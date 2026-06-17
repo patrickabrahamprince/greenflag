@@ -1,11 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { env } from "@/lib/env";
 
 export function getAdminClient() {
   return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE!,
+    env.supabaseUrl,
+    env.supabaseServiceRole,
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
 }
@@ -13,8 +14,8 @@ export function getAdminClient() {
 export async function requireAdmin(): Promise<{ adminId: string } | Response> {
   const cookieStore = await cookies();
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    env.supabaseUrl,
+    env.supabaseAnonKey,
     {
       cookies: {
         getAll: () => cookieStore.getAll(),

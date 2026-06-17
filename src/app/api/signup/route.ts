@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { env } from "@/lib/env";
 
 export async function POST(req: Request) {
   const { email, password } = await req.json();
@@ -7,17 +8,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid email or password (min 6 chars)" }, { status: 400 });
   }
   const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE!,
+    env.supabaseUrl,
+    env.supabaseServiceRole,
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
 
-  // Check if user already exists
   const { data: existing } = await supabase.auth.admin.listUsers();
   const existingUser = existing?.users.find((u) => u.email === email);
 
   if (existingUser) {
-    // Confirm email and update password
     const { error } = await supabase.auth.admin.updateUserById(existingUser.id, {
       email_confirm: true,
       password,

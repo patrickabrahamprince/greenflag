@@ -1,16 +1,17 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { env } from "@/lib/env";
 
 export async function POST(req: Request) {
   try {
     const { phone } = await req.json();
     if (!phone) return NextResponse.json({ exists: false });
-    const serviceRole = process.env.SUPABASE_SERVICE_ROLE;
+    const serviceRole = env.supabaseServiceRole;
     if (!serviceRole) {
       return NextResponse.json({ exists: false, error: "Server not configured" });
     }
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      env.supabaseUrl,
       serviceRole,
       { auth: { autoRefreshToken: false, persistSession: false } }
     );

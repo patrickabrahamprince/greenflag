@@ -1,11 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { env } from "@/lib/env";
 
 export async function POST(req: Request) {
   const { email } = await req.json();
   const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE!,
+    env.supabaseUrl,
+    env.supabaseServiceRole,
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
   const { data: users, error: listErr } = await supabase.auth.admin.listUsers();

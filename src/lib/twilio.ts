@@ -1,7 +1,9 @@
+import { env } from "@/lib/env";
+
 export async function sendSMS(to: string, body: string) {
-  const accountSid = process.env["NEXT_PUBLIC_TWILIO_ACCOUNT_SID"];
-  const authToken = process.env["NEXT_PUBLIC_TWILIO_AUTH_TOKEN"];
-  const from = process.env["NEXT_PUBLIC_TWILIO_PHONE_NUMBER"];
+  const accountSid = env.twilioAccountSid;
+  const authToken = env.twilioAuthToken;
+  const from = env.twilioPhoneNumber;
 
   if (!accountSid || !authToken || !from) {
     throw new Error("Missing Twilio credentials");

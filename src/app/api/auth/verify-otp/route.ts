@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { env } from "@/lib/env";
 
 export async function POST(req: Request) {
   try {
@@ -8,18 +9,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Phone and OTP required" }, { status: 400 });
     }
 
-    const serviceRole = process.env["NEXT_PUBLIC_SUPABASE_SERVICE_ROLE"];
-    if (!serviceRole) {
+    if (!env.supabaseServiceRole) {
       return NextResponse.json({ error: "Server not configured" }, { status: 500 });
     }
 
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      serviceRole,
+      env.supabaseUrl,
+      env.supabaseServiceRole,
       { auth: { autoRefreshToken: false, persistSession: false } }
     );
 
-    // Find valid OTP
     const { data: otpRecord } = await supabase
       .from("phone_otps")
       .select("*")
@@ -35,17 +34,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid or expired code" }, { status: 400 });
     }
 
-    // Mark OTP as verified
     await supabase
       .from("phone_otps")
       .update({ verified: true })
       .eq("id", otpRecord.id);
 
-    // Generate new password each time so sign-in always works
     const password = crypto.randomUUID().slice(0, 16);
     const email = `${phone.replace(/[^0-9]/g, "")}@app.greenflag`;
 
-    // Check if user exists
     const { data: existing } = await supabase.auth.admin.listUsers();
     const existingUser = existing?.users.find((u: any) => u.email === email);
 
