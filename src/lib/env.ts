@@ -4,6 +4,7 @@ export const env = {
   supabaseServiceRole:
     process.env.SUPABASE_SERVICE_ROLE ||
     process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
     "",
   twilioAccountSid: process.env.NEXT_PUBLIC_TWILIO_ACCOUNT_SID || "",
   twilioAuthToken: process.env.NEXT_PUBLIC_TWILIO_AUTH_TOKEN || "",
