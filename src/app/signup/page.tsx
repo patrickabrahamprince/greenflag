@@ -66,7 +66,7 @@ export default function SignupPage() {
         setLoading(false);
         return;
       }
-      const { error: err } = await supabase.auth.signInWithOtp({ phone: fullPhone });
+      const { error: err } = await supabase.auth.signUp({ phone: fullPhone, password: crypto.randomUUID().slice(0, 12) });
       if (err) { setError(err.message); setLoading(false); return; }
       setOtpSent(true);
       setCooldown(30);
