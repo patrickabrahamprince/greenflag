@@ -15,6 +15,7 @@ export default function StandardDetail() {
   const [connection, setConnection] = useState<Connection | null>(null);
   const [userId, setUserId] = useState("");
   const [starting, setStarting] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -28,7 +29,7 @@ export default function StandardDetail() {
       );
       if (match) {
         setHost(match);
-        supabase.from("tests").select("*").eq("host_id", match.id).single().then(({ data: t }) => {
+        supabase.from("tests").select("*").eq("host_id", match.id).maybeSingle().then(({ data: t }) => {
           if (t) {
             setTest(t);
             supabase.from("tasks").select("*").eq("test_id", t.id).order("day_number").then(({ data: ts }) => setTasks(ts || []));
@@ -71,16 +72,25 @@ export default function StandardDetail() {
 
   async function submitTask(task: Task) {
     if (!connection || !test) return;
-    await supabase.from("submissions").insert({
-      connection_id: connection.id,
-      task_id: task.id,
-      day_number: task.day_number,
-      proof_url: "https://i.pravatar.cc/400?img=12",
-      status: "submitted",
-    });
-    const next = Math.min(connection.tasks_completed + 1, 8);
-    await supabase.from("connections").update({ tasks_completed: next, current_day: next + 1 }).eq("id", connection.id);
-    setConnection({ ...connection, tasks_completed: next, current_day: next + 1 });
+    setSubmitting(true);
+    setError("");
+    try {
+      const { error: subErr } = await supabase.from("submissions").insert({
+        connection_id: connection.id,
+        task_id: task.id,
+        day_number: task.day_number,
+        proof_url: "https://i.pravatar.cc/400?img=12",
+        status: "submitted",
+      });
+      if (subErr) { setError(subErr.message); return; }
+      const next = Math.min(connection.tasks_completed + 1, 8);
+      await supabase.from("connections").update({ tasks_completed: next, current_day: next + 1 }).eq("id", connection.id);
+      setConnection({ ...connection, tasks_completed: next, current_day: next + 1 });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to submit");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (!host || !test) {
@@ -160,10 +170,10 @@ export default function StandardDetail() {
                       </p>
                     </div>
                     {isActive && (
-                      <button onClick={() => submitTask(task)}
-                        className="px-4 py-2.5 rounded-[16px] bg-accent text-bg text-xs font-semibold flex items-center gap-1.5">
+                      <button onClick={() => submitTask(task)} disabled={submitting}
+                        className="px-4 py-2.5 rounded-[16px] bg-accent text-bg text-xs font-semibold flex items-center gap-1.5 disabled:opacity-30 transition-all duration-400">
                         <Upload className="w-3.5 h-3.5" strokeWidth={1.5} />
-                        Submit
+                        {submitting ? "..." : "Submit"}
                       </button>
                     )}
                   </div>
