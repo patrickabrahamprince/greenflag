@@ -54,34 +54,43 @@ export default function SignupPage() {
   async function handleSendOtp() {
     setError("");
     setLoading(true);
-    const fullPhone = formatPhone();
-    const res = await fetch("/api/auth/check-phone", {
-      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phone: fullPhone }),
-    });
-    const { exists } = await res.json();
-    if (exists) {
-      setError("This number is already registered. Sign in instead.");
-      setLoading(false);
-      return;
+    try {
+      const fullPhone = formatPhone();
+      const res = await fetch("/api/auth/check-phone", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phone: fullPhone }),
+      });
+      if (!res.ok) { setError("Server error. Try again."); setLoading(false); return; }
+      const { exists } = await res.json();
+      if (exists) {
+        setError("This number is already registered. Sign in instead.");
+        setLoading(false);
+        return;
+      }
+      const { error: err } = await supabase.auth.signInWithOtp({ phone: fullPhone });
+      if (err) { setError(err.message); setLoading(false); return; }
+      setOtpSent(true);
+      setCooldown(30);
+      toast("success", "Code sent!");
+    } catch (e) {
+      setError("Something went wrong. Check your connection and try again.");
     }
-    const { error: err } = await supabase.auth.signInWithOtp({ phone: fullPhone });
     setLoading(false);
-    if (err) { setError(err.message); return; }
-    setOtpSent(true);
-    setCooldown(30);
-    toast("success", "Code sent!");
   }
 
   async function handleVerifyOtp() {
     setError("");
     setLoading(true);
-    const token = otp.join("");
-    if (token.length !== 6) { setError("Enter the full 6-digit code"); setLoading(false); return; }
-    const { error: err } = await supabase.auth.verifyOtp({ phone: formatPhone(), token, type: "sms" });
+    try {
+      const token = otp.join("");
+      if (token.length !== 6) { setError("Enter the full 6-digit code"); setLoading(false); return; }
+      const { error: err } = await supabase.auth.verifyOtp({ phone: formatPhone(), token, type: "sms" });
+      if (err) { setError("Invalid code. Try again."); setLoading(false); return; }
+      toast("success", "Account created! Complete your profile.");
+      router.push("/onboard");
+    } catch (e) {
+      setError("Something went wrong. Try again.");
+    }
     setLoading(false);
-    if (err) { setError("Invalid code. Try again."); return; }
-    toast("success", "Account created! Complete your profile.");
-    router.push("/onboard");
   }
 
   async function handleEmailSignup() {
