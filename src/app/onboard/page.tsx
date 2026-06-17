@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { ArrowLeft, Plus, Venus, Mars, ShieldCheck, Camera } from "lucide-react";
+import { ArrowLeft, Plus, Venus, Mars, ShieldCheck, Camera, MapPin } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
 import { uploadPhoto } from "@/lib/storage";
 
@@ -13,7 +13,9 @@ export default function OnboardPage() {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [city, setCity] = useState("");
+  const [detectingCity, setDetectingCity] = useState(false);
   const [bio, setBio] = useState("");
+  const [tastes, setTastes] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
   const [phone, setPhone] = useState("");
   const [phoneSkipped, setPhoneSkipped] = useState(false);
@@ -25,13 +27,38 @@ export default function OnboardPage() {
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return;
-      // Clear existing profile so user can redo onboarding
-      supabase.from("profiles").delete().eq("id", user.id).then(() => {
-        if (user?.phone) setPhoneSkipped(true);
-      });
+      if (user?.phone) setPhoneSkipped(true);
     });
   }, []);
+
+  useEffect(() => {
+    if (step !== "profile") return;
+    if (city) return;
+    setDetectingCity(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json&accept-language=en`,
+            { headers: { "User-Agent": "Greenflag/1.0" } }
+          );
+          const data = await res.json();
+          const detected =
+            data.address?.city ||
+            data.address?.town ||
+            data.address?.village ||
+            data.address?.county ||
+            "";
+          if (detected) setCity(detected);
+        } catch {
+          // fallback to manual input
+        }
+        setDetectingCity(false);
+      },
+      () => setDetectingCity(false),
+      { timeout: 5000 }
+    );
+  }, [step, city]);
 
   function isValidPhone() {
     return phone.replace(/\D/g, "").length === 10;
@@ -62,6 +89,7 @@ export default function OnboardPage() {
     payload.role = role;
     if (phone && isValidPhone()) payload.phone = formatPhone();
     if (instagramUrl) payload.instagram_url = instagramUrl;
+    if (role === "woman" && tastes) payload.tastes = tastes;
     const { error } = await supabase.from("profiles").upsert(payload);
     setUploading(false);
 
@@ -215,7 +243,21 @@ export default function OnboardPage() {
               <option key={a} value={a}>{a}</option>
             ))}
           </select>
-          <input placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} className="w-full h-14 px-5 rounded-[16px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted focus:outline-none focus:border-accent transition-all" />
+          <div className="relative">
+            <input placeholder="City" value={city} onChange={(e) => setCity(e.target.value)}
+              className="w-full h-14 px-5 rounded-[16px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted focus:outline-none focus:border-accent transition-all" />
+            {detectingCity && (
+              <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                <MapPin className="w-5 h-5 text-accent animate-pulse" strokeWidth={1.5} />
+              </div>
+            )}
+          </div>
+          {gender === "female" && (
+            <div className="relative">
+              <textarea placeholder="What are you looking for? Describe your tastes, interests, and what matters to you." maxLength={300} value={tastes} onChange={(e) => setTastes(e.target.value)} className="w-full h-28 px-5 py-4 rounded-[24px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted resize-none focus:outline-none focus:border-accent transition-all" />
+              <span className="absolute bottom-3 right-4 text-xs text-text-muted tabular-nums">{tastes.length}/300</span>
+            </div>
+          )}
           <input placeholder="Instagram URL (optional)" value={instagramUrl} onChange={(e) => setInstagramUrl(e.target.value)}
             className="w-full h-14 px-5 rounded-[16px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted focus:outline-none focus:border-accent transition-all" />
           <div>

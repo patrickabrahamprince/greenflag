@@ -13,6 +13,7 @@ export default function EditProfilePage() {
   const [age, setAge] = useState("");
   const [city, setCity] = useState("");
   const [bio, setBio] = useState("");
+  const [tastes, setTastes] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -27,6 +28,7 @@ export default function EditProfilePage() {
           setCity(data.city);
           setBio(data.bio);
           setPhotos(data.photos || []);
+          if (data.tastes) setTastes(data.tastes);
         }
       });
     });
@@ -36,7 +38,7 @@ export default function EditProfilePage() {
     if (!profile) return;
     setSaving(true);
     await supabase.from("profiles").update({
-      name, age: Number(age), city, bio, photos: photos.filter(Boolean),
+      name, age: Number(age), city, bio, tastes, photos: photos.filter(Boolean),
     }).eq("id", profile.id);
     setSaving(false);
     router.push("/profile");
@@ -90,6 +92,13 @@ export default function EditProfilePage() {
           </select>
           <input placeholder="City" value={city} onChange={(e) => setCity(e.target.value)}
             className="w-full h-14 px-5 rounded-[16px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted focus:outline-none focus:border-accent transition-all" />
+          {profile?.role === "woman" && (
+            <div className="relative">
+              <textarea placeholder="What are you looking for?" maxLength={300} value={tastes} onChange={(e) => setTastes(e.target.value)}
+                className="w-full h-28 px-5 py-4 rounded-[24px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted resize-none focus:outline-none focus:border-accent transition-all" />
+              <span className="absolute bottom-3 right-4 text-xs text-text-muted tabular-nums">{tastes.length}/300</span>
+            </div>
+          )}
           <div className="relative">
             <textarea placeholder="One line. Make it count." maxLength={120} value={bio} onChange={(e) => setBio(e.target.value)}
               className="w-full h-24 px-5 py-4 rounded-[24px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted resize-none focus:outline-none focus:border-accent transition-all" />

@@ -13,6 +13,7 @@ export interface Profile {
   photos: string[];
   phone?: string;
   instagram_url?: string;
+  tastes?: string;
   created_at: string;
 }
 

@@ -72,6 +72,12 @@ export default function ProfilePage() {
                 </div>
               )}
               <p className="text-sm text-text-muted max-w-xs mx-auto">{profile.bio}</p>
+              {profile.role === "woman" && profile.tastes && (
+                <div className="rounded-[24px] bg-accent/5 border-[0.5px] border-accent/20 p-4 text-left max-w-xs mx-auto">
+                  <p className="text-xs text-accent uppercase tracking-wider font-semibold mb-2">My Tastes</p>
+                  <p className="text-sm text-text-muted">{profile.tastes}</p>
+                </div>
+              )}
             </div>
 
             <div className="rounded-[24px] bg-surface border-[0.5px] border-border p-6 space-y-3">
