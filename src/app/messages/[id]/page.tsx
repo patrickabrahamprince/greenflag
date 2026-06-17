@@ -26,7 +26,7 @@ export default function MessagesRoom() {
       .from("connections")
       .select("*, host:host_id(*)")
       .eq("id", connectionId)
-      .single()
+      .maybeSingle()
       .then(({ data }) => {
         if (data) {
           setConnection(data as unknown as Connection);

@@ -13,7 +13,7 @@ export default function ProfilePage() {
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) return router.push("/login");
-      supabase.from("profiles").select("*").eq("id", user.id).single().then(({ data }) => setProfile(data));
+      supabase.from("profiles").select("*").eq("id", user.id).maybeSingle().then(({ data }) => setProfile(data));
       supabase.from("connections").select("id", { count: "exact", head: true }).eq("guest_id", user.id).eq("status", "completed")
         .then(({ count }) => setConnections(count || 0));
     });

@@ -16,7 +16,7 @@ export default function ReviewPage() {
     supabase.from("submissions").select("*").eq("connection_id", connectionId).order("day_number")
       .then(({ data }) => setSubmissions(data || []));
 
-    supabase.from("connections").select("guest:guest_id(name)").eq("id", connectionId).single()
+    supabase.from("connections").select("guest:guest_id(name)").eq("id", connectionId).maybeSingle()
       .then(({ data }) => {
         if (data) setGuestName((data as any).guest?.name || "");
       });
