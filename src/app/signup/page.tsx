@@ -85,7 +85,8 @@ export default function SignupPage() {
       });
       const json = await res.json();
       if (!res.ok) { setError(json.error || "Invalid code"); setLoading(false); return; }
-      await supabase.auth.signInWithPassword({ email: json.email, password: json.password });
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email: json.email, password: json.password });
+      if (signInError) { setError(signInError.message); setLoading(false); return; }
       toast("success", "Account created! Complete your profile.");
       router.push("/onboard");
     } catch (e) {

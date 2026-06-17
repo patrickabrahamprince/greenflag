@@ -213,7 +213,7 @@ export default function OnboardPage() {
             <p className="text-sm text-red-400 text-center">{submitError}</p>
           )}
           <button onClick={handleSubmit} disabled={!name || !age || !city || bio.length < 2 || uploading} className="w-full h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px] disabled:opacity-30 transition-all">
-            {uploading ? "Saving..." : "Submit"}
+            {uploading ? "Saving..." : "Upload"}
           </button>
         </div>
       )}

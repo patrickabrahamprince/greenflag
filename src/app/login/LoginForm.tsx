@@ -77,7 +77,8 @@ export default function LoginForm() {
       });
       const json = await res.json();
       if (!res.ok) { setError(json.error || "Invalid code"); setLoading(false); return; }
-      await supabase.auth.signInWithPassword({ email: json.email, password: json.password });
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email: json.email, password: json.password });
+      if (signInError) { setError(signInError.message); setLoading(false); return; }
       router.push("/discover");
     } catch (e) {
       setError("Something went wrong.");
