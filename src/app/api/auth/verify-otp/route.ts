@@ -10,7 +10,10 @@ export async function POST(req: Request) {
 
     const serviceRole = process.env.SUPABASE_SERVICE_ROLE;
     if (!serviceRole) {
-      return NextResponse.json({ error: "Server not configured" }, { status: 500 });
+      const missing = [];
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL) missing.push("NEXT_PUBLIC_SUPABASE_URL");
+      if (!process.env.SUPABASE_SERVICE_ROLE) missing.push("SUPABASE_SERVICE_ROLE");
+      return NextResponse.json({ error: `Missing env vars: ${missing.join(", ")}` }, { status: 500 });
     }
 
     const supabase = createClient(
