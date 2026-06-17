@@ -1,4 +1,4 @@
-export type UserRole = "guest" | "host";
+export type UserRole = "man" | "woman";
 export type Difficulty = "easy" | "medium" | "hard";
 export type TrialStatus = "pending" | "active" | "completed" | "failed" | "withdrawn";
 export type TaskStatus = "locked" | "pending" | "submitted" | "approved" | "rejected";
@@ -11,6 +11,8 @@ export interface Profile {
   city: string;
   bio: string;
   photos: string[];
+  phone?: string;
+  instagram_url?: string;
   created_at: string;
 }
 
@@ -65,6 +67,18 @@ export interface Message {
   connection_id: string;
   sender_id: string;
   content: string;
+  message_type?: "text" | "image";
+  created_at: string;
+}
+
+export interface Notification {
+  id: string;
+  user_id: string;
+  type: string;
+  title: string;
+  body: string | null;
+  read: boolean;
+  link: string | null;
   created_at: string;
 }
 

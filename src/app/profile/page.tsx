@@ -2,19 +2,23 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { ArrowLeft, Bell, Shield, HelpCircle, LogOut, Receipt } from "lucide-react";
+import { ArrowLeft, Bell, Shield, HelpCircle, LogOut, Edit3, Trash2, Smartphone, CheckCircle, ShieldCheck } from "lucide-react";
+import Link from "next/link";
 import type { Profile } from "@/lib/types";
+import { requireOnboarded } from "@/lib/auth";
+import { ProfileSkeleton } from "@/components/Skeleton";
 
 export default function ProfilePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [connections, setConnections] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return router.push("/login");
-      supabase.from("profiles").select("*").eq("id", user.id).maybeSingle().then(({ data }) => setProfile(data));
-      supabase.from("connections").select("id", { count: "exact", head: true }).eq("guest_id", user.id).eq("status", "completed")
+    requireOnboarded().then((uid) => {
+      if (!uid) { router.replace("/onboard"); return; }
+      supabase.from("profiles").select("*").eq("id", uid).maybeSingle().then(({ data }) => { setProfile(data); setLoading(false); });
+      supabase.from("connections").select("id", { count: "exact", head: true }).eq("guest_id", uid).eq("status", "completed")
         .then(({ count }) => setConnections(count || 0));
     });
   }, [router]);
@@ -22,6 +26,21 @@ export default function ProfilePage() {
   async function signOut() {
     await supabase.auth.signOut();
     router.push("/login");
+  }
+
+  function maskPhone(phone: string) {
+    return phone.slice(0, 3) + "XXXXX" + phone.slice(-4);
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-dvh bg-bg px-4 pt-6 pb-24 animate-fade-in">
+        <div className="max-w-lg mx-auto space-y-8">
+          <div className="w-10 h-10 rounded-full bg-surface-elevated animate-pulse" />
+          <ProfileSkeleton />
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -38,10 +57,20 @@ export default function ProfilePage() {
           <>
             <div className="text-center space-y-4">
               <img src={profile.photos?.[0] || ""} alt="" className="w-24 h-24 rounded-full object-cover mx-auto" />
-              <div>
+              <div className="flex items-center gap-2 justify-center">
                 <h1 className="text-[22px] font-display font-semibold">{profile.name}, {profile.age}</h1>
-                <p className="text-sm text-text-muted">{profile.city}</p>
+                <Link href="/profile/edit" className="text-text-muted hover:text-accent transition-colors">
+                  <Edit3 className="w-4 h-4" strokeWidth={1.5} />
+                </Link>
               </div>
+              <p className="text-sm text-text-muted">{profile.city}</p>
+              {profile.phone && (
+                <div className="flex items-center justify-center gap-1.5 text-xs text-text-muted">
+                  <Smartphone className="w-3.5 h-3.5" strokeWidth={1.5} />
+                  <span>{maskPhone(profile.phone)}</span>
+                  <CheckCircle className="w-3.5 h-3.5 text-accent" strokeWidth={1.5} />
+                </div>
+              )}
               <p className="text-sm text-text-muted max-w-xs mx-auto">{profile.bio}</p>
             </div>
 
@@ -51,18 +80,28 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-1">
+              <button onClick={() => router.push("/admin")}
+                className="w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] bg-accent/5 border-[0.5px] border-accent/20 hover:bg-accent/10 transition-all">
+                <ShieldCheck className="w-5 h-5 text-accent" strokeWidth={1.5} />
+                <span className="text-sm text-accent font-medium">Admin</span>
+              </button>
               {[
-                { icon: Bell, label: "Notifications" },
-                { icon: Shield, label: "Privacy" },
-                { icon: HelpCircle, label: "Concierge" },
+                { icon: Bell, label: "Notifications", href: "/profile/notifications" },
+                { icon: Shield, label: "Privacy", href: "/profile/privacy" },
+                { icon: HelpCircle, label: "Concierge", href: "/profile/concierge" },
               ].map((item) => (
-                <button key={item.label}
+                <button key={item.label} onClick={() => router.push(item.href)}
                   className="w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] hover:bg-white/[0.03] transition-all">
                   <item.icon className="w-5 h-5 text-text-muted" strokeWidth={1.5} />
                   <span className="text-sm">{item.label}</span>
                 </button>
               ))}
 
+              <button onClick={() => router.push("/profile/delete")}
+                className="w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] hover:bg-white/[0.03] transition-all">
+                <Trash2 className="w-5 h-5 text-danger" strokeWidth={1.5} />
+                <span className="text-sm text-danger">Delete Account</span>
+              </button>
               <button onClick={signOut}
                 className="w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] hover:bg-white/[0.03] transition-all">
                 <LogOut className="w-5 h-5 text-danger" strokeWidth={1.5} />

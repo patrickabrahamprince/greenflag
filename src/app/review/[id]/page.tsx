@@ -4,14 +4,22 @@ import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { ArrowLeft, CheckCircle, X } from "lucide-react";
 import type { Submission } from "@/lib/types";
+import { requireOnboarded } from "@/lib/auth";
+import { useToast } from "@/components/Toast";
+import ImageLightbox from "@/components/ImageLightbox";
 
 export default function ReviewPage() {
   const params = useParams();
   const router = useRouter();
+  const { toast } = useToast();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [guestName, setGuestName] = useState("");
+  const [lightboxIndex, setLightboxIndex] = useState(-1);
 
   useEffect(() => {
+    requireOnboarded().then((uid) => {
+      if (!uid) { router.replace("/onboard"); return; }
+    });
     const connectionId = params.id as string;
     supabase.from("submissions").select("*").eq("connection_id", connectionId).order("day_number")
       .then(({ data }) => setSubmissions(data || []));
@@ -26,6 +34,9 @@ export default function ReviewPage() {
     await supabase.from("submissions").update({ status, reviewed_at: new Date().toISOString() }).eq("id", sub.id);
     if (status === "approved") {
       await supabase.from("connections").update({ tasks_completed: sub.day_number }).eq("id", sub.connection_id);
+      toast("success", `Day ${sub.day_number} approved!`);
+    } else {
+      toast("info", `Day ${sub.day_number} passed.`);
     }
     setSubmissions((prev) => prev.map((s) => s.id === sub.id ? { ...s, status } : s));
   }
@@ -65,7 +76,9 @@ export default function ReviewPage() {
                 )}
               </div>
               {sub.proof_url && (
-                <img src={sub.proof_url} alt="" className="w-full rounded-[16px] object-cover h-48" />
+                <button onClick={() => setLightboxIndex(submissions.indexOf(sub))} className="w-full">
+                  <img src={sub.proof_url} alt="" className="w-full rounded-[16px] object-cover h-48 hover:opacity-90 transition-opacity" />
+                </button>
               )}
               {sub.status === "submitted" && (
                 <div className="flex gap-3">
@@ -83,6 +96,26 @@ export default function ReviewPage() {
           ))}
         </div>
       </div>
+
+      {lightboxIndex >= 0 && (() => {
+        const filteredUrls = submissions.filter((s) => s.proof_url);
+        const currentIndex = filteredUrls.findIndex((s) => s.id === submissions[lightboxIndex]?.id);
+        return (
+          <ImageLightbox
+            images={filteredUrls.map((s) => s.proof_url!)}
+            index={Math.max(0, currentIndex)}
+            onClose={() => setLightboxIndex(-1)}
+            onPrev={() => {
+              const prevIdx = (currentIndex - 1 + filteredUrls.length) % filteredUrls.length;
+              setLightboxIndex(submissions.findIndex((s) => s.id === filteredUrls[prevIdx].id));
+            }}
+            onNext={() => {
+              const nextIdx = (currentIndex + 1) % filteredUrls.length;
+              setLightboxIndex(submissions.findIndex((s) => s.id === filteredUrls[nextIdx].id));
+            }}
+          />
+        );
+      })()}
     </div>
   );
 }

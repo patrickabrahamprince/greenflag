@@ -1,13 +1,13 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-CREATE TYPE user_role AS ENUM ('guest', 'host');
+CREATE TYPE user_role AS ENUM ('man', 'woman');
 CREATE TYPE difficulty_level AS ENUM ('easy', 'medium', 'hard');
 CREATE TYPE trial_status AS ENUM ('pending', 'active', 'completed', 'failed', 'withdrawn');
 CREATE TYPE task_status AS ENUM ('locked', 'pending', 'submitted', 'approved', 'rejected');
 
 CREATE TABLE public.profiles (
   id UUID REFERENCES auth.users(id) PRIMARY KEY,
-  role user_role NOT NULL DEFAULT 'guest',
+  role user_role NOT NULL DEFAULT 'man',
   name TEXT NOT NULL DEFAULT 'User',
   age INT DEFAULT 25 CHECK (age >= 18 AND age <= 60),
   city TEXT DEFAULT 'Mumbai',

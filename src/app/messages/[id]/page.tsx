@@ -1,9 +1,24 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { ArrowLeft, Send, Lock } from "lucide-react";
+import { ArrowLeft, Send, Lock, Camera } from "lucide-react";
 import type { Message, Profile, Connection } from "@/lib/types";
+import { requireOnboarded } from "@/lib/auth";
+
+function timeAgo(date: string) {
+  const diff = Date.now() - new Date(date).getTime();
+  const s = Math.floor(diff / 1000);
+  if (s < 5) return "just now";
+  if (s < 60) return `${s}s ago`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d < 7) return `${d}d ago`;
+  return new Date(date).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+}
 
 export default function MessagesRoom() {
   const params = useParams();
@@ -14,12 +29,20 @@ export default function MessagesRoom() {
   const [connection, setConnection] = useState<Connection | null>(null);
   const [host, setHost] = useState<Profile | null>(null);
   const [userId, setUserId] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [now, setNow] = useState(Date.now());
   const bottomRef = useRef<HTMLDivElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return router.push("/login");
-      setUserId(user.id);
+    const timer = setInterval(() => setNow(Date.now()), 30000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    requireOnboarded().then((uid) => {
+      if (!uid) { router.replace("/onboard"); return; }
+      setUserId(uid);
     });
 
     supabase
@@ -65,6 +88,24 @@ export default function MessagesRoom() {
     setInput("");
   }
 
+  async function handleCamera(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !userId) return;
+    setUploading(true);
+    const path = `chat/${connectionId}/${Date.now()}_${file.name}`;
+    const { error } = await supabase.storage.from("proofs").upload(path, file);
+    if (error) { setUploading(false); return; }
+    const { data: { publicUrl } } = supabase.storage.from("proofs").getPublicUrl(path);
+    await supabase.from("messages").insert({
+      connection_id: connectionId,
+      sender_id: userId,
+      content: publicUrl,
+      message_type: "image",
+    });
+    setUploading(false);
+    if (fileRef.current) fileRef.current.value = "";
+  }
+
   const locked = connection && connection.tasks_completed < 5;
 
   return (
@@ -90,12 +131,22 @@ export default function MessagesRoom() {
         )}
         {messages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.sender_id === userId ? "justify-end" : "justify-start"}`}>
-            <div className={`max-w-[80%] px-4 py-2.5 rounded-[16px] text-sm ${
-              msg.sender_id === userId
-                ? "bg-accent text-bg rounded-br-[4px]"
-                : "bg-surface-elevated text-text/90 rounded-bl-[4px] border-[0.5px] border-border"
-            }`}>
-              {msg.content}
+            <div className={`max-w-[80%] space-y-1 ${msg.sender_id === userId ? "items-end" : "items-start"}`}>
+              {(msg as any).message_type === "image" ? (
+                <img src={msg.content} alt="" className="max-w-full rounded-[16px] object-cover max-h-80"
+                  onError={(e) => { (e.target as HTMLImageElement).src = ""; }} />
+              ) : (
+                <div className={`px-4 py-2.5 rounded-[16px] text-sm ${
+                  msg.sender_id === userId
+                    ? "bg-accent text-bg rounded-br-[4px]"
+                    : "bg-surface-elevated text-text/90 rounded-bl-[4px] border-[0.5px] border-border"
+                }`}>
+                  {msg.content}
+                </div>
+              )}
+              <p className={`text-[10px] text-text-muted/50 px-1 ${msg.sender_id === userId ? "text-right" : "text-left"}`}>
+                {timeAgo(msg.created_at)}
+              </p>
             </div>
           </div>
         ))}
@@ -105,11 +156,16 @@ export default function MessagesRoom() {
       {!locked && (
         <div className="sticky bottom-0 glass-strong border-t-[0.5px] border-border p-4">
           <div className="max-w-lg mx-auto flex items-center gap-3">
+            <button onClick={() => fileRef.current?.click()} disabled={uploading}
+              className="w-12 h-12 rounded-full bg-surface-elevated border-[0.5px] border-border flex items-center justify-center disabled:opacity-30 transition-all shrink-0">
+              <Camera className="w-5 h-5 text-text-muted" strokeWidth={1.5} />
+            </button>
+            <input ref={fileRef} type="file" accept="image/*" capture="environment" onChange={handleCamera} className="hidden" />
             <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSend()}
               placeholder="Write..." className="flex-1 h-12 px-5 rounded-full bg-surface-elevated border-[0.5px] border-border text-text placeholder-text-muted focus:outline-none focus:border-accent transition-all" />
-            <button onClick={handleSend} disabled={!input.trim()}
-              className="w-12 h-12 rounded-full bg-accent flex items-center justify-center disabled:opacity-30 transition-all">
-              <Send className="w-5 h-5 text-bg" strokeWidth={1.5} />
+            <button onClick={handleSend} disabled={!input.trim() || uploading}
+              className="w-12 h-12 rounded-full bg-accent flex items-center justify-center disabled:opacity-30 transition-all shrink-0">
+              {uploading ? <div className="w-5 h-5 border-2 border-bg border-t-transparent rounded-full animate-spin" /> : <Send className="w-5 h-5 text-bg" strokeWidth={1.5} />}
             </button>
           </div>
         </div>

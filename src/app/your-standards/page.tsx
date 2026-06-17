@@ -2,9 +2,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { Plus, CheckCircle, X, ChevronRight } from "lucide-react";
+import { Plus, CheckCircle, X, ChevronRight, Settings } from "lucide-react";
 import Link from "next/link";
 import type { Connection, Profile } from "@/lib/types";
+import { requireOnboarded } from "@/lib/auth";
+import { ListSkeleton } from "@/components/Skeleton";
 
 type ConnectionFull = Connection & { guest: Profile };
 
@@ -13,17 +15,21 @@ export default function YourStandardsPage() {
   const [tab, setTab] = useState("Interested");
   const [userId, setUserId] = useState("");
   const [connections, setConnections] = useState<ConnectionFull[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return router.push("/login");
-      setUserId(user.id);
+    requireOnboarded().then((uid) => {
+      if (!uid) { router.replace("/onboard"); return; }
+      setUserId(uid);
       supabase
         .from("connections")
         .select("*, guest:guest_id(*)")
-        .eq("host_id", user.id)
+        .eq("host_id", uid)
         .order("created_at", { ascending: false })
-        .then(({ data }) => setConnections((data || []) as unknown as ConnectionFull[]));
+        .then(({ data }) => {
+          setConnections((data || []) as unknown as ConnectionFull[]);
+          setLoading(false);
+        });
     });
   }, [router]);
 
@@ -43,15 +49,32 @@ export default function YourStandardsPage() {
 
   const TABS = ["Interested", "In Progress", "Connected"];
 
+  if (loading) {
+    return (
+      <div className="min-h-dvh bg-bg px-4 pt-6 pb-24">
+        <div className="max-w-lg mx-auto space-y-6">
+          <div className="h-8 w-48 rounded-full bg-surface-elevated animate-pulse" />
+          <ListSkeleton count={2} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-dvh bg-bg px-4 pt-6 pb-24">
       <div className="max-w-lg mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-[32px] font-display font-bold tracking-[-0.02em]">Your Standards</h1>
-          <Link href="/your-standards/create"
-            className="w-10 h-10 rounded-full bg-surface-elevated border-[0.5px] border-border flex items-center justify-center hover:border-accent/40 transition-all">
-            <Plus className="w-5 h-5 text-text-muted" strokeWidth={1.5} />
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link href="/your-standards/edit"
+              className="w-10 h-10 rounded-full bg-surface-elevated border-[0.5px] border-border flex items-center justify-center hover:border-accent/40 transition-all">
+              <Settings className="w-5 h-5 text-text-muted" strokeWidth={1.5} />
+            </Link>
+            <Link href="/your-standards/create"
+              className="w-10 h-10 rounded-full bg-surface-elevated border-[0.5px] border-border flex items-center justify-center hover:border-accent/40 transition-all">
+              <Plus className="w-5 h-5 text-text-muted" strokeWidth={1.5} />
+            </Link>
+          </div>
         </div>
 
         <div className="flex gap-2">

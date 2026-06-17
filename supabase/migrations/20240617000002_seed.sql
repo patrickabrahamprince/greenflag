@@ -1,14 +1,37 @@
--- Seed: 3 hosts with active tests, 1 guest, 1 connection
+-- Seed: 3 women with active tests, 1 man, 1 connection
+-- Uses inline SVG data URIs for profile photos (no external service dependency)
+
+CREATE OR REPLACE FUNCTION gen_avatar_svg(p_name text, p_color text)
+RETURNS text LANGUAGE plpgsql IMMUTABLE AS $$
+BEGIN
+  RETURN 'data:image/svg+xml;utf8,' ||
+    '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">' ||
+    '<rect width="400" height="400" fill="' || p_color || '"/>' ||
+    '<circle cx="200" cy="160" r="60" fill="rgba(255,255,255,0.3)"/>' ||
+    '<text x="200" y="180" text-anchor="middle" fill="white" font-size="48" font-family="sans-serif" font-weight="bold">' ||
+    upper(left(p_name, 1)) || '</text>' ||
+    '<ellipse cx="200" cy="300" rx="80" ry="40" fill="rgba(255,255,255,0.2)"/>' ||
+    '</svg>';
+END;
+$$;
 
 -- Temporarily drop FK to allow seed inserts (profiles FK to auth.users)
 ALTER TABLE public.profiles DROP CONSTRAINT IF EXISTS profiles_id_fkey;
 
 INSERT INTO public.profiles (id, role, name, age, city, bio, photos) VALUES
-  ('00000000-0000-0000-0000-000000000001', 'guest', 'Rahul', 25, 'Mumbai', 'Product. Discipline over motivation.', ARRAY['https://i.pravatar.cc/400?img=12', 'https://i.pravatar.cc/400?img=13', 'https://i.pravatar.cc/400?img=14']),
-  ('00000000-0000-0000-0000-000000000010', 'host', 'Priya', 24, 'Mumbai', 'Read 47 books this year. If you cannot name 3 authors, do not reach out.', ARRAY['https://i.pravatar.cc/400?img=5']),
-  ('00000000-0000-0000-0000-000000000011', 'host', 'Aisha', 26, 'Bangalore', '5am or do not engage. PR: 100kg deadlift. Caliber required.', ARRAY['https://i.pravatar.cc/400?img=1']),
-  ('00000000-0000-0000-0000-000000000012', 'host', 'Maya', 22, 'Delhi', 'Digital artist. 200-day streak. Looking for those who match my energy.', ARRAY['https://i.pravatar.cc/400?img=9'])
-ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, age = EXCLUDED.age, city = EXCLUDED.city, bio = EXCLUDED.bio, photos = EXCLUDED.photos;
+  ('00000000-0000-0000-0000-000000000001', 'man', 'Rahul', 25, 'Mumbai', 'Product. Discipline over motivation.',
+   ARRAY[gen_avatar_svg('Rahul', '#3B82F6'), gen_avatar_svg('R', '#2563EB'), gen_avatar_svg('R', '#1D4ED8')]),
+  ('00000000-0000-0000-0000-000000000010', 'woman', 'Priya', 24, 'Mumbai',
+   'Read 47 books this year. If you cannot name 3 authors, do not reach out.',
+   ARRAY[gen_avatar_svg('Priya', '#EC4899')]),
+  ('00000000-0000-0000-0000-000000000011', 'woman', 'Aisha', 26, 'Bangalore',
+   '5am or do not engage. PR: 100kg deadlift. Caliber required.',
+   ARRAY[gen_avatar_svg('Aisha', '#F59E0B')]),
+  ('00000000-0000-0000-0000-000000000012', 'woman', 'Maya', 22, 'Delhi',
+   'Digital artist. 200-day streak. Looking for those who match my energy.',
+   ARRAY[gen_avatar_svg('Maya', '#10B981')])
+ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, age = EXCLUDED.age, city = EXCLUDED.city,
+  bio = EXCLUDED.bio, photos = EXCLUDED.photos;
 
 INSERT INTO public.tests (id, host_id, name, difficulty, is_active) VALUES
   ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000010', 'Book Lover', 'medium', true),
@@ -44,16 +67,20 @@ INSERT INTO public.tasks (test_id, day_number, description) VALUES
 ON CONFLICT DO NOTHING;
 
 INSERT INTO public.connections (id, guest_id, host_id, test_id, status, current_day, tasks_completed, started_at, expires_at) VALUES
-  ('20000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000010', '10000000-0000-0000-0000-000000000001', 'active', 5, 5, NOW() - INTERVAL '3 days', NOW() + INTERVAL '4 days')
+  ('20000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001',
+   '00000000-0000-0000-0000-000000000010', '10000000-0000-0000-0000-000000000001',
+   'active', 5, 5, NOW() - INTERVAL '3 days', NOW() + INTERVAL '4 days')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO public.submissions (connection_id, task_id, day_number, status, proof_url, submitted_at)
-SELECT '20000000-0000-0000-0000-000000000001', id, day_number, 'approved', 'https://i.pravatar.cc/400?img=12', NOW() - INTERVAL '3 days'
+SELECT '20000000-0000-0000-0000-000000000001', id, day_number, 'approved',
+  gen_avatar_svg('✓', '#22C55E'), NOW() - INTERVAL '3 days'
 FROM public.tasks WHERE test_id = '10000000-0000-0000-0000-000000000001' AND day_number <= 4
 ON CONFLICT DO NOTHING;
 
 INSERT INTO public.submissions (connection_id, task_id, day_number, status, proof_url, submitted_at)
-SELECT '20000000-0000-0000-0000-000000000001', id, day_number, 'submitted', 'https://i.pravatar.cc/400?img=12', NOW()
+SELECT '20000000-0000-0000-0000-000000000001', id, day_number, 'submitted',
+  gen_avatar_svg('?', '#F59E0B'), NOW()
 FROM public.tasks WHERE test_id = '10000000-0000-0000-0000-000000000001' AND day_number = 5
 ON CONFLICT DO NOTHING;
 
@@ -63,3 +90,5 @@ INSERT INTO public.messages (connection_id, sender_id, content, created_at) VALU
   ('20000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000010', 'Day 6: no reels for 12h. Clear?', NOW() - INTERVAL '10 hours'),
   ('20000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 'Understood.', NOW() - INTERVAL '9 hours')
 ON CONFLICT DO NOTHING;
+
+DROP FUNCTION gen_avatar_svg;

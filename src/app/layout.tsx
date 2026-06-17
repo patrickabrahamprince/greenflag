@@ -1,5 +1,8 @@
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import BottomNav from "@/components/BottomNav";
+import { ToastProvider } from "@/components/Toast";
+import AppInitializer from "@/components/AppInitializer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,7 +33,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${inter.variable} ${playfair.variable} h-full antialiased`}>
       <body className="min-h-full bg-bg text-text font-body">
         <div className="noise" />
-        {children}
+        <ToastProvider>
+          <AppInitializer>
+            {children}
+          </AppInitializer>
+        </ToastProvider>
+        <BottomNav />
       </body>
     </html>
   );

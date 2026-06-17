@@ -33,3 +33,23 @@ export function daysLeft(expiresAt: string): number {
   const diff = new Date(expiresAt).getTime() - Date.now();
   return Math.max(0, Math.ceil(diff / 86400000));
 }
+
+export function isExpired(expiresAt: string): boolean {
+  return new Date(expiresAt).getTime() < Date.now();
+}
+
+export async function expireOverdueConnections() {
+  const { createBrowserClient } = await import("@supabase/ssr");
+  const supabase = (await import("@/lib/supabase")).supabase;
+  const { data: overdue } = await supabase
+    .from("connections")
+    .select("id")
+    .lt("expires_at", new Date().toISOString())
+    .eq("status", "active");
+
+  if (overdue && overdue.length > 0) {
+    const ids = overdue.map((c) => c.id);
+    await supabase.from("connections").update({ status: "failed" }).in("id", ids);
+  }
+  return overdue?.length || 0;
+}

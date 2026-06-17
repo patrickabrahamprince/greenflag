@@ -1,36 +1,86 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, Venus, Mars, ShieldCheck } from "lucide-react";
+import FileUpload from "@/components/FileUpload";
 
 export default function OnboardPage() {
   const router = useRouter();
   const [step, setStep] = useState("intro");
-  const [role, setRole] = useState<string | null>(null);
+  const [gender, setGender] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [city, setCity] = useState("");
   const [bio, setBio] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
+  const [phone, setPhone] = useState("");
+  const [phoneSkipped, setPhoneSkipped] = useState(false);
+  const [instagramUrl, setInstagramUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user?.phone) setPhoneSkipped(true);
+    });
+  }, []);
+
+  function isValidPhone() {
+    return phone.replace(/\D/g, "").length === 10;
+  }
+
+  function formatPhone() {
+    return "+91" + phone.replace(/\D/g, "").slice(0, 10);
+  }
 
   async function handleSubmit() {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (!user || authError) return router.push("/login");
 
-    const { error } = await supabase.from("profiles").upsert({
+    setUploading(true);
+    const payload: Record<string, unknown> = {
       id: user.id,
-      role,
       name,
       age: Number(age),
       city,
       bio,
       photos: photos.filter(Boolean),
-    });
+    };
+    const role = gender === "male" ? "man" : "woman";
+    payload.role = role;
+    if (phone && isValidPhone()) payload.phone = formatPhone();
+    if (instagramUrl) payload.instagram_url = instagramUrl;
+    const { error } = await supabase.from("profiles").upsert(payload);
+    setUploading(false);
 
     if (!error) {
-      router.replace(role === "host" ? "/your-standards" : "/discover");
+      setSubmitted(true);
     }
+  }
+
+  if (submitted) {
+    return (
+      <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-6 text-center space-y-6">
+        <div className="w-20 h-20 rounded-[24px] bg-accent/10 border-[0.5px] border-accent/20 flex items-center justify-center mx-auto">
+          <ShieldCheck className="w-10 h-10 text-accent" strokeWidth={1.5} />
+        </div>
+        <h1 className="text-[24px] font-display font-bold tracking-[-0.02em]">Under Review</h1>
+        <p className="text-sm text-text-muted max-w-xs leading-relaxed">
+          Our team will verify your profile and you&apos;ll be live soon. We&apos;ll notify you once it&apos;s approved.
+        </p>
+        <div className="space-y-3 w-full max-w-xs pt-4">
+          <button onClick={() => router.push("/admin")}
+            className="w-full h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px] transition-all">
+            Go to Admin
+          </button>
+          <button onClick={() => router.push("/discover")}
+            className="w-full h-14 rounded-[16px] bg-surface border-[0.5px] border-border text-text font-semibold text-[15px] transition-all">
+            Browse App
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -50,22 +100,64 @@ export default function OnboardPage() {
             <p className="text-lg font-display font-semibold text-accent tracking-[-0.02em]">Actions over algorithms.</p>
             <p className="text-sm text-text-muted">8 intentions. Then you connect.</p>
           </div>
-          <button onClick={() => setStep("role")} className="w-full max-w-xs h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px]">
-            Get Started
-          </button>
+          {phoneSkipped ? (
+            <button onClick={() => setStep("gender")} className="w-full max-w-xs h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px]">
+              Get Started
+            </button>
+          ) : (
+            <button onClick={() => setStep("phone")} className="w-full max-w-xs h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px]">
+              Get Started
+            </button>
+          )}
         </div>
       )}
 
-      {step === "role" && (
+      {step === "phone" && (
+        <div className="flex-1 flex flex-col justify-center px-6 space-y-4">
+          <h2 className="text-[22px] font-display font-semibold text-center tracking-[-0.02em]">Add your number</h2>
+          <p className="text-sm text-text-muted text-center -mt-2">For account security. We never share it.</p>
+          <div className="flex items-center gap-1">
+            <span className="text-sm text-text-muted px-3 py-3.5 bg-surface border-[0.5px] border-border rounded-[16px]">+91</span>
+            <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="99999 99999" maxLength={10}
+              className="flex-1 h-14 px-5 rounded-[16px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted focus:outline-none focus:border-accent transition-all tracking-[2px] text-lg" />
+          </div>
+          <button onClick={() => setStep("gender")} disabled={!isValidPhone()}
+            className="w-full h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px] disabled:opacity-30 transition-all">
+            Continue
+          </button>
+          <p onClick={() => { setPhoneSkipped(true); setStep("gender"); }}
+            className="text-xs text-text-muted text-center cursor-pointer hover:text-accent">
+            Skip for now
+          </p>
+        </div>
+      )}
+
+      {step === "gender" && (
         <div className="flex-1 flex flex-col justify-center px-6 space-y-4">
           <h2 className="text-[22px] font-display font-semibold text-center tracking-[-0.02em]">I am here to...</h2>
-          <button onClick={() => { setRole("guest"); setStep("profile"); }} className="w-full p-6 rounded-[24px] bg-surface border-[0.5px] border-border text-left space-y-2 hover:border-accent/40 transition-all">
-            <p className="text-lg font-display font-semibold tracking-[-0.02em]">Meet Someone</p>
-            <p className="text-sm text-text-muted">Complete intentions to earn a connection</p>
+          <button onClick={() => { setGender("male"); setStep("profile"); }}
+            className="w-full p-6 rounded-[24px] bg-surface border-[0.5px] border-border text-left space-y-3 hover:border-accent/40 transition-all group">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-blue-500/10 border-[0.5px] border-blue-500/20 flex items-center justify-center group-hover:bg-blue-500/20 transition-all">
+                <Mars className="w-6 h-6 text-blue-400" strokeWidth={1.5} />
+              </div>
+              <div>
+                <p className="text-lg font-display font-semibold tracking-[-0.02em]">Meet a Woman</p>
+                <p className="text-sm text-text-muted">Complete intentions to earn a connection</p>
+              </div>
+            </div>
           </button>
-          <button onClick={() => { setRole("host"); setStep("profile"); }} className="w-full p-6 rounded-[24px] bg-surface border-[0.5px] border-border text-left space-y-2 hover:border-accent/40 transition-all">
-            <p className="text-lg font-display font-semibold tracking-[-0.02em]">Set Your Standard</p>
-            <p className="text-sm text-text-muted">Define your standard. Connect those who prove it.</p>
+          <button onClick={() => { setGender("female"); setStep("profile"); }}
+            className="w-full p-6 rounded-[24px] bg-surface border-[0.5px] border-border text-left space-y-3 hover:border-accent/40 transition-all group">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-pink-500/10 border-[0.5px] border-pink-500/20 flex items-center justify-center group-hover:bg-pink-500/20 transition-all">
+                <Venus className="w-6 h-6 text-pink-400" strokeWidth={1.5} />
+              </div>
+              <div>
+                <p className="text-lg font-display font-semibold tracking-[-0.02em]">Meet a Man</p>
+                <p className="text-sm text-text-muted">Set your standard. He proves it.</p>
+              </div>
+            </div>
           </button>
         </div>
       )}
@@ -84,17 +176,26 @@ export default function OnboardPage() {
             ))}
           </select>
           <input placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} className="w-full h-14 px-5 rounded-[16px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted focus:outline-none focus:border-accent transition-all" />
+          <input placeholder="Instagram URL (optional)" value={instagramUrl} onChange={(e) => setInstagramUrl(e.target.value)}
+            className="w-full h-14 px-5 rounded-[16px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted focus:outline-none focus:border-accent transition-all" />
           <div>
             <p className="text-sm text-text-muted mb-3">3 Photos</p>
             <div className="grid grid-cols-3 gap-2">
               {Array.from({ length: 3 }, (_, i) => (
-                <div key={i} className={`aspect-square rounded-[16px] border-[0.5px] border-dashed flex items-center justify-center transition-all ${photos[i] ? "border-accent bg-accent/5" : "border-border"}`}>
+                <div key={i} className={`aspect-square rounded-[16px] border-[0.5px] border-dashed flex items-center justify-center transition-all overflow-hidden ${photos[i] ? "border-accent bg-accent/5" : "border-border"}`}>
                   {photos[i] ? (
-                    <img src={photos[i]} alt="" className="w-full h-full object-cover rounded-[15px]" />
+                    <div className="relative w-full h-full">
+                      <img src={photos[i]} alt="" className="w-full h-full object-cover" />
+                      <button onClick={() => { const p = [...photos]; p[i] = ""; setPhotos(p); }}
+                        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-bg/80 flex items-center justify-center">
+                        <Plus className="w-3 h-3 rotate-45 text-text-muted" strokeWidth={1.5} />
+                      </button>
+                    </div>
                   ) : (
-                    <button onClick={() => { const p = [...photos]; p[i] = `https://i.pravatar.cc/400?img=${12 + i}`; setPhotos(p); }} className="text-text-muted">
-                      <Plus className="w-6 h-6" />
-                    </button>
+                    <FileUpload onUpload={(url) => { const p = [...photos]; p[i] = url; setPhotos(p); }}
+                      className="w-full h-full flex items-center justify-center cursor-pointer">
+                      <Plus className="w-6 h-6 text-text-muted" />
+                    </FileUpload>
                   )}
                 </div>
               ))}
@@ -104,8 +205,8 @@ export default function OnboardPage() {
             <textarea placeholder="One line. Make it count." maxLength={120} value={bio} onChange={(e) => setBio(e.target.value)} className="w-full h-24 px-5 py-4 rounded-[24px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted resize-none focus:outline-none focus:border-accent transition-all" />
             <span className="absolute bottom-3 right-4 text-xs text-text-muted tabular-nums">{bio.length}/120</span>
           </div>
-          <button onClick={handleSubmit} disabled={!name || !age || !city || bio.length < 2} className="w-full h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px] disabled:opacity-30 transition-all">
-            Submit
+          <button onClick={handleSubmit} disabled={!name || !age || !city || bio.length < 2 || uploading} className="w-full h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px] disabled:opacity-30 transition-all">
+            {uploading ? "Saving..." : "Submit"}
           </button>
         </div>
       )}
