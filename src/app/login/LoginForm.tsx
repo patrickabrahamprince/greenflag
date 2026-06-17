@@ -153,7 +153,8 @@ export default function LoginForm() {
                 <span className="text-sm text-text-muted px-3 py-3.5 bg-surface border-[0.5px] border-border rounded-[16px]">+91</span>
                 <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="99999 99999" maxLength={10}
                   onKeyDown={(e) => e.key === "Enter" && isValidPhone() && handleSendOtp()}
-                  className="flex-1 h-14 px-5 rounded-[16px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted focus:outline-none focus:border-accent transition-all tracking-[2px] text-lg" />
+                  className="flex-1 h-14 px-5 rounded-[16px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted focus:outline-none focus:border-accent transition-all tracking-[2px] text-lg"
+                  inputMode="numeric" type="tel" />
               </div>
               <button onClick={handleSendOtp} disabled={!isValidPhone() || loading}
                 className="w-full h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px] disabled:opacity-30 transition-all">
