@@ -1,0 +1,88 @@
+"use client";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
+import { ArrowLeft, CheckCircle, X } from "lucide-react";
+import type { Submission } from "@/lib/types";
+
+export default function ReviewPage() {
+  const params = useParams();
+  const router = useRouter();
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [guestName, setGuestName] = useState("");
+
+  useEffect(() => {
+    const connectionId = params.id as string;
+    supabase.from("submissions").select("*").eq("connection_id", connectionId).order("day_number")
+      .then(({ data }) => setSubmissions(data || []));
+
+    supabase.from("connections").select("guest:guest_id(name)").eq("id", connectionId).single()
+      .then(({ data }) => {
+        if (data) setGuestName((data as any).guest?.name || "");
+      });
+  }, [params.id]);
+
+  async function review(sub: Submission, status: "approved" | "rejected") {
+    await supabase.from("submissions").update({ status, reviewed_at: new Date().toISOString() }).eq("id", sub.id);
+    if (status === "approved") {
+      await supabase.from("connections").update({ tasks_completed: sub.day_number }).eq("id", sub.connection_id);
+    }
+    setSubmissions((prev) => prev.map((s) => s.id === sub.id ? { ...s, status } : s));
+  }
+
+  return (
+    <div className="min-h-dvh bg-bg">
+      <header className="sticky top-0 z-40 glass-strong">
+        <div className="max-w-lg mx-auto px-4 h-16 flex items-center gap-3">
+          <button onClick={() => router.back()} className="w-10 h-10 rounded-full bg-surface-elevated border-[0.5px] border-border flex items-center justify-center">
+            <ArrowLeft className="w-5 h-5 text-text-muted" strokeWidth={1.5} />
+          </button>
+          <div className="flex-1">
+            <h1 className="text-[17px] font-display font-semibold">Reviewing {guestName}</h1>
+          </div>
+        </div>
+      </header>
+
+      <div className="px-4 py-6">
+        <div className="max-w-lg mx-auto space-y-4">
+          {submissions.length === 0 && (
+            <p className="text-center text-text-muted text-sm py-20">No submissions yet.</p>
+          )}
+          {submissions.map((sub) => (
+            <div key={sub.id} className="rounded-[24px] bg-surface border-[0.5px] border-border p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium">Day {sub.day_number}</p>
+                {sub.status === "submitted" && (
+                  <span className="text-xs text-accent">Pending review</span>
+                )}
+                {sub.status === "approved" && (
+                  <span className="text-xs text-accent flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3" /> Approved
+                  </span>
+                )}
+                {sub.status === "rejected" && (
+                  <span className="text-xs text-danger">Rejected</span>
+                )}
+              </div>
+              {sub.proof_url && (
+                <img src={sub.proof_url} alt="" className="w-full rounded-[16px] object-cover h-48" />
+              )}
+              {sub.status === "submitted" && (
+                <div className="flex gap-3">
+                  <button onClick={() => review(sub, "rejected")}
+                    className="flex-1 h-12 rounded-[16px] bg-surface-elevated border-[0.5px] border-border text-text-muted font-medium text-sm flex items-center justify-center gap-2">
+                    <X className="w-4 h-4" /> Pass
+                  </button>
+                  <button onClick={() => review(sub, "approved")}
+                    className="flex-1 h-12 rounded-[16px] bg-accent text-bg font-semibold text-sm flex items-center justify-center gap-2">
+                    <CheckCircle className="w-4 h-4" /> Connect
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
