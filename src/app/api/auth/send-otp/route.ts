@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     });
 
     if (insertError) {
-      return NextResponse.json({ error: "Failed to create OTP", detail: insertError.message }, { status: 500 });
+      return NextResponse.json({ error: "Failed to create OTP", detail: `${insertError.code}: ${insertError.message}` }, { status: 500 });
     }
 
     await sendSMS(phone, `Your Greenflag verification code is: ${otp}. Valid for 5 minutes.`);

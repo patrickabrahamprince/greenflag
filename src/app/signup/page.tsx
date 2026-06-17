@@ -60,7 +60,7 @@ export default function SignupPage() {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phone: fullPhone }),
       });
       const json = await res.json();
-      if (!res.ok) { setError(json.error || "Failed to send code"); setLoading(false); return; }
+      if (!res.ok) { setError(json.detail || json.error || "Failed to send code"); setLoading(false); return; }
       setOtpSent(true);
       setCooldown(30);
       toast("success", "Code sent!");
