@@ -1,9 +1,10 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { ArrowLeft, Plus, Venus, Mars, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Plus, Venus, Mars, ShieldCheck, Camera } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
+import { uploadPhoto } from "@/lib/storage";
 
 export default function OnboardPage() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function OnboardPage() {
   const [uploading, setUploading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const cameraInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -35,10 +37,13 @@ export default function OnboardPage() {
     return "+91" + phone.replace(/\D/g, "").slice(0, 10);
   }
 
-  async function handleSubmit() {
+  async function submitProfile(photoUrl?: string) {
     setSubmitError("");
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (!user || authError) return router.push("/login");
+
+    const allPhotos = [...photos];
+    if (photoUrl) allPhotos[0] = photoUrl;
 
     setUploading(true);
     const payload: Record<string, unknown> = {
@@ -47,7 +52,7 @@ export default function OnboardPage() {
       age: Number(age),
       city,
       bio,
-      photos: photos.filter(Boolean),
+      photos: allPhotos.filter(Boolean),
     };
     const role = gender === "male" ? "man" : "woman";
     payload.role = role;
@@ -63,6 +68,25 @@ export default function OnboardPage() {
     setSubmitted(true);
   }
 
+  async function handleUploadClick() {
+    if (!name || !age || !city || bio.length < 2) return;
+    cameraInput.current?.click();
+  }
+
+  async function handleCameraCapture(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const url = await uploadPhoto(file, "photos", user.id);
+    if (url) {
+      await submitProfile(url);
+    }
+    if (cameraInput.current) cameraInput.current.value = "";
+  }
+
   if (submitted) {
     return (
       <div className="min-h-dvh bg-bg flex flex-col items-center justify-center px-6 text-center space-y-6">
@@ -71,7 +95,7 @@ export default function OnboardPage() {
         </div>
         <h1 className="text-[24px] font-display font-bold tracking-[-0.02em]">Under Review</h1>
         <p className="text-sm text-text-muted max-w-xs leading-relaxed">
-          Our team will verify your profile and you&apos;ll be live soon. We&apos;ll notify you once it&apos;s approved.
+          Our team will verify your profile and you&apos;ll be live soon.
         </p>
         <div className="space-y-3 w-full max-w-xs pt-4">
           <button onClick={() => router.push("/admin")}
@@ -89,6 +113,14 @@ export default function OnboardPage() {
 
   return (
     <div className="min-h-dvh bg-bg flex flex-col">
+      <input
+        ref={cameraInput}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={handleCameraCapture}
+        className="hidden"
+      />
       {step !== "intro" && (
         <div className="px-4 pt-6">
           <button onClick={() => setStep("intro")} className="w-10 h-10 rounded-full bg-surface-elevated border-[0.5px] border-border flex items-center justify-center">
@@ -212,7 +244,8 @@ export default function OnboardPage() {
           {submitError && (
             <p className="text-sm text-red-400 text-center">{submitError}</p>
           )}
-          <button onClick={handleSubmit} disabled={!name || !age || !city || bio.length < 2 || uploading} className="w-full h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px] disabled:opacity-30 transition-all">
+          <button onClick={handleUploadClick} disabled={!name || !age || !city || bio.length < 2 || uploading} className="w-full h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px] disabled:opacity-30 transition-all flex items-center justify-center gap-2">
+            <Camera className="w-5 h-5" strokeWidth={1.5} />
             {uploading ? "Saving..." : "Upload"}
           </button>
         </div>
