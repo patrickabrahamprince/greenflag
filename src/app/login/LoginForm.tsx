@@ -21,6 +21,7 @@ export default function LoginForm() {
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [cooldown, setCooldown] = useState(0);
+  const [debugOtp, setDebugOtp] = useState("");
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -55,6 +56,7 @@ export default function LoginForm() {
       if (!res.ok) { setError(json.detail || json.error || "Failed to send code"); setLoading(false); return; }
       setOtpSent(true);
       setCooldown(30);
+      if (json.otp) setDebugOtp(json.otp);
       toast("success", "Code sent!");
     } catch (e) {
       setError("Something went wrong.");
@@ -181,6 +183,12 @@ export default function LoginForm() {
             <>
               <h2 className="text-[20px] font-display font-semibold tracking-[-0.02em] text-center">Enter code</h2>
               <p className="text-xs text-text-muted text-center -mt-2">Sent to +91 {"XXXXX ".repeat(2).trim()}</p>
+              {debugOtp && (
+                <div className="text-center bg-accent/10 border border-accent/30 rounded-xl p-3">
+                  <p className="text-xs text-text-muted">Your code:</p>
+                  <p className="text-2xl font-bold text-accent tracking-[0.3em]">{debugOtp}</p>
+                </div>
+              )}
               <div className="flex justify-center gap-2">
                 {otp.map((d, i) => (
                   <input key={i} ref={(el) => { otpRefs.current[i] = el; }}

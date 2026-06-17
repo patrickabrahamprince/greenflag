@@ -38,9 +38,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Failed to create OTP", detail: `${insertError.code}: ${insertError.message}` }, { status: 500 });
     }
 
-    await sendSMS(phone, `Your Greenflag verification code is: ${otp}. Valid for 5 minutes.`);
+    if (env.twilioAccountSid && env.twilioAuthToken && env.twilioPhoneNumber) {
+      try {
+        await sendSMS(phone, `Your Greenflag verification code is: ${otp}. Valid for 5 minutes.`);
+      } catch (smsErr: any) {
+        return NextResponse.json({ sent: true, otp, smsError: smsErr.message });
+      }
+    }
 
-    return NextResponse.json({ sent: true });
+    return NextResponse.json({ sent: true, otp });
   } catch (err: any) {
     return NextResponse.json({ error: err.message || "Failed to send OTP" }, { status: 500 });
   }
