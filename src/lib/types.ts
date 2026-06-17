@@ -14,6 +14,8 @@ export interface Profile {
   phone?: string;
   instagram_url?: string;
   tastes?: string;
+  about_me_tags?: string[];
+  looking_for_tags?: string[];
   created_at: string;
 }
 

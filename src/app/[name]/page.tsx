@@ -142,6 +142,32 @@ export default function StandardDetail() {
           </div>
           <p className="text-sm text-text-muted leading-relaxed">{host.bio}</p>
 
+          {host.looking_for_tags && host.looking_for_tags.length > 0 && (
+            <div>
+              <p className="text-xs text-accent uppercase tracking-wider font-semibold mb-2">She's looking for</p>
+              <div className="flex flex-wrap gap-2">
+                {host.looking_for_tags.map((tag) => (
+                  <span key={tag} className="text-xs px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-accent">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {host.about_me_tags && host.about_me_tags.length > 0 && (
+            <div>
+              <p className="text-xs text-text-muted uppercase tracking-wider font-semibold mb-2">About Her</p>
+              <div className="flex flex-wrap gap-2">
+                {host.about_me_tags.map((tag) => (
+                  <span key={tag} className="text-xs px-3 py-1.5 rounded-full bg-surface border border-border text-text-muted">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {host.instagram_url && (
             <a href={host.instagram_url} target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-accent hover:underline">

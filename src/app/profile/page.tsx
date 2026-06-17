@@ -72,10 +72,25 @@ export default function ProfilePage() {
                 </div>
               )}
               <p className="text-sm text-text-muted max-w-xs mx-auto">{profile.bio}</p>
-              {profile.role === "woman" && profile.tastes && (
-                <div className="rounded-[24px] bg-accent/5 border-[0.5px] border-accent/20 p-4 text-left max-w-xs mx-auto">
-                  <p className="text-xs text-accent uppercase tracking-wider font-semibold mb-2">My Tastes</p>
-                  <p className="text-sm text-text-muted">{profile.tastes}</p>
+              {profile.about_me_tags && profile.about_me_tags.length > 0 && (
+                <div className="flex flex-wrap justify-center gap-2 max-w-xs mx-auto">
+                  {profile.about_me_tags.map((tag) => (
+                    <span key={tag} className="text-xs px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-accent">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {profile.looking_for_tags && profile.looking_for_tags.length > 0 && (
+                <div className="max-w-xs mx-auto text-left">
+                  <p className="text-xs text-accent uppercase tracking-wider font-semibold mb-2">Looking For</p>
+                  <div className="flex flex-wrap gap-2">
+                    {profile.looking_for_tags.map((tag) => (
+                      <span key={tag} className="text-xs px-3 py-1.5 rounded-full bg-surface border border-border text-text-muted">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

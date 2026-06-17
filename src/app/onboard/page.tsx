@@ -95,9 +95,15 @@ export default function OnboardPage() {
 
     if (error) {
       setSubmitError(error.message);
+      setUploading(false);
       return;
     }
-    setSubmitted(true);
+    setUploading(false);
+    if (role === "woman") {
+      router.push("/onboard/vibe");
+    } else {
+      setSubmitted(true);
+    }
   }
 
   async function handleUploadClick() {
