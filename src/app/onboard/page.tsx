@@ -26,6 +26,10 @@ export default function OnboardPage() {
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user?.phone) setPhoneSkipped(true);
+      if (!user) return;
+      supabase.from("profiles").select("role").eq("id", user.id).maybeSingle().then(({ data }) => {
+        if (data?.role) router.push("/discover");
+      });
     });
   }, []);
 

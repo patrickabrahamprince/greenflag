@@ -79,7 +79,7 @@ export default function LoginForm() {
       if (!res.ok) { setError(json.error || "Invalid code"); setLoading(false); return; }
       const { error: signInError } = await supabase.auth.signInWithPassword({ email: json.email, password: json.password });
       if (signInError) { setError(signInError.message); setLoading(false); return; }
-      router.push("/discover");
+      router.push("/onboard");
     } catch (e) {
       setError("Something went wrong.");
     }
@@ -90,9 +90,9 @@ export default function LoginForm() {
     setError("");
     setLoading(true);
     const { error: err } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (err) setError(err.message);
-    else router.push("/discover");
+      setLoading(false);
+      if (err) setError(err.message);
+      else router.push("/onboard");
   }
 
   async function handleMagicLink() {
