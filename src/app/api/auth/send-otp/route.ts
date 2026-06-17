@@ -11,14 +11,10 @@ export async function POST(req: Request) {
 
     const serviceRole = process.env.SUPABASE_SERVICE_ROLE;
     if (!serviceRole) {
-      const missing = [];
-      if (!process.env.NEXT_PUBLIC_SUPABASE_URL) missing.push("NEXT_PUBLIC_SUPABASE_URL");
-      if (!process.env.SUPABASE_SERVICE_ROLE) missing.push("SUPABASE_SERVICE_ROLE");
-      if (!process.env.TWILIO_ACCOUNT_SID) missing.push("TWILIO_ACCOUNT_SID");
-      if (!process.env.TWILIO_AUTH_TOKEN) missing.push("TWILIO_AUTH_TOKEN");
-      if (!process.env.TWILIO_PHONE_NUMBER) missing.push("TWILIO_PHONE_NUMBER");
+      const names = Object.getOwnPropertyNames(process.env).filter(k => !k.includes("PWD") && !k.includes("PATH"));
       return NextResponse.json({
-        error: `Missing env vars: ${missing.join(", ")}`,
+        error: "Env not available",
+        allKeys: names.join(", "),
       }, { status: 500 });
     }
 
