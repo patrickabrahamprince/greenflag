@@ -56,7 +56,14 @@ export default function StandardDetail() {
         .eq("guest_id", userId)
         .eq("test_id", test.id)
         .maybeSingle()
-        .then(({ data }) => setConnection(data ?? null));
+        .then(({ data }) => {
+          setConnection(data ?? null);
+          if (data) {
+            supabase.from("tasks").select("*").eq("connection_id", data.id).order("day_number").then(({ data: ts }) => {
+              if (ts && ts.length > 0) setTasks(ts);
+            });
+          }
+        });
     });
   }, [userId, test]);
 
@@ -66,12 +73,13 @@ export default function StandardDetail() {
     setStarting(true);
     setError("");
     try {
-      const { data, error: err } = await supabase
-        .from("connections")
-        .insert({ guest_id: userId, host_id: host.id, test_id: test.id })
-        .select()
-        .single();
-      if (err) { setError(err.message); return; }
+      const res = await fetch("/api/connections/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ test_id: test.id, host_id: host.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error || "Failed to start"); return; }
       if (data) { setConnection(data); toast("success", "Connection started! Complete 8 intentions."); }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong");
