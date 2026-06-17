@@ -1,4 +1,5 @@
 "use client";
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 
 interface Props {
@@ -9,8 +10,22 @@ interface Props {
   onChange: (val: string[]) => void;
 }
 
+function shuffle(arr: string[]): string[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export default function BubbleSelector({ title, tags, selected, max, onChange }: Props) {
+  const shuffled = useMemo(() => shuffle(tags), [tags]);
+
   function toggle(tag: string) {
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      navigator.vibrate(10);
+    }
     if (selected.includes(tag)) {
       onChange(selected.filter((t) => t !== tag));
     } else if (selected.length < max) {
@@ -27,7 +42,7 @@ export default function BubbleSelector({ title, tags, selected, max, onChange }:
         </span>
       </div>
       <div className="flex flex-wrap gap-2">
-        {tags.map((tag) => {
+        {shuffled.map((tag) => {
           const isSelected = selected.includes(tag);
           const isDisabled = !isSelected && selected.length >= max;
           return (
