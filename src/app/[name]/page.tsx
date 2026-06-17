@@ -14,6 +14,8 @@ export default function StandardDetail() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [connection, setConnection] = useState<Connection | null>(null);
   const [userId, setUserId] = useState("");
+  const [starting, setStarting] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -48,12 +50,17 @@ export default function StandardDetail() {
   }, [userId, test]);
 
   async function startConnection() {
-    if (!userId || !test || !host) return;
-    const { data } = await supabase
+    if (!userId) { setError("Please log in first"); return; }
+    if (!test || !host) return;
+    setStarting(true);
+    setError("");
+    const { data, error: err } = await supabase
       .from("connections")
       .insert({ guest_id: userId, host_id: host.id, test_id: test.id })
       .select()
       .single();
+    setStarting(false);
+    if (err) { setError(err.message); return; }
     if (data) setConnection(data);
   }
 
@@ -119,10 +126,12 @@ export default function StandardDetail() {
             </div>
           )}
 
+          {error && <p className="text-xs text-danger text-center">{error}</p>}
+
           {!connection ? (
-            <button onClick={startConnection}
-              className="w-full h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px]">
-              Meet Her Standard
+            <button onClick={startConnection} disabled={starting}
+              className="w-full h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px] disabled:opacity-30 transition-all duration-400">
+              {starting ? "Starting..." : "Meet Her Standard"}
             </button>
           ) : (
             <div className="space-y-2">

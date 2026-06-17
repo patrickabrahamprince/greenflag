@@ -54,7 +54,7 @@ export default function DiscoverPage() {
             {tests.map((test) => (
               <div
                 key={test.id}
-                onClick={() => router.push(`/${test.host.name.toLowerCase()}`)}
+                onClick={() => test.host?.name && router.push(`/${test.host.name.toLowerCase()}`)}
                 className="rounded-[24px] bg-surface border-[0.5px] border-border overflow-hidden cursor-pointer hover:border-accent/40 transition-all duration-400"
               >
                 <div className="relative h-72 overflow-hidden">
@@ -80,7 +80,7 @@ export default function DiscoverPage() {
                 <div className="p-5">
                   <p className="text-sm text-text-muted leading-relaxed line-clamp-2">{test.host.bio}</p>
                   <button
-                    onClick={(e) => { e.stopPropagation(); router.push(`/${test.host.name.toLowerCase()}`); }}
+                    onClick={(e) => { e.stopPropagation(); test.host?.name && router.push(`/${test.host.name.toLowerCase()}`); }}
                     className="w-full h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px] mt-4 hover:brightness-110 transition-all"
                   >
                     Meet Her Standard
