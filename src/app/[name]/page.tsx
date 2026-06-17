@@ -45,8 +45,8 @@ export default function StandardDetail() {
       .select("*")
       .eq("guest_id", userId)
       .eq("test_id", test.id)
-      .single()
-      .then(({ data }) => setConnection(data));
+      .maybeSingle()
+      .then(({ data }) => setConnection(data ?? null));
   }, [userId, test]);
 
   async function startConnection() {
@@ -54,14 +54,19 @@ export default function StandardDetail() {
     if (!test || !host) return;
     setStarting(true);
     setError("");
-    const { data, error: err } = await supabase
-      .from("connections")
-      .insert({ guest_id: userId, host_id: host.id, test_id: test.id })
-      .select()
-      .single();
-    setStarting(false);
-    if (err) { setError(err.message); return; }
-    if (data) setConnection(data);
+    try {
+      const { data, error: err } = await supabase
+        .from("connections")
+        .insert({ guest_id: userId, host_id: host.id, test_id: test.id })
+        .select()
+        .single();
+      if (err) { setError(err.message); return; }
+      if (data) setConnection(data);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong");
+    } finally {
+      setStarting(false);
+    }
   }
 
   async function submitTask(task: Task) {
