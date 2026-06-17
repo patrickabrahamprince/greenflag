@@ -13,3 +13,6 @@ ALTER TABLE public.phone_otps ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "phone_otps_all" ON public.phone_otps;
 CREATE POLICY "phone_otps_all" ON public.phone_otps FOR ALL USING (true);
+
+DROP POLICY IF EXISTS "profiles_self_delete" ON public.profiles;
+CREATE POLICY "profiles_self_delete" ON public.profiles FOR DELETE USING (auth.uid() = id);
