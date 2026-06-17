@@ -56,18 +56,11 @@ export default function SignupPage() {
     setLoading(true);
     try {
       const fullPhone = formatPhone();
-      const res = await fetch("/api/auth/check-phone", {
+      const res = await fetch("/api/auth/send-otp", {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phone: fullPhone }),
       });
-      if (!res.ok) { setError("Server error. Try again."); setLoading(false); return; }
-      const { exists } = await res.json();
-      if (exists) {
-        setError("This number is already registered. Sign in instead.");
-        setLoading(false);
-        return;
-      }
-      const { error: err } = await supabase.auth.signUp({ phone: fullPhone, password: crypto.randomUUID().slice(0, 12) });
-      if (err) { setError(err.message); setLoading(false); return; }
+      const json = await res.json();
+      if (!res.ok) { setError(json.error || "Failed to send code"); setLoading(false); return; }
       setOtpSent(true);
       setCooldown(30);
       toast("success", "Code sent!");
@@ -83,8 +76,14 @@ export default function SignupPage() {
     try {
       const token = otp.join("");
       if (token.length !== 6) { setError("Enter the full 6-digit code"); setLoading(false); return; }
-      const { error: err } = await supabase.auth.verifyOtp({ phone: formatPhone(), token, type: "sms" });
-      if (err) { setError("Invalid code. Try again."); setLoading(false); return; }
+      const fullPhone = formatPhone();
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: fullPhone, otp: token }),
+      });
+      const json = await res.json();
+      if (!res.ok) { setError(json.error || "Invalid code"); setLoading(false); return; }
+      await supabase.auth.signInWithPassword({ email: json.email, password: json.password });
       toast("success", "Account created! Complete your profile.");
       router.push("/onboard");
     } catch (e) {

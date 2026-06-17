@@ -47,24 +47,40 @@ export default function LoginForm() {
     setError("");
     const fullPhone = "+91" + formatPhone();
     setLoading(true);
-    const { error: err } = await supabase.auth.signInWithOtp({ phone: fullPhone });
+    try {
+      const res = await fetch("/api/auth/send-otp", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phone: fullPhone }),
+      });
+      const json = await res.json();
+      if (!res.ok) { setError(json.error || "Failed to send code"); setLoading(false); return; }
+      setOtpSent(true);
+      setCooldown(30);
+      toast("success", "Code sent!");
+    } catch (e) {
+      setError("Something went wrong.");
+    }
     setLoading(false);
-    if (err) { setError(err.message); return; }
-    setOtpSent(true);
-    setCooldown(30);
-    toast("success", "Code sent!");
   }
 
   async function handleVerifyOtp() {
     setError("");
     setLoading(true);
-    const token = otp.join("");
-    if (token.length !== 6) { setError("Enter the full 6-digit code"); setLoading(false); return; }
-    const fullPhone = "+91" + formatPhone();
-    const { error: err } = await supabase.auth.verifyOtp({ phone: fullPhone, token, type: "sms" });
+    try {
+      const token = otp.join("");
+      if (token.length !== 6) { setError("Enter the full 6-digit code"); setLoading(false); return; }
+      const fullPhone = "+91" + formatPhone();
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: fullPhone, otp: token }),
+      });
+      const json = await res.json();
+      if (!res.ok) { setError(json.error || "Invalid code"); setLoading(false); return; }
+      await supabase.auth.signInWithPassword({ email: json.email, password: json.password });
+      router.push("/discover");
+    } catch (e) {
+      setError("Something went wrong.");
+    }
     setLoading(false);
-    if (err) { setError("Invalid code. Try again."); return; }
-    router.push("/discover");
   }
 
   async function handlePassword() {
