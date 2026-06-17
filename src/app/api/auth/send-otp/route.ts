@@ -11,7 +11,14 @@ export async function POST(req: Request) {
 
     const serviceRole = process.env.SUPABASE_SERVICE_ROLE;
     if (!serviceRole) {
-      return NextResponse.json({ error: "Server not configured" }, { status: 500 });
+      return NextResponse.json({
+        error: "Server not configured",
+        hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+        hasServiceRole: !!process.env.SUPABASE_SERVICE_ROLE,
+        hasTwilioSid: !!process.env.TWILIO_ACCOUNT_SID,
+        hasTwilioToken: !!process.env.TWILIO_AUTH_TOKEN,
+        hasTwilioPhone: !!process.env.TWILIO_PHONE_NUMBER,
+      }, { status: 500 });
     }
 
     const supabase = createClient(
