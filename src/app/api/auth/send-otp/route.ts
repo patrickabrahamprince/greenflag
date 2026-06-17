@@ -9,15 +9,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Phone number required" }, { status: 400 });
     }
 
-    // Dynamic key access to prevent static inlining by Turbopack
-    const envKey = "SUPABASE_SERVICE_ROLE";
-    const serviceRole = process.env[envKey];
+    const serviceRole = process.env["NEXT_PUBLIC_SUPABASE_SERVICE_ROLE"];
     if (!serviceRole) {
-      return NextResponse.json({
-        error: "Service role not available",
-        hasNextPublicUrl: !!process.env["NEXT_PUBLIC_SUPABASE_URL"],
-        keys: Object.keys(process.env).filter(k => k.includes("SUPABASE") || k.includes("TWILIO") || k.startsWith("NEXT_PUBLIC")),
-      }, { status: 500 });
+      return NextResponse.json({ error: "Server not configured" }, { status: 500 });
     }
 
     const supabase = createClient(
