@@ -19,6 +19,7 @@ export default function OnboardPage() {
   const [instagramUrl, setInstagramUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -35,6 +36,7 @@ export default function OnboardPage() {
   }
 
   async function handleSubmit() {
+    setSubmitError("");
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (!user || authError) return router.push("/login");
 
@@ -54,9 +56,11 @@ export default function OnboardPage() {
     const { error } = await supabase.from("profiles").upsert(payload);
     setUploading(false);
 
-    if (!error) {
-      setSubmitted(true);
+    if (error) {
+      setSubmitError(error.message);
+      return;
     }
+    setSubmitted(true);
   }
 
   if (submitted) {
@@ -205,6 +209,9 @@ export default function OnboardPage() {
             <textarea placeholder="One line. Make it count." maxLength={120} value={bio} onChange={(e) => setBio(e.target.value)} className="w-full h-24 px-5 py-4 rounded-[24px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted resize-none focus:outline-none focus:border-accent transition-all" />
             <span className="absolute bottom-3 right-4 text-xs text-text-muted tabular-nums">{bio.length}/120</span>
           </div>
+          {submitError && (
+            <p className="text-sm text-red-400 text-center">{submitError}</p>
+          )}
           <button onClick={handleSubmit} disabled={!name || !age || !city || bio.length < 2 || uploading} className="w-full h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px] disabled:opacity-30 transition-all">
             {uploading ? "Saving..." : "Submit"}
           </button>
