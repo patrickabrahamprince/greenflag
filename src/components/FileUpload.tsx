@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
-import { Upload } from "lucide-react";
+import { Upload, Camera, Video } from "lucide-react";
 import { uploadPhoto } from "@/lib/storage";
 
 interface FileUploadProps {
@@ -9,6 +9,7 @@ interface FileUploadProps {
   userId?: string;
   className?: string;
   children?: React.ReactNode;
+  mediaType?: "image" | "video";
 }
 
 export default function FileUpload({
@@ -17,6 +18,7 @@ export default function FileUpload({
   userId,
   className = "",
   children,
+  mediaType = "image",
 }: FileUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -34,13 +36,15 @@ export default function FileUpload({
     if (inputRef.current) inputRef.current.value = "";
   }
 
+  const Icon = mediaType === "video" ? Video : Camera;
+
   return (
     <>
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
-        capture="environment"
+        accept={mediaType === "video" ? "video/*" : "image/*"}
+        capture={mediaType === "video" ? "environment" : "environment"}
         onChange={handleChange}
         className="hidden"
       />
@@ -50,7 +54,7 @@ export default function FileUpload({
             {uploading ? (
               <div className="w-5 h-5 rounded-full border-[1.5px] border-accent/30 border-t-accent animate-spin" />
             ) : (
-              <Upload className="w-6 h-6 text-text-muted" strokeWidth={1.5} />
+              <Icon className="w-6 h-6 text-text-muted" strokeWidth={1.5} />
             )}
           </div>
         )}

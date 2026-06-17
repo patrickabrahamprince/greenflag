@@ -2,13 +2,16 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { ArrowLeft, Lock, CheckCircle, Upload, Clock, MessageCircle, Flag, Snowflake, Brain, ExternalLink } from "lucide-react";
+import { ArrowLeft, Lock, CheckCircle, Clock, MessageCircle, Flag, Snowflake, Brain, ExternalLink, Music, MapPin, Camera, Video } from "lucide-react";
 import type { Profile, Test, Task, Connection } from "@/lib/types";
 import FileUpload from "@/components/FileUpload";
+import VoiceRecorder from "@/components/VoiceRecorder";
+import LocationPicker from "@/components/LocationPicker";
 import FreezeStreak from "@/components/FreezeStreak";
 import { useToast } from "@/components/Toast";
 import { requireOnboarded } from "@/lib/auth";
 import { isExpired, expireOverdueConnections, daysLeft } from "@/lib/utils";
+import { parseTaskDescription } from "@/lib/task-utils";
 
 export default function StandardDetail() {
   const params = useParams();
@@ -88,7 +91,7 @@ export default function StandardDetail() {
     }
   }
 
-  async function submitTask(task: Task, proofUrl: string) {
+  async function submitTask(task: Task, proofUrl?: string, proofText?: string) {
     if (!connection || !test) return;
     setSubmitting(true);
     setSubmittingDay(task.day_number);
@@ -98,7 +101,8 @@ export default function StandardDetail() {
         connection_id: connection.id,
         task_id: task.id,
         day_number: task.day_number,
-        proof_url: proofUrl,
+        proof_url: proofUrl || null,
+        proof_text: proofText || null,
         status: "submitted",
       });
       if (subErr) { setError(subErr.message); setSubmitting(false); return; }
@@ -257,38 +261,100 @@ export default function StandardDetail() {
                 )}
               </div>
               {tasks.map((task) => {
+                const detail = parseTaskDescription(task.description);
                 const isComplete = task.day_number <= completed;
                 const isActive = task.day_number === completed + 1;
                 const isLocked = task.day_number > completed + 1;
                 const todayCount = completed % 2;
                 const isTodayTask = task.day_number > completed && task.day_number <= completed + (2 - todayCount);
+
+                if (isComplete) {
+                  return (
+                    <div key={task.id} className="flex items-center gap-4 p-4 rounded-[24px] bg-accent/[0.04] border-[0.5px] border-accent/20 transition-all">
+                      <CheckCircle className="w-5 h-5 text-accent shrink-0" strokeWidth={1.5} />
+                      <div className="flex-1">
+                        <p className="text-xs text-text-muted/50">Day {task.day_number}</p>
+                        <p className="text-sm text-text-muted/50 line-through">{detail.title}</p>
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (isLocked && !isTodayTask) {
+                  return (
+                    <div key={task.id} className="flex items-center gap-4 p-4 rounded-[24px] bg-surface border-[0.5px] border-border opacity-20 transition-all">
+                      <Lock className="w-5 h-5 text-text-muted/30 shrink-0" strokeWidth={1.5} />
+                      <div className="flex-1">
+                        <p className="text-xs text-text-muted/30">Day {task.day_number}</p>
+                        <p className="text-sm text-text-muted/30">Locked</p>
+                      </div>
+                    </div>
+                  );
+                }
+
                 return (
-                  <div key={task.id} className={`flex items-center gap-4 p-4 rounded-[24px] border-[0.5px] bg-surface transition-all ${
-                    isComplete ? "bg-accent/[0.04] border-accent/20" : isTodayTask ? "border-accent/40" : "opacity-20"
-                  }`}>
-                    <div className="w-6 flex justify-center">
-                      {isComplete ? <CheckCircle className="w-5 h-5 text-accent" strokeWidth={1.5} /> :
-                       isTodayTask ? <Clock className="w-5 h-5 text-accent" strokeWidth={1.5} /> :
-                       <Lock className="w-5 h-5 text-text-muted/30" strokeWidth={1.5} />}
+                  <div key={task.id} className="rounded-[24px] bg-surface border-[0.5px] border-accent/40 p-5 space-y-4 transition-all">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
+                        {detail.verification_method === "photo" ? <Camera className="w-4 h-4 text-accent" strokeWidth={1.5} /> :
+                         detail.verification_method === "video" ? <Video className="w-4 h-4 text-accent" strokeWidth={1.5} /> :
+                         detail.verification_method === "voice" ? <Music className="w-4 h-4 text-accent" strokeWidth={1.5} /> :
+                         <MapPin className="w-4 h-4 text-accent" strokeWidth={1.5} />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="text-xs text-accent font-medium">Day {task.day_number}</p>
+                          <span className="text-[10px] text-text-muted/50 bg-bg/40 px-2 py-0.5 rounded-full">{detail.time_estimate}</span>
+                        </div>
+                        <p className="text-sm font-medium text-text mt-1">{detail.title}</p>
+                        <p className="text-xs text-text-muted mt-1 leading-relaxed">{detail.instruction}</p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <p className={`text-sm ${isComplete ? "text-text-muted/50 line-through" : "text-text"}`}>
-                        Day {task.day_number}: {task.description}
-                      </p>
-                    </div>
-                    {isTodayTask && !isComplete && (
-                      <FileUpload
-                        onUpload={(url) => submitTask(task, url)}
-                        bucket="proofs"
-                        className="px-4 py-2.5 rounded-[16px] bg-accent text-bg text-xs font-semibold flex items-center gap-1.5 disabled:opacity-30 transition-all duration-400 cursor-pointer"
-                      >
-                        {submitting && submittingDay === task.day_number ? (
-                          <div className="w-3.5 h-3.5 rounded-full border-[1.5px] border-bg/30 border-t-bg animate-spin" />
-                        ) : (
-                          <Upload className="w-3.5 h-3.5" strokeWidth={1.5} />
+
+                    {!isComplete && isTodayTask && (
+                      <div className="pt-2">
+                        {detail.verification_method === "photo" && (
+                          <FileUpload
+                            onUpload={(url) => submitTask(task, url)}
+                            bucket="proofs"
+                            mediaType="image"
+                            className="w-full h-12 rounded-[12px] bg-accent text-bg font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-30 transition-all duration-400"
+                          >
+                            {submitting && submittingDay === task.day_number ? (
+                              <div className="w-4 h-4 rounded-full border-[1.5px] border-bg/30 border-t-bg animate-spin" />
+                            ) : (
+                              <Camera className="w-4 h-4" strokeWidth={1.5} />
+                            )}
+                            {submitting && submittingDay === task.day_number ? "..." : "Take Photo"}
+                          </FileUpload>
                         )}
-                        {submitting && submittingDay === task.day_number ? "..." : "Submit"}
-                      </FileUpload>
+                        {detail.verification_method === "video" && (
+                          <FileUpload
+                            onUpload={(url) => submitTask(task, url)}
+                            bucket="proofs"
+                            mediaType="video"
+                            className="w-full h-12 rounded-[12px] bg-accent text-bg font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-30 transition-all duration-400"
+                          >
+                            {submitting && submittingDay === task.day_number ? (
+                              <div className="w-4 h-4 rounded-full border-[1.5px] border-bg/30 border-t-bg animate-spin" />
+                            ) : (
+                              <Video className="w-4 h-4" strokeWidth={1.5} />
+                            )}
+                            {submitting && submittingDay === task.day_number ? "..." : "Record Video"}
+                          </FileUpload>
+                        )}
+                        {detail.verification_method === "voice" && (
+                          <VoiceRecorder
+                            userId={userId}
+                            onRecorded={(url) => submitTask(task, url)}
+                          />
+                        )}
+                        {detail.verification_method === "location" && (
+                          <LocationPicker
+                            onLocated={(text) => submitTask(task, undefined, text)}
+                          />
+                        )}
+                      </div>
                     )}
                   </div>
                 );
