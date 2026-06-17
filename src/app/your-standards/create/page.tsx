@@ -49,7 +49,7 @@ export default function CreateStandard() {
           <button onClick={() => router.back()} className="w-10 h-10 rounded-full bg-surface-elevated border-[0.5px] border-border flex items-center justify-center">
             <ArrowLeft className="w-5 h-5 text-text-muted" strokeWidth={1.5} />
           </button>
-          <h1 className="text-[22px] font-display font-semibold tracking-[-0.02em]">Set Your Standard</h1>
+          <h1 className="text-[22px] font-display font-semibold tracking-[-0.02em]">Standard</h1>
         </div>
 
         {step === 1 && (

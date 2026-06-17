@@ -89,7 +89,6 @@ export default function OnboardPage() {
     payload.role = role;
     if (phone && isValidPhone()) payload.phone = formatPhone();
     if (instagramUrl) payload.instagram_url = instagramUrl;
-    if (role === "woman" && tastes) payload.tastes = tastes;
     const { error } = await supabase.from("profiles").upsert(payload);
     setUploading(false);
 
@@ -258,12 +257,6 @@ export default function OnboardPage() {
               </div>
             )}
           </div>
-          {gender === "female" && (
-            <div className="relative">
-              <textarea placeholder="What are you looking for? Describe your tastes, interests, and what matters to you." maxLength={300} value={tastes} onChange={(e) => setTastes(e.target.value)} className="w-full h-28 px-5 py-4 rounded-[24px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted resize-none focus:outline-none focus:border-accent transition-all" />
-              <span className="absolute bottom-3 right-4 text-xs text-text-muted tabular-nums">{tastes.length}/300</span>
-            </div>
-          )}
           <input placeholder="Instagram URL (optional)" value={instagramUrl} onChange={(e) => setInstagramUrl(e.target.value)}
             className="w-full h-14 px-5 rounded-[16px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted focus:outline-none focus:border-accent transition-all" />
           <div>

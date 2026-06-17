@@ -152,10 +152,10 @@ export default function StandardDetail() {
 
           {host.looking_for_tags && host.looking_for_tags.length > 0 && (
             <div>
-              <p className="text-xs text-accent uppercase tracking-wider font-semibold mb-2">She's looking for</p>
-              <div className="flex flex-wrap gap-2">
+              <p className="text-[11px] text-accent uppercase tracking-[0.08em] font-semibold mb-3">She's looking for</p>
+              <div className="flex flex-wrap gap-2.5">
                 {host.looking_for_tags.map((tag) => (
-                  <span key={tag} className="text-xs px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-accent">
+                  <span key={tag} className="text-sm font-medium px-5 py-2.5 rounded-full bg-accent/10 border border-accent/30 text-accent">
                     {tag}
                   </span>
                 ))}
@@ -165,10 +165,10 @@ export default function StandardDetail() {
 
           {host.about_me_tags && host.about_me_tags.length > 0 && (
             <div>
-              <p className="text-xs text-text-muted uppercase tracking-wider font-semibold mb-2">About Her</p>
-              <div className="flex flex-wrap gap-2">
+              <p className="text-[11px] text-text-muted uppercase tracking-[0.08em] font-semibold mb-3">About her</p>
+              <div className="flex flex-wrap gap-2.5">
                 {host.about_me_tags.map((tag) => (
-                  <span key={tag} className="text-xs px-3 py-1.5 rounded-full bg-surface border border-border text-text-muted">
+                  <span key={tag} className="text-sm font-medium px-5 py-2.5 rounded-full bg-surface border border-border text-text">
                     {tag}
                   </span>
                 ))}
