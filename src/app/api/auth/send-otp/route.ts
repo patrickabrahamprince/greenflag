@@ -9,12 +9,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Phone number required" }, { status: 400 });
     }
 
-    const serviceRole = process.env.SUPABASE_SERVICE_ROLE;
+    // Dynamic key access to prevent static inlining by Turbopack
+    const envKey = "SUPABASE_SERVICE_ROLE";
+    const serviceRole = process.env[envKey];
     if (!serviceRole) {
-      const names = Object.getOwnPropertyNames(process.env).filter(k => !k.includes("PWD") && !k.includes("PATH"));
       return NextResponse.json({
-        error: "Env not available",
-        allKeys: names.join(", "),
+        error: "Service role not available",
+        hasNextPublicUrl: !!process.env["NEXT_PUBLIC_SUPABASE_URL"],
+        keys: Object.keys(process.env).filter(k => k.includes("SUPABASE") || k.includes("TWILIO") || k.startsWith("NEXT_PUBLIC")),
       }, { status: 500 });
     }
 
