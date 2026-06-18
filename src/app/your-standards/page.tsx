@@ -19,9 +19,7 @@ export default function YourStandardsPage() {
   const [loading, setLoading] = useState(true);
 
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return <ProfileSkeleton />;
-
+  useEffect(() => setMounted(true), [])
   useEffect(() => {
     requireOnboarded().then((uid) => {
       if (!uid) { router.replace("/onboard"); return; }
@@ -54,17 +52,6 @@ export default function YourStandardsPage() {
 
   const TABS = ["Interested", "In Progress", "Connected"];
 
-  if (loading) {
-    return (
-      <div className="min-h-dvh bg-bg px-4 pt-6 pb-24">
-        <div className="max-w-lg mx-auto space-y-6">
-          <div className="h-8 w-48 rounded-full bg-surface-elevated animate-pulse" />
-          <ListSkeleton count={2} />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-dvh bg-bg px-4 pt-6 pb-24">
       <div className="max-w-lg mx-auto space-y-6">
@@ -93,6 +80,10 @@ export default function YourStandardsPage() {
           ))}
         </div>
 
+        <div className="pb-4">
+          <SaveButton onSave={() => {}} label="Connect" disabled={false} />
+        </div>
+
         {tab === "Interested" && (
           <div className="space-y-3">
             {interested.length === 0 ? (
@@ -115,7 +106,7 @@ export default function YourStandardsPage() {
           onSave={() => handleConnect(c)}
           label="Connect"
           disabled={false}
-          variant="primary"
+
         />
                 </div>
               </div>

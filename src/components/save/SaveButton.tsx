@@ -24,7 +24,7 @@ export default function SaveButton({
   }, [])
 
   const handlePress = async () => {
-    if (loading || disabled) return
+    if (loading || disabled || !mounted) return
     setLoading(true)
     try {
       await onSave()
@@ -35,21 +35,10 @@ export default function SaveButton({
     }
   }
 
-  if (!mounted) {
-    return (
-      <button
-        disabled
-        className="w-full bg-[#16A34A]/50 text-white/50 rounded-2xl py-4 font-semibold text-base flex items-center justify-center gap-2 cursor-not-allowed opacity-50"
-      >
-        {label}
-      </button>
-    )
-  }
-
   return (
     <button
       onClick={handlePress}
-      disabled={disabled || loading}
+      disabled={disabled || loading || !mounted}
       className="w-full bg-[#16A34A] text-white rounded-2xl py-4 font-semibold text-base flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
     >
       {loading ? (
