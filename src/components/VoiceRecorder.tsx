@@ -1,10 +1,10 @@
 "use client";
-import { useState, useRef, useCallback, useEffect } from "react";
-import { Mic, Square, Circle, Loader2, Upload } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Mic, Square, Loader2, Upload, Keyboard } from "lucide-react";
 import { uploadPhoto } from "@/lib/storage";
 
 interface Props {
-  onRecorded: (url: string) => void;
+  onRecorded: (url?: string, text?: string) => void;
   userId: string;
 }
 
@@ -13,6 +13,8 @@ export default function VoiceRecorder({ onRecorded, userId }: Props) {
   const [duration, setDuration] = useState(0);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [showTextField, setShowTextField] = useState(false);
+  const [typedText, setTypedText] = useState("");
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const chunks = useRef<Blob[]>([]);
   const timer = useRef<ReturnType<typeof setInterval>>(undefined);
@@ -87,14 +89,56 @@ export default function VoiceRecorder({ onRecorded, userId }: Props) {
     );
   }
 
+  if (showTextField) {
+    return (
+      <div className="space-y-3 animate-fade-in">
+        <textarea
+          value={typedText}
+          onChange={(e) => setTypedText(e.target.value)}
+          placeholder="Type your response here..."
+          className="w-full h-24 p-3 rounded-[12px] bg-surface border border-border text-text placeholder-text-muted text-xs focus:outline-none focus:border-accent resize-none font-sans"
+        />
+        <div className="flex gap-2">
+          <button
+            onClick={() => {
+              setShowTextField(false);
+              setError("");
+              setState("idle");
+            }}
+            className="flex-1 h-12 rounded-[12px] bg-surface border border-border text-text-muted font-medium text-xs cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              if (typedText.trim()) {
+                onRecorded(undefined, typedText);
+              }
+            }}
+            disabled={!typedText.trim()}
+            className="flex-1 h-12 rounded-[12px] bg-accent text-bg font-semibold text-xs disabled:opacity-30 cursor-pointer"
+          >
+            Submit Text
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-3">
       {state === "idle" && (
-        <button onClick={startRecording}
-          className="w-full h-14 rounded-[16px] bg-accent/10 border border-accent/30 text-accent font-medium flex items-center justify-center gap-2 transition-all">
-          <Mic className="w-5 h-5" strokeWidth={1.5} />
-          Record Voice Note
-        </button>
+        <div className="flex gap-2">
+          <button onClick={startRecording}
+            className="flex-1 h-14 rounded-[16px] bg-accent/10 border border-accent/30 text-accent font-medium flex items-center justify-center gap-2 transition-all cursor-pointer">
+            <Mic className="w-5 h-5" strokeWidth={1.5} />
+            Record Voice
+          </button>
+          <button onClick={() => setShowTextField(true)}
+            className="w-14 h-14 rounded-[16px] bg-surface border border-border text-text-muted hover:text-text flex items-center justify-center transition-all cursor-pointer">
+            <Keyboard className="w-5 h-5" strokeWidth={1.5} />
+          </button>
+        </div>
       )}
 
       {state === "recording" && (
@@ -105,7 +149,7 @@ export default function VoiceRecorder({ onRecorded, userId }: Props) {
             <span className="text-sm text-text-muted font-mono">{formatDuration(duration)}</span>
           </div>
           <button onClick={stopRecording}
-            className="w-full h-12 rounded-[12px] bg-danger text-bg font-semibold flex items-center justify-center gap-2">
+            className="w-full h-12 rounded-[12px] bg-danger text-bg font-semibold flex items-center justify-center gap-2 cursor-pointer">
             <Square className="w-4 h-4" strokeWidth={1.5} />
             Stop Recording
           </button>
@@ -117,11 +161,11 @@ export default function VoiceRecorder({ onRecorded, userId }: Props) {
           <audio controls src={audioUrl} className="w-full h-10 rounded-[8px]" />
           <div className="flex gap-2">
             <button onClick={startRecording}
-              className="flex-1 h-12 rounded-[12px] bg-surface border border-border text-text-muted font-medium text-sm">
+              className="flex-1 h-12 rounded-[12px] bg-surface border border-border text-text-muted font-medium text-sm cursor-pointer">
               Re-record
             </button>
             <button onClick={uploadRecording}
-              className="flex-1 h-12 rounded-[12px] bg-accent text-bg font-semibold text-sm flex items-center justify-center gap-2">
+              className="flex-1 h-12 rounded-[12px] bg-accent text-bg font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer">
               <Upload className="w-4 h-4" strokeWidth={1.5} />
               Submit Voice Note
             </button>
@@ -129,7 +173,17 @@ export default function VoiceRecorder({ onRecorded, userId }: Props) {
         </div>
       )}
 
-      {error && <p className="text-xs text-danger text-center">{error}</p>}
+      {error && (
+        <div className="space-y-2">
+          <p className="text-xs text-danger text-center">{error}</p>
+          <button
+            onClick={() => setShowTextField(true)}
+            className="w-full h-12 rounded-[12px] bg-surface border border-border text-accent font-semibold text-xs flex items-center justify-center cursor-pointer"
+          >
+            Type instead
+          </button>
+        </div>
+      )}
     </div>
   );
 }

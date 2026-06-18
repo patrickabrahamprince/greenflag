@@ -3,17 +3,13 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { env } from "@/lib/env";
-
-const taskSchema = z.object({
-  title: z.string().min(1),
-  instruction: z.string().min(1),
-  time_estimate: z.enum(["2 min", "5 min", "15 min"]),
-  verification_method: z.enum(["photo", "voice", "video", "location"]),
-  day_number: z.number().int().min(1).max(8)
-});
+import { parseTaskDescription } from "@/lib/task-utils";
 
 const bodySchema = z.object({
-  tasks: z.array(taskSchema).length(8)
+  title: z.string().min(1),
+  intentions: z.array(z.string()).min(1).max(3),
+  tasks: z.array(z.string()).length(8),
+  language: z.enum(["en", "hi"]).default("en")
 });
 
 export async function POST(req: Request) {
@@ -46,21 +42,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Forbidden. Women only." }, { status: 403 });
     }
 
-    // 2. Validate body: Zod array of 8 tasks.
+    // 2. Validate body: title, intentions, and 8 generated task strings.
     const body = await req.json();
     const parsed = bodySchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid tasks body configuration" }, { status: 400 });
+      return NextResponse.json({ error: parsed.error.issues[0].message || "Invalid body configuration" }, { status: 400 });
     }
 
-    const { tasks } = parsed.data;
+    const { title, intentions, tasks, language } = parsed.data;
 
-    // 3. Insert into tests table: { creator_id/host_id: user.id, name: "My Standard", status/is_active: true }
+    // 3. Insert into tests table: { host_id: user.id, name: title, title, intentions, tasks, language, is_active: true }
     const { data: test, error: testError } = await supabase
       .from("tests")
       .upsert({
         host_id: user.id,
-        name: "My Standard",
+        name: title,
+        title,
+        intentions,
+        tasks,
+        language,
         is_active: true,
       }, { onConflict: "host_id" })
       .select()
@@ -80,11 +80,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: deleteError.message }, { status: 500 });
     }
 
-    // 4. Insert 8 rows into tasks table with test_id, all fields formatted into description.
-    const taskInserts = tasks.map((t) => ({
+    // 4. Insert 8 rows into tasks table with test_id
+    const taskInserts = tasks.map((t, idx) => ({
       test_id: test.id,
-      day_number: t.day_number,
-      description: `${t.title}: ${t.instruction} (${t.time_estimate}, ${t.verification_method})`,
+      day_number: idx + 1,
+      description: t, // already formatted into "Title: Instruction (Time, Method)"
     }));
 
     const { error: tasksError } = await supabase
@@ -95,7 +95,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: tasksError.message }, { status: 500 });
     }
 
-    // 5. Return { success: true, testId }
     return NextResponse.json({ success: true, testId: test.id });
   } catch (err: any) {
     return NextResponse.json({ error: err.message || "Server error" }, { status: 500 });

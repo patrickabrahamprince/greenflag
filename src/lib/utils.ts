@@ -53,3 +53,7 @@ export async function expireOverdueConnections() {
   }
   return overdue?.length || 0;
 }
+
+export function cn(...classes: (string | boolean | undefined | null)[]) {
+  return classes.filter(Boolean).join(" ");
+}

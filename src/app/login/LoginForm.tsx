@@ -17,16 +17,12 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
-  const [confirmed, setConfirmed] = useState(false);
+  const confirmed = searchParams.get("confirmed") === "true";
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [cooldown, setCooldown] = useState(0);
   const [debugOtp, setDebugOtp] = useState("");
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-  useEffect(() => {
-    if (searchParams.get("confirmed") === "true") setConfirmed(true);
-  }, [searchParams]);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -91,11 +87,23 @@ export default function LoginForm() {
       }
 
       // Check if profile has phone
+      let needsInterests = false;
       if (data?.user) {
-        await supabase.from("profiles").upsert({ id: data.user.id, phone: fullPhone }, { onConflict: "id" }).select();
+        const { data: profile } = await supabase
+          .from("profiles")
+          .upsert({ id: data.user.id, phone: fullPhone }, { onConflict: "id" })
+          .select("role, interests")
+          .maybeSingle();
+        if (profile?.role === "man" && (!profile.interests || profile.interests.length === 0)) {
+          needsInterests = true;
+        }
       }
 
-      router.push("/recharge");
+      if (needsInterests) {
+        router.push("/onboarding/interests");
+      } else {
+        router.push("/recharge");
+      }
     } catch (e: any) {
       setError(e.message || "Something went wrong.");
     }
@@ -106,10 +114,28 @@ export default function LoginForm() {
     setError("");
     setLoading(true);
     try {
-      const { error: err } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error: err } = await supabase.auth.signInWithPassword({ email, password });
+      if (err) {
+        setError(err.message);
+        setLoading(false);
+        return;
+      }
+      if (data?.user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("name, role, interests")
+          .eq("id", data.user.id)
+          .maybeSingle();
+
+        if (!profile || profile.name === "User" || !profile.name) {
+          router.push("/onboard");
+        } else if (profile.role === "man" && (!profile.interests || profile.interests.length === 0)) {
+          router.push("/onboarding/interests");
+        } else {
+          router.push("/discover");
+        }
+      }
       setLoading(false);
-      if (err) setError(err.message);
-      else router.push("/onboard");
     } catch (e: any) {
       setLoading(false);
       setError(e.message || "Failed to sign in. Please try again.");
@@ -193,7 +219,7 @@ export default function LoginForm() {
           !otpSent ? (
             <>
               <h2 className="text-[20px] font-display font-semibold tracking-[-0.02em] text-center">Enter your number</h2>
-              <p className="text-xs text-text-muted text-center -mt-2">We'll text you a code to confirm it's you.</p>
+              <p className="text-xs text-text-muted text-center -mt-2">We&apos;ll text you a code to confirm it&apos;s you.</p>
               <div className="flex items-center gap-1">
                 <span className="text-sm text-text-muted px-3 py-3.5 bg-surface border-[0.5px] border-border rounded-[16px]">+91</span>
                 <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="99999 99999" maxLength={10}

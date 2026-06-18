@@ -1,206 +1,208 @@
-"use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
-import { Shuffle, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { generateTasksFromTags } from "@/lib/generate-tasks";
-import type { TaskTemplate } from "@/lib/task-templates";
+'use client'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { IntentionsGrid } from '@/components/IntentionsGrid'
+import { generateTasksFromIntentions } from '@/lib/generate-tasks'
+import { INTENTION_CONFIG, IntentionId } from '@/lib/task-templates'
+import { parseTaskDescription } from "@/lib/task-utils"
+import { supabase } from '@/lib/supabase'
+import { Loader2, Shuffle, Camera, Video, Music, MapPin, ArrowLeft } from 'lucide-react'
 
 export default function CreateStandard() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [aboutMeTags, setAboutMeTags] = useState<string[]>([]);
-  const [lookingForTags, setLookingForTags] = useState<string[]>([]);
-  const [tasks, setTasks] = useState<(TaskTemplate & { day_number?: number })[]>([]);
-  const [publishing, setPublishing] = useState(false);
-  const [shuffleKey, setShuffleKey] = useState(0);
-  const [shuffleError, setShuffleError] = useState<string | null>(null);
+  const [authLoading, setAuthLoading] = useState(true)
+  const [step, setStep] = useState<'intentions' | 'preview'>('intentions')
+  const [lang, setLang] = useState<'en' | 'hi'>('en')
+  const [intentions, setIntentions] = useState<IntentionId[]>([])
+  const [tasks, setTasks] = useState<string[]>([])
+  const [title, setTitle] = useState('')
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return router.push("/login");
+      if (!user) return router.push("/login")
 
       supabase
         .from("profiles")
-        .select("role, about_me_tags, looking_for_tags")
+        .select("role")
         .eq("id", user.id)
         .maybeSingle()
         .then(({ data }) => {
           if (!data || data.role !== "woman") {
-            // Role gated: profiles.role must be 'woman'
-            router.replace("/discover");
-            return;
+            router.replace("/discover")
+            return
           }
+          setAuthLoading(false)
+        })
+    })
+  }, [router])
 
-          const am = data.about_me_tags || [];
-          const lf = data.looking_for_tags || [];
-          setAboutMeTags(am);
-          setLookingForTags(lf);
+  const toggleIntention = (id: IntentionId) => {
+    setIntentions(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    )
+  }
 
-          if (am.length > 0 || lf.length > 0) {
-            const generated = generateTasksFromTags(am, lf);
-            setTasks(generated);
-          }
-          setLoading(false);
-        });
-    });
-  }, [router]);
+  const handleGenerate = () => {
+    if (intentions.length === 0) return
+    const generated = generateTasksFromIntentions(intentions)
+    setTasks(generated)
+    const labels = intentions.map(i => INTENTION_CONFIG.find(c => c.id === i)?.label).join(' & ')
+    setTitle(`Looking for ${labels} Partner`)
+    setStep('preview')
+  }
 
   const handleShuffle = () => {
-    if (aboutMeTags.length === 0 && lookingForTags.length === 0) return;
-    const generated = generateTasksFromTags(aboutMeTags, lookingForTags);
-    setTasks(generated);
-    if (generated.length < 8) {
-      setShuffleError('Need more tags for 8 unique tasks. Go back to Her Vibe and pick 3 more "Looking For" tags.');
-    } else {
-      setShuffleError(null);
-    }
-    setShuffleKey((prev) => prev + 1);
-  };
+    const generated = generateTasksFromIntentions(intentions)
+    setTasks(generated)
+  }
 
-  const handleTitleChange = (index: number, newTitle: string) => {
-    const updated = [...tasks];
-    updated[index] = { ...updated[index], title: newTitle };
-    setTasks(updated);
-  };
-
-  const handlePublish = async () => {
-    setPublishing(true);
+  const handleSave = async () => {
+    if (intentions.length === 0 || tasks.length !== 8 || !title.trim()) return
+    setLoading(true)
     try {
       const res = await fetch("/api/standards/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tasks }),
-      });
+        body: JSON.stringify({ title, intentions, tasks, language: lang }),
+      })
       if (res.ok) {
-        router.push("/your-standards");
+        router.push('/your-standards')
       } else {
-        const data = await res.json();
-        alert(data.error || "Failed to publish standard");
-        setPublishing(false);
+        const data = await res.json()
+        alert(data.error || "Failed to publish standard")
+        setLoading(false)
       }
     } catch {
-      alert("Something went wrong");
-      setPublishing(false);
+      alert("Something went wrong")
+      setLoading(false)
     }
-  };
-
-  // If user has no tags, show empty state: "Complete Her Vibe first" button → /onboard/vibe.
-  if (!loading && aboutMeTags.length === 0 && lookingForTags.length === 0) {
-    return (
-      <div className="min-h-dvh bg-[#0A0A0A] flex flex-col items-center justify-center p-6 text-center text-[#F5F5F5] font-sans">
-        <h1 className="font-playfair text-2xl font-bold mb-4">No Tags Selected</h1>
-        <p className="text-sm text-[#F5F5F5]/60 mb-8 max-w-xs">
-          Please complete your tags first so we can customize your standard tasks.
-        </p>
-        <motion.button
-          whileTap={{ scale: 0.98 }}
-          onClick={() => router.push("/onboard/vibe")}
-          className="h-14 px-8 rounded-xl bg-[#D4AF37] text-black font-semibold hover:bg-[#D4AF37]/90 transition-all cursor-pointer"
-        >
-          Complete Her Vibe first
-        </motion.button>
-      </div>
-    );
   }
 
-  const isPublishDisabled = tasks.some((t) => !t.title.trim()) || publishing || !!shuffleError || tasks.length < 8;
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+        <div className="w-6 h-6 rounded-full border-2 border-[#16A34A] border-t-transparent animate-spin" />
+      </div>
+    )
+  }
 
-  return (
-    <div className="min-h-dvh bg-[#0A0A0A] text-[#F5F5F5] p-6 pb-32 font-sans animate-fade-in">
-      <div className="max-w-lg mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="font-playfair text-2xl font-bold tracking-tight">Define 8 intentions</h1>
-          {!loading && (
-            <div className="flex items-center gap-4">
-              <motion.button
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setTasks(tasks.map((t) => ({ ...t, title: "" })))}
-                className="text-sm text-[#F5F5F5]/60 font-semibold hover:text-[#F5F5F5] transition-colors cursor-pointer"
-              >
-                Clear All
-              </motion.button>
-              <motion.button
-                whileTap={{ scale: 0.98 }}
-                onClick={handleShuffle}
-                className="text-sm text-[#D4AF37] font-semibold hover:text-[#D4AF37]/80 transition-colors cursor-pointer flex items-center gap-1.5"
-              >
-                <Shuffle className="w-3.5 h-3.5" /> Shuffle
-              </motion.button>
-            </div>
-          )}
+  if (step === 'intentions') {
+    return (
+      <div className="max-w-md mx-auto p-6 pb-32 min-h-screen bg-[#0A0A0A] text-text">
+        <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={() => router.back()}
+            className="w-10 h-10 rounded-full bg-white/5 border border-border flex items-center justify-center cursor-pointer hover:bg-white/10 transition-all"
+          >
+            <ArrowLeft className="w-5 h-5 text-text-muted" />
+          </button>
+          <button
+            onClick={() => setLang(lang === "en" ? "hi" : "en")}
+            className="px-3 py-1.5 rounded-full bg-white/5 border border-border text-xs font-semibold hover:bg-white/10 transition-all cursor-pointer text-[#16A34A]"
+          >
+            {lang === "en" ? "हिन्दी" : "English"}
+          </button>
         </div>
 
-        {shuffleError && (
-          <div className="bg-red-900/20 border border-red-900/50 text-red-200 p-4 rounded-xl text-sm">
-            {shuffleError}
-          </div>
-        )}
-
-        {loading ? (
-          // Loading state: Show 8 skeleton rows while generateTasksFromTags runs
-          <div className="space-y-3">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="h-[72px] bg-white/5 border border-[#262626] rounded-xl animate-pulse" />
-            ))}
-          </div>
-        ) : (
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={shuffleKey}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="space-y-3"
-            >
-              {tasks.map((task, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-4 bg-white/5 border border-[#262626] rounded-xl p-4 transition-all focus-within:border-[#D4AF37]/50 animate-fade-in"
-                >
-                  <span className="text-[#D4AF37] font-semibold text-sm shrink-0">Day {task.day_number || i + 1}</span>
-                  <input
-                    type="text"
-                    value={task.title}
-                    onChange={(e) => handleTitleChange(i, e.target.value)}
-                    className={`flex-1 bg-transparent border-none text-[#F5F5F5] placeholder-[#F5F5F5]/30 focus:outline-none focus:ring-0 text-sm font-medium ${!task.title.trim() ? 'border border-red-500 rounded p-1' : ''}`}
-                    placeholder="Describe intention..."
-                  />
-                  {task.title && (
-                    <button
-                      type="button"
-                      onClick={() => handleTitleChange(i, "")}
-                      className="text-[#F5F5F5]/40 hover:text-[#F5F5F5] transition-colors p-1"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  )}
-                  {task.day_number === 5 && (
-                    <span className="text-[#D4AF37] text-xs font-semibold shrink-0 uppercase tracking-wide">
-                      Messages unlock
-                    </span>
-                  )}
-                </div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
-        )}
-
-        <div className="fixed bottom-0 left-0 right-0 bg-[#0A0A0A] border-t border-[#262626] px-6 py-6">
-          <div className="max-w-lg mx-auto">
-            <motion.button
-              whileTap={{ scale: 0.98 }}
-              onClick={handlePublish}
-              disabled={isPublishDisabled || loading}
-              className="w-full bg-[#D4AF37] text-black py-4 rounded-xl font-semibold hover:bg-[#D4AF37]/90 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
-            >
-              {publishing ? "Publishing..." : "Publish"}
-            </motion.button>
-          </div>
+        <IntentionsGrid
+          selected={intentions}
+          onToggle={toggleIntention}
+          max={3}
+          min={1}
+          lang={lang}
+          title={lang === "hi" ? "आपका स्टैंडर्ड किस बारे में है?" : "What's your Standard about?"}
+          subtitle={lang === "hi" ? "1-3 इरादे (Intentions) चुनें। पुरुष ये देखेंगे।" : "Pick 1-3 intentions. Men with matching interests will see you first."}
+        />
+        <div className="fixed bottom-0 left-0 right-0 p-6 bg-[#0A0A0A]/95 border-t border-border backdrop-blur-lg">
+          <button
+            onClick={handleGenerate}
+            disabled={intentions.length === 0}
+            className="w-full bg-[#16A34A] text-white rounded-2xl py-4 font-semibold text-base disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-all active:scale-[0.98]"
+          >
+            {lang === "hi" ? "टास्क बनाएं" : "Generate Tasks"}
+          </button>
         </div>
       </div>
+    )
+  }
+
+  return (
+    <div className="max-w-md mx-auto p-6 pb-32 min-h-screen bg-[#0A0A0A] text-text">
+      <div className="flex justify-between items-center mb-6">
+        <button
+          onClick={() => setStep('intentions')}
+          className="w-10 h-10 rounded-full bg-white/5 border border-border flex items-center justify-center cursor-pointer hover:bg-white/10 transition-all"
+        >
+          <ArrowLeft className="w-5 h-5 text-text-muted" />
+        </button>
+        <button
+          onClick={handleShuffle}
+          className="flex items-center gap-2 text-xs font-semibold text-[#16A34A] cursor-pointer hover:underline"
+        >
+          <Shuffle className="w-4 h-4" /> {lang === "hi" ? "फिर से शफल करें" : "Shuffle Again"}
+        </button>
+      </div>
+
+      <div className="space-y-6">
+        <div>
+          <p className="text-xs text-text-muted uppercase tracking-wider font-semibold">
+            {lang === "hi" ? "स्टैंडर्ड" : "Standard"}
+          </p>
+          <h1 className="text-xl font-bold mt-1">{title}</h1>
+        </div>
+
+        <div className="space-y-3">
+          {tasks.map((taskStr, i) => {
+            const detail = parseTaskDescription(taskStr)
+            return (
+              <div
+                key={i}
+                className="flex items-start gap-4 bg-surface border border-border rounded-2xl p-4 transition-all"
+              >
+                <div className="w-8 h-8 rounded-full bg-[#16A34A]/10 flex items-center justify-center shrink-0 mt-0.5">
+                  {detail.verification_method === "photo" ? (
+                    <Camera className="w-4 h-4 text-[#16A34A]" />
+                  ) : detail.verification_method === "video" ? (
+                    <Video className="w-4 h-4 text-[#16A34A]" />
+                  ) : detail.verification_method === "voice" ? (
+                    <Music className="w-4 h-4 text-[#16A34A]" />
+                  ) : (
+                    <MapPin className="w-4 h-4 text-[#16A34A]" />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#16A34A] font-semibold text-xs">
+                      {lang === "hi" ? `दिन ${i + 1}` : `Day ${i + 1}`}
+                    </span>
+                    <span className="text-[10px] text-text-muted bg-white/5 px-2 py-0.5 rounded-full">
+                      {detail.time_estimate}
+                    </span>
+                    {i === 4 && (
+                      <span className="text-[#16A34A] text-[10px] font-semibold uppercase tracking-wider ml-auto">
+                        {lang === "hi" ? "चैट अनलॉक" : "Messages unlock"}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm font-semibold text-text mt-1">{detail.title}</p>
+                  <p className="text-xs text-text-muted mt-0.5 leading-relaxed">{detail.instruction}</p>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+      <div className="fixed bottom-0 left-0 right-0 p-6 bg-[#0A0A0A]/95 border-t border-border backdrop-blur-lg">
+        <button
+          onClick={handleSave}
+          disabled={loading}
+          className="w-full bg-[#16A34A] text-white rounded-2xl py-4 font-semibold text-base flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98]"
+        >
+          {loading && <Loader2 className="w-5 h-5 animate-spin" />}
+          {lang === "hi" ? "पब्लिश करें" : "Go Live"}
+        </button>
+      </div>
     </div>
-  );
+  )
 }

@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { ArrowLeft, Bell, Shield, HelpCircle, LogOut, Edit3, Trash2, Smartphone, CheckCircle, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Bell, Shield, HelpCircle, LogOut, Edit3, Trash2, Smartphone, CheckCircle, ShieldCheck, Coins } from "lucide-react";
 import Link from "next/link";
 import type { Profile } from "@/lib/types";
 import { requireOnboarded } from "@/lib/auth";
@@ -17,7 +17,16 @@ export default function ProfilePage() {
   useEffect(() => {
     requireOnboarded().then((uid) => {
       if (!uid) { router.replace("/onboard"); return; }
-      supabase.from("profiles").select("*").eq("id", uid).maybeSingle().then(({ data }) => { setProfile(data); setLoading(false); });
+      supabase.from("profiles").select("*").eq("id", uid).maybeSingle().then(({ data }) => {
+        if (data) {
+          if (data.role === "man" && (!data.interests || data.interests.length === 0)) {
+            router.replace("/onboarding/interests");
+            return;
+          }
+          setProfile(data);
+        }
+        setLoading(false);
+      });
       supabase.from("connections").select("id", { count: "exact", head: true }).eq("guest_id", uid).eq("status", "completed")
         .then(({ count }) => setConnections(count || 0));
     });
@@ -110,6 +119,7 @@ export default function ProfilePage() {
                 <span className="text-sm text-accent font-medium">Admin</span>
               </button>
               {[
+                { icon: Coins, label: "Coins & Store", href: "/store" },
                 { icon: Bell, label: "Notifications", href: "/profile/notifications" },
                 { icon: Shield, label: "Privacy", href: "/profile/privacy" },
                 { icon: HelpCircle, label: "Concierge", href: "/profile/concierge" },

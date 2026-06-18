@@ -12,6 +12,7 @@ import { useToast } from "@/components/Toast";
 import { requireOnboarded } from "@/lib/auth";
 import { isExpired, expireOverdueConnections, daysLeft } from "@/lib/utils";
 import { parseTaskDescription } from "@/lib/task-utils";
+import { INTENTION_CONFIG } from "@/lib/task-templates";
 
 export default function StandardDetail() {
   const params = useParams();
@@ -28,11 +29,30 @@ export default function StandardDetail() {
   const [submitting, setSubmitting] = useState(false);
   const [submittingDay, setSubmittingDay] = useState(0);
   const [error, setError] = useState("");
+  const [lang, setLang] = useState<"en" | "hi">("en");
 
   useEffect(() => {
     requireOnboarded().then((uid) => {
       if (!uid) { router.replace("/onboard"); return; }
-      if (uid) setUserId(uid);
+      if (uid) {
+        setUserId(uid);
+        supabase
+          .from("profiles")
+          .select("language_preference, role, interests")
+          .eq("id", uid)
+          .maybeSingle()
+          .then(({ data }) => {
+            if (data) {
+              if (data.language_preference) {
+                setLang(data.language_preference as "en" | "hi");
+              }
+              if (data.role === "man" && (!data.interests || data.interests.length === 0)) {
+                router.replace("/onboarding/interests");
+                return;
+              }
+            }
+          });
+      }
     });
 
     supabase.from("profiles").select("*").then(({ data: profiles }) => {
@@ -189,13 +209,33 @@ export default function StandardDetail() {
             <div>
               <h2 className="text-[22px] font-display font-semibold">{host.name}, {host.age}</h2>
               <p className="text-sm text-text-muted">{host.city}</p>
+              
+              {/* Intention Badges */}
+              {(test as any).intentions && (test as any).intentions.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {(test as any).intentions.map((id: string) => {
+                    const config = INTENTION_CONFIG.find((i) => i.id === id);
+                    if (!config) return null;
+                    return (
+                      <span
+                        key={id}
+                        style={{ backgroundColor: config.color + "20", color: config.color }}
+                        className="px-2.5 py-1 rounded-full text-[10px] font-semibold flex items-center gap-1 shadow-sm animate-fade-in"
+                      >
+                        <span>{config.icon}</span>
+                        <span>{lang === "hi" ? config.label_hi : config.label}</span>
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
           <p className="text-sm text-text-muted leading-relaxed">{host.bio}</p>
 
           {host.looking_for_tags && host.looking_for_tags.length > 0 && (
             <div>
-              <p className="text-[11px] text-accent uppercase tracking-[0.08em] font-semibold mb-3">She's looking for</p>
+              <p className="text-[11px] text-accent uppercase tracking-[0.08em] font-semibold mb-3">She&apos;s looking for</p>
               <div className="flex flex-wrap gap-2.5">
                 {host.looking_for_tags.map((tag) => (
                   <span key={tag} className="text-sm font-medium px-5 py-2.5 rounded-full bg-accent/10 border border-accent/30 text-accent">
@@ -391,7 +431,7 @@ export default function StandardDetail() {
                         {detail.verification_method === "voice" && (
                           <VoiceRecorder
                             userId={userId}
-                            onRecorded={(url) => submitTask(task, url)}
+                            onRecorded={(url, text) => submitTask(task, url, text)}
                           />
                         )}
                         {detail.verification_method === "location" && (

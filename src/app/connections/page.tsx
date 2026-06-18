@@ -21,6 +21,20 @@ export default function ConnectionsPage() {
   useEffect(() => {
     requireOnboarded().then((uid) => {
       if (!uid) { router.replace("/onboard"); return; }
+
+      // Check if user is a man with empty interests
+      supabase
+        .from("profiles")
+        .select("role, interests")
+        .eq("id", uid)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (data && data.role === "man" && (!data.interests || data.interests.length === 0)) {
+            router.replace("/onboarding/interests");
+            return;
+          }
+        });
+
       expireOverdueConnections().then(() => {
         supabase
           .from("connections")

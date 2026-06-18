@@ -75,47 +75,70 @@ export default function ReviewPage() {
           {submissions.length === 0 && (
             <p className="text-center text-text-muted text-sm py-20">No submissions yet.</p>
           )}
-          {submissions.map((sub) => (
-            <div key={sub.id} className="rounded-[24px] bg-surface border-[0.5px] border-border p-5 space-y-3">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium">Day {sub.day_number}</p>
-                {sub.status === "submitted" && (
-                  <span className="text-xs text-accent">Pending review</span>
-                )}
-                {sub.status === "approved" && (
-                  <span className="text-xs text-accent flex items-center gap-1">
-                    <CheckCircle className="w-3 h-3" /> Approved
-                  </span>
-                )}
-                {sub.status === "rejected" && (
-                  <span className="text-xs text-danger">Rejected</span>
+          {submissions.map((sub) => {
+            const isVoice = sub.proof_type === "voice" || (sub.proof_url && (sub.proof_url.endsWith(".webm") || sub.proof_url.includes("/voice-")));
+            const isText = sub.proof_type === "text" || (!sub.proof_url && sub.proof_text);
+            const isPending = sub.status === "submitted" || sub.status === "pending";
+
+            return (
+              <div key={sub.id} className="rounded-[24px] bg-surface border-[0.5px] border-border p-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium">Day {sub.day_number}</p>
+                  {isPending && (
+                    <span className="text-xs text-accent">Pending review</span>
+                  )}
+                  {sub.status === "approved" && (
+                    <span className="text-xs text-accent flex items-center gap-1">
+                      <CheckCircle className="w-3 h-3" /> Approved
+                    </span>
+                  )}
+                  {sub.status === "rejected" && (
+                    <span className="text-xs text-danger">Rejected</span>
+                  )}
+                </div>
+
+                {isText ? (
+                  <div className="p-4 rounded-[16px] bg-bg/40 border-[0.5px] border-border text-sm text-text leading-relaxed font-sans">
+                    {sub.proof_text}
+                  </div>
+                ) : isVoice && sub.proof_url ? (
+                  <div className="py-2">
+                    <audio controls src={sub.proof_url} className="w-full h-10 rounded-lg" />
+                  </div>
+                ) : sub.proof_url ? (
+                  <button onClick={() => setLightboxIndex(submissions.indexOf(sub))} className="w-full">
+                    <img src={sub.proof_url} alt="" className="w-full rounded-[16px] object-cover h-48 hover:opacity-90 transition-opacity" />
+                  </button>
+                ) : null}
+
+                {isPending && (
+                  <div className="flex gap-3">
+                    <button onClick={() => review(sub, "rejected")}
+                      className="flex-1 h-12 rounded-[16px] bg-surface-elevated border-[0.5px] border-border text-text-muted font-medium text-sm flex items-center justify-center gap-2 cursor-pointer">
+                      <X className="w-4 h-4" /> Pass
+                    </button>
+                    <button onClick={() => review(sub, "approved")}
+                      className="flex-1 h-12 rounded-[16px] bg-accent text-bg font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer">
+                      <CheckCircle className="w-4 h-4" /> Connect
+                    </button>
+                  </div>
                 )}
               </div>
-              {sub.proof_url && (
-                <button onClick={() => setLightboxIndex(submissions.indexOf(sub))} className="w-full">
-                  <img src={sub.proof_url} alt="" className="w-full rounded-[16px] object-cover h-48 hover:opacity-90 transition-opacity" />
-                </button>
-              )}
-              {sub.status === "submitted" && (
-                <div className="flex gap-3">
-                  <button onClick={() => review(sub, "rejected")}
-                    className="flex-1 h-12 rounded-[16px] bg-surface-elevated border-[0.5px] border-border text-text-muted font-medium text-sm flex items-center justify-center gap-2">
-                    <X className="w-4 h-4" /> Pass
-                  </button>
-                  <button onClick={() => review(sub, "approved")}
-                    className="flex-1 h-12 rounded-[16px] bg-accent text-bg font-semibold text-sm flex items-center justify-center gap-2">
-                    <CheckCircle className="w-4 h-4" /> Connect
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
       {lightboxIndex >= 0 && (() => {
-        const filteredUrls = submissions.filter((s) => s.proof_url);
+        const filteredUrls = submissions.filter(
+          (s) => s.proof_url &&
+            s.proof_type !== "voice" &&
+            s.proof_type !== "text" &&
+            !s.proof_url.endsWith(".webm") &&
+            !s.proof_url.includes("/voice-")
+        );
         const currentIndex = filteredUrls.findIndex((s) => s.id === submissions[lightboxIndex]?.id);
+        if (currentIndex === -1 || filteredUrls.length === 0) return null;
         return (
           <ImageLightbox
             images={filteredUrls.map((s) => s.proof_url!)}
