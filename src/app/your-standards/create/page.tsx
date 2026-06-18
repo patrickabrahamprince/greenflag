@@ -7,6 +7,7 @@ import { INTENTION_CONFIG, IntentionId } from '@/lib/task-templates'
 import { supabase } from '@/lib/supabase'
 import { Loader2, Shuffle, Camera, Video, Music, MapPin, ArrowLeft, Trash2, Edit2, RefreshCw, Plus } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import SaveButton from '@/components/save/SaveButton'
 
 type TaskItem = {
   day_number: number
@@ -21,6 +22,7 @@ function getRandomElement<T>(array: T[]): T {
 }
 
 export default function CreateStandard() {
+  const [mounted, setMounted] = useState(false)
   const [authLoading, setAuthLoading] = useState(true)
   const [step, setStep] = useState<'intentions' | 'edit-tasks'>('intentions')
   const [lang, setLang] = useState<'en' | 'hi'>('en')
@@ -32,6 +34,10 @@ export default function CreateStandard() {
   const [error, setError] = useState('')
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const router = useRouter()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -176,7 +182,7 @@ export default function CreateStandard() {
     
     setSaving(true)
     try {
-      const res = await fetch("/api/standards/create", {
+      const res = await fetch("/api/save-standard", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title, intentions, tasks, language: lang }),
@@ -192,6 +198,14 @@ export default function CreateStandard() {
       setError("Something went wrong while saving.")
       setSaving(false)
     }
+  }
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+        <div className="w-6 h-6 rounded-full border-2 border-[#16A34A] border-t-transparent animate-spin" />
+      </div>
+    )
   }
 
   if (authLoading) {
@@ -396,14 +410,12 @@ export default function CreateStandard() {
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 p-6 bg-[#0A0A0A]/95 border-t border-border backdrop-blur-lg">
-        <button
-          onClick={handleSave}
+        <SaveButton
+          onSave={handleSave}
           disabled={saving}
-          className="w-full bg-[#16A34A] text-white rounded-2xl py-4 font-semibold text-base flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98]"
-        >
-          {saving && <Loader2 className="w-5 h-5 animate-spin" />}
-          {lang === "hi" ? "पब्लिश करें" : "Publish"}
-        </button>
+          label={lang === "hi" ? "पब्लिश करें" : "Publish"}
+          loadingLabel={lang === "hi" ? "पब्लिश हो रहा है..." : "Publishing..."}
+        />
       </div>
     </div>
   )
