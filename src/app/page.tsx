@@ -13,6 +13,9 @@ export default function Home() {
       } else {
         router.replace("/login");
       }
+    }).catch(error => {
+      console.error("Failed to fetch session:", error);
+      router.replace("/login");
     });
   }, [router]);
 

@@ -45,6 +45,8 @@ export interface Connection {
   status: TrialStatus;
   current_day: number;
   tasks_completed: number;
+  messages_unlocked?: boolean;
+  messages_unlocked_at?: string | null;
   started_at: string;
   expires_at: string;
   streak_frozen: boolean;
@@ -61,7 +63,9 @@ export interface Submission {
   status: TaskStatus;
   proof_url: string | null;
   proof_text: string | null;
+  proof_type?: string | null;
   submitted_at: string;
+  rejection_reason?: string | null;
   reviewed_at: string | null;
 }
 

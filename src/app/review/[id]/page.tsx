@@ -1,12 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+
 import { supabase } from "@/lib/supabase";
-import { ArrowLeft, CheckCircle, X } from "lucide-react";
 import type { Submission } from "@/lib/types";
 import { requireOnboarded } from "@/lib/auth";
 import { useToast } from "@/components/Toast";
 import ImageLightbox from "@/components/ImageLightbox";
+import { ArrowLeft, CheckCircle, X } from "lucide-react";
 
 export default function ReviewPage() {
   const params = useParams();
@@ -31,14 +32,29 @@ export default function ReviewPage() {
   }, [params.id]);
 
   async function review(sub: Submission, status: "approved" | "rejected") {
-    await supabase.from("submissions").update({ status, reviewed_at: new Date().toISOString() }).eq("id", sub.id);
-    if (status === "approved") {
-      await supabase.from("connections").update({ tasks_completed: sub.day_number }).eq("id", sub.connection_id);
-      toast("success", `Day ${sub.day_number} approved!`);
-    } else {
-      toast("info", `Day ${sub.day_number} passed.`);
+    try {
+      const res = await fetch("/api/connections/review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ submissionId: sub.id, action: status }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast("error", data.error || "Failed to review submission");
+        return;
+      }
+      // Update local state
+      setSubmissions((prev) =>
+        prev.map((s) => (s.id === sub.id ? { ...s, status } : s))
+      );
+      if (status === "approved") {
+        toast("success", `Day ${sub.day_number} approved!`);
+      } else {
+        toast("info", `Day ${sub.day_number} passed.`);
+      }
+    } catch (e) {
+      toast("error", e instanceof Error ? e.message : "Failed to review submission");
     }
-    setSubmissions((prev) => prev.map((s) => s.id === sub.id ? { ...s, status } : s));
   }
 
   return (

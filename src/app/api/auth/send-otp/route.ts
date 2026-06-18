@@ -1,15 +1,7 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 import { sendSMS } from "@/lib/twilio";
 import { env } from "@/lib/env";
-
-const headers = {
-  apikey: env.supabaseServiceRole,
-  Authorization: `Bearer ${env.supabaseServiceRole}`,
-  "Content-Type": "application/json",
-  Accept: "application/json",
-  "Accept-Profile": "public",
-  "Content-Profile": "public",
-};
 
 export async function POST(req: Request) {
   try {
@@ -22,29 +14,32 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Server not configured" }, { status: 500 });
     }
 
+    const supabase = createClient(
+      env.supabaseUrl,
+      env.supabaseServiceRole,
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    );
+
     // Mark any existing unverified OTPs as verified
-    await fetch(`${env.supabaseUrl}/rest/v1/phone_otps?phone=eq.${encodeURIComponent(phone)}&verified=eq.false`, {
-      method: "PATCH",
-      headers,
-      body: JSON.stringify({ verified: true }),
-    });
+    await supabase
+      .from("phone_otps")
+      .update({ verified: true })
+      .eq("phone", phone)
+      .eq("verified", false);
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    const res = await fetch(`${env.supabaseUrl}/rest/v1/phone_otps`, {
-      method: "POST",
-      headers: { ...headers, Prefer: "return=representation" },
-      body: JSON.stringify({
+    const { error: insertError } = await supabase
+      .from("phone_otps")
+      .insert({
         phone,
         otp,
         expires_at: new Date(Date.now() + 5 * 60000).toISOString(),
-      }),
-    });
+      });
 
-    if (!res.ok) {
-      const err = await res.json();
+    if (insertError) {
       return NextResponse.json(
-        { error: "Failed to create OTP", detail: err.message || res.statusText },
+        { error: "Failed to create OTP", detail: insertError.message },
         { status: 500 }
       );
     }

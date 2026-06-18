@@ -70,38 +70,41 @@ export default function OnboardPage() {
 
   async function submitProfile(photoUrl?: string) {
     setSubmitError("");
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (!user || authError) return router.push("/login");
+    try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (!user || authError) return router.push("/login");
 
-    const allPhotos = [...photos];
-    if (photoUrl) allPhotos[0] = photoUrl;
+      const allPhotos = [...photos];
+      if (photoUrl) allPhotos[0] = photoUrl;
 
-    setUploading(true);
-    const payload: Record<string, unknown> = {
-      id: user.id,
-      name,
-      age: Number(age),
-      city,
-      bio,
-      photos: allPhotos.filter(Boolean),
-    };
-    const role = gender === "male" ? "man" : "woman";
-    payload.role = role;
-    if (phone && isValidPhone()) payload.phone = formatPhone();
-    if (instagramUrl) payload.instagram_url = instagramUrl;
-    const { error } = await supabase.from("profiles").upsert(payload);
-    setUploading(false);
+      setUploading(true);
+      const payload: Record<string, unknown> = {
+        id: user.id,
+        name,
+        age: Number(age),
+        city,
+        bio,
+        photos: allPhotos.filter(Boolean),
+      };
+      const role = gender === "male" ? "man" : "woman";
+      payload.role = role;
+      if (phone && isValidPhone()) payload.phone = formatPhone();
+      if (instagramUrl) payload.instagram_url = instagramUrl;
+      const { error } = await supabase.from("profiles").upsert(payload);
 
-    if (error) {
-      setSubmitError(error.message);
+      if (error) {
+        setSubmitError(error.message);
+        return;
+      }
+      if (role === "woman") {
+        router.push("/onboard/vibe");
+      } else {
+        setSubmitted(true);
+      }
+    } catch (e: any) {
+      setSubmitError(e.message || "Failed to submit profile");
+    } finally {
       setUploading(false);
-      return;
-    }
-    setUploading(false);
-    if (role === "woman") {
-      router.push("/onboard/vibe");
-    } else {
-      setSubmitted(true);
     }
   }
 
@@ -114,14 +117,24 @@ export default function OnboardPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    setUploading(true);
+    setSubmitError("");
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-    const url = await uploadPhoto(file, "photos", user.id);
-    if (url) {
-      await submitProfile(url);
+      const url = await uploadPhoto(file, "photos", user.id);
+      if (url) {
+        await submitProfile(url);
+      } else {
+        setSubmitError("Failed to upload profile photo. Please try again.");
+      }
+    } catch (e: any) {
+      setSubmitError(e.message || "Selfie upload failed");
+    } finally {
+      setUploading(false);
+      if (cameraInput.current) cameraInput.current.value = "";
     }
-    if (cameraInput.current) cameraInput.current.value = "";
   }
 
   if (submitted) {

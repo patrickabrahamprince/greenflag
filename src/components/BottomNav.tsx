@@ -16,7 +16,7 @@ export default function BottomNav() {
   const router = useRouter();
   const user = useAppStore((s) => s.user);
 
-  const hiddenRoutes = ["/login", "/signup", "/onboard"];
+  const hiddenRoutes = ["/login", "/signup", "/onboard", "/recharge"];
   if (!user || hiddenRoutes.some((r) => pathname.startsWith(r))) return null;
   if (pathname === "/") return null;
 

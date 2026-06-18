@@ -90,10 +90,16 @@ export default function EditStandard() {
 
           <div className="flex items-center justify-between">
             <p className="text-sm text-text-muted">8 Intentions</p>
-            <button onClick={() => setTasks((t) => [...t].sort(() => Math.random() - 0.5))}
-              className="flex items-center gap-1 text-xs text-accent">
-              <Shuffle className="w-3 h-3" strokeWidth={1.5} /> Shuffle
-            </button>
+            <div className="flex items-center gap-3">
+              <button onClick={() => setTasks(Array(8).fill(""))}
+                className="text-xs text-text-muted hover:text-accent transition-colors font-medium">
+                Clear All
+              </button>
+              <button onClick={() => setTasks((t) => [...t].sort(() => Math.random() - 0.5))}
+                className="flex items-center gap-1 text-xs text-accent">
+                <Shuffle className="w-3 h-3" strokeWidth={1.5} /> Shuffle
+              </button>
+            </div>
           </div>
           {tasks.map((t, i) => (
             <div key={i} className="flex items-center gap-3">

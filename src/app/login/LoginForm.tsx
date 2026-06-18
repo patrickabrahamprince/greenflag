@@ -49,17 +49,28 @@ export default function LoginForm() {
     const fullPhone = "+91" + formatPhone();
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/send-otp", {
+      const rateRes = await fetch("/api/auth/rate-limit", {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phone: fullPhone }),
       });
-      const json = await res.json();
-      if (!res.ok) { setError(json.detail || json.error || "Failed to send code"); setLoading(false); return; }
+      const rateJson = await rateRes.json();
+      if (!rateJson.success) {
+        setError("Too many requests. Please try again later.");
+        setLoading(false);
+        return;
+      }
+
+      const { error: signInError } = await supabase.auth.signInWithOtp({ phone: fullPhone });
+      if (signInError) {
+        setError(signInError.message);
+        setLoading(false);
+        return;
+      }
+
       setOtpSent(true);
       setCooldown(30);
-      if (json.otp) setDebugOtp(json.otp);
       toast("success", "Code sent!");
-    } catch (e) {
-      setError("Something went wrong.");
+    } catch (e: any) {
+      setError(e.message || "Something went wrong.");
     }
     setLoading(false);
   }
@@ -71,17 +82,22 @@ export default function LoginForm() {
       const token = otp.join("");
       if (token.length !== 6) { setError("Enter the full 6-digit code"); setLoading(false); return; }
       const fullPhone = "+91" + formatPhone();
-      const res = await fetch("/api/auth/verify-otp", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: fullPhone, otp: token }),
-      });
-      const json = await res.json();
-      if (!res.ok) { setError(json.error || "Invalid code"); setLoading(false); return; }
-      const { error: signInError } = await supabase.auth.signInWithPassword({ email: json.email, password: json.password });
-      if (signInError) { setError(signInError.message); setLoading(false); return; }
-      router.push("/onboard");
-    } catch (e) {
-      setError("Something went wrong.");
+      
+      const { data, error: verifyError } = await supabase.auth.verifyOtp({ phone: fullPhone, token, type: 'sms' });
+      if (verifyError) {
+        setError(verifyError.message);
+        setLoading(false);
+        return;
+      }
+
+      // Check if profile has phone
+      if (data?.user) {
+        await supabase.from("profiles").upsert({ id: data.user.id, phone: fullPhone }, { onConflict: "id" }).select();
+      }
+
+      router.push("/recharge");
+    } catch (e: any) {
+      setError(e.message || "Something went wrong.");
     }
     setLoading(false);
   }
@@ -89,22 +105,32 @@ export default function LoginForm() {
   async function handlePassword() {
     setError("");
     setLoading(true);
-    const { error: err } = await supabase.auth.signInWithPassword({ email, password });
+    try {
+      const { error: err } = await supabase.auth.signInWithPassword({ email, password });
       setLoading(false);
       if (err) setError(err.message);
       else router.push("/onboard");
+    } catch (e: any) {
+      setLoading(false);
+      setError(e.message || "Failed to sign in. Please try again.");
+    }
   }
 
   async function handleMagicLink() {
     setError("");
     setLoading(true);
-    const { error: err } = await supabase.auth.signInWithOtp({
-      email,
-      options: { shouldCreateUser: true },
-    });
-    setLoading(false);
-    if (err) { setError(err.message); return; }
-    setSent(true);
+    try {
+      const { error: err } = await supabase.auth.signInWithOtp({
+        email,
+        options: { shouldCreateUser: true },
+      });
+      setLoading(false);
+      if (err) { setError(err.message); return; }
+      setSent(true);
+    } catch (e: any) {
+      setLoading(false);
+      setError(e.message || "Failed to send magic link.");
+    }
   }
 
   function otpChange(i: number, val: string) {

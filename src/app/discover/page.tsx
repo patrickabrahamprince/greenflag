@@ -112,9 +112,37 @@ export default function DiscoverPage() {
                   </div>
                 </div>
                 <div className="p-5 space-y-3">
-                  <div className="rounded-[16px] bg-bg/40 border-[0.5px] border-border p-4 space-y-2">
-                    <p className="text-xs text-accent font-semibold uppercase tracking-wider">Green Flags</p>
-                    <p className="text-sm text-text-muted leading-relaxed line-clamp-2">{test.host.bio}</p>
+                  <div className="rounded-[16px] bg-bg/40 border-[0.5px] border-border p-4 space-y-3">
+                    {test.host.about_me_tags && test.host.about_me_tags.length > 0 && (
+                      <div className="space-y-1">
+                        <p className="text-[10px] text-text-muted uppercase tracking-wider font-semibold">About Her</p>
+                        <div className="flex flex-wrap gap-1">
+                          {test.host.about_me_tags.slice(0, 3).map((tag) => (
+                            <span key={tag} className="px-2 py-1 rounded-full text-[10px] bg-white/[0.04] text-text border-[0.5px] border-border font-medium">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {test.host.looking_for_tags && test.host.looking_for_tags.length > 0 && (
+                      <div className="space-y-1">
+                        <p className="text-[10px] text-accent uppercase tracking-wider font-semibold">Interested In</p>
+                        <div className="flex flex-wrap gap-1">
+                          {test.host.looking_for_tags.slice(0, 3).map((tag) => (
+                            <span key={tag} className="px-2 py-1 rounded-full text-[10px] bg-accent/10 text-accent border-[0.5px] border-accent/20 font-medium">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {(!test.host.about_me_tags || test.host.about_me_tags.length === 0) && (
+                      <div className="space-y-1">
+                        <p className="text-[10px] text-accent uppercase tracking-wider font-semibold">Green Flags</p>
+                        <p className="text-xs text-text-muted leading-relaxed line-clamp-2">{test.host.bio}</p>
+                      </div>
+                    )}
                   </div>
                   <button
                     onClick={(e) => { e.stopPropagation(); test.host?.name && router.push(`/${test.host.name.toLowerCase()}`); }}

@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { ArrowLeft, Lock, CheckCircle, Clock, MessageCircle, Flag, Snowflake, Brain, ExternalLink, Music, MapPin, Camera, Video } from "lucide-react";
-import type { Profile, Test, Task, Connection } from "@/lib/types";
+import { ArrowLeft, Lock, CheckCircle, Clock, MessageCircle, Flag, Snowflake, Brain, ExternalLink, Music, MapPin, Camera, Video, AlertTriangle } from "lucide-react";
+import type { Profile, Test, Task, Connection, Submission } from "@/lib/types";
 import FileUpload from "@/components/FileUpload";
 import VoiceRecorder from "@/components/VoiceRecorder";
 import LocationPicker from "@/components/LocationPicker";
@@ -21,6 +21,7 @@ export default function StandardDetail() {
   const [host, setHost] = useState<Profile | null>(null);
   const [test, setTest] = useState<Test | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [submissionsMap, setSubmissionsMap] = useState<Record<number, Submission>>({});
   const [connection, setConnection] = useState<Connection | null>(null);
   const [userId, setUserId] = useState("");
   const [starting, setStarting] = useState(false);
@@ -62,9 +63,24 @@ export default function StandardDetail() {
         .then(({ data }) => {
           setConnection(data ?? null);
           if (data) {
+            // fetch tasks for the connection
             supabase.from("tasks").select("*").eq("connection_id", data.id).order("day_number").then(({ data: ts }) => {
               if (ts && ts.length > 0) setTasks(ts);
             });
+            // fetch submissions map for this connection
+            supabase
+              .from("submissions")
+              .select("day_number,status,rejection_reason")
+              .eq("connection_id", data.id)
+              .then(({ data: subs, error }) => {
+                if (!error && subs) {
+                  const map: Record<number, Submission> = {};
+                  (subs as any[]).forEach((sub) => {
+                    map[sub.day_number] = sub as Submission;
+                  });
+                  setSubmissionsMap(map);
+                }
+              });
           }
         });
     });
@@ -97,19 +113,42 @@ export default function StandardDetail() {
     setSubmittingDay(task.day_number);
     setError("");
     try {
-      const { error: subErr } = await supabase.from("submissions").insert({
-        connection_id: connection.id,
-        task_id: task.id,
-        day_number: task.day_number,
-        proof_url: proofUrl || null,
-        proof_text: proofText || null,
-        status: "submitted",
+      const detail = parseTaskDescription(task.description);
+      const res = await fetch("/api/submissions/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          testId: test.id,
+          taskId: task.id,
+          dayNumber: task.day_number,
+          proofUrl: proofUrl || null,
+          proofType: detail.verification_method,
+          proofText: proofText || null,
+        }),
       });
-      if (subErr) { setError(subErr.message); setSubmitting(false); return; }
-      const next = Math.min(connection.tasks_completed + 1, 8);
-      await supabase.from("connections").update({ tasks_completed: next, current_day: next + 1 }).eq("id", connection.id);
-      setConnection({ ...connection, tasks_completed: next, current_day: next + 1 });
-      toast("success", `Day ${task.day_number} submitted! ${next >= 5 ? "Messages unlocked! 🎉" : `${8 - next} remaining.`}`);
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Failed to submit");
+        setSubmitting(false);
+        return;
+      }
+      // Refresh submissions map after successful submit
+      if (connection) {
+        supabase
+          .from("submissions")
+          .select("day_number,status,rejection_reason")
+          .eq("connection_id", connection.id)
+          .then(({ data: subs, error }) => {
+            if (!error && subs) {
+              const map: Record<number, Submission> = {};
+              (subs as any[]).forEach((sub) => {
+                map[sub.day_number] = sub as Submission;
+              });
+              setSubmissionsMap(map);
+            }
+          });
+      }
+      toast("success", `Day ${task.day_number} submitted for review!`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to submit");
     } finally {
@@ -262,13 +301,14 @@ export default function StandardDetail() {
               </div>
               {tasks.map((task) => {
                 const detail = parseTaskDescription(task.description);
+                const submission = submissionsMap[task.day_number];
                 const isComplete = task.day_number <= completed;
-                const isActive = task.day_number === completed + 1;
-                const isLocked = task.day_number > completed + 1;
+                const isActive = task.day_number === completed + 1 || (submission?.status === "rejected");
+                const isLocked = task.day_number > completed + 1 && !(submission?.status === "rejected");
                 const todayCount = completed % 2;
                 const isTodayTask = task.day_number > completed && task.day_number <= completed + (2 - todayCount);
 
-                if (isComplete) {
+                if (isComplete && submission?.status !== "rejected") {
                   return (
                     <div key={task.id} className="flex items-center gap-4 p-4 rounded-[24px] bg-accent/[0.04] border-[0.5px] border-accent/20 transition-all">
                       <CheckCircle className="w-5 h-5 text-accent shrink-0" strokeWidth={1.5} />
@@ -294,6 +334,11 @@ export default function StandardDetail() {
 
                 return (
                   <div key={task.id} className="rounded-[24px] bg-surface border-[0.5px] border-accent/40 p-5 space-y-4 transition-all">
+                    {submission?.status === "rejected" && (
+                      <div className="p-3 rounded-[12px] bg-danger/10 text-danger text-xs border border-danger/20">
+                        <strong>Rejected:</strong> {submission.rejection_reason || "Please try again."}
+                      </div>
+                    )}
                     <div className="flex items-start gap-3">
                       <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
                         {detail.verification_method === "photo" ? <Camera className="w-4 h-4 text-accent" strokeWidth={1.5} /> :
@@ -311,7 +356,7 @@ export default function StandardDetail() {
                       </div>
                     </div>
 
-                    {!isComplete && isTodayTask && (
+                    {isActive && (
                       <div className="pt-2">
                         {detail.verification_method === "photo" && (
                           <FileUpload
@@ -325,7 +370,7 @@ export default function StandardDetail() {
                             ) : (
                               <Camera className="w-4 h-4" strokeWidth={1.5} />
                             )}
-                            {submitting && submittingDay === task.day_number ? "..." : "Take Photo"}
+                            {submitting && submittingDay === task.day_number ? "..." : (submission ? "Resubmit Photo" : "Take Photo")}
                           </FileUpload>
                         )}
                         {detail.verification_method === "video" && (
@@ -340,7 +385,7 @@ export default function StandardDetail() {
                             ) : (
                               <Video className="w-4 h-4" strokeWidth={1.5} />
                             )}
-                            {submitting && submittingDay === task.day_number ? "..." : "Record Video"}
+                            {submitting && submittingDay === task.day_number ? "..." : (submission ? "Resubmit Video" : "Record Video")}
                           </FileUpload>
                         )}
                         {detail.verification_method === "voice" && (

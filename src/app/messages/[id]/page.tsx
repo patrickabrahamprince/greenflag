@@ -74,8 +74,24 @@ export default function MessagesRoom() {
     return () => { supabase.removeChannel(sub); };
   }, [connectionId, router]);
 
+  // Subscribe to connection updates for unlocking chat without manual refresh
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Ensure we have latest connection data for unlock status
+    if (!connectionId) return;
+    const connSub = supabase
+      .channel(`connections:${connectionId}`)
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'connections',
+        filter: `id=eq.${connectionId}`,
+      }, (payload) => {
+        const updated = payload.new as Connection;
+        setConnection(updated);
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(connSub); };
   }, [messages]);
 
   async function handleSend() {
@@ -106,7 +122,15 @@ export default function MessagesRoom() {
     if (fileRef.current) fileRef.current.value = "";
   }
 
-  const locked = connection && connection.tasks_completed < 5;
+  if (!connection?.messages_unlocked) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-dvh bg-bg text-center p-6">
+        <Lock className="w-12 h-12 text-text-muted mb-4" />
+        <h2 className="text-xl font-semibold mb-2">Messages unlock after 5 approved tasks</h2>
+        <p className="text-sm text-text-muted">Complete {5 - (connection?.tasks_completed || 0)} more to chat</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-dvh bg-bg flex flex-col">
@@ -123,12 +147,7 @@ export default function MessagesRoom() {
       </header>
 
       <div className="flex-1 px-4 py-4 overflow-y-auto space-y-3">
-        {locked && (
-          <div className="text-center py-10 space-y-2">
-            <Lock className="w-8 h-8 text-text-muted mx-auto" strokeWidth={1.5} />
-            <p className="text-sm text-text-muted">Messages unlock after 5 intentions</p>
-          </div>
-        )}
+        
         {messages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.sender_id === userId ? "justify-end" : "justify-start"}`}>
             <div className={`max-w-[80%] space-y-1 ${msg.sender_id === userId ? "items-end" : "items-start"}`}>
@@ -153,7 +172,7 @@ export default function MessagesRoom() {
         <div ref={bottomRef} />
       </div>
 
-      {!locked && (
+      {
         <div className="sticky bottom-0 glass-strong border-t-[0.5px] border-border p-4">
           <div className="max-w-lg mx-auto flex items-center gap-3">
             <button onClick={() => fileRef.current?.click()} disabled={uploading}
@@ -169,7 +188,7 @@ export default function MessagesRoom() {
             </button>
           </div>
         </div>
-      )}
+      }
     </div>
   );
 }

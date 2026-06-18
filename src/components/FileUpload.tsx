@@ -28,12 +28,21 @@ export default function FileUpload({
     if (!file) return;
 
     setUploading(true);
-    const uid = userId || "anonymous";
-    const url = await uploadPhoto(file, bucket, uid);
-    setUploading(false);
-
-    if (url) onUpload(url);
-    if (inputRef.current) inputRef.current.value = "";
+    try {
+      const uid = userId || "anonymous";
+      const url = await uploadPhoto(file, bucket, uid);
+      if (url) {
+        onUpload(url);
+      } else {
+        alert("Upload failed. Please check your connection and try again.");
+      }
+    } catch (err: any) {
+      console.error("Upload error:", err);
+      alert(err.message || "Upload failed");
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
   }
 
   const Icon = mediaType === "video" ? Video : Camera;

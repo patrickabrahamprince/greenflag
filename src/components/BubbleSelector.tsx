@@ -1,5 +1,5 @@
 "use client";
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 interface Props {
@@ -20,7 +20,11 @@ function shuffle(arr: string[]): string[] {
 }
 
 export default function BubbleSelector({ title, tags, selected, max, onChange }: Props) {
-  const shuffled = useMemo(() => shuffle(tags), [tags]);
+  const [shuffled, setShuffled] = useState<string[]>([]);
+
+  useEffect(() => {
+    setShuffled(shuffle(tags));
+  }, [tags]);
 
   function toggle(tag: string) {
     if (typeof navigator !== "undefined" && navigator.vibrate) {
@@ -37,9 +41,20 @@ export default function BubbleSelector({ title, tags, selected, max, onChange }:
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-sm text-[#F5F5F5] font-medium">{title}</h3>
-        <span className="text-xs text-[#F5F5F5]/50">
-          Selected: {selected.length}/{max}
-        </span>
+        <div className="flex items-center gap-3">
+          {selected.length > 0 && (
+            <button
+              type="button"
+              onClick={() => onChange([])}
+              className="text-xs text-[#D4AF37] hover:text-[#D4AF37]/80 transition-colors font-medium cursor-pointer"
+            >
+              Clear
+            </button>
+          )}
+          <span className="text-xs text-[#F5F5F5]/50">
+            Selected: {selected.length}/{max}
+          </span>
+        </div>
       </div>
       <div className="flex flex-wrap gap-2">
         {shuffled.map((tag) => {

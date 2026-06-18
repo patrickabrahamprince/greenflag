@@ -71,7 +71,7 @@ export default function MessagesPage() {
             const lastMsg = msgs[msgs.length - 1];
             const isGuest = userId === conn.guest_id;
             const partner = isGuest ? conn.host : conn.guest;
-            const messagesUnlocked = conn.tasks_completed >= 5;
+            const messagesUnlocked = conn.messages_unlocked === true;
             const hasUnread = msgs.some(m => m.sender_id !== userId);
 
             return (

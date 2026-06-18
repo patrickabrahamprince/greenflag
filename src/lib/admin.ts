@@ -25,7 +25,50 @@ export async function requireAdmin(): Promise<{ adminId: string } | Response> {
   );
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 403 });
+    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
   }
+
+  const adminClient = getAdminClient();
+  const { data: profile } = await adminClient
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile || profile.role !== "admin") {
+    return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
+  }
+
   return { adminId: user.id };
 }
+
+export async function getAdminUser() {
+  try {
+    const cookieStore = await cookies();
+    const supabase = createServerClient(
+      env.supabaseUrl,
+      env.supabaseAnonKey,
+      {
+        cookies: {
+          getAll: () => cookieStore.getAll(),
+          setAll: () => {},
+        },
+      }
+    );
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    const adminClient = getAdminClient();
+    const { data: profile } = await adminClient
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile || profile.role !== "admin") return null;
+    return { user, role: profile.role };
+  } catch {
+    return null;
+  }
+}
+

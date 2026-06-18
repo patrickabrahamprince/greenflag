@@ -7,13 +7,19 @@ export default function OnboardingGate() {
   const router = useRouter();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) { router.replace("/login"); return; }
-      supabase.from("profiles").select("name").eq("id", user.id).maybeSingle().then(({ data }) => {
+      try {
+        const { data } = await supabase.from("profiles").select("name").eq("id", user.id).maybeSingle();
         if (data && (data.name === "User" || !data.name)) {
           router.replace("/onboard");
         }
-      });
+      } catch (err) {
+        console.error(err);
+      }
+    }).catch(error => {
+      console.error("Failed to get user:", error);
+      router.replace("/login");
     });
   }, [router]);
 
