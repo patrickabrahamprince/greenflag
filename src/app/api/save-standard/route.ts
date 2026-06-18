@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       .eq("id", user.id)
       .single();
 
-    if (profileError || !profile || profile.role !== "woman") {
+    if (profileError || !profile || (profile.role !== "woman" && profile.role !== "host")) {
       return NextResponse.json({ error: "Forbidden. Women only." }, { status: 403 });
     }
 

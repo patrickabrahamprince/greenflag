@@ -49,7 +49,7 @@ export default function CreateStandard() {
         .eq("id", user.id)
         .maybeSingle()
         .then(({ data }) => {
-          if (!data || data.role !== "woman") {
+          if (!data || (data.role !== "woman" && data.role !== "host")) {
             router.replace("/discover")
             return
           }
