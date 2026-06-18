@@ -1,16 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { IntentionsGrid } from '@/components/IntentionsGrid'
 import { supabase } from '@/lib/supabase'
 import { IntentionId } from '@/lib/task-templates'
 import { Loader2 } from 'lucide-react'
+import { input } from '@/lib/theme'
 
 export default function OnboardingInterests() {
   const [interests, setInterests] = useState<IntentionId[]>([])
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   const toggleInterest = (id: IntentionId) => {
     setInterests(prev =>
@@ -40,8 +43,9 @@ export default function OnboardingInterests() {
     }
   }
 
+  if (!mounted) return null;
   return (
-    <div className="max-w-md mx-auto p-6 pb-32 min-h-screen bg-[#0A0A0A] text-text flex flex-col">
+    <div className="max-w-md mx-auto p-6 pb-32 min-h-screen bg-[#0A0A0A] text-white flex flex-col">
       <div className="flex-1">
         <IntentionsGrid
           selected={interests}
@@ -53,14 +57,12 @@ export default function OnboardingInterests() {
         />
       </div>
       <div className="fixed bottom-0 left-0 right-0 p-6 bg-[#0A0A0A]/95 border-t border-border backdrop-blur-lg">
-        <button
-          onClick={handleContinue}
-          disabled={interests.length < 3 || loading}
-          className="w-full bg-[#16A34A] text-white rounded-2xl py-4 font-semibold text-base flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          {loading && <Loader2 className="w-5 h-5 animate-spin" />}
-          Continue
-        </button>
+        <SaveButton
+            onSave={handleContinue}
+            disabled={interests.length < 3 || loading}
+            label="Continue"
+            loadingLabel="Continuing..."
+          />
       </div>
     </div>
   )

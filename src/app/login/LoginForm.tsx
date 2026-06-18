@@ -4,9 +4,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/components/Toast";
+import SaveButton from "@/components/save/SaveButton";
+import { input } from "@/lib/theme";
 
 export default function LoginForm() {
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const searchParams = useSearchParams();
   const { toast } = useToast();
   const [tab, setTab] = useState<"phone" | "email">("phone");
@@ -224,13 +228,15 @@ export default function LoginForm() {
                 <span className="text-sm text-text-muted px-3 py-3.5 bg-surface border-[0.5px] border-border rounded-[16px]">+91</span>
                 <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="99999 99999" maxLength={10}
                   onKeyDown={(e) => e.key === "Enter" && isValidPhone() && handleSendOtp()}
-                  className="flex-1 h-14 px-5 rounded-[16px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted focus:outline-none focus:border-accent transition-all tracking-[2px] text-lg"
+                  className={`flex-1 ${input} focus:outline-none focus:border-accent transition-all tracking-[2px] text-lg`}
                   inputMode="numeric" type="tel" />
               </div>
-              <button onClick={handleSendOtp} disabled={!isValidPhone() || loading}
-                className="w-full h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px] disabled:opacity-30 transition-all">
-                {loading ? "..." : "Send Code"}
-              </button>
+              <SaveButton
+                onSave={handleSendOtp}
+                disabled={!isValidPhone() || loading}
+                label="Send Code"
+                loadingLabel="Sending..."
+              />
             </>
           ) : (
             <>
@@ -250,10 +256,12 @@ export default function LoginForm() {
                     className="w-11 h-14 rounded-[16px] bg-surface border-[0.5px] border-border text-text text-center text-xl font-semibold focus:outline-none focus:border-accent transition-all tabular-nums" />
                 ))}
               </div>
-              <button onClick={handleVerifyOtp} disabled={loading}
-                className="w-full h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px] disabled:opacity-30 transition-all">
-                {loading ? "..." : "Verify"}
-              </button>
+              <SaveButton
+                onSave={handleVerifyOtp}
+                disabled={loading}
+                label="Verify"
+                loadingLabel="Verifying..."
+              />
               <p className="text-xs text-text-muted text-center">
                 {cooldown > 0 ? (
                   <span className="text-text-muted/60">Resend in {cooldown}s</span>
@@ -278,11 +286,12 @@ export default function LoginForm() {
                 Forgot password?
               </Link>
             )}
-            <button onClick={mode === "password" ? handlePassword : handleMagicLink}
+            <SaveButton
+              onSave={mode === "password" ? handlePassword : handleMagicLink}
               disabled={!email.includes("@") || loading}
-              className="w-full h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px] disabled:opacity-30 transition-all">
-              {loading ? "..." : mode === "password" ? "Sign In" : "Send Magic Link"}
-            </button>
+              label={mode === "password" ? "Sign In" : "Send Magic Link"}
+              loadingLabel={mode === "password" ? "Signing in..." : "Sending..."}
+            />
             <p onClick={() => setMode(mode === "password" ? "magic" : "password")}
               className="text-xs text-text-muted text-center cursor-pointer hover:text-accent">
               {mode === "password" ? "Use magic link instead" : "Use password instead"}

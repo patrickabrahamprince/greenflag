@@ -13,6 +13,9 @@ const ICON_MAP: Record<string, React.ElementType> = {
 };
 
 export default function NotificationsCenter() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
   const router = useRouter();
   const [notifications, setNotifications] = useState<Notification[]>([]);
 

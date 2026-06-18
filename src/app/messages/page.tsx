@@ -25,6 +25,9 @@ interface ConnectionWithDetails extends Connection {
 }
 
 export default function MessagesPage() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
   const router = useRouter();
   const [connections, setConnections] = useState<ConnectionWithDetails[]>([]);
   const [loading, setLoading] = useState(true);

@@ -10,10 +10,14 @@ import { CardSkeleton } from "@/components/Skeleton";
 import { usePullToRefresh } from "@/lib/usePullToRefresh";
 import { INTENTION_CONFIG } from "@/lib/task-templates";
 import { cn } from "@/lib/utils";
+import SaveButton from "@/components/save/SaveButton";
 
 type TestWithHost = Test & { host: Profile; intentions?: string[] };
 
 export default function DiscoverPage() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
   const router = useRouter();
   const [tests, setTests] = useState<TestWithHost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -293,15 +297,14 @@ export default function DiscoverPage() {
                       </div>
                     )}
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      test.host?.name && router.push(`/${test.host.name.toLowerCase()}`);
-                    }}
-                    className="w-full h-14 rounded-[16px] bg-accent text-bg font-semibold text-[15px] hover:brightness-110 transition-all"
-                  >
-                    {lang === "hi" ? "उनके ग्रीन फ्लैग्स देखें" : "Meet Her Green Flags"}
-                  </button>
+                    <SaveButton
+                      onSave={() => {
+                        router.push(`/${test.host.name.toLowerCase()}`);
+                      }}
+                      label={lang === "hi" ? "उनके ग्रीन फ्लैग्स देखें" : "Meet Her Green Flags"}
+                      disabled={false}
+                      loadingLabel={lang === "hi" ? "लोड हो रहा है..." : "Loading..."}
+                    />
                 </div>
               </div>
             ))}

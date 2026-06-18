@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { env } from "@/lib/env";
+import { TASK_POOL, IntentionId } from "@/lib/task-templates";
 
 export async function POST(req: Request) {
   try {
@@ -28,41 +29,80 @@ export async function POST(req: Request) {
       .select("*")
       .in("intention", intentions);
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
     const tasks: any[] = [];
     const neededDays = [1, 2, 3, 4, 5, 6, 7, 8];
 
-    // Interleave by day_number if 2+ intentions
-    for (const d of neededDays) {
-      const idx = (d - 1) % intentions.length;
-      const targetIntention = intentions[idx];
-      const template = templates?.find(t => t.intention.toLowerCase() === targetIntention.toLowerCase() && t.day_number === d);
-      if (template) {
+    if (error) {
+      console.warn("Database query failed, using local TASK_POOL fallback:", error.message);
+      
+      // Fallback: Generate from TASK_POOL
+      for (const d of neededDays) {
+        const idx = (d - 1) % intentions.length;
+        const targetIntention = intentions[idx] as IntentionId;
+        const pool = TASK_POOL[targetIntention] || TASK_POOL['Fitness'];
+        const rawTask = pool[(d - 1) % pool.length];
+        
+        let title = rawTask;
+        let description = rawTask;
+        if (rawTask.includes(": ")) {
+          const parts = rawTask.split(": ");
+          title = parts[0];
+          description = parts[1];
+        } else {
+          const words = rawTask.split(" ");
+          if (words.length > 2) {
+            title = words.slice(0, 2).join(" ");
+          }
+        }
+        
+        const lower = rawTask.toLowerCase();
+        let method: "photo" | "voice" | "video" | "location" = "photo";
+        if (lower.includes("video") || lower.includes("timelapse")) {
+          method = "video";
+        } else if (lower.includes("voice") || lower.includes("sing") || lower.includes("recite") || lower.includes("describe")) {
+          method = "voice";
+        } else if (lower.includes("map pin")) {
+          method = "location";
+        }
+        
         tasks.push({
           day_number: d,
-          task_type: template.task_type,
-          title: template.title,
-          description: template.description,
-          verification_hint: template.verification_hint
+          task_type: method,
+          title: title,
+          description: description,
+          verification_hint: `Submit a ${method}`
         });
       }
-    }
+    } else {
+      // Interleave by day_number if 2+ intentions
+      for (const d of neededDays) {
+        const idx = (d - 1) % intentions.length;
+        const targetIntention = intentions[idx];
+        const template = templates?.find(t => t.intention.toLowerCase() === targetIntention.toLowerCase() && t.day_number === d);
+        if (template) {
+          tasks.push({
+            day_number: d,
+            task_type: template.task_type,
+            title: template.title,
+            description: template.description,
+            verification_hint: template.verification_hint
+          });
+        }
+      }
 
-    // If < 8 found, call fallback to fill gaps
-    if (tasks.length < 8) {
-      const missingDays = neededDays.filter(d => !tasks.some(t => t.day_number === d));
-      for (const d of missingDays) {
-        const fallbackTask = getFallbackTask(d, intentions[0] || "Fitness");
-        tasks.push({
-          day_number: d,
-          task_type: fallbackTask.task_type,
-          title: fallbackTask.title,
-          description: fallbackTask.description,
-          verification_hint: fallbackTask.verification_hint
-        });
+      // If < 8 found, call fallback to fill gaps
+      if (tasks.length < 8) {
+        const missingDays = neededDays.filter(d => !tasks.some(t => t.day_number === d));
+        for (const d of missingDays) {
+          const fallbackTask = getFallbackTask(d, intentions[0] || "Fitness");
+          tasks.push({
+            day_number: d,
+            task_type: fallbackTask.task_type,
+            title: fallbackTask.title,
+            description: fallbackTask.description,
+            verification_hint: fallbackTask.verification_hint
+          });
+        }
       }
     }
 

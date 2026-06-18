@@ -6,9 +6,12 @@ import { ArrowLeft, Bell, Shield, HelpCircle, LogOut, Edit3, Trash2, Smartphone,
 import Link from "next/link";
 import type { Profile } from "@/lib/types";
 import { requireOnboarded } from "@/lib/auth";
-import { ProfileSkeleton } from "@/components/Skeleton";
+import SaveButton from "@/components/save/SaveButton";
 
 export default function ProfilePage() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [connections, setConnections] = useState(0);
@@ -113,7 +116,12 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-1">
-              <button onClick={() => router.push("/admin")}
+                                  <SaveButton
+                      onSave={() => router.push("/admin")}
+                      label="Admin"
+                      disabled={false}
+                      loadingLabel="Loading..."
+                    />
                 className="w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] bg-accent/5 border-[0.5px] border-accent/20 hover:bg-accent/10 transition-all">
                 <ShieldCheck className="w-5 h-5 text-accent" strokeWidth={1.5} />
                 <span className="text-sm text-accent font-medium">Admin</span>
