@@ -1,6 +1,6 @@
-"use client";
+'use client'
 import { useEffect, useState } from "react";
-import { Skeleton } from '@/components/Skeleton';
+import { ProfileSkeleton } from '@/components/Skeleton';
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { ArrowLeft, AlertTriangle } from "lucide-react";
@@ -12,8 +12,8 @@ export default function DeleteAccountPage() {
   const [confirm, setConfirm] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return <Skeleton />;
+  useEffect(() => setMounted(true), [])
+  if (!mounted) return <ProfileSkeleton />;
 
   async function handleDelete() {
     if (confirm !== "DELETE") { toast("error", "Type DELETE to confirm."); return; }
@@ -32,7 +32,7 @@ export default function DeleteAccountPage() {
     <div className="min-h-dvh bg-bg px-4 pt-6 pb-24">
       <div className="max-w-lg mx-auto space-y-6">
         <div className="flex items-center gap-3">
-          <button onClick={() => router.back()} className="w-10 h-10 rounded-full bg-surface-elevated border-[0.5px] border-border flex items-center justify-center">
+          <button onClick={mounted ? () => router.back() : undefined} className="w-10 h-10 rounded-full bg-surface-elevated border-[0.5px] border-border flex items-center justify-center">
             <ArrowLeft className="w-5 h-5 text-text-muted" strokeWidth={1.5} />
           </button>
           <h1 className="text-[22px] font-display font-semibold tracking-[-0.02em]">Delete account</h1>
@@ -56,8 +56,7 @@ export default function DeleteAccountPage() {
             className="w-full h-12 px-4 rounded-[16px] bg-surface border-[0.5px] border-border text-text placeholder-text-muted text-sm focus:outline-none focus:border-danger transition-all" />
         </div>
 
-        <button onClick={handleDelete} disabled={deleting || confirm !== "DELETE"}
-          className="w-full h-14 rounded-[16px] bg-danger text-text font-semibold text-[15px] disabled:opacity-40 transition-all">
+        <button onClick={mounted ? handleDelete : undefined} disabled={deleting || confirm !== "DELETE"} className="w-full h-14 rounded-[16px] bg-danger text-text font-semibold text-[15px] disabled:opacity-40 transition-all">
           {deleting ? "Deleting..." : "Delete my account"}
         </button>
       </div>
