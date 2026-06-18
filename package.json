@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 4500",
+    "prebuild": "node scripts/verify-savee.js",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
