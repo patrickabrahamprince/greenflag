@@ -3,10 +3,16 @@ import { createClient } from "@/lib/supabaseServer";
 import { NextResponse } from "next/server";
 import { env } from "@/lib/env";
 
-const razorpay = new Razorpay({
-  key_id: env.razorpayKeyId,
-  key_secret: env.razorpayKeySecret,
-});
+let razorpayClient: Razorpay | null = null;
+function getRazorpay() {
+  if (!razorpayClient) {
+    razorpayClient = new Razorpay({
+      key_id: env.razorpayKeyId || "rzp_test_placeholder",
+      key_secret: env.razorpayKeySecret || "placeholder_secret",
+    });
+  }
+  return razorpayClient;
+}
 
 export async function POST(req: Request) {
   const supabase = await createClient();
@@ -28,7 +34,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const order = await razorpay.orders.create({
+    const order = await getRazorpay().orders.create({
       amount: pack.price_inr,
       currency: "INR",
       receipt: `${user.id}_${Date.now()}`,
