@@ -1,24 +1,36 @@
 'use client'
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { IntentionsGrid } from '@/components/IntentionsGrid'
-import { generateTasksFromIntentions } from '@/lib/generate-tasks'
 import { INTENTION_CONFIG, IntentionId } from '@/lib/task-templates'
-import { parseTaskDescription } from "@/lib/task-utils"
 import { supabase } from '@/lib/supabase'
-import { Loader2, Shuffle, Camera, Video, Music, MapPin, ArrowLeft } from 'lucide-react'
+import { Loader2, Shuffle, Camera, Video, Music, MapPin, ArrowLeft, Trash2, Edit2, RefreshCw, Plus } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+
+type TaskItem = {
+  day_number: number
+  task_type: 'photo' | 'video' | 'voice' | 'location'
+  title: string
+  description: string
+  verification_hint?: string
+}
+
+function getRandomElement<T>(array: T[]): T {
+  return array[Math.floor(Math.random() * array.length)];
+}
 
 export default function CreateStandard() {
   const [authLoading, setAuthLoading] = useState(true)
-  const [step, setStep] = useState<'intentions' | 'preview'>('intentions')
+  const [step, setStep] = useState<'intentions' | 'edit-tasks'>('intentions')
   const [lang, setLang] = useState<'en' | 'hi'>('en')
   const [intentions, setIntentions] = useState<IntentionId[]>([])
-  const [tasks, setTasks] = useState<string[]>([])
+  const [tasks, setTasks] = useState<TaskItem[]>([])
   const [title, setTitle] = useState('')
   const [loading, setLoading] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -46,39 +58,139 @@ export default function CreateStandard() {
     )
   }
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (intentions.length === 0) return
-    const generated = generateTasksFromIntentions(intentions)
-    setTasks(generated)
-    const labels = intentions.map(i => INTENTION_CONFIG.find(c => c.id === i)?.label).join(' & ')
-    setTitle(`Looking for ${labels} Partner`)
-    setStep('preview')
+    setLoading(true)
+    setError('')
+    try {
+      const res = await fetch("/api/generate-standard", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ intentions })
+      })
+      const data = await res.json()
+      if (res.ok && data.tasks) {
+        setTasks(data.tasks)
+        const labels = intentions.map(i => INTENTION_CONFIG.find(c => c.id === i)?.label).join(' & ')
+        setTitle(`Looking for ${labels} Partner`)
+        setStep('edit-tasks')
+      } else {
+        setError(data.error || "Failed to generate tasks")
+      }
+    } catch {
+      setError("Something went wrong while generating tasks.")
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleShuffle = () => {
-    const generated = generateTasksFromIntentions(intentions)
-    setTasks(generated)
+  const handleRefreshTask = async (index: number, dayNumber: number) => {
+    try {
+      setError('')
+      const { data, error: dbErr } = await supabase
+        .from('task_templates')
+        .select('*')
+        .in('intention', intentions)
+        .eq('day_number', dayNumber)
+      
+      if (dbErr) throw dbErr
+      
+      if (data && data.length > 0) {
+        const currentTitle = tasks[index]?.title
+        const candidates = data.filter(t => t.title !== currentTitle)
+        const chosen = candidates.length > 0 
+          ? getRandomElement(candidates) 
+          : getRandomElement(data)
+
+        const updated = [...tasks]
+        updated[index] = {
+          day_number: dayNumber,
+          task_type: chosen.task_type,
+          title: chosen.title,
+          description: chosen.description,
+          verification_hint: chosen.verification_hint || ''
+        }
+        setTasks(updated)
+      } else {
+        // Fallback local random tasks
+        const fallbacks = [
+          { task_type: "photo" as const, title: "Selfie Check", description: "Daily selfie with timestamp" },
+          { task_type: "voice" as const, title: "Voice Journal", description: "Speak about your highlights today" },
+          { task_type: "location" as const, title: "Favorite Outdoor Spot", description: "Share your outdoor location" }
+        ]
+        const chosen = getRandomElement(fallbacks)
+        const updated = [...tasks]
+        updated[index] = {
+          day_number: dayNumber,
+          task_type: chosen.task_type,
+          title: chosen.title,
+          description: chosen.description,
+          verification_hint: ''
+        }
+        setTasks(updated)
+      }
+    } catch (err: any) {
+      console.error(err)
+      setError("Could not refresh task.")
+    }
+  }
+
+  const handleDeleteTask = (index: number) => {
+    setTasks(prev => prev.filter((_, i) => i !== index))
+    if (editingIndex === index) setEditingIndex(null)
+  }
+
+  const handleAddTask = () => {
+    if (tasks.length >= 8) return
+    const nextDay = tasks.length + 1
+    const newTask: TaskItem = {
+      day_number: nextDay,
+      task_type: 'photo',
+      title: 'New Task',
+      description: 'Perform a task and upload a photo proof.',
+      verification_hint: ''
+    }
+    setTasks(prev => [...prev, newTask])
+    setEditingIndex(tasks.length)
+  }
+
+  const handleUpdateTaskField = (index: number, field: keyof TaskItem, value: any) => {
+    const updated = [...tasks]
+    updated[index] = {
+      ...updated[index],
+      [field]: value
+    }
+    setTasks(updated)
   }
 
   const handleSave = async () => {
-    if (intentions.length === 0 || tasks.length !== 8 || !title.trim()) return
-    setLoading(true)
+    setError('')
+    if (tasks.length !== 8) {
+      setError(lang === "hi" ? "कृपया कुल 8 टास्क पूरा करें।" : "Exactly 8 tasks are required to publish.")
+      return
+    }
+    if (!title.trim()) {
+      setError(lang === "hi" ? "स्टैंडर्ड का नाम आवश्यक है।" : "Standard name is required.")
+      return
+    }
+    
+    setSaving(true)
     try {
       const res = await fetch("/api/standards/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title, intentions, tasks, language: lang }),
       })
+      const data = await res.json()
       if (res.ok) {
         router.push('/your-standards')
       } else {
-        const data = await res.json()
-        alert(data.error || "Failed to publish standard")
-        setLoading(false)
+        setError(data.error || "Failed to publish standard")
+        setSaving(false)
       }
     } catch {
-      alert("Something went wrong")
-      setLoading(false)
+      setError("Something went wrong while saving.")
+      setSaving(false)
     }
   }
 
@@ -117,12 +229,14 @@ export default function CreateStandard() {
           title={lang === "hi" ? "आपका स्टैंडर्ड किस बारे में है?" : "What's your Standard about?"}
           subtitle={lang === "hi" ? "1-3 इरादे (Intentions) चुनें। पुरुष ये देखेंगे।" : "Pick 1-3 intentions. Men with matching interests will see you first."}
         />
+        {error && <p className="text-xs text-red-500 mt-4 text-center">{error}</p>}
         <div className="fixed bottom-0 left-0 right-0 p-6 bg-[#0A0A0A]/95 border-t border-border backdrop-blur-lg">
           <button
             onClick={handleGenerate}
-            disabled={intentions.length === 0}
-            className="w-full bg-[#16A34A] text-white rounded-2xl py-4 font-semibold text-base disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-all active:scale-[0.98]"
+            disabled={intentions.length === 0 || loading}
+            className="w-full bg-[#16A34A] text-white rounded-2xl py-4 font-semibold text-base disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-all active:scale-[0.98] flex items-center justify-center gap-2"
           >
+            {loading && <Loader2 className="w-5 h-5 animate-spin" />}
             {lang === "hi" ? "टास्क बनाएं" : "Generate Tasks"}
           </button>
         </div>
@@ -139,71 +253,156 @@ export default function CreateStandard() {
         >
           <ArrowLeft className="w-5 h-5 text-text-muted" />
         </button>
-        <button
-          onClick={handleShuffle}
-          className="flex items-center gap-2 text-xs font-semibold text-[#16A34A] cursor-pointer hover:underline"
-        >
-          <Shuffle className="w-4 h-4" /> {lang === "hi" ? "फिर से शफल करें" : "Shuffle Again"}
-        </button>
+        <div className="text-sm font-semibold text-[#16A34A]">
+          {tasks.length} of 8 Tasks
+        </div>
       </div>
 
       <div className="space-y-6">
-        <div>
-          <p className="text-xs text-text-muted uppercase tracking-wider font-semibold">
-            {lang === "hi" ? "स्टैंडर्ड" : "Standard"}
-          </p>
-          <h1 className="text-xl font-bold mt-1">{title}</h1>
+        <div className="space-y-2">
+          <label className="text-xs text-text-muted uppercase tracking-wider font-semibold">
+            {lang === "hi" ? "स्टैंडर्ड का नाम" : "Standard Name"}
+          </label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full h-12 px-4 rounded-xl bg-surface border border-border text-text focus:outline-none focus:border-[#16A34A] transition-all font-semibold"
+          />
         </div>
 
+        {error && <p className="text-xs text-red-500 text-center font-medium bg-red-500/10 border border-red-500/20 rounded-lg p-2.5">{error}</p>}
+
+        {/* EditableTaskList */}
         <div className="space-y-3">
-          {tasks.map((taskStr, i) => {
-            const detail = parseTaskDescription(taskStr)
-            return (
-              <div
-                key={i}
-                className="flex items-start gap-4 bg-surface border border-border rounded-2xl p-4 transition-all"
-              >
-                <div className="w-8 h-8 rounded-full bg-[#16A34A]/10 flex items-center justify-center shrink-0 mt-0.5">
-                  {detail.verification_method === "photo" ? (
-                    <Camera className="w-4 h-4 text-[#16A34A]" />
-                  ) : detail.verification_method === "video" ? (
-                    <Video className="w-4 h-4 text-[#16A34A]" />
-                  ) : detail.verification_method === "voice" ? (
-                    <Music className="w-4 h-4 text-[#16A34A]" />
-                  ) : (
-                    <MapPin className="w-4 h-4 text-[#16A34A]" />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[#16A34A] font-semibold text-xs">
-                      {lang === "hi" ? `दिन ${i + 1}` : `Day ${i + 1}`}
-                    </span>
-                    <span className="text-[10px] text-text-muted bg-white/5 px-2 py-0.5 rounded-full">
-                      {detail.time_estimate}
-                    </span>
-                    {i === 4 && (
-                      <span className="text-[#16A34A] text-[10px] font-semibold uppercase tracking-wider ml-auto">
-                        {lang === "hi" ? "चैट अनलॉक" : "Messages unlock"}
-                      </span>
-                    )}
+          <AnimatePresence initial={false}>
+            {tasks.map((task, index) => {
+              const isEditing = editingIndex === index
+              return (
+                <motion.div
+                  key={index}
+                  layout
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="bg-surface border border-border rounded-2xl overflow-hidden transition-all"
+                >
+                  <div className="flex items-center gap-3 p-4">
+                    <div className="w-8 h-8 rounded-full bg-[#16A34A]/10 flex items-center justify-center shrink-0">
+                      {task.task_type === "photo" ? (
+                        <Camera className="w-4 h-4 text-[#16A34A]" />
+                      ) : task.task_type === "video" ? (
+                        <Video className="w-4 h-4 text-[#16A34A]" />
+                      ) : task.task_type === "voice" ? (
+                        <Music className="w-4 h-4 text-[#16A34A]" />
+                      ) : (
+                        <MapPin className="w-4 h-4 text-[#16A34A]" />
+                      )}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] text-[#16A34A] font-bold">
+                        {lang === "hi" ? `दिन ${task.day_number || index + 1}` : `Day ${task.day_number || index + 1}`}
+                      </div>
+                      <input
+                        type="text"
+                        value={task.title}
+                        onChange={(e) => handleUpdateTaskField(index, 'title', e.target.value)}
+                        className="w-full bg-transparent text-sm font-semibold text-text border-none focus:outline-none p-0 mt-0.5 focus:border-[#16A34A] transition-all"
+                        placeholder="Task Title"
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        onClick={() => setEditingIndex(isEditing ? null : index)}
+                        className={`p-2 rounded-lg hover:bg-white/5 transition-all cursor-pointer ${isEditing ? 'text-[#16A34A]' : 'text-text-muted'}`}
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleRefreshTask(index, task.day_number || index + 1)}
+                        className="p-2 rounded-lg hover:bg-white/5 text-text-muted transition-all cursor-pointer"
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteTask(index)}
+                        className="p-2 rounded-lg hover:bg-white/5 text-red-500/70 hover:text-red-500 transition-all cursor-pointer"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
-                  <p className="text-sm font-semibold text-text mt-1">{detail.title}</p>
-                  <p className="text-xs text-text-muted mt-0.5 leading-relaxed">{detail.instruction}</p>
-                </div>
-              </div>
-            )
-          })}
+
+                  {isEditing && (
+                    <motion.div
+                      initial={{ height: 0 }}
+                      animate={{ height: 'auto' }}
+                      exit={{ height: 0 }}
+                      className="border-t border-border bg-[#161616]/40 p-4 space-y-3 text-xs"
+                    >
+                      <div className="space-y-1">
+                        <label className="text-text-muted font-medium">Task Type</label>
+                        <select
+                          value={task.task_type}
+                          onChange={(e) => handleUpdateTaskField(index, 'task_type', e.target.value)}
+                          className="w-full h-10 px-3 rounded-lg bg-[#222] border border-border text-text focus:outline-none focus:border-[#16A34A] cursor-pointer"
+                        >
+                          <option value="photo">Photo Upload</option>
+                          <option value="video">Video Upload</option>
+                          <option value="voice">Voice Note</option>
+                          <option value="location">Location Pin</option>
+                        </select>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-text-muted font-medium">Instruction / Description</label>
+                        <textarea
+                          rows={2}
+                          value={task.description}
+                          onChange={(e) => handleUpdateTaskField(index, 'description', e.target.value)}
+                          className="w-full p-3 rounded-lg bg-[#222] border border-border text-text focus:outline-none focus:border-[#16A34A] resize-none"
+                          placeholder="What should they do?"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-text-muted font-medium">Verification Hint (Optional)</label>
+                        <input
+                          type="text"
+                          value={task.verification_hint || ''}
+                          onChange={(e) => handleUpdateTaskField(index, 'verification_hint', e.target.value)}
+                          className="w-full h-10 px-3 rounded-lg bg-[#222] border border-border text-text focus:outline-none focus:border-[#16A34A]"
+                          placeholder="e.g. Must show watermark"
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </motion.div>
+              )
+            })}
+          </AnimatePresence>
         </div>
+
+        {tasks.length < 8 && (
+          <button
+            onClick={handleAddTask}
+            className="w-full py-4 border border-dashed border-border rounded-2xl text-xs font-semibold text-text-muted hover:text-text hover:border-text-muted/40 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+          >
+            <Plus className="w-4 h-4" /> {lang === "hi" ? "टास्क जोड़ें" : "Add Task"}
+          </button>
+        )}
       </div>
+
       <div className="fixed bottom-0 left-0 right-0 p-6 bg-[#0A0A0A]/95 border-t border-border backdrop-blur-lg">
         <button
           onClick={handleSave}
-          disabled={loading}
+          disabled={saving}
           className="w-full bg-[#16A34A] text-white rounded-2xl py-4 font-semibold text-base flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98]"
         >
-          {loading && <Loader2 className="w-5 h-5 animate-spin" />}
-          {lang === "hi" ? "पब्लिश करें" : "Go Live"}
+          {saving && <Loader2 className="w-5 h-5 animate-spin" />}
+          {lang === "hi" ? "पब्लिश करें" : "Publish"}
         </button>
       </div>
     </div>

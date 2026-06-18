@@ -37,7 +37,7 @@ export function formatTaskString(task: string): string {
 export function generateTasksFromIntentions(intentions: IntentionId[]): string[] {
   let selectedIntentions = intentions || [];
   if (selectedIntentions.length === 0) {
-    selectedIntentions = ['fitness']; // fallback
+    selectedIntentions = ['Fitness']; // fallback
   }
 
   // Build pool from selected intentions
@@ -94,7 +94,7 @@ export function generateTasksFromTags(
   lookingForTags: string[] = [],
   count: number = 8
 ): { title: string; instruction: string; time_estimate: "2 min" | "5 min" | "15 min"; verification_method: "photo" | "voice" | "video" | "location"; day_number: number }[] {
-  const tasks = generateTasksFromIntentions(['fitness']);
+  const tasks = generateTasksFromIntentions(['Fitness']);
   if (aboutMeTags.includes("Gym Partner")) {
     tasks[0] = "Gym Selfie: Gym Selfie with timestamp (2 min, photo)";
   }

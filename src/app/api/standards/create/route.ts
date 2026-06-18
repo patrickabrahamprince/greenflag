@@ -3,14 +3,19 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { env } from "@/lib/env";
-import { parseTaskDescription } from "@/lib/task-utils";
 
 const bodySchema = z.object({
   title: z.string().min(1),
   intentions: z.array(z.string()).min(1).max(3),
-  tasks: z.array(z.string()).length(8),
+  tasks: z.array(z.any()).length(8),
   language: z.enum(["en", "hi"]).default("en")
 });
+
+const BANNED_WORDS = [
+  'instagram', 'snapchat', 'phone', 'whatsapp', 'telegram', 
+  'onlyfans', 'money', 'cash', 'pay', 'sex', 'nude', 
+  'nsfw', 'cashapp', 'venmo', 'kick', 'facebook'
+];
 
 export async function POST(req: Request) {
   try {
@@ -26,7 +31,6 @@ export async function POST(req: Request) {
       }
     );
 
-    // 1. Get user. Verify role = 'woman'.
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -42,16 +46,38 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Forbidden. Women only." }, { status: 403 });
     }
 
-    // 2. Validate body: title, intentions, and 8 generated task strings.
     const body = await req.json();
     const parsed = bodySchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.issues[0].message || "Invalid body configuration" }, { status: 400 });
+      return NextResponse.json({ error: parsed.error.issues[0].message || "Invalid configuration" }, { status: 400 });
     }
 
     const { title, intentions, tasks, language } = parsed.data;
 
-    // 3. Insert into tests table: { host_id: user.id, name: title, title, intentions, tasks, language, is_active: true }
+    // Check banned words and format tasks into strings if they are objects
+    let formattedTasks: string[] = [];
+    try {
+      formattedTasks = tasks.map((task: any) => {
+        if (typeof task === "string") {
+          const lower = task.toLowerCase();
+          if (BANNED_WORDS.some(w => lower.includes(w))) {
+            throw new Error(`Content contains banned words.`);
+          }
+          return task;
+        } else {
+          const content = `${task.title || ""} ${task.description || ""}`.toLowerCase();
+          if (BANNED_WORDS.some(w => content.includes(w))) {
+            throw new Error(`Content contains banned words.`);
+          }
+          const time = task.time_estimate || "5 min";
+          return `${task.title}: ${task.description} (${time}, ${task.task_type || "photo"})`;
+        }
+      });
+    } catch (err: any) {
+      return NextResponse.json({ error: err.message || "Banned words detected" }, { status: 400 });
+    }
+
+    // Insert or update standard test details
     const { data: test, error: testError } = await supabase
       .from("tests")
       .upsert({
@@ -59,7 +85,7 @@ export async function POST(req: Request) {
         name: title,
         title,
         intentions,
-        tasks,
+        tasks: formattedTasks,
         language,
         is_active: true,
       }, { onConflict: "host_id" })
@@ -70,7 +96,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: testError?.message || "Failed to save standard" }, { status: 500 });
     }
 
-    // Delete existing tasks for this test to replace them cleanly
+    // Delete previous individual tasks
     const { error: deleteError } = await supabase
       .from("tasks")
       .delete()
@@ -80,11 +106,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: deleteError.message }, { status: 500 });
     }
 
-    // 4. Insert 8 rows into tasks table with test_id
-    const taskInserts = tasks.map((t, idx) => ({
+    // Insert 8 tasks
+    const taskInserts = formattedTasks.map((t, idx) => ({
       test_id: test.id,
       day_number: idx + 1,
-      description: t, // already formatted into "Title: Instruction (Time, Method)"
+      description: t,
     }));
 
     const { error: tasksError } = await supabase
