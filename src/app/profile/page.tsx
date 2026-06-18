@@ -7,7 +7,7 @@ import Link from "next/link";
 import type { Profile } from "@/lib/types";
 import { requireOnboarded } from "@/lib/auth";
 import SaveButton from "@/components/save/SaveButton";
-
+import { ProfileSkeleton } from '@/components/Skeleton'
 export default function ProfilePage() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -122,10 +122,10 @@ export default function ProfilePage() {
                       disabled={false}
                       loadingLabel="Loading..."
                     />
-                className="w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] bg-accent/5 border-[0.5px] border-accent/20 hover:bg-accent/10 transition-all">
-                <ShieldCheck className="w-5 h-5 text-accent" strokeWidth={1.5} />
-                <span className="text-sm text-accent font-medium">Admin</span>
-              </button>
+
+
+
+
               {[
                 { icon: Coins, label: "Coins & Store", href: "/store" },
                 { icon: Bell, label: "Notifications", href: "/profile/notifications" },
