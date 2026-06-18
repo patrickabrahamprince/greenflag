@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase'
 import { IntentionId } from '@/lib/task-templates'
 import { Loader2 } from 'lucide-react'
 import { input } from '@/lib/theme'
+import SaveButton from '@/components/save/SaveButton'
 
 export default function OnboardingInterests() {
   const [interests, setInterests] = useState<IntentionId[]>([])
