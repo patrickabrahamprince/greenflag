@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Skeleton } from '@/components/Skeleton';
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { ArrowLeft, AlertTriangle } from "lucide-react";
@@ -10,6 +11,9 @@ export default function DeleteAccountPage() {
   const { toast } = useToast();
   const [confirm, setConfirm] = useState("");
   const [deleting, setDeleting] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return <Skeleton />;
 
   async function handleDelete() {
     if (confirm !== "DELETE") { toast("error", "Type DELETE to confirm."); return; }

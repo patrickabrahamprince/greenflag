@@ -7,7 +7,8 @@ import Link from "next/link";
 import type { Connection, Profile } from "@/lib/types";
 import { requireOnboarded } from "@/lib/auth";
 import { ListSkeleton } from "@/components/Skeleton";
-
+import SaveButton from '@/components/save/SaveButton';
+import { ProfileSkeleton } from '@/components/Skeleton';
 type ConnectionFull = Connection & { guest: Profile };
 
 export default function YourStandardsPage() {
@@ -16,6 +17,10 @@ export default function YourStandardsPage() {
   const [userId, setUserId] = useState("");
   const [connections, setConnections] = useState<ConnectionFull[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return <ProfileSkeleton />;
 
   useEffect(() => {
     requireOnboarded().then((uid) => {
@@ -106,10 +111,12 @@ export default function YourStandardsPage() {
                     className="flex-1 h-12 rounded-[16px] bg-surface-elevated border-[0.5px] border-border text-text-muted text-sm font-medium flex items-center justify-center gap-2">
                     <X className="w-4 h-4" strokeWidth={1.5} /> Pass
                   </button>
-                  <button onClick={() => handleConnect(c)}
-                    className="flex-1 h-12 rounded-[16px] bg-accent text-bg text-sm font-semibold flex items-center justify-center gap-2">
-                    <CheckCircle className="w-4 h-4" strokeWidth={1.5} /> Connect
-                  </button>
+                  <SaveButton
+          onSave={() => handleConnect(c)}
+          label="Connect"
+          disabled={false}
+          variant="primary"
+        />
                 </div>
               </div>
             ))}
