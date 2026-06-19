@@ -10,35 +10,22 @@ interface Profile {
   id: string;
   name: string;
   age: number;
-  city: string;
+  city?: string;
+  city_auto?: string;
   photos: string[];
   interests: string[];
   active_test_id: string;
   difficulty: 'easy' | 'medium' | 'hard';
 }
 
-const FALLBACK_INTERESTS = ['Books', 'Coffee', 'Music'];
-const FALLBACK_PHOTOS = ['https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=600&fit=crop'];
-
 const MOCK_PROFILES: Profile[] = [
   { id: '1', name: 'Priya', age: 28, city: 'Mumbai', photos: ['https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=600&fit=crop'], interests: ['Reading', 'Wine', 'Travel'], active_test_id: 's1', difficulty: 'medium' },
-  { id: '2', name: 'Ananya', age: 26, city: 'Delhi', photos: ['https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=600&fit=crop'], interests: ['Yoga', 'Photography'], active_test_id: 's2', difficulty: 'hard' },
+  { id: '2', name: 'Ananya', age: 26, city: 'Delhi', photos: ['https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=600&fit=crop'], interests: ['Yoga', 'Photography', 'Music'], active_test_id: 's2', difficulty: 'hard' },
   { id: '3', name: 'Riya', age: 27, city: 'Bangalore', photos: ['https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=600&fit=crop'], interests: ['Music', 'Art', 'Cooking'], active_test_id: 's3', difficulty: 'easy' },
   { id: '4', name: 'Neha', age: 29, city: 'Pune', photos: ['https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=600&fit=crop'], interests: ['Running', 'Coffee'], active_test_id: 's4', difficulty: 'medium' },
   { id: '5', name: 'Kavya', age: 25, city: 'Hyderabad', photos: ['https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&h=600&fit=crop'], interests: ['Dance', 'Travel', 'Books'], active_test_id: 's5', difficulty: 'medium' },
   { id: '6', name: 'Ishita', age: 30, city: 'Chennai', photos: ['https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=400&h=600&fit=crop'], interests: ['Music', 'Wine'], active_test_id: 's6', difficulty: 'hard' },
 ];
-
-function DifficultyDots({ level }: { level: string }) {
-  const dotCount = level === 'easy' ? 1 : level === 'medium' ? 2 : 3;
-  return (
-    <div className="flex items-center gap-0.5">
-      {[1, 2, 3].map((dot) => (
-        <span key={dot} className={`text-xs leading-none ${dot <= dotCount ? 'text-[#D4AF37]' : 'text-white/20'}`}>●</span>
-      ))}
-    </div>
-  );
-}
 
 function ProfileCard({ profile }: { profile: Profile }) {
   const router = useRouter();
@@ -46,11 +33,11 @@ function ProfileCard({ profile }: { profile: Profile }) {
   const [connecting, setConnecting] = useState(false);
   const [blurred, setBlurred] = useState(true);
 
-  const photo = profile.photos?.[0] || FALLBACK_PHOTOS[0];
-  const interests = profile.interests?.length ? profile.interests : FALLBACK_INTERESTS;
+  const photo = profile.photos?.[0] || '';
+  const city = profile.city || profile.city_auto || '';
 
   const handleBegin = async () => {
-    if (balance < 100) {
+    if (balance < 5) {
       toast.error('Not enough coins', {
         duration: 4000,
         style: { background: '#1C1C1E', color: '#fff', border: '1px solid #2A2A2E' },
@@ -75,7 +62,7 @@ function ProfileCard({ profile }: { profile: Profile }) {
         return;
       }
       if (data.id) {
-        useCoinStore.getState().deduct(100);
+        useCoinStore.getState().deduct(5);
         router.push(`/${profile.name.toLowerCase()}`);
       } else {
         toast.error('Something went wrong');
@@ -88,12 +75,9 @@ function ProfileCard({ profile }: { profile: Profile }) {
   };
 
   return (
-    <div className="snap-center h-screen w-full relative flex flex-col bg-[#0A0A0A]">
+    <div className="snap-center h-screen w-full relative flex flex-col">
       <div className="absolute inset-0 w-full h-full">
-        <div
-          className="w-full h-full bg-cover bg-center"
-          style={{ backgroundImage: `url(${photo})` }}
-        />
+        <img src={photo} alt={profile.name} className="w-full h-full object-cover" />
         {blurred && (
           <div className="absolute inset-0 backdrop-blur-xl bg-black/20 flex items-center justify-center">
             <span className="text-8xl font-display text-white/20 select-none">?</span>
@@ -103,28 +87,23 @@ function ProfileCard({ profile }: { profile: Profile }) {
       </div>
 
       <div className="relative z-10 mt-auto w-full px-6 pb-32">
-        <div className="flex items-baseline gap-3">
-          <h2 className="font-display text-3xl text-[#EDEADE]">{profile.name}</h2>
-          <span className="font-display text-3xl text-[#EDEADE]/80">{profile.age}</span>
-        </div>
-        <p className="text-[#EDEADE]/60 text-sm mt-1">{profile.city}</p>
+        <h1 className="font-display text-3xl text-[#EDEADE]">{profile.name}, {profile.age}</h1>
+        {city && (
+          <p className="text-[#EDEADE]/60 text-sm mt-1">{city}</p>
+        )}
 
         <div className="flex gap-2 mt-3 flex-wrap">
-          {interests.slice(0, 3).map((interest) => (
+          {(profile.interests || []).slice(0, 3).map((interest) => (
             <span key={interest} className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#EDEADE] text-xs">
               {interest}
             </span>
           ))}
         </div>
 
-        <div className="mt-4">
-          <DifficultyDots level={profile.difficulty} />
-        </div>
-
         <button
           onClick={handleBegin}
           disabled={connecting}
-          className="mt-6 w-full max-w-sm mx-auto h-14 rounded-full bg-[#D4AF37] text-[#0A0A0A] font-medium text-base active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
+          className="w-full max-w-sm mx-auto mt-6 h-14 rounded-full bg-[#D4AF37] text-[#0A0A0A] font-medium active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
         >
           {connecting ? (
             <><Loader2 className="w-5 h-5 animate-spin" /> Starting...</>
@@ -175,7 +154,7 @@ export default function DiscoverPage() {
   }
 
   return (
-    <div className="h-screen w-full snap-y snap-mandatory overflow-y-scroll bg-[#0A0A0A] scroll-smooth">
+    <div className="h-screen w-full snap-y snap-mandatory overflow-y-scroll bg-[#0A0A0A]">
       <div className="fixed top-4 right-4 z-50">
         <button
           onClick={() => router.push('/coins')}

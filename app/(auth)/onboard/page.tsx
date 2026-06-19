@@ -4,20 +4,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore } from '@/lib/store';
-import { ArrowLeft, Venus, Mars, Upload, X, Heart } from 'lucide-react';
+import { INTERESTS_MASTER } from '@/lib/constants/interests';
+import { ArrowLeft, Crown, Crosshair, Upload, X, MapPin } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
-type Step = 'gender' | 'interested' | 'profile';
-type Gender = 'woman' | 'man';
-
-const profileSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  age: z.number().min(18, 'You must be at least 18').max(60, 'Age must be 60 or under'),
-  city: z.string().min(1, 'Please select a city'),
-  bio: z.string().max(120, 'Bio must be 120 characters or less'),
-  photos: z.array(z.string()).min(1, 'Please add at least 1 photo'),
-});
+type Role = 'host' | 'guest';
+type Step = 'role' | 'profile';
 
 const INDIAN_CITIES = [
   'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai',
@@ -33,21 +26,36 @@ const MOCK_PHOTOS = [
   'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop',
 ];
 
+const INSTAGRAM_REGEX = /^[a-zA-Z0-9._]{1,30}$/;
+
+const profileSchema = z.object({
+  name: z.string().min(2, 'Name is required'),
+  bio: z.string().max(120, 'Bio must be 120 characters or less').optional(),
+  photos: z.array(z.string()).min(3, 'Add at least 3 photos').max(6, 'Maximum 6 photos'),
+  city: z.string().min(1, 'City is required'),
+  yourInterests: z.array(z.string()).min(3, 'Pick at least 3 interests').max(5),
+  lookingFor: z.array(z.string()).min(3, 'Pick at least 3').max(5),
+});
+
 export default function OnboardPage() {
   const router = useRouter();
   const supabase = createClient();
   const setUser = useUserStore((s) => s.setUser);
 
-  const [step, setStep] = useState<Step>('gender');
-  const [gender, setGender] = useState<Gender | null>(null);
-  const [interestedIn, setInterestedIn] = useState<Gender | null>(null);
-  const [name, setName] = useState('');
-  const [age, setAge] = useState<number>(25);
-  const [city, setCity] = useState('');
-  const [bio, setBio] = useState('');
-  const [photos, setPhotos] = useState<string[]>([]);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [step, setStep] = useState<Step>('role');
+  const [role, setRole] = useState<Role | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const [name, setName] = useState('');
+  const [city, setCity] = useState('');
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [bio, setBio] = useState('');
+  const [yourInterests, setYourInterests] = useState<string[]>([]);
+  const [lookingFor, setLookingFor] = useState<string[]>([]);
+  const [instagramHandle, setInstagramHandle] = useState('');
+  const [gpsDetecting, setGpsDetecting] = useState(false);
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const addMockPhoto = () => {
     if (photos.length >= 6) return;
@@ -60,17 +68,89 @@ export default function OnboardPage() {
     setPhotos(photos.filter((p) => p !== url));
   };
 
-  const handleSubmit = async () => {
-    const result = profileSchema.safeParse({ name, age, city, bio, photos });
-    if (!result.success) {
-      const fieldErrors: Record<string, string> = {};
-      result.error.errors.forEach((err) => {
-        fieldErrors[err.path[0] as string] = err.message;
-      });
-      setErrors(fieldErrors);
+  const toggleYourInterest = (interest: string) => {
+    setYourInterests((prev) => {
+      if (prev.includes(interest)) return prev.filter((i) => i !== interest);
+      if (prev.length >= 5) return prev;
+      return [...prev, interest];
+    });
+  };
+
+  const toggleLookingFor = (interest: string) => {
+    setLookingFor((prev) => {
+      if (prev.includes(interest)) return prev.filter((i) => i !== interest);
+      if (prev.length >= 5) return prev;
+      return [...prev, interest];
+    });
+  };
+
+  const detectLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by your browser');
       return;
     }
-    setErrors({});
+    setGpsDetecting(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&format=json`
+          );
+          const data = await res.json();
+          const address = data.address;
+          const detected = address.city || address.town || address.county || address.state;
+          if (detected) {
+            const match = INDIAN_CITIES.find(
+              (c) => detected.toLowerCase().includes(c.toLowerCase())
+            );
+            setCity(match || detected);
+            toast.success(`Location detected: ${match || detected}`);
+          } else {
+            toast.error('Could not detect your city. Please select manually.');
+          }
+        } catch {
+          toast.error('Could not detect your city. Please select manually.');
+        } finally {
+          setGpsDetecting(false);
+        }
+      },
+      () => {
+        setGpsDetecting(false);
+        toast.error('Location access denied. Please select your city manually.');
+      },
+      { timeout: 10000 }
+    );
+  };
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+
+    const result = profileSchema.safeParse({
+      name,
+      bio,
+      photos,
+      city,
+      yourInterests,
+      lookingFor,
+    });
+
+    if (!result.success) {
+      result.error.errors.forEach((err) => {
+        const path = err.path[0] as string;
+        if (!newErrors[path]) newErrors[path] = err.message;
+      });
+    }
+
+    if (!isHost && (!instagramHandle || !INSTAGRAM_REGEX.test(instagramHandle))) {
+      newErrors.instagram = 'Valid Instagram handle is required (letters, numbers, ., _)';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (!validate()) return;
     setLoading(true);
 
     const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -80,19 +160,23 @@ export default function OnboardPage() {
       return;
     }
 
-    const role = gender === 'woman' ? 'host' : 'guest';
-
-    const { error } = await supabase.from('profiles').upsert({
+    const payload: Record<string, unknown> = {
       id: authUser.id,
-      name,
-      age,
+      name: name.trim(),
       city,
-      bio,
+      bio: bio.trim(),
       photos,
       role,
-      gender,
-      interested_in: interestedIn,
-    } as any);
+      gender: isHost ? 'woman' : 'man',
+      your_interests: yourInterests,
+      looking_for_interests: lookingFor,
+    };
+
+    if (!isHost) {
+      payload.instagram_handle = instagramHandle;
+    }
+
+    const { error } = await supabase.from('profiles').upsert(payload as any);
 
     setLoading(false);
     if (error) {
@@ -102,59 +186,59 @@ export default function OnboardPage() {
 
     setUser({
       id: authUser.id,
-      name,
-      age,
+      name: name.trim(),
+      age: 25,
       city,
-      bio,
+      bio: bio.trim(),
       photos,
-      role: role as 'host' | 'guest',
+      role,
       created_at: new Date().toISOString(),
     } as any);
 
     toast.success('Profile created!');
-    if (gender === 'woman') {
+    if (isHost) {
       router.replace('/your-standards/create');
     } else {
       router.replace('/discover');
     }
   };
 
-  if (step === 'gender') {
+  if (step === 'role') {
     return (
       <div className="w-full animate-fade-in min-h-[80vh] flex flex-col justify-center">
         <div className="text-center mb-10">
           <h1 className="text-3xl font-display font-semibold text-white mb-3">
             Welcome to GreenFlag
           </h1>
-          <p className="text-muted text-sm">First, tell us about yourself</p>
+          <p className="text-muted text-sm">Choose your path</p>
         </div>
 
         <div className="space-y-4 px-2">
           <button
-            onClick={() => { setGender('woman'); setStep('interested'); }}
-            className="w-full h-48 rounded-2xl bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 border border-[#D4AF37]/20 hover:border-[#D4AF37]/50 transition-all duration-300 relative overflow-hidden group"
+            onClick={() => { setRole('host'); setStep('profile'); }}
+            className="w-full h-48 rounded-2xl bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 border border-[#D4AF37]/20 hover:border-[#D4AF37]/50 transition-all duration-300 relative overflow-hidden group active:scale-95"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
             <div className="relative z-10 h-full flex flex-col items-center justify-center gap-3">
               <div className="w-16 h-16 rounded-full bg-[#D4AF37]/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Venus className="w-8 h-8 text-[#D4AF37]" />
+                <Crown className="w-8 h-8 text-[#D4AF37]" />
               </div>
-              <span className="text-2xl font-display text-[#EDEADE]">I&apos;m a Woman</span>
-              <span className="text-sm text-[#EDEADE]/60">I set the standards</span>
+              <span className="text-2xl font-display text-[#EDEADE]">I Set the Standards</span>
+              <span className="text-sm text-[#EDEADE]/60">Host — I know what I want</span>
             </div>
           </button>
 
           <button
-            onClick={() => { setGender('man'); setStep('interested'); }}
-            className="w-full h-48 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:border-white/30 transition-all duration-300 relative overflow-hidden group"
+            onClick={() => { setRole('guest'); setStep('profile'); }}
+            className="w-full h-48 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:border-white/30 transition-all duration-300 relative overflow-hidden group active:scale-95"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
             <div className="relative z-10 h-full flex flex-col items-center justify-center gap-3">
               <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Mars className="w-8 h-8 text-white/80" />
+                <Crosshair className="w-8 h-8 text-white/80" />
               </div>
-              <span className="text-2xl font-display text-[#EDEADE]">I&apos;m a Man</span>
-              <span className="text-sm text-[#EDEADE]/60">I pursue standards</span>
+              <span className="text-2xl font-display text-[#EDEADE]">I Meet Standards</span>
+              <span className="text-sm text-[#EDEADE]/60">Guest — I rise to the challenge</span>
             </div>
           </button>
         </div>
@@ -162,134 +246,82 @@ export default function OnboardPage() {
     );
   }
 
-  if (step === 'interested') {
-    return (
-      <div className="w-full animate-fade-in min-h-[80vh] flex flex-col justify-center">
-        <div className="flex items-center mb-10">
-          <button onClick={() => setStep('gender')} className="text-muted hover:text-white transition-colors">
-            <ArrowLeft size={24} />
-          </button>
-          <div className="flex-1 text-center">
-            <p className="text-xs text-muted uppercase tracking-wider">Step 2 of 3</p>
-          </div>
-          <div className="w-6" />
-        </div>
-
-        <div className="text-center mb-10">
-          <h1 className="text-2xl font-display font-semibold text-white mb-3">
-            Who are you interested in?
-          </h1>
-          <p className="text-muted text-sm">This helps us show you the right people</p>
-        </div>
-
-        <div className="space-y-4 px-2">
-          <button
-            onClick={() => { setInterestedIn('woman'); setStep('profile'); }}
-            className={`w-full h-40 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden group ${
-              interestedIn === 'woman'
-                ? 'border-[#D4AF37] bg-[#D4AF37]/10'
-                : 'border-white/10 bg-white/5 hover:border-white/30'
-            }`}
-          >
-            <div className="h-full flex flex-col items-center justify-center gap-3">
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform ${
-                interestedIn === 'woman' ? 'bg-[#D4AF37]/20' : 'bg-white/10'
-              }`}>
-                <Venus className={`w-8 h-8 ${interestedIn === 'woman' ? 'text-[#D4AF37]' : 'text-white/80'}`} />
-              </div>
-              <span className="text-xl font-display text-[#EDEADE]">Women</span>
-            </div>
-          </button>
-
-          <button
-            onClick={() => { setInterestedIn('man'); setStep('profile'); }}
-            className={`w-full h-40 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden group ${
-              interestedIn === 'man'
-                ? 'border-[#D4AF37] bg-[#D4AF37]/10'
-                : 'border-white/10 bg-white/5 hover:border-white/30'
-            }`}
-          >
-            <div className="h-full flex flex-col items-center justify-center gap-3">
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform ${
-                interestedIn === 'man' ? 'bg-[#D4AF37]/20' : 'bg-white/10'
-              }`}>
-                <Mars className={`w-8 h-8 ${interestedIn === 'man' ? 'text-[#D4AF37]' : 'text-white/80'}`} />
-              </div>
-              <span className="text-xl font-display text-[#EDEADE]">Men</span>
-            </div>
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const isHost = role === 'host';
 
   return (
     <div className="w-full animate-fade-in pb-8">
       <div className="flex items-center mb-6">
-        <button onClick={() => setStep('interested')} className="text-muted hover:text-white transition-colors">
+        <button onClick={() => { setStep('role'); setRole(null); }} className="text-muted hover:text-white transition-colors">
           <ArrowLeft size={24} />
         </button>
         <div className="flex-1 text-center">
-          <p className="text-xs text-muted uppercase tracking-wider">Step 3 of 3</p>
+          <p className="text-xs text-muted uppercase tracking-wider">
+            {isHost ? 'Set Your Standards' : 'Meet the Standards'}
+          </p>
         </div>
         <div className="w-6" />
       </div>
 
       <h1 className="text-xl font-display font-semibold text-white text-center mb-6">
-        Complete your profile
+        {isHost ? 'Create Your Profile' : 'Tell Us About Yourself'}
       </h1>
 
       <div className="space-y-5">
         <div>
           <label className="block text-sm font-medium text-white mb-1.5">Name</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" className={`input ${errors.name ? 'input-error' : ''}`} />
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Your full name"
+            className={`input ${errors.name ? 'input-error' : ''}`}
+          />
           {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-white mb-1.5">Age</label>
-          <div className="flex items-center gap-3">
-            <input type="range" min={18} max={60} value={age} onChange={(e) => setAge(parseInt(e.target.value))} className="flex-1 accent-gold" />
-            <span className="text-white font-medium text-sm w-8 text-center">{age}</span>
+        {!isHost && (
+          <div>
+            <label className="block text-sm font-medium text-white mb-1.5">City</label>
+            <select
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              className={`input ${errors.city ? 'input-error' : ''}`}
+            >
+              <option value="">Select your city</option>
+              {INDIAN_CITIES.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+            {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
           </div>
-          {errors.age && <p className="text-red-500 text-xs mt-1">{errors.age}</p>}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-white mb-1.5">City</label>
-          <select value={city} onChange={(e) => setCity(e.target.value)} className={`input ${errors.city ? 'input-error' : ''}`}>
-            <option value="" className="bg-surface">Select your city</option>
-            {INDIAN_CITIES.map((c) => (
-              <option key={c} value={c} className="bg-surface">{c}</option>
-            ))}
-          </select>
-          {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-white mb-1.5">Bio</label>
-          <textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tell us about yourself..." maxLength={120} rows={3} className={`input resize-none ${errors.bio ? 'input-error' : ''}`} />
-          <div className="flex justify-between mt-1">
-            {errors.bio && <p className="text-red-500 text-xs">{errors.bio}</p>}
-            <p className="text-muted text-xs ml-auto">{bio.length}/120</p>
-          </div>
-        </div>
+        )}
 
         <div>
           <label className="block text-sm font-medium text-white mb-1.5">
-            Photos <span className="text-muted">(1-6)</span>
+            Photos <span className="text-muted">(3-6 required)</span>
           </label>
           <div className="grid grid-cols-3 gap-2">
             {Array.from({ length: 6 }).map((_, i) => {
               const photo = photos[i];
               return (
-                <div key={i} className={`aspect-square rounded-xl border-2 border-dashed flex items-center justify-center relative overflow-hidden ${
-                  photo ? 'border-transparent' : photos.length < 6 ? 'border-border hover:border-gold/30 cursor-pointer' : 'border-border opacity-50'
-                }`} onClick={() => { if (!photo && photos.length < 6) addMockPhoto(); }}>
+                <div
+                  key={i}
+                  className={`aspect-square rounded-xl border-2 border-dashed flex items-center justify-center relative overflow-hidden transition-all duration-300 ${
+                    photo
+                      ? 'border-transparent'
+                      : photos.length < 6
+                      ? 'border-white/10 hover:border-gold/30 cursor-pointer'
+                      : 'border-white/10 opacity-50'
+                  }`}
+                  onClick={() => { if (!photo && photos.length < 6) addMockPhoto(); }}
+                >
                   {photo ? (
                     <>
                       <img src={photo} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
-                      <button onClick={(e) => { e.stopPropagation(); removePhoto(photo); }} className="absolute top-1 right-1 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); removePhoto(photo); }}
+                        className="absolute top-1 right-1 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80 transition-colors"
+                      >
                         <X size={14} className="text-white" />
                       </button>
                     </>
@@ -300,10 +332,128 @@ export default function OnboardPage() {
               );
             })}
           </div>
+          <p className="text-xs text-muted mt-1">{photos.length}/6 photos</p>
           {errors.photos && <p className="text-red-500 text-xs mt-1">{errors.photos}</p>}
         </div>
 
-        <button onClick={handleSubmit} disabled={loading} className="btn-primary w-full mt-2">
+        {isHost && (
+          <div>
+            <label className="block text-sm font-medium text-white mb-1.5">Location</label>
+            <button
+              onClick={detectLocation}
+              disabled={gpsDetecting}
+              className="btn-secondary w-full mb-2 flex items-center justify-center gap-2 active:scale-95"
+            >
+              <MapPin size={16} />
+              {gpsDetecting ? 'Detecting...' : 'Auto-detect location'}
+            </button>
+            <select
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              className={`input ${errors.city ? 'input-error' : ''}`}
+            >
+              <option value="">Select your city</option>
+              {INDIAN_CITIES.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+            {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
+          </div>
+        )}
+
+        {!isHost && (
+          <div>
+            <label className="block text-sm font-medium text-white mb-1.5">
+              Instagram Handle <span className="text-red-400">*</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                <span className="text-muted text-sm">@</span>
+              </div>
+              <input
+                type="text"
+                value={instagramHandle}
+                onChange={(e) => setInstagramHandle(e.target.value.replace(/[^a-zA-Z0-9._]/g, '').slice(0, 30))}
+                placeholder="username"
+                className={`input pl-8 ${errors.instagram ? 'input-error' : ''}`}
+              />
+            </div>
+            {errors.instagram && <p className="text-red-500 text-xs mt-1">{errors.instagram}</p>}
+          </div>
+        )}
+
+        <div>
+          <label className="block text-sm font-medium text-white mb-1.5">Your Interests</label>
+          <p className="text-xs text-muted mb-3">Pick what you love. Min 3, Max 5.</p>
+          <div className="flex flex-wrap gap-2">
+            {INTERESTS_MASTER.map((interest) => {
+              const selected = yourInterests.includes(interest);
+              return (
+                <button
+                  key={interest}
+                  type="button"
+                  onClick={() => toggleYourInterest(interest)}
+                  className={`px-4 py-2 rounded-full text-sm transition-all duration-300 active:scale-95 ${
+                    selected
+                      ? 'border border-[#D4AF37] bg-[#D4AF37]/10 text-[#EDEADE]'
+                      : 'border border-white/10 bg-transparent text-muted hover:text-white'
+                  }`}
+                >
+                  {interest}
+                </button>
+              );
+            })}
+          </div>
+          {errors.yourInterests && <p className="text-red-500 text-xs mt-1">{errors.yourInterests}</p>}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-white mb-1.5">
+            {isHost ? "You're looking for someone who likes..." : "You're interested in women who like..."}
+          </label>
+          <p className="text-xs text-muted mb-3">Min 3, Max 5.</p>
+          <div className="flex flex-wrap gap-2">
+            {INTERESTS_MASTER.map((interest) => {
+              const selected = lookingFor.includes(interest);
+              return (
+                <button
+                  key={interest}
+                  type="button"
+                  onClick={() => toggleLookingFor(interest)}
+                  className={`px-4 py-2 rounded-full text-sm transition-all duration-300 active:scale-95 ${
+                    selected
+                      ? 'border border-[#D4AF37] bg-[#D4AF37]/10 text-[#EDEADE]'
+                      : 'border border-white/10 bg-transparent text-muted hover:text-white'
+                  }`}
+                >
+                  {interest}
+                </button>
+              );
+            })}
+          </div>
+          {errors.lookingFor && <p className="text-red-500 text-xs mt-1">{errors.lookingFor}</p>}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-white mb-1.5">Bio</label>
+          <textarea
+            value={bio}
+            onChange={(e) => setBio(e.target.value.slice(0, 120))}
+            placeholder="Tell us about yourself..."
+            rows={3}
+            className={`input resize-none ${errors.bio ? 'input-error' : ''}`}
+          />
+          <div className="flex justify-between mt-1">
+            {errors.bio && <p className="text-red-500 text-xs">{errors.bio}</p>}
+            <p className="text-muted text-xs ml-auto">{bio.length}/120</p>
+          </div>
+        </div>
+
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="btn-primary w-full mt-2 active:scale-95"
+        >
           {loading ? 'Creating profile...' : 'Complete Profile'}
         </button>
       </div>

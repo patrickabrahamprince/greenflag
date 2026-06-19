@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({
-      order_id: 'order_mock' + Date.now(),
+      order_id: 'order_mock_' + Date.now(),
       amount: amount_inr * 100,
       currency: 'INR',
     });
