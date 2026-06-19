@@ -12,37 +12,35 @@ export interface Database {
           bio: string;
           photos: string[];
           role: 'guest' | 'host';
+          gender: 'guest' | 'host' | 'man' | 'woman' | null;
+          city_auto: string | null;
+          lat: number | null;
+          lng: number | null;
+          interests: string[] | null;
+          looking_for_interests: string[] | null;
+          about_me_tags: string[] | null;
+          looking_for_tags: string[] | null;
+          instagram_url: string | null;
+          job: string | null;
+          height: string | null;
+          is_active: boolean | null;
+          is_admin: boolean | null;
+          is_banned: boolean | null;
+          banned_reason: string | null;
+          banned_at: string | null;
+          last_active: string | null;
+          onboarding_completed: boolean | null;
+          coins: number | null;
+          email: string | null;
           created_at: string;
         };
-        Insert: Omit<Database['public']['Tables']['profiles']['Row'], 'created_at'>;
-        Update: Partial<Database['public']['Tables']['profiles']['Insert']>;
-      };
-      standards: {
-        Row: {
-          id: string;
-          host_id: string;
-          name: string;
-          difficulty: 'easy' | 'medium' | 'hard';
-          is_active: boolean;
-          created_at: string;
-        };
-        Insert: Omit<Database['public']['Tables']['standards']['Row'], 'created_at'>;
-        Update: Partial<Database['public']['Tables']['standards']['Insert']>;
-      };
-      intentions: {
-        Row: {
-          id: string;
-          standard_id: string;
-          day: number;
-          description: string;
-          type: 'photo' | 'voice' | 'text' | 'location';
-        };
-        Insert: Omit<Database['public']['Tables']['intentions']['Row'], 'id'>;
-        Update: Partial<Database['public']['Tables']['intentions']['Insert']>;
+        Insert: Partial<Database['public']['Tables']['profiles']['Row']>;
+        Update: Partial<Database['public']['Tables']['profiles']['Row']>;
       };
       connections: {
         Row: {
           id: string;
+          test_id: string;
           standard_id: string;
           guest_id: string;
           host_id: string;
@@ -99,6 +97,44 @@ export interface Database {
         Insert: Omit<Database['public']['Tables']['transactions']['Row'], 'id' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['transactions']['Insert']>;
       };
+      reports: {
+        Row: {
+          id: number;
+          reporter_id: string;
+          reported_id: string;
+          reason: string;
+          details: string | null;
+          status: 'pending' | 'reviewed' | 'actioned' | 'dismissed';
+          admin_notes: string | null;
+          created_at: string;
+          resolved_at: string | null;
+          resolved_by: string | null;
+        };
+        Insert: Omit<Database['public']['Tables']['reports']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['reports']['Row']>;
+      };
+      admin_actions: {
+        Row: {
+          id: number;
+          admin_id: string;
+          action: string;
+          target_id: string | null;
+          metadata: Json | null;
+          created_at: string;
+        };
+        Insert: Omit<Database['public']['Tables']['admin_actions']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['admin_actions']['Row']>;
+      };
+      blocked_pairs: {
+        Row: {
+          id: number;
+          host_id: string;
+          guest_id: string;
+          created_at: string;
+        };
+        Insert: Omit<Database['public']['Tables']['blocked_pairs']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['blocked_pairs']['Row']>;
+      };
       mod_queue: {
         Row: {
           id: string;
@@ -122,6 +158,19 @@ export interface Database {
       };
     };
     Functions: {
+      get_matching_profiles: {
+        Args: {
+          p_user_id: string;
+          p_viewing_gender: string;
+          p_user_interests: string[];
+          p_user_standards: string[];
+          p_user_lat: number;
+          p_user_lng: number;
+          p_limit?: number;
+          p_offset?: number;
+        };
+        Returns: Record<string, unknown>[];
+      };
       deduct_coins: {
         Args: { user_id: string; amount: number };
         Returns: { success: boolean; balance: number };
@@ -129,6 +178,18 @@ export interface Database {
       add_coins: {
         Args: { user_id: string; amount: number; description?: string };
         Returns: { success: boolean; balance: number };
+      };
+      admin_ban_user: {
+        Args: { p_user_id: string; p_reason: string };
+        Returns: void;
+      };
+      admin_unban_user: {
+        Args: { p_user_id: string };
+        Returns: void;
+      };
+      admin_set_admin: {
+        Args: { p_user_id: string };
+        Returns: void;
       };
     };
   };

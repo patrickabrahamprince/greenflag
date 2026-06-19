@@ -14,19 +14,19 @@ export async function GET(req: Request) {
 
     const { data: viewer } = await supabase
       .from('profiles')
-      .select('gender, interests, lat, lng')
+      .select('gender, looking_for_interests, lat, lng')
       .eq('id', user.id)
       .single();
 
-    if (viewer?.gender !== 'guest') {
+    if (viewer?.gender !== 'host') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const { data, error } = await supabase.rpc('get_matching_profiles', {
       p_user_id: user.id,
-      p_viewing_gender: 'host',
-      p_user_interests: viewer.interests || [],
-      p_user_standards: [],
+      p_viewing_gender: 'guest',
+      p_user_interests: [],
+      p_user_standards: viewer.looking_for_interests || [],
       p_user_lat: viewer.lat || 0,
       p_user_lng: viewer.lng || 0,
       p_limit: 20,

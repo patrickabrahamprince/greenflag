@@ -1,5 +1,5 @@
 export type Role = 'guest' | 'host';
-export type Gender = 'man' | 'woman';
+export type Gender = 'guest' | 'host' | 'man' | 'woman';
 
 export interface Profile {
   id: string;
@@ -10,6 +10,10 @@ export interface Profile {
   photos: string[];
   role: Role;
   gender?: Gender;
+  interests?: string[];
+  looking_for_interests?: string[];
+  coins?: number;
+  onboarding_completed?: boolean;
   created_at: string;
 }
 

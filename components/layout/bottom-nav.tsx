@@ -13,6 +13,7 @@ const guestTabs = [
 ];
 
 const hostTabs = [
+  { name: 'Discover', href: '/discover-men', icon: Compass },
   { name: 'Profile', href: '/profile', icon: User },
 ];
 

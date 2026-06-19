@@ -1,52 +1,88 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
-  Image as ImageIcon,
   Users,
-  Link2,
-  FlaskConical,
-  ScrollText,
+  Flag,
   BarChart3,
-  ArrowLeft,
+  ScrollText,
+  LogOut,
+  Link2,
+  Loader2,
 } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { label: 'Queue', href: '/admin/queue', icon: ImageIcon },
   { label: 'Users', href: '/admin/users', icon: Users },
+  { label: 'Reports', href: '/admin/reports', icon: Flag },
   { label: 'Connections', href: '/admin/connections', icon: Link2 },
-  { label: 'Tests', href: '/admin/tests', icon: FlaskConical },
-  { label: 'Logs', href: '/admin/logs', icon: ScrollText },
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
+  { label: 'Audit', href: '/admin/audit', icon: ScrollText },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const supabase = createClient();
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) {
+        router.replace('/login');
+        return;
+      }
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', user.id)
+        .single();
+      const p = profile as { is_admin: boolean } | null;
+      if (!p?.is_admin) {
+        router.replace('/');
+        return;
+      }
+      setChecking(false);
+    });
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/login');
+  };
+
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-[#D4AF37]" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black flex">
-      <aside className="hidden lg:flex w-64 flex-col bg-surface border-r border-border p-4">
+      <aside className="hidden lg:flex w-64 flex-col bg-[#0A0A0A] border-r border-white/10 p-4">
         <div className="flex items-center gap-3 px-3 py-4">
-          <div className="w-8 h-8 rounded-lg bg-gold flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-[#D4AF37] flex items-center justify-center">
             <span className="text-black font-bold text-sm">G</span>
           </div>
-          <span className="text-white font-display text-lg">Admin</span>
+          <span className="text-[#EDEADE] font-display text-lg">Admin</span>
         </div>
         <nav className="flex-1 space-y-1 mt-6">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
-            const active = pathname === item.href;
+            const active = pathname === item.href || pathname.startsWith(item.href + '/');
             return (
               <button
                 key={item.href}
                 onClick={() => router.push(item.href)}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
                   active
-                    ? 'bg-gold/10 text-gold'
-                    : 'text-muted hover:text-white hover:bg-surface-light'
+                    ? 'bg-[#D4AF37]/10 text-[#D4AF37]'
+                    : 'text-[#8E8E93] hover:text-white hover:bg-white/5'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -55,17 +91,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             );
           })}
         </nav>
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-400 hover:bg-red-500/10 transition-all mt-auto"
+        >
+          <LogOut className="w-4 h-4" />
+          Logout
+        </button>
       </aside>
 
       <div className="flex-1 min-h-screen">
-        <header className="lg:hidden flex items-center gap-3 px-4 py-3 border-b border-border">
-          <button onClick={() => router.back()} className="btn-ghost p-2">
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <span className="text-white font-display">Admin</span>
+        <header className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-white/10">
+          <span className="text-[#EDEADE] font-display">Admin</span>
+          <button onClick={handleLogout} className="text-red-400 text-sm">Logout</button>
         </header>
 
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-border z-50">
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#0A0A0A] border-t border-white/10 z-50">
           <nav className="flex overflow-x-auto scrollbar-hide">
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
@@ -75,7 +116,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   key={item.href}
                   onClick={() => router.push(item.href)}
                   className={`flex flex-col items-center gap-0.5 px-3 py-2 text-[10px] min-w-[60px] transition-colors ${
-                    active ? 'text-gold' : 'text-muted'
+                    active ? 'text-[#D4AF37]' : 'text-[#8E8E93]'
                   }`}
                 >
                   <Icon className="w-4 h-4" />

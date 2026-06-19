@@ -11,21 +11,17 @@ export async function POST(
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    if (user.id === id) {
-      return NextResponse.json({ error: 'Cannot ban yourself' }, { status: 400 });
-    }
+    const { approve } = await req.json();
 
-    const { reason } = await req.json();
-    if (!reason?.trim()) {
-      return NextResponse.json({ error: 'Reason is required' }, { status: 400 });
-    }
-
-    const { error } = await supabase.rpc('admin_ban_user', {
-      p_user_id: id,
-      p_reason: reason.trim(),
+    const { error } = await supabase.rpc('review_connection', {
+      p_connection_id: id,
+      p_approve: approve,
     });
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

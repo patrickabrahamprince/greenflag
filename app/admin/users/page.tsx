@@ -1,154 +1,275 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Search, Eye, LayoutDashboard, Trash2, AlertTriangle, X
+  Search, Eye, LayoutDashboard, Ban, Shield, X, AlertTriangle, CheckCircle, Loader2
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const MOCK_USERS = [
-  { id: '1', name: 'Aarav Sharma', phone: '+91 98765 43210', email: 'aarav@example.com', created_at: '2026-06-01T10:00:00Z', role: 'guest', wallet_balance: 15 },
-  { id: '2', name: 'Ananya Gupta', phone: '+91 98765 43211', email: 'ananya@example.com', created_at: '2026-06-02T11:00:00Z', role: 'host', wallet_balance: 0 },
-  { id: '3', name: 'Rohan Patel', phone: '+91 98765 43212', email: 'rohan@example.com', created_at: '2026-06-03T12:00:00Z', role: 'guest', wallet_balance: 5 },
-  { id: '4', name: 'Ishita Verma', phone: '+91 98765 43213', email: 'ishita@example.com', created_at: '2026-06-04T13:00:00Z', role: 'host', wallet_balance: 50 },
-  { id: '5', name: 'Karan Singh', phone: '+91 98765 43214', email: 'karan@example.com', created_at: '2026-06-05T14:00:00Z', role: 'guest', wallet_balance: 10 },
-  { id: '6', name: 'Maya Joshi', phone: '+91 98765 43215', email: 'maya@example.com', created_at: '2026-06-06T15:00:00Z', role: 'guest', wallet_balance: 0 },
-  { id: '7', name: 'Arjun Nair', phone: '+91 98765 43216', email: 'arjun@example.com', created_at: '2026-06-07T16:00:00Z', role: 'host', wallet_balance: 120 },
-  { id: '8', name: 'Diya Malhotra', phone: '+91 98765 43217', email: 'diya@example.com', created_at: '2026-06-08T17:00:00Z', role: 'guest', wallet_balance: 3 },
-  { id: '9', name: 'Vivaan Kapoor', phone: '+91 98765 43218', email: 'vivaan@example.com', created_at: '2026-06-09T18:00:00Z', role: 'host', wallet_balance: 200 },
-  { id: '10', name: 'Sara Khan', phone: '+91 98765 43219', email: 'sara@example.com', created_at: '2026-06-10T19:00:00Z', role: 'guest', wallet_balance: 25 },
-];
+interface AdminUser {
+  id: string;
+  name: string;
+  age: number;
+  gender: string;
+  city_auto?: string;
+  created_at: string;
+  last_active?: string;
+  is_banned: boolean;
+  is_admin: boolean;
+  photos: string[];
+  email: string;
+  role: string;
+}
 
 export default function AdminUsers() {
   const router = useRouter();
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [total, setTotal] = useState(0);
   const [search, setSearch] = useState('');
-  const [users, setUsers] = useState(MOCK_USERS);
-  const [deleting, setDeleting] = useState<string | null>(null);
-  const [confirmInput, setConfirmInput] = useState('');
-  const [purging, setPurging] = useState(false);
+  const [gender, setGender] = useState('');
+  const [status, setStatus] = useState('');
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  const filtered = users.filter((u) => {
-    const q = search.toLowerCase();
-    return (
-      u.name.toLowerCase().includes(q) ||
-      u.phone.includes(q) ||
-      u.email.toLowerCase().includes(q)
-    );
-  });
+  const [banTarget, setBanTarget] = useState<AdminUser | null>(null);
+  const [banReason, setBanReason] = useState('');
+  const [banning, setBanning] = useState(false);
 
-  const openDelete = (userId: string) => {
-    setDeleting(userId);
-    setConfirmInput('');
-  };
-
-  const closeDelete = () => {
-    setDeleting(null);
-    setConfirmInput('');
-  };
-
-  const targetUser = deleting ? users.find((u) => u.id === deleting) : null;
-  const confirmMatch = confirmInput === targetUser?.phone;
-
-  const handlePurge = async () => {
-    if (!deleting || !confirmMatch) return;
-    setPurging(true);
+  const fetchUsers = useCallback(async () => {
+    setLoading(true);
     try {
-      const res = await fetch('/api/admin/users/purge', {
+      const params = new URLSearchParams();
+      if (search) params.set('search', search);
+      if (gender) params.set('gender', gender);
+      if (status) params.set('status', status);
+      params.set('page', page.toString());
+      const res = await fetch(`/api/admin/users?${params}`);
+      const d = await res.json();
+      if (d.users) { setUsers(d.users); setTotal(d.total); }
+    } catch {
+      toast.error('Failed to load users');
+    } finally {
+      setLoading(false);
+    }
+  }, [search, gender, status, page]);
+
+  useEffect(() => { fetchUsers(); }, [fetchUsers]);
+
+  const handleBan = async () => {
+    if (!banTarget || !banReason.trim()) return;
+    setBanning(true);
+    try {
+      const res = await fetch(`/api/admin/users/${banTarget.id}/ban`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: deleting }),
+        body: JSON.stringify({ reason: banReason.trim() }),
       });
-      const data = await res.json();
-      if (data.success) {
-        toast.success(`Deleted ${data.deleted_tables.length} tables`);
-        setUsers((prev) => prev.filter((u) => u.id !== deleting));
-        closeDelete();
+      const d = await res.json();
+      if (d.success) {
+        toast.success('User banned');
+        setBanTarget(null);
+        setBanReason('');
+        fetchUsers();
       } else {
-        toast.error(data.error || 'Purge failed');
+        toast.error(d.error || 'Failed to ban');
       }
     } catch {
       toast.error('Network error');
     } finally {
-      setPurging(false);
+      setBanning(false);
+    }
+  };
+
+  const handleSetAdmin = async (userId: string) => {
+    try {
+      const res = await fetch(`/api/admin/users/${userId}/set-admin`, {
+        method: 'POST',
+      });
+      const d = await res.json();
+      if (d.success) {
+        toast.success('Admin role granted');
+        fetchUsers();
+      } else {
+        toast.error(d.error || 'Failed');
+      }
+    } catch {
+      toast.error('Network error');
     }
   };
 
   return (
     <div className="animate-fade-in">
-      <h1 className="text-2xl font-display text-white mb-6">Users</h1>
-
-      <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
-        <input
-          className="input pl-10"
-          placeholder="Search by name, phone, or email..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-display text-[#EDEADE]">Users</h1>
+        <span className="text-xs text-[#8E8E93]">{total} total</span>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-muted text-xs uppercase border-b border-border">
-              <th className="text-left py-3 px-2">Name</th>
-              <th className="text-left py-3 px-2">Phone</th>
-              <th className="text-left py-3 px-2">Joined</th>
-              <th className="text-left py-3 px-2">Role</th>
-              <th className="text-right py-3 px-2">Coins</th>
-              <th className="text-right py-3 px-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((user) => (
-              <tr key={user.id} className="border-b border-border/50 hover:bg-surface/50">
-                <td className="py-3 px-2 text-white font-medium">{user.name}</td>
-                <td className="py-3 px-2 text-muted text-xs">{user.phone}</td>
-                <td className="py-3 px-2 text-muted text-xs">
-                  {new Date(user.created_at).toLocaleDateString()}
-                </td>
-                <td className="py-3 px-2">
-                  <span className="text-xs capitalize">{user.role}</span>
-                </td>
-                <td className="py-3 px-2 text-right text-white">{user.wallet_balance}</td>
-                <td className="py-3 px-2">
-                  <div className="flex items-center gap-1 justify-end">
-                    {user.role === 'host' && (
-                      <button
-                        onClick={() => router.push(`/admin/host-dashboard/${user.id}`)}
-                        className="btn-ghost text-xs p-1.5 text-gold"
-                        title="View Dashboard"
-                      >
-                        <LayoutDashboard className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                    <button className="btn-ghost text-xs p-1.5" title="View Data">
-                      <Eye className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => openDelete(user.id)}
-                      className="btn-ghost text-xs p-1.5 text-red-500 hover:text-red-400"
-                      title="Hard Delete"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {filtered.length === 0 && (
-        <div className="empty-state py-16">
-          <Search className="w-8 h-8 text-muted mx-auto mb-3" />
-          <p className="text-muted text-sm">No users found</p>
+      <div className="flex flex-wrap gap-2 mb-4">
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8E8E93]" />
+          <input
+            className="input pl-10"
+            placeholder="Search by name or email..."
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+          />
         </div>
+        <select
+          className="input max-w-[130px]"
+          value={gender}
+          onChange={(e) => { setGender(e.target.value); setPage(0); }}
+        >
+          <option value="">All genders</option>
+          <option value="host">Host</option>
+          <option value="guest">Guest</option>
+        </select>
+        <select
+          className="input max-w-[130px]"
+          value={status}
+          onChange={(e) => { setStatus(e.target.value); setPage(0); }}
+        >
+          <option value="">All status</option>
+          <option value="active">Active</option>
+          <option value="banned">Banned</option>
+        </select>
+      </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-6 h-6 animate-spin text-[#D4AF37]" />
+        </div>
+      ) : (
+        <>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-[#8E8E93] text-xs uppercase border-b border-white/10">
+                  <th className="text-left py-3 px-2">Name</th>
+                  <th className="text-left py-3 px-2">Gender</th>
+                  <th className="text-left py-3 px-2">City</th>
+                  <th className="text-left py-3 px-2">Joined</th>
+                  <th className="text-left py-3 px-2">Status</th>
+                  <th className="text-left py-3 px-2">Debug</th>
+                  <th className="text-right py-3 px-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((u) => (
+                  <tr key={u.id} className="border-b border-white/5 hover:bg-white/5">
+                    <td className="py-3 px-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
+                          {u.photos?.[0] ? (
+                            <img src={u.photos[0]} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="text-xs text-[#8E8E93]">{u.name?.[0]}</span>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-[#EDEADE] font-medium text-xs">{u.name}</p>
+                          <p className="text-[#8E8E93] text-[10px]">{u.email}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-3 px-2 text-[#8E8E93] text-xs capitalize">{u.gender}</td>
+                    <td className="py-3 px-2 text-[#8E8E93] text-xs">{u.city_auto || '-'}</td>
+                    <td className="py-3 px-2 text-[#8E8E93] text-xs">
+                      {new Date(u.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="py-3 px-2">
+                      {u.is_banned ? (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400">Banned</span>
+                      ) : u.is_admin ? (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-[#D4AF37]/10 text-[#D4AF37]">Admin</span>
+                      ) : (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-400">Active</span>
+                      )}
+                    </td>
+                    <td className="py-3 px-2">
+                      <button
+                        onClick={() => router.push(`/admin/users/${u.id}/matches`)}
+                        className="text-blue-400 hover:text-blue-300 text-xs font-medium"
+                      >
+                        View Matches
+                      </button>
+                    </td>
+                    <td className="py-3 px-2">
+                      <div className="flex items-center gap-1 justify-end">
+                        <button
+                          onClick={() => router.push(`/profile/${u.id}`)}
+                          className="btn-ghost text-xs p-1.5"
+                          title="View Profile"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                        {u.role === 'host' && (
+                          <button
+                            onClick={() => router.push(`/admin/host-dashboard/${u.id}`)}
+                            className="btn-ghost text-xs p-1.5 text-[#D4AF37]"
+                            title="Host Dashboard"
+                          >
+                            <LayoutDashboard className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                        {!u.is_admin && (
+                          <button
+                            onClick={() => handleSetAdmin(u.id)}
+                            className="btn-ghost text-xs p-1.5 text-blue-400"
+                            title="Make Admin"
+                          >
+                            <Shield className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                        {!u.is_banned && (
+                          <button
+                            onClick={() => setBanTarget(u)}
+                            className="btn-ghost text-xs p-1.5 text-red-400"
+                            title="Ban User"
+                          >
+                            <Ban className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {users.length === 0 && (
+            <div className="empty-state py-16">
+              <Search className="w-8 h-8 text-[#8E8E93] mx-auto mb-3" />
+              <p className="text-[#8E8E93] text-sm">No users found</p>
+            </div>
+          )}
+
+          {total > 20 && (
+            <div className="flex items-center justify-center gap-3 mt-6">
+              <button
+                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                disabled={page === 0}
+                className="btn-secondary text-xs py-2 disabled:opacity-30"
+              >
+                Previous
+              </button>
+              <span className="text-xs text-[#8E8E93]">
+                Page {page + 1} of {Math.ceil(total / 20)}
+              </span>
+              <button
+                onClick={() => setPage((p) => p + 1)}
+                disabled={(page + 1) * 20 >= total}
+                className="btn-secondary text-xs py-2 disabled:opacity-30"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </>
       )}
 
-      {deleting && targetUser && (
+      {banTarget && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
           <div className="card max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
@@ -156,53 +277,41 @@ export default function AdminUsers() {
                 <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
                   <AlertTriangle className="w-5 h-5 text-red-500" />
                 </div>
-                <h3 className="text-lg font-display text-white">Hard Delete User</h3>
+                <h3 className="text-lg font-display text-[#EDEADE]">Ban User</h3>
               </div>
-              <button onClick={closeDelete} className="btn-ghost p-1">
-                <X className="w-5 h-5 text-muted" />
+              <button onClick={() => { setBanTarget(null); setBanReason(''); }} className="btn-ghost p-1">
+                <X className="w-5 h-5 text-[#8E8E93]" />
               </button>
             </div>
 
             <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 mb-4">
-              <p className="text-sm text-red-400 font-medium mb-1">This deletes ALL data for:</p>
-              <p className="text-white font-medium">{targetUser.phone}</p>
-            </div>
-
-            <div className="space-y-2 mb-6">
-              <p className="text-sm text-muted">
-                This action <span className="text-red-400">cannot be undone</span>. It will permanently delete:
-              </p>
-              <ul className="text-xs text-muted space-y-1 ml-4 list-disc">
-                <li>Profile photos from storage</li>
-                <li>All submissions and messages</li>
-                <li>All connections and transactions</li>
-                <li>Wallet balance and profile</li>
-                <li>The user account itself</li>
-              </ul>
+              <p className="text-sm text-red-400 font-medium mb-1">You are banning:</p>
+              <p className="text-[#EDEADE] font-medium">{banTarget.name} ({banTarget.email})</p>
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm text-muted mb-2">
-                Type <span className="text-white font-mono">{targetUser.phone}</span> to confirm:
-              </label>
-              <input
-                className="input"
-                value={confirmInput}
-                onChange={(e) => setConfirmInput(e.target.value)}
-                placeholder={targetUser.phone}
+              <label className="block text-sm text-[#8E8E93] mb-2">Reason for ban *</label>
+              <textarea
+                className="input min-h-[80px] resize-none"
+                placeholder="e.g. Fake profile, inappropriate behavior..."
+                value={banReason}
+                onChange={(e) => setBanReason(e.target.value)}
               />
             </div>
 
             <div className="flex gap-3">
-              <button onClick={closeDelete} className="btn-secondary flex-1 text-sm">
+              <button
+                onClick={() => { setBanTarget(null); setBanReason(''); }}
+                className="btn-secondary flex-1 text-sm"
+              >
                 Cancel
               </button>
               <button
-                onClick={handlePurge}
-                disabled={!confirmMatch || purging}
+                onClick={handleBan}
+                disabled={!banReason.trim() || banning}
                 className="btn-danger flex-1 text-sm"
               >
-                {purging ? 'Deleting...' : 'Delete Forever'}
+                {banning ? 'Banning...' : 'Ban User'}
               </button>
             </div>
           </div>

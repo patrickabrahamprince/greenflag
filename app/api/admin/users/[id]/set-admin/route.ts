@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 export async function POST(
-  req: Request,
+  _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -11,18 +11,8 @@ export async function POST(
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    if (user.id === id) {
-      return NextResponse.json({ error: 'Cannot ban yourself' }, { status: 400 });
-    }
-
-    const { reason } = await req.json();
-    if (!reason?.trim()) {
-      return NextResponse.json({ error: 'Reason is required' }, { status: 400 });
-    }
-
-    const { error } = await supabase.rpc('admin_ban_user', {
+    const { error } = await supabase.rpc('admin_set_admin', {
       p_user_id: id,
-      p_reason: reason.trim(),
     });
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });

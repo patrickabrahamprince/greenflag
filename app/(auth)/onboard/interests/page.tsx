@@ -113,13 +113,18 @@ export default function OnboardInterestsPage() {
       return;
     }
 
-    const payload: Record<string, unknown> = { id: authUser.id };
+    const payload: Record<string, unknown> = { id: authUser.id, onboarding_completed: true };
     if (isHost) {
       payload.about_me_tags = persona;
       payload.looking_for_tags = standard;
+      payload.looking_for_interests = standard;
+      payload.gender = 'host';
     } else {
       payload.about_me_tags = genericInterests;
       payload.looking_for_tags = genericLookingFor;
+      payload.interests = genericInterests;
+      payload.looking_for_interests = genericLookingFor;
+      payload.gender = 'guest';
     }
 
     const { error } = await supabase.from('profiles').upsert(payload as any);
@@ -141,7 +146,7 @@ export default function OnboardInterestsPage() {
     } as any);
 
     toast.success('Profile created!');
-    router.replace(isHost ? '/profile' : '/discover');
+    router.replace(isHost ? '/discover-men' : '/discover');
   };
 
   if (!authChecked) {
