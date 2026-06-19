@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "framework": null,
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/((?!_expo/|assets/|favicon).*)", "destination": "/index.html" }
+  ]
+}
