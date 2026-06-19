@@ -1,4 +1,5 @@
 export type Role = 'guest' | 'host';
+export type Gender = 'man' | 'woman';
 
 export interface Profile {
   id: string;
@@ -8,6 +9,7 @@ export interface Profile {
   bio: string;
   photos: string[];
   role: Role;
+  gender?: Gender;
   created_at: string;
 }
 

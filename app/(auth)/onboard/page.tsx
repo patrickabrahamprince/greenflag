@@ -4,32 +4,24 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore } from '@/lib/store';
-import { ArrowLeft, Crown, Target, Upload, X } from 'lucide-react';
+import { ArrowLeft, Venus, Mars, Upload, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
-type Step = 'role' | 'profile';
-type Role = 'host' | 'guest';
+type Step = 'gender' | 'profile';
+type Gender = 'woman' | 'man';
 
 const profileSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   age: z.number().min(18, 'You must be at least 18').max(60, 'Age must be 60 or under'),
   city: z.string().min(1, 'Please select a city'),
   bio: z.string().max(120, 'Bio must be 120 characters or less'),
-  photos: z.array(z.string()).min(3, 'Please add at least 3 photos'),
+  photos: z.array(z.string()).min(1, 'Please add at least 1 photo'),
 });
 
 const INDIAN_CITIES = [
-  'Mumbai',
-  'Delhi',
-  'Bangalore',
-  'Hyderabad',
-  'Chennai',
-  'Kolkata',
-  'Pune',
-  'Ahmedabad',
-  'Jaipur',
-  'Surat',
+  'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai',
+  'Kolkata', 'Pune', 'Ahmedabad', 'Jaipur', 'Surat',
 ];
 
 const MOCK_PHOTOS = [
@@ -46,8 +38,8 @@ export default function OnboardPage() {
   const supabase = createClient();
   const setUser = useUserStore((s) => s.setUser);
 
-  const [step, setStep] = useState<Step>('role');
-  const [role, setRole] = useState<Role | null>(null);
+  const [step, setStep] = useState<Step>('gender');
+  const [gender, setGender] = useState<Gender | null>(null);
   const [name, setName] = useState('');
   const [age, setAge] = useState<number>(25);
   const [city, setCity] = useState('');
@@ -87,6 +79,8 @@ export default function OnboardPage() {
       return;
     }
 
+    const role = gender === 'woman' ? 'host' : 'guest';
+
     const { error } = await supabase.from('profiles').upsert({
       id: authUser.id,
       name,
@@ -95,6 +89,7 @@ export default function OnboardPage() {
       bio,
       photos,
       role,
+      gender,
     } as any);
 
     setLoading(false);
@@ -115,61 +110,49 @@ export default function OnboardPage() {
     });
 
     toast.success('Profile created!');
-    if (role === 'host') {
+    if (gender === 'woman') {
       router.replace('/your-standards/create');
     } else {
       router.replace('/discover');
     }
   };
 
-  if (step === 'role') {
+  if (step === 'gender') {
     return (
-      <div className="w-full animate-fade-in">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-display font-semibold text-white mb-2">
-            Join GreenFlag
+      <div className="w-full animate-fade-in min-h-[80vh] flex flex-col justify-center">
+        <div className="text-center mb-10">
+          <h1 className="text-3xl font-display font-semibold text-white mb-3">
+            Welcome to GreenFlag
           </h1>
-          <p className="text-muted text-sm">
-            Choose how you want to connect
-          </p>
+          <p className="text-muted text-sm">Choose how you want to show up</p>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-4 px-2">
           <button
-            onClick={() => { setRole('host'); setStep('profile'); }}
-            className={`w-full card text-left hover:border-gold/30 transition-all ${
-              role === 'host' ? 'border-gold' : ''
-            }`}
+            onClick={() => { setGender('woman'); setStep('profile'); }}
+            className="w-full h-48 rounded-2xl bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 border border-[#D4AF37]/20 hover:border-[#D4AF37]/50 transition-all duration-300 relative overflow-hidden group"
           >
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center shrink-0">
-                <Crown className="text-gold" size={24} />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
+            <div className="relative z-10 h-full flex flex-col items-center justify-center gap-3">
+              <div className="w-16 h-16 rounded-full bg-[#D4AF37]/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Venus className="w-8 h-8 text-[#D4AF37]" />
               </div>
-              <div>
-                <h3 className="text-white font-medium text-lg">I set the Standards</h3>
-                <p className="text-muted text-sm mt-1">
-                  Create standards and invite others to meet them. You're in control.
-                </p>
-              </div>
+              <span className="text-2xl font-display text-[#EDEADE]">I&apos;m a Woman</span>
+              <span className="text-sm text-[#EDEADE]/60">I set the standards</span>
             </div>
           </button>
 
           <button
-            onClick={() => { setRole('guest'); setStep('profile'); }}
-            className={`w-full card text-left hover:border-gold/30 transition-all ${
-              role === 'guest' ? 'border-gold' : ''
-            }`}
+            onClick={() => { setGender('man'); setStep('profile'); }}
+            className="w-full h-48 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:border-white/30 transition-all duration-300 relative overflow-hidden group"
           >
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center shrink-0">
-                <Target className="text-gold" size={24} />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
+            <div className="relative z-10 h-full flex flex-col items-center justify-center gap-3">
+              <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Mars className="w-8 h-8 text-white/80" />
               </div>
-              <div>
-                <h3 className="text-white font-medium text-lg">I meet Standards</h3>
-                <p className="text-muted text-sm mt-1">
-                  Find standards that resonate and show you can meet them.
-                </p>
-              </div>
+              <span className="text-2xl font-display text-[#EDEADE]">I&apos;m a Man</span>
+              <span className="text-sm text-[#EDEADE]/60">I pursue standards</span>
             </div>
           </button>
         </div>
@@ -180,16 +163,11 @@ export default function OnboardPage() {
   return (
     <div className="w-full animate-fade-in pb-8">
       <div className="flex items-center mb-6">
-        <button
-          onClick={() => setStep('role')}
-          className="text-muted hover:text-white transition-colors"
-        >
+        <button onClick={() => setStep('gender')} className="text-muted hover:text-white transition-colors">
           <ArrowLeft size={24} />
         </button>
         <div className="flex-1 text-center">
-          <h1 className="text-xl font-display font-semibold text-white">
-            Complete your profile
-          </h1>
+          <h1 className="text-xl font-display font-semibold text-white">Complete your profile</h1>
         </div>
         <div className="w-6" />
       </div>
@@ -256,7 +234,7 @@ export default function OnboardPage() {
 
         <div>
           <label className="block text-sm font-medium text-white mb-1.5">
-            Photos <span className="text-muted">(3-6 required)</span>
+            Photos <span className="text-muted">(1-6)</span>
           </label>
           <div className="grid grid-cols-3 gap-2">
             {Array.from({ length: 6 }).map((_, i) => {
@@ -277,11 +255,7 @@ export default function OnboardPage() {
                 >
                   {photo ? (
                     <>
-                      <img
-                        src={photo}
-                        alt={`Photo ${i + 1}`}
-                        className="w-full h-full object-cover"
-                      />
+                      <img src={photo} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
                       <button
                         onClick={(e) => { e.stopPropagation(); removePhoto(photo); }}
                         className="absolute top-1 right-1 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center"
@@ -299,11 +273,7 @@ export default function OnboardPage() {
           {errors.photos && <p className="text-red-500 text-xs mt-1">{errors.photos}</p>}
         </div>
 
-        <button
-          onClick={handleSubmit}
-          disabled={loading}
-          className="btn-primary w-full mt-2"
-        >
+        <button onClick={handleSubmit} disabled={loading} className="btn-primary w-full mt-2">
           {loading ? 'Creating profile...' : 'Complete Profile'}
         </button>
       </div>
