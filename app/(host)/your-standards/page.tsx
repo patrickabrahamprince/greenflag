@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Plus, Users, Clock, Check, Edit3, Pause, ChevronRight } from 'lucide-react';
-import type { Standard, Connection } from '@/types';
+import { Plus, Users, Edit3, Pause, ChevronRight } from 'lucide-react';
+import type { Standard } from '@/types';
 
 const MOCK_STANDARD: Standard = {
   id: '1',
@@ -15,55 +15,29 @@ const MOCK_STANDARD: Standard = {
   created_at: '2026-06-01T00:00:00Z',
 };
 
-const MOCK_CONNECTIONS: Connection[] = [
-  {
-    id: 'c1',
-    test_id: 't1',
-    guest_id: 'g1',
-    host_id: 'host1',
-    status: 'active',
-    tasks_completed: 3,
-    expires_at: '2026-07-01T00:00:00Z',
-    created_at: '2026-06-10T00:00:00Z',
-  },
-  {
-    id: 'c2',
-    test_id: 't2',
-    guest_id: 'g2',
-    host_id: 'host1',
-    status: 'active',
-    tasks_completed: 6,
-    expires_at: '2026-07-05T00:00:00Z',
-    created_at: '2026-06-12T00:00:00Z',
-  },
-  {
-    id: 'c3',
-    test_id: 't3',
-    guest_id: 'g3',
-    host_id: 'host1',
-    status: 'pending',
-    tasks_completed: 0,
-    expires_at: '2026-07-10T00:00:00Z',
-    created_at: '2026-06-15T00:00:00Z',
-  },
+const MOCK_CONNECTIONS = [
+  { id: 'c1', test_id: 't1', guest_name: 'Rahul', guest_age: 28, guest_city: 'Mumbai', status: 'active' as const, tasks_completed: 3, expires_at: '2026-07-01T00:00:00Z', created_at: '2026-06-10T00:00:00Z' },
+  { id: 'c2', test_id: 't2', guest_name: 'Arjun', guest_age: 31, guest_city: 'Bangalore', status: 'active' as const, tasks_completed: 6, expires_at: '2026-07-05T00:00:00Z', created_at: '2026-06-12T00:00:00Z' },
+  { id: 'c3', test_id: 't3', guest_name: 'Vivaan', guest_age: 26, guest_city: 'Pune', status: 'pending' as const, tasks_completed: 0, expires_at: '2026-07-10T00:00:00Z', created_at: '2026-06-15T00:00:00Z' },
 ];
 
-function ApplicantCard({ connection }: { connection: Connection }) {
+function ApplicantCard({ connection }: { connection: any }) {
   return (
     <div className="card flex items-center gap-4 animate-fade-in">
       <div className="w-14 h-14 rounded-full bg-surface-light flex items-center justify-center text-muted shrink-0">
-        <Users className="w-6 h-6" />
+        <span className="text-sm font-medium text-white">{connection.guest_name?.charAt(0)}</span>
       </div>
       <div className="flex-1 min-w-0">
-        <p className="font-medium text-white">Guest #{connection.guest_id.slice(-4)}</p>
-        <p className="text-sm text-muted">Pending review</p>
+        <p className="font-medium text-white">{connection.guest_name}</p>
+        <p className="text-sm text-muted">{connection.guest_age} &middot; {connection.guest_city}</p>
       </div>
+      <span className="text-xs text-gold">Pending</span>
       <ChevronRight className="w-5 h-5 text-muted" />
     </div>
   );
 }
 
-function ActiveConnectionCard({ connection }: { connection: Connection }) {
+function ActiveConnectionCard({ connection }: { connection: any }) {
   const total = 8;
   const progress = connection.tasks_completed;
   const pct = Math.round((progress / total) * 100);
@@ -72,19 +46,16 @@ function ActiveConnectionCard({ connection }: { connection: Connection }) {
     <div className="card animate-fade-in">
       <div className="flex items-center gap-4 mb-3">
         <div className="w-14 h-14 rounded-full bg-surface-light flex items-center justify-center text-muted shrink-0">
-          <Users className="w-6 h-6" />
+          <span className="text-sm font-medium text-white">{connection.guest_name?.charAt(0)}</span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-medium text-white">Guest #{connection.guest_id.slice(-4)}</p>
-          <p className="text-sm text-muted">Intention {progress} of {total}</p>
+          <p className="font-medium text-white">{connection.guest_name}, {connection.guest_age}</p>
+          <p className="text-sm text-muted">{connection.guest_city} &middot; Day {Math.min(progress + 1, 8)} of 8</p>
         </div>
         <span className="text-xs font-medium text-gold">{pct}%</span>
       </div>
       <div className="w-full h-2 bg-surface-light rounded-full overflow-hidden">
-        <div
-          className="h-full bg-gold rounded-full transition-all duration-700 ease-out"
-          style={{ width: `${pct}%` }}
-        />
+        <div className="h-full bg-gold rounded-full transition-all duration-700 ease-out" style={{ width: `${pct}%` }} />
       </div>
     </div>
   );

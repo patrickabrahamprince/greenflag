@@ -4,11 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore } from '@/lib/store';
-import { ArrowLeft, Venus, Mars, Upload, X } from 'lucide-react';
+import { ArrowLeft, Venus, Mars, Upload, X, Heart } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
-type Step = 'gender' | 'profile';
+type Step = 'gender' | 'interested' | 'profile';
 type Gender = 'woman' | 'man';
 
 const profileSchema = z.object({
@@ -40,6 +40,7 @@ export default function OnboardPage() {
 
   const [step, setStep] = useState<Step>('gender');
   const [gender, setGender] = useState<Gender | null>(null);
+  const [interestedIn, setInterestedIn] = useState<Gender | null>(null);
   const [name, setName] = useState('');
   const [age, setAge] = useState<number>(25);
   const [city, setCity] = useState('');
@@ -90,6 +91,7 @@ export default function OnboardPage() {
       photos,
       role,
       gender,
+      interested_in: interestedIn,
     } as any);
 
     setLoading(false);
@@ -107,7 +109,7 @@ export default function OnboardPage() {
       photos,
       role: role as 'host' | 'guest',
       created_at: new Date().toISOString(),
-    });
+    } as any);
 
     toast.success('Profile created!');
     if (gender === 'woman') {
@@ -124,12 +126,12 @@ export default function OnboardPage() {
           <h1 className="text-3xl font-display font-semibold text-white mb-3">
             Welcome to GreenFlag
           </h1>
-          <p className="text-muted text-sm">Choose how you want to show up</p>
+          <p className="text-muted text-sm">First, tell us about yourself</p>
         </div>
 
         <div className="space-y-4 px-2">
           <button
-            onClick={() => { setGender('woman'); setStep('profile'); }}
+            onClick={() => { setGender('woman'); setStep('interested'); }}
             className="w-full h-48 rounded-2xl bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 border border-[#D4AF37]/20 hover:border-[#D4AF37]/50 transition-all duration-300 relative overflow-hidden group"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
@@ -143,7 +145,7 @@ export default function OnboardPage() {
           </button>
 
           <button
-            onClick={() => { setGender('man'); setStep('profile'); }}
+            onClick={() => { setGender('man'); setStep('interested'); }}
             className="w-full h-48 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:border-white/30 transition-all duration-300 relative overflow-hidden group"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
@@ -160,42 +162,94 @@ export default function OnboardPage() {
     );
   }
 
+  if (step === 'interested') {
+    return (
+      <div className="w-full animate-fade-in min-h-[80vh] flex flex-col justify-center">
+        <div className="flex items-center mb-10">
+          <button onClick={() => setStep('gender')} className="text-muted hover:text-white transition-colors">
+            <ArrowLeft size={24} />
+          </button>
+          <div className="flex-1 text-center">
+            <p className="text-xs text-muted uppercase tracking-wider">Step 2 of 3</p>
+          </div>
+          <div className="w-6" />
+        </div>
+
+        <div className="text-center mb-10">
+          <h1 className="text-2xl font-display font-semibold text-white mb-3">
+            Who are you interested in?
+          </h1>
+          <p className="text-muted text-sm">This helps us show you the right people</p>
+        </div>
+
+        <div className="space-y-4 px-2">
+          <button
+            onClick={() => { setInterestedIn('woman'); setStep('profile'); }}
+            className={`w-full h-40 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden group ${
+              interestedIn === 'woman'
+                ? 'border-[#D4AF37] bg-[#D4AF37]/10'
+                : 'border-white/10 bg-white/5 hover:border-white/30'
+            }`}
+          >
+            <div className="h-full flex flex-col items-center justify-center gap-3">
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform ${
+                interestedIn === 'woman' ? 'bg-[#D4AF37]/20' : 'bg-white/10'
+              }`}>
+                <Venus className={`w-8 h-8 ${interestedIn === 'woman' ? 'text-[#D4AF37]' : 'text-white/80'}`} />
+              </div>
+              <span className="text-xl font-display text-[#EDEADE]">Women</span>
+            </div>
+          </button>
+
+          <button
+            onClick={() => { setInterestedIn('man'); setStep('profile'); }}
+            className={`w-full h-40 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden group ${
+              interestedIn === 'man'
+                ? 'border-[#D4AF37] bg-[#D4AF37]/10'
+                : 'border-white/10 bg-white/5 hover:border-white/30'
+            }`}
+          >
+            <div className="h-full flex flex-col items-center justify-center gap-3">
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform ${
+                interestedIn === 'man' ? 'bg-[#D4AF37]/20' : 'bg-white/10'
+              }`}>
+                <Mars className={`w-8 h-8 ${interestedIn === 'man' ? 'text-[#D4AF37]' : 'text-white/80'}`} />
+              </div>
+              <span className="text-xl font-display text-[#EDEADE]">Men</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full animate-fade-in pb-8">
       <div className="flex items-center mb-6">
-        <button onClick={() => setStep('gender')} className="text-muted hover:text-white transition-colors">
+        <button onClick={() => setStep('interested')} className="text-muted hover:text-white transition-colors">
           <ArrowLeft size={24} />
         </button>
         <div className="flex-1 text-center">
-          <h1 className="text-xl font-display font-semibold text-white">Complete your profile</h1>
+          <p className="text-xs text-muted uppercase tracking-wider">Step 3 of 3</p>
         </div>
         <div className="w-6" />
       </div>
 
+      <h1 className="text-xl font-display font-semibold text-white text-center mb-6">
+        Complete your profile
+      </h1>
+
       <div className="space-y-5">
         <div>
           <label className="block text-sm font-medium text-white mb-1.5">Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your full name"
-            className={`input ${errors.name ? 'input-error' : ''}`}
-          />
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" className={`input ${errors.name ? 'input-error' : ''}`} />
           {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
         </div>
 
         <div>
           <label className="block text-sm font-medium text-white mb-1.5">Age</label>
           <div className="flex items-center gap-3">
-            <input
-              type="range"
-              min={18}
-              max={60}
-              value={age}
-              onChange={(e) => setAge(parseInt(e.target.value))}
-              className="flex-1 accent-gold"
-            />
+            <input type="range" min={18} max={60} value={age} onChange={(e) => setAge(parseInt(e.target.value))} className="flex-1 accent-gold" />
             <span className="text-white font-medium text-sm w-8 text-center">{age}</span>
           </div>
           {errors.age && <p className="text-red-500 text-xs mt-1">{errors.age}</p>}
@@ -203,11 +257,7 @@ export default function OnboardPage() {
 
         <div>
           <label className="block text-sm font-medium text-white mb-1.5">City</label>
-          <select
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            className={`input ${errors.city ? 'input-error' : ''}`}
-          >
+          <select value={city} onChange={(e) => setCity(e.target.value)} className={`input ${errors.city ? 'input-error' : ''}`}>
             <option value="" className="bg-surface">Select your city</option>
             {INDIAN_CITIES.map((c) => (
               <option key={c} value={c} className="bg-surface">{c}</option>
@@ -218,14 +268,7 @@ export default function OnboardPage() {
 
         <div>
           <label className="block text-sm font-medium text-white mb-1.5">Bio</label>
-          <textarea
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            placeholder="Tell us about yourself..."
-            maxLength={120}
-            rows={3}
-            className={`input resize-none ${errors.bio ? 'input-error' : ''}`}
-          />
+          <textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tell us about yourself..." maxLength={120} rows={3} className={`input resize-none ${errors.bio ? 'input-error' : ''}`} />
           <div className="flex justify-between mt-1">
             {errors.bio && <p className="text-red-500 text-xs">{errors.bio}</p>}
             <p className="text-muted text-xs ml-auto">{bio.length}/120</p>
@@ -240,26 +283,13 @@ export default function OnboardPage() {
             {Array.from({ length: 6 }).map((_, i) => {
               const photo = photos[i];
               return (
-                <div
-                  key={i}
-                  className={`aspect-square rounded-xl border-2 border-dashed flex items-center justify-center relative overflow-hidden ${
-                    photo
-                      ? 'border-transparent'
-                      : photos.length < 6
-                      ? 'border-border hover:border-gold/30 cursor-pointer'
-                      : 'border-border opacity-50'
-                  }`}
-                  onClick={() => {
-                    if (!photo && photos.length < 6) addMockPhoto();
-                  }}
-                >
+                <div key={i} className={`aspect-square rounded-xl border-2 border-dashed flex items-center justify-center relative overflow-hidden ${
+                  photo ? 'border-transparent' : photos.length < 6 ? 'border-border hover:border-gold/30 cursor-pointer' : 'border-border opacity-50'
+                }`} onClick={() => { if (!photo && photos.length < 6) addMockPhoto(); }}>
                   {photo ? (
                     <>
                       <img src={photo} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
-                      <button
-                        onClick={(e) => { e.stopPropagation(); removePhoto(photo); }}
-                        className="absolute top-1 right-1 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center"
-                      >
+                      <button onClick={(e) => { e.stopPropagation(); removePhoto(photo); }} className="absolute top-1 right-1 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center">
                         <X size={14} className="text-white" />
                       </button>
                     </>
