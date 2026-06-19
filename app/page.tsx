@@ -8,21 +8,33 @@ import { useUserStore } from '@/lib/store';
 export default function HomePage() {
   const router = useRouter();
   const user = useUserStore((s) => s.user);
+  const setUser = useUserStore((s) => s.setUser);
 
   useEffect(() => {
     if (user) {
-      if (user.role === 'host') {
-        router.replace('/profile');
-      } else {
-        router.replace('/discover');
-      }
-    } else {
-      const supabase = createClient();
-      supabase.auth.getUser().then(({ data: { user: authUser } }) => {
-        if (authUser) return;
-        router.replace('/login');
-      });
+      router.replace(user.role === 'host' ? '/profile' : '/discover');
+      return;
     }
+
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user: authUser } }) => {
+      if (!authUser) {
+        router.replace('/login');
+        return;
+      }
+      supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', authUser.id)
+        .maybeSingle()
+        .then(({ data: profile }) => {
+          if (profile) {
+            setUser(profile as any);
+          } else {
+            router.replace('/onboard');
+          }
+        });
+    });
   }, [user]);
 
   return (
