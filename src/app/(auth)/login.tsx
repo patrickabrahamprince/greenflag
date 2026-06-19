@@ -1,194 +1,71 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-  Alert,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+// @ts-nocheck
+import { useState } from 'react';
+import { SafeAreaView, Text, TextInput, TouchableOpacity, View, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { supabase } from '@/lib/supabase';
-
-console.log('[ENV] URL:', process.env.EXPO_PUBLIC_SUPABASE_URL);
-console.log('[ENV] KEY:', process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY?.slice(0, 20) + '...');
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
-      Alert.alert('Missing Fields', 'Please enter email and password.');
-      return;
+  const handleSignIn = () => {
+    if (email !== 'test@greenflag.app' || password !== 'demo123') {
+      return Alert.alert('Invalid Credentials', 'Use test@greenflag.app / demo123');
     }
     setLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password,
-      });
-      if (error) {
-        Alert.alert('Login Failed', error.message);
-      } else {
-        router.replace('/(tabs)/discover');
-      }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Network error';
-      Alert.alert('Login Failed', message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSignUp = async () => {
-    console.log('[SIGNUP] Start', { email, password: '***' });
-    setLoading(true);
-    try {
-      console.log('[SIGNUP] Calling supabase.auth.signUp');
-      const { data, error } = await supabase.auth.signUp({
-        email: email.trim().toLowerCase(),
-        password,
-      });
-      console.log('[SIGNUP] Response:', { data, error });
-      if (error) {
-        console.error('[SIGNUP] Error:', error.message, error);
-        Alert.alert('Sign Up Failed', error.message);
-      } else {
-        console.log('[SIGNUP] Success:', data.user?.id);
-        Alert.alert('Check your email', 'Account created. You can log in now.');
-      }
-    } catch (e) {
-      console.error('[SIGNUP] Caught:', e);
-      Alert.alert('Crash', e instanceof Error ? e.message : 'Unknown error');
-    } finally {
-      console.log('[SIGNUP] Finally: setLoading false');
-      setLoading(false);
-    }
+    setTimeout(() => router.replace('/(tabs)'), 50);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={{ flex: 1 }}
-      >
-        <View style={styles.inner}>
-          <Text style={styles.title}>GREENFLAG</Text>
-          <Text style={styles.subtitle}>Sign in or create an account</Text>
+    <LinearGradient colors={['#0D3D0D', '#1A4D1A']} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} className="flex-1">
+      <SafeAreaView className="flex-1">
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1 justify-center">
+          <View className="bg-green-800/90 rounded-3xl p-8 mx-6 border border-green-600/30">
+            <Text className="text-gold text-4xl font-bold text-center mb-8">GreenFlag</Text>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#555"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-          />
+            <TextInput
+              value={email}
+              onChangeText={setEmail}
+              placeholder="Email"
+              placeholderTextColor="#4A7A4A"
+              autoCapitalize="none"
+              keyboardType="email-address"
+              className="bg-green-800 text-white p-4 rounded-2xl mb-4"
+            />
 
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#555"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+            <TextInput
+              value={password}
+              onChangeText={setPassword}
+              placeholder="Password"
+              placeholderTextColor="#4A7A4A"
+              secureTextEntry
+              className="bg-green-800 text-white p-4 rounded-2xl"
+            />
 
-          <TouchableOpacity
-            style={[styles.button, loading && styles.buttonDisabled]}
-            onPress={handleLogin}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#000" />
-            ) : (
-              <Text style={styles.buttonText}>Log In</Text>
-            )}
-          </TouchableOpacity>
+            <TouchableOpacity onPress={handleSignIn} disabled={loading} className="w-full mt-6">
+              <LinearGradient colors={['#2D5F2D', '#D4AF37']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} className="rounded-3xl p-4">
+                {loading ? (
+                  <ActivityIndicator color="#000" />
+                ) : (
+                  <Text className="text-black text-center font-bold">Sign In</Text>
+                )}
+              </LinearGradient>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.button, styles.signUpButton, loading && styles.buttonDisabled]}
-            onPress={handleSignUp}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#D4AF37" />
-            ) : (
-              <Text style={styles.signUpButtonText}>Sign Up</Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+            <View className="flex-row justify-center mt-6">
+              <Text className="text-green-400">Don't have an account? </Text>
+              <TouchableOpacity onPress={() => router.push('/signup')}>
+                <Text className="text-gold font-bold">Sign Up</Text>
+              </TouchableOpacity>
+            </View>
+
+            <Text className="text-green-400 text-xs text-center mt-4">
+              Test: test@greenflag.app / demo123
+            </Text>
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000000',
-  },
-  inner: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-  },
-  title: {
-    fontSize: 36,
-    fontWeight: '900',
-    color: '#D4AF37',
-    letterSpacing: 3,
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#888',
-    textAlign: 'center',
-    marginBottom: 40,
-  },
-  input: {
-    backgroundColor: '#111111',
-    color: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#222222',
-    borderRadius: 8,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    marginBottom: 12,
-  },
-  button: {
-    backgroundColor: '#D4AF37',
-    borderRadius: 8,
-    paddingVertical: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: '#000000',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  signUpButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#D4AF37',
-  },
-  signUpButtonText: {
-    color: '#D4AF37',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});

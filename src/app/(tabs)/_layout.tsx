@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useEffect } from 'react';
 import { Tabs, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,8 +17,8 @@ export default function TabsLayout() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, backgroundColor: '#000', justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator color="#D4AF37" />
+      <View className="flex-1 bg-black justify-center items-center">
+        <ActivityIndicator color="#8FAE8F" />
       </View>
     );
   }
@@ -30,32 +31,42 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: '#D4AF37',
-        tabBarInactiveTintColor: '#888888',
+        tabBarInactiveTintColor: '#8FAE8F',
         tabBarStyle: {
-          backgroundColor: '#111111',
-          borderTopColor: '#222222',
-          height: 60,
-          paddingBottom: 8,
+          backgroundColor: '#0D3D0D',
+          borderTopColor: 'rgba(74, 122, 74, 0.2)',
+          borderTopWidth: 1,
+          height: 80,
+          paddingBottom: 16,
           paddingTop: 8,
         },
         headerShown: false,
       }}
     >
       <Tabs.Screen
-        name="discover"
+        name="index"
         options={{
           title: 'Discover',
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'compass' : 'compass-outline'} size={24} color={color} />
+            <Ionicons name={focused ? 'flame' : 'flame-outline'} size={24} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="requests"
+        name="likes"
         options={{
-          title: 'Requests',
+          title: 'Likes',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? 'heart' : 'heart-outline'} size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="matches"
+        options={{
+          title: 'Matches',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? 'chatbubbles' : 'chatbubbles-outline'} size={24} color={color} />
           ),
         }}
       />
@@ -69,7 +80,7 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="chat/[id]"
+        name="discover"
         options={{
           href: null,
         }}

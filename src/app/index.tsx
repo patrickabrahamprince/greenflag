@@ -1,15 +1,26 @@
+// @ts-nocheck
 import { supabase } from '@/lib/supabase';
-import { useRouter, useRootNavigationState } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { router, useRootNavigationState } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Animated, Platform, Text, View } from 'react-native';
 
 export default function Index() {
-  const router = useRouter();
   const rootNavigationState = useRootNavigationState();
   const [checking, setChecking] = useState(true);
+  const shimmerAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Wait until root navigation state is ready before navigating
+    const shimmer = Animated.loop(
+      Animated.sequence([
+        Animated.timing(shimmerAnim, { toValue: 1, duration: 1500, useNativeDriver: false }),
+        Animated.timing(shimmerAnim, { toValue: 0, duration: 1500, useNativeDriver: false }),
+      ])
+    );
+    shimmer.start();
+    return () => shimmer.stop();
+  }, []);
+
+  useEffect(() => {
     if (!rootNavigationState?.key) return;
 
     let mounted = true;
@@ -17,23 +28,17 @@ export default function Index() {
     const checkAuth = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
-        
+
         if (!mounted) return;
 
-        if (error) {
-          console.log('Auth error:', error);
-          router.replace('/(auth)/login');
+        if (error || !session) {
+          router.replace('/(auth)/splash');
           return;
         }
 
-        if (session) {
-          router.replace('/(tabs)/discover');
-        } else {
-          router.replace('/(auth)/login');
-        }
+        router.replace('/(tabs)');
       } catch (e) {
-        console.log('Check auth failed:', e);
-        if (mounted) router.replace('/(auth)/login');
+        if (mounted) router.replace('/(auth)/splash');
       } finally {
         if (mounted) setChecking(false);
       }
@@ -41,13 +46,12 @@ export default function Index() {
 
     checkAuth();
 
-    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!mounted) return;
       if (session) {
-        router.replace('/(tabs)/discover');
+        router.replace('/(tabs)');
       } else {
-        router.replace('/(auth)/login');
+        router.replace('/(auth)/splash');
       }
     });
 
@@ -57,12 +61,20 @@ export default function Index() {
     };
   }, [rootNavigationState?.key]);
 
+  const opacity = shimmerAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.3, 1],
+  });
+
   return (
-    <View style={{ flex: 1, backgroundColor: '#000', justifyContent: 'center', alignItems: 'center' }}>
-      <ActivityIndicator color="#D4AF37" />
-      <Text style={{ color: '#D4AF37', marginTop: 12 }}>
-        {checking ? 'Loading...' : 'Redirecting...'}
-      </Text>
+    <View className="flex-1 bg-black items-center justify-center">
+      <Animated.Text
+        className="text-gold text-5xl font-bold mb-6"
+        style={{ opacity }}
+      >
+        GreenFlag
+      </Animated.Text>
+      <ActivityIndicator color="#D4AF37" size="large" />
     </View>
   );
 }

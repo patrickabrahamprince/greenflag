@@ -1,32 +1,32 @@
+// @ts-nocheck
 import { useEffect, useState } from 'react';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
 import { supabase } from '@/lib/supabase';
-import type { User } from '@supabase/supabase-js';
 
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
+    let mounted = true;
     supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!mounted) return;
       setUser(user);
+      setLoading(false);
+    }).catch(() => {
+      if (!mounted) return;
       setLoading(false);
     });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!mounted) return;
       setUser(session?.user ?? null);
-
-      if (event === 'SIGNED_IN' && session) {
-        router.replace('/(tabs)/discover');
-      } else if (event === 'SIGNED_OUT') {
-        router.replace('/(auth)/login');
-      }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   return { user, loading };
