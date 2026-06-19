@@ -245,6 +245,12 @@ export default function LoginPage() {
           </button>
         </div>
       )}
+
+      <div className="mt-8 text-center">
+        <button onClick={() => router.replace('/discover')} className="btn-ghost text-sm text-muted hover:text-white">
+          Skip for now
+        </button>
+      </div>
     </div>
   );
 }
