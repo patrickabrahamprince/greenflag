@@ -1,25 +1,54 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/app/**/*.{js,jsx,ts,tsx}', './src/components/**/*.{js,jsx,ts,tsx}'],
-  presets: [require('nativewind/preset')],
+  darkMode: 'class',
+  content: [
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
   theme: {
     extend: {
       colors: {
-        'green-900': '#0D3D0D',
-        'green-800': '#1A4D1A',
-        'green-700': '#2D5F2D',
-        'green-600': '#4A7A4A',
-        'green-400': '#8FAE8F',
-        'gold': '#D4AF37',
-        'gold-light': '#F4E4BC',
+        black: '#0A0A0A',
+        gold: '#D4AF37',
+        'gold-light': '#E8C84A',
+        'gold-dark': '#B8962F',
+        surface: '#141414',
+        'surface-light': '#1C1C1E',
+        border: '#2A2A2E',
+        muted: '#8E8E93',
       },
-      boxShadow: {
-        'gold': '0 0 20px rgba(212, 175, 55, 0.3)',
-        'gold-lg': '0 0 40px rgba(212, 175, 55, 0.4)',
-        'card': '0 10px 40px rgba(13, 61, 13, 0.5)',
-        'card-lg': '0 20px 60px rgba(13, 61, 13, 0.6)',
+      fontFamily: {
+        display: ['Playfair Display', 'serif'],
+        sans: ['Satoshi', 'system-ui', 'sans-serif'],
+      },
+      animation: {
+        'fade-in': 'fadeIn 400ms ease-out',
+        'slide-up': 'slideUp 400ms ease-out',
+        'slide-down': 'slideDown 400ms ease-out',
+        'shimmer': 'shimmer 2s infinite linear',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideDown: {
+          '0%': { opacity: '0', transform: 'translateY(-10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+      },
+      maxWidth: {
+        'app': '480px',
       },
     },
   },
-  plugins: [],
+  plugins: [require('tailwindcss-animate')],
 };

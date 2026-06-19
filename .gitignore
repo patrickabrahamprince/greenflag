@@ -35,6 +35,10 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+next-env.d.ts
+
+# Next.js
+.next/
 
 example
 

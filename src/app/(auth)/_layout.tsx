@@ -1,38 +1,16 @@
 // @ts-nocheck
-import { useEffect } from 'react';
-import { Stack, useRouter } from 'expo-router';
-import { View, ActivityIndicator } from 'react-native';
-import { useAuth } from '@/hooks/useAuth';
+import { Stack } from 'expo-router';
 
 export default function AuthLayout() {
-  const { user, loading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loading && user) {
-      router.replace('/(tabs)');
-    }
-  }, [user, loading]);
-
-  if (loading) {
-    return (
-      <View className="flex-1 bg-black justify-center items-center">
-        <ActivityIndicator color="#D4AF37" size="large" />
-      </View>
-    );
-  }
-
-  if (user) {
-    return null;
-  }
-
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#000000' } }}>
+      <Stack.Screen name="invite" />
       <Stack.Screen name="login" />
-      <Stack.Screen name="signup" />
-      <Stack.Screen name="permissions" />
-      <Stack.Screen name="verify" />
+      <Stack.Screen name="otp" />
+      <Stack.Screen name="persona" />
+      <Stack.Screen name="profile" />
+      <Stack.Screen name="interests" />
     </Stack>
   );
 }
+

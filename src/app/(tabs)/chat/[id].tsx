@@ -1,97 +1,118 @@
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+// @ts-nocheck
+import React, { useState, useRef } from 'react';
+import { View, TextInput, FlatList, KeyboardAvoidingView, Platform, TouchableOpacity, Image, SafeAreaView } from 'react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { Text } from '../../../components/ui/Text';
+import { useAppStore } from '../../../lib/store';
 
-export default function ChatScreen() {
-    const { id } = useLocalSearchParams();
-    const [connection, setConnection] = useState<any>(null);
-    const [me, setMe] = useState<string | null>(null);
-    const [otherUser, setOtherUser] = useState<any>(null);
-    const [message, setMessage] = useState('');
-
-    useEffect(() => {
-        loadChat();
-    }, [id]);
-
-    const loadChat = async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-        setMe(user.id);
-
-        const { data, error } = await supabase
-            .from('connections')
-            .select('*, initiator:profiles!initiator_id(*), receiver:profiles!receiver_id(*)')
-            .eq('id', id)
-            .single();
-
-        if (data) {
-            setConnection(data);
-            if (data.initiator_id === user.id) {
-                setOtherUser(data.receiver);
-            } else {
-                setOtherUser(data.initiator);
-            }
-        }
-    };
-
-    const handleSend = () => {
-        if (!message.trim()) return;
-        console.log('Sending message:', message);
-        console.log('TODO: insert into messages table');
-        setMessage('');
-    };
-
-    if (!otherUser) return (
-        <View style={styles.container}>
-            <Text style={{color: '#D4AF37', textAlign: 'center', marginTop: 100}}>Loading chat...</Text>
-        </View>
-    );
-
-    return (
-        <KeyboardAvoidingView 
-            style={styles.container} 
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-        >
-            <View style={styles.header}>
-                <Image source={{ uri: otherUser.avatar_url || 'https://via.placeholder.com/100' }} style={styles.avatar} />
-                <Text style={styles.headerName}>{otherUser.full_name}</Text>
-            </View>
-
-            <FlatList
-                data={[]} // Messages stub
-                renderItem={() => null}
-                ListEmptyComponent={<Text style={styles.emptyText}>Say hi 👋</Text>}
-                contentContainerStyle={styles.listContent}
-                inverted
-            />
-
-            <View style={styles.inputContainer}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Message..."
-                    placeholderTextColor="#666"
-                    value={message}
-                    onChangeText={setMessage}
-                />
-                <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-                    <Ionicons name="send" size={24} color="#000" />
-                </TouchableOpacity>
-            </View>
-        </KeyboardAvoidingView>
-    );
+interface Message {
+  id: string;
+  text: string;
+  senderId: string;
+  timestamp: string;
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#000' },
-    header: { flexDirection: 'row', alignItems: 'center', padding: 16, borderBottomWidth: 1, borderBottomColor: '#222', paddingTop: 60 },
-    avatar: { width: 40, height: 40, borderRadius: 20, marginRight: 12 },
-    headerName: { color: '#fff', fontSize: 18, fontWeight: '600' },
-    listContent: { flexGrow: 1, justifyContent: 'flex-end', padding: 16 },
-    emptyText: { color: '#888', textAlign: 'center', marginTop: 40, fontSize: 16 },
-    inputContainer: { flexDirection: 'row', padding: 16, borderTopWidth: 1, borderTopColor: '#222', alignItems: 'center', paddingBottom: 30 },
-    input: { flex: 1, backgroundColor: '#111', color: '#fff', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 10, marginRight: 12, fontSize: 16 },
-    sendButton: { backgroundColor: '#D4AF37', width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center' },
-});
+export default function ChatRoomScreen() {
+  const router = useRouter();
+  const { id } = useLocalSearchParams();
+  const connections = useAppStore((state) => state.connections);
+  const user = useAppStore((state) => state.user);
+
+  const connection = connections.find((c) => c.id === id) || connections[0];
+  const partner = connection?.partner || { name: 'Chat Partner', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200' };
+
+  const [messages, setMessages] = useState<Message[]>([
+    { id: '1', text: 'Hey there! How is your day going?', senderId: partner.id || 'partner_1', timestamp: '7:00 PM' },
+    { id: '2', text: 'Hey! Doing good. Ready for our day check-in?', senderId: 'user_123', timestamp: '7:02 PM' },
+    { id: '3', text: 'Absolutely. Lets meet our milestones.', senderId: partner.id || 'partner_1', timestamp: '7:05 PM' },
+  ]);
+  const [inputText, setInputText] = useState('');
+  const flatListRef = useRef<FlatList>(null);
+
+  const handleSend = () => {
+    if (!inputText.trim()) return;
+
+    const newMessage: Message = {
+      id: String(messages.length + 1),
+      text: inputText.trim(),
+      senderId: user?.id || 'user_123',
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    setMessages([...messages, newMessage]);
+    setInputText('');
+    setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+  };
+
+  return (
+    <SafeAreaView className="flex-1 bg-black">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        className="flex-1"
+      >
+        {/* Header */}
+        <View className="flex-row items-center justify-between px-6 py-4 border-b border-zinc-900 bg-black">
+          <View className="flex-row items-center">
+            <TouchableOpacity onPress={() => router.back()} className="p-1 mr-3">
+              <Ionicons name="arrow-back" size={24} color="white" />
+            </TouchableOpacity>
+            
+            <Image source={{ uri: partner.avatar }} className="w-10 h-10 rounded-full mr-3" />
+            <View>
+              <Text className="text-base font-bold text-white">{partner.name}</Text>
+              <Text className="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider">No Read Receipts</Text>
+            </View>
+          </View>
+          
+          <TouchableOpacity onPress={() => router.push(`/report?id=${partner.id || 'partner_1'}`)} className="p-1">
+            <Ionicons name="shield-outline" size={20} color="#FF6B6B" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Message List */}
+        <FlatList
+          ref={flatListRef}
+          data={messages}
+          keyExtractor={(item) => item.id}
+          className="flex-1 px-4 py-4"
+          contentContainerStyle={{ paddingBottom: 20 }}
+          renderItem={({ item }) => {
+            const isMe = item.senderId === (user?.id || 'user_123');
+            return (
+              <View className={`flex-row mb-3 ${isMe ? 'justify-end' : 'justify-start'}`}>
+                <View
+                  className={`max-w-[75%] px-4 py-3 rounded-2xl ${
+                    isMe
+                      ? 'bg-[#1A4D1A] rounded-tr-none'
+                      : 'bg-zinc-900 rounded-tl-none border border-zinc-800'
+                  }`}
+                >
+                  <Text className="text-sm font-medium text-white leading-relaxed">{item.text}</Text>
+                  <Text className="text-[9px] text-zinc-500 text-right mt-1 font-semibold">{item.timestamp}</Text>
+                </View>
+              </View>
+            );
+          }}
+        />
+
+        {/* Text Input Area Only */}
+        <View className="p-4 border-t border-zinc-900 bg-black flex-row items-center">
+          <TextInput
+            value={inputText}
+            onChangeText={setInputText}
+            placeholder="Type your message..."
+            placeholderTextColor="#52525B"
+            className="flex-1 h-12 bg-zinc-900 border border-zinc-800 rounded-full px-5 text-white text-sm"
+          />
+          <TouchableOpacity
+            onPress={handleSend}
+            className="w-12 h-12 bg-[#1A4D1A] rounded-full items-center justify-center ml-3"
+          >
+            <Ionicons name="send" size={18} color="white" />
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+}

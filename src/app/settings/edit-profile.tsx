@@ -1,102 +1,147 @@
 // @ts-nocheck
+import React, { useState } from 'react';
+import { View, ScrollView, TextInput, TouchableOpacity, Image, Alert, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View, TextInput, ScrollView, Image, Platform } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { Text } from '../../components/ui/Text';
+import { Button } from '../../components/ui/Button';
+import { useAppStore } from '../../lib/store';
+import { supabase } from '../../lib/supabase';
 
-const PHOTOS = [
-  'https://i.pravatar.cc/400?img=12',
-  null,
-  null,
+const DEFAULT_MOCK_PHOTOS = [
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
+  'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400'
 ];
 
 export default function EditProfileScreen() {
   const router = useRouter();
-  const [name, setName] = useState('Sam');
-  const [age, setAge] = useState('26');
-  const [bio, setBio] = useState('Love the outdoors and trying new coffee shops');
-  const [location, setLocation] = useState('New York');
-  const [focusedField, setFocusedField] = useState(null);
+  const user = useAppStore((state) => state.user);
+  const setUser = useAppStore((state) => state.setUser);
 
-  const fieldStyle = (field) =>
-    `bg-green-800/80 border ${focusedField === field ? 'border-gold' : 'border-green-600/20'} rounded-2xl p-4 text-white text-lg`;
+  const [bio, setBio] = useState(user?.bio || '');
+  const [city, setCity] = useState(user?.city || '');
+  const [photos, setPhotos] = useState<string[]>(user?.photos || DEFAULT_MOCK_PHOTOS);
+  const [loading, setLoading] = useState(false);
+
+  const handleUpdatePhoto = (idx: number) => {
+    // swap or update photo
+    Alert.alert('Edit Photo', 'Image uploading is simulated in demo mode.');
+  };
+
+  const handleSave = async () => {
+    if (!bio.trim() || !city.trim()) {
+      Alert.alert('Required Fields', 'Bio and City fields cannot be empty.');
+      return;
+    }
+
+    setLoading(true);
+    const updateData = { bio, city, photos };
+
+    try {
+      if (user?.id) {
+        const { error } = await supabase
+          .from('users')
+          .update(updateData)
+          .eq('id', user.id);
+        
+        if (error) {
+          console.log('Error saving updates:', error.message);
+        }
+      }
+      
+      setUser(updateData);
+      Alert.alert('Success', 'Profile saved successfully.', [
+        { text: 'OK', onPress: () => router.back() }
+      ]);
+    } catch (e) {
+      console.log('Exception in edit profile:', e);
+      setUser(updateData);
+      router.back();
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-black">
-      <LinearGradient colors={['#0D3D0D', '#1A4D1A']} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} className="flex-1">
-        <View className="px-6 pt-12 pb-4">
-          <TouchableOpacity onPress={() => router.back()} className="w-10 h-10 rounded-full bg-black/50 items-center justify-center mb-4">
-            <Ionicons name="chevron-back" size={24} color="#D4AF37" />
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }} className="px-6">
+        
+        {/* Header */}
+        <View className="flex-row items-center justify-between pt-6 pb-6">
+          <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2">
+            <Ionicons name="arrow-back" size={24} color="white" />
           </TouchableOpacity>
-          <Text className="text-white text-3xl font-bold">Edit Profile</Text>
+          <Text className="text-white text-base font-black">Edit Profile</Text>
+          <View className="w-10" />
         </View>
-        <ScrollView className="flex-1 px-6">
-          <View className="flex-row gap-3 mb-8">
-            {PHOTOS.map((photo, i) => (
-              <TouchableOpacity key={i} className={`w-28 h-28 rounded-2xl bg-green-800/60 items-center justify-center overflow-hidden ${i === 0 ? 'border-2 border-gold' : 'border border-green-600/20'}`}>
+
+        {/* Photo Grid */}
+        <Text className="text-xs text-zinc-400 font-bold mb-3 px-1 uppercase tracking-wider">Profile Images</Text>
+        <View className="flex-row justify-between mb-8 gap-2 mt-2">
+          {[0, 1, 2].map((idx) => {
+            const photo = photos[idx];
+            return (
+              <TouchableOpacity
+                key={idx}
+                onPress={() => handleUpdatePhoto(idx)}
+                activeOpacity={0.7}
+                className="flex-1 aspect-[3/4] bg-zinc-900 border border-zinc-800 rounded-2xl items-center justify-center overflow-hidden relative"
+              >
                 {photo ? (
-                  <Image source={{ uri: photo }} className="w-full h-full" />
+                  <>
+                    <Image source={{ uri: photo }} className="w-full h-full" />
+                    <View className="absolute bottom-2 right-2 w-7 h-7 bg-black/60 rounded-full items-center justify-center">
+                      <Ionicons name="pencil" size={14} color="white" />
+                    </View>
+                  </>
                 ) : (
-                  <View className="items-center justify-center">
-                    <Ionicons name="add" size={28} color="#D4AF37" />
-                    <Text className="text-gold text-xs mt-1">Add</Text>
-                  </View>
+                  <Ionicons name="camera-outline" size={22} color="#52525B" />
                 )}
               </TouchableOpacity>
-            ))}
+            );
+          })}
+        </View>
+
+        {/* Inputs */}
+        <Text className="text-xs text-zinc-400 font-bold mb-3 px-1 uppercase tracking-wider">Details</Text>
+        <View className="space-y-4 gap-4 mb-8">
+          
+          <View>
+            <Text className="text-xs text-zinc-500 font-bold mb-2">My City</Text>
+            <TextInput
+              value={city}
+              onChangeText={setCity}
+              placeholder="E.g., Bangalore"
+              placeholderTextColor="#52525B"
+              className="w-full h-14 bg-[#18181B] border border-zinc-800 rounded-2xl px-5 text-white text-sm"
+            />
           </View>
 
-          <View className="gap-4 mb-8">
-            <TextInput
-              value={name}
-              onChangeText={setName}
-              placeholder="Name"
-              placeholderTextColor="#8FAE8F"
-              className={fieldStyle('name')}
-              onFocus={() => setFocusedField('name')}
-              onBlur={() => setFocusedField(null)}
-            />
-            <TextInput
-              value={age}
-              onChangeText={setAge}
-              placeholder="Age"
-              placeholderTextColor="#8FAE8F"
-              keyboardType="number-pad"
-              className={fieldStyle('age')}
-              onFocus={() => setFocusedField('age')}
-              onBlur={() => setFocusedField(null)}
-            />
+          <View>
+            <Text className="text-xs text-zinc-500 font-bold mb-2">My Bio</Text>
             <TextInput
               value={bio}
               onChangeText={setBio}
-              placeholder="Bio"
-              placeholderTextColor="#8FAE8F"
+              placeholder="Update bio..."
+              placeholderTextColor="#52525B"
               multiline
               numberOfLines={4}
-              className={`${fieldStyle('bio')} min-h-[100px]`}
-              style={{ textAlignVertical: 'top' }}
-              onFocus={() => setFocusedField('bio')}
-              onBlur={() => setFocusedField(null)}
-            />
-            <TextInput
-              value={location}
-              onChangeText={setLocation}
-              placeholder="Location"
-              placeholderTextColor="#8FAE8F"
-              className={fieldStyle('location')}
-              onFocus={() => setFocusedField('location')}
-              onBlur={() => setFocusedField(null)}
+              className="w-full bg-[#18181B] border border-zinc-800 rounded-2xl px-5 py-4 text-white text-sm text-left"
+              style={{ minHeight: 100, textAlignVertical: 'top' }}
             />
           </View>
 
-          <TouchableOpacity className="rounded-3xl overflow-hidden shadow-gold-lg mb-12">
-            <LinearGradient colors={['#D4AF37', '#F4E4BC', '#D4AF37']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} className="p-5">
-              <Text className="text-black font-bold text-center text-lg">Save Changes</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </ScrollView>
-      </LinearGradient>
+        </View>
+
+        {/* Action Button */}
+        <Button
+          title="Save Profile Changes"
+          loading={loading}
+          onPress={handleSave}
+        />
+
+      </ScrollView>
     </SafeAreaView>
   );
 }

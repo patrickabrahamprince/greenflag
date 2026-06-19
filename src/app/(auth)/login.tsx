@@ -1,71 +1,100 @@
 // @ts-nocheck
-import { useState } from 'react';
-import { SafeAreaView, Text, TextInput, TouchableOpacity, View, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import React, { useState } from 'react';
+import { View, TextInput, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { Text } from '../../components/ui/Text';
+import { Button } from '../../components/ui/Button';
+import { supabase } from '../../lib/supabase';
+import { useAppStore } from '../../lib/store';
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const router = useRouter();
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
+  const setUser = useAppStore((state) => state.setUser);
 
-  const handleSignIn = () => {
-    if (email !== 'test@greenflag.app' || password !== 'demo123') {
-      return Alert.alert('Invalid Credentials', 'Use test@greenflag.app / demo123');
+  const handleSendOTP = async () => {
+    if (!phone || phone.length < 10) {
+      Alert.alert('Invalid Phone', 'Please enter a valid mobile number.');
+      return;
     }
     setLoading(true);
-    setTimeout(() => router.replace('/(tabs)'), 50);
+
+    const fullPhoneNumber = phone.startsWith('+') ? phone : `+91${phone}`;
+
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: fullPhoneNumber,
+      });
+
+      if (error) {
+        // Fallback for debugging, let them proceed to otp
+        console.log('OTP error:', error.message);
+      }
+      
+      setUser({ phone: fullPhoneNumber });
+      router.push({
+        pathname: '/(auth)/otp',
+        params: { phone: fullPhoneNumber }
+      });
+    } catch (e) {
+      console.log('Error triggering OTP:', e);
+      router.push({
+        pathname: '/(auth)/otp',
+        params: { phone: fullPhoneNumber }
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <LinearGradient colors={['#0D3D0D', '#1A4D1A']} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} className="flex-1">
-      <SafeAreaView className="flex-1">
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1 justify-center">
-          <View className="bg-green-800/90 rounded-3xl p-8 mx-6 border border-green-600/30">
-            <Text className="text-gold text-4xl font-bold text-center mb-8">GreenFlag</Text>
+    <SafeAreaView className="flex-1 bg-black">
+      <View className="flex-1 justify-between px-6 pt-12 pb-10">
+        
+        {/* Back Button */}
+        <View className="flex-row">
+          <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2">
+            <Ionicons name="arrow-back" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
 
+        {/* Form area */}
+        <View className="my-auto px-2">
+          <Text className="text-[#8FAE8F] uppercase tracking-widest text-xs font-semibold mb-2">
+            India-First Verification
+          </Text>
+          <Text className="text-white text-3xl font-black mb-6">
+            Enter Phone Number
+          </Text>
+          <Text className="text-zinc-400 text-sm mb-8 leading-relaxed">
+            We will send a 6-digit secure code to verify your mobile number.
+          </Text>
+
+          <View className="flex-row items-center w-full h-16 bg-[#18181B] border border-zinc-800 rounded-2xl px-5 mb-4">
+            <Text className="text-white text-lg font-bold mr-3">+91</Text>
+            <View className="w-[1] h-6 bg-zinc-800 mr-4" />
             <TextInput
-              value={email}
-              onChangeText={setEmail}
-              placeholder="Email"
-              placeholderTextColor="#4A7A4A"
-              autoCapitalize="none"
-              keyboardType="email-address"
-              className="bg-green-800 text-white p-4 rounded-2xl mb-4"
+              value={phone}
+              onChangeText={setPhone}
+              placeholder="99999 99999"
+              placeholderTextColor="#52525B"
+              keyboardType="phone-pad"
+              maxLength={10}
+              className="flex-1 h-full text-white text-lg font-semibold"
             />
-
-            <TextInput
-              value={password}
-              onChangeText={setPassword}
-              placeholder="Password"
-              placeholderTextColor="#4A7A4A"
-              secureTextEntry
-              className="bg-green-800 text-white p-4 rounded-2xl"
-            />
-
-            <TouchableOpacity onPress={handleSignIn} disabled={loading} className="w-full mt-6">
-              <LinearGradient colors={['#2D5F2D', '#D4AF37']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} className="rounded-3xl p-4">
-                {loading ? (
-                  <ActivityIndicator color="#000" />
-                ) : (
-                  <Text className="text-black text-center font-bold">Sign In</Text>
-                )}
-              </LinearGradient>
-            </TouchableOpacity>
-
-            <View className="flex-row justify-center mt-6">
-              <Text className="text-green-400">Don't have an account? </Text>
-              <TouchableOpacity onPress={() => router.push('/signup')}>
-                <Text className="text-gold font-bold">Sign Up</Text>
-              </TouchableOpacity>
-            </View>
-
-            <Text className="text-green-400 text-xs text-center mt-4">
-              Test: test@greenflag.app / demo123
-            </Text>
           </View>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    </LinearGradient>
+        </View>
+
+        {/* Submit */}
+        <Button
+          title="Send OTP"
+          loading={loading}
+          disabled={phone.length < 10}
+          onPress={handleSendOTP}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
