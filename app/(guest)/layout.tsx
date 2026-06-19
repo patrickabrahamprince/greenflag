@@ -1,3 +1,10 @@
+import { BottomNav } from '@/components/layout/bottom-nav';
+
 export default function GuestLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return (
+    <>
+      <div className="pb-20">{children}</div>
+      <BottomNav />
+    </>
+  );
 }

@@ -19,6 +19,6 @@ export async function POST(req: Request) {
       tasks_completed: 0,
     });
   } catch {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    return NextResponse.json({ error: 'insufficient_funds' }, { status: 402 });
   }
 }
