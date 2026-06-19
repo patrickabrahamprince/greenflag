@@ -149,7 +149,7 @@ function ProfileForm() {
       payload.lng = lng;
     } else {
       payload.city = city;
-      payload.instagram_handle = instagramHandle.replace(/^@/, '');
+      payload.instagram_url = instagramHandle.replace(/^@/, '');
     }
 
     const { error } = await supabase.from('profiles').upsert(payload as any);

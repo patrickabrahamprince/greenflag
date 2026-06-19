@@ -115,11 +115,11 @@ export default function OnboardInterestsPage() {
 
     const payload: Record<string, unknown> = { id: authUser.id };
     if (isHost) {
-      payload.interests = persona;
-      payload.looking_for_interests = standard;
+      payload.about_me_tags = persona;
+      payload.looking_for_tags = standard;
     } else {
-      payload.interests = genericInterests;
-      payload.looking_for_interests = genericLookingFor;
+      payload.about_me_tags = genericInterests;
+      payload.looking_for_tags = genericLookingFor;
     }
 
     const { error } = await supabase.from('profiles').upsert(payload as any);

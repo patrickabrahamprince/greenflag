@@ -93,7 +93,7 @@ function ProfileCard({ profile }: { profile: Profile }) {
         )}
 
         <div className="flex gap-2 mt-3 flex-wrap">
-          {(profile.interests || []).slice(0, 3).map((interest) => (
+          {((profile as any).about_me_tags || profile.interests || []).slice(0, 3).map((interest: string) => (
             <span key={interest} className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#EDEADE] text-xs">
               {interest}
             </span>
