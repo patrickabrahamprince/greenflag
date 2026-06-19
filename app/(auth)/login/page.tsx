@@ -112,7 +112,7 @@ export default function LoginPage() {
     if (profile) {
       setUser(profile as unknown as Profile);
       if ((profile as unknown as Profile).role === 'host') {
-        router.replace('/your-standards');
+        router.replace('/profile');
       } else {
         router.replace('/discover');
       }

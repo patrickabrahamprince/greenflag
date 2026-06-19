@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Eye, Ban, CheckCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Search, Eye, Ban, CheckCircle, LayoutDashboard } from 'lucide-react';
 
 const MOCK_USERS = [
   { id: '1', name: 'Aarav Sharma', age: 24, role: 'guest', status: 'active' },
   { id: '2', name: 'Ananya Gupta', age: 27, role: 'host', status: 'active' },
   { id: '3', name: 'Rohan Patel', age: 22, role: 'guest', status: 'banned' },
-  { id: '4', name: 'Ishita Verma', age: 26, role: 'host', status: 'active' },
+  { id: '4', name: 'Ishita Verma', age: 29, role: 'host', status: 'active' },
   { id: '5', name: 'Karan Singh', age: 29, role: 'guest', status: 'active' },
   { id: '6', name: 'Maya Joshi', age: 23, role: 'guest', status: 'inactive' },
   { id: '7', name: 'Arjun Nair', age: 31, role: 'host', status: 'active' },
@@ -17,6 +18,7 @@ const MOCK_USERS = [
 ];
 
 export default function AdminUsers() {
+  const router = useRouter();
   const [search, setSearch] = useState('');
   const [users, setUsers] = useState(MOCK_USERS);
 
@@ -78,6 +80,14 @@ export default function AdminUsers() {
                 </td>
                 <td className="py-3 px-2">
                   <div className="flex items-center gap-1 justify-end">
+                    {user.role === 'host' && (
+                      <button
+                        onClick={() => router.push(`/admin/host-dashboard/${user.id}`)}
+                        className="btn-ghost text-xs p-1.5 text-gold"
+                      >
+                        <LayoutDashboard className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                     <button className="btn-ghost text-xs p-1.5">
                       <Eye className="w-3.5 h-3.5" />
                     </button>

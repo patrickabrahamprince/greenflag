@@ -158,7 +158,7 @@ export default function InterestedPage() {
   return (
     <div className="animate-fade-in py-6">
       <button
-        onClick={() => router.push('/your-standards')}
+        onClick={() => router.back()}
         className="btn-ghost flex items-center gap-2 text-muted hover:text-white -ml-2 mb-4"
       >
         <ArrowLeft className="w-5 h-5" />

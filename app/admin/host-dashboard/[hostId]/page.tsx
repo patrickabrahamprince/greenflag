@@ -1,9 +1,8 @@
 'use client';
 
+import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import { Plus, Users, Edit3, Pause, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Users, Edit3, Pause, ChevronRight, Plus } from 'lucide-react';
 import type { Standard } from '@/types';
 
 const MOCK_STANDARD: Standard = {
@@ -61,8 +60,10 @@ function ActiveConnectionCard({ connection }: { connection: any }) {
   );
 }
 
-export default function YourStandardsPage() {
+export default function AdminHostDashboardPage() {
   const router = useRouter();
+  const params = useParams();
+  const hostId = params.hostId as string;
   const [standard] = useState<Standard | null>(MOCK_STANDARD);
   const connections = MOCK_CONNECTIONS;
   const applicants = connections.filter((c) => c.status === 'pending');
@@ -71,30 +72,36 @@ export default function YourStandardsPage() {
 
   if (!standard) {
     return (
-      <div className="empty-state animate-fade-in min-h-[80vh]">
+      <div className="animate-fade-in min-h-[60vh] flex flex-col items-center justify-center">
         <div className="empty-state-icon">
           <Plus className="w-8 h-8" />
         </div>
         <h2 className="text-xl font-medium text-white mb-2">No Standard Yet</h2>
         <p className="text-muted text-sm max-w-xs mb-8">
-          Set your standard to start meeting people
+          This host hasn't set a standard yet
         </p>
-        <button
-          onClick={() => router.push('/your-standards/create')}
-          className="btn-primary text-lg"
-        >
-          Create Your Standard
-        </button>
       </div>
     );
   }
 
   return (
     <div className="animate-fade-in">
-      <div className="py-6">
-        <h1 className="font-display text-3xl text-white font-semibold">
-          Your Standard
-        </h1>
+      <div className="flex items-center gap-3 mb-6">
+        <button onClick={() => router.push('/admin/users')} className="btn-ghost p-2">
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <div>
+          <h1 className="text-2xl font-display text-white">
+            Host Dashboard
+          </h1>
+          <p className="text-sm text-muted">ID: {hostId}</p>
+        </div>
+      </div>
+
+      <div className="py-4">
+        <h2 className="font-display text-3xl text-white font-semibold">
+          {standard.name}
+        </h2>
         <p className="text-muted text-sm mt-1">Difficulty: {standard.difficulty}</p>
       </div>
 
@@ -114,10 +121,7 @@ export default function YourStandardsPage() {
       </div>
 
       <div className="flex gap-3 mb-8">
-        <button
-          onClick={() => router.push('/your-standards/edit')}
-          className="flex-1 btn-secondary flex items-center justify-center gap-2"
-        >
+        <button className="flex-1 btn-secondary flex items-center justify-center gap-2">
           <Edit3 className="w-4 h-4" />
           Edit Standard
         </button>
@@ -137,10 +141,7 @@ export default function YourStandardsPage() {
               <ApplicantCard key={c.id} connection={c} />
             ))}
           </div>
-          <button
-            onClick={() => router.push('/interested')}
-            className="w-full btn-ghost mt-3 text-sm"
-          >
+          <button className="w-full btn-ghost mt-3 text-sm">
             View all applicants
           </button>
         </div>

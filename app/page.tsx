@@ -12,7 +12,7 @@ export default function HomePage() {
   useEffect(() => {
     if (user) {
       if (user.role === 'host') {
-        router.replace('/your-standards');
+        router.replace('/profile');
       } else {
         router.replace('/discover');
       }

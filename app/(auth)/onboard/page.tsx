@@ -197,7 +197,7 @@ export default function OnboardPage() {
 
     toast.success('Profile created!');
     if (isHost) {
-      router.replace('/your-standards/create');
+      router.replace('/profile');
     } else {
       router.replace('/discover');
     }

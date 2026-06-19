@@ -62,35 +62,20 @@ export default function ProfilePage() {
       </div>
 
       <div className="px-4 mt-6">
-        {user.role === 'host' ? (
-          <div className="card">
-            <p className="text-sm text-muted mb-2">Your Standard</p>
-            <div className="flex items-center justify-between">
+        <div className="card">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Coins className="w-5 h-5 text-gold" />
               <div>
-                <p className="text-white font-medium">Active Standard</p>
-                <p className="text-xs text-muted mt-0.5">Tap to manage your standard</p>
+                <p className="text-white font-medium">Coins: {balance}</p>
+                <p className="text-xs text-muted mt-0.5">Purchase coins to connect</p>
               </div>
-              <button onClick={() => router.push('/your-standards')} className="btn-ghost text-sm">
-                <Edit3 className="w-4 h-4" />
-              </button>
             </div>
+            <button onClick={() => router.push('/coins')} className="btn-primary text-sm py-2 px-4">
+              Buy Coins
+            </button>
           </div>
-        ) : (
-          <div className="card">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Coins className="w-5 h-5 text-gold" />
-                <div>
-                  <p className="text-white font-medium">Coins: {balance}</p>
-                  <p className="text-xs text-muted mt-0.5">Purchase coins to connect</p>
-                </div>
-              </div>
-              <button onClick={() => router.push('/coins')} className="btn-primary text-sm py-2 px-4">
-                Buy Coins
-              </button>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
 
       <div className="px-4 mt-8">

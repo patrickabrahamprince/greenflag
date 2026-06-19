@@ -1,15 +1,22 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '').split(',').map((e) => e.trim().toLowerCase());
+
+async function isAdmin(supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user?.email) return false;
+  return ADMIN_EMAILS.includes(user.email.toLowerCase());
+}
+
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createServerSupabaseClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!await isAdmin(supabase)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const { id } = await params;
@@ -37,10 +44,6 @@ export async function POST(
 
     if (connErr || !connection) {
       return NextResponse.json({ success: true });
-    }
-
-    if (connection.host_id !== user.id) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const now = new Date().toISOString();
