@@ -14,7 +14,6 @@ const guestTabs = [
 
 const hostTabs = [
   { name: 'Standards', href: '/your-standards', icon: Star },
-  { name: 'Interested', href: '/interested', icon: Users },
   { name: 'Profile', href: '/profile', icon: User },
 ];
 
