@@ -4,27 +4,41 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [name, setName] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
+      options: { data: { name } }
     })
 
-    if (error) {
-      setError(error.message)
+    if (signUpError) {
+      setError(signUpError.message)
       setLoading(false)
+      return
+    }
+
+    const { error: loginError } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    })
+
+    if (loginError) {
+      setError('Account created. Please login.')
+      setLoading(false)
+      router.push('/login')
       return
     }
 
@@ -41,8 +55,16 @@ export default function LoginPage() {
         </div>
         
         <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-8">
-          <h2 className="text-xl font-semibold text-white mb-6">Welcome back</h2>
-          <form onSubmit={handleLogin} className="space-y-4">
+          <h2 className="text-xl font-semibold text-white mb-6">Create account</h2>
+          <form onSubmit={handleSignup} className="space-y-4">
+            <input
+              type="text"
+              placeholder="Full name"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              required
+              className="w-full px-4 py-3 bg-[#0A0A0A] text-white rounded-lg border border-[#2A2A2A] focus:border-[#D4AF37] focus:outline-none transition"
+            />
             <input
               type="email"
               placeholder="Email"
@@ -53,10 +75,11 @@ export default function LoginPage() {
             />
             <input
               type="password"
-              placeholder="Password"
+              placeholder="Password (min 6 chars)"
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
+              minLength={6}
               className="w-full px-4 py-3 bg-[#0A0A0A] text-white rounded-lg border border-[#2A2A2A] focus:border-[#D4AF37] focus:outline-none transition"
             />
             {error && <p className="text-red-400 text-sm">{error}</p>}
@@ -65,11 +88,11 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full py-3 bg-[#D4AF37] text-black rounded-lg font-semibold hover:bg-[#C4A027] disabled:opacity-50 transition"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Creating account...' : 'Sign Up'}
             </button>
           </form>
           <p className="text-gray-500 text-sm mt-6 text-center">
-            Don't have an account? <Link href="/signup" className="text-[#D4AF37] hover:underline">Sign up</Link>
+            Already have an account? <Link href="/login" className="text-[#D4AF37] hover:underline">Sign in</Link>
           </p>
         </div>
       </div>
