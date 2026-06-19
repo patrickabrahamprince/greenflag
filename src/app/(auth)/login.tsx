@@ -23,30 +23,8 @@ export default function LoginScreen() {
 
     const fullPhoneNumber = phone.startsWith('+') ? phone : `+91${phone}`;
 
-    try {
-      const { error } = await supabase.auth.signInWithOtp({
-        phone: fullPhoneNumber,
-      });
-
-      if (error) {
-        // Fallback for debugging, let them proceed to otp
-        console.log('OTP error:', error.message);
-      }
-      
-      setUser({ phone: fullPhoneNumber });
-      router.push({
-        pathname: '/(auth)/otp',
-        params: { phone: fullPhoneNumber }
-      });
-    } catch (e) {
-      console.log('Error triggering OTP:', e);
-      router.push({
-        pathname: '/(auth)/otp',
-        params: { phone: fullPhoneNumber }
-      });
-    } finally {
-      setLoading(false);
-    }
+    Alert.alert('Phone Login Disabled', 'Phone OTP login has been removed permanently. Please use the web interface to login with email/password.');
+    setLoading(false);
   };
 
   return (
