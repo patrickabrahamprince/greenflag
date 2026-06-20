@@ -25,77 +25,63 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  // 1. /admin routes — check auth + is_admin, nothing else
-  if (pathname.startsWith('/admin')) {
-    if (!user) {
-      const url = request.nextUrl.clone();
-      url.pathname = '/login';
-      return NextResponse.redirect(url);
-    }
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
-    if (!profile?.is_admin) {
-      const url = request.nextUrl.clone();
-      url.pathname = '/login';
-      return NextResponse.redirect(url);
-    }
+  // 1. Public paths — always allow through
+  const publicPaths = ['/login', '/signup', '/auth'];
+  if (publicPaths.some((p) => pathname.startsWith(p))) {
     return supabaseResponse;
   }
 
-  // 2. Unauthenticated users → /login (except public paths)
-  const publicPaths = ['/login', '/signup', '/auth'];
-  if (!user && !publicPaths.some((p) => pathname.startsWith(p))) {
+  // 2. Unauthenticated users → /login
+  if (!user) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     return NextResponse.redirect(url);
   }
 
-  // 3. Authenticated but banned → /banned
-  if (user) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
-    if (profile?.is_banned && pathname !== '/banned') {
+  // 3. Authenticated — fetch profile once
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single();
+
+  // 4. Banned → /banned
+  if (profile?.is_banned && pathname !== '/banned') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/banned';
+    return NextResponse.redirect(url);
+  }
+
+  // 5. Admin routes — must be is_admin
+  if (pathname.startsWith('/admin')) {
+    if (!profile?.is_admin) {
       const url = request.nextUrl.clone();
-      url.pathname = '/banned';
+      url.pathname = '/discover';
       return NextResponse.redirect(url);
     }
+    return supabaseResponse;
   }
 
-  // 4. Host/guest discover routing
-  if (user) {
-    if (pathname === '/discover') {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-      if (profile?.gender === 'host') {
-        const url = request.nextUrl.clone();
-        url.pathname = '/discover-men';
-        return NextResponse.redirect(url);
-      }
-    }
-    if (pathname === '/discover-men') {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-      if (profile?.gender === 'guest') {
-        const url = request.nextUrl.clone();
-        url.pathname = '/discover';
-        return NextResponse.redirect(url);
-      }
-    }
+  // 6. Admin users → force to /admin from ANY non-admin page (skip API and static)
+  if (profile?.is_admin && !pathname.startsWith('/api')) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/admin';
+    return NextResponse.redirect(url);
   }
 
-  // 5. Everything else — allow through
+  // 7. Host/guest discover routing (non-admin users only)
+  if (pathname === '/discover' && profile?.gender === 'host') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/discover-men';
+    return NextResponse.redirect(url);
+  }
+  if (pathname === '/discover-men' && profile?.gender === 'guest') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/discover';
+    return NextResponse.redirect(url);
+  }
+
+  // 8. Everything else — allow through
   return supabaseResponse;
 }
 
