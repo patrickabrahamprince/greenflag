@@ -9,8 +9,10 @@ export default function HomePage() {
   const supabase = createClient()
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
+      console.log('home: user =', user?.id)
       if (user) {
-        const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+        const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+        console.log('home: profile =', data, 'error =', error)
         const profile = data as any
         if (profile?.is_admin) {
           router.replace('/admin')
