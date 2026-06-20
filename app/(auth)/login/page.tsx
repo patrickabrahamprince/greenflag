@@ -38,7 +38,8 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const { error } = await supabase.auth.signInWithOtp({ phone })
+    const formatted = '+91' + phone
+    const { error } = await supabase.auth.signInWithOtp({ phone: formatted })
     if (error) {
       setError(error.message)
       setLoading(false)
@@ -52,7 +53,8 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const { error } = await supabase.auth.verifyOtp({ phone, token: otp, type: 'sms' })
+    const formatted = '+91' + phone
+    const { error } = await supabase.auth.verifyOtp({ phone: formatted, token: otp, type: 'sms' })
     if (error) {
       setError(error.message)
       setLoading(false)
