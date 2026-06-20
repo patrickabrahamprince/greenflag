@@ -32,16 +32,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) {
+        console.log('admin-layout: no user');
         router.replace('/login');
         return;
       }
-      const { data: profile } = await supabase
+      console.log('admin-layout: user.id =', user.id);
+      const { data: profile, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single();
+      console.log('admin-layout: profile =', profile, 'error =', error);
       const p = profile as { is_admin: boolean } | null;
+      console.log('admin-layout: p.is_admin =', p?.is_admin);
       if (!p?.is_admin) {
+        console.log('admin-layout: not admin, redirecting to /');
         router.replace('/');
         return;
       }
