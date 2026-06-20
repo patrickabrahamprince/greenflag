@@ -1,32 +1,49 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
-function redirectWithCookies(request: NextRequest, supabaseResponse: NextResponse, pathname: string): NextResponse {
-  const url = request.nextUrl.clone();
-  url.pathname = pathname;
-  const response = NextResponse.redirect(url);
-  for (const { name, value } of supabaseResponse.cookies.getAll()) {
-    response.cookies.set(name, value, { path: '/', httpOnly: true, secure: true, sameSite: 'lax' });
+const PUBLIC_PATHS = ['/login', '/signup', '/auth', '/banned'];
+
+function copyCookies(from: NextResponse, to: NextResponse) {
+  for (const { name, value } of from.cookies.getAll()) {
+    to.cookies.set(name, value);
   }
-  return response;
 }
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+function redirect(req: NextRequest, res: NextResponse, pathname: string): NextResponse {
+  const url = req.nextUrl.clone();
+  url.pathname = pathname;
+  const redirectResponse = NextResponse.redirect(url);
+  copyCookies(res, redirectResponse);
+  return redirectResponse;
+}
 
-  let supabaseResponse = NextResponse.next({ request });
+export async function middleware(req: NextRequest) {
+  const path = req.nextUrl.pathname;
+
+  // 1. Always allow public paths and static files
+  if (PUBLIC_PATHS.some((p) => path.startsWith(p))) {
+    return NextResponse.next({ request: req });
+  }
+  if (path.startsWith('/_next') || path.startsWith('/api') || path.includes('.')) {
+    return NextResponse.next({ request: req });
+  }
+
+  // 2. Create Supabase client and get session
+  let res = NextResponse.next({ request: req });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() { return request.cookies.getAll(); },
+        getAll() {
+          return req.cookies.getAll();
+        },
         setAll(cookiesToSet: { name: string; value: string; options?: CookieOptions }[]) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          supabaseResponse = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
+          res = NextResponse.next({ request: req });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            res.cookies.set(name, value, options)
           );
         },
       },
@@ -35,57 +52,44 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  // 1. Public paths — always allow through
-  const publicPaths = ['/login', '/signup', '/auth'];
-  if (publicPaths.some((p) => pathname.startsWith(p))) {
-    return supabaseResponse;
-  }
-
-  // 2. Unauthenticated users → /login
   if (!user) {
-    return redirectWithCookies(request, supabaseResponse, '/login');
+    return redirect(req, res, '/login');
   }
 
-  // 3. Authenticated — fetch profile once
+  // 3. Get profile
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
     .single();
 
-  // 4. Banned → /banned
-  if (profile?.is_banned && pathname !== '/banned') {
-    return redirectWithCookies(request, supabaseResponse, '/banned');
+  if (!profile) {
+    return redirect(req, res, '/onboard');
   }
 
-  // 5. Admin routes — must be is_admin
-  if (pathname.startsWith('/admin')) {
-    if (!profile?.is_admin) {
-      return redirectWithCookies(request, supabaseResponse, '/discover');
+  // 4. Banned
+  if (profile.is_banned) {
+    return redirect(req, res, '/banned');
+  }
+
+  // 5. ADMIN — highest priority, runs before anything else
+  if (profile.is_admin === true) {
+    if (!path.startsWith('/admin')) {
+      return redirect(req, res, '/admin');
     }
-    return supabaseResponse;
+    return res;
   }
 
-  // 6. Admin users → force to /admin from ANY non-admin page (skip API and static)
-  if (profile?.is_admin && !pathname.startsWith('/api')) {
-    return redirectWithCookies(request, supabaseResponse, '/admin');
+  // 6. Onboarding incomplete
+  if (!profile.onboarding_completed) {
+    if (!path.startsWith('/onboard')) {
+      return redirect(req, res, '/onboard');
+    }
+    return res;
   }
 
-  // 7. Root path → send authenticated non-admin users to discover
-  if (pathname === '/') {
-    return redirectWithCookies(request, supabaseResponse, '/discover');
-  }
-
-  // 8. Host/guest discover routing (non-admin users only)
-  if (pathname === '/discover' && profile?.gender === 'host') {
-    return redirectWithCookies(request, supabaseResponse, '/discover-men');
-  }
-  if (pathname === '/discover-men' && profile?.gender === 'guest') {
-    return redirectWithCookies(request, supabaseResponse, '/discover');
-  }
-
-  // 8. Everything else — allow through
-  return supabaseResponse;
+  // 7. Regular users — allow everything else
+  return res;
 }
 
 export const config = {
