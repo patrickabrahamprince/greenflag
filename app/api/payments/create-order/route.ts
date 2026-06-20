@@ -2,11 +2,6 @@ import { NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 
-const razorpay = new Razorpay({
-  key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
-
 const COIN_PACKS: Record<number, { coins: number; priceINR: number }> = {
   99: { coins: 10, priceINR: 99 },
   299: { coins: 40, priceINR: 299 },
@@ -14,6 +9,11 @@ const COIN_PACKS: Record<number, { coins: number; priceINR: number }> = {
 };
 
 export async function POST(req: Request) {
+  const razorpay = new Razorpay({
+    key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY!,
+    key_secret: process.env.RAZORPAY_KEY_SECRET!,
+  });
+
   try {
     const supabase = await createServerSupabaseClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
