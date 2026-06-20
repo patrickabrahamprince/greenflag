@@ -1,6 +1,16 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
+function redirectWithCookies(request: NextRequest, supabaseResponse: NextResponse, pathname: string): NextResponse {
+  const url = request.nextUrl.clone();
+  url.pathname = pathname;
+  const response = NextResponse.redirect(url);
+  supabaseResponse.cookies.getAll().forEach(({ name, value, ...options }) =>
+    response.cookies.set(name, value, options as any)
+  );
+  return response;
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -33,9 +43,7 @@ export async function middleware(request: NextRequest) {
 
   // 2. Unauthenticated users → /login
   if (!user) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/login';
-    return NextResponse.redirect(url);
+    return redirectWithCookies(request, supabaseResponse, '/login');
   }
 
   // 3. Authenticated — fetch profile once
@@ -47,38 +55,28 @@ export async function middleware(request: NextRequest) {
 
   // 4. Banned → /banned
   if (profile?.is_banned && pathname !== '/banned') {
-    const url = request.nextUrl.clone();
-    url.pathname = '/banned';
-    return NextResponse.redirect(url);
+    return redirectWithCookies(request, supabaseResponse, '/banned');
   }
 
   // 5. Admin routes — must be is_admin
   if (pathname.startsWith('/admin')) {
     if (!profile?.is_admin) {
-      const url = request.nextUrl.clone();
-      url.pathname = '/discover';
-      return NextResponse.redirect(url);
+      return redirectWithCookies(request, supabaseResponse, '/discover');
     }
     return supabaseResponse;
   }
 
   // 6. Admin users → force to /admin from ANY non-admin page (skip API and static)
   if (profile?.is_admin && !pathname.startsWith('/api')) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/admin';
-    return NextResponse.redirect(url);
+    return redirectWithCookies(request, supabaseResponse, '/admin');
   }
 
   // 7. Host/guest discover routing (non-admin users only)
   if (pathname === '/discover' && profile?.gender === 'host') {
-    const url = request.nextUrl.clone();
-    url.pathname = '/discover-men';
-    return NextResponse.redirect(url);
+    return redirectWithCookies(request, supabaseResponse, '/discover-men');
   }
   if (pathname === '/discover-men' && profile?.gender === 'guest') {
-    const url = request.nextUrl.clone();
-    url.pathname = '/discover';
-    return NextResponse.redirect(url);
+    return redirectWithCookies(request, supabaseResponse, '/discover');
   }
 
   // 8. Everything else — allow through
