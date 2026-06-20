@@ -1,32 +1,49 @@
 'use client';
 
-import { useState } from 'react';
-import { Download } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Download, FileText } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 
-const MOCK_LOGS = [
-  { id: '1', admin: 'admin@greenflag.app', action: 'approve_submission', target: 'Submission #123', time: '2024-12-15 14:32' },
-  { id: '2', admin: 'mod@greenflag.app', action: 'reject_submission', target: 'Submission #124', time: '2024-12-15 13:15' },
-  { id: '3', admin: 'admin@greenflag.app', action: 'ban_user', target: 'User #456', time: '2024-12-15 12:00' },
-  { id: '4', admin: 'mod@greenflag.app', action: 'approve_submission', target: 'Submission #125', time: '2024-12-15 11:45' },
-  { id: '5', admin: 'admin@greenflag.app', action: 'unban_user', target: 'User #789', time: '2024-12-14 18:30' },
-  { id: '6', admin: 'super@greenflag.app', action: 'force_complete', target: 'Connection #321', time: '2024-12-14 16:20' },
-  { id: '7', admin: 'admin@greenflag.app', action: 'extend_connection', target: 'Connection #654', time: '2024-12-14 15:10' },
-  { id: '8', admin: 'mod@greenflag.app', action: 'reject_submission', target: 'Submission #126', time: '2024-12-14 14:00' },
-  { id: '9', admin: 'mod@greenflag.app', action: 'approve_submission', target: 'Submission #127', time: '2024-12-14 12:30' },
-  { id: '10', admin: 'admin@greenflag.app', action: 'delete_standard', target: 'Standard #555', time: '2024-12-14 11:00' },
-  { id: '11', admin: 'super@greenflag.app', action: 'approve_submission', target: 'Submission #128', time: '2024-12-13 22:15' },
-  { id: '12', admin: 'mod@greenflag.app', action: 'ban_user', target: 'User #101', time: '2024-12-13 20:45' },
-  { id: '13', admin: 'admin@greenflag.app', action: 'force_fail', target: 'Connection #432', time: '2024-12-13 19:30' },
-  { id: '14', admin: 'mod@greenflag.app', action: 'approve_submission', target: 'Submission #129', time: '2024-12-13 18:00' },
-  { id: '15', admin: 'super@greenflag.app', action: 'reject_submission', target: 'Submission #130', time: '2024-12-13 16:45' },
-];
+interface LogEntry {
+  id: string;
+  admin: string;
+  action: string;
+  target: string;
+  time: string;
+}
 
 const ACTIONS = ['all', 'approve_submission', 'reject_submission', 'ban_user', 'unban_user', 'force_complete', 'force_fail', 'extend_connection', 'delete_standard'];
 
 export default function AdminLogs() {
   const [filter, setFilter] = useState('all');
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filtered = filter === 'all' ? MOCK_LOGS : MOCK_LOGS.filter((l) => l.action === filter);
+  useEffect(() => {
+    const supabase = createClient();
+
+    const fetchLogs = async () => {
+      const { data, error } = await supabase
+        .from('audit_logs')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        setLogs(data.map((log: any) => ({
+          id: log.id,
+          admin: log.admin_email || 'system',
+          action: log.action,
+          target: log.target || '',
+          time: new Date(log.created_at).toLocaleString(),
+        })));
+      }
+      setLoading(false);
+    };
+
+    fetchLogs();
+  }, []);
+
+  const filtered = filter === 'all' ? logs : logs.filter((l) => l.action === filter);
 
   return (
     <div className="animate-fade-in">
@@ -52,32 +69,44 @@ export default function AdminLogs() {
         </select>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-muted text-xs uppercase border-b border-border">
-              <th className="text-left py-3 px-2">Admin</th>
-              <th className="text-left py-3 px-2">Action</th>
-              <th className="text-left py-3 px-2">Target</th>
-              <th className="text-right py-3 px-2">Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((log) => (
-              <tr key={log.id} className="border-b border-border/50">
-                <td className="py-3 px-2 text-white font-medium text-xs">{log.admin}</td>
-                <td className="py-3 px-2">
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-surface-light text-muted">
-                    {log.action.replace(/_/g, ' ')}
-                  </span>
-                </td>
-                <td className="py-3 px-2 text-muted text-xs">{log.target}</td>
-                <td className="py-3 px-2 text-muted text-xs text-right">{log.time}</td>
+      {loading ? (
+        <div className="text-center py-12 text-muted text-sm">Loading...</div>
+      ) : filtered.length === 0 ? (
+        <div className="empty-state py-16">
+          <div className="empty-state-icon">
+            <FileText className="w-8 h-8" />
+          </div>
+          <h3 className="text-lg font-medium text-white mb-2">No logs available</h3>
+          <p className="text-muted text-sm">Audit logs will appear here once admin actions are recorded.</p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-muted text-xs uppercase border-b border-border">
+                <th className="text-left py-3 px-2">Admin</th>
+                <th className="text-left py-3 px-2">Action</th>
+                <th className="text-left py-3 px-2">Target</th>
+                <th className="text-right py-3 px-2">Time</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {filtered.map((log) => (
+                <tr key={log.id} className="border-b border-border/50">
+                  <td className="py-3 px-2 text-white font-medium text-xs">{log.admin}</td>
+                  <td className="py-3 px-2">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-surface-light text-muted">
+                      {log.action.replace(/_/g, ' ')}
+                    </span>
+                  </td>
+                  <td className="py-3 px-2 text-muted text-xs">{log.target}</td>
+                  <td className="py-3 px-2 text-muted text-xs text-right">{log.time}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

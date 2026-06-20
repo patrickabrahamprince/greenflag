@@ -1,24 +1,10 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Users, Edit3, Pause, ChevronRight, Plus } from 'lucide-react';
-import type { Standard } from '@/types';
-
-const MOCK_STANDARD: Standard = {
-  id: '1',
-  host_id: 'host1',
-  name: 'The Gold Standard',
-  difficulty: 'medium',
-  is_active: true,
-  created_at: '2026-06-01T00:00:00Z',
-};
-
-const MOCK_CONNECTIONS = [
-  { id: 'c1', test_id: 't1', guest_name: 'Rahul', guest_age: 28, guest_city: 'Mumbai', status: 'active' as const, tasks_completed: 3, expires_at: '2026-07-01T00:00:00Z', created_at: '2026-06-10T00:00:00Z' },
-  { id: 'c2', test_id: 't2', guest_name: 'Arjun', guest_age: 31, guest_city: 'Bangalore', status: 'active' as const, tasks_completed: 6, expires_at: '2026-07-05T00:00:00Z', created_at: '2026-06-12T00:00:00Z' },
-  { id: 'c3', test_id: 't3', guest_name: 'Vivaan', guest_age: 26, guest_city: 'Pune', status: 'pending' as const, tasks_completed: 0, expires_at: '2026-07-10T00:00:00Z', created_at: '2026-06-15T00:00:00Z' },
-];
+import { createClient } from '@/lib/supabase/client';
+import type { Standard, Connection } from '@/types';
 
 function ApplicantCard({ connection }: { connection: any }) {
   return (
@@ -64,11 +50,60 @@ export default function AdminHostDashboardPage() {
   const router = useRouter();
   const params = useParams();
   const hostId = params.hostId as string;
-  const [standard] = useState<Standard | null>(MOCK_STANDARD);
-  const connections = MOCK_CONNECTIONS;
+  const [standard, setStandard] = useState<Standard | null>(null);
+  const [connections, setConnections] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    const fetchData = async () => {
+      const { data: stdData } = await supabase
+        .from('standards')
+        .select('*')
+        .eq('host_id', hostId)
+        .single();
+
+      if (stdData) setStandard(stdData);
+
+      const { data: connData } = await supabase
+        .from('connections')
+        .select(`
+          id,
+          status,
+          tasks_completed,
+          expires_at,
+          created_at,
+          guest:guest_id(name, age, city)
+        `)
+        .eq('host_id', hostId);
+
+      if (connData) {
+        setConnections(connData.map((c: any) => ({
+          ...c,
+          guest_name: c.guest?.name,
+          guest_age: c.guest?.age,
+          guest_city: c.guest?.city,
+        })));
+      }
+
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [hostId]);
+
   const applicants = connections.filter((c) => c.status === 'pending');
   const inProgress = connections.filter((c) => c.status === 'active' && c.tasks_completed < 8);
   const completed = connections.filter((c) => c.status === 'active' && c.tasks_completed >= 8);
+
+  if (loading) {
+    return (
+      <div className="animate-fade-in min-h-[60vh] flex items-center justify-center">
+        <div className="text-muted text-sm">Loading...</div>
+      </div>
+    );
+  }
 
   if (!standard) {
     return (
@@ -78,7 +113,7 @@ export default function AdminHostDashboardPage() {
         </div>
         <h2 className="text-xl font-medium text-white mb-2">No Standard Yet</h2>
         <p className="text-muted text-sm max-w-xs mb-8">
-          This host hasn't set a standard yet
+          This host hasn&apos;t set a standard yet
         </p>
       </div>
     );

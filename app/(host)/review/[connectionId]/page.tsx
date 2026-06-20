@@ -86,7 +86,7 @@ export default function ReviewPage({
       const res = await fetch(`/api/connections/${connectionId}/review`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ approve: false }),
+        body: JSON.stringify({ approve: false, reason: rejectReason, note: rejectNote }),
       });
       const data = await res.json();
       if (data.error) { toast.error(data.error); return; }
@@ -134,7 +134,7 @@ export default function ReviewPage({
       <div className="flex items-center gap-4 mb-6">
         <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center overflow-hidden shrink-0">
           {guest.photos?.[0] ? (
-            <img src={guest.photos[0]} alt="" className="w-full h-full object-cover" />
+            <img src={guest.photos[0]} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
           ) : (
             <span className="text-2xl font-medium text-[#EDEADE]">
               {guest.name?.charAt(0)}
@@ -170,16 +170,37 @@ export default function ReviewPage({
               <p className="text-xs text-[#8E8E93] mb-2">{task.prompt}</p>
 
               {sub ? (
-                sub.content_type === 'image' ? (
-                  <div className="bg-white/5 rounded-lg p-4 text-center">
-                    <Image className="w-6 h-6 text-[#8E8E93] mx-auto mb-1" />
-                    <p className="text-xs text-[#8E8E93]">Image submitted</p>
-                  </div>
-                ) : (
-                  <div className="bg-white/5 rounded-lg p-3">
-                    <p className="text-sm text-[#EDEADE] leading-relaxed">{sub.text_content}</p>
-                  </div>
-                )
+                <div className="space-y-2">
+                  {sub.media_url && (
+                    <div className="relative">
+                      <img
+                        src={sub.media_url}
+                        alt={`Task ${taskNum} submission`}
+                        className="w-full h-48 object-cover rounded-xl"
+                        onError={(e) => {
+                          const img = e.target as HTMLImageElement;
+                          img.style.display = 'none';
+                          const fallback = img.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.classList.remove('hidden');
+                        }}
+                      />
+                      <div className="hidden bg-white/5 rounded-xl p-4 text-center">
+                        <Image className="w-6 h-6 text-[#8E8E93] mx-auto mb-1" />
+                        <p className="text-xs text-[#8E8E93]">Image unavailable</p>
+                      </div>
+                    </div>
+                  )}
+                  {sub.text_content && (
+                    <div className="bg-white/5 rounded-lg p-3">
+                      <p className="text-sm text-[#EDEADE] leading-relaxed">{sub.text_content}</p>
+                    </div>
+                  )}
+                  {!sub.media_url && !sub.text_content && (
+                    <div className="bg-white/5 rounded-lg p-3">
+                      <p className="text-xs text-[#5A5A5D] italic">Empty submission</p>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <div className="bg-white/5 rounded-lg p-3">
                   <p className="text-xs text-[#5A5A5D] italic">Awaiting submission</p>

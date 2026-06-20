@@ -1,69 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Users, Check, Clock, MessageCircle, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Users, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { createClient } from '@/lib/supabase/client';
 
 interface GuestCard {
   id: string;
   connectionId: string;
   name: string;
   age: number;
-  photo?: string;
-  currentDay: number;
-  progress: number;
-  status: 'submitted' | 'waiting';
+  photo: string;
+  tasksCompleted: number;
+  status: string;
+  unreadCount?: number;
 }
 
-const MOCK_APPLICANTS: GuestCard[] = [
-  {
-    id: 'g1',
-    connectionId: 'c1',
-    name: 'Priya',
-    age: 28,
-    currentDay: 1,
-    progress: 1,
-    status: 'submitted',
-  },
-  {
-    id: 'g2',
-    connectionId: 'c2',
-    name: 'Arjun',
-    age: 30,
-    currentDay: 1,
-    progress: 0,
-    status: 'waiting',
-  },
-];
-
-const MOCK_IN_PROGRESS: GuestCard[] = [
-  {
-    id: 'g3',
-    connectionId: 'c3',
-    name: 'Ananya',
-    age: 26,
-    currentDay: 3,
-    progress: 3,
-    status: 'submitted',
-  },
-];
-
-const MOCK_CONNECTED: GuestCard[] = [];
-
 const TABS = ['Applicants', 'In Progress', 'Connected'] as const;
+const TOTAL_TASKS = 8;
 
-const TOTAL_INTENTIONS = 8;
-
-function GuestCard({ guest, onReview }: { guest: GuestCard; onReview: (id: string) => void }) {
-  const pct = Math.round((guest.progress / TOTAL_INTENTIONS) * 100);
+function GuestCard({ guest, onNavigate }: { guest: GuestCard; onNavigate: (id: string, status: string) => void }) {
+  const pct = Math.round((guest.tasksCompleted / TOTAL_TASKS) * 100);
+  const hasSubmitted = guest.status === 'tasks_submitted';
+  const isActive = guest.status === 'pending' || guest.status === 'tasks_submitted';
 
   return (
     <div className="card animate-fade-in">
       <div className="flex items-center gap-4">
         <div className="w-14 h-14 rounded-full bg-surface-light flex items-center justify-center text-muted shrink-0 overflow-hidden">
           {guest.photo ? (
-            <img src={guest.photo} alt={guest.name} className="w-full h-full object-cover" />
+            <img src={guest.photo} alt={guest.name} className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
           ) : (
             <span className="text-lg font-medium text-white">
               {guest.name.charAt(0)}
@@ -73,13 +40,18 @@ function GuestCard({ guest, onReview }: { guest: GuestCard; onReview: (id: strin
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <p className="font-medium text-white truncate">{guest.name}, {guest.age}</p>
-            {guest.status === 'submitted' && (
+            {hasSubmitted && (
               <span className="text-xs bg-gold/10 text-gold px-2 py-0.5 rounded-full">
                 Pending review
               </span>
             )}
+            {(guest.unreadCount || 0) > 0 && (
+              <span className="min-w-[18px] h-[18px] px-1 bg-red-500 rounded-full flex items-center justify-center">
+                <span className="text-[10px] font-bold text-white">{guest.unreadCount}</span>
+              </span>
+            )}
           </div>
-          <p className="text-sm text-muted">Day {guest.currentDay}</p>
+          <p className="text-sm text-muted">{guest.tasksCompleted}/{TOTAL_TASKS} tasks</p>
           <div className="flex items-center gap-2 mt-1">
             <div className="flex-1 h-1.5 bg-surface-light rounded-full overflow-hidden">
               <div
@@ -87,19 +59,19 @@ function GuestCard({ guest, onReview }: { guest: GuestCard; onReview: (id: strin
                 style={{ width: `${pct}%` }}
               />
             </div>
-            <span className="text-xs text-muted">{guest.progress}/{TOTAL_INTENTIONS}</span>
+            <span className="text-xs text-muted">{pct}%</span>
           </div>
         </div>
         <button
-          onClick={() => onReview(guest.connectionId)}
+          onClick={() => onNavigate(guest.connectionId, guest.status)}
           className={cn(
             'shrink-0 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-400 ease-out',
-            guest.status === 'submitted'
+            hasSubmitted
               ? 'bg-gold text-black hover:bg-gold-light'
               : 'bg-surface text-muted border border-border'
           )}
         >
-          {guest.status === 'submitted' ? 'Review' : 'View'}
+          {hasSubmitted ? 'Review' : 'View'}
         </button>
       </div>
     </div>
@@ -114,11 +86,11 @@ function EmptyState({ tab }: { tab: string }) {
     },
     'In Progress': {
       title: 'No active connections',
-      text: 'No active connections.',
+      text: 'No guests are currently working on your standards.',
     },
     Connected: {
       title: 'No completed connections',
-      text: 'No completed connections yet.',
+      text: 'No one has completed all tasks yet.',
     },
   };
 
@@ -138,10 +110,71 @@ function EmptyState({ tab }: { tab: string }) {
 export default function InterestedPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<typeof TABS[number]>('Applicants');
+  const [connections, setConnections] = useState<GuestCard[]>([]);
+  const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
-  const applicants = MOCK_APPLICANTS;
-  const inProgress = MOCK_IN_PROGRESS;
-  const connected = MOCK_CONNECTED;
+  useEffect(() => {
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push('/login');
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('connections')
+        .select(`
+          id,
+          status,
+          tasks_completed,
+          guest:guest_id(id, name, age, photos)
+        `)
+        .eq('host_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Failed to load connections:', error);
+        setLoading(false);
+        return;
+      }
+
+      const cards: GuestCard[] = await Promise.all(
+        (data || []).map(async (c: any) => {
+          const guest = c.guest;
+          let unreadCount = 0;
+          if (c.status === 'chat_unlocked' || c.status === 'completed') {
+            const { count } = await supabase
+              .from('messages')
+              .select('*', { count: 'exact', head: true })
+              .eq('connection_id', c.id)
+              .neq('sender_id', user.id)
+              .is('read_at', null);
+            unreadCount = count || 0;
+          }
+          return {
+            id: guest?.id || '',
+            connectionId: c.id,
+            name: guest?.name || 'Unknown',
+            age: guest?.age || 0,
+            photo: guest?.photos?.[0] || '',
+            tasksCompleted: c.tasks_completed || 0,
+            status: c.status,
+            unreadCount,
+          };
+        })
+      );
+
+      setConnections(cards);
+      setLoading(false);
+    };
+
+    load();
+  }, [supabase, router]);
+
+  const applicants = connections.filter((c) => c.status === 'pending' || c.status === 'tasks_submitted');
+  const inProgress = connections.filter((c) => c.status === 'active');
+  const connected = connections.filter((c) => c.status === 'chat_unlocked' || c.status === 'completed');
 
   const tabData: Record<typeof TABS[number], GuestCard[]> = {
     Applicants: applicants,
@@ -151,8 +184,32 @@ export default function InterestedPage() {
 
   const currentList = tabData[activeTab];
 
-  function handleReview(connectionId: string) {
-    router.push(`/review/${connectionId}`);
+  function handleNavigate(connectionId: string, status: string) {
+    if (status === 'chat_unlocked' || status === 'completed') {
+      router.push(`/messages/${connectionId}`);
+    } else {
+      router.push(`/review/${connectionId}`);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="animate-fade-in py-6">
+        <button
+          onClick={() => router.back()}
+          className="btn-ghost flex items-center gap-2 text-muted hover:text-white -ml-2 mb-4"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Back
+        </button>
+        <h1 className="font-display text-3xl text-white font-semibold mb-6">
+          Interested In You
+        </h1>
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="w-8 h-8 animate-spin text-gold" />
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -189,7 +246,7 @@ export default function InterestedPage() {
       <div className="space-y-3">
         {currentList.length > 0 ? (
           currentList.map((guest) => (
-            <GuestCard key={guest.id} guest={guest} onReview={handleReview} />
+            <GuestCard key={guest.id} guest={guest} onNavigate={handleNavigate} />
           ))
         ) : (
           <EmptyState tab={activeTab} />

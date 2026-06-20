@@ -9,24 +9,19 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState('overview')
   const router = useRouter()
-  const supabase = createClient()
 
   const load = async () => {
     try {
+      const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return router.push('/login')
       const { data: profile } = (await supabase.from('profiles').select('is_admin').eq('id', user.id).single()) as any
       if (!profile?.is_admin) { setError('Not admin'); setLoading(false); return }
 
-      const counts: any = {}
-      for (const t of ['profiles', 'connections', 'messages', 'reports']) {
-        const { count } = await supabase.from(t as any).select('*', { count: 'exact', head: true })
-        counts[t] = count || 0
-      }
-      const { data: users } = await supabase.from('profiles').select('*').order('created_at', { ascending: false }).limit(100)
-      const { data: reports } = await supabase.from('reports').select('*, reporter:profiles!reports_reporter_id_fkey(name), reported:profiles!reports_reported_id_fkey(name)').order('created_at', { ascending: false }).limit(50)
-      
-      setData({...counts, users: users || [], reports: reports || [] })
+      const res = await fetch('/api/admin')
+      if (!res.ok) throw new Error('Failed to load admin data')
+      const adminData = await res.json()
+      setData(adminData)
       setLoading(false)
     } catch (e: any) { setError(e.message); setLoading(false) }
   }
@@ -34,28 +29,32 @@ export default function AdminPage() {
   useEffect(() => { load() }, [])
 
   const banUser = async (id: string, reason: string) => {
-    await (supabase.from('profiles') as any).update({ is_banned: true, banned_reason: reason }).eq('id', id)
+    await fetch(`/api/admin/users/${id}/ban`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reason }),
+    })
     load()
   }
 
   const unbanUser = async (id: string) => {
-    await (supabase.from('profiles') as any).update({ is_banned: false, banned_reason: null }).eq('id', id)
+    await fetch(`/api/admin/users/${id}/unban`, { method: 'POST' })
     load()
   }
 
-  const toggleAdmin = async (id: string, current: boolean) => {
-    await (supabase.from('profiles') as any).update({ is_admin: !current }).eq('id', id)
+  const toggleAdmin = async (id: string, _current: boolean) => {
+    await fetch(`/api/admin/users/${id}/set-admin`, { method: 'POST' })
     load()
   }
 
   const deleteUser = async (id: string) => {
     if (!confirm('Delete this user + all data? Cannot undo.')) return
-    await (supabase.from('profiles') as any).delete().eq('id', id)
+    await fetch(`/api/admin/users/${id}`, { method: 'DELETE' })
     load()
   }
 
   const deleteReport = async (id: string) => {
-    await (supabase.from('reports') as any).delete().eq('id', id)
+    await fetch(`/api/admin/reports/${id}`, { method: 'DELETE' })
     load()
   }
 

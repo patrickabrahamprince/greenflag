@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { notifyHostOfSubmission } from '@/lib/notifications';
 
 export async function POST(
   req: Request,
@@ -30,6 +31,33 @@ export async function POST(
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    // Notify host of new submission
+    try {
+      const { data: connection } = await supabase
+        .from('connections')
+        .select('host_id')
+        .eq('id', id)
+        .single();
+
+      const { data: guestProfile } = await supabase
+        .from('profiles')
+        .select('name')
+        .eq('id', user.id)
+        .single();
+
+      if (connection && guestProfile) {
+        await notifyHostOfSubmission(
+          supabase,
+          connection.host_id,
+          guestProfile.name || 'Someone',
+          task_number,
+          id
+        );
+      }
+    } catch (notifyError) {
+      console.error('Failed to send notification:', notifyError);
     }
 
     return NextResponse.json(data);

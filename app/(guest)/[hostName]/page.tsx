@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect, use, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Clock, CheckCircle, XCircle, Loader2, Image, Send, AlertCircle, Coins } from 'lucide-react';
+import { ArrowLeft, Clock, CheckCircle, XCircle, Loader2, Image, Send, AlertCircle, Coins, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useCoinStore } from '@/lib/store';
+import { uploadFile } from '@/lib/supabase/storage';
 import toast from 'react-hot-toast';
 
 interface TaskSubmission {
@@ -27,8 +28,6 @@ interface ConnectionData {
   submissions: TaskSubmission[];
 }
 
-
-
 export default function TasksPage({ params }: { params: Promise<{ hostName: string }> }) {
   const { hostName } = use(params);
   const router = useRouter();
@@ -36,8 +35,12 @@ export default function TasksPage({ params }: { params: Promise<{ hostName: stri
   const [connection, setConnection] = useState<ConnectionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [taskInputs, setTaskInputs] = useState<Record<number, string>>({});
+  const [taskImages, setTaskImages] = useState<Record<number, File | null>>({});
+  const [taskImagePreviews, setTaskImagePreviews] = useState<Record<number, string>>({});
+  const [uploadingTask, setUploadingTask] = useState<number | null>(null);
   const [submittingTask, setSubmittingTask] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState('');
+  const fileInputRefs = useRef<Record<number, HTMLInputElement | null>>({});
 
   useEffect(() => {
     const load = async () => {
@@ -85,19 +88,92 @@ export default function TasksPage({ params }: { params: Promise<{ hostName: stri
     return () => clearInterval(interval);
   }, [connection?.deadline]);
 
+  const handleImageSelect = (taskNumber: number, file: File | null) => {
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image must be less than 5MB');
+      return;
+    }
+
+    setTaskImages((prev) => ({ ...prev, [taskNumber]: file }));
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setTaskImagePreviews((prev) => ({ ...prev, [taskNumber]: e.target?.result as string }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveImage = (taskNumber: number) => {
+    setTaskImages((prev) => ({ ...prev, [taskNumber]: null }));
+    setTaskImagePreviews((prev) => ({ ...prev, [taskNumber]: '' }));
+    if (fileInputRefs.current[taskNumber]) {
+      fileInputRefs.current[taskNumber].value = '';
+    }
+  };
+
   const handleSubmitTask = async (taskNumber: number) => {
-    const content = taskInputs[taskNumber];
-    if (!content?.trim()) { toast.error('Please fill in your response'); return; }
+    const task = tasks[taskNumber - 1];
+    const imageFile = taskImages[taskNumber];
+    const textContent = taskInputs[taskNumber];
+
+    if (task.type === 'image' && !imageFile && !textContent?.trim()) {
+      toast.error('Please upload an image or add text');
+      return;
+    }
+    if (task.type === 'text' && !textContent?.trim()) {
+      toast.error('Please fill in your response');
+      return;
+    }
+
     setSubmittingTask(taskNumber);
+    let mediaUrl: string | null = null;
+
     try {
+      if (imageFile) {
+        setUploadingTask(taskNumber);
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) { toast.error('Not authenticated'); return; }
+
+        const fileExt = imageFile.name.split('.').pop() || 'jpg';
+        const path = `${user.id}/${connection!.id}/${taskNumber}.${fileExt}`;
+
+        const { url, error: uploadError } = await uploadFile('submissions', path, imageFile);
+
+        if (uploadError) {
+          toast.error('Upload failed: ' + uploadError);
+          setSubmittingTask(null);
+          setUploadingTask(null);
+          return;
+        }
+
+        mediaUrl = url;
+        setUploadingTask(null);
+      }
+
       const res = await fetch(`/api/connections/${connection!.id}/submit-task`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ task_number: taskNumber, text: content.trim() }),
+        body: JSON.stringify({
+          task_number: taskNumber,
+          text: textContent?.trim() || null,
+          media_url: mediaUrl,
+        }),
       });
       const data = await res.json();
       if (data.error) { toast.error(data.error); return; }
       toast.success(`Task ${taskNumber} submitted`);
+
+      setTaskInputs((prev) => ({ ...prev, [taskNumber]: '' }));
+      setTaskImages((prev) => ({ ...prev, [taskNumber]: null }));
+      setTaskImagePreviews((prev) => ({ ...prev, [taskNumber]: '' }));
+
       const connRes = await fetch(`/api/connections/${connection!.id}`);
       const updated = await connRes.json();
       if (updated.id) setConnection(updated);
@@ -105,6 +181,7 @@ export default function TasksPage({ params }: { params: Promise<{ hostName: stri
       toast.error('Submission failed');
     } finally {
       setSubmittingTask(null);
+      setUploadingTask(null);
     }
   };
 
@@ -198,7 +275,7 @@ export default function TasksPage({ params }: { params: Promise<{ hostName: stri
         <div className="flex items-center gap-3 mb-4">
           <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
             {c.host.photos?.[0] ? (
-              <img src={c.host.photos[0]} alt="" className="w-full h-full object-cover" />
+              <img src={c.host.photos[0]} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
             ) : (
               <span className="text-lg text-[#8E8E93]">{c.host.name?.[0]}</span>
             )}
@@ -246,14 +323,17 @@ export default function TasksPage({ params }: { params: Promise<{ hostName: stri
             {tasks.map((task, idx) => {
               const taskNum = idx + 1;
               const submission = submissions.find((s) => s.task_number === taskNum);
-              const isSubmitted = !!submission;
+              const isTaskSubmitted = !!submission;
               const isSubmitting = submittingTask === taskNum;
+              const isUploading = uploadingTask === taskNum;
+              const imageFile = taskImages[taskNum];
+              const imagePreview = taskImagePreviews[taskNum];
 
               return (
                 <div key={taskNum} className="card">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-medium text-[#D4AF37]">Task {taskNum}/8</span>
-                    {isSubmitted && (
+                    {isTaskSubmitted && (
                       <span className="text-xs text-green-400 flex items-center gap-1">
                         <CheckCircle className="w-3 h-3" /> Done
                       </span>
@@ -262,16 +342,64 @@ export default function TasksPage({ params }: { params: Promise<{ hostName: stri
                   <h3 className="text-sm font-medium text-[#EDEADE] mb-1">{task.title}</h3>
                   <p className="text-xs text-[#8E8E93] mb-3">{task.prompt}</p>
 
-                  {isSubmitted ? (
+                  {isTaskSubmitted ? (
                     <div className="text-xs text-[#8E8E93] bg-white/5 rounded-lg p-3">
-                      {submission.text_content || (submission.media_url && 'Image uploaded')}
+                      {submission.media_url ? (
+                        <img
+                          src={submission.media_url}
+                          alt="Submitted"
+                          className="w-full h-40 object-cover rounded-lg"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                            (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                          }}
+                        />
+                      ) : null}
+                      <p className={submission.media_url ? 'hidden' : ''}>
+                        {submission.text_content || 'Image uploaded'}
+                      </p>
                     </div>
                   ) : (
                     <>
                       {task.type === 'image' ? (
-                        <div className="border-2 border-dashed border-white/10 rounded-xl p-6 text-center">
-                          <Image className="w-6 h-6 text-[#8E8E93] mx-auto mb-2" />
-                          <p className="text-xs text-[#8E8E93]">Tap to upload an image</p>
+                        <div className="space-y-2">
+                          {imagePreview ? (
+                            <div className="relative">
+                              <img
+                                src={imagePreview}
+                                alt="Preview"
+                                className="w-full h-48 object-cover rounded-xl"
+                              />
+                              <button
+                                onClick={() => handleRemoveImage(taskNum)}
+                                className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center"
+                              >
+                                <X className="w-4 h-4 text-white" />
+                              </button>
+                            </div>
+                          ) : (
+                            <div
+                              onClick={() => fileInputRefs.current[taskNum]?.click()}
+                              className="border-2 border-dashed border-white/10 rounded-xl p-6 text-center cursor-pointer hover:border-[#D4AF37]/30 transition-colors"
+                            >
+                              <Image className="w-6 h-6 text-[#8E8E93] mx-auto mb-2" />
+                              <p className="text-xs text-[#8E8E93]">Tap to upload an image</p>
+                              <p className="text-[10px] text-[#5A5A5D] mt-1">JPG, PNG up to 5MB</p>
+                            </div>
+                          )}
+                          <input
+                            ref={(el) => { fileInputRefs.current[taskNum] = el; }}
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => handleImageSelect(taskNum, e.target.files?.[0] || null)}
+                          />
+                          <textarea
+                            className="input min-h-[60px] resize-none text-sm"
+                            placeholder="Optional: add a note..."
+                            value={taskInputs[taskNum] || ''}
+                            onChange={(e) => setTaskInputs((prev) => ({ ...prev, [taskNum]: e.target.value }))}
+                          />
                         </div>
                       ) : (
                         <textarea
@@ -283,10 +411,16 @@ export default function TasksPage({ params }: { params: Promise<{ hostName: stri
                       )}
                       <button
                         onClick={() => handleSubmitTask(taskNum)}
-                        disabled={isSubmitting}
-                        className="mt-2 w-full h-9 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-xs font-medium active:scale-95 transition-all disabled:opacity-50"
+                        disabled={isSubmitting || isUploading}
+                        className="mt-2 w-full h-9 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-xs font-medium active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                       >
-                        {isSubmitting ? 'Submitting...' : 'Submit'}
+                        {isUploading ? (
+                          <><Loader2 className="w-3 h-3 animate-spin" /> Uploading...</>
+                        ) : isSubmitting ? (
+                          'Submitting...'
+                        ) : (
+                          'Submit'
+                        )}
                       </button>
                     </>
                   )}

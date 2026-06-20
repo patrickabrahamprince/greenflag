@@ -1,57 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, MessageCircle, ChevronRight, Users, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, MessageCircle, ChevronRight, Users, Clock, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { cn, formatTimeLeft } from '@/lib/utils';
-import type { Connection } from '@/types';
+import { createClient } from '@/lib/supabase/client';
 
 type TabKey = 'in-progress' | 'connected' | 'ended';
 
-interface ExtendedConnection extends Connection {
-  hostName: string;
-  hostPhoto?: string;
-  totalTasks: number;
+interface Connection {
+  id: string;
+  status: string;
+  tasks_completed: number;
+  expires_at: string;
+  host: { id: string; name: string; photos: string[] };
+  unread_count?: number;
 }
-
-const MOCK_CONNECTIONS: ExtendedConnection[] = [
-  {
-    id: 'c1',
-    test_id: 's1',
-    guest_id: 'g1',
-    host_id: 'h1',
-    status: 'active',
-    tasks_completed: 5,
-    expires_at: new Date(Date.now() + 23 * 3600 * 1000).toISOString(),
-    created_at: new Date(Date.now() - 3 * 86400 * 1000).toISOString(),
-    hostName: 'Priya',
-    totalTasks: 8,
-  },
-  {
-    id: 'c2',
-    test_id: 's2',
-    guest_id: 'g1',
-    host_id: 'h2',
-    status: 'chat_unlocked',
-    tasks_completed: 8,
-    expires_at: new Date(Date.now() + 48 * 3600 * 1000).toISOString(),
-    created_at: new Date(Date.now() - 6 * 86400 * 1000).toISOString(),
-    hostName: 'Ananya',
-    totalTasks: 8,
-  },
-  {
-    id: 'c3',
-    test_id: 's3',
-    guest_id: 'g1',
-    host_id: 'h3',
-    status: 'expired',
-    tasks_completed: 3,
-    expires_at: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
-    created_at: new Date(Date.now() - 10 * 86400 * 1000).toISOString(),
-    hostName: 'Riya',
-    totalTasks: 8,
-  },
-];
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'in-progress', label: 'In Progress' },
@@ -64,27 +28,37 @@ function ConnectionCard({
   onContinue,
   onMessage,
 }: {
-  connection: ExtendedConnection;
-  onContinue: (id: string) => void;
+  connection: Connection;
+  onContinue: (id: string, hostName: string) => void;
   onMessage: (id: string) => void;
 }) {
   const isChatUnlocked = connection.status === 'chat_unlocked' || connection.status === 'completed';
   const isEnded = connection.status === 'expired' || connection.status === 'rejected';
+  const hostName = connection.host?.name || 'Unknown';
+  const hostPhoto = connection.host?.photos?.[0];
+  const unread = connection.unread_count || 0;
 
   return (
     <div className="card flex items-center gap-3 p-3 animate-fade-in">
-      <div className="w-12 h-12 rounded-full bg-surface-light flex items-center justify-center flex-shrink-0">
-        <span className="text-sm font-display text-muted">
-          {connection.hostName.charAt(0)}
-        </span>
+      <div className="w-12 h-12 rounded-full bg-surface-light flex items-center justify-center flex-shrink-0 overflow-hidden">
+        {hostPhoto ? (
+          <img src={hostPhoto} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
+        ) : (
+          <span className="text-sm font-display text-muted">{hostName.charAt(0)}</span>
+        )}
       </div>
 
       <div className="flex-1 min-w-0">
-        <h3 className="text-base font-medium text-white">{connection.hostName}</h3>
+        <div className="flex items-center gap-2">
+          <h3 className="text-base font-medium text-white truncate">{hostName}</h3>
+          {unread > 0 && (
+            <span className="min-w-[18px] h-[18px] px-1 bg-red-500 rounded-full flex items-center justify-center">
+              <span className="text-[10px] font-bold text-white">{unread > 99 ? '99+' : unread}</span>
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-2 text-xs text-muted mt-0.5">
-          <span>Day {Math.min(connection.tasks_completed + 1, connection.totalTasks)} of {connection.totalTasks}</span>
-          <span className="w-1 h-1 rounded-full bg-surface-light" />
-          <span>{connection.tasks_completed}/{connection.totalTasks}</span>
+          <span>{connection.tasks_completed}/8 tasks</span>
           {!isEnded && (
             <>
               <span className="w-1 h-1 rounded-full bg-surface-light" />
@@ -109,7 +83,7 @@ function ConnectionCard({
         </button>
       ) : (
         <button
-          onClick={() => onContinue(connection.id)}
+          onClick={() => onContinue(connection.id, hostName)}
           className="flex items-center gap-1.5 text-xs bg-surface text-white border border-border font-medium rounded-lg px-3 py-1.5 transition-all duration-300 ease-out hover:bg-surface-light active:scale-[0.98]"
         >
           Continue
@@ -122,12 +96,83 @@ function ConnectionCard({
 
 export default function ConnectionsPage() {
   const router = useRouter();
+  const supabase = createClient();
   const [activeTab, setActiveTab] = useState<TabKey>('in-progress');
+  const [connections, setConnections] = useState<Connection[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredConnections = MOCK_CONNECTIONS.filter((c) => {
+  useEffect(() => {
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { router.push('/login'); return; }
+
+      const { data } = await supabase
+        .from('connections')
+        .select(`
+          id,
+          status,
+          tasks_completed,
+          expires_at,
+          host:host_id(id, name, photos)
+        `)
+        .eq('guest_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (!data) { setLoading(false); return; }
+
+      // Fetch unread counts for chat_unlocked connections
+      const connsWithUnread = await Promise.all(
+        data.map(async (c: any) => {
+          let unread_count = 0;
+          if (c.status === 'chat_unlocked' || c.status === 'completed') {
+            const { count } = await supabase
+              .from('messages')
+              .select('*', { count: 'exact', head: true })
+              .eq('connection_id', c.id)
+              .neq('sender_id', user.id)
+              .is('read_at', null);
+            unread_count = count || 0;
+          }
+          return { ...c, unread_count };
+        })
+      );
+
+      setConnections(connsWithUnread as Connection[]);
+      setLoading(false);
+    };
+
+    load();
+  }, [supabase, router]);
+
+  // Real-time unread count updates
+  useEffect(() => {
+    if (!connections.length) return;
+
+    const channel = supabase
+      .channel('unread-updates')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages' },
+        (payload) => {
+          const newMsg = payload.new as any;
+          setConnections((prev) =>
+            prev.map((c) =>
+              c.id === newMsg.connection_id
+                ? { ...c, unread_count: (c.unread_count || 0) + 1 }
+                : c
+            )
+          );
+        }
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [connections.length, supabase]);
+
+  const filteredConnections = connections.filter((c) => {
     switch (activeTab) {
       case 'in-progress':
-        return c.status === 'active';
+        return c.status === 'pending' || c.status === 'active' || c.status === 'tasks_submitted';
       case 'connected':
         return c.status === 'chat_unlocked' || c.status === 'completed';
       case 'ended':
@@ -137,9 +182,8 @@ export default function ConnectionsPage() {
     }
   });
 
-  const handleContinue = (id: string) => {
-    const conn = MOCK_CONNECTIONS.find((c) => c.id === id);
-    if (conn) router.push(`/${conn.hostName.toLowerCase()}`);
+  const handleContinue = (id: string, hostName: string) => {
+    router.push(`/${hostName.toLowerCase()}`);
   };
 
   const handleMessage = (id: string) => {
@@ -151,35 +195,24 @@ export default function ConnectionsPage() {
       case 'in-progress':
         return (
           <div className="empty-state">
-            <div className="empty-state-icon">
-              <Users className="w-6 h-6" />
-            </div>
+            <div className="empty-state-icon"><Users className="w-6 h-6" /></div>
             <h3 className="empty-state-title">No connections yet.</h3>
             <p className="empty-state-text">Browse Discover to find someone with standards you&apos;d like to meet.</p>
-            <button
-              onClick={() => router.push('/discover')}
-              className="btn-primary mt-6"
-            >
-              Browse Discover
-            </button>
+            <button onClick={() => router.push('/discover')} className="btn-primary mt-6">Browse Discover</button>
           </div>
         );
       case 'connected':
         return (
           <div className="empty-state">
-            <div className="empty-state-icon">
-              <CheckCircle className="w-6 h-6" />
-            </div>
+            <div className="empty-state-icon"><CheckCircle className="w-6 h-6" /></div>
             <h3 className="empty-state-title">No connections yet.</h3>
-            <p className="empty-state-text">Complete 8 intentions to connect with someone.</p>
+            <p className="empty-state-text">Complete 8 tasks to connect with someone.</p>
           </div>
         );
       case 'ended':
         return (
           <div className="empty-state">
-            <div className="empty-state-icon">
-              <Clock className="w-6 h-6" />
-            </div>
+            <div className="empty-state-icon"><Clock className="w-6 h-6" /></div>
             <h3 className="empty-state-title">Nothing here yet.</h3>
             <p className="empty-state-text">Connections that ended will appear here.</p>
           </div>
@@ -187,13 +220,26 @@ export default function ConnectionsPage() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="page-container">
+        <div className="page-header">
+          <button onClick={() => router.push('/discover')} className="btn-ghost p-2 -ml-2">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <h1 className="text-xl font-display text-white">Connections</h1>
+        </div>
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-gold" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="page-container">
       <div className="page-header">
-        <button
-          onClick={() => router.push('/discover')}
-          className="btn-ghost p-2 -ml-2"
-        >
+        <button onClick={() => router.push('/discover')} className="btn-ghost p-2 -ml-2">
           <ArrowLeft className="w-5 h-5" />
         </button>
         <h1 className="text-xl font-display text-white">Connections</h1>

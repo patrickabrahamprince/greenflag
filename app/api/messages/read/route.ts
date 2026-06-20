@@ -7,10 +7,9 @@ export async function POST(req: Request) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { connection_id, content } = await req.json();
-
-    if (!connection_id || !content?.trim()) {
-      return NextResponse.json({ error: 'connection_id and content are required' }, { status: 400 });
+    const { connection_id } = await req.json();
+    if (!connection_id) {
+      return NextResponse.json({ error: 'connection_id required' }, { status: 400 });
     }
 
     const { data: connection } = await supabase
@@ -27,21 +26,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { data, error } = await supabase
-      .from('messages')
-      .insert({
-        connection_id,
-        sender_id: user.id,
-        content: content.trim(),
-      })
-      .select()
-      .single();
+    const { error } = await supabase.rpc('mark_messages_read', {
+      p_connection_id: connection_id,
+    });
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
-    return NextResponse.json(data);
+    return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

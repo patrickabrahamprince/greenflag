@@ -1,4 +1,3 @@
-// @ts-nocheck
 export interface CoinPack {
   id: string;
   coins: number;
@@ -7,9 +6,9 @@ export interface CoinPack {
 }
 
 export const COIN_PACKS: CoinPack[] = [
-  { id: 'pack_120', coins: 120, priceINR: 99, label: '120 Coins (Best Value)' },
-  { id: 'pack_500', coins: 500, priceINR: 399, label: '500 Coins (Popular)' },
-  { id: 'pack_1500', coins: 1500, priceINR: 999, label: '1500 Coins (Super Value)' },
+  { id: 'pack_10', coins: 10, priceINR: 99, label: '10 Coins' },
+  { id: 'pack_40', coins: 40, priceINR: 299, label: '40 Coins (Popular)' },
+  { id: 'pack_150', coins: 150, priceINR: 799, label: '150 Coins (Best Value)' },
 ];
 
 export const checkHasEnoughCoins = (currentBalance: number, cost: number): boolean => {

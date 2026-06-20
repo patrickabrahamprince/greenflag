@@ -37,7 +37,7 @@ export default function ProfilePage() {
       <div className="flex flex-col items-center py-6">
         <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gold mb-4">
           {user.photos?.[0] ? (
-            <img src={user.photos[0]} alt={user.name} className="w-full h-full object-cover" />
+            <img src={user.photos[0]} alt={user.name} className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
           ) : (
             <div className="w-full h-full bg-surface flex items-center justify-center text-2xl font-display text-gold">
               {user.name?.[0]}

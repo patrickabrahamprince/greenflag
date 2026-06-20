@@ -11,15 +11,6 @@ const INDIAN_CITIES = [
   'Kolkata', 'Pune', 'Ahmedabad', 'Jaipur', 'Surat',
 ];
 
-const MOCK_PHOTOS = [
-  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop',
-];
-
 const INSTAGRAM_REGEX = /^@?[a-zA-Z0-9._]{1,30}$/;
 
 function ProfileForm() {
@@ -31,6 +22,7 @@ function ProfileForm() {
 
   const [name, setName] = useState('');
   const [photos, setPhotos] = useState<string[]>([]);
+  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [city, setCity] = useState('');
   const [cityAutoText, setCityAutoText] = useState('');
   const [lat, setLat] = useState<number | null>(null);
@@ -41,16 +33,21 @@ function ProfileForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
-  const addMockPhoto = () => {
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
     const max = isHost ? 3 : 6;
-    if (photos.length >= max) return;
-    const available = MOCK_PHOTOS.filter((p) => !photos.includes(p));
-    if (available.length === 0) return;
-    setPhotos([...photos, available[0]]);
+    const remaining = max - photos.length;
+    const newFiles = Array.from(files).slice(0, remaining);
+    const newPreviews = newFiles.map(f => URL.createObjectURL(f));
+    setPhotos([...photos, ...newPreviews]);
+    setPhotoFiles([...photoFiles, ...newFiles]);
   };
 
-  const removePhoto = (url: string) => {
-    setPhotos(photos.filter((p) => p !== url));
+  const removePhoto = (idx: number) => {
+    URL.revokeObjectURL(photos[idx]);
+    setPhotos(photos.filter((_, i) => i !== idx));
+    setPhotoFiles(photoFiles.filter((_, i) => i !== idx));
   };
 
   const detectLocation = () => {
@@ -135,11 +132,31 @@ function ProfileForm() {
       return;
     }
 
+    // Upload photo files to Supabase storage
+    const uploadedUrls: string[] = [];
+    for (let i = 0; i < photoFiles.length; i++) {
+      const file = photoFiles[i];
+      const path = `${authUser.id}/${Date.now()}-${i}.jpg`;
+      const { data, error } = await supabase.storage
+        .from('profile-photos')
+        .upload(path, file, { upsert: true });
+      if (error) {
+        toast.error(`Failed to upload photo: ${error.message}`);
+        setLoading(false);
+        return;
+      }
+      const { data: urlData } = supabase.storage.from('profile-photos').getPublicUrl(data.path);
+      uploadedUrls.push(urlData.publicUrl);
+    }
+
+    const allPhotos = [...photos.filter(p => !p.startsWith('blob:')), ...uploadedUrls];
+
     const payload: Record<string, unknown> = {
       id: authUser.id,
       name: name.trim(),
       role,
-      photos,
+      photos: allPhotos,
+      onboarding_completed: true,
     };
 
     if (isHost) {
@@ -217,13 +234,13 @@ function ProfileForm() {
                       ? 'border-white/10 hover:border-gold/30 cursor-pointer'
                       : 'border-white/10 opacity-50'
                   }`}
-                  onClick={() => { if (!photo && canAdd) addMockPhoto(); }}
+                  onClick={() => { if (!photo && canAdd) document.getElementById(`photo-input-${i}`)?.click(); }}
                 >
                   {photo ? (
                     <>
-                      <img src={photo} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
+                      <img src={photo} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
                       <button
-                        onClick={(e) => { e.stopPropagation(); removePhoto(photo); }}
+                        onClick={(e) => { e.stopPropagation(); removePhoto(i); }}
                         className="absolute top-1 right-1 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80 transition-colors"
                       >
                         <X size={14} className="text-white" />
@@ -232,6 +249,13 @@ function ProfileForm() {
                   ) : (
                     <Upload size={20} className="text-muted" />
                   )}
+                  <input
+                    id={`photo-input-${i}`}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handlePhotoUpload}
+                  />
                 </div>
               );
             })}

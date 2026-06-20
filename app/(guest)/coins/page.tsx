@@ -1,35 +1,160 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Coins, Zap, Crown, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, Coins, Zap, Crown, ShoppingCart, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useCoinStore } from '@/lib/store';
+import { createClient } from '@/lib/supabase/client';
 
 const PACKAGES = [
-  { coins: 10, price: 29, popular: true },
-  { coins: 40, price: 99, best: true },
-  { coins: 150, price: 299 },
+  { coins: 10, price: 99, popular: true },
+  { coins: 40, price: 299, best: true },
+  { coins: 150, price: 799 },
 ];
 
-const MOCK_TRANSACTIONS = [
-  { id: '1', type: 'credit', amount: 40, description: 'Purchased 40 Coins', date: '2024-12-15' },
-  { id: '2', type: 'debit', amount: 10, description: 'Started connection: Morning Routine', date: '2024-12-14' },
-  { id: '3', type: 'credit', amount: 150, description: 'Purchased 150 Coins', date: '2024-12-10' },
-  { id: '4', type: 'debit', amount: 10, description: 'Started connection: Fitness Challenge', date: '2024-12-08' },
-  { id: '5', type: 'credit', amount: 10, description: 'Purchased 10 Coins', date: '2024-12-01' },
-];
+interface Transaction {
+  id: string;
+  type: string;
+  amount: number;
+  description: string;
+  created_at: string;
+}
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 export default function CoinsPage() {
   const router = useRouter();
   const balance = useCoinStore((s) => s.balance);
-  const add = useCoinStore((s) => s.add);
+  const setBalance = useCoinStore((s) => s.setBalance);
+  const [loading, setLoading] = useState(true);
+  const [purchasing, setPurchasing] = useState<number | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const supabase = createClient();
 
-  const handleBuy = (pkg: typeof PACKAGES[0]) => {
-    toast.success(`Order created for ${pkg.coins} coins`);
-    add(pkg.coins);
-    router.push('/profile');
+  useEffect(() => {
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push('/login');
+        return;
+      }
+
+      const { data: wallet } = await supabase
+        .from('wallets')
+        .select('balance')
+        .eq('user_id', user.id)
+        .single();
+
+      if (wallet) {
+        setBalance((wallet as { balance: number }).balance);
+      }
+
+      const { data: txData } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      setTransactions((txData as Transaction[]) || []);
+      setLoading(false);
+    };
+
+    load();
+  }, [supabase, router, setBalance]);
+
+  const handleBuy = async (pkg: typeof PACKAGES[0]) => {
+    setPurchasing(pkg.price);
+
+    try {
+      const res = await fetch('/api/payments/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pack_price: pkg.price }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.error || 'Failed to create order');
+        setPurchasing(null);
+        return;
+      }
+
+      const options = {
+        key: data.key_id,
+        amount: data.amount,
+        currency: data.currency,
+        name: 'GreenFlag',
+        description: `${pkg.coins} Coins`,
+        order_id: data.order_id,
+        handler: async function (response: any) {
+          toast.success('Payment successful! Coins will be credited shortly.');
+          setPurchasing(null);
+
+          // Optimistically add coins
+          useCoinStore.getState().add(pkg.coins);
+
+          // Refresh wallet balance from DB
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const { data: wallet } = await supabase
+              .from('wallets')
+              .select('balance')
+              .eq('user_id', user.id)
+              .single();
+            if (wallet) {
+              setBalance((wallet as { balance: number }).balance);
+            }
+
+            // Refresh transactions
+            const { data: txData } = await supabase
+              .from('transactions')
+              .select('*')
+              .eq('user_id', user.id)
+              .order('created_at', { ascending: false })
+              .limit(20);
+            setTransactions((txData as Transaction[]) || []);
+          }
+        },
+        prefill: {
+          name: data.user_name || '',
+          email: data.user_email || '',
+        },
+        theme: {
+          color: '#D4AF37',
+        },
+        modal: {
+          ondismiss: function () {
+            setPurchasing(null);
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response: any) {
+        toast.error('Payment failed. Please try again.');
+        setPurchasing(null);
+      });
+      rzp.open();
+    } catch (error) {
+      toast.error('Something went wrong');
+      setPurchasing(null);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-gold" />
+      </div>
+    );
+  }
 
   return (
     <div className="page-container animate-fade-in">
@@ -76,10 +201,15 @@ export default function CoinsPage() {
               </div>
               <button
                 onClick={() => handleBuy(pkg)}
-                className="btn-primary text-sm py-2 px-4 flex items-center gap-1.5"
+                disabled={purchasing !== null}
+                className="btn-primary text-sm py-2 px-4 flex items-center gap-1.5 disabled:opacity-50"
               >
-                <ShoppingCart className="w-3.5 h-3.5" />
-                Buy
+                {purchasing === pkg.price ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <ShoppingCart className="w-3.5 h-3.5" />
+                )}
+                {purchasing === pkg.price ? 'Processing...' : 'Buy'}
               </button>
             </div>
           </div>
@@ -88,32 +218,42 @@ export default function CoinsPage() {
 
       <div className="px-4 mt-8">
         <h2 className="text-lg font-display text-white mb-3">Transaction History</h2>
-        <div className="space-y-1">
-          {MOCK_TRANSACTIONS.map((tx) => (
-            <div key={tx.id} className="flex items-center justify-between py-2.5 border-b border-border/50 last:border-0">
-              <div className="flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  tx.type === 'credit' ? 'bg-green-500/10' : 'bg-red-500/10'
+        {transactions.length === 0 ? (
+          <p className="text-muted text-sm text-center py-8">No transactions yet</p>
+        ) : (
+          <div className="space-y-1">
+            {transactions.map((tx) => (
+              <div key={tx.id} className="flex items-center justify-between py-2.5 border-b border-border/50 last:border-0">
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    tx.type === 'purchase' ? 'bg-green-500/10' : 'bg-red-500/10'
+                  }`}>
+                    {tx.type === 'purchase' ? (
+                      <Coins className="w-4 h-4 text-green-500" />
+                    ) : (
+                      <Zap className="w-4 h-4 text-red-500" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm text-white">{tx.description}</p>
+                    <p className="text-xs text-muted">
+                      {new Date(tx.created_at).toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </p>
+                  </div>
+                </div>
+                <span className={`text-sm font-medium ${
+                  tx.type === 'purchase' ? 'text-green-500' : 'text-red-500'
                 }`}>
-                  {tx.type === 'credit' ? (
-                    <Coins className="w-4 h-4 text-green-500" />
-                  ) : (
-                    <Zap className="w-4 h-4 text-red-500" />
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm text-white">{tx.description}</p>
-                  <p className="text-xs text-muted">{tx.date}</p>
-                </div>
+                  {tx.type === 'purchase' ? '+' : ''}{tx.amount}
+                </span>
               </div>
-              <span className={`text-sm font-medium ${
-                tx.type === 'credit' ? 'text-green-500' : 'text-red-500'
-              }`}>
-                {tx.type === 'credit' ? '+' : '-'}{tx.amount}
-              </span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

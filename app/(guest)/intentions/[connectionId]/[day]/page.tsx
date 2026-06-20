@@ -1,27 +1,11 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Camera, Mic, Type, MapPin, Check, Upload, Image, Music } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-interface MockIntentionDetail {
-  day: number;
-  description: string;
-  type: 'photo' | 'voice' | 'text' | 'location';
-  prompt: string;
-}
-
-const MOCK_INTENTIONS_DETAIL: Record<number, MockIntentionDetail> = {
-  1: { day: 1, description: 'Send a photo of your morning routine', type: 'photo', prompt: 'Share a glimpse into how you start your day.' },
-  2: { day: 2, description: 'Tell me what drives you in life', type: 'text', prompt: 'What motivates you to get out of bed every morning?' },
-  3: { day: 3, description: 'Record a voice note introducing yourself', type: 'voice', prompt: 'Let her hear your voice. Introduce yourself naturally.' },
-  4: { day: 4, description: 'Share a photo from your favorite place', type: 'photo', prompt: 'A place that means something to you.' },
-  5: { day: 5, description: 'Describe your perfect weekend', type: 'text', prompt: 'Paint a picture of your ideal weekend.' },
-  6: { day: 6, description: 'Send a voice note about your passions', type: 'voice', prompt: 'Talk about something you truly care about.' },
-  7: { day: 7, description: 'Share a photo of something you created', type: 'photo', prompt: 'Show her something you made with your hands or mind.' },
-  8: { day: 8, description: 'Pin your location for a dream travel spot', type: 'location', prompt: 'Where in the world would you love to go?' },
-};
+import { createClient } from '@/lib/supabase/client';
+import type { Intention } from '@/types';
 
 function PhotoUploader({ onUpload }: { onUpload: (url: string) => void }) {
   const [preview, setPreview] = useState<string | null>(null);
@@ -221,20 +205,98 @@ export default function IntentionPage({
   const [submitted, setSubmitted] = useState(false);
   const [proofUrl, setProofUrl] = useState<string>('');
   const [proofText, setProofText] = useState<string>('');
+  const [intention, setIntention] = useState<Intention | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const detail = MOCK_INTENTIONS_DETAIL[day] || {
-    day,
-    description: `Intention #${day}`,
-    type: 'text' as const,
-    prompt: 'Complete this intention.',
-  };
+  useEffect(() => {
+    const supabase = createClient();
+
+    const fetchIntention = async () => {
+      const { data: connection, error: connError } = await supabase
+        .from('connections')
+        .select('*')
+        .eq('id', connectionId)
+        .single();
+
+      if (connError || !connection) {
+        setError('Connection not found');
+        setLoading(false);
+        return;
+      }
+
+      const conn = connection as any;
+
+      const { data: standard, error: stdError } = await supabase
+        .from('standards')
+        .select('id')
+        .eq('id', conn.test_id)
+        .single();
+
+      if (stdError || !standard) {
+        setError('Standard not found');
+        setLoading(false);
+        return;
+      }
+
+      const std = standard as any;
+
+      const { data: intentionData, error: intError } = await supabase
+        .from('intentions')
+        .select('*')
+        .eq('standard_id', std.id)
+        .eq('day', day)
+        .single();
+
+      if (intError || !intentionData) {
+        setError('Intention not found for this day');
+        setLoading(false);
+        return;
+      }
+
+      setIntention(intentionData);
+      setLoading(false);
+    };
+
+    fetchIntention();
+  }, [connectionId, day]);
+
+  if (loading) {
+    return (
+      <div className="page-container flex items-center justify-center">
+        <div className="text-muted text-sm">Loading...</div>
+      </div>
+    );
+  }
+
+  if (error || !intention) {
+    return (
+      <div className="page-container flex flex-col justify-center">
+        <div className="empty-state">
+          <div className="w-16 h-16 rounded-full bg-surface-light flex items-center justify-center mb-4">
+            <MapPin className="w-8 h-8 text-muted/40" />
+          </div>
+          <h3 className="text-lg font-display text-white mb-2">No Intention Found</h3>
+          <p className="text-sm text-muted text-center max-w-xs">
+            {error || 'There is no intention set for this day yet.'}
+          </p>
+          <button
+            onClick={() => router.back()}
+            className="btn-primary mt-6"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const TypeIcon = {
     photo: Camera,
     voice: Mic,
     text: Type,
     location: MapPin,
-  }[detail.type];
+  }[intention.type];
 
   const handleSubmit = () => {
     setSubmitted(true);
@@ -279,23 +341,23 @@ export default function IntentionPage({
         </div>
         <div>
           <h1 className="text-xl font-display text-white">
-            Day {detail.day}: {detail.description}
+            Day {intention.day}: {intention.description}
           </h1>
-          <p className="text-sm text-muted mt-0.5">{detail.prompt}</p>
+          <p className="text-sm text-muted mt-0.5">{intention.description}</p>
         </div>
       </div>
 
       <div className="mb-8">
-        {detail.type === 'photo' && (
+        {intention.type === 'photo' && (
           <PhotoUploader onUpload={(url) => setProofUrl(url)} />
         )}
-        {detail.type === 'voice' && (
+        {intention.type === 'voice' && (
           <VoiceRecorder onRecord={(url) => setProofUrl(url)} />
         )}
-        {detail.type === 'text' && (
+        {intention.type === 'text' && (
           <TextInput onText={(text) => setProofText(text)} />
         )}
-        {detail.type === 'location' && (
+        {intention.type === 'location' && (
           <LocationPicker onLocation={(url) => setProofUrl(url)} />
         )}
       </div>
@@ -303,7 +365,7 @@ export default function IntentionPage({
       <button
         onClick={handleSubmit}
         disabled={
-          detail.type !== 'text'
+          intention.type !== 'text'
             ? !proofUrl
             : !proofText.trim()
         }

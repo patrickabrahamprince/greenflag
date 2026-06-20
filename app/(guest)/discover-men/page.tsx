@@ -33,7 +33,7 @@ function ProfileCard({
   return (
     <div className="snap-center h-screen w-full relative flex flex-col">
       <div className="absolute inset-0 w-full h-full">
-        <img src={photo} alt={profile.name} className="w-full h-full object-cover" />
+        <img src={photo} alt={profile.name} className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent" />
       </div>
 

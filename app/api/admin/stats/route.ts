@@ -1,35 +1,75 @@
 import { NextResponse } from 'next/server';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 export async function GET() {
-  return NextResponse.json({
-    pending_photos: 12,
-    active_connections: 47,
-    banned_users: 6,
-    revenue_mtd: 12450,
-    dau: 245,
-    mau: 1892,
-    conversion_rate: 23,
-    completion_rate: 67,
-    arpu: 48,
-    signups_30d: [
-      8, 12, 5, 18, 10, 22, 15, 9, 14, 20,
-      11, 7, 16, 13, 19, 6, 21, 17, 4, 23,
-      12, 8, 15, 10, 18, 14, 20, 11, 16, 9,
-    ],
-    revenue_30d: [
-      1200, 1800, 900, 2100, 1500, 2400, 1900, 1300, 1700, 2200,
-      1400, 1100, 2000, 1600, 2300, 1000, 2500, 1800, 1200, 1900,
-      2100, 1500, 1700, 2400, 1300, 2000, 1600, 2200, 1400, 1800,
-    ],
-    user_distribution: {
-      hosts: 28,
-      guests: 52,
-    },
-    recent_activity: [
-      { action: 'New connection created', time: '2 min ago' },
-      { action: 'Photo approved', time: '15 min ago' },
-      { action: 'New user registered', time: '1 hour ago' },
-      { action: 'Payment received ₹299', time: '2 hours ago' },
-    ],
-  });
+  try {
+    const supabase = await createServerSupabaseClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single();
+
+    if (!profile?.is_admin) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const counts: Record<string, number> = {};
+    for (const t of ['profiles', 'connections', 'messages', 'reports']) {
+      const { count } = await supabase.from(t).select('*', { count: 'exact', head: true });
+      counts[t] = count || 0;
+    }
+
+    const { data: signupsData } = await supabase
+      .from('profiles')
+      .select('created_at')
+      .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+
+    const signupsByDay: number[] = [];
+    for (let i = 29; i >= 0; i--) {
+      const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
+      const dayStr = date.toISOString().slice(0, 10);
+      const count = signupsData?.filter(s => s.created_at?.slice(0, 10) === dayStr).length || 0;
+      signupsByDay.push(count);
+    }
+
+    const { data: revenueData } = await supabase
+      .from('coin_transactions')
+      .select('amount, created_at')
+      .eq('type', 'purchase')
+      .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+
+    const revenueByDay: number[] = [];
+    for (let i = 29; i >= 0; i--) {
+      const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
+      const dayStr = date.toISOString().slice(0, 10);
+      const dayTotal = revenueData
+        ?.filter(r => r.created_at?.slice(0, 10) === dayStr)
+        .reduce((sum, r) => sum + (r.amount || 0), 0) || 0;
+      revenueByDay.push(dayTotal);
+    }
+
+    return NextResponse.json({
+      pending_photos: counts.reports || 0,
+      active_connections: counts.connections || 0,
+      banned_users: 0,
+      revenue_mtd: revenueByDay.reduce((a, b) => a + b, 0),
+      dau: signupsByDay.slice(-1)[0] || 0,
+      mau: signupsByDay.reduce((a, b) => a + b, 0),
+      conversion_rate: 0,
+      completion_rate: 0,
+      arpu: 0,
+      signups_30d: signupsByDay,
+      revenue_30d: revenueByDay,
+      user_distribution: { hosts: 0, guests: 0 },
+      recent_activity: [],
+    });
+  } catch {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
 }

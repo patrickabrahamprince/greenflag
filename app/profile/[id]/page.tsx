@@ -151,7 +151,7 @@ export default function ViewProfilePage() {
     <div className="min-h-screen bg-[#0A0A0A] pb-24">
       <div className="relative w-full aspect-[3/4]">
         {photo && (
-          <img src={photo} alt={profile.name} className="w-full h-full object-cover" />
+          <img src={photo} alt={profile.name} className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
 

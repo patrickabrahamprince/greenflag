@@ -35,5 +35,4 @@ CREATE POLICY "messages_admin" ON messages
     auth.email() = ANY(string_to_array(current_setting('app.admin_emails', true), ','))
   );
 
--- Set default admin_emails (overridden by environment)
-ALTER DATABASE postgres SET app.admin_emails TO '';
+-- Set default admin_emails (overridden by environment

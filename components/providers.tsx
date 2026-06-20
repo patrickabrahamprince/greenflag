@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useCoinStore } from '@/lib/store';
+import { PushNotificationRegistrar } from './push-notification-registrar';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const setUser = useUserStore((s) => s.setUser);
@@ -57,6 +58,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <PushNotificationRegistrar />
       {children}
       <Toaster
         position="top-center"

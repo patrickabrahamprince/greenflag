@@ -161,7 +161,7 @@ export default function AdminUsers() {
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
                           {u.photos?.[0] ? (
-                            <img src={u.photos[0]} alt="" className="w-full h-full object-cover" />
+                            <img src={u.photos[0]} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
                           ) : (
                             <span className="text-xs text-[#8E8E93]">{u.name?.[0]}</span>
                           )}

@@ -1,19 +1,24 @@
 import { NextResponse } from 'next/server';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 export async function GET() {
-  const profile = {
-    id: 'mock-user-id',
-    name: 'Guest User',
-    age: 24,
-    city: 'Mumbai',
-    bio: 'Looking for meaningful connections through shared standards.',
-    photos: [],
-    role: 'guest',
-    created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-    wallet: {
-      balance: 100,
-    },
-  };
+  const supabase = await createServerSupabaseClient();
+
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single();
+
+  if (profileError) {
+    return NextResponse.json({ error: profileError.message }, { status: 500 });
+  }
 
   return NextResponse.json({ profile });
 }

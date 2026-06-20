@@ -84,7 +84,7 @@ export default function AdminMatchesPage({
             <div className="flex items-center gap-3 mb-3">
               <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center overflow-hidden shrink-0">
                 {match.photos?.[0] ? (
-                  <img src={match.photos[0]} alt="" className="w-full h-full object-cover" />
+                  <img src={match.photos[0]} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
                 ) : (
                   <span className="text-lg text-[#8E8E93]">{match.name?.[0]}</span>
                 )}
