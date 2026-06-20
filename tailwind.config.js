@@ -9,17 +9,22 @@ module.exports = {
     extend: {
       colors: {
         black: '#0A0A0A',
+        'black-deep': '#080808',
         gold: '#D4AF37',
         'gold-light': '#E8C84A',
         'gold-dark': '#B8962F',
-        surface: '#141414',
-        'surface-light': '#1C1C1E',
-        border: '#2A2A2E',
-        muted: '#8E8E93',
+        blush: '#C4956A',
+        surface: '#111111',
+        'surface-light': '#161616',
+        border: '#1E1E1E',
+        muted: '#9A9A9A',
       },
       fontFamily: {
         display: ['Playfair Display', 'serif'],
         sans: ['Satoshi', 'system-ui', 'sans-serif'],
+      },
+      letterSpacing: {
+        'widest-xl': '0.25em',
       },
       animation: {
         'fade-in': 'fadeIn 400ms ease-out',

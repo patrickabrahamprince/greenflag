@@ -35,27 +35,63 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#080808' }}>
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-[#D4AF37] mb-2">GreenFlag</h1>
-          <p className="text-gray-400 text-sm">Set your standards. Meet your match.</p>
+        <div className="text-center mb-12">
+          <div className="relative inline-block">
+            <div className="absolute inset-0 blur-3xl opacity-20" style={{ background: 'radial-gradient(circle, #D4AF37 0%, transparent 70%)' }} />
+            <h1 className="relative text-5xl font-display italic text-white mb-3" style={{ fontWeight: 500 }}>
+              Set your standards.
+            </h1>
+          </div>
+          <div className="hairline mx-auto mt-6 mb-2 w-16" />
+          <p className="text-muted text-sm font-thin tracking-wide mt-4">Create your account</p>
         </div>
-        <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-8">
-          <h2 className="text-xl font-semibold text-white mb-6">Create account</h2>
-          <form onSubmit={handleSignup} className="space-y-4">
-            <input type="text" placeholder="Full name" value={name} onChange={e => setName(e.target.value)} required className="w-full px-4 py-3 bg-[#0A0A0A] text-white rounded-lg border border-[#2A2A2A] focus:border-[#D4AF37] focus:outline-none transition" />
-            <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required className="w-full px-4 py-3 bg-[#0A0A0A] text-white rounded-lg border border-[#2A2A2A] focus:border-[#D4AF37] focus:outline-none transition" />
-            <input type="password" placeholder="Password (min 6 chars)" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} className="w-full px-4 py-3 bg-[#0A0A0A] text-white rounded-lg border border-[#2A2A2A] focus:border-[#D4AF37] focus:outline-none transition" />
-            {error && <p className="text-red-400 text-sm">{error}</p>}
-            <button type="submit" disabled={loading} className="w-full py-3 bg-[#D4AF37] text-black rounded-lg font-semibold hover:bg-[#C4A027] disabled:opacity-50 transition">
-              {loading ? 'Creating account...' : 'Sign Up'}
-            </button>
-          </form>
-          <p className="text-gray-500 text-sm mt-6 text-center">
-            Already have an account? <Link href="/login" className="text-[#D4AF37] hover:underline">Sign in</Link>
-          </p>
-        </div>
+
+        <form onSubmit={handleSignup} className="space-y-4">
+          <div>
+            <input
+              type="text"
+              placeholder="Full name"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              required
+              className="input"
+            />
+          </div>
+          <div>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+              className="input"
+            />
+          </div>
+          <div>
+            <input
+              type="password"
+              placeholder="Password (min 6 chars)"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+              minLength={6}
+              className="input"
+            />
+          </div>
+          {error && <p className="text-red-400 text-sm">{error}</p>}
+          <button type="submit" disabled={loading} className="btn-primary w-full">
+            {loading ? 'Creating account...' : 'Sign Up'}
+          </button>
+        </form>
+
+        <p className="text-muted text-sm mt-8 text-center font-thin">
+          Already have an account?{' '}
+          <Link href="/login" className="text-white underline underline-offset-4 decoration-white/30 hover:decoration-white/60 transition-colors">
+            Sign in
+          </Link>
+        </p>
       </div>
     </div>
   )
