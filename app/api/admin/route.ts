@@ -4,7 +4,8 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 async function requireAdmin(supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>) {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return { error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
-  const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single();
+  const { data: profileData } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+  const profile = profileData as any;
   if (!profile?.is_admin) return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };
   return { user };
 }

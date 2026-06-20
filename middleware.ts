@@ -26,7 +26,7 @@ export async function middleware(request: NextRequest) {
     }
     const { data: profile } = await supabase
       .from('profiles')
-      .select('is_admin')
+      .select('*')
       .eq('id', user.id)
       .single();
     if (!profile?.is_admin) {

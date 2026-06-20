@@ -15,7 +15,8 @@ export default function AdminPage() {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return router.push('/login')
-      const { data: profile } = (await supabase.from('profiles').select('is_admin').eq('id', user.id).single()) as any
+      const { data: profileData } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+      const profile = profileData as any
       if (!profile?.is_admin) { setError('Not admin'); setLoading(false); return }
 
       const res = await fetch('/api/admin')

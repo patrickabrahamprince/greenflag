@@ -37,7 +37,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       }
       const { data: profile } = await supabase
         .from('profiles')
-        .select('is_admin')
+        .select('*')
         .eq('id', user.id)
         .single();
       const p = profile as { is_admin: boolean } | null;
