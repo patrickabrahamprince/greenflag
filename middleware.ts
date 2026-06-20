@@ -5,9 +5,9 @@ function redirectWithCookies(request: NextRequest, supabaseResponse: NextRespons
   const url = request.nextUrl.clone();
   url.pathname = pathname;
   const response = NextResponse.redirect(url);
-  supabaseResponse.cookies.getAll().forEach(({ name, value, ...options }) =>
-    response.cookies.set(name, value, options as any)
-  );
+  for (const { name, value } of supabaseResponse.cookies.getAll()) {
+    response.cookies.set(name, value, { path: '/', httpOnly: true, secure: true, sameSite: 'lax' });
+  }
   return response;
 }
 
@@ -71,7 +71,12 @@ export async function middleware(request: NextRequest) {
     return redirectWithCookies(request, supabaseResponse, '/admin');
   }
 
-  // 7. Host/guest discover routing (non-admin users only)
+  // 7. Root path → send authenticated non-admin users to discover
+  if (pathname === '/') {
+    return redirectWithCookies(request, supabaseResponse, '/discover');
+  }
+
+  // 8. Host/guest discover routing (non-admin users only)
   if (pathname === '/discover' && profile?.gender === 'host') {
     return redirectWithCookies(request, supabaseResponse, '/discover-men');
   }
