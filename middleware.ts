@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
-const PUBLIC_PATHS = ['/login', '/signup', '/auth', '/banned', '/onboard'];
+const PUBLIC_PATHS = ['/login', '/signup', '/auth', '/banned'];
 
 function copyCookies(from: NextResponse, to: NextResponse) {
   for (const { name, value } of from.cookies.getAll()) {
@@ -56,7 +56,12 @@ export async function middleware(req: NextRequest) {
     return redirect(req, res, '/login');
   }
 
-  // 3. Get profile
+  // 3. Authenticated user on /onboard — always allow (they need to complete onboarding)
+  if (path.startsWith('/onboard')) {
+    return res;
+  }
+
+  // 4. Get profile
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
@@ -67,12 +72,12 @@ export async function middleware(req: NextRequest) {
     return redirect(req, res, '/onboard');
   }
 
-  // 4. Banned
+  // 5. Banned
   if (profile.is_banned) {
     return redirect(req, res, '/banned');
   }
 
-  // 5. ADMIN — highest priority, runs before anything else
+  // 6. ADMIN — highest priority, runs before anything else
   if (profile.is_admin === true) {
     if (!path.startsWith('/admin')) {
       return redirect(req, res, '/admin');
@@ -80,7 +85,7 @@ export async function middleware(req: NextRequest) {
     return res;
   }
 
-  // 6. Onboarding incomplete
+  // 7. Onboarding incomplete
   if (!profile.onboarding_completed) {
     if (!path.startsWith('/onboard')) {
       return redirect(req, res, '/onboard');
@@ -88,7 +93,7 @@ export async function middleware(req: NextRequest) {
     return res;
   }
 
-  // 7. Regular users — allow everything else
+  // 8. Regular users — allow everything else
   return res;
 }
 
