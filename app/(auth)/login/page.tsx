@@ -1,7 +1,6 @@
 'use client'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Phone, Mail, ArrowLeft, Loader2 } from 'lucide-react'
 
@@ -17,51 +16,63 @@ export default function LoginPage() {
   const [otp, setOtp] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
   const supabase = createClient()
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) {
-      setError(error.message)
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) {
+        setError(error.message)
+        setLoading(false)
+        return
+      }
+      window.location.href = '/'
+    } catch (err: any) {
+      setError(err?.message || 'Login failed')
       setLoading(false)
-      return
     }
-    router.push('/')
-    router.refresh()
   }
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const formatted = '+91' + phone
-    const { error } = await supabase.auth.signInWithOtp({ phone: formatted })
-    if (error) {
-      setError(error.message)
+    try {
+      const formatted = '+91' + phone
+      const { error } = await supabase.auth.signInWithOtp({ phone: formatted })
+      if (error) {
+        setError(error.message)
+        setLoading(false)
+        return
+      }
+      setPhoneStep('otp')
       setLoading(false)
-      return
+    } catch (err: any) {
+      setError(err?.message || 'Failed to send OTP')
+      setLoading(false)
     }
-    setPhoneStep('otp')
-    setLoading(false)
   }
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const formatted = '+91' + phone
-    const { error } = await supabase.auth.verifyOtp({ phone: formatted, token: otp, type: 'sms' })
-    if (error) {
-      setError(error.message)
+    try {
+      const formatted = '+91' + phone
+      const { error } = await supabase.auth.verifyOtp({ phone: formatted, token: otp, type: 'sms' })
+      if (error) {
+        setError(error.message)
+        setLoading(false)
+        return
+      }
+      window.location.href = '/'
+    } catch (err: any) {
+      setError(err?.message || 'OTP verification failed')
       setLoading(false)
-      return
     }
-    router.push('/')
-    router.refresh()
   }
 
   return (

@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
-const PUBLIC_PATHS = ['/login', '/signup', '/auth', '/banned'];
+const PUBLIC_PATHS = ['/login', '/signup', '/auth', '/banned', '/onboard'];
 
 function copyCookies(from: NextResponse, to: NextResponse) {
   for (const { name, value } of from.cookies.getAll()) {

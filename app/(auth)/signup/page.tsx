@@ -1,7 +1,6 @@
 'use client'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Phone, Mail, ArrowLeft, Loader2 } from 'lucide-react'
 
@@ -18,62 +17,73 @@ export default function SignupPage() {
   const [otp, setOtp] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
   const supabase = createClient()
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const { error: signUpError } = await supabase.auth.signUp({ email, password, options: { data: { name } } })
-    if (signUpError) {
-      setError(signUpError.message)
+    try {
+      const { error: signUpError } = await supabase.auth.signUp({ email, password, options: { data: { name } } })
+      if (signUpError) {
+        setError(signUpError.message)
+        setLoading(false)
+        return
+      }
+      const { error: loginError } = await supabase.auth.signInWithPassword({ email, password })
+      if (loginError) {
+        setError('Account created. Please login.')
+        setLoading(false)
+        window.location.href = '/login'
+        return
+      }
+      window.location.href = '/'
+    } catch (err: any) {
+      setError(err?.message || 'Signup failed')
       setLoading(false)
-      return
     }
-    const { error: loginError } = await supabase.auth.signInWithPassword({ email, password })
-    if (loginError) {
-      setError('Account created. Please login.')
-      setLoading(false)
-      router.push('/login')
-      return
-    }
-    router.push('/')
-    router.refresh()
   }
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const formatted = '+91' + phone
-    const { error } = await supabase.auth.signInWithOtp({ phone: formatted })
-    if (error) {
-      setError(error.message)
+    try {
+      const formatted = '+91' + phone
+      const { error } = await supabase.auth.signInWithOtp({ phone: formatted })
+      if (error) {
+        setError(error.message)
+        setLoading(false)
+        return
+      }
+      setPhoneStep('otp')
       setLoading(false)
-      return
+    } catch (err: any) {
+      setError(err?.message || 'Failed to send OTP')
+      setLoading(false)
     }
-    setPhoneStep('otp')
-    setLoading(false)
   }
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const formatted = '+91' + phone
-    const { data, error } = await supabase.auth.verifyOtp({ phone: formatted, token: otp, type: 'sms' })
-    if (error) {
-      setError(error.message)
+    try {
+      const formatted = '+91' + phone
+      const { data, error } = await supabase.auth.verifyOtp({ phone: formatted, token: otp, type: 'sms' })
+      if (error) {
+        setError(error.message)
+        setLoading(false)
+        return
+      }
+      if (name && data.user) {
+        await supabase.from('profiles').upsert({ id: data.user.id, name, phone: formatted } as any)
+      }
+      window.location.href = '/onboard'
+    } catch (err: any) {
+      setError(err?.message || 'OTP verification failed')
       setLoading(false)
-      return
     }
-    // Save name to profile if provided
-    if (name && data.user) {
-      await supabase.from('profiles').upsert({ id: data.user.id, name, phone: formatted } as any)
-    }
-    router.push('/onboard')
-    router.refresh()
   }
 
   return (
