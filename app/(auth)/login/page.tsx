@@ -58,9 +58,6 @@ export default function LoginPage() {
           'man@test.com': '+919876500001',
           'woman@test.com': '+919876500002',
           'admin@test.com': '+919876500003',
-          'test.man@greenflag.test': '+919876500001',
-          'test.woman@greenflag.test': '+919876500002',
-          'test.admin@greenflag.test': '+919876500003',
         }
         const phone = e2ePhoneMap[email]
         if (phone) {
