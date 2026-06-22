@@ -21,7 +21,8 @@ export default function LoginPage() {
   const supabase = createClient()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const isE2ETest = process.env.NEXT_PUBLIC_E2E_TESTING === 'true'
+  const isE2ETest = (process.env.NEXT_PUBLIC_E2E_TESTING || '').trim() === 'true'
+
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -57,6 +58,9 @@ export default function LoginPage() {
           'man@test.com': '+919876500001',
           'woman@test.com': '+919876500002',
           'admin@test.com': '+919876500003',
+          'test.man@greenflag.test': '+919876500001',
+          'test.woman@greenflag.test': '+919876500002',
+          'test.admin@greenflag.test': '+919876500003',
         }
         const phone = e2ePhoneMap[email]
         if (phone) {
