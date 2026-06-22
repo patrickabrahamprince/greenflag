@@ -177,11 +177,17 @@ export interface Database {
         Row: {
           id: string;
           test_id: string | null;
+          initiator_id: string | null;
+          recipient_id: string | null;
           guest_id: string;
           host_id: string;
+          standard_id: string | null;
           status: string;
+          state: string | null;
           tasks_completed: number;
           frozen_count: number | null;
+          day_count: number | null;
+          approved_count: number | null;
           expires_at: string | null;
           started_at: string;
           completed_at: string | null;
@@ -198,15 +204,23 @@ export interface Database {
           connected: boolean;
           connected_at: string | null;
           ended_reason: string | null;
+          match_percentage: number | null;
+          match_reasons: Json | null;
         };
         Insert: {
           id?: string;
           test_id?: string | null;
+          initiator_id?: string | null;
+          recipient_id?: string | null;
           guest_id: string;
           host_id: string;
+          standard_id?: string | null;
           status?: string;
+          state?: string | null;
           tasks_completed?: number;
           frozen_count?: number | null;
+          day_count?: number | null;
+          approved_count?: number | null;
           expires_at?: string | null;
           started_at?: string;
           completed_at?: string | null;
@@ -223,12 +237,18 @@ export interface Database {
           connected?: boolean;
           connected_at?: string | null;
           ended_reason?: string | null;
+          match_percentage?: number | null;
+          match_reasons?: Json | null;
         };
         Update: {
           id?: string;
           test_id?: string | null;
+          initiator_id?: string | null;
+          recipient_id?: string | null;
           guest_id?: string;
           host_id?: string;
+          standard_id?: string | null;
+          state?: string | null;
           status?: string;
           tasks_completed?: number;
           frozen_count?: number | null;
