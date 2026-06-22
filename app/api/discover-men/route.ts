@@ -14,11 +14,11 @@ export async function GET(req: Request) {
 
     const { data: viewer } = await supabase
       .from('profiles')
-      .select('gender, looking_for_interests, lat, lng')
+      .select('persona, looking_for_interests, lat, lng')
       .eq('id', user.id)
       .single();
 
-    if (viewer?.gender !== 'woman') {
+    if (viewer?.persona !== 'woman') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
