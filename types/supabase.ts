@@ -804,21 +804,39 @@ export interface Database {
       standards: {
         Row: {
           id: string;
+          user_id: string;
           woman_id: string;
           is_active: boolean;
+          active: boolean;
           created_at: string;
+          intentions: Json | null;
+          required_interests: string[] | null;
+          values: string[] | null;
+          deal_breakers: string[] | null;
         };
         Insert: {
           id?: string;
+          user_id?: string;
           woman_id: string;
           is_active?: boolean;
+          active?: boolean;
           created_at?: string;
+          intentions?: Json | null;
+          required_interests?: string[] | null;
+          values?: string[] | null;
+          deal_breakers?: string[] | null;
         };
         Update: {
           id?: string;
+          user_id?: string;
           woman_id?: string;
           is_active?: boolean;
+          active?: boolean;
           created_at?: string;
+          intentions?: Json | null;
+          required_interests?: string[] | null;
+          values?: string[] | null;
+          deal_breakers?: string[] | null;
         };
         Relationships: [
           {
