@@ -17,7 +17,7 @@ function getAdminClient() {
   );
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const supabase = await createServerSupabaseClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -27,14 +27,36 @@ export async function GET() {
 
     const admin = getAdminClient();
 
-    const { data: manProfile } = await admin
+    const { data: profile } = await admin
       .from('profiles')
-      .select('persona, elo_score')
+      .select('persona, elo_score, looking_for_interests, lat, lng')
       .eq('id', user.id)
       .single();
 
-    if (manProfile?.persona !== 'man') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    if (!profile) {
+      return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
+    }
+
+    if (profile.persona === 'woman') {
+      const { searchParams } = new URL(req.url);
+      const page = parseInt(searchParams.get('page') || '0');
+
+      const { data, error } = await admin.rpc('get_matching_profiles', {
+        p_user_id: user.id,
+        p_viewing_gender: 'man',
+        p_user_interests: [],
+        p_user_standards: profile.looking_for_interests || [],
+        p_user_lat: profile.lat || 0,
+        p_user_lng: profile.lng || 0,
+        p_limit: 20,
+        p_offset: page * 20,
+      });
+
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+
+      return NextResponse.json({ profiles: data || [] });
     }
 
     const { data: standard } = await admin
@@ -72,7 +94,7 @@ export async function GET() {
       man_interests: manInterests,
       man_values: manValues,
       man_dealbreakers: manDealbreakers,
-      man_elo: manProfile.elo_score || 1000,
+      man_elo: profile.elo_score || 1000,
       man_id: user.id,
     });
 

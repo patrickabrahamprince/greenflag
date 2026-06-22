@@ -72,7 +72,7 @@ export default function InterestsPage() {
     }
     setLoading(false);
     toast.success('Profile completed!');
-    router.replace(isWoman ? '/standard/builder' : '/discover');
+    router.replace('/discover');
   };
 
   return (

@@ -81,7 +81,7 @@ export function useInterestsForm(persona: 'woman' | 'man' | null) {
     });
 
     toast.success('Profile created!');
-    router.replace(isWoman ? '/discover-men' : '/discover');
+    router.replace('/discover');
   };
 
   return {

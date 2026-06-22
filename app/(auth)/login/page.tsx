@@ -71,7 +71,7 @@ export default function LoginPage() {
         if (!user) { router.push('/'); return }
         const { data: profile } = await supabase.from('profiles').select('persona, is_admin').eq('id', user.id).single()
         if (profile?.is_admin) router.push('/admin')
-        else router.push(profile?.persona === 'woman' ? '/connections' : '/discover')
+        else router.push('/discover')
         return;
       }
       const { error } = await supabase.auth.signInWithPassword({ email, password })
@@ -83,7 +83,7 @@ export default function LoginPage() {
       }
       const { data: profile } = await supabase.from('profiles').select('persona, is_admin, onboarding_completed').eq('id', user.id).single()
       if (profile?.is_admin) router.push('/admin')
-      else router.push(profile?.persona === 'woman' ? '/connections' : '/discover')
+      else router.push('/discover')
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Login failed')
     } finally {
@@ -122,7 +122,7 @@ export default function LoginPage() {
       if (profile?.is_admin) {
         window.location.href = '/admin'
       } else {
-        window.location.href = profile?.persona === 'woman' ? '/connections' : '/discover'
+        window.location.href = '/discover'
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'OTP verification failed')
@@ -158,10 +158,10 @@ export default function LoginPage() {
         <h2 className="text-white text-center text-2xl font-bold mb-4">Welcome to GreenFlag</h2>
         {isE2ETest ? (
         <form onSubmit={handleLogin} className="space-y-4">
-          <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required className="input w-full" />
-          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required className="input w-full" />
+          <input data-testid="email" type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required className="input w-full" />
+          <input data-testid="password" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required className="input w-full" />
           {error && <p className="text-red-400 text-sm">{error}</p>}
-          <button type="submit" disabled={loading} className="btn-primary w-full">
+          <button data-testid="login-btn" type="submit" disabled={loading} className="btn-primary w-full">
             {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Log in'}
           </button>
         </form>

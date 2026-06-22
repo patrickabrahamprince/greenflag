@@ -15,6 +15,7 @@ export default function DiscoverPage() {
   const [loading, setLoading] = useState(false)
   const [page, setPage] = useState(0)
   const [hasMore, setHasMore] = useState(true)
+  const [persona, setPersona] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
 
@@ -33,6 +34,15 @@ export default function DiscoverPage() {
   const fetchedForPage = useRef<Set<number>>(new Set())
 
   useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return
+      supabase.from('profiles').select('persona').eq('id', user.id).single().then(({ data }) => {
+        if (data?.persona) setPersona(data.persona)
+      })
+    })
+  }, [])
+
+  useEffect(() => {
     if (!fetchedForPage.current.has(page)) {
       fetchedForPage.current.add(page)
       fetchProfiles()
@@ -44,7 +54,7 @@ export default function DiscoverPage() {
     try {
       const res = await fetch('/api/discover')
       const json = await res.json()
-      if (res.status === 401 || res.status === 403) {
+      if (res.status === 401) {
         router.push('/login')
         return
       }
@@ -58,14 +68,18 @@ export default function DiscoverPage() {
     }
   }
 
-  async function handleBegin(hostId: string) {
+  async function handleBegin(profileId: string) {
     if (loading) return
     setLoading(true)
     try {
+      if (persona === 'woman') {
+        router.push(`/profile/${profileId}`)
+        return
+      }
       const res = await fetch('/api/connections/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ woman_id: hostId })
+        body: JSON.stringify({ woman_id: profileId })
       })
       if (!res.ok) {
         const err = await res.json()
@@ -81,7 +95,7 @@ export default function DiscoverPage() {
   }
 
   if (!profiles?.length && !loading) {
-    return <EmptyState title="No one new" description="Check back soon" />
+    return <EmptyState dataTestId="discover-empty-state" title="No one new" description="Check back soon" />
   }
 
   return (
@@ -108,7 +122,7 @@ export default function DiscoverPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
             <div className="absolute bottom-0 w-full p-6 pb-safe">
-              <h1 className="text-[#EDEADE] text-4xl font-playfair">{p.name}, {p.age}</h1>
+              <h1 className="text-[#EDEADE] text-4xl font-playfair">{p.name}{p.age ? `, ${p.age}` : ''}</h1>
               <p className="text-[#EDEADE]/80">{p.city_auto}</p>
 
               <div className="flex gap-2 my-4 max-w-[90%] flex-wrap">
@@ -124,7 +138,7 @@ export default function DiscoverPage() {
                 disabled={loading}
                 className="min-h- w-full bg-[#D4AF37] text-black text-lg font-bold active:scale-95 disabled:opacity-50"
               >
-                {loading ? <Loader2 className="animate-spin" /> : 'Meet Her Standard'}
+                {loading ? <Loader2 className="animate-spin" /> : persona === 'woman' ? 'View Profile' : 'Meet Her Standard'}
               </Button>
             </div>
           </div>

@@ -25,10 +25,9 @@ export async function GET(request: Request) {
         return NextResponse.redirect(`${origin}/admin`);
       }
 
-      // Has profile + onboarding complete → go to home
+      // Has profile + onboarding complete → go to discover
       if (profile?.onboarding_completed) {
-        if (profile.persona === 'woman') return NextResponse.redirect(`${origin}/connections`);
-        if (profile.persona === 'man') return NextResponse.redirect(`${origin}/discover`);
+        return NextResponse.redirect(`${origin}/discover`);
       }
 
       // No profile or onboarding incomplete → go to onboard

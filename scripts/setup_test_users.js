@@ -1,4 +1,10 @@
 // scripts/setup_test_users.js
+// Only runs in development — guarded against accidental production use
+
+if (process.env.NODE_ENV !== 'development' && !process.env.ALLOW_TEST_SEED) {
+  console.log('Seed script skipped: NODE_ENV is not development and ALLOW_TEST_SEED is not set.');
+  process.exit(0);
+}
 
 import { createClient } from '@/lib/supabase/client';
 

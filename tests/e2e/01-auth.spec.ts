@@ -18,7 +18,7 @@ test('shows OTP input after phone submission', async ({ page }) => {
   await expect(page.locator('input[placeholder*="OTP"], input[maxlength="6"]')).toBeVisible({ timeout: 5000 })
 })
 
-  test('redirects man to /discover after login', async ({ page }) => {
+  test('redirects man to /discover after login (no more gender routing)', async ({ page }) => {
     const users = loadTestUsers()
     await page.goto('/login')
     await page.fill('input[type="email"]', users.TEST_MAN1_EMAIL)
@@ -27,7 +27,7 @@ test('shows OTP input after phone submission', async ({ page }) => {
     await expect(page).toHaveURL('/discover', { timeout: 10000 })
   })
 
-  test('redirects woman to /connections after login', async ({ page }) => {
+  test('redirects woman to /discover after login (no more /connections)', async ({ page }) => {
     const users = loadTestUsers()
     await page.goto('/login')
     if (isE2ETest) {
@@ -40,7 +40,7 @@ test('shows OTP input after phone submission', async ({ page }) => {
       await page.fill('input[maxlength="6"]', '123456')
       await page.click('button:has-text("Verify")')
     }
-    await expect(page).toHaveURL('/connections', { timeout: 10000 })
+    await expect(page).toHaveURL('/discover', { timeout: 10000 })
   })
 
   test('blocks unauthenticated access to /discover', async ({ page }) => {

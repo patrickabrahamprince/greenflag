@@ -6,11 +6,12 @@ export interface KpiCardProps {
   icon?: LucideIcon;
   accent?: string;
   subtitle?: string;
+  dataTestId?: string;
 }
 
-export function KpiCard({ label, value, icon: Icon, accent, subtitle }: KpiCardProps) {
+export function KpiCard({ label, value, icon: Icon, accent, subtitle, dataTestId }: KpiCardProps) {
   return (
-    <div data-testid="stats-card" className="bg-[#111111] border border-white/[0.06] rounded-2xl p-5 relative overflow-hidden">
+    <div data-testid={dataTestId || 'stats-card'} className="bg-[#111111] border border-white/[0.06] rounded-2xl p-5 relative overflow-hidden">
       {accent && (
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ background: accent }} />
       )}
