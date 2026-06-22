@@ -40,12 +40,12 @@ export async function GET() {
     const { data: standard } = await admin
       .from('standards')
       .select('required_interests, values, deal_breakers')
-      .eq('user_id', user.id)
-      .single();
+      .or(`user_id.eq.${user.id},woman_id.eq.${user.id}`)
+      .maybeSingle();
 
-    if (!standard) {
-      return NextResponse.json({ profiles: [] });
-    }
+    const manInterests = standard?.required_interests ?? [];
+    const manValues = standard?.values ?? [];
+    const manDealbreakers = standard?.deal_breakers ?? [];
 
     const today = getISTDate();
 
@@ -69,9 +69,9 @@ export async function GET() {
     const viewedIds = (viewedToday ?? []).map((v) => v.woman_id);
 
     const { data: matchResults, error: fetchError } = await admin.rpc('get_ranked_women', {
-      man_interests: standard.required_interests || [],
-      man_values: standard.values || [],
-      man_dealbreakers: standard.deal_breakers || [],
+      man_interests: manInterests,
+      man_values: manValues,
+      man_dealbreakers: manDealbreakers,
       man_elo: manProfile.elo_score || 1000,
       man_id: user.id,
     });
