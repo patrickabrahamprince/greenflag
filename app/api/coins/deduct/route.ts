@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      new_balance: result.new_balance,
+      new_balance: (result as Record<string, unknown>).new_balance,
     });
   } catch {
     return NextResponse.json({

@@ -1,72 +1,91 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Check, X, Ban, ChevronRight, Inbox } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
-
-interface QueueItem {
-  id: string;
-  name: string;
-  day: number;
-  task: string;
-  status: string;
-  img: string;
-}
+import type { QueueItem } from '@/components/admin/types';
+import { QueueHeader, QueueEmptyState } from '@/components/admin/QueueHeader';
+import { QueueItemCard } from '@/components/admin/QueueItemCard';
+import { QueueItemDetail } from '@/components/admin/QueueItemDetail';
 
 export default function AdminQueue() {
   const [items, setItems] = useState<QueueItem[]>([]);
   const [selected, setSelected] = useState<QueueItem | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchQueue = useCallback(async () => {
     const supabase = createClient();
+    const { data, error } = await supabase
+      .from('submissions')
+      .select(`
+        id,
+        proof_url,
+        media_url,
+        media_type,
+        status,
+        moderation_status,
+        submitted_at,
+        day_number,
+        connection_id,
+        connections(guest:guest_id(name), host:host_id(name)),
+        tasks(description)
+      `)
+      .eq('moderation_status', 'pending')
+      .order('submitted_at', { ascending: false });
 
-    const fetchQueue = async () => {
-      const { data, error } = await supabase
-        .from('submissions')
-        .select(`
-          id,
-          proof_url,
-          status,
-          intentions:description,day,
-          connections(test_id,guest:guest_id(name))
-        `)
-        .eq('status', 'submitted')
-        .order('created_at', { ascending: false });
+    if (!error && data) {
+      const queueItems: QueueItem[] = data.map((s: Record<string, unknown>) => {
+        const conns = s.connections as { guest?: { name?: string }; host?: { name?: string } } | null;
+        const tasks = s.tasks as { description?: string } | null;
+        return {
+          id: String(s.id),
+          name: conns?.guest?.name || conns?.host?.name || 'Unknown',
+          day: Number(s.day_number) || 0,
+          task: tasks?.description || '',
+          status: String(s.status),
+          img: String(s.media_url || s.proof_url || ''),
+          submitted_at: String(s.submitted_at || ''),
+          media_type: s.media_type as string | null,
+        };
+      });
+      setItems(queueItems);
+      if (queueItems.length > 0 && !selected) setSelected(queueItems[0]);
+    }
+    setLoading(false);
+  }, [selected]);
 
-      if (!error && data) {
-        const queueItems = data.map((s: any) => ({
-          id: s.id,
-          name: s.connections?.guest?.name || 'Unknown',
-          day: s.intentions?.day || 0,
-          task: s.intentions?.description || '',
-          status: s.status,
-          img: s.proof_url || '',
-        }));
-        setItems(queueItems);
-        if (queueItems.length > 0) setSelected(queueItems[0]);
-      }
-      setLoading(false);
-    };
+  useEffect(() => { fetchQueue(); }, []);
 
-    fetchQueue();
+  const handleApprove = useCallback(async (id: string) => {
+    const res = await fetch(`/api/admin/submissions/${id}/moderate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'approve' }),
+    });
+    if (res.ok) {
+      setItems((prev) => {
+        const next = prev.filter((i) => i.id !== id);
+        setSelected((s) => (s?.id === id ? next[0] || null : s));
+        return next;
+      });
+    }
   }, []);
 
-  const handleApprove = useCallback((id: string) => {
-    setItems((prev) => prev.filter((i) => i.id !== id));
-    setSelected((prev) => {
-      const remaining = items.filter((i) => i.id !== id);
-      return prev?.id === id ? remaining[0] || null : prev;
+  const handleReject = useCallback(async (id: string) => {
+    const reason = prompt('Rejection reason:');
+    if (reason === null) return;
+    const res = await fetch(`/api/admin/submissions/${id}/moderate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'reject', reason }),
     });
-  }, [items]);
-
-  const handleReject = useCallback((id: string) => {
-    setItems((prev) => prev.filter((i) => i.id !== id));
-    setSelected((prev) => {
-      const remaining = items.filter((i) => i.id !== id);
-      return prev?.id === id ? remaining[0] || null : prev;
-    });
-  }, [items]);
+    if (res.ok) {
+      setItems((prev) => {
+        const next = prev.filter((i) => i.id !== id);
+        setSelected((s) => (s?.id === id ? next[0] || null : s));
+        return next;
+      });
+    }
+  }, []);
 
   const handleNext = useCallback(() => {
     const idx = items.findIndex((i) => i.id === selected?.id);
@@ -86,97 +105,20 @@ export default function AdminQueue() {
 
   return (
     <div className="animate-fade-in">
-      <h1 className="text-2xl font-display text-white mb-2">Photo Moderation Queue</h1>
-      <p className="text-sm text-muted mb-6">
-        Keyboard shortcuts: <kbd className="px-1.5 py-0.5 bg-surface-light rounded text-xs">A</kbd> Approve{' '}
-        <kbd className="px-1.5 py-0.5 bg-surface-light rounded text-xs">R</kbd> Reject{' '}
-        <kbd className="px-1.5 py-0.5 bg-surface-light rounded text-xs">Space</kbd> Next
-      </p>
-
+      <QueueHeader />
       {loading ? (
-        <div className="text-center py-12 text-muted text-sm">Loading...</div>
+        <div className="text-center py-12 text-[#8E8E93] text-sm">Loading...</div>
       ) : items.length === 0 ? (
-        <div className="empty-state py-16">
-          <div className="empty-state-icon">
-            <Inbox className="w-8 h-8" />
-          </div>
-          <h3 className="text-lg font-medium text-white mb-2">Queue is empty</h3>
-          <p className="text-muted text-sm">No submissions pending review. Check back later.</p>
-        </div>
+        <QueueEmptyState />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-2">
             {items.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setSelected(item)}
-                className={`w-full card text-left flex items-center gap-3 ${
-                  selected?.id === item.id ? 'border-gold/50' : ''
-                }`}
-              >
-                <div className="w-12 h-12 rounded-xl bg-surface-light flex items-center justify-center overflow-hidden flex-shrink-0">
-                  {item.img ? (
-                    <img src={item.img} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
-                  ) : (
-                    <span className="text-muted text-xs">No img</span>
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-white font-medium">{item.name}</p>
-                  <p className="text-xs text-muted truncate">Day {item.day} &middot; {item.task}</p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-muted flex-shrink-0" />
-              </button>
+              <QueueItemCard key={item.id} item={item} isSelected={selected?.id === item.id} onSelect={setSelected} />
             ))}
           </div>
-
           {selected && (
-            <div className="card">
-              <div className="aspect-video bg-surface-light rounded-xl flex items-center justify-center mb-4">
-                {selected.img ? (
-                  <img src={selected.img} alt="" className="w-full h-full object-cover rounded-xl" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
-                ) : (
-                  <span className="text-muted text-sm">Photo Preview</span>
-                )}
-              </div>
-
-              <div className="space-y-3 mb-6">
-                <div>
-                  <span className="text-xs text-muted">Guest</span>
-                  <p className="text-white font-medium">{selected.name}</p>
-                </div>
-                <div>
-                  <span className="text-xs text-muted">Day</span>
-                  <p className="text-white font-medium">Day {selected.day}</p>
-                </div>
-                <div>
-                  <span className="text-xs text-muted">Task</span>
-                  <p className="text-white text-sm">{selected.task}</p>
-                </div>
-                <div>
-                  <span className="text-xs text-muted">Previous Reviews</span>
-                  <p className="text-white text-sm">None</p>
-                </div>
-              </div>
-
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleApprove(selected.id)}
-                  className="flex-1 bg-green-500/10 text-green-500 rounded-xl py-2.5 text-sm font-medium flex items-center justify-center gap-1.5 hover:bg-green-500/20 transition-colors"
-                >
-                  <Check className="w-4 h-4" /> Approve
-                </button>
-                <button
-                  onClick={() => handleReject(selected.id)}
-                  className="flex-1 bg-red-500/10 text-red-500 rounded-xl py-2.5 text-sm font-medium flex items-center justify-center gap-1.5 hover:bg-red-500/20 transition-colors"
-                >
-                  <X className="w-4 h-4" /> Reject
-                </button>
-                <button className="btn-danger text-sm py-2.5 px-3">
-                  <Ban className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
+            <QueueItemDetail item={selected} onApprove={handleApprove} onReject={handleReject} />
           )}
         </div>
       )}

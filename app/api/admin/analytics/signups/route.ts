@@ -36,7 +36,7 @@ export async function GET() {
     for (const p of profiles) {
       const key = new Date(p.created_at).toISOString().split('T')[0];
       if (daily[key]) {
-        if (p.gender === 'host') daily[key].hosts++;
+        if (p.gender === 'woman') daily[key].hosts++;
         else daily[key].guests++;
       }
     }

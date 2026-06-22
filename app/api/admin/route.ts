@@ -5,7 +5,7 @@ async function requireAdmin(supabase: Awaited<ReturnType<typeof createServerSupa
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return { error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
   const { data: profileData } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-  const profile = profileData as any;
+  const profile = profileData;
   if (!profile?.is_admin) return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };
   return { user };
 }
@@ -17,7 +17,8 @@ export async function GET() {
     if ('error' in admin) return admin.error;
 
     const counts: Record<string, number> = {};
-    for (const t of ['profiles', 'connections', 'messages', 'reports']) {
+    const tables = ['profiles', 'connections', 'messages', 'reports'] as const;
+    for (const t of tables) {
       const { count } = await supabase.from(t).select('*', { count: 'exact', head: true });
       counts[t] = count || 0;
     }

@@ -27,7 +27,7 @@ export interface ProfileView {
     instagram_url?: string;
     interests: string[];
     looking_for_interests: string[];
-    role: string;
+    persona: string;
     gender: string;
   };
   match: {

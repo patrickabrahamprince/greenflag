@@ -1,7 +1,11 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { checkRateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
+import { validateEnv } from '@/lib/env';
 
-const PUBLIC_PATHS = ['/login', '/signup', '/auth', '/banned'];
+const PUBLIC_PATHS = ['/login', '/signup', '/auth', '/auth/callback', '/banned'];
+
+validateEnv();
 
 function copyCookies(from: NextResponse, to: NextResponse) {
   for (const { name, value } of from.cookies.getAll()) {
@@ -18,22 +22,50 @@ function redirect(req: NextRequest, res: NextResponse, pathname: string): NextRe
 }
 
 export async function middleware(req: NextRequest) {
-  const path = req.nextUrl.pathname;
+  const pathname = req.nextUrl.pathname;
 
-  // 1. Always allow public paths and static files
-  if (PUBLIC_PATHS.some((p) => path.startsWith(p))) {
-    return NextResponse.next({ request: req });
-  }
-  if (path.startsWith('/_next') || path.startsWith('/api') || path.includes('.')) {
-    return NextResponse.next({ request: req });
+  // Rate limit API auth routes
+  if (pathname.startsWith('/api/auth') || pathname.startsWith('/api/admin')) {
+    const ip = getClientIp(req);
+    const result = checkRateLimit(ip, 'api_auth', RATE_LIMITS.auth);
+    if (!result.allowed) {
+      return new NextResponse(JSON.stringify({ error: 'Too many requests' }), {
+        status: 429,
+        headers: {
+          'Content-Type': 'application/json',
+          'Retry-After': String(result.retryAfter),
+        },
+      });
+    }
   }
 
-  // 2. Create Supabase client and get session
+  // Rule 1 — Public paths: never redirect, always allow through
+  const publicPaths = [
+    '/login',
+    '/signup',
+    '/onboard',
+    '/auth/callback',
+    '/auth/error',
+    '/_next',
+    '/favicon',
+    '/sw.js',
+    '/manifest',
+  ];
+
+  // If path starts with any public path — return next() immediately, no checks
+  if (publicPaths.some((p) => pathname.startsWith(p)) || pathname.startsWith('/api') || pathname.includes('.')) {
+    return NextResponse.next();
+  }
+
+  // Create Supabase client and get session
   let res = NextResponse.next({ request: req });
 
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\\n/g, '').trim();
+  const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').replace(/\\n/g, '').trim();
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    anonKey,
     {
       cookies: {
         getAll() {
@@ -50,50 +82,57 @@ export async function middleware(req: NextRequest) {
     }
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
+  console.log("MIDDLEWARE PATHNAME:", pathname);
+  const { data: { session } } = await supabase.auth.getSession();
+  console.log("MIDDLEWARE SESSION USER ID:", session?.user?.id || "NO SESSION");
 
-  if (!user) {
-    return redirect(req, res, '/login');
+  // Rule 2 — No session: redirect to login
+  if (!session) {
+    console.log("MIDDLEWARE: No session, redirecting to /login");
+    const redirectResponse = NextResponse.redirect(new URL('/login', req.url));
+    copyCookies(res, redirectResponse);
+    return redirectResponse;
   }
 
-  // 3. Authenticated user on /onboard — always allow (they need to complete onboarding)
-  if (path.startsWith('/onboard')) {
-    return res;
-  }
-
-  // 4. Get profile
+  // Get profile
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
-    .eq('id', user.id)
+    .eq('id', session.user.id)
     .single();
 
-  if (!profile) {
-    return redirect(req, res, '/onboard');
-  }
+  console.log("MIDDLEWARE PROFILE:", profile ? { id: profile.id, is_admin: profile.is_admin, onboarding_completed: profile.onboarding_completed } : "NO PROFILE");
 
-  // 5. Banned
-  if (profile.is_banned) {
-    return redirect(req, res, '/banned');
-  }
-
-  // 6. ADMIN — highest priority, runs before anything else
-  if (profile.is_admin === true) {
-    if (!path.startsWith('/admin')) {
-      return redirect(req, res, '/admin');
+  // Admin users skip onboarding entirely
+  if (profile?.is_admin) {
+    // Only redirect to /admin if they're not already in /admin
+    if (!pathname.startsWith('/admin')) {
+      console.log("MIDDLEWARE: Admin user, redirecting to /admin");
+      const redirectResponse = NextResponse.redirect(new URL('/admin', req.url));
+      copyCookies(res, redirectResponse);
+      return redirectResponse;
     }
+    console.log("MIDDLEWARE: Admin user already on admin route, letting through");
     return res;
   }
 
-  // 7. Onboarding incomplete
-  if (!profile.onboarding_completed) {
-    if (!path.startsWith('/onboard')) {
-      return redirect(req, res, '/onboard');
-    }
-    return res;
+  // Admin route protection: Non-admin users cannot access /admin
+  if (pathname.startsWith('/admin') && !profile?.is_admin) {
+    console.log("MIDDLEWARE: Non-admin trying to access /admin, redirecting to /login");
+    const redirectResponse = NextResponse.redirect(new URL('/login', req.url));
+    copyCookies(res, redirectResponse);
+    return redirectResponse;
   }
 
-  // 8. Regular users — allow everything else
+  // Non-admin: check onboarding
+  if (!profile?.onboarding_completed && !pathname.startsWith('/onboard')) {
+    const redirectResponse = NextResponse.redirect(new URL('/onboard', req.url));
+    copyCookies(res, redirectResponse);
+    return redirectResponse;
+  }
+
+  // Rule 5 — Everything else: allow through
+  copyCookies(res, res);
   return res;
 }
 

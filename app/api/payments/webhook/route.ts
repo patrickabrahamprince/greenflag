@@ -3,9 +3,9 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import crypto from 'crypto';
 
 const COIN_PACKS: Record<number, number> = {
-  99: 10,
-  299: 40,
-  799: 150,
+  399: 500,
+  799: 1200,
+  1499: 2500,
 };
 
 function verifyWebhookSignature(body: string, signature: string, secret: string): boolean {
@@ -18,7 +18,7 @@ function verifyWebhookSignature(body: string, signature: string, secret: string)
 
 export async function POST(req: Request) {
   try {
-    const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
+    const webhookSecret = (process.env.RAZORPAY_WEBHOOK_SECRET || '').replace(/\\n/g, '').trim();
     if (!webhookSecret) {
       console.error('RAZORPAY_WEBHOOK_SECRET not set');
       return new NextResponse('Server misconfigured', { status: 500 });

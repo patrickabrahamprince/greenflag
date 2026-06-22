@@ -23,6 +23,18 @@ interface ConnectionState {
   updateConnection: (id: string, updates: Partial<Connection>) => void;
 }
 
+interface OnboardingState {
+  persona: 'woman' | 'man' | null;
+  setPersona: (p: 'woman' | 'man') => void;
+  clearOnboarding: () => void;
+}
+
+export const useOnboardingStore = create<OnboardingState>((set) => ({
+  persona: null,
+  setPersona: (persona) => set({ persona }),
+  clearOnboarding: () => set({ persona: null }),
+}));
+
 export const useUserStore = create<UserState>((set) => ({
   user: null,
   setUser: (user) => set({ user }),

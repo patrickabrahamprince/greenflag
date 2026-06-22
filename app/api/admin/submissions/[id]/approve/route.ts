@@ -25,8 +25,8 @@ export async function POST(
 
     const { error } = await supabase
       .from('task_submissions')
-      .update({ status: 'approved', reviewed_by: user.id })
-      .eq('id', id);
+      .update({ content_type: 'approved' })
+      .eq('id', parseInt(id, 10));
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 

@@ -1,17 +1,21 @@
 import { NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 
 const COIN_PACKS: Record<number, { coins: number; priceINR: number }> = {
-  99: { coins: 10, priceINR: 99 },
-  299: { coins: 40, priceINR: 299 },
-  799: { coins: 150, priceINR: 799 },
+  399: { coins: 500, priceINR: 399 },
+  799: { coins: 1200, priceINR: 799 },
+  1499: { coins: 2500, priceINR: 1499 },
 };
 
 export async function POST(req: Request) {
+  const keyId = (process.env.NEXT_PUBLIC_RAZORPAY_KEY || '').replace(/\\n/g, '').trim();
+  const keySecret = (process.env.RAZORPAY_KEY_SECRET || '').replace(/\\n/g, '').trim();
+
   const razorpay = new Razorpay({
-    key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY!,
-    key_secret: process.env.RAZORPAY_KEY_SECRET!,
+    key_id: keyId,
+    key_secret: keySecret,
   });
 
   try {
@@ -20,6 +24,14 @@ export async function POST(req: Request) {
 
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const rl = checkRateLimit(user.id, 'coin_purchase', RATE_LIMITS.coinPurchase);
+    if (!rl.allowed) {
+      return NextResponse.json({ error: 'Rate limit exceeded' }, {
+        status: 429,
+        headers: { 'Retry-After': String(rl.retryAfter) },
+      });
     }
 
     const { pack_price } = await req.json();
@@ -45,11 +57,11 @@ export async function POST(req: Request) {
       order_id: order.id,
       amount: order.amount,
       currency: order.currency,
-      key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
+      key_id: keyId,
       user_name: user.user_metadata?.name || user.email,
       user_email: user.email,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Create order error:', error);
     return NextResponse.json({ error: 'Failed to create order' }, { status: 500 });
   }

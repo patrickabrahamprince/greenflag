@@ -10,6 +10,7 @@ import {
   ScrollText,
   LogOut,
   Link2,
+  Shield,
   Loader2,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -17,6 +18,7 @@ import { createClient } from '@/lib/supabase/client';
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { label: 'Users', href: '/admin/users', icon: Users },
+  { label: 'Queue', href: '/admin/queue', icon: Shield },
   { label: 'Reports', href: '/admin/reports', icon: Flag },
   { label: 'Connections', href: '/admin/connections', icon: Link2 },
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
@@ -37,11 +39,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       }
       const { data: profile } = await supabase
         .from('profiles')
-        .select('*')
+        .select('is_admin')
         .eq('id', user.id)
         .single();
-      const p = profile as { is_admin: boolean } | null;
-      if (!p?.is_admin) {
+      if (!profile?.is_admin) {
         router.replace('/');
         return;
       }

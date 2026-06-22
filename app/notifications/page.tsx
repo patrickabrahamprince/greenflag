@@ -47,7 +47,7 @@ export default function NotificationsPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    await (supabase as any).rpc('mark_notifications_read', { p_user_id: user.id });
+    await supabase.rpc('mark_notifications_read', { p_user_id: user.id });
 
     setNotifications((prev) =>
       prev.map((n) => ({ ...n, read_at: n.read_at || new Date().toISOString() }))
@@ -58,7 +58,7 @@ export default function NotificationsPage() {
   const handleNotificationClick = async (notif: Notification) => {
     // Mark as read
     if (!notif.read_at) {
-      await (supabase as any)
+      await supabase
         .from('notifications')
         .update({ read_at: new Date().toISOString() })
         .eq('id', notif.id);

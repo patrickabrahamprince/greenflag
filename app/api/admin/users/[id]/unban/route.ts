@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { requireAdmin, logAuditAction } from '@/lib/admin/auth';
 
 export async function POST(
   _req: Request,
@@ -7,15 +7,18 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const supabase = await createServerSupabaseClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const auth = await requireAdmin();
+    if (!auth.ok) return auth.response;
+    const { supabase, adminEmail } = auth.data;
 
-    const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-    if (!profile?.is_admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const { error } = await supabase
+      .from('profiles')
+      .update({ is_banned: false, banned_reason: null, ban_reason: null })
+      .eq('id', id);
 
-    const { error } = await supabase.from('profiles').update({ is_banned: false, banned_reason: null }).eq('id', id);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+    await logAuditAction(supabase, adminEmail, 'unban_user', id);
 
     return NextResponse.json({ success: true });
   } catch {

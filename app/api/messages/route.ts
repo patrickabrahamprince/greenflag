@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { notifyNewMessage } from '@/lib/notifications';
 
 export async function POST(req: Request) {
   try {
@@ -39,6 +40,24 @@ export async function POST(req: Request) {
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    try {
+      const recipientId = connection.guest_id === user.id ? connection.host_id : connection.guest_id;
+      const { data: senderProfile } = await supabase
+        .from('profiles')
+        .select('name')
+        .eq('id', user.id)
+        .single();
+      await notifyNewMessage(
+        supabase,
+        recipientId,
+        senderProfile?.name || 'Someone',
+        connection_id,
+        content.trim()
+      );
+    } catch (notifyError) {
+      console.error('Failed to send message notification:', notifyError);
     }
 
     return NextResponse.json(data);

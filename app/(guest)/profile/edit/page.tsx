@@ -77,7 +77,7 @@ export default function EditProfilePage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const { error } = await (supabase as any)
+      const { error } = await supabase
         .from('profiles')
         .update({
           name,

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { requireAdmin, logAuditAction } from '@/lib/admin/auth';
+import { notifyUserOfBan } from '@/lib/notifications';
 
 export async function POST(
   req: Request,
@@ -7,21 +8,11 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const supabase = await createServerSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const auth = await requireAdmin();
+    if (!auth.ok) return auth.response;
+    const { supabase, adminId, adminEmail } = auth.data;
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
-
-    if (!profile?.is_admin) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
-
-    if (user.id === id) {
+    if (adminId === id) {
       return NextResponse.json({ error: 'Cannot ban yourself' }, { status: 400 });
     }
 
@@ -36,6 +27,10 @@ export async function POST(
     });
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+    await notifyUserOfBan(supabase, id);
+    await logAuditAction(supabase, adminEmail, 'ban_user', id);
+
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

@@ -1,37 +1,42 @@
-export type Role = 'guest' | 'host';
-export type Gender = 'guest' | 'host' | 'man' | 'woman';
+export type Persona = 'man' | 'woman';
+export type Gender = 'man' | 'woman';
 
 export interface Profile {
   id: string;
   name: string;
-  age: number;
-  city: string;
-  bio: string;
+  age: number | null;
+  city: string | null;
+  bio: string | null;
   photos: string[];
-  role: Role;
-  gender?: Gender;
+  persona: string;
+  gender?: string | null;
   interests?: string[];
   looking_for_interests?: string[];
-  coins?: number;
-  onboarding_completed?: boolean;
+  interests_have?: string[];
+  interests_looking_for?: string[];
+  why_me_prompts?: string[];
+  blur_key?: string;
+  connected_count?: number;
+  coins?: number | null;
+  onboarding_completed?: boolean | null;
+  is_banned?: boolean | null;
+  ban_reason?: string | null;
   created_at: string;
 }
 
 export interface Standard {
   id: string;
-  host_id: string;
-  name: string;
-  difficulty: 'easy' | 'medium' | 'hard';
-  is_active: boolean;
+  woman_id: string;
+  is_active: boolean | null;
   created_at: string;
 }
 
 export interface Intention {
   id: string;
   standard_id: string;
-  day: number;
-  description: string;
-  type: 'photo' | 'voice' | 'text' | 'location';
+  day_number: number;
+  type: 'photo' | 'voice' | 'text';
+  prompt: string;
 }
 
 export interface Connection {

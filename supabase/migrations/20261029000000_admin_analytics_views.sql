@@ -1,6 +1,5 @@
--- 1. Ensure admin exists
 WITH admin_user AS (SELECT id FROM auth.users WHERE email = 'musigoevents@gmail.com')
-INSERT INTO profiles (id, name, is_admin, onboarded, coins, created_at)
+INSERT INTO profiles (id, name, is_admin, onboarding_completed, coins, created_at)
 SELECT id, 'Admin', true, true, 9999, now() FROM admin_user
 ON CONFLICT (id) DO UPDATE SET is_admin = true, name = 'Admin';
 
@@ -20,7 +19,7 @@ SELECT
   count(*) as matches_created,
   count(*) FILTER (WHERE status = 'accepted') as accepted,
   count(*) FILTER (WHERE status = 'rejected') as rejected
-FROM matches
+FROM connections
 GROUP BY 1 ORDER BY 1 DESC;
 
 -- 4. Analytics view: Message volume

@@ -1,0 +1,6 @@
+{"type":"receive","time":1782114937811.2136,"opcode":1,"data":"{\"action\":\"sync\",\"hash\":\"f2cac3d999784edc\",\"errors\":[],\"warnings\":[],\"versionInfo\":{\"staleness\":\"stale-major\",\"expected\":\"16.2.9\",\"installed\":\"14.2.35\"}}"}
+{"type":"send","time":1782114937811.214,"opcode":1,"data":"{\"event\":\"client-success\",\"clientId\":1782114937843}"}
+{"type":"send","time":1782114937813.713,"opcode":1,"data":"{\"event\":\"ping\",\"tree\":[\"\",{\"children\":[\"(auth)\",{\"children\":[\"login\",{\"children\":[\"__PAGE__\",{},\"/login\",\"refresh\"]}]}]},null,null,true],\"appDirRoute\":true}"}
+{"type":"send","time":1782114937816.2134,"opcode":1,"data":"{\"event\":\"ping\",\"tree\":[\"\",{\"children\":[\"(auth)\",{\"children\":[\"login\",{\"children\":[\"__PAGE__\",{},\"/login\",\"refresh\"]}]}]},null,null,true],\"appDirRoute\":true}"}
+{"type":"send","time":1782114937818.7144,"opcode":1,"data":"{\"event\":\"ping\",\"tree\":[\"\",{\"children\":[\"(auth)\",{\"children\":[\"login\",{\"children\":[\"__PAGE__\",{},\"/login\",\"refresh\"]}]}]},null,null,true],\"appDirRoute\":true}"}
+{"type":"send","time":1782114937821.2153,"opcode":1,"data":"{\"event\":\"ping\",\"tree\":[\"\",{\"children\":[\"(auth)\",{\"children\":[\"login\",{\"children\":[\"__PAGE__\",{},\"/login\",\"refresh\"]}]}]},null,null,true],\"appDirRoute\":true}"}

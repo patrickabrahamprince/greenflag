@@ -2,56 +2,22 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Users, Edit3, Pause, ChevronRight, Plus } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
-import type { Standard, Connection } from '@/types';
-
-function ApplicantCard({ connection }: { connection: any }) {
-  return (
-    <div className="card flex items-center gap-4 animate-fade-in">
-      <div className="w-14 h-14 rounded-full bg-surface-light flex items-center justify-center text-muted shrink-0">
-        <span className="text-sm font-medium text-white">{connection.guest_name?.charAt(0)}</span>
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="font-medium text-white">{connection.guest_name}</p>
-        <p className="text-sm text-muted">{connection.guest_age} &middot; {connection.guest_city}</p>
-      </div>
-      <span className="text-xs text-gold">Pending</span>
-      <ChevronRight className="w-5 h-5 text-muted" />
-    </div>
-  );
-}
-
-function ActiveConnectionCard({ connection }: { connection: any }) {
-  const total = 8;
-  const progress = connection.tasks_completed;
-  const pct = Math.round((progress / total) * 100);
-
-  return (
-    <div className="card animate-fade-in">
-      <div className="flex items-center gap-4 mb-3">
-        <div className="w-14 h-14 rounded-full bg-surface-light flex items-center justify-center text-muted shrink-0">
-          <span className="text-sm font-medium text-white">{connection.guest_name?.charAt(0)}</span>
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="font-medium text-white">{connection.guest_name}, {connection.guest_age}</p>
-          <p className="text-sm text-muted">{connection.guest_city} &middot; Day {Math.min(progress + 1, 8)} of 8</p>
-        </div>
-        <span className="text-xs font-medium text-gold">{pct}%</span>
-      </div>
-      <div className="w-full h-2 bg-surface-light rounded-full overflow-hidden">
-        <div className="h-full bg-gold rounded-full transition-all duration-700 ease-out" style={{ width: `${pct}%` }} />
-      </div>
-    </div>
-  );
-}
+import type { Standard } from '@/types';
+import type { MappedConnection, RawConnection } from '@/components/admin/types';
+import { ApplicantCard } from '@/components/admin/ApplicantCard';
+import { ActiveConnectionCard } from '@/components/admin/ActiveConnectionCard';
+import { HostStatsBar } from '@/components/admin/HostStatsBar';
+import { HostActionButtons } from '@/components/admin/HostActionButtons';
+import { EmptyConnectionsState } from '@/components/admin/EmptyConnectionsState';
 
 export default function AdminHostDashboardPage() {
   const router = useRouter();
   const params = useParams();
   const hostId = params.hostId as string;
   const [standard, setStandard] = useState<Standard | null>(null);
-  const [connections, setConnections] = useState<any[]>([]);
+  const [connections, setConnections] = useState<MappedConnection[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -61,7 +27,7 @@ export default function AdminHostDashboardPage() {
       const { data: stdData } = await supabase
         .from('standards')
         .select('*')
-        .eq('host_id', hostId)
+        .eq('woman_id', hostId)
         .single();
 
       if (stdData) setStandard(stdData);
@@ -74,12 +40,13 @@ export default function AdminHostDashboardPage() {
           tasks_completed,
           expires_at,
           created_at,
-          guest:guest_id(name, age, city)
+          started_at,
+          guest:profiles!connections_guest_id_fkey(name, age, city)
         `)
         .eq('host_id', hostId);
 
       if (connData) {
-        setConnections(connData.map((c: any) => ({
+        setConnections(connData.map((c: RawConnection) => ({
           ...c,
           guest_name: c.guest?.name,
           guest_age: c.guest?.age,
@@ -113,7 +80,7 @@ export default function AdminHostDashboardPage() {
         </div>
         <h2 className="text-xl font-medium text-white mb-2">No Standard Yet</h2>
         <p className="text-muted text-sm max-w-xs mb-8">
-          This host hasn&apos;t set a standard yet
+          This woman hasn&apos;t set a standard yet
         </p>
       </div>
     );
@@ -127,45 +94,22 @@ export default function AdminHostDashboardPage() {
         </button>
         <div>
           <h1 className="text-2xl font-display text-white">
-            Host Dashboard
+            Woman Dashboard
           </h1>
           <p className="text-sm text-muted">ID: {hostId}</p>
         </div>
       </div>
-
       <div className="py-4">
         <h2 className="font-display text-3xl text-white font-semibold">
-          {standard.name}
+          Standard
         </h2>
-        <p className="text-muted text-sm mt-1">Difficulty: {standard.difficulty}</p>
       </div>
-
-      <div className="grid grid-cols-3 gap-3 mb-6">
-        <div className="card text-center">
-          <p className="text-2xl font-bold text-gold">{applicants.length}</p>
-          <p className="text-xs text-muted mt-1">Applicants</p>
-        </div>
-        <div className="card text-center">
-          <p className="text-2xl font-bold text-white">{inProgress.length}</p>
-          <p className="text-xs text-muted mt-1">In Progress</p>
-        </div>
-        <div className="card text-center">
-          <p className="text-2xl font-bold text-white">{completed.length}</p>
-          <p className="text-xs text-muted mt-1">Connected</p>
-        </div>
-      </div>
-
-      <div className="flex gap-3 mb-8">
-        <button className="flex-1 btn-secondary flex items-center justify-center gap-2">
-          <Edit3 className="w-4 h-4" />
-          Edit Standard
-        </button>
-        <button className="flex-1 btn-secondary flex items-center justify-center gap-2">
-          <Pause className="w-4 h-4" />
-          {standard.is_active ? 'Pause' : 'Resume'}
-        </button>
-      </div>
-
+      <HostStatsBar
+        applicants={applicants.length}
+        inProgress={inProgress.length}
+        completed={completed.length}
+      />
+      <HostActionButtons isActive={standard.is_active} />
       {applicants.length > 0 && (
         <div className="mb-8">
           <h2 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">
@@ -181,7 +125,6 @@ export default function AdminHostDashboardPage() {
           </button>
         </div>
       )}
-
       {inProgress.length > 0 && (
         <div>
           <h2 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">
@@ -194,14 +137,8 @@ export default function AdminHostDashboardPage() {
           </div>
         </div>
       )}
-
       {inProgress.length === 0 && applicants.length === 0 && (
-        <div className="empty-state py-16">
-          <div className="empty-state-icon">
-            <Users className="w-8 h-8" />
-          </div>
-          <p className="text-muted text-sm">No connections yet</p>
-        </div>
+        <EmptyConnectionsState />
       )}
     </div>
   );

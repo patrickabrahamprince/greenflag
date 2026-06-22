@@ -27,7 +27,7 @@ export async function GET(
       .eq('connection_id', id)
       .order('task_number', { ascending: true });
 
-    return NextResponse.json({ ...connection, submissions: submissions || [] });
+    return NextResponse.json({ ...(connection!), submissions: submissions || [] });
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

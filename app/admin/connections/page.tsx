@@ -1,123 +1,108 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Eye, Link } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Link2, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { createClient } from '@/lib/supabase/client';
-
-interface ConnectionRow {
-  id: string;
-  guest: string;
-  host: string;
-  day: number;
-  tasks: string;
-  expires: string;
-  status: string;
-}
+import type { ConnectionRow } from '@/components/admin/types';
+import { ConnectionsTable } from '@/components/admin/ConnectionsTable';
+import { ForceEndModal } from '@/components/admin/ForceEndModal';
 
 export default function AdminConnections() {
   const [connections, setConnections] = useState<ConnectionRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState('');
+  const [forceEndId, setForceEndId] = useState<string | null>(null);
+  const [forceEndReason, setForceEndReason] = useState('');
 
-  useEffect(() => {
+  const fetchConnections = useCallback(async () => {
+    setLoading(true);
     const supabase = createClient();
+    let query = supabase
+      .from('connections')
+      .select(`
+        id, status, tasks_completed, current_day, started_at, expires_at,
+        guest:profiles!connections_guest_id_fkey(name),
+        host:profiles!connections_host_id_fkey(name)
+      `)
+      .order('created_at', { ascending: false });
 
-    const fetchConnections = async () => {
-      const { data, error } = await supabase
-        .from('connections')
-        .select(`
-          id,
-          status,
-          tasks_completed,
-          expires_at,
-          guest:guest_id(name),
-          host:host_id(name),
-          standards:test_id(day)
-        `)
-        .order('created_at', { ascending: false });
+    if (statusFilter) query = query.eq('status', statusFilter);
 
-      if (!error && data) {
-        setConnections(data.map((c: any) => ({
-          id: c.id,
-          guest: c.guest?.name || 'Unknown',
-          host: c.host?.name || 'Unknown',
-          day: c.tasks_completed + 1,
+    const { data, error } = await query;
+    if (!error && data) {
+      setConnections(data.map((c: Record<string, unknown>) => {
+        const guest = c.guest as { name?: string } | null;
+        const host = c.host as { name?: string } | null;
+        return {
+          id: String(c.id),
+          guest: guest?.name || 'Unknown',
+          host: host?.name || 'Unknown',
+          currentDay: Number(c.current_day) || Number(c.tasks_completed) + 1,
           tasks: `${c.tasks_completed}/8`,
-          expires: new Date(c.expires_at) < new Date() ? 'Expired' : new Date(c.expires_at).toLocaleDateString(),
-          status: c.status,
-        })));
-      }
-      setLoading(false);
-    };
+          startedAt: c.started_at ? new Date(String(c.started_at)).toLocaleDateString() : '-',
+          expires: c.expires_at ? (new Date(String(c.expires_at)) < new Date() ? 'Expired' : new Date(String(c.expires_at)).toLocaleDateString()) : '-',
+          status: String(c.status),
+        };
+      }));
+    }
+    setLoading(false);
+  }, [statusFilter]);
 
-    fetchConnections();
-  }, []);
+  useEffect(() => { fetchConnections(); }, [fetchConnections]);
 
-  const statusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'text-green-500 bg-green-500/10';
-      case 'chat_unlocked': return 'text-gold bg-gold/10';
-      case 'completed': return 'text-blue-500 bg-blue-500/10';
-      case 'expired': return 'text-red-500 bg-red-500/10';
-      default: return 'text-muted bg-surface-light';
+  const handleForceEnd = async () => {
+    if (!forceEndId || !forceEndReason.trim()) return;
+    const res = await fetch(`/api/admin/connections/${forceEndId}/force-end`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reason: forceEndReason.trim() }),
+    });
+    const d = await res.json();
+    if (d.success) {
+      toast.success('Connection ended');
+      setForceEndId(null);
+      setForceEndReason('');
+      fetchConnections();
+    } else {
+      toast.error(d.error || 'Failed');
     }
   };
 
   return (
     <div className="animate-fade-in">
-      <h1 className="text-2xl font-display text-white mb-6">Connections</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-display text-[#EDEADE]">Connections</h1>
+        <select className="input max-w-[150px]" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="completed">Completed</option>
+          <option value="expired">Expired</option>
+          <option value="ended">Ended</option>
+          <option value="chat_unlocked">Chat Unlocked</option>
+        </select>
+      </div>
 
       {loading ? (
-        <div className="text-center py-12 text-muted text-sm">Loading...</div>
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-6 h-6 animate-spin text-[#D4AF37]" />
+        </div>
       ) : connections.length === 0 ? (
-        <div className="empty-state py-16">
-          <div className="empty-state-icon">
-            <Link className="w-8 h-8" />
-          </div>
-          <h3 className="text-lg font-medium text-white mb-2">No connections yet</h3>
-          <p className="text-muted text-sm">Connections between hosts and guests will appear here.</p>
+        <div className="card py-16 text-center">
+          <Link2 className="w-8 h-8 text-[#8E8E93] mx-auto mb-3" />
+          <p className="text-[#8E8E93] text-sm">No connections found</p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-muted text-xs uppercase border-b border-border">
-                <th className="text-left py-3 px-2">Guest</th>
-                <th className="text-left py-3 px-2">Host</th>
-                <th className="text-left py-3 px-2">Day</th>
-                <th className="text-left py-3 px-2">Tasks</th>
-                <th className="text-left py-3 px-2">Expires</th>
-                <th className="text-left py-3 px-2">Status</th>
-                <th className="text-right py-3 px-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {connections.map((conn) => (
-                <tr key={conn.id} className="border-b border-border/50">
-                  <td className="py-3 px-2 text-white font-medium">{conn.guest}</td>
-                  <td className="py-3 px-2 text-muted">{conn.host}</td>
-                  <td className="py-3 px-2 text-muted">{conn.day}</td>
-                  <td className="py-3 px-2 text-muted">{conn.tasks}</td>
-                  <td className="py-3 px-2 text-muted">{conn.expires}</td>
-                  <td className="py-3 px-2">
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${statusColor(conn.status)}`}>
-                      {conn.status.replace('_', ' ')}
-                    </span>
-                  </td>
-                  <td className="py-3 px-2">
-                    <div className="flex items-center gap-1 justify-end">
-                      <button className="btn-ghost text-xs p-1.5">
-                        <Eye className="w-3.5 h-3.5" />
-                      </button>
-                      <button className="btn-ghost text-[10px] text-green-500">Complete</button>
-                      <button className="btn-ghost text-[10px] text-red-500">Fail</button>
-                      <button className="btn-ghost text-[10px] text-gold">Extend</button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ConnectionsTable connections={connections} onForceEnd={setForceEndId} />
+      )}
+
+      {forceEndId && (
+        <ForceEndModal
+          reason={forceEndReason}
+          onReasonChange={setForceEndReason}
+          onConfirm={handleForceEnd}
+          onClose={() => { setForceEndId(null); setForceEndReason(''); }}
+        />
       )}
     </div>
   );

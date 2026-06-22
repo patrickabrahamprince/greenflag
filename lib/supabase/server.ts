@@ -1,12 +1,20 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import type { Database } from '@/types/supabase';
 
-export async function createServerSupabaseClient() {
+import type { SupabaseClient } from '@supabase/supabase-js';
+
+export type TypedSupabaseClient = SupabaseClient<Database, 'public', 'public', Database['public'], { PostgrestVersion: '12' }>;
+
+export async function createServerSupabaseClient(): Promise<TypedSupabaseClient> {
   const cookieStore = await cookies();
 
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\\n/g, '').trim();
+  const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').replace(/\\n/g, '').trim();
+
+  return createServerClient<Database>(
+    url,
+    anonKey,
     {
       cookies: {
         getAll() {
@@ -21,5 +29,5 @@ export async function createServerSupabaseClient() {
         },
       },
     }
-  );
+  ) as unknown as TypedSupabaseClient;
 }

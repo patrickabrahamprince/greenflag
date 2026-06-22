@@ -2,44 +2,46 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { ScrollText, Loader2 } from 'lucide-react';
+import type { AuditLogEntry } from '@/components/admin/types';
 
-interface AdminAction {
-  id: number;
-  admin_id: string;
-  action: string;
-  target_id: string;
-  metadata: Record<string, unknown>;
-  created_at: string;
-  admin?: { name: string; email: string };
-}
+const ACTION_FILTERS = [
+  { value: '', label: 'All Actions' },
+  { value: 'ban_user', label: 'Ban User' },
+  { value: 'unban_user', label: 'Unban User' },
+  { value: 'credit_coins', label: 'Credit Coins' },
+  { value: 'approve_submission', label: 'Approve Submission' },
+  { value: 'reject_submission', label: 'Reject Submission' },
+  { value: 'force_end_connection', label: 'Force End' },
+  { value: 'actioned_report', label: 'Actioned Report' },
+  { value: 'delete_report', label: 'Delete Report' },
+];
+
+const PAGE_SIZE = 50;
 
 export default function AdminAudit() {
-  const [actions, setActions] = useState<AdminAction[]>([]);
+  const [actions, setActions] = useState<AuditLogEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('');
+  const [actionFilter, setActionFilter] = useState('');
+  const [adminFilter, setAdminFilter] = useState('');
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
   const fetchActions = useCallback(async () => {
     setLoading(true);
     try {
-      const supabase = (await import('@/lib/supabase/client')).createClient();
-      let query = supabase
-        .from('admin_actions')
-        .select('*, admin:admin_id(name, email)')
-        .order('created_at', { ascending: false })
-        .limit(100);
+      const params = new URLSearchParams();
+      params.set('limit', String(PAGE_SIZE));
+      params.set('offset', String(page * PAGE_SIZE));
+      if (actionFilter) params.set('action', actionFilter);
+      if (adminFilter) params.set('admin_email', adminFilter);
 
-      if (filter) {
-        query = query.eq('action', filter);
-      }
-
-      const { data } = await query;
-      setActions(data || []);
-    } catch {
-      // silent
-    } finally {
-      setLoading(false);
-    }
-  }, [filter]);
+      const res = await fetch(`/api/admin/audit?${params}`);
+      const d = await res.json();
+      setActions(d.entries || []);
+      setHasMore((d.entries || []).length === PAGE_SIZE);
+    } catch {}
+    finally { setLoading(false); }
+  }, [page, actionFilter, adminFilter]);
 
   useEffect(() => { fetchActions(); }, [fetchActions]);
 
@@ -49,18 +51,13 @@ export default function AdminAudit() {
         <h1 className="text-2xl font-display text-[#EDEADE]">Audit Log</h1>
       </div>
 
-      <div className="mb-4">
-        <select
-          className="input max-w-xs"
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-        >
-          <option value="">All Actions</option>
-          <option value="ban_user">Ban User</option>
-          <option value="unban_user">Unban User</option>
-          <option value="set_admin">Set Admin</option>
-          <option value="actioned_report">Actioned Report</option>
+      <div className="flex flex-wrap gap-2 mb-4">
+        <select className="input max-w-[180px]" value={actionFilter} onChange={(e) => { setActionFilter(e.target.value); setPage(0); }}>
+          {ACTION_FILTERS.map((f) => (
+            <option key={f.value} value={f.value}>{f.label}</option>
+          ))}
         </select>
+        <input className="input max-w-[200px]" placeholder="Filter by admin email..." value={adminFilter} onChange={(e) => { setAdminFilter(e.target.value); setPage(0); }} />
       </div>
 
       {loading ? (
@@ -70,45 +67,53 @@ export default function AdminAudit() {
       ) : actions.length === 0 ? (
         <div className="card py-16 text-center">
           <ScrollText className="w-8 h-8 text-[#8E8E93] mx-auto mb-3" />
-          <p className="text-[#8E8E93] text-sm">No audit entries yet</p>
+          <p className="text-[#8E8E93] text-sm">No audit entries found</p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-[#8E8E93] text-xs uppercase border-b border-white/10">
-                <th className="text-left py-3 px-2">Admin</th>
-                <th className="text-left py-3 px-2">Action</th>
-                <th className="text-left py-3 px-2">Target</th>
-                <th className="text-left py-3 px-2">Details</th>
-                <th className="text-right py-3 px-2">Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {actions.map((a) => (
-                <tr key={a.id} className="border-b border-white/5">
-                  <td className="py-3 px-2 text-[#EDEADE] font-medium text-xs">
-                    {(a.admin as any)?.name || (a.admin as any)?.email || a.admin_id.slice(0, 8)}
-                  </td>
-                  <td className="py-3 px-2">
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-[#8E8E93]">
-                      {a.action.replace(/_/g, ' ')}
-                    </span>
-                  </td>
-                  <td className="py-3 px-2 text-[#8E8E93] text-xs font-mono">
-                    {a.target_id?.slice(0, 12)}...
-                  </td>
-                  <td className="py-3 px-2 text-[#8E8E93] text-xs">
-                    {a.metadata?.reason ? String(a.metadata.reason) : '-'}
-                  </td>
-                  <td className="py-3 px-2 text-[#8E8E93] text-xs text-right">
-                    {new Date(a.created_at).toLocaleString()}
-                  </td>
+        <>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-[#8E8E93] text-xs uppercase border-b border-white/10">
+                  <th className="text-left py-3 px-2">Admin</th>
+                  <th className="text-left py-3 px-2">Action</th>
+                  <th className="text-left py-3 px-2">Target</th>
+                  <th className="text-right py-3 px-2">Time</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {actions.map((a) => (
+                  <tr data-testid="audit-row" key={a.id} className="border-b border-white/5">
+                    <td className="py-3 px-2 text-[#EDEADE] font-medium text-xs">
+                      {a.admin_email || 'system'}
+                    </td>
+                    <td className="py-3 px-2">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-[#8E8E93]">
+                        {a.action.replace(/_/g, ' ')}
+                      </span>
+                    </td>
+                    <td className="py-3 px-2 text-[#8E8E93] text-xs font-mono">
+                      {a.target?.slice(0, 12) || '-'}{a.target && a.target.length > 12 ? '...' : ''}
+                    </td>
+                    <td className="py-3 px-2 text-[#8E8E93] text-xs text-right">
+                      {new Date(a.created_at).toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="flex items-center justify-center gap-3 mt-6">
+            <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={page === 0} className="btn-secondary text-xs py-2 disabled:opacity-30">
+              Previous
+            </button>
+            <span className="text-xs text-[#8E8E93]">Page {page + 1}</span>
+            <button onClick={() => setPage((p) => p + 1)} disabled={!hasMore} className="btn-secondary text-xs py-2 disabled:opacity-30">
+              Next
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

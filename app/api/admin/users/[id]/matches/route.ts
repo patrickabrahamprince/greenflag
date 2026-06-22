@@ -28,10 +28,10 @@ export async function GET(
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const isGuest = target.gender === 'guest';
+    const isGuest = target.gender === 'man';
     const { data: matches, error: matchErr } = await supabase.rpc('get_matching_profiles', {
       p_user_id: target.id,
-      p_viewing_gender: isGuest ? 'host' : 'guest',
+      p_viewing_gender: isGuest ? 'woman' : 'man',
       p_user_interests: isGuest ? (target.interests || []) : [],
       p_user_standards: isGuest ? [] : (target.looking_for_interests || []),
       p_user_lat: target.lat || 0,

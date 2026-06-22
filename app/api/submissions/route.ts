@@ -34,10 +34,10 @@ export async function POST(req: Request) {
       .from('task_submissions')
       .insert({
         connection_id,
-        intention_id: task_id,
-        proof_url: proof_url || '',
-        proof_text: proof_text || '',
-        submitted_by: user.id,
+        task_number: task_id,
+        content_type: proof_url ? 'image' : 'text',
+        text_content: proof_text || null,
+        media_url: proof_url || null,
       })
       .select()
       .single();

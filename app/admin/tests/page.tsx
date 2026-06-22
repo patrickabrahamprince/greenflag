@@ -21,15 +21,15 @@ export default function AdminTests() {
     const fetchFlagged = async () => {
       const { data, error } = await supabase
         .from('standards')
-        .select('id, name, host_id, profiles:host_id(name)')
-        .eq('is_flagged', true);
+        .select('id, woman_id, profiles:woman_id(name)')
+        .eq('is_active', false);
 
       if (!error && data) {
         setTests(data.map((t: any) => ({
           id: t.id,
           host: t.profiles?.name || 'Unknown',
-          name: t.name,
-          reports: t.report_count || 0,
+          name: '',
+          reports: 0,
         })));
       }
       setLoading(false);

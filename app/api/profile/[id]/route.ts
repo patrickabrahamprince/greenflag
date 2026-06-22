@@ -27,7 +27,7 @@ export async function GET(
 
     let matchData: { percent: number; overlapping: string[]; viewerIsHost: boolean } | null = null;
     if (viewer && viewer.gender !== target.gender) {
-      const viewerIsHost = viewer.gender === 'host';
+      const viewerIsHost = viewer.gender === 'woman';
       const standards = viewerIsHost ? viewer.looking_for_interests : target.looking_for_interests;
       const interests = viewerIsHost ? target.interests : viewer.interests;
       const overlap = (interests || []).filter((i: string) => (standards || []).includes(i));
@@ -38,8 +38,8 @@ export async function GET(
       };
     }
 
-    const viewerId = viewer?.gender === 'host' ? viewer.id : target.id;
-    const targetId = viewer?.gender === 'host' ? target.id : viewer?.id;
+    const viewerId = viewer?.gender === 'woman' ? viewer.id : target.id;
+    const targetId = viewer?.gender === 'woman' ? target.id : viewer?.id;
 
     const { data: connection } = await supabase
       .from('connections')

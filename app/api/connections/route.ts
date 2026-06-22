@@ -16,7 +16,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status');
 
-    const isHost = profile?.gender === 'host';
+    const isHost = profile?.gender === 'woman';
 
     let query = supabase
       .from('connections')

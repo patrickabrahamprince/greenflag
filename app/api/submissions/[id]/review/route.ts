@@ -1,5 +1,11 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import {
+  notifyManOfDayApproval,
+  notifyManOfDay5,
+  notifyBothOfCompletion,
+  notifyManOfRejection,
+} from '@/lib/notifications';
 
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '').split(',').map((e) => e.trim().toLowerCase());
 
@@ -38,7 +44,7 @@ export async function POST(
 
     const { data: connection, error: connErr } = await supabase
       .from('connections')
-      .select('host_id, tasks_completed, status')
+      .select('host_id, guest_id, tasks_completed, status')
       .eq('id', submission.connection_id)
       .maybeSingle();
 
@@ -65,20 +71,38 @@ export async function POST(
 
       if (updateConnErr) return NextResponse.json({ success: true });
 
-      if (newCount === 5) {
+      if (newCount >= 8) {
+        await supabase
+          .from('connections')
+          .update({ status: 'completed', completed_at: now })
+          .eq('id', submission.connection_id);
+
+        await notifyBothOfCompletion(
+          supabase,
+          connection.guest_id,
+          connection.host_id,
+          submission.connection_id
+        );
+      } else if (newCount === 5) {
         await supabase.from('messages').insert({
           connection_id: submission.connection_id,
           sender_id: null,
           content: 'Chat unlocked!',
           type: 'system',
         });
-      }
 
-      if (newCount >= 8) {
-        await supabase
-          .from('connections')
-          .update({ status: 'completed', completed_at: now })
-          .eq('id', submission.connection_id);
+        await notifyManOfDay5(
+          supabase,
+          connection.guest_id,
+          submission.connection_id
+        );
+      } else {
+        await notifyManOfDayApproval(
+          supabase,
+          connection.guest_id,
+          newCount,
+          submission.connection_id
+        );
       }
     } else {
       await supabase
@@ -89,6 +113,8 @@ export async function POST(
           reviewed_at: now,
         })
         .eq('id', id);
+
+      await notifyManOfRejection(supabase, connection.guest_id, submission.connection_id);
     }
 
     return NextResponse.json({ success: true });

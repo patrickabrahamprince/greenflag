@@ -1,11 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Bell, Shield, Trash2, LogOut, Phone, Mail, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { parsePhoneNumber } from 'libphonenumber-js';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useCoinStore } from '@/lib/store';
+
+function formatPhoneDisplay(phone: string | undefined): string {
+  if (!phone) return 'Not available';
+  const parsed = parsePhoneNumber(phone);
+  if (parsed && parsed.isValid()) {
+    return parsed.formatInternational();
+  }
+  return phone;
+}
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -13,12 +23,24 @@ export default function SettingsPage() {
   const clearUser = useUserStore((s) => s.clearUser);
   const setBalance = useCoinStore((s) => s.setBalance);
 
+  const [phone, setPhone] = useState<string | undefined>(undefined);
   const [email, setEmail] = useState('');
   const [pushNotif, setPushNotif] = useState(true);
   const [smsNotif, setSmsNotif] = useState(false);
   const [emailNotif, setEmailNotif] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [updating, setUpdating] = useState(false);
+
+  useEffect(() => {
+    const fetchPhone = async () => {
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      if (data.user?.phone) {
+        setPhone(data.user.phone);
+      }
+    };
+    fetchPhone();
+  }, []);
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -66,7 +88,7 @@ export default function SettingsPage() {
               </div>
               <div>
                 <p className="text-sm text-muted">Phone</p>
-                <p className="text-white font-medium">+91 9876543210</p>
+                <p className="text-white font-medium">{formatPhoneDisplay(phone)}</p>
               </div>
             </div>
             <span className="text-xs text-green-500 bg-green-500/10 px-2 py-1 rounded-full flex items-center gap-1">

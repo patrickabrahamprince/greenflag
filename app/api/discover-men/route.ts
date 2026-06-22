@@ -18,13 +18,13 @@ export async function GET(req: Request) {
       .eq('id', user.id)
       .single();
 
-    if (viewer?.gender !== 'host') {
+    if (viewer?.gender !== 'woman') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const { data, error } = await supabase.rpc('get_matching_profiles', {
       p_user_id: user.id,
-      p_viewing_gender: 'guest',
+      p_viewing_gender: 'man',
       p_user_interests: [],
       p_user_standards: viewer.looking_for_interests || [],
       p_user_lat: viewer.lat || 0,

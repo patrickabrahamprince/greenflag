@@ -3,35 +3,37 @@
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Compass, Heart, User, Bell } from 'lucide-react';
+import { Compass, Heart, User, MessageSquare, Star, Coins } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
 
-const guestTabs = [
+const manTabs = [
   { name: 'Discover', href: '/discover', icon: Compass },
-  { name: 'Connections', href: '/connections', icon: Heart },
-  { name: 'Notifications', href: '/notifications', icon: Bell },
+  { name: 'My Connections', href: '/my-connections', icon: Heart },
+  { name: 'Chat', href: '/messages', icon: MessageSquare },
   { name: 'Profile', href: '/profile', icon: User },
+  { name: 'Coins', href: '/coins', icon: Coins },
 ];
 
-const hostTabs = [
-  { name: 'Discover', href: '/discover-men', icon: Compass },
-  { name: 'Notifications', href: '/notifications', icon: Bell },
+const womanTabs = [
+  { name: 'Standard', href: '/standard/builder', icon: Star },
+  { name: 'Connections', href: '/connections', icon: Heart },
+  { name: 'Chat', href: '/messages', icon: MessageSquare },
   { name: 'Profile', href: '/profile', icon: User },
 ];
 
 export function BottomNav() {
   const pathname = usePathname();
   const user = useUserStore((s) => s.user);
-  const tabs = user?.role === 'host' ? hostTabs : guestTabs;
+  const tabs = user?.persona === 'woman' ? womanTabs : manTabs;
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     if (!user?.id) return;
     const supabase = createClient();
     const fetchCount = async () => {
-      const { data } = await (supabase as any).rpc('get_unread_count', { p_user_id: user.id });
+      const { data } = await supabase.rpc('get_unread_count', { p_user_id: user.id });
       setUnreadCount(data || 0);
     };
     fetchCount();

@@ -1,52 +1,68 @@
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/admin/auth';
 
-export async function POST(
-  req: Request,
+export async function GET(
+  _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
-    const supabase = await createServerSupabaseClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const auth = await requireAdmin();
+    if (!auth.ok) return auth.response;
+    const { supabase } = auth.data;
 
-    const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-    if (!profile?.is_admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const { data: user, error: userErr } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-    if (user.id === id) return NextResponse.json({ error: 'Cannot ban yourself' }, { status: 400 });
+    if (userErr || !user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
 
-    const { reason } = await req.json();
-    if (!reason?.trim()) return NextResponse.json({ error: 'Reason is required' }, { status: 400 });
+    const { data: coinTransactions } = await supabase
+      .from('coin_transactions')
+      .select('*')
+      .eq('user_id', id)
+      .order('created_at', { ascending: false })
+      .limit(50);
 
-    const { error } = await supabase.rpc('admin_ban_user', { p_user_id: id, p_reason: reason.trim() });
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    const { data: connections } = await supabase
+      .from('connections')
+      .select(`
+        id,
+        status,
+        current_day,
+        tasks_completed,
+        started_at,
+        expires_at,
+        guest:profiles!connections_guest_id_fkey(name),
+        host:profiles!connections_host_id_fkey(name)
+      `)
+      .or(`guest_id.eq.${id},host_id.eq.${id}`)
+      .order('created_at', { ascending: false });
 
-    return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
-}
+    const mappedConnections = (connections || []).map((c: Record<string, unknown>) => {
+      const guest = c.guest as { name?: string } | null;
+      const host = c.host as { name?: string } | null;
+      return {
+        id: c.id,
+        status: c.status,
+        current_day: c.current_day,
+        tasks_completed: c.tasks_completed,
+        started_at: c.started_at,
+        expires_at: c.expires_at,
+        guest_name: guest?.name,
+        host_name: host?.name,
+      };
+    });
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
-    const supabase = await createServerSupabaseClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-    const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-    if (!profile?.is_admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-
-    if (user.id === id) return NextResponse.json({ error: 'Cannot delete yourself' }, { status: 400 });
-
-    const { error } = await supabase.from('profiles').delete().eq('id', id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      user,
+      coinTransactions: coinTransactions || [],
+      connections: mappedConnections,
+    });
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

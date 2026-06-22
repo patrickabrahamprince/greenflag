@@ -14,6 +14,12 @@ CREATE TABLE IF NOT EXISTS notifications (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+ALTER TABLE notifications ADD COLUMN IF NOT EXISTS title TEXT;
+ALTER TABLE notifications ADD COLUMN IF NOT EXISTS body TEXT;
+ALTER TABLE notifications ADD COLUMN IF NOT EXISTS data JSONB DEFAULT '{}';
+ALTER TABLE notifications ADD COLUMN IF NOT EXISTS read_at TIMESTAMPTZ;
+ALTER TABLE notifications ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
+
 CREATE INDEX idx_notifications_user_unread ON notifications(user_id, read_at) WHERE read_at IS NULL;
 CREATE INDEX idx_notifications_user_time ON notifications(user_id, created_at DESC);
 
