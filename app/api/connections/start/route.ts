@@ -86,7 +86,7 @@ export async function POST(req: Request) {
         man_id: user.id,
       });
 
-      const woman = (women ?? []).find((w) => w.id === woman_id);
+      const woman = (women ?? []).find((w: { id: string }) => w.id === woman_id);
       if (!woman) {
         return NextResponse.json({ error: 'Woman not available' }, { status: 410 });
       }
