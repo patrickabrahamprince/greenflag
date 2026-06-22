@@ -35,7 +35,7 @@ export default function AdminPage() {
   return (
     <div className="animate-fade-in">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-display text-[#EDEADE]">Dashboard</h1>
+        <h1 data-testid="admin-dashboard-title" className="text-2xl font-display text-[#EDEADE]">Dashboard</h1>
       </div>
       <AdminDashboard />
     </div>

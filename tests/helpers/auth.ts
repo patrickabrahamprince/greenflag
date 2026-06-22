@@ -1,59 +1,107 @@
-import fs from 'fs'
-import path from 'path'
-import { type Page } from '@playwright/test'
+import type { Page } from '@playwright/test'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+const PROJECT_REF = extractProjectRef(SUPABASE_URL)
 
-const TEST_USERS_PATH = path.resolve(__dirname, '..', '.test-users.json')
-
-type TestUsers = {
-  TEST_MAN1_EMAIL: string
-  TEST_MAN2_EMAIL: string
-  TEST_WOMAN_EMAIL: string
+function extractProjectRef(url: string): string {
+  const match = url.match(/https:\/\/([^.]+)/)
+  if (!match) throw new Error(`Cannot extract project ref from URL: ${url}`)
+  return match[1]
 }
 
-export function loadTestUsers(): TestUsers {
-  if (!fs.existsSync(TEST_USERS_PATH)) {
-    throw new Error(
-      '.test-users.json not found. Run global setup first or ensure tests are started via playwright.'
-    )
-  }
-  return JSON.parse(fs.readFileSync(TEST_USERS_PATH, 'utf-8'))
-}
+const AUTH_COOKIE_NAME = `sb-${PROJECT_REF}-auth-token`
 
-export async function loginAsTestUser(email: string, password: string) {
-  const supabase = createClient(supabaseUrl, supabaseAnonKey)
-
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  })
-
-  if (error) {
-    throw new Error(`Login failed for ${email}: ${error.message}`)
-  }
-
-  return { session: data.session, user: data.user, supabase }
-}
-
-export const loginAsMan = () =>
-  loginAsTestUser(loadTestUsers().TEST_MAN1_EMAIL, process.env.TEST_USER_PASSWORD!)
-
-export const loginAsWoman = () =>
-  loginAsTestUser(loadTestUsers().TEST_WOMAN_EMAIL, process.env.TEST_USER_PASSWORD!)
-
-export async function loginAs(page: Page, userId: string) {
-  const sb = createClient(supabaseUrl, supabaseServiceKey)
-  const { data: user, error } = await sb.auth.admin.getUserById(userId)
-
-  if (error || !user?.user?.email) throw new Error(`User ${userId} not found`)
+/**
+ * Log in via the browser UI (email/password form) and persist the resulting
+ * auth cookies to a storage state file.
+ *
+ * Usage:
+ *   const storageState = await loginAndGetStorageState(page, email, password)
+ *   test.use({ storageState })
+ */
+export async function loginAndGetStorageState(
+  page: Page,
+  email: string,
+  password: string,
+  options?: { expectedUrl?: RegExp }
+): Promise<string> {
+  const statePath = `.auth/${email.replace(/[^a-z0-9]/gi, '_')}.json`
 
   await page.goto('/login')
-  await page.fill('input[type="email"]', user.user.email)
-  await page.fill('input[type="password"]', process.env.TEST_USER_PASSWORD || 'Test1234!')
-  await page.click('button:has-text("Log in")')
-  await page.waitForURL(/\/discover|\/connections|\/admin/, { timeout: 10000 })
+  await page.waitForSelector('[data-testid="email"]', { timeout: 10000 })
+  await page.fill('[data-testid="email"]', email)
+  await page.fill('[data-testid="password"]', password)
+  await page.click('[data-testid="login-btn"]')
+
+  const expected = options?.expectedUrl ?? /\/discover|\/admin/
+  await page.waitForURL(expected, { timeout: 15000 })
+
+  await page.context().storageState({ path: statePath })
+  return statePath
 }
+
+/**
+ * Set Supabase auth cookies in the browser context after a server-side login.
+ * This allows tests to be authenticated without visiting the login page.
+ *
+ * Usage:
+ *   await loginWithCookies(page, email, password)
+ *   await page.goto('/discover') // already authenticated
+ */
+export async function loginWithCookies(page: Page, email: string, password: string) {
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+  if (error || !data.session) {
+    throw new Error(`loginWithCookies failed for ${email}: ${error?.message}`)
+  }
+
+  const session = data.session
+  const cookieValue = encodeURIComponent(JSON.stringify({
+    access_token: session.access_token,
+    refresh_token: session.refresh_token,
+    expires_in: session.expires_in ?? 3600,
+    expires_at: session.expires_at ?? Math.floor(Date.now() / 1000) + 3600,
+    token_type: session.token_type ?? 'bearer',
+    user: session.user,
+  }))
+
+  await page.context().addCookies([
+    {
+      name: AUTH_COOKIE_NAME,
+      value: cookieValue,
+      domain: new URL(SUPABASE_URL).hostname,
+      path: '/',
+      httpOnly: true,
+      sameSite: 'Lax',
+      secure: false,
+    },
+  ])
+
+  // Supabase SSR also expects the cookie set on the app domain (localhost:3000)
+  await page.context().addCookies([
+    {
+      name: AUTH_COOKIE_NAME,
+      value: cookieValue,
+      domain: 'localhost',
+      path: '/',
+      httpOnly: true,
+      sameSite: 'Lax',
+      secure: false,
+    },
+  ])
+}
+
+/**
+ * Pre-generated storage states for the 4 known test accounts.
+ * These are created by loginAndGetStorageState and cached.
+ * The first call generates them; subsequent calls reuse the cached file.
+ */
+export const TEST_ACCOUNTS = {
+  man: { email: 'test.man@greenflag.test', password: 'Test1234!' },
+  woman: { email: 'test.woman@greenflag.test', password: 'Test1234!' },
+  admin: { email: 'test.admin@greenflag.test', password: 'Test1234!' },
+  patrick: { email: 'patrickabraham.abraham@gmail.com', password: '' },
+} as const

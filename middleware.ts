@@ -3,137 +3,106 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { checkRateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateEnv } from '@/lib/env';
 
-const PUBLIC_PATHS = ['/login', '/signup', '/auth', '/auth/callback', '/banned'];
-
 validateEnv();
 
-function copyCookies(from: NextResponse, to: NextResponse) {
-  for (const { name, value } of from.cookies.getAll()) {
-    to.cookies.set(name, value);
-  }
-}
-
-function redirect(req: NextRequest, res: NextResponse, pathname: string): NextResponse {
-  const url = req.nextUrl.clone();
-  url.pathname = pathname;
-  const redirectResponse = NextResponse.redirect(url);
-  copyCookies(res, redirectResponse);
-  return redirectResponse;
-}
+const PUBLIC_PATHS = [
+  '/login', '/signup', '/onboard',
+  '/auth/callback', '/auth/error',
+  '/_next', '/favicon', '/sw.js', '/manifest',
+];
 
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
-  // Rate limit API auth routes
+  // Rate limit API auth/admin routes
   if (pathname.startsWith('/api/auth') || pathname.startsWith('/api/admin')) {
     const ip = getClientIp(req);
     const result = checkRateLimit(ip, 'api_auth', RATE_LIMITS.auth);
     if (!result.allowed) {
-      return new NextResponse(JSON.stringify({ error: 'Too many requests' }), {
-        status: 429,
-        headers: {
-          'Content-Type': 'application/json',
-          'Retry-After': String(result.retryAfter),
-        },
-      });
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
     }
   }
 
-  // Rule 1 — Public paths: never redirect, always allow through
-  const publicPaths = [
-    '/login',
-    '/signup',
-    '/onboard',
-    '/auth/callback',
-    '/auth/error',
-    '/_next',
-    '/favicon',
-    '/sw.js',
-    '/manifest',
-  ];
-
-  // If path starts with any public path — return next() immediately, no checks
-  if (publicPaths.some((p) => pathname.startsWith(p)) || pathname.startsWith('/api') || pathname.includes('.')) {
+  // Public paths and API routes — let through immediately
+  if (
+    PUBLIC_PATHS.some((p) => pathname.startsWith(p)) ||
+    pathname.startsWith('/api') ||
+    pathname.includes('.')
+  ) {
     return NextResponse.next();
   }
 
-  // Create Supabase client and get session
-  let res = NextResponse.next({ request: req });
+  // Create Supabase SSR client with cookie handling
+  let supabaseResponse = NextResponse.next({ request: req });
 
   const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\\n/g, '').trim();
   const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').replace(/\\n/g, '').trim();
 
-  const supabase = createServerClient(
-    url,
-    anonKey,
-    {
-      cookies: {
-        getAll() {
-          return req.cookies.getAll();
-        },
-        setAll(cookiesToSet: { name: string; value: string; options?: CookieOptions }[]) {
-          cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
-          res = NextResponse.next({ request: req });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            res.cookies.set(name, value, options)
-          );
-        },
+  const supabase = createServerClient(url, anonKey, {
+    cookies: {
+      getAll() {
+        return req.cookies.getAll();
       },
-    }
-  );
+      setAll(cookiesToSet: { name: string; value: string; options?: CookieOptions }[]) {
+        cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
+        supabaseResponse = NextResponse.next({ request: req });
+        cookiesToSet.forEach(({ name, value, options }) =>
+          supabaseResponse.cookies.set(name, value, {
+            httpOnly: true,
+            sameSite: 'lax' as const,
+            secure: false,
+            ...options,
+          })
+        );
+      },
+    },
+  });
 
-  console.log("MIDDLEWARE PATHNAME:", pathname);
-  const { data: { session } } = await supabase.auth.getSession();
-  console.log("MIDDLEWARE SESSION USER ID:", session?.user?.id || "NO SESSION");
+  // Use getUser() instead of getSession() — getUser() validates the access
+  // token with the server and auto-refreshes if expired, calling setAll above
+  // to persist the refreshed tokens as cookies.
+  const { data: { user } } = await supabase.auth.getUser();
 
-  // Rule 2 — No session: redirect to login
-  if (!session) {
-    console.log("MIDDLEWARE: No session, redirecting to /login");
-    const redirectResponse = NextResponse.redirect(new URL('/login', req.url));
-    copyCookies(res, redirectResponse);
-    return redirectResponse;
+  console.log('MIDDLEWARE PATHNAME:', pathname);
+  console.log('MIDDLEWARE USER:', user?.id ?? 'NO USER');
+
+  if (!user) {
+    console.log('MIDDLEWARE: No user, redirecting to /login');
+    const destination = new URL('/login', req.url);
+    return NextResponse.redirect(destination);
   }
 
-  // Get profile
+  // Fetch profile for authz checks
   const { data: profile } = await supabase
     .from('profiles')
-    .select('*')
-    .eq('id', session.user.id)
+    .select('is_admin, onboarding_completed')
+    .eq('id', user.id)
     .single();
 
-  console.log("MIDDLEWARE PROFILE:", profile ? { id: profile.id, is_admin: profile.is_admin, onboarding_completed: profile.onboarding_completed } : "NO PROFILE");
+  console.log('MIDDLEWARE PROFILE:', profile?.is_admin ? 'admin' : profile?.onboarding_completed ? 'onboarded' : 'no profile');
 
-  // Admin users skip onboarding entirely
+  // Admin users: redirect to /admin unless already there
   if (profile?.is_admin) {
-    // Only redirect to /admin if they're not already in /admin
     if (!pathname.startsWith('/admin')) {
-      console.log("MIDDLEWARE: Admin user, redirecting to /admin");
-      const redirectResponse = NextResponse.redirect(new URL('/admin', req.url));
-      copyCookies(res, redirectResponse);
-      return redirectResponse;
+      const destination = new URL('/admin', req.url);
+      return NextResponse.redirect(destination);
     }
-    console.log("MIDDLEWARE: Admin user already on admin route, letting through");
-    return res;
+    return supabaseResponse;
   }
 
-  // Admin route protection: Non-admin users cannot access /admin
-  if (pathname.startsWith('/admin') && !profile?.is_admin) {
-    console.log("MIDDLEWARE: Non-admin trying to access /admin, redirecting to /login");
-    const redirectResponse = NextResponse.redirect(new URL('/login', req.url));
-    copyCookies(res, redirectResponse);
-    return redirectResponse;
+  // Non-admins cannot access /admin
+  if (pathname.startsWith('/admin')) {
+    const destination = new URL('/login', req.url);
+    return NextResponse.redirect(destination);
   }
 
-  // Non-admin: check onboarding
+  // Non-admin without completed onboarding: redirect to /onboard
   if (!profile?.onboarding_completed && !pathname.startsWith('/onboard')) {
-    const redirectResponse = NextResponse.redirect(new URL('/onboard', req.url));
-    copyCookies(res, redirectResponse);
-    return redirectResponse;
+    const destination = new URL('/onboard', req.url);
+    return NextResponse.redirect(destination);
   }
 
-  // Rule 5 — Everything else: allow through
-  copyCookies(res, res);
-  return res;
+  return supabaseResponse;
 }
 
 export const config = {
