@@ -80,7 +80,9 @@ export async function GET() {
       return NextResponse.json({ error: fetchError.message }, { status: 500 });
     }
 
-    let ranked = (matchResults ?? []).filter((w) => !viewedIds.includes(w.id));
+    type RankedWoman = { id: string; match_percentage: number; match_reasons: string[] };
+    const matchResultsTyped = (matchResults ?? []) as RankedWoman[];
+    let ranked = matchResultsTyped.filter((w) => !viewedIds.includes(w.id));
 
     const remaining = DAILY_LIMIT - viewedCount;
     ranked = ranked.slice(0, remaining);
@@ -90,22 +92,24 @@ export async function GET() {
     }
 
     const rankedIds = ranked.map((w) => w.id);
-    const matchByWomanId = new Map(ranked.map((w) => [w.id, { match_percentage: w.match_percentage, match_reasons: w.match_reasons }]));
+    const matchByWomanId = new Map<string, { match_percentage: number; match_reasons: string[] }>(
+      ranked.map((w) => [w.id, { match_percentage: w.match_percentage, match_reasons: w.match_reasons }])
+    );
 
     const { data: fullProfiles } = await admin
       .from('profiles')
       .select('id, name, age, city, city_auto, bio, photos, interests, looking_for_interests, interests_have, interests_looking_for, blur_key')
       .in('id', rankedIds);
 
-    const idOrder = new Map(rankedIds.map((id, i) => [id, i]));
-    const profiles = (fullProfiles ?? [])
-      .sort((a, b) => (idOrder.get(a.id) ?? 0) - (idOrder.get(b.id) ?? 0))
+    const idOrder = new Map<string, number>(rankedIds.map((id, i) => [id, i]));
+    type ProfileWithOrder = Record<string, unknown> & { id: string };
+    const raw: ProfileWithOrder[] = (fullProfiles ?? []) as ProfileWithOrder[];
+    const profiles = raw
+      .sort((a, b) => ((idOrder.get(a.id) as number) ?? 0) - ((idOrder.get(b.id) as number) ?? 0))
       .map((p) => {
         const match = matchByWomanId.get(p.id);
-        return {
-          ...p,
-          ...(match ? { match_percentage: match.match_percentage, match_reasons: match.match_reasons } : {}),
-        };
+        if (!match) return p;
+        return { ...p, match_percentage: match.match_percentage, match_reasons: match.match_reasons };
       });
 
     if (profiles.length > 0) {

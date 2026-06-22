@@ -491,7 +491,10 @@ export interface Database {
         Row: {
           id: string;
           connection_id: string;
-          task_id: string;
+          task_id: string | null;
+          day: number | null;
+          content: string | null;
+          approved: boolean | null;
           proof_url: string | null;
           proof_text: string | null;
           status: string;
@@ -508,7 +511,10 @@ export interface Database {
         Insert: {
           id?: string;
           connection_id: string;
-          task_id: string;
+          task_id?: string | null;
+          day?: number | null;
+          content?: string | null;
+          approved?: boolean | null;
           proof_url?: string | null;
           proof_text?: string | null;
           status?: string;
@@ -525,7 +531,10 @@ export interface Database {
         Update: {
           id?: string;
           connection_id?: string;
-          task_id?: string;
+          task_id?: string | null;
+          day?: number | null;
+          content?: string | null;
+          approved?: boolean | null;
           proof_url?: string | null;
           proof_text?: string | null;
           status?: string;
