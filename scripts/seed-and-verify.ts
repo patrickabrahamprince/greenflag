@@ -73,13 +73,15 @@ async function seed() {
       id: woman.id, 
       persona: 'woman', 
       name: 'Test Woman',
-      gender: 'woman'
+      gender: 'woman',
+      onboarding_completed: true
     },
     { 
       id: man.id, 
       persona: 'man', 
       name: 'Test Man',
-      gender: 'man'
+      gender: 'man',
+      onboarding_completed: true
     }
   ]);
   if (profErr) throw new Error(`profiles upsert failed: ${profErr.message}`);
