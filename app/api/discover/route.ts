@@ -134,18 +134,10 @@ export async function GET(req: Request) {
         return { ...p, match_percentage: match.match_percentage, match_reasons: match.match_reasons };
       });
 
-    if (profiles.length > 0) {
-      const viewRows = profiles.map((p) => ({
-        man_id: user.id,
-        woman_id: p.id,
-        viewed_date: today,
-      }));
-      await admin.from('daily_discover_views').insert(viewRows);
-    }
-
+    // TODO: Move view tracking to /api/swipe when implemented
     return NextResponse.json({
       profiles,
-      daily_limit_reached: viewedCount + profiles.length >= DAILY_LIMIT,
+      daily_limit_reached: false,
     });
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
