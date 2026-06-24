@@ -33,7 +33,8 @@ async function getOrCreateAuthUser(email: string, password: string) {
   }
   const { data, error } = await supabase.auth.admin.createUser({ email, password, email_confirm: true })
   if (error) throw new Error(`${email} auth create failed: ${error.message}`)
-  console.log(`${email} created (${data.id})`)
+  if (!data?.user) throw new Error(`${email} auth create returned no user`)
+  console.log(`${email} created (${data.user.id})`)
   return data.user
 }
 
