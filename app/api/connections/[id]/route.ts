@@ -27,16 +27,25 @@ export async function GET(
     ])
 
     const { data: submissions } = await supabase
-      .from('task_submissions')
+      .from('submissions')
       .select('*')
       .eq('connection_id', id)
+      .order('day_number', { ascending: true })
+      .order('task_number', { ascending: true });
+
+    const { data: intentions } = await supabase
+      .from('intentions')
+      .select('*')
+      .eq('standard_id', connection.standard_id || '')
+      .order('day_number', { ascending: true })
       .order('task_number', { ascending: true });
 
     return NextResponse.json({
       ...connection,
       host: hostRes.data || null,
       guest: guestRes.data || null,
-      submissions: submissions || []
+      submissions: submissions || [],
+      intentions: intentions || [],
     });
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

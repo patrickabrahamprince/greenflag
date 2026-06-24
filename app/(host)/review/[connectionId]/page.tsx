@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
@@ -41,9 +41,9 @@ interface ConnectionData {
 export default function ReviewPage({
   params,
 }: {
-  params: { connectionId: string };
+  params: Promise<{ connectionId: string }>;
 }) {
-  const { connectionId } = params;
+  const { connectionId } = use(params);
   const router = useRouter();
 
   const [connection, setConnection] = useState<ConnectionData | null>(null);

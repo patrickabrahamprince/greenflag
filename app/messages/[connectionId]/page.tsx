@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { useUserStore } from '@/lib/store';
@@ -14,8 +14,8 @@ import { MessageInput } from '@/components/chat/MessageInput';
 import { LockedOverlay } from '@/components/chat/LockedOverlay';
 import { EmptyChat } from '@/components/chat/EmptyChat';
 
-export default function ChatPage({ params }: { params: { connectionId: string } }) {
-  const { connectionId } = params;
+export default function ChatPage({ params }: { params: Promise<{ connectionId: string }> }) {
+  const { connectionId } = use(params);
   const router = useRouter();
   const user = useUserStore((s) => s.user);
   const supabase = createClient();

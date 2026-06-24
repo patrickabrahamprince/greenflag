@@ -74,14 +74,19 @@ async function seed() {
       persona: 'woman', 
       name: 'Test Woman',
       gender: 'woman',
-      onboarding_completed: true
+      onboarding_completed: true,
+      is_active: true, is_banned: false, elo_score: 1000,
+      interests: ['Hiking', 'Music'],
+      photos: ['https://i.pravatar.cc/400?u=test-woman'],
     },
     { 
       id: man.id, 
       persona: 'man', 
       name: 'Test Man',
       gender: 'man',
-      onboarding_completed: true
+      onboarding_completed: true,
+      is_active: true, is_banned: false, elo_score: 1000,
+      interests: ['Hiking', 'Music'],
     }
   ]);
   if (profErr) throw new Error(`profiles upsert failed: ${profErr.message}`);

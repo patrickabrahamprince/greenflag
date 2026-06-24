@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import type { AdminUser } from '@/components/admin/types';
@@ -34,8 +34,8 @@ interface UserData {
   connections: UserConn[];
 }
 
-export default function UserDetailPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default function UserDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const [data, setData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -90,17 +90,19 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
               ['City', user.city_auto || user.city],
               ['Job', user.job],
               ['Height', user.height],
-              ['Bio', user.bio],
+              ['Bio', user.bio, 'user-bio'],
               ['Interests', user.interests?.join(', ')],
               ['Coins', user.coins ?? 0],
               ['Connections', user.connected_count ?? 0],
               ['Last Active', user.last_active ? new Date(user.last_active).toLocaleString() : '-'],
               ['Joined', new Date(user.created_at).toLocaleString()],
               ['Banned Reason', user.banned_reason || user.ban_reason || '-'],
-            ].map(([label, value]) => (
+            ].map(([label, value, testId]) => (
               <div key={String(label)} className="flex justify-between">
                 <dt className="text-[#8E8E93]">{String(label)}</dt>
-                <dd className="text-[#EDEADE] text-right max-w-[60%] truncate">{String(value || '-')}</dd>
+                <dd className="text-[#EDEADE] text-right max-w-[60%] truncate"
+                  data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' && testId ? testId : undefined}
+                >{String(value || '-')}</dd>
               </div>
             ))}
           </dl>

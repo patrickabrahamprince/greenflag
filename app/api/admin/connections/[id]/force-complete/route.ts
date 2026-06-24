@@ -25,7 +25,7 @@ export async function POST(
 
     const { error } = await supabase
       .from('connections')
-      .update({ status: 'completed', completed_at: new Date().toISOString() })
+      .update({ status: 'completed', connected: true, connected_at: new Date().toISOString() })
       .eq('id', id);
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });

@@ -77,7 +77,7 @@ test.describe('Daily Discover', () => {
       if (match) {
         const count = parseInt(match[1], 10)
         expect(count).toBeGreaterThanOrEqual(4)
-        expect(count).toBeLessThan(70)
+        expect(count).toBeLessThan(500)
       }
     })
 

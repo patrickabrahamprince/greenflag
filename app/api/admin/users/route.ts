@@ -24,7 +24,7 @@ export async function GET(req: Request) {
 
     let query = supabase
       .from('profiles')
-      .select('id, name, age, gender, city_auto, created_at, last_active, is_banned, is_admin, photos, role', { count: 'exact' });
+      .select('id, name, age, gender, city_auto, created_at, last_active, is_banned, is_admin, photos, persona', { count: 'exact' });
 
     if (search) {
       query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%`);

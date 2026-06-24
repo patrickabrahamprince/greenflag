@@ -1,9 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+
+function adminClient() {
+  return createClient(SUPABASE_URL, SERVICE_ROLE_KEY)
+}
 
 function isMockEmail(email: string | null): boolean {
   if (!email) return true
@@ -12,68 +14,85 @@ function isMockEmail(email: string | null): boolean {
   if (email === 'test8@gmail.com') return true
   if (email.startsWith('test-guest-') && email.endsWith('@greenflag.app')) return true
   if (email.startsWith('test-host-') && email.endsWith('@greenflag.app')) return true
+  if (email.endsWith('@test.com')) return true
+  if (email.endsWith('@example.com')) return true
   return false
 }
 
 export async function getMockUsers(): Promise<{ id: string; email: string | null }[]> {
+  const supabase = adminClient()
   const { data, error } = await supabase.auth.admin.listUsers()
   if (error) throw new Error(`Failed to list users: ${error.message}`)
   return data.users.filter(u => isMockEmail(u.email)).map(u => ({ id: u.id, email: u.email }))
 }
 
 export async function deleteMockData() {
-  const mockUsers = await getMockUsers()
-  const mockIds = mockUsers.map(u => u.id)
+  const supabase = adminClient()
 
-  console.log(`[cleanup] Found ${mockUsers.length} mock auth users`)
+  // 1. Collect all mock user IDs
+  const { data: users } = await supabase.auth.admin.listUsers()
+  const mockUsers = users.users.filter(u => isMockEmail(u.email))
+  const ids = mockUsers.map(u => u.id)
+  console.log(`[cleanup] Found ${ids.length} mock auth users`)
 
-  // Clean FK-referencing tables for mock user IDs
-  for (const id of mockIds) {
-    await safeDelete('daily_discover_views', id, ['man_id', 'woman_id'])
-    await safeDelete('reports', id, ['reporter_id', 'reported_id'])
-    await safeDelete('audit_logs', id, ['admin_id'])
-    await safeDelete('admin_actions', id, ['admin_id'])
-    await safeDelete('freeze_transactions', id, ['man_id'])
-    await safeDelete('mod_queue', id, ['reviewed_by'])
+  // 2. Delete child rows first (dependency order), bulk where possible
+  const idList = ids.join(',')
+
+  await safeDeleteMulti('daily_discover_views', ids, ['man_id', 'woman_id'])
+  await safeDeleteMulti('reports', ids, ['reporter_id', 'reported_id'])
+  await safeDeleteMulti('audit_logs', ids, ['admin_id'])
+  await safeDeleteMulti('admin_actions', ids, ['admin_id'])
+  await safeDeleteMulti('freeze_transactions', ids, ['man_id'])
+  await safeDeleteMulti('mod_queue', ids, ['reviewed_by'])
+  await supabase.from('messages').delete().in('sender_id', ids)
+  await supabase.from('coin_transactions').delete().in('user_id', ids)
+  // Also delete coin_transactions that reference connections we're about to drop
+  const { data: conns } = await supabase
+    .from('connections')
+    .select('id')
+    .or(`guest_id.in.(${ids.join(',')}),host_id.in.(${ids.join(',')})`)
+  if (conns && conns.length > 0) {
+    const connIds = conns.map(c => c.id)
+    await supabase.from('coin_transactions').delete().in('connection_id', connIds)
+  }
+  await supabase.from('connections').delete().or(
+    `guest_id.in.(${ids.join(',')}),host_id.in.(${ids.join(',')})`
+  )
+  await supabase.from('wallets').delete().in('user_id', ids)
+  await supabase.from('profiles').delete().in('id', ids)
+
+  // 3. Delete auth users last
+  for (const id of ids) {
+    const { error } = await supabase.auth.admin.deleteUser(id)
+    if (error) console.warn(`[cleanup] Failed to delete user ${id}: ${error.message}`)
   }
 
-  // Delete mock auth users (cascades to profiles, wallets, transactions)
-  for (const user of mockUsers) {
-    const { error } = await supabase.auth.admin.deleteUser(user.id)
-    if (error) console.warn(`[cleanup] Failed to delete ${user.email ?? user.id}: ${error.message}`)
-  }
-
-  // Delete orphan profiles (profiles with no corresponding auth.users)
-  // These can exist from partial previous cleanups where auth.users
-  // were deleted but profiles remained (unlikely with CASCADE, but possible)
+  // 4. Clean up orphan profiles (profiles with no auth user)
   const { data: remainingAuth } = await supabase.auth.admin.listUsers()
   const validAuthIds = new Set(remainingAuth?.users.map(u => u.id) ?? [])
   const { data: allProfiles } = await supabase.from('profiles').select('id')
-  const orphanProfileIds = (allProfiles ?? [])
+  const orphanIds = (allProfiles ?? [])
     .filter(p => !validAuthIds.has(p.id))
     .map(p => p.id)
 
-  if (orphanProfileIds.length > 0) {
-    console.log(`[cleanup] Deleting ${orphanProfileIds.length} orphan profiles`)
-    for (const id of orphanProfileIds) {
-      await safeDelete('daily_discover_views', id, ['man_id', 'woman_id'])
-      await safeDelete('reports', id, ['reporter_id', 'reported_id'])
-      await safeDelete('audit_logs', id, ['admin_id'])
-      await safeDelete('admin_actions', id, ['admin_id'])
-      await safeDelete('freeze_transactions', id, ['man_id'])
-    }
-    const { error } = await supabase.from('profiles').delete().in('id', orphanProfileIds)
-    if (error) console.warn('[cleanup] Orphan profile delete error:', error.message)
+  if (orphanIds.length > 0) {
+    console.log(`[cleanup] Deleting ${orphanIds.length} orphan profiles`)
+    await safeDeleteMulti('daily_discover_views', orphanIds, ['man_id', 'woman_id'])
+    await safeDeleteMulti('reports', orphanIds, ['reporter_id', 'reported_id'])
+    await safeDeleteMulti('audit_logs', orphanIds, ['admin_id'])
+    await safeDeleteMulti('admin_actions', orphanIds, ['admin_id'])
+    await safeDeleteMulti('freeze_transactions', orphanIds, ['man_id'])
+    await supabase.from('profiles').delete().in('id', orphanIds)
   }
 
-  const totalDeleted = mockIds.length + orphanProfileIds.length
-  console.log(`[cleanup] Done. Deleted ${totalDeleted} total records (${mockIds.length} auth, ${orphanProfileIds.length} orphan profiles).`)
-  return { mockIds, orphanProfileIds }
+  console.log(`[cleanup] Done. Deleted ${ids.length + orphanIds.length} records total.`)
+  return { mockIds: ids, orphanProfileIds: orphanIds }
 }
 
-async function safeDelete(table: string, id: string, columns: string[]) {
+async function safeDeleteMulti(table: string, ids: string[], columns: string[]) {
+  const supabase = adminClient()
   for (const col of columns) {
-    const { error } = await supabase.from(table as never).delete().eq(col as never, id)
+    const { error } = await supabase.from(table as never).delete().in(col as never, ids)
     if (error && !error.message.includes('relation') && !error.message.includes('does not exist')) {
       console.warn(`[cleanup] ${table} warning: ${error.message}`)
     }

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, MessageCircle, Snowflake, ArrowRight } from 'lucide-react';
+import { CheckCircle, Circle } from 'lucide-react';
 import { ConnectedScreen } from '@/components/ConnectedScreen';
 import { ProgressSegmentBar } from './ProgressSegmentBar';
 import { IntentionCard } from './IntentionCard';
@@ -36,18 +37,20 @@ export function ConnectionView({ connection, submission, intention }: Connection
   const router = useRouter();
   const [showSheet, setShowSheet] = useState(false);
   const [sub, setSub] = useState(submission);
+  const [currentTaskNumber, setCurrentTaskNumber] = useState(1);
 
   const isEnded = connection.status === 'ended' || connection.status === 'expired' || connection.status === 'rejected';
   const isConnected = connection.connected;
   const isChatUnlocked = connection.chat_unlocked && !connection.connected;
-
+  const currentDay = connection.current_day ?? 1;
   const now = new Date();
   const deadlineMs = sub?.deadline ? new Date(sub.deadline).getTime() : 0;
   const frozenUntil = connection.frozen_until ? new Date(connection.frozen_until).getTime() : 0;
   const isFrozen = frozenUntil > now.getTime();
   const deadlinePassed = deadlineMs > 0 && deadlineMs < now.getTime() && !isFrozen;
-  const isPendingReview = sub?.status === 'pending_review';
-  const isPendingSubmission = !isPendingReview && !deadlinePassed;
+  const isPendingReview = sub?.approved === false;
+  const isApproved = sub?.approved === true;
+  const isPendingSubmission = !isApproved && !isPendingReview && !deadlinePassed;
 
   if (isEnded) {
     return (
@@ -86,11 +89,36 @@ export function ConnectionView({ connection, submission, intention }: Connection
         <h1 className="text-lg font-display text-white truncate">{connection.host?.name}</h1>
       </div>
 
-      <ProgressSegmentBar currentDay={connection.current_day} className="mb-6" />
+      <ProgressSegmentBar currentDay={currentDay} className="mb-6" />
 
-      <p className="text-center text-sm text-[#8E8E93] font-thin mb-6">
-        Day {connection.current_day} of 8
+      <p className="text-center text-sm text-[#8E8E93] font-thin mb-3">
+        Day {currentDay} of 3
       </p>
+
+      {intention && (
+        <div className="flex items-center justify-center gap-2 mb-5">
+          {[1, 2, 3].map((tn) => {
+            const isCurrent = tn === currentTaskNumber;
+            const isComplete = tn < currentTaskNumber;
+            return (
+              <div
+                key={tn}
+                className="flex items-center gap-1 text-xs"
+                style={{ color: isComplete ? '#8FAE8F' : isCurrent ? '#D4AF37' : '#3A3A3C' }}
+              >
+                {isComplete ? (
+                  <CheckCircle className="w-3.5 h-3.5" />
+                ) : isCurrent ? (
+                  <Circle className="w-3.5 h-3.5" />
+                ) : (
+                  <Circle className="w-3.5 h-3.5" />
+                )}
+                <span>Task {tn}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {isChatUnlocked && (
         <div className="card mb-5 p-4 flex items-center gap-4" style={{ background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.2)' }}>
@@ -154,7 +182,7 @@ export function ConnectionView({ connection, submission, intention }: Connection
             <CountdownTimer deadline={sub.deadline} label="Submit in" />
           )}
           <button onClick={() => setShowSheet(true)} className="btn-primary w-full mt-5 flex items-center justify-center gap-2">
-            Submit Day {connection.current_day}
+            Submit Task {currentTaskNumber}
             <ArrowRight className="w-4 h-4" />
           </button>
         </>
@@ -163,7 +191,8 @@ export function ConnectionView({ connection, submission, intention }: Connection
       {showSheet && intention && (
         <SubmitSheet
           connectionId={connection.id}
-          dayNumber={connection.current_day}
+          dayNumber={currentDay}
+          taskNumber={currentTaskNumber}
           intention={intention}
           onClose={() => setShowSheet(false)}
           onSubmit={() => { setShowSheet(false); router.refresh(); }}

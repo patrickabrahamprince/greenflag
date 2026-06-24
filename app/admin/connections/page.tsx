@@ -21,7 +21,7 @@ export default function AdminConnections() {
     let query = supabase
       .from('connections')
       .select(`
-        id, status, tasks_completed, current_day, started_at, expires_at,
+        id, status, current_day, expires_at, created_at,
         guest:profiles!connections_guest_id_fkey(name),
         host:profiles!connections_host_id_fkey(name)
       `)
@@ -38,9 +38,9 @@ export default function AdminConnections() {
           id: String(c.id),
           guest: guest?.name || 'Unknown',
           host: host?.name || 'Unknown',
-          currentDay: Number(c.current_day) || Number(c.tasks_completed) + 1,
-          tasks: `${c.tasks_completed}/8`,
-          startedAt: c.started_at ? new Date(String(c.started_at)).toLocaleDateString() : '-',
+          currentDay: Number(c.current_day) || 1,
+          tasks: `${Number(c.current_day) || 1}/3`,
+          startedAt: c.created_at ? new Date(String(c.created_at)).toLocaleDateString() : '-',
           expires: c.expires_at ? (new Date(String(c.expires_at)) < new Date() ? 'Expired' : new Date(String(c.expires_at)).toLocaleDateString()) : '-',
           status: String(c.status),
         };

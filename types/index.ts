@@ -7,58 +7,63 @@ export interface Profile {
   age: number | null;
   city: string | null;
   bio: string | null;
-  photos: string[];
+  photos: string[] | null;
   persona: string;
   gender?: string | null;
-  interests?: string[];
-  looking_for_interests?: string[];
-  interests_have?: string[];
-  interests_looking_for?: string[];
-  why_me_prompts?: string[];
-  blur_key?: string;
-  connected_count?: number;
+  interests?: string[] | null;
+  looking_for_interests?: string[] | null;
+  interests_have?: string[] | null;
+  interests_looking_for?: string[] | null;
+  why_me_prompts?: string[] | null;
+  blur_key?: string | null;
+  connected_count?: number | null;
   coins?: number | null;
   onboarding_completed?: boolean | null;
   is_banned?: boolean | null;
   ban_reason?: string | null;
-  created_at: string;
+  created_at: string | null;
 }
 
 export interface Standard {
   id: string;
-  woman_id: string;
+  woman_id: string | null;
   is_active: boolean | null;
-  created_at: string;
+  created_at: string | null;
 }
 
 export interface Intention {
   id: string;
-  standard_id: string;
+  standard_id: string | null;
   day_number: number;
-  type: 'photo' | 'voice' | 'text';
+  task_number?: number;
+  type: string;
   prompt: string;
 }
 
 export interface Connection {
   id: string;
-  test_id: string;
+  standard_id: string | null;
   guest_id: string;
   host_id: string;
-  status: 'pending' | 'active' | 'chat_unlocked' | 'completed' | 'expired' | 'rejected';
-  tasks_completed: number;
+  status: string;
+  current_day: number | null;
+  day_count: number | null;
   expires_at: string;
-  created_at: string;
+  created_at: string | null;
+  chat_unlocked: boolean | null;
+  connected: boolean | null;
 }
 
 export interface Submission {
   id: string;
   connection_id: string;
-  intention_id: number;
-  proof_url: string;
-  proof_text?: string;
-  status: 'submitted' | 'approved' | 'rejected';
-  review_note?: string;
-  created_at: string;
+  day_number: number;
+  task_number: number | null;
+  proof_url: string | null;
+  proof_text: string | null;
+  status: string | null;
+  approved: boolean | null;
+  created_at: string | null;
 }
 
 export interface Message {
@@ -66,7 +71,7 @@ export interface Message {
   connection_id: string;
   sender_id: string;
   content: string;
-  created_at: string;
+  created_at: string | null;
 }
 
 export interface Wallet {
@@ -77,10 +82,10 @@ export interface Wallet {
 export interface Transaction {
   id: string;
   user_id: string;
-  amount: number;
-  type: 'credit' | 'debit';
-  description: string;
-  created_at: string;
+  amount_inr: number | null;
+  coins: number;
+  type: string;
+  created_at: string | null;
 }
 
 export interface ModQueueItem {

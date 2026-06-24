@@ -60,12 +60,12 @@ export default function InterestsPage() {
 
     if (isWoman) {
       const { error } = await supabase.from('profiles').upsert({
-        id: user.id, interests_have: interestsHave, interests_looking_for: lookingFor,
+        id: user.id, persona: persona ?? undefined, interests_have: interestsHave, interests_looking_for: lookingFor,
       });
       if (error) { toast.error(error.message); setLoading(false); return; }
     } else {
       const { error } = await supabase.from('profiles').upsert({
-        id: user.id, interests_have: interestsHave,
+        id: user.id, persona: persona ?? undefined, interests_have: interestsHave,
         why_me_prompts: whyMePrompts.map((p) => p.trim()),
       });
       if (error) { toast.error(error.message); setLoading(false); return; }
@@ -83,16 +83,19 @@ export default function InterestsPage() {
 
       <div className="flex-1 max-w-md mx-auto w-full space-y-8 pb-8">
         <InterestTagGrid title="5 things about you" description="Pick exactly 5"
-          options={INTEREST_TAGS} selected={interestsHave} max={5} onToggle={(i) => toggle('have', i)} />
+          options={INTEREST_TAGS} selected={interestsHave} max={5} onToggle={(i) => toggle('have', i)}
+          dataTestIdPrefix={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'interest-have' : undefined} />
 
         {isWoman ? (
           <InterestTagGrid title="5 things you&apos;re looking for in him" description="Pick exactly 5"
-            options={INTEREST_TAGS} selected={lookingFor} max={5} onToggle={(i) => toggle('looking', i)} />
+            options={INTEREST_TAGS} selected={lookingFor} max={5} onToggle={(i) => toggle('looking', i)}
+            dataTestIdPrefix={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'interest-looking' : undefined} />
         ) : (
           <WhyMePrompts prompts={whyMePrompts} onPromptChange={handlePromptChange} />
         )}
 
         <button onClick={handleContinue} disabled={loading}
+          data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'submit-onboarding' : undefined}
           className="btn-primary w-full active:scale-[0.98] flex items-center justify-center gap-2">
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Complete'}
         </button>

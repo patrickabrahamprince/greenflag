@@ -18,16 +18,13 @@ export default function AdminQueue() {
       .from('submissions')
       .select(`
         id,
-        proof_url,
         media_url,
         media_type,
-        status,
         moderation_status,
         submitted_at,
         day_number,
         connection_id,
-        connections(guest:guest_id(name), host:host_id(name)),
-        tasks(description)
+        connections(guest:guest_id(name), host:host_id(name))
       `)
       .eq('moderation_status', 'pending')
       .order('submitted_at', { ascending: false });
@@ -35,14 +32,13 @@ export default function AdminQueue() {
     if (!error && data) {
       const queueItems: QueueItem[] = data.map((s: Record<string, unknown>) => {
         const conns = s.connections as { guest?: { name?: string }; host?: { name?: string } } | null;
-        const tasks = s.tasks as { description?: string } | null;
         return {
           id: String(s.id),
           name: conns?.guest?.name || conns?.host?.name || 'Unknown',
           day: Number(s.day_number) || 0,
-          task: tasks?.description || '',
-          status: String(s.status),
-          img: String(s.media_url || s.proof_url || ''),
+          task: '',
+          status: '',
+          img: String(s.media_url || ''),
           submitted_at: String(s.submitted_at || ''),
           media_type: s.media_type as string | null,
         };

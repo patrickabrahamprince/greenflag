@@ -12,7 +12,7 @@ type ProfileRow = Database['public']['Tables']['profiles']['Row'];
 
 interface ChatConnection extends ConnectionRow {
   partner: Pick<ProfileRow, 'id' | 'name' | 'photos'> | null;
-  last_message: { content: string; created_at: string } | null;
+  last_message: { content: string; created_at: string | null } | null;
 }
 
 interface ChatListPageProps {
@@ -54,7 +54,7 @@ function ChatListItem({ conn, userId }: { conn: ChatConnection; userId: string }
           </span>
           {conn.last_message && (
             <span className="text-[10px] flex-shrink-0 ml-2" style={{ color: '#8E8E93' }}>
-              {new Date(conn.last_message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              {conn.last_message.created_at ? new Date(conn.last_message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
             </span>
           )}
         </div>

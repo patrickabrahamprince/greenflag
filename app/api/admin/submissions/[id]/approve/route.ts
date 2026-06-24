@@ -23,12 +23,18 @@ export async function POST(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { error } = await supabase
-      .from('task_submissions')
-      .update({ content_type: 'approved' })
-      .eq('id', parseInt(id, 10));
+    const { data: sub, error: updateError } = await supabase
+      .from('submissions')
+      .update({ approved: true })
+      .eq('id', id)
+      .select('connection_id')
+      .single();
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (updateError) return NextResponse.json({ error: updateError.message }, { status: 500 });
+
+    if (sub) {
+      await (supabase.rpc as any)('advance_day_if_complete', { p_connection_id: sub.connection_id });
+    }
 
     return NextResponse.json({ success: true, submission_id: id, status: 'approved' });
   } catch {

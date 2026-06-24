@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     if (!sid) {
       const { data: created, error: createErr } = await supabase
         .from('standards')
-        .insert({ woman_id: user.id })
+        .insert({ woman_id: user.id, user_id: user.id, intentions: {} })
         .select('id')
         .single();
       if (createErr || !created) {

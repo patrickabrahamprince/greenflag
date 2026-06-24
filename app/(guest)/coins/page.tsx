@@ -19,9 +19,9 @@ const PACKAGES = [
 interface Transaction {
   id: string;
   type: string;
-  amount: number;
-  description: string;
-  created_at: string;
+  amount_inr: number | null;
+  coins: number;
+  created_at: string | null;
 }
 
 export default function CoinsPage() {

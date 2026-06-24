@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -15,8 +15,8 @@ import {
   type StandardTask,
 } from '@/components/discovery/useTaskActions';
 
-export default function TasksPage({ params }: { params: { hostName: string } }) {
-  const { hostName } = params;
+export default function TasksPage({ params }: { params: Promise<{ hostName: string }> }) {
+  const { hostName } = use(params);
   const router = useRouter();
   const supabase = createClient();
   const [connection, setConnection] = useState<ConnectionData | null>(null);

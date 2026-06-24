@@ -18,7 +18,7 @@ export async function PATCH(
 
     const { error } = await supabase
       .from('reports')
-      .update({ status, admin_notes })
+      .update({ status })
       .eq('id', id);
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });

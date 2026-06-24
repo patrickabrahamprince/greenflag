@@ -58,20 +58,18 @@ export type Tab = 'pending' | 'reviewed' | 'actioned' | 'dismissed';
 export interface RawConnection {
   id: string;
   status: string;
-  tasks_completed: number;
+  current_day: number | null;
   expires_at: string | null;
-  created_at: string;
-  started_at: string;
+  created_at: string | null;
   guest?: { name?: string; age?: number | null; city?: string | null } | null;
 }
 
 export interface MappedConnection {
   id: string;
   status: string;
-  tasks_completed: number;
+  current_day: number | null;
   expires_at: string | null;
-  created_at: string;
-  started_at: string;
+  created_at: string | null;
   guest_name?: string;
   guest_age?: number | null;
   guest_city?: string | null;

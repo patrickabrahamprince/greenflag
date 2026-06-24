@@ -58,7 +58,7 @@ export default function DiscoverPage() {
         router.push('/login')
         return
       }
-      const data = json.profiles ?? []
+      const data = (json.profiles ?? []).filter((p: any) => p.photos?.length > 0)
       if (data.length < 3) setHasMore(false)
       setProfiles(prev => page === 0 ? data : [...prev, ...data])
     } catch {
@@ -109,6 +109,7 @@ export default function DiscoverPage() {
           <div
             key={p.id}
             ref={i === profiles.length - 1 ? lastProfileRef : null}
+            data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
             className="snap-start h- w-full relative"
           >
             <Image

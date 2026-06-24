@@ -37,10 +37,9 @@ export default function AdminHostDashboardPage() {
         .select(`
           id,
           status,
-          tasks_completed,
+          current_day,
           expires_at,
           created_at,
-          started_at,
           guest:profiles!connections_guest_id_fkey(name, age, city)
         `)
         .eq('host_id', hostId);
@@ -61,8 +60,8 @@ export default function AdminHostDashboardPage() {
   }, [hostId]);
 
   const applicants = connections.filter((c) => c.status === 'pending');
-  const inProgress = connections.filter((c) => c.status === 'active' && c.tasks_completed < 8);
-  const completed = connections.filter((c) => c.status === 'active' && c.tasks_completed >= 8);
+  const inProgress = connections.filter((c) => c.status === 'active');
+  const completed: MappedConnection[] = [];
 
   if (loading) {
     return (

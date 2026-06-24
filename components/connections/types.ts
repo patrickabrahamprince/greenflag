@@ -28,7 +28,7 @@ export interface SubmissionRow {
   id: string;
   connection_id: string;
   day_number: number;
-  status: string;
+  approved: boolean | null;
   deadline: string | null;
 }
 

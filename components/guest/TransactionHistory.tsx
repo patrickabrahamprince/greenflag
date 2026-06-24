@@ -3,9 +3,9 @@ import { Coins, Zap } from 'lucide-react';
 interface Transaction {
   id: string;
   type: string;
-  amount: number;
-  description: string;
-  created_at: string;
+  amount_inr: number | null;
+  coins: number;
+  created_at: string | null;
 }
 
 interface TransactionHistoryProps {
@@ -33,20 +33,20 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
                   )}
                 </div>
                 <div>
-                  <p className="text-sm text-white">{tx.description}</p>
+                  <p className="text-sm text-white">{tx.type}</p>
                   <p className="text-xs text-muted">
-                    {new Date(tx.created_at).toLocaleDateString('en-IN', {
+                    {tx.created_at ? new Date(tx.created_at).toLocaleDateString('en-IN', {
                       day: 'numeric',
                       month: 'short',
                       year: 'numeric',
-                    })}
+                    }) : ''}
                   </p>
                 </div>
               </div>
               <span className={`text-sm font-medium ${
                 tx.type === 'purchase' ? 'text-green-500' : 'text-red-500'
               }`}>
-                {tx.type === 'purchase' ? '+' : ''}{tx.amount}
+                {tx.type === 'purchase' ? '+' : ''}{tx.coins}
               </span>
             </div>
           ))}

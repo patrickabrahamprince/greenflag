@@ -35,6 +35,10 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
   clearOnboarding: () => set({ persona: null }),
 }));
 
+if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_E2E_TESTING === 'true') {
+  (window as any).__e2e = { onboardingStore: useOnboardingStore };
+}
+
 export const useUserStore = create<UserState>((set) => ({
   user: null,
   setUser: (user) => set({ user }),

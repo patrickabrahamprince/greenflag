@@ -16,8 +16,9 @@ VALUES (
   now()
 );
 
-INSERT INTO public.profiles (id, gender, name, age, city_auto, is_active, created_at)
-VALUES ('11111111-1111-1111-1111-111111111111', 'male', 'Test Man', 28, 'Bangalore', true, now());
+INSERT INTO public.profiles (id, persona, gender, name, age, city_auto, is_active, created_at)
+VALUES ('11111111-1111-1111-1111-111111111111', 'man', 'male', 'Test Man', 28, 'Bangalore', true, now())
+ON CONFLICT (id) DO UPDATE SET persona = EXCLUDED.persona;
 
 -- Woman account  
 INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
@@ -32,8 +33,9 @@ VALUES (
   now()
 );
 
-INSERT INTO public.profiles (id, gender, name, age, city_auto, is_active, photos, created_at)
-VALUES ('22222222-2222-2222-2222-222222222222', 'female', 'Test Woman', 26, 'Bangalore', true, ARRAY['https://picsum.photos/seed/woman/800/1200'], now());
+INSERT INTO public.profiles (id, persona, gender, name, age, city_auto, is_active, photos, created_at)
+VALUES ('22222222-2222-2222-2222-222222222222', 'woman', 'female', 'Test Woman', 26, 'Bangalore', true, ARRAY['https://picsum.photos/seed/woman/800/1200'], now())
+ON CONFLICT (id) DO UPDATE SET persona = EXCLUDED.persona;
 
 -- Admin account
 INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
@@ -48,8 +50,9 @@ VALUES (
   now()
 );
 
-INSERT INTO public.profiles (id, gender, name, is_admin, is_active, created_at)
-VALUES ('33333333-3333-3333-3333-333333333333', 'male', 'Admin', true, true, now());
+INSERT INTO public.profiles (id, persona, gender, name, is_admin, is_active, created_at)
+VALUES ('33333333-3333-3333-3333-333333333333', 'man', 'male', 'Admin', true, true, now())
+ON CONFLICT (id) DO UPDATE SET persona = EXCLUDED.persona;
 
 -- Wallets
 INSERT INTO public.wallets (user_id, balance, created_at) VALUES

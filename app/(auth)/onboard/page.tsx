@@ -25,6 +25,7 @@ export default function OnboardPage() {
       <div className="space-y-4">
         <button
           onClick={() => handleSelect('woman')}
+          data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'persona-woman' : undefined}
           className="w-full h-56 rounded-2xl bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 border border-[#D4AF37]/20 hover:border-[#D4AF37]/60 transition-all duration-300 relative overflow-hidden group active:scale-[0.98]"
         >
           <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
@@ -43,6 +44,7 @@ export default function OnboardPage() {
 
         <button
           onClick={() => handleSelect('man')}
+          data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'persona-man' : undefined}
           className="w-full h-56 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:border-white/30 transition-all duration-300 relative overflow-hidden group active:scale-[0.98]"
         >
           <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />

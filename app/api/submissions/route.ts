@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { connection_id, task_id, proof_url, proof_text } = body;
+    const { connection_id, task_id, proof_url } = body;
 
     if (!connection_id || !task_id) {
       return NextResponse.json({ error: 'connection_id and task_id are required' }, { status: 400 });
@@ -31,14 +31,13 @@ export async function POST(req: Request) {
     }
 
     const { data, error } = await supabase
-      .from('task_submissions')
+      .from('submissions')
       .insert({
         connection_id,
-        task_number: task_id,
-        content_type: proof_url ? 'image' : 'text',
-        text_content: proof_text || null,
-        media_url: proof_url || null,
-      })
+        day_number: Number(task_id),
+        day: Number(task_id),
+        media_url: proof_url,
+      } as any)
       .select()
       .single();
 

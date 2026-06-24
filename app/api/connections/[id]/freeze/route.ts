@@ -30,7 +30,7 @@ export async function POST(
       return NextResponse.json({ error: 'Connection is no longer active' }, { status: 400 });
     }
 
-    if (connection.freezes_used >= 1) {
+    if ((connection.freezes_used ?? 0) >= 1) {
       return NextResponse.json({ error: 'Freeze already used' }, { status: 400 });
     }
 
@@ -70,20 +70,16 @@ export async function POST(
       return NextResponse.json({ error: updateErr.message }, { status: 400 });
     }
 
-    const { data: currentSub } = await supabase
+    // Extend deadline for ALL pending submissions this day (multi-task support)
+    const { error: extendErr } = await supabase
       .from('submissions')
-      .select('id, deadline')
+      .update({ deadline: frozenUntil })
       .eq('connection_id', id)
-      .eq('day_number', connection.current_day)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .eq('day_number', connection.current_day ?? 1)
+      .neq('approved', true);
 
-    if (currentSub) {
-      await supabase
-        .from('submissions')
-        .update({ deadline: frozenUntil })
-        .eq('id', currentSub.id);
+    if (extendErr) {
+      console.error('Failed to extend submission deadlines:', extendErr);
     }
 
     await supabase.from('freeze_transactions').insert({

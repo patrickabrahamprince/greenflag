@@ -2,9 +2,6 @@ import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { sendNotification } from '@/lib/notifications';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
-import type { Database } from '@/types/supabase';
-
-type SubmissionUpdate = Database['public']['Tables']['submissions']['Update'];
 
 export async function POST(
   req: Request,
@@ -26,8 +23,8 @@ export async function POST(
 
     const { task_number, text, media_url, media_type } = await req.json();
 
-    if (!task_number || task_number < 1 || task_number > 8) {
-      return NextResponse.json({ error: 'task_number must be 1-8' }, { status: 400 });
+    if (!task_number || task_number < 1) {
+      return NextResponse.json({ error: 'task_number must be >= 1' }, { status: 400 });
     }
 
     if (!text && !media_url) {
@@ -52,25 +49,22 @@ export async function POST(
       return NextResponse.json({ error: 'Connection is no longer active' }, { status: 400 });
     }
 
-    if (task_number !== connection.current_day) {
-      return NextResponse.json({ error: 'Day mismatch' }, { status: 400 });
-    }
-
     const now = new Date();
     const frozenUntil = connection.frozen_until ? new Date(connection.frozen_until) : null;
     const isFrozen = frozenUntil !== null && frozenUntil > now;
 
+    const day_number = connection.current_day;
+
     const { data: existingSub } = await supabase
       .from('submissions')
-      .select('id, status, deadline')
+      .select('id, approved, deadline')
       .eq('connection_id', id)
-      .eq('day_number', task_number)
-      .order('created_at', { ascending: false })
-      .limit(1)
+      .eq('day_number', day_number ?? 1)
+      .eq('task_number' as any, task_number)
       .maybeSingle();
 
-    if (existingSub && existingSub.status === 'pending_review') {
-      return NextResponse.json({ error: 'Already submitted for this day' }, { status: 400 });
+    if (existingSub && (existingSub as any).status === 'pending_review') {
+      return NextResponse.json({ error: 'Already submitted for this task' }, { status: 400 });
     }
 
     if (existingSub?.deadline && !isFrozen) {
@@ -80,24 +74,25 @@ export async function POST(
       }
     }
 
-    const moderationStatus = media_type === 'text' ? 'approved' : 'pending';
     const isText = media_type === 'text';
+    const moderationStatus = isText ? 'approved' : 'pending';
 
-    const baseUpdate: SubmissionUpdate = {
+    const basePayload = {
+      connection_id: id,
+      day_number,
+      task_number,
       status: 'pending_review',
       moderation_status: moderationStatus,
       submitted_at: now.toISOString(),
       media_type,
+      deadline: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(),
+      ...(isText ? { proof_text: text } : { media_url, proof_url: media_url }),
     };
-
-    const updatePayload: SubmissionUpdate = isText
-      ? { ...baseUpdate, proof_text: text }
-      : { ...baseUpdate, proof_url: media_url, media_url };
 
     if (existingSub) {
       const { error: updateErr } = await supabase
         .from('submissions')
-        .update(updatePayload)
+        .update(basePayload as any)
         .eq('id', existingSub.id);
       if (updateErr) {
         return NextResponse.json({ error: updateErr.message }, { status: 400 });
@@ -105,14 +100,27 @@ export async function POST(
     } else {
       const { error: insertErr } = await supabase
         .from('submissions')
-        .insert({
-          connection_id: id,
-          task_id: '',
-          day_number: task_number,
-          ...updatePayload,
-        });
+        .insert(basePayload as any);
       if (insertErr) {
         return NextResponse.json({ error: insertErr.message }, { status: 400 });
+      }
+    }
+
+    let dayAdvanced = false;
+
+    // Auto-approve text submissions immediately
+    if (isText) {
+      const { error: approveErr } = await supabase
+        .from('submissions')
+        .update({ approved: true } as any)
+        .eq('connection_id', id)
+        .eq('day_number', day_number ?? 1)
+        .eq('task_number' as any, task_number);
+      if (!approveErr) {
+        const { data: advResult } = await (supabase.rpc as any)('advance_day_if_complete', {
+          p_connection_id: id,
+        });
+        dayAdvanced = advResult === true;
       }
     }
 
@@ -123,14 +131,13 @@ export async function POST(
       .single();
 
     const guestName = guestProfile?.name || 'Someone';
-    const reviewDeadline = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString();
 
     await sendNotification({
       supabase,
       user_id: connection.host_id,
       title: 'New submission',
-      body: `${guestName} submitted Day ${task_number}. Review within 24h.`,
-      data: { connectionId: id, taskNumber: task_number, type: 'submission', reviewDeadline },
+      body: `${guestName} submitted Day ${day_number} Task ${task_number}.`,
+      data: { connectionId: id, taskNumber: task_number, type: 'submission' },
     });
 
     if (!isText) {
@@ -144,9 +151,8 @@ export async function POST(
           .from('submissions')
           .select('id')
           .eq('connection_id', id)
-          .eq('day_number', task_number)
-          .order('created_at', { ascending: false })
-          .limit(1)
+      .eq('day_number', day_number ?? 1)
+      .eq('task_number' as any, task_number)
           .maybeSingle();
 
         if (newSub) {
@@ -160,7 +166,7 @@ export async function POST(
               supabase,
               user_id: admin.id,
               title: 'Moderation queue',
-              body: `${guestName} submitted a ${media_type} for Day ${task_number}. Needs review.`,
+              body: `${guestName} submitted a ${media_type} for Day ${day_number}. Needs review.`,
               data: { connectionId: id, submissionId: newSub.id, type: 'moderation' },
             });
           }
@@ -168,7 +174,7 @@ export async function POST(
       }
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, day_advanced: dayAdvanced });
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

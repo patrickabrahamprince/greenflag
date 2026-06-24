@@ -35,13 +35,12 @@ export async function requireAdmin(): Promise<
 
 export async function logAuditAction(
   supabase: TypedSupabaseClient,
-  adminEmail: string,
+  _adminEmail: string,
   action: string,
-  target: string
+  targetId: string
 ): Promise<void> {
   await supabase.from('audit_logs').insert({
-    admin_email: adminEmail,
     action,
-    target,
+    target_id: targetId,
   });
 }

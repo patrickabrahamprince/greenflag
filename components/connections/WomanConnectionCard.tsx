@@ -83,7 +83,7 @@ export function WomanConnectionCard({
           </div>
 
           <p className="text-[11px] text-[#8E8E93] font-thin mb-2">
-            Day {currentDay} of 8
+            Day {currentDay} of 3
           </p>
 
           <ProgressSegmentBar currentDay={currentDay} />

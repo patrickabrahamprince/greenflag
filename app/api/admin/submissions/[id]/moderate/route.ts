@@ -26,9 +26,7 @@ export async function POST(
       .from('submissions')
       .update({
         moderation_status: newStatus,
-        status: newStatus,
-        reviewed_at: new Date().toISOString(),
-        ...(action === 'reject' ? { rejection_reason: reason || null } : {}),
+        approved: action === 'approve',
       })
       .eq('id', id);
 

@@ -73,6 +73,7 @@ export function PhotoUploadSlots({
         accept="image/*"
         multiple
         className="hidden"
+        data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'photo-upload' : undefined}
         onChange={handleChange}
       />
       <p className="text-xs text-[#8E8E93] mt-1.5">{photos.length}/{maxPhotos} uploaded</p>

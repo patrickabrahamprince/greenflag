@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2, Search } from 'lucide-react';
 
@@ -27,9 +27,9 @@ interface MatchesData {
 export default function AdminMatchesPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = params;
+  const { id } = use(params);
   const router = useRouter();
   const [data, setData] = useState<MatchesData | null>(null);
   const [loading, setLoading] = useState(true);

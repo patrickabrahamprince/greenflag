@@ -7,6 +7,7 @@ interface InterestTagGridProps {
   selected: string[];
   max: number;
   onToggle: (item: string) => void;
+  dataTestIdPrefix?: string;
 }
 
 export function InterestTagGrid({
@@ -16,6 +17,7 @@ export function InterestTagGrid({
   selected,
   max,
   onToggle,
+  dataTestIdPrefix,
 }: InterestTagGridProps) {
   return (
     <div>
@@ -30,6 +32,7 @@ export function InterestTagGrid({
               key={item}
               type="button"
               onClick={() => !locked && onToggle(item)}
+              data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' && dataTestIdPrefix ? `${dataTestIdPrefix}-${item}` : undefined}
               className={cn(
                 'px-4 py-2 rounded-full text-sm transition-all duration-300 active:scale-95',
                 isSelected

@@ -21,7 +21,6 @@ export async function POST(
       .from('connections')
       .update({
         status: 'ended',
-        completed_at: new Date().toISOString(),
         ended_reason: reason.trim(),
       })
       .eq('id', id);

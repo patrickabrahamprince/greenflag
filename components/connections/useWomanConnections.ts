@@ -96,9 +96,9 @@ export function useWomanConnections(): UseWomanConnectionsResult {
       const connIds = (conns as ConnectionRow[]).map((c) => c.id);
       const { data: subs } = await supabase
         .from('submissions')
-        .select('connection_id, status, deadline')
+        .select('connection_id, approved, deadline')
         .in('connection_id', connIds)
-        .eq('status', 'pending_review')
+        .eq('approved', false)
         .order('submitted_at', { ascending: false });
 
       const latestReviewSub = new Map<string, SubmissionRow>();

@@ -34,9 +34,8 @@ export async function GET(
         id,
         status,
         current_day,
-        tasks_completed,
-        started_at,
         expires_at,
+        created_at,
         guest:profiles!connections_guest_id_fkey(name),
         host:profiles!connections_host_id_fkey(name)
       `)
@@ -50,8 +49,7 @@ export async function GET(
         id: c.id,
         status: c.status,
         current_day: c.current_day,
-        tasks_completed: c.tasks_completed,
-        started_at: c.started_at,
+        created_at: c.created_at,
         expires_at: c.expires_at,
         guest_name: guest?.name,
         host_name: host?.name,

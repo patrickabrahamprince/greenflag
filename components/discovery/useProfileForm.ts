@@ -160,7 +160,7 @@ export function useProfileForm() {
       instagram_handle: isWoman ? undefined : instagramHandle.replace(/^@/, ''),
     };
 
-    const { error } = await supabase.from('profiles').upsert(payload);
+    const { error } = await supabase.from('profiles').upsert(payload as any);
     setLoading(false);
     if (error) {
       toast.error(error.message);

@@ -59,14 +59,14 @@ export async function loginWithCookies(page: Page, email: string, password: stri
   }
 
   const session = data.session
-  const cookieValue = encodeURIComponent(JSON.stringify({
+  const cookieValue = JSON.stringify({
     access_token: session.access_token,
     refresh_token: session.refresh_token,
     expires_in: session.expires_in ?? 3600,
     expires_at: session.expires_at ?? Math.floor(Date.now() / 1000) + 3600,
     token_type: session.token_type ?? 'bearer',
     user: session.user,
-  }))
+  })
 
   await page.context().addCookies([
     {
@@ -74,7 +74,7 @@ export async function loginWithCookies(page: Page, email: string, password: stri
       value: cookieValue,
       domain: new URL(SUPABASE_URL).hostname,
       path: '/',
-      httpOnly: true,
+      httpOnly: false,
       sameSite: 'Lax',
       secure: false,
     },
@@ -87,7 +87,7 @@ export async function loginWithCookies(page: Page, email: string, password: stri
       value: cookieValue,
       domain: 'localhost',
       path: '/',
-      httpOnly: true,
+      httpOnly: false,
       sameSite: 'Lax',
       secure: false,
     },

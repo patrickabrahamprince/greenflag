@@ -140,6 +140,7 @@ export default function ProfilePage() {
         <button
           onClick={handleContinue}
           disabled={loading}
+          data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'submit-profile' : undefined}
           className="btn-primary w-full mt-2 active:scale-[0.98] flex items-center justify-center gap-2"
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Continue'}

@@ -23,14 +23,11 @@ export async function POST(
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
-    // Save rejection reason/note to connection
-    if (!approve && (reason || note)) {
+    // Save rejection reason to connection
+    if (!approve && reason) {
       await supabase
         .from('connections')
-        .update({
-          review_reason: reason || null,
-          review_note: note || null,
-        })
+        .update({ ended_reason: reason })
         .eq('id', id);
     }
 

@@ -88,11 +88,11 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    // Find submissions eligible for auto-approval:
-    //   status = 'pending' (pending_review), moderation approved, deadline passed
+    // Safety-net: auto-approve stale pending submissions and advance days via RPC.
+    // Core progression now runs through submit-task → advance_day_if_complete.
     const { data: submissions, error: fetchError } = await supabase
       .from('submissions')
-      .select('id, connection_id, day_number, status, moderation_status, deadline, auto_approved')
+      .select('id, connection_id, day_number, task_number, status, moderation_status, deadline')
       .eq('status', 'pending')
       .eq('moderation_status', 'approved')
       .lt('deadline', new Date().toISOString());
@@ -115,24 +115,6 @@ serve(async (req) => {
     let processed = 0;
 
     for (const sub of submissions) {
-      // Fetch the associated connection
-      const { data: connection, error: connError } = await supabase
-        .from('connections')
-        .select('id, guest_id, host_id, status, current_day, connected')
-        .eq('id', sub.connection_id)
-        .single();
-
-      if (connError || !connection) {
-        console.error(`Connection not found for submission ${sub.id}:`, connError);
-        continue;
-      }
-
-      // Only auto-approve if connection is active and not yet fully connected
-      if (connection.connected) {
-        continue;
-      }
-
-      // 1. Update submission status to approved
       const { error: updateError } = await supabase
         .from('submissions')
         .update({
@@ -147,126 +129,19 @@ serve(async (req) => {
         continue;
       }
 
-      // 2. Increment connection's current_day
-      const newDay = connection.current_day + 1;
-      const { error: dayError } = await supabase
-        .from('connections')
-        .update({ current_day: newDay })
-        .eq('id', connection.id);
+      // Let the RPC decide if the day is complete
+      await supabase.rpc('advance_day_if_complete', {
+        p_connection_id: sub.connection_id,
+      });
 
-      if (dayError) {
-        console.error(`Failed to update current_day for connection ${connection.id}:`, dayError);
-        continue;
-      }
-
-      // 3. Day 6: Unlock chat
-      if (newDay === 6) {
-        await supabase
-          .from('connections')
-          .update({ chat_unlocked: true })
-          .eq('id', connection.id);
-
-        await sendNotification(
-          supabase,
-          connection.guest_id,
-          'Chat Unlocked!',
-          `You can now chat with your match.`
-        );
-      }
-
-      // 4. Day 9: Mark as fully connected
-      if (newDay === 9) {
-        const now = new Date().toISOString();
-
-        await supabase
-          .from('connections')
-          .update({
-            connected: true,
-            connected_at: now,
-          })
-          .eq('id', connection.id);
-
-        // Increment connected_count on both profiles
-        const { data: guestProfile } = await supabase
-          .from('profiles')
-          .select('connected_count')
-          .eq('id', connection.guest_id)
-          .single();
-
-        const { data: hostProfile } = await supabase
-          .from('profiles')
-          .select('connected_count')
-          .eq('id', connection.host_id)
-          .single();
-
-        if (guestProfile) {
-          await supabase
-            .from('profiles')
-            .update({ connected_count: (guestProfile.connected_count ?? 0) + 1 })
-            .eq('id', connection.guest_id);
-        }
-
-        if (hostProfile) {
-          await supabase
-            .from('profiles')
-            .update({ connected_count: (hostProfile.connected_count ?? 0) + 1 })
-            .eq('id', connection.host_id);
-        }
-
-        await sendNotification(
-          supabase,
-          connection.guest_id,
-          'You\'re Connected!',
-          'Congratulations! You are now fully connected.'
-        );
-
-        await sendNotification(
-          supabase,
-          connection.host_id,
-          'You\'re Connected!',
-          'Congratulations! You are now fully connected.'
-        );
-      }
-
-      // 5. Create next submission record (if not day 8)
-      if (sub.day_number < 8) {
-        const nextDayNumber = sub.day_number + 1;
-        const nextDeadline = new Date();
-        nextDeadline.setHours(nextDeadline.getHours() + 48);
-
-        const { error: nextSubError } = await supabase
-          .from('submissions')
-          .insert({
-            connection_id: connection.id,
-            day_number: nextDayNumber,
-            status: 'pending',
-            moderation_status: 'approved',
-            deadline: nextDeadline.toISOString(),
-          });
-
-        if (nextSubError) {
-          console.error(`Failed to create next submission for connection ${connection.id}:`, nextSubError);
-        }
-      }
-
-      // 6. Push notification to man
-      await sendNotification(
-        supabase,
-        connection.guest_id,
-        `Day ${sub.day_number} Auto-Approved`,
-        `Day ${newDay} is now unlocked.`
-      );
-
-      // 7. Log to audit_logs
       await supabase.from('audit_logs').insert({
         admin_id: '00000000-0000-0000-0000-000000000000',
         action: 'auto_approve_submission',
         target_type: 'submission',
         target_id: sub.id,
         metadata: {
-          connection_id: connection.id,
+          connection_id: sub.connection_id,
           day_number: sub.day_number,
-          new_day: newDay,
         },
       } satisfies AuditLog);
 

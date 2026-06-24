@@ -15,7 +15,7 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick }: UserManag
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-sm">
+      <table data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'users-table' : undefined} className="w-full text-sm">
         <thead>
           <tr className="text-[#8E8E93] text-xs uppercase border-b border-white/10">
             <th className="text-left py-3 px-2">Name</th>

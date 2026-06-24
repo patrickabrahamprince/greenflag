@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Camera, Mic, Type, MapPin, Check, Upload } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -12,9 +12,9 @@ import { TextInput } from '@/components/guest/TextInput';
 export default function IntentionPage({
   params,
 }: {
-  params: { connectionId: string; day: string };
+  params: Promise<{ connectionId: string; day: string }>;
 }) {
-  const { connectionId, day: dayStr } = params;
+  const { connectionId, day: dayStr } = use(params);
   const day = parseInt(dayStr, 10);
   const router = useRouter();
   const [submitted, setSubmitted] = useState(false);
@@ -29,9 +29,9 @@ export default function IntentionPage({
     const fetchIntention = async () => {
       const { data: connection, error: connError } = await supabase.from('connections').select('*').eq('id', connectionId).single();
       if (connError || !connection) { setError('Connection not found'); setLoading(false); return; }
-      const conn = connection as { test_id: string } | null;
-      if (!conn?.test_id) { setError('Standard not found'); setLoading(false); return; }
-      const { data: standard, error: stdError } = await supabase.from('standards').select('id').eq('id', conn.test_id).single();
+      const conn = connection as { standard_id: string } | null;
+      if (!conn?.standard_id) { setError('Standard not found'); setLoading(false); return; }
+      const { data: standard, error: stdError } = await supabase.from('standards').select('id').eq('id', conn.standard_id).single();
       if (stdError || !standard) { setError('Standard not found'); setLoading(false); return; }
       const std = standard as { id: string } | null;
       if (!std?.id) { setError('Standard not found'); setLoading(false); return; }
@@ -58,7 +58,7 @@ export default function IntentionPage({
     );
   }
 
-  const TypeIcon = { photo: Camera, voice: Mic, text: Type }[intention.type];
+  const TypeIcon = { photo: Camera, voice: Mic, text: Type }[intention.type] as React.ComponentType<{ className?: string }>;
 
   const handleSubmit = () => setSubmitted(true);
 

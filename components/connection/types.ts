@@ -1,14 +1,13 @@
 export interface ConnectionWithHost {
   id: string;
-  test_id: string;
+  standard_id: string | null;
   guest_id: string;
   host_id: string;
   status: string;
-  tasks_completed: number;
-  current_day: number;
-  chat_unlocked: boolean;
-  connected: boolean;
-  freezes_used: number;
+  current_day: number | null;
+  chat_unlocked: boolean | null;
+  connected: boolean | null;
+  freezes_used: number | null;
   expires_at: string | null;
   frozen_until: string | null;
   ended_reason: string | null;
@@ -19,25 +18,24 @@ export interface ConnectionWithHost {
 export interface SubmissionRecord {
   id: string;
   connection_id: string;
-  task_id: string;
   day_number: number;
-  status: string;
+  day: number;
+  approved: boolean | null;
   media_type: string | null;
   media_url: string | null;
-  proof_url: string | null;
-  proof_text: string | null;
-  moderation_status: string;
+  content: string | null;
+  moderation_status: string | null;
   deadline: string | null;
   submitted_at: string | null;
-  rejection_reason: string | null;
-  reviewed_at: string | null;
-  auto_approved: boolean;
+  auto_approved: boolean | null;
+  prompt?: string | null;
 }
 
 export interface IntentionRecord {
   id: string;
-  standard_id: string;
+  standard_id: string | null;
   day_number: number;
+  task_number?: number;
   type: string;
   prompt: string;
 }
