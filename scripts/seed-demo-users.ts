@@ -1,25 +1,11 @@
 import 'dotenv/config'
 import { createClient } from '@supabase/supabase-js'
 
-/*
- * Seeds 3 test users that are SAFE from cleanup.ts's isMockEmail filter.
- * Cleanup only deletes users matching:
- *   - endsWith('@test.com')
- *   - endsWith('@example.com')
- *   - startsWith('test-guest-') && endsWith('@greenflag.app')
- *   - startsWith('test-host-') && endsWith('@greenflag.app')
- *   - specific hardcoded emails (musigoevents@gmail.com, test8@gmail.com, etc.)
- *
- * @quest.local domain is NOT caught by any of these patterns.
- *
- * Run: npx tsx scripts/seed-demo-users.ts
- */
-
 const URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
 if (!URL || !KEY?.startsWith('eyJ')) {
-  throw new Error('Missing or invalid SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY')
+  throw new Error('Missing or invalid NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY')
 }
 
 const supabase = createClient(URL, KEY, { auth: { persistSession: false } })
@@ -28,94 +14,67 @@ async function getOrCreateAuthUser(email: string, password: string) {
   const { data: { users } } = await supabase.auth.admin.listUsers()
   const existing = users.find(u => u.email === email)
   if (existing) {
-    console.log(`${email} already exists (${existing.id}), skipping auth creation`)
+    console.log(`[auth] ${email} already exists (${existing.id}), skipping`)
     return existing
   }
   const { data, error } = await supabase.auth.admin.createUser({ email, password, email_confirm: true })
-  if (error) throw new Error(`${email} auth create failed: ${error.message}`)
-  if (!data?.user) throw new Error(`${email} auth create returned no user`)
-  console.log(`${email} created (${data.user.id})`)
+  if (error) throw new Error(`${email} create failed: ${error.message}`)
+  if (!data?.user) throw new Error(`${email} create returned no user object`)
+  console.log(`[auth] ${email} created (${data.user.id})`)
   return data.user
 }
 
-async function seedDemoUsers() {
-  console.log('Seeding demo users...\n')
+async function seed() {
+  console.log('--- Seeding demo users ---\n')
 
+  // 1. Auth users
   const man = await getOrCreateAuthUser('demo-man@quest.local', 'DemoPass123!')
   const woman = await getOrCreateAuthUser('demo-woman@quest.local', 'DemoPass123!')
-  const admin = await getOrCreateAuthUser('demo-admin@quest.local', 'DemoPass123!')
 
-  // ── demo-man ──────────────────────────────────────
-  console.log('man auth id:', man.id)
-
-  await supabase.from('users').upsert({
-    id: man.id, persona: 'man', name: 'Demo Man', phone: null,
-  })
-  await supabase.from('profiles').upsert({
-    id: man.id, persona: 'man', name: 'Demo Man',
-    gender: 'man', onboarding_completed: true,
-    is_active: true, is_banned: false, elo_score: 1000,
+  // 2. demo-man profile
+  const { error: pm } = await supabase.from('profiles').upsert({
+    id: man.id,
+    name: 'Demo Man',
+    persona: 'man',
+    coins: 1000,
+    photos: ['https://i.pravatar.cc/300?img=1'],
     interests: ['Hiking', 'Music'],
-  })
-  await supabase.from('wallets').upsert({
-    user_id: man.id, balance: 1000,
-  })
-  console.log('  -> demo-man@quest.local / DemoPass123! | 1000 coins')
-
-  // ── demo-woman ────────────────────────────────────
-  await supabase.from('users').upsert({
-    id: woman.id, persona: 'woman', name: 'Demo Woman', phone: null,
-  })
-  await supabase.from('profiles').upsert({
-    id: woman.id, persona: 'woman', name: 'Demo Woman',
-    gender: 'woman', onboarding_completed: true,
-    is_active: true, is_banned: false, elo_score: 1000,
-    interests: ['Hiking', 'Music'],
-    photos: ['https://i.pravatar.cc/400?u=demo-woman'],
-  })
-  await supabase.from('wallets').upsert({
-    user_id: woman.id, balance: 0,
-  })
-  // Active 8-day standard
-  await supabase.from('standards').delete().eq('user_id', woman.id)
-  await supabase.from('standards').insert({
-    user_id: woman.id,
-    woman_id: woman.id,
-    intentions: {
-      title: 'My Standard',
-      description: '8-day quest',
-      tasks: Array.from({ length: 8 }, (_, i) => ({
-        day: i + 1,
-        task: 1,
-        prompt: `Day ${i + 1}: Complete this task`,
-        proof_type: 'text',
-      })),
-    },
+    elo_score: 1000,
     is_active: true,
-    active: true,
-  })
-  console.log('  -> demo-woman@quest.local / DemoPass123! | 0 coins | 8-day standard active')
+    onboarding_completed: true,
+    is_banned: false,
+  }, { onConflict: 'id' })
+  if (pm) throw new Error(`demo-man profile upsert failed: ${pm.message}`)
+  console.log('[profile] Demo Man upserted')
 
-  // ── demo-admin ────────────────────────────────────
-  // persona is an enum type user_role — only 'man'/'woman' allowed.
-  // Admin status comes from profiles.is_admin = true.
-  await supabase.from('users').upsert({
-    id: admin.id, persona: 'man', name: 'Demo Admin', phone: null,
-  })
-  await supabase.from('profiles').upsert({
-    id: admin.id, persona: 'man', name: 'Demo Admin',
-    gender: 'man', is_admin: true, onboarding_completed: true,
-  })
-  await supabase.from('wallets').upsert({
-    user_id: admin.id, balance: 9999,
-  })
-  console.log('  -> demo-admin@quest.local / DemoPass123! | 9999 coins | is_admin=true')
+  // 3. demo-woman profile
+  const { error: pw } = await supabase.from('profiles').upsert({
+    id: woman.id,
+    name: 'Demo Woman',
+    persona: 'woman',
+    coins: 1000,
+    photos: ['https://i.pravatar.cc/300?img=2'],
+    interests: ['Hiking', 'Music'],
+    elo_score: 1000,
+    is_active: true,
+    onboarding_completed: true,
+    is_banned: false,
+  }, { onConflict: 'id' })
+  if (pw) throw new Error(`demo-woman profile upsert failed: ${pw.message}`)
+  console.log('[profile] Demo Woman upserted')
 
-  console.log('\n✅ Demo users seeded. They will NOT be deleted by cleanup().')
-  console.log('   Credentials: {email} / DemoPass123!')
+  // 4. Clear daily_discover_views so new starts don't hit the daily limit
+  for (const id of [man.id, woman.id]) {
+    await supabase.from('daily_discover_views').delete().eq('man_id', id)
+  }
+  console.log('[cleanup] daily_discover_views cleared')
+
+  console.log('\n--- Done ---')
+  console.log('demo-man@quest.local / DemoPass123!')
+  console.log('demo-woman@quest.local / DemoPass123!')
 }
 
-seedDemoUsers().catch((err) => {
-  console.error('❌', err)
+seed().catch(err => {
+  console.error('FATAL:', err)
   process.exit(1)
 })
