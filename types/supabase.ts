@@ -800,6 +800,7 @@ export type Database = {
           onboarding_completed: boolean | null
           persona: Database["public"]["Enums"]["user_role"]
           phone: string | null
+          phone_verified: boolean | null
           photos: string[] | null
           push_token: string | null
           standards: Json | null
@@ -846,6 +847,7 @@ export type Database = {
           onboarding_completed?: boolean | null
           persona?: Database["public"]["Enums"]["user_role"]
           phone?: string | null
+          phone_verified?: boolean | null
           photos?: string[] | null
           push_token?: string | null
           standards?: Json | null
@@ -892,6 +894,7 @@ export type Database = {
           onboarding_completed?: boolean | null
           persona?: Database["public"]["Enums"]["user_role"]
           phone?: string | null
+          phone_verified?: boolean | null
           photos?: string[] | null
           push_token?: string | null
           standards?: Json | null

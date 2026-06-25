@@ -1,3 +1,5 @@
+SET search_path TO public, extensions;
+
 -- scripts/setup_test_users.sql
 
 -- Delete existing test users if any

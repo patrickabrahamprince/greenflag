@@ -19,6 +19,7 @@ export interface Profile {
   connected_count?: number | null;
   coins?: number | null;
   onboarding_completed?: boolean | null;
+  phone_verified?: boolean | null;
   is_banned?: boolean | null;
   ban_reason?: string | null;
   created_at: string | null;

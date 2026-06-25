@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { PhoneInput } from '@/components/ui/phone-input';
@@ -15,8 +15,27 @@ export default function PhonePage() {
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
+  const [skipping, setSkipping] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    const init = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return router.push('/login');
+      setUserEmail(user.email ?? null);
+      if (user.email && !user.phone) {
+        setSkipping(true);
+        await supabase
+          .from('profiles')
+          .update({ phone_verified: true })
+          .eq('id', user.id);
+        router.replace('/onboard/profile');
+      }
+    };
+    init();
+  }, []);
 
   const handlePhoneChange = useCallback((e164: string) => {
     setPhone(e164);
@@ -54,6 +73,18 @@ export default function PhonePage() {
     router.push('/onboard/profile');
   };
 
+  const handleSkip = async () => {
+    setSkipping(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase
+        .from('profiles')
+        .update({ phone_verified: true })
+        .eq('id', user.id);
+    }
+    router.push('/onboard/profile');
+  };
+
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     try {
@@ -66,6 +97,14 @@ export default function PhonePage() {
     }
   };
 
+  if (skipping) {
+    return (
+      <div className="w-full animate-fade-in min-h-screen flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-[#8E8E93]" />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6">
       <button
@@ -77,12 +116,12 @@ export default function PhonePage() {
 
       <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
         <h1 className="text-2xl font-display font-semibold text-white mb-2">
-          {otpSent ? 'Verify your number' : 'What\'s your number?'}
+          {otpSent ? "Verify your number" : "What's your number?"}
         </h1>
         <p className="text-[#8E8E93] text-sm mb-8">
           {otpSent
             ? `We sent a 6-digit code to ${phone}`
-            : 'We\'ll send you a verification code'}
+            : "We'll send you a verification code"}
         </p>
 
         {!otpSent ? (
@@ -133,6 +172,20 @@ export default function PhonePage() {
               Resend OTP
             </button>
           </div>
+        )}
+
+        <button
+          onClick={handleSkip}
+          disabled={skipping}
+          className="mt-6 w-full text-sm text-[#8E8E93] underline underline-offset-4 decoration-white/20 hover:text-white hover:decoration-white/40 transition-colors disabled:opacity-50"
+        >
+          Skip for now
+        </button>
+
+        {userEmail && (
+          <p className="text-xs text-gray-500 mt-2 text-center">
+            Logged in as {userEmail}. You can add a phone later in Settings.
+          </p>
         )}
 
         <div className="flex items-center gap-3 my-6">

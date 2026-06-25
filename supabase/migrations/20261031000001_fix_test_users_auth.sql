@@ -1,3 +1,5 @@
+SET search_path TO public, extensions;
+
 -- Fix test users authentication fields
 UPDATE auth.users 
 SET encrypted_password = crypt('Test1234!', gen_salt('bf')),
