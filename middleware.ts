@@ -64,6 +64,8 @@ export async function middleware(req: NextRequest) {
   // Use getUser() instead of getSession() — getUser() validates the access
   // token with the server and auto-refreshes if expired, calling setAll above
   // to persist the refreshed tokens as cookies.
+  // Cookies must be secure: true on HTTPS or browser drops them on refresh
+  // This caused "Token has expired" errors before the fix
   const { data: { user } } = await supabase.auth.getUser();
 
   console.log('MIDDLEWARE PATHNAME:', pathname);

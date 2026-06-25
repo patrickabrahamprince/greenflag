@@ -54,3 +54,13 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Auth Cookie Behavior
+
+| Environment | URL | secure | Notes |
+| --- | --- | --- | --- |
+| Local | http://localhost:3000 | false | Required for HTTP |
+| Preview | https://greenflag-*.vercel.app | true | Separate session per preview |
+| Prod | https://greenflag-dusky.vercel.app | true | Cookies persist on refresh |
+
+**Important**: Cookies don't transfer between preview and prod domains. Log in fresh on each.

@@ -7,26 +7,36 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 export type TypedSupabaseClient = SupabaseClient<Database, 'public', 'public', Database['public'], { PostgrestVersion: '12' }>;
 
 export async function createServerSupabaseClient(): Promise<TypedSupabaseClient> {
-  const cookieStore = await cookies();
-
-  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\\n/g, '').trim();
-  const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').replace(/\\n/g, '').trim();
+  const cookieStore = cookies();
 
   return createServerClient<Database>(
-    url,
-    anonKey,
+    (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\\n/g, '').trim(),
+    (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').replace(/\\n/g, '').trim(),
     {
       cookies: {
-        getAll() {
-          return cookieStore.getAll();
+        get(name: string) {
+          return cookieStore.get(name)?.value;
         },
-        setAll(cookiesToSet: { name: string; value: string; options?: CookieOptions }[]) {
+        set(name: string, value: string, options: CookieOptions) {
           try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
-          } catch {}
+            cookieStore.set({ name, value, ...options });
+          } catch {
+            // Server Component - can be ignored if middleware refreshes
+          }
         },
+        remove(name: string, options: CookieOptions) {
+          try {
+            cookieStore.set({ name, value: '', ...options });
+          } catch {
+            // Server Component - can be ignored
+          }
+        },
+      },
+      cookieOptions: {
+        name: 'sb-auth',
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax' as const,
+        path: '/',
       },
     }
   ) as unknown as TypedSupabaseClient;
