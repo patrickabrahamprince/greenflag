@@ -99,7 +99,8 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(destination);
   }
 
-  // Non-admin without completed onboarding: redirect to /onboard
+  // Auth method agnostic: works for phone OTP, email, magic link, OAuth
+  // Only checks profiles.onboarding_completed for redirect to /onboard
   if (!profile?.onboarding_completed && !pathname.startsWith('/onboard')) {
     const destination = new URL('/onboard', req.url);
     return NextResponse.redirect(destination);

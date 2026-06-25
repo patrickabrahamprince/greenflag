@@ -196,6 +196,13 @@ export default function LoginPage() {
           </form>
         )
       )}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-4 text-xs text-gray-500 text-center">
+            <p>Dev accounts:</p>
+            <p>demo-man@quest.local / test1234</p>
+            <p>demo-woman@quest.local / test1234</p>
+          </div>
+        )}
         <div className="flex items-center gap-3 my-6">
           <div className="flex-1 h-px bg-white/10" />
           <span className="text-muted text-xs">or</span>
