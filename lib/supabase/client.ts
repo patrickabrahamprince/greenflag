@@ -10,5 +10,11 @@ export function createClient(): TypedSupabaseClient {
   const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\\n/g, '').trim();
   const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').replace(/\\n/g, '').trim();
 
-  return createBrowserClient<Database>(url, anonKey) as unknown as TypedSupabaseClient;
+  return createBrowserClient<Database>(url, anonKey, {
+    cookieOptions: {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      path: '/',
+    },
+  }) as unknown as TypedSupabaseClient;
 }
