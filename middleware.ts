@@ -1,9 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { checkRateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
-import { validateEnv } from '@/lib/env';
-
-validateEnv();
 
 const PUBLIC_PATHS = [
   '/login', '/signup', '/onboard',
@@ -13,6 +10,12 @@ const PUBLIC_PATHS = [
 
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
+
+  // Validate only the env vars the middleware actually needs
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    console.error('MIDDLEWARE: Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY');
+    return NextResponse.json({ error: 'Configuration error' }, { status: 500 });
+  }
 
   // Rate limit API auth/admin routes
   if (pathname.startsWith('/api/auth') || pathname.startsWith('/api/admin')) {
