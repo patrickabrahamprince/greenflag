@@ -41,7 +41,7 @@ async function seed() {
     interests: ['Hiking', 'Music'],
     elo_score: 1000,
     is_active: true,
-    onboarding_completed: true,
+    onboarding_completed: false,
     is_banned: false,
   }, { onConflict: 'id' })
   if (pm) throw new Error(`demo-man profile upsert failed: ${pm.message}`)
@@ -57,7 +57,7 @@ async function seed() {
     interests: ['Hiking', 'Music'],
     elo_score: 1000,
     is_active: true,
-    onboarding_completed: true,
+    onboarding_completed: false,
     is_banned: false,
   }, { onConflict: 'id' })
   if (pw) throw new Error(`demo-woman profile upsert failed: ${pw.message}`)
