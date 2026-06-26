@@ -1,6 +1,6 @@
 'use client';
 
-import { Loader2, MapPin } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 const INDIAN_CITIES = [
   'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai',
@@ -63,33 +63,24 @@ export function ProfileFormFields({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-white mb-1.5">City</label>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={city}
-            onChange={(e) => onCityChange(e.target.value)}
-            placeholder="Your city"
-            data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-city' : undefined}
-            className={`input flex-1 ${errors.city ? 'border-red-500' : ''}`}
-          />
-          <button
-            type="button"
-            onClick={onDetectLocation}
-            disabled={gpsDetecting}
-            className="px-3 py-2 bg-[#1A1A1A] text-white rounded-lg border border-[#2A2A2A] hover:border-[#D4AF37] transition disabled:opacity-50"
-            title="Detect location"
-          >
-            {gpsDetecting ? <Loader2 className="w-5 h-5 animate-spin" /> : <MapPin className="w-5 h-5" />}
-          </button>
-        </div>
-        {gpsDenied && <p className="text-amber-400 text-xs mt-1">Enable location access in your browser settings</p>}
+        <label className="block text-sm font-medium text-white mb-1.5">
+          Location <span className="text-red-400">*</span>
+          {gpsDetecting && <span className="text-[#8E8E93] font-normal text-xs ml-1">(detecting...)</span>}
+        </label>
+        <input
+          type="text"
+          value={city}
+          onChange={(e) => onCityChange(e.target.value)}
+          placeholder={gpsDetecting ? 'Detecting location...' : 'Your city'}
+          className={`input ${errors.city ? 'border-red-500' : ''}`}
+        />
+        {gpsDenied && <p className="text-amber-400 text-xs mt-1">Enable location access in your browser settings, or type your city above</p>}
         {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
       </div>
 
       <div>
         <label className="block text-sm font-medium text-white mb-1.5">
-          Instagram Handle <span className="text-[#8E8E93] font-normal">(optional)</span>
+          Instagram Handle <span className="text-red-400">*</span>
         </label>
         <div className="relative">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">@</span>

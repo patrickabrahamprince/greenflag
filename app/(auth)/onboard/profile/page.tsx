@@ -35,14 +35,15 @@ export default function ProfilePage() {
   const [lng, setLng] = useState<number | null>(null);
 
   useEffect(() => {
-    const checkProvider = async () => {
+    const init = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user?.app_metadata?.provider === 'google') {
         setIsGoogleUser(true);
       }
     };
-    checkProvider();
-  }, [supabase]);
+    init();
+    detectLocation();
+  }, []);
 
   const clearError = (key: string) => setErrors((p) => ({ ...p, [key]: '' }));
 
@@ -118,6 +119,7 @@ export default function ProfilePage() {
     if (!city.trim()) e.city = 'City is required';
     if (photos.length < 1) e.photos = 'Upload at least 1 photo';
     if (bio.length > 200) e.bio = 'Max 200 characters';
+    if (!instagramHandle.trim()) e.instagram = 'Instagram handle is required';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
