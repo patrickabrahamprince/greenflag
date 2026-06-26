@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -8,6 +8,11 @@ import { useOnboardingStore } from '@/lib/store';
 import { PhotoUploadSlots } from '@/components/discovery/PhotoUploadSlots';
 import { ProfileFormFields } from '@/components/discovery/ProfileFormFields';
 import toast from 'react-hot-toast';
+
+const INDIAN_CITIES = [
+  'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai',
+  'Kolkata', 'Pune', 'Ahmedabad', 'Jaipur', 'Surat',
+];
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -18,11 +23,16 @@ export default function ProfilePage() {
   const [age, setAge] = useState('');
   const [city, setCity] = useState('');
   const [bio, setBio] = useState('');
+  const [instagramHandle, setInstagramHandle] = useState('');
   const [photos, setPhotos] = useState<string[]>([]);
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isGoogleUser, setIsGoogleUser] = useState(false);
+  const [gpsDetecting, setGpsDetecting] = useState(false);
+  const [gpsDenied, setGpsDenied] = useState(false);
+  const [lat, setLat] = useState<number | null>(null);
+  const [lng, setLng] = useState<number | null>(null);
 
   useEffect(() => {
     const checkProvider = async () => {
@@ -50,6 +60,55 @@ export default function ProfilePage() {
     setPhotos((prev) => prev.filter((_, i) => i !== idx));
     setPhotoFiles((prev) => prev.filter((_, i) => i !== idx));
   };
+
+  const detectLocation = useCallback(() => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by your browser');
+      return;
+    }
+    setGpsDetecting(true);
+    setGpsDenied(false);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        setLat(position.coords.latitude);
+        setLng(position.coords.longitude);
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&format=json`
+          );
+          const data = await res.json();
+          const address = data.address;
+          const parts = [
+            address.city || address.town || address.county,
+            address.state,
+          ].filter(Boolean);
+          const detected = parts.join(', ');
+          if (detected) {
+            const match = INDIAN_CITIES.find(
+              (c) => detected.toLowerCase().includes(c.toLowerCase())
+            );
+            const display = match || detected;
+            setCity(display);
+            toast.success(`Location detected: ${display}`);
+          } else {
+            toast.error('Could not detect your city');
+            setGpsDenied(true);
+          }
+        } catch {
+          toast.error('Could not detect your city');
+          setGpsDenied(true);
+        } finally {
+          setGpsDetecting(false);
+        }
+      },
+      () => {
+        setGpsDetecting(false);
+        setGpsDenied(true);
+        toast.error('Location access denied. Please enter your city manually.');
+      },
+      { timeout: 10000 }
+    );
+  }, []);
 
   const validate = (): boolean => {
     const e: Record<string, string> = {};
@@ -99,6 +158,9 @@ export default function ProfilePage() {
       bio: bio.trim() || null,
       photos: uploadedUrls,
       persona: persona || 'man',
+      instagram_url: instagramHandle ? `https://instagram.com/${instagramHandle.replace(/^@/, '')}` : null,
+      lat: lat,
+      lng: lng,
       onboarding_completed: true,
     });
     setLoading(false);
@@ -122,11 +184,15 @@ export default function ProfilePage() {
       <div className="space-y-5 flex-1 max-w-md mx-auto w-full">
         <ProfileFormFields
           name={name} age={age} city={city} bio={bio}
+          instagramHandle={instagramHandle}
+          gpsDetecting={gpsDetecting} gpsDenied={gpsDenied}
           errors={errors}
           onNameChange={(v) => { setName(v); clearError('name'); }}
           onAgeChange={(v) => { setAge(v); clearError('age'); }}
           onCityChange={(v) => { setCity(v); clearError('city'); }}
           onBioChange={(v) => { setBio(v); clearError('bio'); }}
+          onInstagramChange={(v) => { setInstagramHandle(v); clearError('instagram'); }}
+          onDetectLocation={detectLocation}
         />
 
         <PhotoUploadSlots
