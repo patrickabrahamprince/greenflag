@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
 const COIN_PACKS: Record<number, number> = {
@@ -64,10 +64,14 @@ export async function POST(req: Request) {
       return new NextResponse('Invalid amount', { status: 400 });
     }
 
-    const supabase = await createServerSupabaseClient();
+    const supabaseAdmin = createClient(
+      (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\\n/g, '').trim(),
+      (process.env.SUPABASE_SERVICE_ROLE_KEY || '').replace(/\\n/g, '').trim(),
+      { auth: { persistSession: false } }
+    );
 
     // Idempotency check — prevent duplicate coin credits
-    const { data: existing } = await supabase
+    const { data: existing } = await supabaseAdmin
       .from('coin_transactions')
       .select('id')
       .eq('razorpay_payment_id', razorpayPaymentId)
@@ -77,7 +81,7 @@ export async function POST(req: Request) {
       return new NextResponse('already processed');
     }
 
-    const { error } = await supabase.rpc('add_coins', {
+    const { error } = await supabaseAdmin.rpc('add_coins', {
       p_user_id: userId,
       p_amount: coins,
       p_description: `Purchased ${coins} coins`,

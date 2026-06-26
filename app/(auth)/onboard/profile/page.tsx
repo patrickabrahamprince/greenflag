@@ -57,7 +57,7 @@ export default function ProfilePage() {
     const ageNum = parseInt(age, 10);
     if (!age || isNaN(ageNum) || ageNum < 18 || ageNum > 100) e.age = 'Must be 18-100';
     if (!city.trim()) e.city = 'City is required';
-    if (photos.length !== 3) e.photos = 'Upload exactly 3 photos';
+    if (photos.length < 1) e.photos = 'Upload at least 1 photo';
     if (bio.length > 200) e.bio = 'Max 200 characters';
     setErrors(e);
     return Object.keys(e).length === 0;

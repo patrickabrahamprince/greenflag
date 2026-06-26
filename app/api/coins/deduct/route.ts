@@ -22,20 +22,16 @@ export async function POST(req: Request) {
     });
 
     if (deductErr || !result) {
-      return NextResponse.json({
-        success: true,
-        new_balance: Math.max(0, 100 - amount),
-      });
+      console.error('deduct_coins RPC error:', deductErr);
+      return NextResponse.json({ error: 'Failed to deduct coins', details: deductErr?.message }, { status: 500 });
     }
 
     return NextResponse.json({
       success: true,
       new_balance: (result as Record<string, unknown>).new_balance,
     });
-  } catch {
-    return NextResponse.json({
-      success: true,
-      new_balance: 0,
-    });
+  } catch (error) {
+    console.error('deduct_coins error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
