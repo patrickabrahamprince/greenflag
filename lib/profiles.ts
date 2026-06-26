@@ -4,18 +4,16 @@ export interface OppositeGenderProfile {
   id: string;
   name: string;
   gender: 'man' | 'woman';
-  avatar_url: string | null;
+  avatar: string | null;
   onboarding_completed: boolean;
 }
 
 /**
  * Returns all completed profiles of the opposite gender.
  *
- * Server-side filtering only — true server-side protection requires dropping
- * the `profiles_public_read` RLS policy via migration
- * `20261202000000_fix_profiles_rls_critical.sql`. Without that fix, the
- * raw API bypasses this gender filter because RLS permits SELECT on any
- * active profile regardless of gender.
+ * RLS migration `20261202000000_fix_profiles_rls_critical.sql` has been applied
+ * to the production DB — the `opposite_gender_only` policy now handles gender
+ * gating server-side. This app-level filter is kept as defence-in-depth.
  */
 export async function getOppositeGenderProfiles(): Promise<{
   profiles: OppositeGenderProfile[];
@@ -43,7 +41,7 @@ export async function getOppositeGenderProfiles(): Promise<{
 
   const { data: profiles, error } = await supabase
     .from('profiles')
-    .select('id, name, gender, avatar_url, onboarding_completed')
+    .select('id, name, gender, avatar, onboarding_completed')
     .neq('id', currentUserId)
     .eq('onboarding_completed', true)
     .neq('gender', currentUserGender)
