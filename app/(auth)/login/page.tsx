@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { Loader2 } from 'lucide-react'
 import { GoogleButton } from '@/components/ui/GoogleButton'
+import { SignOutStrip } from './sign-out'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -71,10 +72,7 @@ export default function LoginPage() {
             {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Log in'}
           </button>
         </form>
-        <div className="mt-4 text-xs text-gray-500 text-center">
-          <p>demo-man@quest.local / test1234</p>
-          <p>demo-woman@quest.local / test1234</p>
-        </div>
+
         <div className="flex items-center gap-3 my-6">
           <div className="flex-1 h-px bg-white/10" />
           <span className="text-muted text-xs">or</span>
@@ -88,6 +86,7 @@ export default function LoginPage() {
             onboarding
           </Link>
         </p>
+        <SignOutStrip />
       </div>
     </div>
   )
