@@ -1,20 +1,36 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Crown, Compass } from 'lucide-react';
+import { Crown, Compass, LogOut } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
+import { createClient } from '@/lib/supabase/client';
 
 export default function OnboardPage() {
   const router = useRouter();
   const setPersona = useOnboardingStore((s) => s.setPersona);
+  const supabase = createClient();
 
   const handleSelect = (persona: 'woman' | 'man') => {
     setPersona(persona);
     router.push('/onboard/phone');
   };
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/login';
+  };
+
   return (
     <div className="w-full animate-fade-in min-h-screen flex flex-col justify-center px-4">
+      <div className="absolute top-4 right-4">
+        <button
+          onClick={handleSignOut}
+          className="text-xs text-gray-500 hover:text-red-400 flex items-center gap-1 transition-colors"
+        >
+          <LogOut className="w-3 h-3" />
+          Sign out
+        </button>
+      </div>
       <div className="text-center mb-10">
         <h1 className="text-3xl font-display font-semibold text-white mb-3">
           Welcome to GreenFlag
