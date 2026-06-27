@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Camera, Mic, Type, MapPin, Check, Upload } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -12,9 +12,9 @@ import { TextInput } from '@/components/guest/TextInput';
 export default function IntentionPage({
   params,
 }: {
-  params: Promise<{ connectionId: string; day: string }>;
+  params: { connectionId: string; day: string };
 }) {
-  const { connectionId, day: dayStr } = use(params);
+  const { connectionId, day: dayStr } = params;
   const day = parseInt(dayStr, 10);
   const router = useRouter();
   const [submitted, setSubmitted] = useState(false);

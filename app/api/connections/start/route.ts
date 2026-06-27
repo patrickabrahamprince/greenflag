@@ -29,7 +29,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Cannot begin your own standard' }, { status: 400 });
     }
 
-    const { data: viewer } = await supabase
+    const admin = getAdminClient();
+
+    const { data: viewer } = await admin
       .from('profiles')
       .select('persona, name')
       .eq('id', user.id)
@@ -39,17 +41,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Only men can begin standards' }, { status: 403 });
     }
 
-    const { data: wallet } = await supabase
+    const { data: wallet } = await admin
       .from('wallets')
       .select('balance')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
     if ((wallet?.balance ?? 0) < BEGIN_COST) {
       return NextResponse.json({ error: 'insufficient_funds' }, { status: 402 });
     }
 
-    const { data: existing } = await supabase
+    const { data: existing } = await admin
       .from('connections')
       .select('id')
       .eq('guest_id', user.id)
@@ -61,19 +63,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Already connected' }, { status: 409 });
     }
 
-    const admin = getAdminClient();
-
     const { data: manProfile } = await admin
       .from('profiles')
       .select('elo_score')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
     const { data: standard } = await admin
       .from('standards')
       .select('required_interests, values, deal_breakers')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
     let matchData = null;
 
@@ -97,17 +97,21 @@ export async function POST(req: Request) {
       };
     }
 
-    const { error: deductErr } = await supabase.rpc('deduct_coins', {
+    const { data: deductData, error: deductErr } = await admin.rpc('deduct_coins', {
       p_user_id: user.id,
       p_amount: BEGIN_COST,
       p_description: 'Begin standard',
     });
 
-    if (deductErr) {
-      return NextResponse.json({ error: 'Failed to deduct coins' }, { status: 500 });
+    const deductResult = deductData as { success?: boolean; error?: string } | null;
+
+    if (deductErr || !deductResult?.success) {
+      return NextResponse.json({
+        error: deductResult?.error || 'Failed to deduct coins',
+      }, { status: deductResult?.error === 'insufficient_funds' ? 402 : 500 });
     }
 
-    const { data: standardRef } = await supabase
+    const { data: standardRef } = await admin
       .from('standards')
       .select('id')
       .eq('user_id', woman_id)
@@ -115,7 +119,7 @@ export async function POST(req: Request) {
       .limit(1)
       .maybeSingle();
 
-    const { data: connection, error: connErr } = await supabase
+    const { data: connection, error: connErr } = await admin
       .from('connections')
       .insert({
         guest_id: user.id,
@@ -133,7 +137,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Failed to create connection' }, { status: 500 });
     }
 
-    const { error: subErr } = await supabase
+    const { error: subErr } = await admin
       .from('submissions')
       .insert({
         connection_id: connection.id,
@@ -146,10 +150,11 @@ export async function POST(req: Request) {
       console.error('Failed to create submission record:', subErr);
     }
 
-    await notifyWomanOfStandardBegin(supabase, woman_id, viewer?.name ?? 'Someone', connection.id);
+    await notifyWomanOfStandardBegin(admin, woman_id, viewer?.name ?? 'Someone', connection.id);
 
     return NextResponse.json({ connectionId: connection.id });
-  } catch {
+  } catch (e) {
+    console.error('connections/start error:', e);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

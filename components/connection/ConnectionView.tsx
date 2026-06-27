@@ -95,6 +95,14 @@ export function ConnectionView({ connection, submission, intention }: Connection
         Day {currentDay} of 3
       </p>
 
+      {!intention && !isPendingReview && !deadlinePassed && (
+        <div className="text-center px-6 mb-6">
+          <p className="text-[#8E8E93] text-sm font-thin">
+            Waiting for her to set up tasks for this day.
+          </p>
+        </div>
+      )}
+
       {intention && (
         <div className="flex items-center justify-center gap-2 mb-5">
           {[1, 2, 3].map((tn) => {

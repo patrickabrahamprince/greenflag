@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { ConnectionView } from '@/components/connection/ConnectionView';
 import type { ConnectionWithHost, SubmissionRecord, IntentionRecord } from '@/components/connection/types';
 
-export default function ConnectionPage({ params }: { params: Promise<{ connectionId: string }> }) {
-  const { connectionId } = use(params);
+export default function ConnectionPage({ params }: { params: { connectionId: string } }) {
+  const { connectionId } = params;
   const router = useRouter();
   const supabase = createClient();
   const [connection, setConnection] = useState<ConnectionWithHost | null>(null);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, use } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import type { AdminUser } from '@/components/admin/types';
@@ -34,8 +34,8 @@ interface UserData {
   connections: UserConn[];
 }
 
-export default function UserDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function UserDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   const router = useRouter();
   const [data, setData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);

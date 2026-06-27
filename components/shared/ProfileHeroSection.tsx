@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowLeft, Flag } from 'lucide-react';
+import { ProfileImageCarousel } from './ProfileImageCarousel';
 
 interface ProfileHeroSectionProps {
   photo: string;
@@ -21,21 +22,11 @@ export function ProfileHeroSection({
   isOwn,
   onBack,
   onReport,
-  onPhotoSelect,
 }: ProfileHeroSectionProps) {
   return (
     <div className="relative w-full aspect-[3/4]">
-      {photo && (
-        <img
-          src={photo}
-          alt={name}
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            e.currentTarget.src = '/placeholder-avatar.svg';
-          }}
-        />
-      )}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
+      <ProfileImageCarousel images={photos} />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent pointer-events-none" />
 
       <button
         onClick={onBack}
@@ -51,20 +42,6 @@ export function ProfileHeroSection({
         >
           <Flag className="w-5 h-5 text-white/60" />
         </button>
-      )}
-
-      {photos.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-          {photos.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => onPhotoSelect(i)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                i === photoIdx ? 'bg-[#D4AF37] w-6' : 'bg-white/40'
-              }`}
-            />
-          ))}
-        </div>
       )}
     </div>
   );

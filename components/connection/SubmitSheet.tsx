@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { X, Camera, Mic, Type, Upload } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import type { IntentionRecord } from './types';
@@ -14,6 +14,64 @@ interface SubmitSheetProps {
   onSubmit: () => void;
 }
 
+function Waveform({ stream, isRecording }: { stream: MediaStream | null; isRecording: boolean }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animRef = useRef<number>(0);
+
+  useEffect(() => {
+    if (!stream || !isRecording || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const audioCtx = new AudioContext();
+    const source = audioCtx.createMediaStreamSource(stream);
+    const analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 64;
+    source.connect(analyser);
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    const barCount = 20;
+
+    const draw = () => {
+      if (!ctx || !canvas) return;
+      animRef.current = requestAnimationFrame(draw);
+      analyser.getByteFrequencyData(dataArray);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const barWidth = canvas.width / barCount;
+      const step = Math.floor(bufferLength / barCount);
+
+      for (let i = 0; i < barCount; i++) {
+        const value = dataArray[i * step] / 255;
+        const barHeight = value * canvas.height;
+        const x = i * barWidth + barWidth * 0.1;
+        const w = barWidth * 0.8;
+        ctx.fillStyle = `rgba(212, 175, 55, ${0.3 + value * 0.7})`;
+        ctx.fillRect(x, canvas.height - barHeight, w, barHeight);
+      }
+    };
+    draw();
+
+    return () => {
+      cancelAnimationFrame(animRef.current);
+      audioCtx.close();
+    };
+  }, [stream, isRecording]);
+
+  if (!isRecording) return null;
+
+  return (
+    <canvas
+      ref={canvasRef}
+      width={240}
+      height={64}
+      className="w-full max-w-[240px] h-16 rounded-xl"
+      style={{ background: '#111' }}
+    />
+  );
+}
+
 export function SubmitSheet({ connectionId, dayNumber, taskNumber, intention, onClose, onSubmit }: SubmitSheetProps) {
   const supabase = createClient();
   const [submitting, setSubmitting] = useState(false);
@@ -23,11 +81,11 @@ export function SubmitSheet({ connectionId, dayNumber, taskNumber, intention, on
   const [isRecording, setIsRecording] = useState(false);
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
   const [recordedDuration, setRecordedDuration] = useState(0);
+  const [stream, setStream] = useState<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const streamRef = useRef<MediaStream | null>(null);
 
   const uploadFile = useCallback(async (file: Blob, ext: string): Promise<string | null> => {
     const filename = `${Date.now()}.${ext}`;
@@ -83,24 +141,29 @@ export function SubmitSheet({ connectionId, dayNumber, taskNumber, intention, on
   };
 
   const startRecording = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    streamRef.current = stream;
-    const recorder = new MediaRecorder(stream);
-    mediaRecorderRef.current = recorder;
-    chunksRef.current = [];
+    try {
+      const ms = await navigator.mediaDevices.getUserMedia({ audio: true });
+      setStream(ms);
+      const recorder = new MediaRecorder(ms);
+      mediaRecorderRef.current = recorder;
+      chunksRef.current = [];
 
-    recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
-    recorder.onstop = () => {
-      const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
-      setRecordedBlob(blob);
-      stream.getTracks().forEach((t) => t.stop());
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
+      recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
+      recorder.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        setRecordedBlob(blob);
+        ms.getTracks().forEach((t) => t.stop());
+        setStream(null);
+        if (timerRef.current) clearInterval(timerRef.current);
+      };
 
-    recorder.start();
-    setIsRecording(true);
-    setRecordedDuration(0);
-    timerRef.current = setInterval(() => setRecordedDuration((p) => p + 1), 1000);
+      recorder.start();
+      setIsRecording(true);
+      setRecordedDuration(0);
+      timerRef.current = setInterval(() => setRecordedDuration((p) => p + 1), 1000);
+    } catch {
+      setIsRecording(false);
+    }
   };
 
   const stopRecording = () => {
@@ -174,6 +237,8 @@ export function SubmitSheet({ connectionId, dayNumber, taskNumber, intention, on
 
         {intention.type === 'voice' && (
           <div className="flex flex-col items-center gap-5 py-4">
+            <Waveform stream={stream} isRecording={isRecording} />
+
             {recordedBlob ? (
               <div className="text-center">
                 <p className="text-gold text-sm mb-1">Voice recorded</p>
