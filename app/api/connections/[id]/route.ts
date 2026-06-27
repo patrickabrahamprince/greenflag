@@ -1,49 +1,52 @@
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js';
+
+function getAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 export async function GET(
   _req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
-    const supabase = await createServerSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { id } = params;
+    const admin = getAdmin();
 
-    const { data: connection, error } = await supabase
+    const { data: connection, error } = await admin
       .from('connections')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
 
     if (error || !connection) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
     }
 
     const [hostRes, guestRes] = await Promise.all([
-      supabase.from('profiles').select('id, name, age, photos, city_auto, standards').eq('id', connection.host_id).single(),
-      supabase.from('profiles').select('id, name, age, photos').eq('id', connection.guest_id).single(),
+      admin.from('profiles').select('id, name, age, photos, city_auto, standards').eq('id', connection.host_id).maybeSingle(),
+      admin.from('profiles').select('id, name, age, photos').eq('id', connection.guest_id).maybeSingle(),
     ])
 
-    const { data: submissions } = await supabase
+    const { data: submissions } = await admin
       .from('submissions')
       .select('*')
       .eq('connection_id', id)
-      .order('day_number', { ascending: true })
-      .order('task_number', { ascending: true });
+      .order('day_number', { ascending: true });
 
-    const { data: intentions } = await supabase
+    const { data: intentions } = await admin
       .from('intentions')
       .select('*')
       .eq('standard_id', connection.standard_id || '')
-      .order('day_number', { ascending: true })
-      .order('task_number', { ascending: true });
+      .order('day_number', { ascending: true });
 
     return NextResponse.json({
       ...connection,
-      host: hostRes.data || null,
-      guest: guestRes.data || null,
+      host: hostRes || null,
+      guest: guestRes || null,
       submissions: submissions || [],
       intentions: intentions || [],
     });

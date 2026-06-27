@@ -1,15 +1,20 @@
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js';
+
+function getAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 export async function POST(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
-    const supabase = await createServerSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { id } = params;
+    const admin = getAdmin();
 
     const { day_number, content, type } = await req.json();
     if (!day_number || !content) {
@@ -18,14 +23,14 @@ export async function POST(
 
     const mediaType = type || 'text';
 
-    const { error } = await supabase.from('submissions').insert({
+    const { error } = await admin.from('submissions').insert({
       connection_id: id,
       day_number,
-      status: 'submitted',
+      moderation_status: 'submitted',
       media_type: mediaType,
-      ...(mediaType === 'text' ? { proof_text: content } : { proof_url: content }),
+      content,
       submitted_at: new Date().toISOString(),
-    } as any);
+    });
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

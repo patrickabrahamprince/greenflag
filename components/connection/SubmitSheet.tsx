@@ -8,13 +8,12 @@ import type { IntentionRecord } from './types';
 interface SubmitSheetProps {
   connectionId: string;
   dayNumber: number;
-  taskNumber: number;
   intention: IntentionRecord;
   onClose: () => void;
   onSubmit: () => void;
 }
 
-export function SubmitSheet({ connectionId, dayNumber, taskNumber, intention, onClose, onSubmit }: SubmitSheetProps) {
+export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSubmit }: SubmitSheetProps) {
   const supabase = createClient();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +65,6 @@ export function SubmitSheet({ connectionId, dayNumber, taskNumber, intention, on
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          task_number: taskNumber,
           text,
           media_url: mediaUrl,
           media_type: mediaType,

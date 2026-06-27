@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { createClient } from '@supabase/supabase-js';
-import { sendNotification } from '@/lib/notifications';
-import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 
 function getAdmin() {
   return createClient(
@@ -22,19 +20,7 @@ export async function POST(
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const rl = checkRateLimit(user.id, 'task_submit', RATE_LIMITS.taskSubmit);
-    if (!rl.allowed) {
-      return NextResponse.json({ error: 'Rate limit exceeded' }, {
-        status: 429,
-        headers: { 'Retry-After': String(rl.retryAfter) },
-      });
-    }
-
-    const { task_number, text, media_url, media_type } = await req.json();
-
-    if (!task_number || task_number < 1) {
-      return NextResponse.json({ error: 'task_number must be >= 1' }, { status: 400 });
-    }
+    const { text, media_url, media_type } = await req.json();
 
     if (!text && !media_url) {
       return NextResponse.json({ error: 'text or media_url required' }, { status: 400 });
@@ -42,7 +28,7 @@ export async function POST(
 
     const { data: connection, error: connErr } = await admin
       .from('connections')
-      .select('id, guest_id, host_id, current_day, status, frozen_until')
+      .select('id, guest_id, host_id, current_day, status')
       .eq('id', id)
       .maybeSingle();
 
@@ -58,27 +44,22 @@ export async function POST(
       return NextResponse.json({ error: 'Connection is no longer active' }, { status: 400 });
     }
 
-    const now = new Date();
-    const frozenUntil = connection.frozen_until ? new Date(connection.frozen_until) : null;
-    const isFrozen = frozenUntil !== null && frozenUntil > now;
-
     const day_number = connection.current_day;
 
     const { data: existingSub } = await admin
       .from('submissions')
-      .select('id, approved, deadline, status')
+      .select('id, approved, deadline')
       .eq('connection_id', id)
       .eq('day_number', day_number ?? 1)
-      .eq('task_number', task_number)
       .maybeSingle();
 
-    if (existingSub && existingSub.status === 'pending_review') {
-      return NextResponse.json({ error: 'Already submitted for this task' }, { status: 400 });
+    if (existingSub && existingSub.approved === true) {
+      return NextResponse.json({ error: 'Day already completed' }, { status: 400 });
     }
 
-    if (existingSub?.deadline && !isFrozen) {
+    if (existingSub?.deadline) {
       const deadline = new Date(existingSub.deadline);
-      if (deadline < now) {
+      if (deadline < new Date()) {
         return NextResponse.json({ error: 'Deadline has passed' }, { status: 400 });
       }
     }
@@ -86,23 +67,21 @@ export async function POST(
     const isText = media_type === 'text';
     const moderationStatus = isText ? 'approved' : 'pending';
 
-    const basePayload = {
+    const basePayload: Record<string, unknown> = {
       connection_id: id,
       day_number,
-      task_number,
-      status: 'pending_review',
       moderation_status: moderationStatus,
-      submitted_at: now.toISOString(),
+      submitted_at: new Date().toISOString(),
       media_type,
-      media_url,
-      proof_text: isText ? text : null,
-      deadline: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(),
+      media_url: media_url || null,
+      content: isText ? text : null,
+      deadline: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     };
 
     if (existingSub) {
       const { error: updateErr } = await admin
         .from('submissions')
-        .update(basePayload as any)
+        .update(basePayload)
         .eq('id', existingSub.id);
       if (updateErr) {
         return NextResponse.json({ error: updateErr.message }, { status: 400 });
@@ -110,7 +89,7 @@ export async function POST(
     } else {
       const { error: insertErr } = await admin
         .from('submissions')
-        .insert(basePayload as any);
+        .insert(basePayload);
       if (insertErr) {
         return NextResponse.json({ error: insertErr.message }, { status: 400 });
       }
@@ -121,65 +100,21 @@ export async function POST(
     if (isText) {
       const { error: approveErr } = await admin
         .from('submissions')
-        .update({ approved: true } as any)
+        .update({ approved: true, auto_approved: true })
         .eq('connection_id', id)
-        .eq('day_number', day_number ?? 1)
-        .eq('task_number', task_number);
-      if (!approveErr) {
-        const { data: advResult } = await admin.rpc('advance_day_if_complete', {
-          p_connection_id: id,
-        });
-        dayAdvanced = advResult === true;
-      }
-    }
+        .eq('day_number', day_number ?? 1);
 
-    const { data: guestProfile } = await admin
-      .from('profiles')
-      .select('name')
-      .eq('id', user.id)
-      .maybeSingle();
-
-    const guestName = guestProfile?.name || 'Someone';
-
-    await sendNotification({
-      supabase: admin,
-      user_id: connection.host_id,
-      title: 'New submission',
-      body: `${guestName} submitted Day ${day_number} Task ${task_number}.`,
-      data: { connectionId: id, taskNumber: task_number, type: 'submission' },
-    });
-
-    if (!isText) {
-      const { data: admins } = await admin
-        .from('profiles')
-        .select('id')
-        .eq('is_admin', true);
-
-      if (admins && admins.length > 0) {
-        const { data: newSub } = await admin
-          .from('submissions')
-          .select('id')
-          .eq('connection_id', id)
-          .eq('day_number', day_number ?? 1)
-          .eq('task_number', task_number)
-          .maybeSingle();
-
-        if (newSub) {
-          await admin.from('mod_queue').insert({
-            submission_id: newSub.id,
-            status: 'pending',
-          } as any);
-
-          for (const adminUser of admins) {
-            await sendNotification({
-              supabase: admin,
-              user_id: adminUser.id,
-              title: 'Moderation queue',
-              body: `${guestName} submitted a ${media_type} for Day ${day_number}. Needs review.`,
-              data: { connectionId: id, submissionId: newSub.id, type: 'moderation' },
-            });
-          }
-        }
+      if (!approveErr && day_number && day_number < 3) {
+        const { error: advErr } = await admin
+          .from('connections')
+          .update({ current_day: day_number + 1, updated_at: new Date().toISOString() })
+          .eq('id', id);
+        dayAdvanced = !advErr;
+      } else if (!approveErr && day_number && day_number >= 3) {
+        await admin
+          .from('connections')
+          .update({ connected: true, status: 'completed', updated_at: new Date().toISOString() })
+          .eq('id', id);
       }
     }
 

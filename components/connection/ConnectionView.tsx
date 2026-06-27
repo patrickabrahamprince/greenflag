@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, MessageCircle, Snowflake, ArrowRight } from 'lucide-react';
-import { CheckCircle, Circle } from 'lucide-react';
+
 import { ConnectedScreen } from '@/components/ConnectedScreen';
 import { ProgressSegmentBar } from './ProgressSegmentBar';
 import { IntentionCard } from './IntentionCard';
@@ -37,7 +37,6 @@ export function ConnectionView({ connection, submission, intention }: Connection
   const router = useRouter();
   const [showSheet, setShowSheet] = useState(false);
   const [sub, setSub] = useState(submission);
-  const [currentTaskNumber, setCurrentTaskNumber] = useState(1);
 
   const isEnded = connection.status === 'ended' || connection.status === 'expired' || connection.status === 'rejected';
   const isConnected = connection.connected;
@@ -103,30 +102,7 @@ export function ConnectionView({ connection, submission, intention }: Connection
         </div>
       )}
 
-      {intention && (
-        <div className="flex items-center justify-center gap-2 mb-5">
-          {[1, 2, 3].map((tn) => {
-            const isCurrent = tn === currentTaskNumber;
-            const isComplete = tn < currentTaskNumber;
-            return (
-              <div
-                key={tn}
-                className="flex items-center gap-1 text-xs"
-                style={{ color: isComplete ? '#8FAE8F' : isCurrent ? '#D4AF37' : '#3A3A3C' }}
-              >
-                {isComplete ? (
-                  <CheckCircle className="w-3.5 h-3.5" />
-                ) : isCurrent ? (
-                  <Circle className="w-3.5 h-3.5" />
-                ) : (
-                  <Circle className="w-3.5 h-3.5" />
-                )}
-                <span>Task {tn}</span>
-              </div>
-            );
-          })}
-        </div>
-      )}
+      
 
       {isChatUnlocked && (
         <div className="card mb-5 p-4 flex items-center gap-4" style={{ background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.2)' }}>
@@ -190,7 +166,7 @@ export function ConnectionView({ connection, submission, intention }: Connection
             <CountdownTimer deadline={sub.deadline} label="Submit in" />
           )}
           <button onClick={() => setShowSheet(true)} className="btn-primary w-full mt-5 flex items-center justify-center gap-2">
-            Submit Task {currentTaskNumber}
+            Submit
             <ArrowRight className="w-4 h-4" />
           </button>
         </>
@@ -200,7 +176,6 @@ export function ConnectionView({ connection, submission, intention }: Connection
         <SubmitSheet
           connectionId={connection.id}
           dayNumber={currentDay}
-          taskNumber={currentTaskNumber}
           intention={intention}
           onClose={() => setShowSheet(false)}
           onSubmit={() => { setShowSheet(false); router.refresh(); }}
