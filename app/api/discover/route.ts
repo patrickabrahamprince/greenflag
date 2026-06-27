@@ -2,14 +2,6 @@ import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { createClient } from '@supabase/supabase-js';
 
-const DAILY_LIMIT = 5;
-
-function getISTDate(): string {
-  const now = new Date();
-  const ist = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-  return ist.toISOString().split('T')[0];
-}
-
 function getAdminClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -69,27 +61,6 @@ export async function GET(req: Request) {
     const manValues = standard?.values ?? [];
     const manDealbreakers = standard?.deal_breakers ?? [];
 
-    const today = getISTDate();
-
-    const { count: todayViews } = await admin
-      .from('daily_discover_views')
-      .select('*', { count: 'exact', head: true })
-      .eq('man_id', user.id)
-      .eq('viewed_date', today);
-
-    const viewedCount = todayViews ?? 0;
-    if (viewedCount >= DAILY_LIMIT) {
-      return NextResponse.json({ profiles: [], daily_limit_reached: true });
-    }
-
-    const { data: viewedToday } = await admin
-      .from('daily_discover_views')
-      .select('woman_id')
-      .eq('man_id', user.id)
-      .eq('viewed_date', today);
-
-    const viewedIds = (viewedToday ?? []).map((v) => v.woman_id);
-
     const { data: matchResults, error: fetchError } = await admin.rpc('get_ranked_women', {
       man_interests: manInterests,
       man_values: manValues,
@@ -104,13 +75,10 @@ export async function GET(req: Request) {
 
     type RankedWoman = { id: string; match_percentage: number; match_reasons: string[] };
     const matchResultsTyped = (matchResults ?? []) as RankedWoman[];
-    let ranked = matchResultsTyped.filter((w) => !viewedIds.includes(w.id));
-
-    const remaining = DAILY_LIMIT - viewedCount;
-    ranked = ranked.slice(0, remaining);
+    const ranked = matchResultsTyped;
 
     if (ranked.length === 0) {
-      return NextResponse.json({ profiles: [], daily_limit_reached: false });
+      return NextResponse.json({ profiles: [] });
     }
 
     const rankedIds = ranked.map((w) => w.id);
@@ -134,11 +102,7 @@ export async function GET(req: Request) {
         return { ...p, match_percentage: match.match_percentage, match_reasons: match.match_reasons };
       });
 
-    // TODO: Move view tracking to /api/swipe when implemented
-    return NextResponse.json({
-      profiles,
-      daily_limit_reached: false,
-    });
+    return NextResponse.json({ profiles });
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
