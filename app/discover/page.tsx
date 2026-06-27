@@ -6,7 +6,6 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { CoinBadge } from '@/components/shared/coin-badge'
-import { EmptyState } from '@/components/ui/EmptyState'
 import { ProfileImageCarousel } from '@/components/shared/ProfileImageCarousel'
 import { createClient } from '@/lib/supabase/client'
 
@@ -92,10 +91,6 @@ export default function DiscoverPage() {
     } finally {
       setLoading(false)
     }
-  }
-
-  if (!profiles?.length && !loading) {
-    return <EmptyState dataTestId="discover-empty-state" title="No one new" description="Check back soon" />
   }
 
   return (
