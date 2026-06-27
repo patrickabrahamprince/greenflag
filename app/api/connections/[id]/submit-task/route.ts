@@ -94,8 +94,9 @@ export async function POST(
       moderation_status: moderationStatus,
       submitted_at: now.toISOString(),
       media_type,
+      media_url,
+      proof_text: isText ? text : null,
       deadline: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(),
-      ...(isText ? { proof_text: text } : { media_url, proof_url: media_url }),
     };
 
     if (existingSub) {
