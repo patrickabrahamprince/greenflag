@@ -30,13 +30,15 @@ export function SubmitSheet({ connectionId, dayNumber, taskNumber, intention, on
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const uploadFile = useCallback(async (file: Blob, ext: string): Promise<string | null> => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
     const filename = `${Date.now()}.${ext}`;
-    const path = `${connectionId}/day${dayNumber}/${filename}`;
+    const path = `${user.id}/day${dayNumber}/${filename}`;
     const { error } = await supabase.storage.from('submissions').upload(path, file);
     if (error) return null;
     const { data } = supabase.storage.from('submissions').getPublicUrl(path);
     return data.publicUrl;
-  }, [supabase, connectionId, dayNumber]);
+  }, [supabase, dayNumber]);
 
   const handleSubmit = async () => {
     setError(null);
