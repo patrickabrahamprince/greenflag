@@ -75,6 +75,7 @@ function Waveform({ stream, isRecording }: { stream: MediaStream | null; isRecor
 export function SubmitSheet({ connectionId, dayNumber, taskNumber, intention, onClose, onSubmit }: SubmitSheetProps) {
   const supabase = createClient();
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [textContent, setTextContent] = useState('');
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -97,6 +98,7 @@ export function SubmitSheet({ connectionId, dayNumber, taskNumber, intention, on
   }, [supabase, connectionId, dayNumber]);
 
   const handleSubmit = async () => {
+    setError(null);
     setSubmitting(true);
     try {
       let mediaUrl: string | null = null;
@@ -112,6 +114,7 @@ export function SubmitSheet({ connectionId, dayNumber, taskNumber, intention, on
       }
 
       if (intention.type !== 'text' && !mediaUrl) {
+        setError('Failed to upload media file.');
         setSubmitting(false);
         return;
       }
@@ -127,7 +130,17 @@ export function SubmitSheet({ connectionId, dayNumber, taskNumber, intention, on
         }),
       });
 
-      if (res.ok) onSubmit();
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        setError(body?.error || 'Submission failed.');
+        setSubmitting(false);
+        return;
+      }
+
+      onSubmit();
+    } catch (e) {
+      setError('Network error. Please try again.');
+      console.error('SubmitSheet error:', e);
     } finally {
       setSubmitting(false);
     }
@@ -265,10 +278,14 @@ export function SubmitSheet({ connectionId, dayNumber, taskNumber, intention, on
           </div>
         )}
 
+        {error && (
+          <p className="text-red-400 text-xs text-center mt-4">{error}</p>
+        )}
+
         <button
           onClick={handleSubmit}
           disabled={!canSubmit || submitting}
-          className="btn-primary w-full mt-5 flex items-center justify-center gap-2"
+          className="btn-primary w-full mt-4 flex items-center justify-center gap-2"
         >
           <Upload className="w-4 h-4" />
           {submitting ? 'Submitting...' : 'Submit'}
