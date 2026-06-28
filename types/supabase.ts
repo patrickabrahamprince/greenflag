@@ -152,24 +152,36 @@ export type Database = {
       }
       blocked_pairs: {
         Row: {
-          created_at: string | null
+          created_at: string
           guest_id: string
           host_id: string
-          id: number
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           guest_id: string
           host_id: string
-          id?: number
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           guest_id?: string
           host_id?: string
-          id?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "blocked_pairs_guest_id_fkey"
+            columns: ["guest_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blocked_pairs_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       blocks: {
         Row: {
@@ -304,11 +316,13 @@ export type Database = {
           current_day: number | null
           day_count: number | null
           deadline: string | null
+          decided_at: string | null
           ended_reason: string | null
           expires_at: string
           freezes_used: number | null
           frozen_until: string | null
           guest_id: string
+          host_decision: string | null
           host_id: string
           host_reviewed_at: string | null
           id: string
@@ -331,11 +345,13 @@ export type Database = {
           current_day?: number | null
           day_count?: number | null
           deadline?: string | null
+          decided_at?: string | null
           ended_reason?: string | null
           expires_at?: string
           freezes_used?: number | null
           frozen_until?: string | null
           guest_id: string
+          host_decision?: string | null
           host_id: string
           host_reviewed_at?: string | null
           id?: string
@@ -358,11 +374,13 @@ export type Database = {
           current_day?: number | null
           day_count?: number | null
           deadline?: string | null
+          decided_at?: string | null
           ended_reason?: string | null
           expires_at?: string
           freezes_used?: number | null
           frozen_until?: string | null
           guest_id?: string
+          host_decision?: string | null
           host_id?: string
           host_reviewed_at?: string | null
           id?: string
@@ -484,6 +502,7 @@ export type Database = {
           id: string
           prompt: string
           standard_id: string | null
+          task_number: number
           type: string
         }
         Insert: {
@@ -492,6 +511,7 @@ export type Database = {
           id?: string
           prompt: string
           standard_id?: string | null
+          task_number?: number
           type: string
         }
         Update: {
@@ -500,6 +520,7 @@ export type Database = {
           id?: string
           prompt?: string
           standard_id?: string | null
+          task_number?: number
           type?: string
         }
         Relationships: [
@@ -777,7 +798,6 @@ export type Database = {
           connected_count: number | null
           created_at: string | null
           elo_score: number | null
-          gender: string | null
           height: string | null
           id: string
           instagram_url: string | null
@@ -803,11 +823,11 @@ export type Database = {
           phone_verified: boolean | null
           photos: string[] | null
           push_token: string | null
+          quiz_answers: Json | null
           standards: Json | null
           tastes: string | null
           verification_status: string | null
           why_me_prompts: string[] | null
-          quiz_answers: Record<string, string> | null
         }
         Insert: {
           about_me_tags?: string[] | null
@@ -825,7 +845,6 @@ export type Database = {
           connected_count?: number | null
           created_at?: string | null
           elo_score?: number | null
-          gender?: string | null
           height?: string | null
           id: string
           instagram_url?: string | null
@@ -851,11 +870,11 @@ export type Database = {
           phone_verified?: boolean | null
           photos?: string[] | null
           push_token?: string | null
+          quiz_answers?: Json | null
           standards?: Json | null
           tastes?: string | null
           verification_status?: string | null
           why_me_prompts?: string[] | null
-          quiz_answers?: Record<string, string> | null
         }
         Update: {
           about_me_tags?: string[] | null
@@ -873,7 +892,6 @@ export type Database = {
           connected_count?: number | null
           created_at?: string | null
           elo_score?: number | null
-          gender?: string | null
           height?: string | null
           id?: string
           instagram_url?: string | null
@@ -899,11 +917,11 @@ export type Database = {
           phone_verified?: boolean | null
           photos?: string[] | null
           push_token?: string | null
+          quiz_answers?: Json | null
           standards?: Json | null
           tastes?: string | null
           verification_status?: string | null
           why_me_prompts?: string[] | null
-          quiz_answers?: Record<string, string> | null
         }
         Relationships: [
           {
@@ -1084,7 +1102,6 @@ export type Database = {
           intentions: Json
           is_active: boolean | null
           required_interests: string[] | null
-          user_id: string
           values: string[] | null
           woman_id: string | null
         }
@@ -1096,7 +1113,6 @@ export type Database = {
           intentions: Json
           is_active?: boolean | null
           required_interests?: string[] | null
-          user_id: string
           values?: string[] | null
           woman_id?: string | null
         }
@@ -1108,18 +1124,10 @@ export type Database = {
           intentions?: Json
           is_active?: boolean | null
           required_interests?: string[] | null
-          user_id?: string
           values?: string[] | null
           woman_id?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "standards_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "standards_woman_id_fkey"
             columns: ["woman_id"]
@@ -1142,7 +1150,9 @@ export type Database = {
           media_type: string | null
           media_url: string | null
           moderation_status: string | null
+          prompt: string | null
           submitted_at: string | null
+          task_number: number
         }
         Insert: {
           approved?: boolean | null
@@ -1156,7 +1166,9 @@ export type Database = {
           media_type?: string | null
           media_url?: string | null
           moderation_status?: string | null
+          prompt?: string | null
           submitted_at?: string | null
+          task_number?: number
         }
         Update: {
           approved?: boolean | null
@@ -1170,49 +1182,13 @@ export type Database = {
           media_type?: string | null
           media_url?: string | null
           moderation_status?: string | null
+          prompt?: string | null
           submitted_at?: string | null
+          task_number?: number
         }
         Relationships: [
           {
             foreignKeyName: "submissions_connection_id_fkey"
-            columns: ["connection_id"]
-            isOneToOne: false
-            referencedRelation: "connections"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      task_submissions: {
-        Row: {
-          connection_id: string
-          content_type: string
-          id: number
-          media_url: string | null
-          submitted_at: string | null
-          task_number: number
-          text_content: string | null
-        }
-        Insert: {
-          connection_id: string
-          content_type: string
-          id?: number
-          media_url?: string | null
-          submitted_at?: string | null
-          task_number: number
-          text_content?: string | null
-        }
-        Update: {
-          connection_id?: string
-          content_type?: string
-          id?: number
-          media_url?: string | null
-          submitted_at?: string | null
-          task_number?: number
-          text_content?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "task_submissions_connection_id_fkey"
             columns: ["connection_id"]
             isOneToOne: false
             referencedRelation: "connections"
@@ -1629,6 +1605,10 @@ export type Database = {
       }
       admin_set_admin: { Args: { p_user_id: string }; Returns: undefined }
       admin_unban_user: { Args: { p_user_id: string }; Returns: undefined }
+      advance_day_if_complete: {
+        Args: { p_connection_id: string }
+        Returns: boolean
+      }
       approve_submission: {
         Args: { p_approver_id: string; p_submission_id: number }
         Returns: undefined
@@ -1648,9 +1628,9 @@ export type Database = {
         }
         Returns: Json
       }
-      advance_day_if_complete: {
-        Args: { p_connection_id: string }
-        Returns: undefined
+      decide_connection: {
+        Args: { p_connection_id: string; p_green_flag: boolean }
+        Returns: Json
       }
       decline_connection: {
         Args: { connection_id: string }
@@ -1700,6 +1680,7 @@ export type Database = {
       equals: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
       expire_connections: { Args: never; Returns: undefined }
       expire_old_connections: { Args: never; Returns: undefined }
+      freeze_connection: { Args: { p_connection_id: string }; Returns: Json }
       geometry: { Args: { "": string }; Returns: unknown }
       geometry_above: {
         Args: { geom1: unknown; geom2: unknown }
@@ -1845,14 +1826,9 @@ export type Database = {
           man_values: string[]
         }
         Returns: {
-          avatar_url: string
-          bio: string
-          elo_score: number
           id: string
-          interests: string[]
           match_percentage: number
           match_reasons: string[]
-          name: string
         }[]
       }
       get_unread_count: { Args: { p_user_id: string }; Returns: number }
