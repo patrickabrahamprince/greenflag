@@ -20,7 +20,7 @@ export async function POST(
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { text, media_url, media_type } = await req.json();
+    const { task_number, text, media_url, media_type } = await req.json();
 
     if (!text && !media_url) {
       return NextResponse.json({ error: 'text or media_url required' }, { status: 400 });
@@ -51,10 +51,11 @@ export async function POST(
       .select('id, approved, deadline')
       .eq('connection_id', id)
       .eq('day_number', day_number ?? 1)
+      .eq('task_number', task_number ?? 1)
       .maybeSingle();
 
     if (existingSub && existingSub.approved === true) {
-      return NextResponse.json({ error: 'Day already completed' }, { status: 400 });
+      return NextResponse.json({ error: 'Task already completed' }, { status: 400 });
     }
 
     if (existingSub?.deadline) {
@@ -70,6 +71,7 @@ export async function POST(
     const basePayload: Record<string, unknown> = {
       connection_id: id,
       day_number,
+      task_number: task_number ?? 1,
       moderation_status: moderationStatus,
       submitted_at: new Date().toISOString(),
       media_type,
@@ -102,19 +104,23 @@ export async function POST(
         .from('submissions')
         .update({ approved: true, auto_approved: true })
         .eq('connection_id', id)
-        .eq('day_number', day_number ?? 1);
+        .eq('day_number', day_number ?? 1)
+        .eq('task_number', task_number ?? 1);
 
-      if (!approveErr && day_number && day_number < 3) {
-        const { error: advErr } = await admin
-          .from('connections')
-          .update({ current_day: day_number + 1, updated_at: new Date().toISOString() })
-          .eq('id', id);
-        dayAdvanced = !advErr;
-      } else if (!approveErr && day_number && day_number >= 3) {
-        await admin
-          .from('connections')
-          .update({ connected: true, status: 'completed', updated_at: new Date().toISOString() })
-          .eq('id', id);
+      if (!approveErr) {
+        const { error: advErr } = await admin.rpc('advance_day_if_complete', {
+          p_connection_id: id,
+        });
+        if (!advErr) {
+          const { data: updatedConn } = await admin
+            .from('connections')
+            .select('current_day')
+            .eq('id', id)
+            .single();
+          if (updatedConn && updatedConn.current_day !== day_number) {
+            dayAdvanced = true;
+          }
+        }
       }
     }
 

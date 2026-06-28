@@ -60,6 +60,10 @@ export async function POST(
             submission.day_number,
             submission.connection_id
           );
+
+          await supabase.rpc('advance_day_if_complete', {
+            p_connection_id: submission.connection_id,
+          });
         } else {
           await notifyBothOfMediaRejection(
             supabase,

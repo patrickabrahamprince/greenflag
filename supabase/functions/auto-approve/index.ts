@@ -92,8 +92,8 @@ serve(async (req) => {
     // Core progression now runs through submit-task → advance_day_if_complete.
     const { data: submissions, error: fetchError } = await supabase
       .from('submissions')
-      .select('id, connection_id, day_number, task_number, status, moderation_status, deadline')
-      .eq('status', 'pending')
+      .select('id, connection_id, day_number, task_number, approved, moderation_status, deadline')
+      .eq('approved', false)
       .eq('moderation_status', 'approved')
       .lt('deadline', new Date().toISOString());
 
@@ -118,7 +118,7 @@ serve(async (req) => {
       const { error: updateError } = await supabase
         .from('submissions')
         .update({
-          status: 'approved',
+          approved: true,
           auto_approved: true,
           reviewed_at: new Date().toISOString(),
         })

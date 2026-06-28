@@ -36,6 +36,7 @@ const nextConfig = {
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com",
             "style-src 'self' 'unsafe-inline'",
             "img-src 'self' data: blob: https: http:",
+            "media-src 'self' blob: data:",
             "font-src 'self'",
             "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.razorpay.com",
             "frame-src https://checkout.razorpay.com",

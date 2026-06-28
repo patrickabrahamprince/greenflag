@@ -29,8 +29,9 @@ export default function LoginPage() {
         return
       }
       const { data: profile } = await supabase.from('profiles').select('persona, is_admin, onboarding_completed').eq('id', user.id).single()
-      if (profile?.is_admin) router.push('/admin')
-      else router.push('/discover')
+      if (profile?.is_admin) window.location.href = '/admin'
+      else if (profile?.persona === 'woman') window.location.href = '/connections'
+      else window.location.href = '/discover'
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Login failed')
     } finally {
@@ -82,7 +83,7 @@ export default function LoginPage() {
 
         <p className="text-muted text-sm mt-8 text-center font-thin">
           New here? Your journey starts at{' '}
-          <Link href="/onboard" className="text-white underline underline-offset-4 decoration-white/30 hover:decoration-white/60 transition-colors">
+          <Link href="/signup" className="text-white underline underline-offset-4 decoration-white/30 hover:decoration-white/60 transition-colors">
             onboarding
           </Link>
         </p>

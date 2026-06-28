@@ -2,19 +2,19 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, MessageCircle, Snowflake, ArrowRight } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Snowflake } from 'lucide-react';
 
 import { ConnectedScreen } from '@/components/ConnectedScreen';
 import { ProgressSegmentBar } from './ProgressSegmentBar';
-import { IntentionCard } from './IntentionCard';
 import { CountdownTimer } from './CountdownTimer';
 import { SubmitSheet } from './SubmitSheet';
 import type { ConnectionWithHost, SubmissionRecord, IntentionRecord } from './types';
 
 interface ConnectionViewProps {
   connection: ConnectionWithHost;
-  submission: SubmissionRecord | null;
-  intention: IntentionRecord | null;
+  submissions: SubmissionRecord[];
+  intentions: IntentionRecord[];
+  onRefresh: () => void;
 }
 
 function EndedCard({ reason }: { reason: string | null }) {
@@ -31,25 +31,23 @@ function EndedCard({ reason }: { reason: string | null }) {
   );
 }
 
-
-
-export function ConnectionView({ connection, submission, intention }: ConnectionViewProps) {
+export function ConnectionView({ connection, submissions, intentions, onRefresh }: ConnectionViewProps) {
   const router = useRouter();
   const [showSheet, setShowSheet] = useState(false);
-  const [sub, setSub] = useState(submission);
+  const [activeIntention, setActiveIntention] = useState<IntentionRecord | null>(null);
 
   const isEnded = connection.status === 'ended' || connection.status === 'expired' || connection.status === 'rejected';
   const isConnected = connection.connected;
   const isChatUnlocked = connection.chat_unlocked && !connection.connected;
   const currentDay = connection.current_day ?? 1;
   const now = new Date();
-  const deadlineMs = sub?.deadline ? new Date(sub.deadline).getTime() : 0;
+
+  // Find the active deadline among submissions
+  const activeDeadlineSub = submissions.find((s) => s.deadline);
+  const deadlineMs = activeDeadlineSub?.deadline ? new Date(activeDeadlineSub.deadline).getTime() : 0;
   const frozenUntil = connection.frozen_until ? new Date(connection.frozen_until).getTime() : 0;
   const isFrozen = frozenUntil > now.getTime();
   const deadlinePassed = deadlineMs > 0 && deadlineMs < now.getTime() && !isFrozen;
-  const isPendingReview = sub?.approved === false;
-  const isApproved = sub?.approved === true;
-  const isPendingSubmission = !isApproved && !isPendingReview && !deadlinePassed;
 
   if (isEnded) {
     return (
@@ -59,7 +57,7 @@ export function ConnectionView({ connection, submission, intention }: Connection
             <ArrowLeft className="w-5 h-5" />
           </button>
         </div>
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 flex-row items-center justify-center">
           <EndedCard reason={connection.ended_reason} />
         </div>
         <button onClick={() => router.push('/discover')} className="btn-primary w-full mb-6">
@@ -94,15 +92,13 @@ export function ConnectionView({ connection, submission, intention }: Connection
         Day {currentDay} of 3
       </p>
 
-      {!intention && !isPendingReview && !deadlinePassed && (
+      {intentions.length === 0 && (
         <div className="text-center px-6 mb-6">
           <p className="text-[#8E8E93] text-sm font-thin">
             Waiting for her to set up tasks for this day.
           </p>
         </div>
       )}
-
-      
 
       {isChatUnlocked && (
         <div className="card mb-5 p-4 flex items-center gap-4" style={{ background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.2)' }}>
@@ -120,19 +116,7 @@ export function ConnectionView({ connection, submission, intention }: Connection
         </div>
       )}
 
-      {isPendingReview && sub && (
-        <>
-          <div className="card p-5 text-center mb-4" style={{ background: 'rgba(212,175,55,0.05)' }}>
-            <p className="text-gold text-sm font-medium">Submitted ✓</p>
-            <p className="text-[#8E8E93] text-xs font-thin mt-1">Awaiting her review</p>
-          </div>
-          {sub.deadline && (
-            <CountdownTimer deadline={sub.deadline} label="She has until" />
-          )}
-        </>
-      )}
-
-      {deadlinePassed && !isPendingReview && (
+      {deadlinePassed && (
         <>
           <div className="card p-5 text-center mb-5" style={{ background: '#141414' }}>
             <p className="text-white/80 text-sm">You missed the deadline</p>
@@ -142,8 +126,7 @@ export function ConnectionView({ connection, submission, intention }: Connection
               onClick={async () => {
                 const res = await fetch(`/api/connections/${connection.id}/freeze`, { method: 'POST' });
                 if (res.ok) {
-                  const updated = await res.json();
-                  setSub((prev) => prev ? { ...prev, deadline: updated.frozen_until } : prev);
+                  router.refresh();
                 }
               }}
               className="btn-secondary w-full flex items-center justify-center gap-2"
@@ -159,26 +142,74 @@ export function ConnectionView({ connection, submission, intention }: Connection
         </>
       )}
 
-      {isPendingSubmission && intention && (
-        <>
-          <IntentionCard intention={intention} />
-          {sub?.deadline && (
-            <CountdownTimer deadline={sub.deadline} label="Submit in" />
-          )}
-          <button onClick={() => setShowSheet(true)} className="btn-primary w-full mt-5 flex items-center justify-center gap-2">
-            Submit
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </>
+      {!deadlinePassed && intentions.length > 0 && (
+        <div className="space-y-4 mb-6 flex-1 overflow-y-auto">
+          {intentions.map((intentionItem) => {
+            const matchingSub = submissions.find((s) => s.task_number === intentionItem.task_number);
+            const hasSubmittedContent = !!(matchingSub?.content || matchingSub?.media_url);
+            const isTaskApproved = matchingSub?.approved === true;
+            const isTaskPendingReview = matchingSub && !isTaskApproved && hasSubmittedContent;
+            const isTaskPendingSubmission = !matchingSub || (!isTaskApproved && !hasSubmittedContent);
+
+            return (
+              <div key={intentionItem.id} className="card p-5" style={{ background: '#1C1C1E' }}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs text-[#8E8E93] font-thin">Task {intentionItem.task_number} ({intentionItem.type})</span>
+                  {isTaskApproved && <span className="text-xs text-green-500 font-medium">Done (Approved) ✓</span>}
+                  {isTaskPendingReview && <span className="text-xs text-gold font-medium">Done (Pending Review) ✓</span>}
+                  {isTaskPendingSubmission && <span className="text-xs text-[#8E8E93] font-thin">Pending Submission</span>}
+                </div>
+                <p className={`text-sm mb-4 ${hasSubmittedContent ? 'line-through text-white/40 font-light' : 'text-white font-normal'}`}>{intentionItem.prompt}</p>
+                
+                {isTaskPendingSubmission && (
+                  <button
+                    onClick={() => {
+                      setActiveIntention(intentionItem);
+                      setShowSheet(true);
+                    }}
+                    className="btn-primary text-xs px-4 py-2 w-full flex items-center justify-center gap-1.5"
+                  >
+                    Submit Response
+                  </button>
+                )}
+
+                {matchingSub && (matchingSub.content || matchingSub.media_url) && (
+                  <div className="border-t border-[#2C2C2E] pt-3 mt-3">
+                    <p className="text-xs text-[#8E8E93] mb-1">Your Submission:</p>
+                    {matchingSub.content && <p className="text-xs text-white/90 italic">"{matchingSub.content}"</p>}
+                    {matchingSub.media_url && (
+                      matchingSub.media_type === 'photo' || matchingSub.media_url.match(/\.(jpeg|jpg|gif|png)/i) ? (
+                        <img src={matchingSub.media_url} alt="" className="mt-2 rounded-lg max-h-40 object-cover" />
+                      ) : (
+                        <audio controls src={matchingSub.media_url} className="mt-2 w-full h-8" />
+                      )
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       )}
 
-      {showSheet && intention && (
+      {activeDeadlineSub?.deadline && !deadlinePassed && (
+        <CountdownTimer deadline={activeDeadlineSub.deadline} label="Submit in" />
+      )}
+
+      {showSheet && activeIntention && (
         <SubmitSheet
           connectionId={connection.id}
           dayNumber={currentDay}
-          intention={intention}
-          onClose={() => setShowSheet(false)}
-          onSubmit={() => { setShowSheet(false); router.refresh(); }}
+          intention={activeIntention}
+          onClose={() => {
+            setShowSheet(false);
+            setActiveIntention(null);
+          }}
+          onSubmit={() => {
+            setShowSheet(false);
+            setActiveIntention(null);
+            onRefresh();
+          }}
         />
       )}
     </div>

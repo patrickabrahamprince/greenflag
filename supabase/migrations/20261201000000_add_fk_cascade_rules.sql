@@ -33,11 +33,11 @@ ALTER TABLE audit_logs
   ADD CONSTRAINT audit_logs_admin_id_fkey
     FOREIGN KEY (admin_id) REFERENCES profiles(id) ON DELETE SET NULL;
 
--- 6. reports.resolved_by → profiles(id) ON DELETE SET NULL
-ALTER TABLE reports
-  DROP CONSTRAINT IF EXISTS reports_resolved_by_fkey,
-  ADD CONSTRAINT reports_resolved_by_fkey
-    FOREIGN KEY (resolved_by) REFERENCES profiles(id) ON DELETE SET NULL;
+-- -- 6. reports.resolved_by → profiles(id) ON DELETE SET NULL
+-- ALTER TABLE reports
+--   DROP CONSTRAINT IF EXISTS reports_resolved_by_fkey,
+--   ADD CONSTRAINT reports_resolved_by_fkey
+--     FOREIGN KEY (resolved_by) REFERENCES profiles(id) ON DELETE SET NULL;
 
 -- 7. admin_actions.admin_id → profiles(id) ON DELETE SET NULL
 ALTER TABLE admin_actions

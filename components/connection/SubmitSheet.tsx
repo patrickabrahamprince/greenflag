@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { X, Camera, Mic, Type, Upload } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import type { IntentionRecord } from './types';
@@ -15,6 +16,7 @@ interface SubmitSheetProps {
 
 export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSubmit }: SubmitSheetProps) {
   const supabase = createClient();
+  const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [textContent, setTextContent] = useState('');
@@ -23,10 +25,71 @@ export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSub
   const [isRecording, setIsRecording] = useState(false);
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
   const [recordedDuration, setRecordedDuration] = useState(0);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [debugInfo, setDebugInfo] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const audioUrlRef = useRef<string | null>(null);
+  const [barHeights, setBarHeights] = useState<number[]>([10, 10, 10, 10, 10, 10, 10, 10, 10, 10]);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioElRef = useRef<HTMLAudioElement | null>(null);
+
+  // Keep audioUrlRef in sync
+  useEffect(() => {
+    audioUrlRef.current = audioUrl;
+    if (audioElRef.current) {
+      audioElRef.current.load();
+    }
+  }, [audioUrl]);
+
+  const togglePlay = () => {
+    const el = audioElRef.current;
+    if (!el || !audioUrl) {
+      setError('No recording available.');
+      return;
+    }
+
+    if (isPlaying) {
+      el.pause();
+      setIsPlaying(false);
+    } else {
+      setError(null);
+      el.currentTime = 0;
+      el.play()
+        .then(() => setIsPlaying(true))
+        .catch((e) => {
+          console.error('Play rejected:', e);
+          setIsPlaying(false);
+          setError('Playback failed: ' + (e?.message || 'Unknown error'));
+        });
+    }
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current);
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+      if (audioContextRef.current) {
+        audioContextRef.current.close().catch(() => {});
+      }
+      if (audioElRef.current) {
+        audioElRef.current.pause();
+      }
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((t) => t.stop());
+      }
+    };
+  }, []);
 
   const uploadFile = useCallback(async (file: Blob, ext: string): Promise<string | null> => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -52,7 +115,8 @@ export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSub
       } else if (intention.type === 'photo' && photoFile) {
         mediaUrl = await uploadFile(photoFile, photoFile.name.split('.').pop() || 'jpg');
       } else if (intention.type === 'voice' && recordedBlob) {
-        mediaUrl = await uploadFile(recordedBlob, 'webm');
+        const fileExt = recordedBlob.type.includes('mp4') ? 'mp4' : recordedBlob.type.includes('aac') ? 'aac' : 'webm';
+        mediaUrl = await uploadFile(recordedBlob, fileExt);
       }
 
       if (intention.type !== 'text' && !mediaUrl) {
@@ -65,6 +129,7 @@ export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSub
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          task_number: intention.task_number || 1,
           text,
           media_url: mediaUrl,
           media_type: mediaType,
@@ -78,7 +143,7 @@ export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSub
         return;
       }
 
-      onSubmit();
+      setShowSuccessPopup(true);
     } catch (e) {
       setError('Network error. Please try again.');
     } finally {
@@ -94,31 +159,123 @@ export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSub
   };
 
   const startRecording = async () => {
+    setError(null);
     try {
+      if (typeof navigator === 'undefined' || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Your browser does not support microphone access.');
+      }
+      if (typeof MediaRecorder === 'undefined') {
+        throw new Error('Your browser does not support audio recording.');
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+      
+      // Let the browser pick its default MIME — no mimeType option at all
+      // This is the most compatible approach across all browsers
       const recorder = new MediaRecorder(stream);
       mediaRecorderRef.current = recorder;
       chunksRef.current = [];
 
-      recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
-      recorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
-        setRecordedBlob(blob);
-        stream.getTracks().forEach((t) => t.stop());
-        if (timerRef.current) clearInterval(timerRef.current);
+      // Audio Analyzer Setup — isolated from recording
+      try {
+        const AC = window.AudioContext || (window as any).webkitAudioContext;
+        if (AC) {
+          const audioCtx = new AC();
+          if (audioCtx.state === 'suspended') {
+            audioCtx.resume().catch(() => {});
+          }
+          const source = audioCtx.createMediaStreamSource(stream);
+          const analyser = audioCtx.createAnalyser();
+          analyser.fftSize = 32;
+          source.connect(analyser);
+          audioContextRef.current = audioCtx;
+          analyserRef.current = analyser;
+
+          const bufLen = analyser.frequencyBinCount;
+          const buf = new Uint8Array(bufLen);
+
+          const tick = () => {
+            if (!analyserRef.current) return;
+            analyserRef.current.getByteTimeDomainData(buf);
+            let peak = 0;
+            for (let i = 0; i < bufLen; i++) {
+              const v = Math.abs(buf[i] - 128);
+              if (v > peak) peak = v;
+            }
+            const vol = Math.min(1, peak / 64);
+            const m = [0.4, 0.7, 0.5, 0.9, 0.6, 0.8, 0.3, 0.75, 0.45, 0.65];
+            setBarHeights(m.map(mult => Math.max(6, 6 + vol * mult * 36)));
+            animationFrameRef.current = requestAnimationFrame(tick);
+          };
+          animationFrameRef.current = requestAnimationFrame(tick);
+        }
+      } catch (vizErr) {
+        console.warn('Visualizer init failed (non-critical):', vizErr);
+      }
+
+      recorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+          chunksRef.current.push(e.data);
+        }
       };
 
+      recorder.onstop = () => {
+        const recorderMime = recorder.mimeType;
+        const numChunks = chunksRef.current.length;
+        const totalSize = chunksRef.current.reduce((sum, c) => sum + c.size, 0);
+        
+        // Use base MIME type without codec params (e.g. 'audio/webm' not 'audio/webm;codecs=opus')
+        const baseMime = (recorder.mimeType || 'audio/webm').split(';')[0];
+        const blob = new Blob(chunksRef.current, { type: baseMime });
+        
+        // Revoke previous blob URL
+        if (audioUrlRef.current) {
+          URL.revokeObjectURL(audioUrlRef.current);
+        }
+        const url = URL.createObjectURL(blob);
+
+        setDebugInfo(`Chunks: ${numChunks}, Size: ${totalSize} bytes, RecorderMIME: ${recorderMime}, BlobType: ${blob.type}, BlobSize: ${blob.size}`);
+        setRecordedBlob(blob);
+        setAudioUrl(url);
+
+        // Stop mic stream
+        stream.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+        if (timerRef.current) clearInterval(timerRef.current);
+
+        // Clean up visualizer
+        if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+        if (audioContextRef.current) {
+          audioContextRef.current.close().catch(() => {});
+          audioContextRef.current = null;
+        }
+        analyserRef.current = null;
+        setBarHeights([10, 10, 10, 10, 10, 10, 10, 10, 10, 10]);
+      };
+
+      recorder.onerror = (e: any) => {
+        console.error('MediaRecorder error:', e);
+        setError('Recording error occurred. Please try again.');
+        setIsRecording(false);
+      };
+
+      // NO timeslice — single valid audio file produced on stop
       recorder.start();
       setIsRecording(true);
       setRecordedDuration(0);
       timerRef.current = setInterval(() => setRecordedDuration((p) => p + 1), 1000);
-    } catch {
+    } catch (e: any) {
+      console.error('Recording start error:', e);
       setIsRecording(false);
+      setError(e?.message || 'Failed to access microphone. Please allow mic permissions and try again.');
     }
   };
 
   const stopRecording = () => {
-    mediaRecorderRef.current?.stop();
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop();
+    }
     setIsRecording(false);
   };
 
@@ -129,6 +286,41 @@ export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSub
 
   const typeIcon = { photo: Camera, voice: Mic, text: Type }[intention.type] || Type;
   const Icon = typeIcon;
+
+  if (showSuccessPopup) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)' }}>
+        <div className="w-full max-w-sm rounded-2xl p-6 text-center animate-scale-in" style={{ background: '#1C1C1E', border: '1px solid #2C2C2E' }}>
+          <div className="w-12 h-12 bg-green-500/10 border border-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-xl text-green-500 font-bold">✓</span>
+          </div>
+          <h4 className="text-white font-display text-lg mb-2">Response Submitted!</h4>
+          <p className="text-[#8E8E93] text-xs font-thin mb-6 leading-relaxed">
+            Move on to the next task for today, or explore other profiles in the meantime.
+          </p>
+          <div className="flex gap-3">
+            <button
+              onClick={() => {
+                onSubmit();
+              }}
+              className="btn-primary flex-1 py-2.5 text-xs font-semibold"
+            >
+              Next Task
+            </button>
+            <button
+              onClick={() => {
+                onSubmit();
+                router.push('/discover');
+              }}
+              className="btn-secondary flex-1 py-2.5 text-xs font-medium"
+            >
+              Explore Feed
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center" style={{ background: 'rgba(0,0,0,0.7)' }}>
@@ -187,26 +379,90 @@ export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSub
         )}
 
         {intention.type === 'voice' && (
-          <div className="flex flex-col items-center gap-5 py-4">
+          <div className="flex flex-col items-center gap-5 py-4 w-full">
             {recordedBlob ? (
-              <div className="text-center">
-                <p className="text-gold text-sm mb-1">Voice recorded</p>
-                <p className="text-[#8E8E93] text-xs font-thin">{recordedDuration}s</p>
-                <button onClick={() => { setRecordedBlob(null); setRecordedDuration(0); }} className="text-xs text-[#8E8E93] mt-2 underline">
+              <div className="text-center flex flex-col items-center gap-4 py-2">
+                <p className="text-gold text-sm font-medium">Voice recorded ({recordedDuration}s)</p>
+                
+                {/* Debug info */}
+                {debugInfo && (
+                  <p className="text-[10px] text-yellow-500 font-mono break-all px-2">{debugInfo}</p>
+                )}
+
+                {/* Native browser audio player hidden, controlled by the gold button */}
+                {audioUrl && (
+                  <audio
+                    ref={audioElRef}
+                    src={audioUrl}
+                    onEnded={() => setIsPlaying(false)}
+                    preload="auto"
+                    className="hidden"
+                  />
+                )}
+
+                <button
+                  onClick={() => { setError(null); togglePlay(); }}
+                  className="w-14 h-14 rounded-full flex items-center justify-center text-black active:scale-95 transition-all mx-auto"
+                  style={{ background: '#D4AF37' }}
+                >
+                  {isPlaying ? (
+                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                      <rect x="5" y="4" width="4" height="16" />
+                      <rect x="15" y="4" width="4" height="16" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5 fill-current ml-0.5" viewBox="0 0 24 24">
+                      <polygon points="6,4 20,12 6,20" />
+                    </svg>
+                  )}
+                </button>
+                <p className="text-xs text-[#8E8E93] font-thin">
+                  {isPlaying ? 'Playing recording...' : 'Tap to listen'}
+                </p>
+
+                <button
+                  onClick={() => {
+                    if (audioElRef.current) audioElRef.current.pause();
+                    if (audioUrl) URL.revokeObjectURL(audioUrl);
+                    setRecordedBlob(null);
+                    setAudioUrl(null);
+                    setRecordedDuration(0);
+                    setIsPlaying(false);
+                    setDebugInfo('');
+                    setError(null);
+                  }}
+                  className="text-xs text-[#8E8E93] underline hover:text-white mt-1"
+                >
                   Re-record
                 </button>
               </div>
             ) : (
-              <button
-                onClick={isRecording ? stopRecording : startRecording}
-                className="w-20 h-20 rounded-full flex items-center justify-center transition-all"
-                style={{
-                  background: isRecording ? 'rgba(239,68,68,0.15)' : '#111',
-                  border: isRecording ? '2px solid rgba(239,68,68,0.4)' : '1px solid #2A2A2C',
-                }}
-              >
-                <Mic className={`w-8 h-8 ${isRecording ? 'text-red-500 animate-pulse' : 'text-gold'}`} />
-              </button>
+              <div className="flex flex-col items-center gap-4 w-full">
+                {isRecording && (
+                  <div className="flex items-center justify-center gap-1.5 h-12 w-full max-w-[200px] overflow-hidden">
+                    {barHeights.map((height, idx) => (
+                      <div
+                        key={idx}
+                        className="w-[3px] bg-gold rounded-full transition-all duration-75"
+                        style={{
+                          height: `${height}px`,
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+                <button
+                  onClick={isRecording ? stopRecording : startRecording}
+                  className="w-20 h-20 rounded-full flex items-center justify-center transition-all"
+                  style={{
+                    background: isRecording ? 'rgba(239,68,68,0.15)' : '#111',
+                    border: isRecording ? '2px solid rgba(239,68,68,0.4)' : '1px solid #2A2A2C',
+                  }}
+                >
+                  <Mic className={`w-8 h-8 ${isRecording ? 'text-red-500 animate-pulse' : 'text-gold'}`} />
+                </button>
+                {isRecording && <p className="text-red-500 text-xs font-medium animate-pulse">{recordedDuration}s / 30s</p>}
+              </div>
             )}
             <p className="text-xs text-[#8E8E93] font-thin">
               {isRecording ? 'Tap to stop' : recordedBlob ? 'Ready to submit' : 'Tap to start recording'}

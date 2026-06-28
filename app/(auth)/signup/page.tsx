@@ -97,7 +97,7 @@ export default function SignupPage() {
         return
       }
       if (name && data.user) {
-        await supabase.from('profiles').upsert({ id: data.user.id, name })
+        await supabase.from('profiles').upsert({ id: data.user.id, name, persona: 'man' })
       }
       window.location.href = '/onboard'
     } catch (err: unknown) {

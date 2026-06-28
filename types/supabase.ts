@@ -807,6 +807,7 @@ export type Database = {
           tastes: string | null
           verification_status: string | null
           why_me_prompts: string[] | null
+          quiz_answers: Record<string, string> | null
         }
         Insert: {
           about_me_tags?: string[] | null
@@ -854,6 +855,7 @@ export type Database = {
           tastes?: string | null
           verification_status?: string | null
           why_me_prompts?: string[] | null
+          quiz_answers?: Record<string, string> | null
         }
         Update: {
           about_me_tags?: string[] | null
@@ -901,6 +903,7 @@ export type Database = {
           tastes?: string | null
           verification_status?: string | null
           why_me_prompts?: string[] | null
+          quiz_answers?: Record<string, string> | null
         }
         Relationships: [
           {
@@ -1645,6 +1648,10 @@ export type Database = {
         }
         Returns: Json
       }
+      advance_day_if_complete: {
+        Args: { p_connection_id: string }
+        Returns: undefined
+      }
       decline_connection: {
         Args: { connection_id: string }
         Returns: undefined
@@ -1905,7 +1912,7 @@ export type Database = {
       postgis_version: { Args: never; Returns: string }
       postgis_wagyu_version: { Args: never; Returns: string }
       review_connection: {
-        Args: { p_approve: boolean; p_connection_id: string }
+        Args: { p_approved: boolean; p_connection_id: string }
         Returns: undefined
       }
       st_3dclosestpoint: {

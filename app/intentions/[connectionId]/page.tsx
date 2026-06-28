@@ -12,9 +12,10 @@ export default function ConnectionPage({ params }: { params: { connectionId: str
   const router = useRouter();
   const supabase = createClient();
   const [connection, setConnection] = useState<ConnectionWithHost | null>(null);
-  const [submission, setSubmission] = useState<SubmissionRecord | null>(null);
-  const [intention, setIntention] = useState<IntentionRecord | null>(null);
+  const [submissions, setSubmissions] = useState<SubmissionRecord[]>([]);
+  const [intentions, setIntentions] = useState<IntentionRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
     const load = async () => {
@@ -38,31 +39,30 @@ export default function ConnectionPage({ params }: { params: { connectionId: str
         .from('submissions')
         .select('*')
         .eq('connection_id', connectionId)
-        .eq('day_number', connTyped.current_day ?? 1)
-        .order('day_number', { ascending: true });
+        .eq('day_number', connTyped.current_day ?? 1);
 
       const subs = (submissionsList ?? []) as SubmissionRecord[];
 
-      let intData: IntentionRecord | null = null;
+      let intentionsList: IntentionRecord[] = [];
       if (connTyped.standard_id) {
-        const { data: intentionsList } = await supabase
+        const { data: intentionsRes } = await supabase
           .from('intentions')
           .select('*')
           .eq('standard_id', connTyped.standard_id)
           .eq('day_number', connTyped.current_day ?? 1)
-          .limit(1);
+          .order('task_number', { ascending: true });
 
-        intData = ((intentionsList?.[0]) as IntentionRecord) ?? null;
+        intentionsList = (intentionsRes ?? []) as IntentionRecord[];
       }
 
       setConnection(connTyped);
-      setSubmission(subs[0] ?? null);
-      setIntention(intData);
+      setSubmissions(subs);
+      setIntentions(intentionsList);
       setLoading(false);
     };
 
     load();
-  }, [connectionId, supabase, router]);
+  }, [connectionId, supabase, router, refreshTrigger]);
 
   if (loading) {
     return (
@@ -80,5 +80,12 @@ export default function ConnectionPage({ params }: { params: { connectionId: str
     );
   }
 
-  return <ConnectionView connection={connection} submission={submission} intention={intention} />;
+  return (
+    <ConnectionView
+      connection={connection}
+      submissions={submissions}
+      intentions={intentions}
+      onRefresh={() => setRefreshTrigger((prev) => prev + 1)}
+    />
+  );
 }

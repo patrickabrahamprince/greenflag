@@ -20,12 +20,26 @@ const USERS = [
   {
     email: 'test-man@local.dev',
     password: 'testpass123',
-    profile: { name: 'Test Man', persona: 'man', gender: 'man', onboarding_completed: true },
+    profile: {
+      name: 'Test Man',
+      persona: 'man',
+      gender: 'man',
+      onboarding_completed: true,
+      elo_score: 1000,
+    },
   },
   {
     email: 'test-woman@local.dev',
     password: 'testpass123',
-    profile: { name: 'Test Woman', persona: 'woman', gender: 'woman', onboarding_completed: true },
+    profile: {
+      name: 'Test Woman',
+      persona: 'woman',
+      gender: 'woman',
+      onboarding_completed: true,
+      elo_score: 1000,
+      photos: ['https://i.pravatar.cc/300?img=4'],
+      interests: ['Fitness', 'Cooking', 'Travel'],
+    },
   },
 ] as const
 

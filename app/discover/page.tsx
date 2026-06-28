@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2 } from 'lucide-react'
-import { toast } from 'sonner'
+import { ArrowLeft, Loader2, Coins } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { Button } from '@/components/ui/button'
 import { CoinBadge } from '@/components/shared/coin-badge'
 import { ProfileImageCarousel } from '@/components/shared/ProfileImageCarousel'
@@ -15,6 +15,7 @@ export default function DiscoverPage() {
   const [page, setPage] = useState(0)
   const [hasMore, setHasMore] = useState(true)
   const [persona, setPersona] = useState<string | null>(null)
+  const [confirmProfileId, setConfirmProfileId] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
 
@@ -132,7 +133,13 @@ export default function DiscoverPage() {
 
               <div className="mt-auto mb-16">
                 <Button
-                  onClick={() => handleBegin(p.id)}
+                  onClick={() => {
+                    if (persona === 'woman') {
+                      handleBegin(p.id);
+                    } else {
+                      setConfirmProfileId(p.id);
+                    }
+                  }}
                   disabled={loading}
                   className="w-full bg-[#D4AF37] text-black text-base font-semibold active:scale-95 disabled:opacity-50 h-14"
                 >
@@ -148,6 +155,38 @@ export default function DiscoverPage() {
           </div>
         )}
       </div>
+
+      {confirmProfileId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)' }}>
+          <div className="w-full max-w-sm rounded-2xl p-6 text-center animate-scale-in" style={{ background: '#1C1C1E', border: '1px solid #2C2C2E' }}>
+            <div className="w-12 h-12 bg-gold/10 border border-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Coins className="w-6 h-6 text-gold" />
+            </div>
+            <h4 className="text-white font-display text-lg mb-2">Unlock Standard?</h4>
+            <p className="text-[#8E8E93] text-xs font-thin mb-6 leading-relaxed">
+              This action will deduct 100 coins from your wallet to begin a 3-day connection request.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmProfileId(null)}
+                className="btn-secondary flex-1 py-2 text-xs font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  const targetId = confirmProfileId;
+                  setConfirmProfileId(null);
+                  handleBegin(targetId);
+                }}
+                className="btn-primary flex-1 py-2 text-xs font-semibold"
+              >
+                Confirm (100 coins)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -27,13 +27,14 @@ DROP INDEX IF EXISTS submissions_conn_day_task_key;
 CREATE UNIQUE INDEX IF NOT EXISTS submissions_conn_day_task_key ON submissions(connection_id, day_number, task_number);
 
 -- 1.3 — Migrate legacy data + drop old table
-INSERT INTO submissions (connection_id, day_number, task_number, proof_text, media_url, status, created_at)
-SELECT connection_id, day_number, 1, proof_text, media_url,
-       CASE WHEN approved THEN 'approved' ELSE 'pending' END, created_at
+INSERT INTO submissions (connection_id, day_number, task_number, content, media_url, approved, moderation_status, submitted_at)
+SELECT connection_id, task_number, 1, text_content, media_url,
+       true, 'approved', submitted_at
 FROM task_submissions ON CONFLICT DO NOTHING;
 DROP TABLE IF EXISTS task_submissions;
 
 -- 1.4 — Fix review_connection: set chat_unlocked boolean + create day-1 tasks
+DROP FUNCTION IF EXISTS review_connection(UUID, BOOLEAN);
 CREATE OR REPLACE FUNCTION review_connection(p_connection_id UUID, p_approved BOOLEAN)
 RETURNS VOID
 LANGUAGE plpgsql
@@ -66,8 +67,8 @@ BEGIN
     LIMIT 1;
 
     -- Insert pending submission rows for every day-1 task
-    INSERT INTO submissions (connection_id, day_number, task_number, prompt, status, moderation_status)
-    SELECT p_connection_id, i.day_number, i.task_number, i.prompt, 'pending', 'approved'
+    INSERT INTO submissions (connection_id, day_number, task_number, prompt, approved, moderation_status)
+    SELECT p_connection_id, i.day_number, i.task_number, i.prompt, false, 'approved'
     FROM intentions i
     WHERE i.standard_id = v_standard_id AND i.day_number = 1
     ON CONFLICT (connection_id, day_number, task_number) DO NOTHING;
@@ -80,6 +81,7 @@ END;
 $$;
 
 -- 1.5 — Helper: count tasks for a day, advance current_day if all approved
+DROP FUNCTION IF EXISTS advance_day_if_complete(UUID);
 CREATE OR REPLACE FUNCTION advance_day_if_complete(p_connection_id UUID)
 RETURNS BOOLEAN
 LANGUAGE plpgsql
@@ -112,7 +114,7 @@ BEGIN
   FROM submissions s
   WHERE s.connection_id = p_connection_id
     AND s.day_number = v_connection.current_day
-    AND s.status = 'approved';
+    AND s.approved = true;
 
   IF v_done >= v_total AND v_total > 0 AND v_connection.current_day < 3 THEN
     v_next_day := v_connection.current_day + 1;
@@ -123,8 +125,8 @@ BEGIN
     WHERE id = p_connection_id;
 
     -- Insert next day's tasks
-    INSERT INTO submissions (connection_id, day_number, task_number, prompt, status, moderation_status)
-    SELECT p_connection_id, i.day_number, i.task_number, i.prompt, 'pending', 'approved'
+    INSERT INTO submissions (connection_id, day_number, task_number, prompt, approved, moderation_status)
+    SELECT p_connection_id, i.day_number, i.task_number, i.prompt, false, 'approved'
     FROM intentions i
     WHERE i.standard_id = v_standard_id AND i.day_number = v_next_day
     ON CONFLICT (connection_id, day_number, task_number) DO NOTHING;

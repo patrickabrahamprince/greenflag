@@ -16,7 +16,7 @@ export async function POST(
 
     const { error } = await supabase.rpc('review_connection', {
       p_connection_id: id,
-      p_approve: approve,
+      p_approved: approve,
     });
 
     if (error) {

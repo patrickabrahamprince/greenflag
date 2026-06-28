@@ -11,10 +11,12 @@ export function QueueItemDetail({ item, onApprove, onReject }: QueueItemDetailPr
   return (
     <div className="card">
       <div className="aspect-video bg-surface-light rounded-xl flex items-center justify-center mb-4">
-        {item.img ? (
+        {item.media_type === 'voice' ? (
+          <audio controls src={item.img} className="w-full px-4" />
+        ) : item.img ? (
           <img src={item.img} alt="" className="w-full h-full object-cover rounded-xl" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
         ) : (
-          <span className="text-muted text-sm">Photo Preview</span>
+          <span className="text-muted text-sm">No Preview Available</span>
         )}
       </div>
 

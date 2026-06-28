@@ -45,8 +45,8 @@ export async function GET(
 
     return NextResponse.json({
       ...connection,
-      host: hostRes || null,
-      guest: guestRes || null,
+      host: hostRes?.data || null,
+      guest: guestRes?.data || null,
       submissions: submissions || [],
       intentions: intentions || [],
     });

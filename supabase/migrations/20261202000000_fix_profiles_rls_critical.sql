@@ -8,6 +8,7 @@ BEGIN;
 
 DROP POLICY IF EXISTS "profiles_public_read" ON profiles;
 
+DROP POLICY IF EXISTS "users_self_insert" ON profiles;
 CREATE POLICY "users_self_insert" ON profiles
   FOR INSERT
   TO authenticated

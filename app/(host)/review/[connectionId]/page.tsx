@@ -119,8 +119,8 @@ export default function ReviewPage({
       <ReviewBackButton onClick={() => router.push('/interested')} />
       <ReviewGuestHeader guest={connection.guest} submissionCount={submissions.length} />
       <ReviewTaskList tasks={tasks} submissions={submissions} />
-      {submissions.length < 8 && <ReviewIncompleteNotice />}
-      {submissions.length === 8 && (
+      {submissions.length < 3 && <ReviewIncompleteNotice />}
+      {submissions.length === 3 && (
         <ReviewActionBar
           onReject={() => setShowRejectModal(true)}
           onApprove={handleApprove}

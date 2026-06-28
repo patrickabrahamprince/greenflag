@@ -53,8 +53,8 @@ export async function POST(req: Request) {
       intentions: { dayNumber: number; type: string; prompt: string }[];
     };
 
-    if (!Array.isArray(intentions) || intentions.length !== 8) {
-      return NextResponse.json({ error: 'Exactly 8 intentions required' }, { status: 400 });
+    if (!Array.isArray(intentions) || intentions.length !== 3) {
+      return NextResponse.json({ error: 'Exactly 3 intentions required' }, { status: 400 });
     }
 
     let sid = standardId;

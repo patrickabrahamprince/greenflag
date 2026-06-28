@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useOnboardingStore } from '@/lib/store';
-import { InterestTagGrid } from '@/components/discovery/InterestTagGrid';
+import { InterestGrid } from '../../../components/discovery/InterestGrid';
 import { WhyMePrompts } from '@/components/discovery/WhyMePrompts';
 import { useInterestsSelection } from '@/components/discovery/useInterestsSelection';
 import toast from 'react-hot-toast';
@@ -24,30 +24,10 @@ export default function InterestsPage() {
   const isWoman = persona === 'woman';
 
   const { interestsHave, lookingFor, toggle, validate } = useInterestsSelection();
-  const [whyMePrompts, setWhyMePrompts] = useState(['', '', '']);
   const [loading, setLoading] = useState(false);
 
-  const handlePromptChange = (index: number, value: string) => {
-    setWhyMePrompts((prev) => {
-      const next = [...prev];
-      next[index] = value;
-      return next;
-    });
-  };
-
-  const validateMan = (): boolean => {
-    if (!validate(isWoman)) return false;
-    if (!isWoman) {
-      const allFilled = whyMePrompts.every((p) => p.trim().length >= 50);
-      if (!allFilled) { toast.error('Each reason must be at least 50 characters'); return false; }
-      const allValid = whyMePrompts.every((p) => p.trim().length <= 150);
-      if (!allValid) { toast.error('Each reason must be 150 characters or fewer'); return false; }
-    }
-    return true;
-  };
-
   const handleContinue = async () => {
-    if (!validateMan()) return;
+    if (!validate(isWoman)) return;
     setLoading(true);
 
     const { data: { user } } = await supabase.auth.getUser();
@@ -58,41 +38,38 @@ export default function InterestsPage() {
       return;
     }
 
-    if (isWoman) {
-      const { error } = await supabase.from('profiles').upsert({
-        id: user.id, persona: persona ?? undefined, interests_have: interestsHave, interests_looking_for: lookingFor,
-      });
-      if (error) { toast.error(error.message); setLoading(false); return; }
-    } else {
-      const { error } = await supabase.from('profiles').upsert({
-        id: user.id, persona: persona ?? undefined, interests_have: interestsHave,
-        why_me_prompts: whyMePrompts.map((p) => p.trim()),
-      });
-      if (error) { toast.error(error.message); setLoading(false); return; }
+    const { error } = await supabase.from('profiles').upsert({
+      id: user.id,
+      persona: persona ?? undefined,
+      interests_have: interestsHave,
+      interests_looking_for: lookingFor,
+    });
+    
+    if (error) {
+      toast.error(error.message);
+      setLoading(false);
+      return;
     }
+
     setLoading(false);
     toast.success('Profile completed!');
-    router.replace('/discover');
+    router.replace('/onboard/rules');
   };
 
   return (
     <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6">
-      <button onClick={() => router.push('/onboard/profile')} className="text-[#8E8E93] hover:text-white transition-colors mb-6 w-fit">
+      <button onClick={() => router.push('/onboard/quiz')} className="text-[#8E8E93] hover:text-white transition-colors mb-6 w-fit">
         <ArrowLeft size={24} />
       </button>
 
       <div className="flex-1 max-w-md mx-auto w-full space-y-8 pb-8">
-        <InterestTagGrid title="5 things about you" description="Pick exactly 5"
-          options={INTEREST_TAGS} selected={interestsHave} max={5} onToggle={(i) => toggle('have', i)}
+        <InterestGrid title="5 things about you" description="Pick exactly 5"
+          options={INTEREST_TAGS} selected={interestsHave} max={5} onToggle={(_, val) => toggle('have', val)}
           dataTestIdPrefix={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'interest-have' : undefined} />
 
-        {isWoman ? (
-          <InterestTagGrid title="5 things you&apos;re looking for in him" description="Pick exactly 5"
-            options={INTEREST_TAGS} selected={lookingFor} max={5} onToggle={(i) => toggle('looking', i)}
-            dataTestIdPrefix={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'interest-looking' : undefined} />
-        ) : (
-          <WhyMePrompts prompts={whyMePrompts} onPromptChange={handlePromptChange} />
-        )}
+        <InterestGrid title={isWoman ? "5 things you're looking for in him" : "5 things you're looking for in her"} description="Pick exactly 5"
+          options={INTEREST_TAGS} selected={lookingFor} max={5} onToggle={(_, val) => toggle('looking', val)}
+          dataTestIdPrefix={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'interest-looking' : undefined} />
 
         <button onClick={handleContinue} disabled={loading}
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'submit-onboarding' : undefined}

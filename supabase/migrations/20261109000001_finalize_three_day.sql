@@ -27,6 +27,7 @@ CREATE UNIQUE INDEX submissions_conn_day_task_key ON submissions(connection_id, 
 DROP TABLE IF EXISTS task_submissions;
 
 -- 1.4 — Final advance_day_if_complete: caps at day 3, marks connected
+DROP FUNCTION IF EXISTS advance_day_if_complete(UUID);
 CREATE OR REPLACE FUNCTION advance_day_if_complete(p_connection_id UUID)
 RETURNS VOID
 LANGUAGE plpgsql
@@ -55,15 +56,15 @@ BEGIN
 
   SELECT COUNT(*) INTO v_approved_tasks
   FROM submissions
-  WHERE connection_id = p_connection_id AND day_number = v_current_day AND status = 'approved';
+  WHERE connection_id = p_connection_id AND day_number = v_current_day AND approved = true;
 
   IF v_approved_tasks >= v_total_tasks AND v_total_tasks > 0 THEN
     IF v_current_day < 3 THEN
       UPDATE connections SET current_day = current_day + 1, updated_at = NOW()
       WHERE id = p_connection_id;
 
-      INSERT INTO submissions (connection_id, day_number, task_number, prompt, status)
-      SELECT p_connection_id, i.day_number, i.task_number, i.prompt, 'pending'
+      INSERT INTO submissions (connection_id, day_number, task_number, prompt, approved)
+      SELECT p_connection_id, i.day_number, i.task_number, i.prompt, false
       FROM intentions i
       WHERE i.standard_id = v_standard_id AND i.day_number = v_current_day + 1
       ON CONFLICT DO NOTHING;
@@ -77,6 +78,7 @@ END;
 $$;
 
 -- 1.5 — Simplified review_connection: unlock chat + create day-1 tasks
+DROP FUNCTION IF EXISTS review_connection(UUID, BOOLEAN);
 CREATE OR REPLACE FUNCTION review_connection(p_connection_id UUID, p_approved BOOLEAN)
 RETURNS VOID
 LANGUAGE plpgsql
@@ -93,8 +95,8 @@ BEGIN
         updated_at = NOW()
     WHERE id = p_connection_id;
 
-    INSERT INTO submissions (connection_id, day_number, task_number, prompt, status)
-    SELECT p_connection_id, i.day_number, i.task_number, i.prompt, 'pending'
+    INSERT INTO submissions (connection_id, day_number, task_number, prompt, approved)
+    SELECT p_connection_id, i.day_number, i.task_number, i.prompt, false
     FROM intentions i
     JOIN standards s ON s.id = i.standard_id
     JOIN connections c ON c.host_id = s.woman_id

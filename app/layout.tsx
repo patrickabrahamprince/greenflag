@@ -1,6 +1,5 @@
 import './globals.css'
 import { Playfair_Display } from 'next/font/google'
-import { Toaster } from 'sonner'
 import { Providers } from '@/components/providers'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import Script from 'next/script'
@@ -28,7 +27,6 @@ export default function RootLayout({
         <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
         <ErrorBoundary>
           <Providers>{children}</Providers>
-          <Toaster richColors position="top-center" />
         </ErrorBoundary>
       </body>
     </html>

@@ -29,6 +29,7 @@ export interface SubmissionRecord {
   submitted_at: string | null;
   auto_approved: boolean | null;
   prompt?: string | null;
+  task_number?: number;
 }
 
 export interface IntentionRecord {

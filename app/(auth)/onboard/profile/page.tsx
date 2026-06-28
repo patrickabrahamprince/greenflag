@@ -64,7 +64,6 @@ export default function ProfilePage() {
 
   const detectLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      toast.error('Geolocation is not supported by your browser');
       return;
     }
     setGpsDetecting(true);
@@ -92,11 +91,9 @@ export default function ProfilePage() {
             setCity(display);
             toast.success(`Location detected: ${display}`);
           } else {
-            toast.error('Could not detect your city');
             setGpsDenied(true);
           }
         } catch {
-          toast.error('Could not detect your city');
           setGpsDenied(true);
         } finally {
           setGpsDetecting(false);
@@ -105,7 +102,6 @@ export default function ProfilePage() {
       () => {
         setGpsDetecting(false);
         setGpsDenied(true);
-        toast.error('Location access denied. Please enter your city manually.');
       },
       { timeout: 10000 }
     );
@@ -167,7 +163,7 @@ export default function ProfilePage() {
     });
     setLoading(false);
     if (error) { toast.error(error.message); return; }
-    router.push('/onboard/interests');
+    router.push('/onboard/quiz');
   };
 
   return (

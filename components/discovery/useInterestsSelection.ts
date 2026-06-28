@@ -21,8 +21,8 @@ export function useInterestsSelection() {
       toast.error('Pick exactly 5 things about you');
       return false;
     }
-    if (isWoman && lookingFor.length !== 5) {
-      toast.error('Pick exactly 5 things you\'re looking for');
+    if (lookingFor.length !== 5) {
+      toast.error("Pick exactly 5 things you're looking for");
       return false;
     }
     return true;

@@ -60,10 +60,6 @@ export function ProfileInfo({
         )}
       </div>
 
-      {bio && (
-        <p className="text-[#EDEADE]/80 text-sm mt-4 leading-relaxed">{bio}</p>
-      )}
-
       {matchOverlapping.length > 0 && (
         <div className="mt-4">
           <p className="text-xs text-[#EDEADE]/40 uppercase tracking-wider mb-2">Shared Interests</p>
@@ -100,6 +96,10 @@ export function ProfileInfo({
           })}
         </div>
       </div>
+
+      {bio && (
+        <p className="text-[#EDEADE]/80 text-sm mt-5 leading-relaxed bg-[#1C1C1E]/30 p-4 rounded-2xl border border-white/5">{bio}</p>
+      )}
 
       {instagram_url && (
         <a

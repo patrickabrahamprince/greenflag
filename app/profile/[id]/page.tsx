@@ -6,6 +6,7 @@ import { useProfilePage } from '@/hooks/useProfilePage';
 import { ProfileHeroSection } from '@/components/shared/ProfileHeroSection';
 import { ProfileInfo } from '@/components/shared/ProfileInfo';
 import { ProfileActionBar } from '@/components/shared/ProfileActionBar';
+import { InterestGrid } from '../../components/discovery/InterestGrid';
 import { ReportModal } from '@/components/shared/ReportModal';
 
 export default function ViewProfilePage() {
@@ -54,7 +55,8 @@ export default function ViewProfilePage() {
         matchPercent={match?.percent}
         matchOverlapping={match?.overlapping}
       />
-      <div className="px-5">
+      <InterestGrid title="Interests" options={profile.interests ?? []} selected={profile.interests ?? []} readOnly />
+<div className="px-5">
         <ProfileActionBar
           isOwn={isOwn}
           hasConnection={!!connection}

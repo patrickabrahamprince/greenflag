@@ -25,16 +25,16 @@ export async function POST(req: Request) {
 
     const { intentions } = (await req.json()) as { intentions: IntentionPayload[] };
 
-    if (!Array.isArray(intentions) || intentions.length !== 8) {
-      return NextResponse.json({ error: 'Exactly 8 intentions required' }, { status: 400 });
+    if (!Array.isArray(intentions) || intentions.length !== 3) {
+      return NextResponse.json({ error: 'Exactly 3 intentions required' }, { status: 400 });
     }
 
-    const validDays = [1, 2, 3, 4, 5, 6, 7, 8];
+    const validDays = [1, 2, 3];
     const hasAllDays = validDays.every((day) =>
       intentions.some((i) => i.dayNumber === day && i.prompt.trim().length > 0)
     );
     if (!hasAllDays) {
-      return NextResponse.json({ error: 'Each day 1-8 must have a prompt' }, { status: 400 });
+      return NextResponse.json({ error: 'Each day 1-3 must have a prompt' }, { status: 400 });
     }
 
     const { data: existing } = await supabase

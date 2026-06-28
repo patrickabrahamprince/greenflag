@@ -11,11 +11,6 @@ const DEFAULTS: Intention[] = [
   { dayNumber: 1, type: 'voice', prompt: 'Tell me 3 books that changed you' },
   { dayNumber: 2, type: 'photo', prompt: 'Show me your workspace' },
   { dayNumber: 3, type: 'text', prompt: 'Plan our ideal first date' },
-  { dayNumber: 4, type: 'voice', prompt: 'What does ambition mean to you?' },
-  { dayNumber: 5, type: 'photo', prompt: 'Show me something you\'re proud of' },
-  { dayNumber: 6, type: 'text', prompt: 'What are your non-negotiables in a relationship?' },
-  { dayNumber: 7, type: 'voice', prompt: 'Tell me about a moment that defined you' },
-  { dayNumber: 8, type: 'text', prompt: 'Why do you want to connect with me?' },
 ];
 
 export default function StandardBuilderPage() {
@@ -24,6 +19,7 @@ export default function StandardBuilderPage() {
   const [editingDay, setEditingDay] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [activating, setActivating] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   const loadStandard = useCallback(async () => {
     try {
@@ -33,7 +29,7 @@ export default function StandardBuilderPage() {
         router.replace('/connections');
         return;
       }
-      if (data.standardId && data.intentions?.length === 8) {
+      if (data.standardId && data.intentions?.length === 3) {
         setIntentions(
           data.intentions.map((i: { day_number: number; type: IntentionType; prompt: string }) => ({
             dayNumber: i.day_number,
@@ -85,8 +81,7 @@ export default function StandardBuilderPage() {
         toast.error(data.error);
         return;
       }
-      toast.success('Standard activated!');
-      router.push('/connections');
+      setShowSuccessPopup(true);
     } catch {
       toast.error('Failed to activate standard');
     } finally {
@@ -110,7 +105,7 @@ export default function StandardBuilderPage() {
         </button>
 
         <h1 className="text-xl font-semibold text-[#EDEADE] mb-1">Build Your Standard</h1>
-        <p className="text-xs text-[#8E8E93] mb-6">8 days. 8 intentions. Let him prove it.</p>
+        <p className="text-xs text-[#8E8E93] mb-6">3 days. 3 intentions. Let him prove it.</p>
 
         <div className="space-y-3 mb-8">
           {intentions.map((intention) => (
@@ -141,6 +136,26 @@ export default function StandardBuilderPage() {
           onPromptChange={handlePromptChange}
           onClose={() => setEditingDay(null)}
         />
+      )}
+
+      {showSuccessPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)' }}>
+          <div className="w-full max-w-sm rounded-2xl p-6 text-center animate-scale-in" style={{ background: '#1C1C1E', border: '1px solid #2C2C2E' }}>
+            <div className="w-12 h-12 bg-green-500/10 border border-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-xl text-green-500 font-bold">✓</span>
+            </div>
+            <h4 className="text-white font-display text-lg mb-2">Standard Activated!</h4>
+            <p className="text-[#8E8E93] text-xs font-thin mb-6 leading-relaxed">
+              Your 3-day standard is live. Men will now have to prove themselves by completing these intentions to connect with you.
+            </p>
+            <button
+              onClick={() => router.push('/connections')}
+              className="btn-primary w-full py-2.5 text-xs font-semibold"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
