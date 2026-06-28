@@ -117,53 +117,63 @@ export default function DiscoverPage() {
             key={p.id}
             ref={i === profiles.length - 1 ? lastProfileRef : null}
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
-            className="snap-start snap-always min-h-screen w-full flex flex-col relative"
+            className="snap-start snap-always min-h-screen w-full flex flex-col"
           >
-            <div className="absolute inset-0 w-full h-full">
+            <div className="relative w-full aspect-[3/4] flex-shrink-0">
               <ProfileImageCarousel images={p.photos} />
+              <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#FAF9F7] to-transparent pointer-events-none" />
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
-              <h1 className="font-['Playfair_Display'] text-4xl text-white font-semibold">
+            <div className="flex-1 flex flex-col px-8 pt-2 pb-10">
+              <h1 className="font-['Playfair_Display'] text-4xl text-ink font-semibold">
                 {p.name}
               </h1>
-              <p className="font-['Inter'] text-sm text-white/80 tracking-wide uppercase mt-1">
+              <p className="font-['Inter'] text-sm text-ink/60 tracking-wide uppercase mt-1">
                 {p.age ? `${p.age}` : ''}{p.age && p.city_auto ? ' · ' : ''}{p.city_auto}
               </p>
               {p.bio && (
-                <p className="text-white/90 text-base leading-relaxed max-w-md mt-3">{p.bio}</p>
+                <p className="text-ink/80 text-base leading-relaxed max-w-md mt-3">{p.bio}</p>
               )}
               <div className="flex flex-wrap gap-2 mt-4">
                 {(p.interests_have ?? p.interests ?? []).slice(0, 5).map((interest: string) => (
-                  <span key={interest} className="px-3 py-1 border border-white/30 text-white/90 text-xs uppercase tracking-wide">
+                  <span key={interest} className="px-3 py-1 border border-[#E8E6E1] text-ink/70 text-xs uppercase tracking-wide">
                     {interest}
                   </span>
                 ))}
               </div>
-            </div>
 
-            <div className="fixed bottom-24 right-8 flex flex-col gap-3 z-40">
-              <button
-                onClick={() => scrollToNext(i)}
-                aria-label="Pass"
-                className="size-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center active:scale-95 transition-all"
-              >
-                <X className="w-6 h-6 text-white" />
-              </button>
-              <button
-                onClick={() => {
-                  if (persona === 'woman') {
-                    handleBegin(p.id);
-                  } else {
-                    setConfirmProfileId(p.id);
-                  }
-                }}
-                disabled={loading}
-                aria-label="Like"
-                className="size-14 rounded-full bg-[#C9A961] flex items-center justify-center active:scale-95 transition-all disabled:opacity-50"
-              >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin text-white" /> : <Heart className="w-6 h-6 text-white" />}
-              </button>
+              <div className="flex items-center gap-4 mt-auto pt-6">
+                <button
+                  onClick={() => scrollToNext(i)}
+                  aria-label="Pass"
+                  className="size-14 rounded-full bg-[#F0EDE9] border border-[#E8E6E1] flex items-center justify-center active:scale-95 transition-all"
+                >
+                  <X className="w-6 h-6 text-ink/60" />
+                </button>
+                <button
+                  onClick={() => {
+                    if (persona === 'woman') {
+                      handleBegin(p.id);
+                    } else {
+                      setConfirmProfileId(p.id);
+                    }
+                  }}
+                  disabled={loading}
+                  aria-label="Like"
+                  className="flex-1 h-14 rounded-full bg-[#C9A961] flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
+                >
+                  {loading ? (
+                    <Loader2 className="w-5 h-5 animate-spin text-white" />
+                  ) : (
+                    <>
+                      <Heart className="w-5 h-5 text-white" />
+                      <span className="text-white text-xs uppercase tracking-wide font-medium">
+                        {persona === 'woman' ? 'View Profile' : 'Meet Her Standard'}
+                      </span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         ))}
