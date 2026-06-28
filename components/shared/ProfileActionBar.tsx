@@ -57,7 +57,7 @@ export function ProfileActionBar({
               });
               if (!res.ok) throw new Error('Failed to start');
               const { connection_id } = await res.json();
-              router.push(`/intentions/${connection_id}/1`);
+              router.push(`/intentions/${connection_id}`);
             } catch (e) {
               toast.error((e as Error).message);
             } finally {

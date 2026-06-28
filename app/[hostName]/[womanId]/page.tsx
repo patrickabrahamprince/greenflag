@@ -49,7 +49,7 @@ export default function StandardViewPage() {
   }, [loadData]);
 
   const handleStarted = (connectionId: string) => {
-    router.push(`/connection/${connectionId}`);
+    router.push(`/intentions/${connectionId}`);
   };
 
   if (loading) {
