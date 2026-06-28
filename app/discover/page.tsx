@@ -142,7 +142,7 @@ export default function DiscoverPage() {
               </div>
             </div>
 
-            <div className="fixed bottom-8 right-8 flex flex-col gap-3 z-40">
+            <div className="fixed bottom-24 right-8 flex flex-col gap-3 z-40">
               <button
                 onClick={() => scrollToNext(i)}
                 aria-label="Pass"
