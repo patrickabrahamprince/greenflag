@@ -5,8 +5,9 @@
   "installCommand": "npm install",
   "regions": ["bom1"],
   "crons": [
-    { "path": "/api/cron/expire-connections", "schedule": "0 6 * * *" },
-    { "path": "/api/cron/auto-approve", "schedule": "0 12 * * *" },
-    { "path": "/api/cron/monthly-bonus", "schedule": "30 18 * * *" }
+    {
+      "path": "/api/cron/daily",
+      "schedule": "0 3 * * *"
+    }
   ]
 }
