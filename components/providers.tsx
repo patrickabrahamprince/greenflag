@@ -22,7 +22,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           .eq('id', user.id)
           .single()
           .then(({ data }) => {
-            if (data) setUser(data);
+            if (data) setUser(data as any);
           });
         supabase
           .from('wallets')
@@ -47,7 +47,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             .eq('id', session.user.id)
             .single()
             .then(({ data }) => {
-              if (data) setUser(data);
+              if (data) setUser(data as any);
             });
         }
       }

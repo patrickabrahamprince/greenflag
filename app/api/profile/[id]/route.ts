@@ -38,8 +38,8 @@ export async function GET(
       };
     }
 
-    const viewerId = viewer?.gender === 'woman' ? viewer.id : target.id;
-    const targetId = viewer?.gender === 'woman' ? target.id : viewer?.id;
+    const viewerId = viewer?.persona === 'woman' ? viewer.id : target.id;
+    const targetId = viewer?.persona === 'woman' ? target.id : viewer?.id;
 
     const { data: connection } = await supabase
       .from('connections')
