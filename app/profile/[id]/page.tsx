@@ -20,8 +20,8 @@ export default function ViewProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#00C853]" />
+      <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[#C9A961]" />
       </div>
     );
   }
@@ -32,7 +32,7 @@ export default function ViewProfilePage() {
   const photo = photos[photoIdx] || '';
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] pb-24">
+    <div className="min-h-screen bg-[#FAF9F7] pb-24">
       <ProfileHeroSection
         photo={photo}
         name={profile.name}
@@ -56,7 +56,7 @@ export default function ViewProfilePage() {
         matchOverlapping={match?.overlapping}
       />
       <InterestGrid title="Interests" options={profile.interests ?? []} selected={profile.interests ?? []} readOnly />
-<div className="px-5">
+      <div className="px-8 pb-6">
         <ProfileActionBar
           isOwn={isOwn}
           hasConnection={!!connection}

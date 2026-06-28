@@ -62,7 +62,7 @@ export default function AdminAudit() {
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-6 h-6 animate-spin text-[#00C853]" />
+          <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
         </div>
       ) : actions.length === 0 ? (
         <div className="card py-16 text-center">

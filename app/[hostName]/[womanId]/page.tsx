@@ -56,7 +56,7 @@ export default function StandardViewPage() {
     return (
       <PageShell>
         <div className="flex items-center justify-center h-[60vh]">
-          <Loader2 className="w-8 h-8 animate-spin text-[#00C853]" />
+          <Loader2 className="w-8 h-8 animate-spin text-[#C9A961]" />
         </div>
       </PageShell>
     );

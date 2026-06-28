@@ -89,7 +89,7 @@ export function useCoinPurchase({ onBalanceUpdate, onTransactionsUpdate }: UseCo
           name: data.user_name || '',
           email: data.user_email || '',
         },
-        theme: { color: '#00C853' },
+        theme: { color: '#C9A961' },
         modal: {
           ondismiss: function () {
             setPurchasing(null);

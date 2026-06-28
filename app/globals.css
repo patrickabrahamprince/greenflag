@@ -1,10 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-html, body { background: #0A0A0A!important; }
+html, body { background: #FAF9F7 !important; }
 * { -webkit-tap-highlight-color: transparent; }
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
-@import url('https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap');
 
 @layer base {
   * {
@@ -12,96 +10,82 @@ html, body { background: #0A0A0A!important; }
   }
 
   body {
-    @apply bg-black-deep text-white font-sans antialiased;
+    @apply bg-cream text-ink font-sans antialiased;
   }
 
   ::selection {
-    @apply bg-gold/30 text-white;
+    @apply bg-gold/20 text-ink;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply font-medium rounded-full px-6 py-3
+    @apply bg-gold text-white font-medium rounded-xl px-8 py-3
+           text-xs uppercase tracking-wide
            transition-all duration-300 ease-out
-           active:scale-[0.98]
+           hover:bg-[#B89851] active:scale-[0.98]
            disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
-    background: linear-gradient(135deg, #009624 0%, #00C853 40%, #33D375 70%, #00C853 100%);
-    color: #080808;
   }
 
   .btn-secondary {
-    @apply text-gold font-medium rounded-full px-6 py-3
+    @apply text-ink font-medium rounded-xl px-8 py-3
+           text-xs uppercase tracking-wide
+           border border-border bg-transparent
            transition-all duration-300 ease-out
-           hover:bg-gold/5 active:scale-[0.98];
-    border: 1px solid rgba(212, 175, 55, 0.4);
-    background: transparent;
+           hover:border-gold active:scale-[0.98];
   }
 
   .btn-ghost {
-    @apply text-muted font-medium rounded-full px-4 py-2
+    @apply text-ink/50 font-medium rounded-xl px-4 py-2
+           text-xs uppercase tracking-wide
            transition-all duration-300 ease-out
-           hover:text-white hover:bg-white/5 active:scale-[0.98];
+           hover:text-ink active:scale-[0.98];
   }
 
   .btn-danger {
-    @apply bg-red-500/10 text-red-500 font-medium rounded-full px-6 py-3
+    @apply bg-red-50 text-red-600 font-medium rounded-xl px-8 py-3
+           text-xs uppercase tracking-wide
            transition-all duration-300 ease-out
-           hover:bg-red-500/20 active:scale-[0.98];
+           hover:bg-red-100 active:scale-[0.98];
   }
 
   .card {
-    @apply bg-surface rounded-2xl p-4
+    @apply bg-white border border-border rounded-none p-6
            transition-all duration-300 ease-out;
-    border: none;
   }
 
   .card-hover {
-    @apply card hover:bg-surface-light;
-    &:hover {
-      border-left: 2px solid rgba(212, 175, 55, 0.6);
-    }
+    @apply card hover:border-gold;
   }
 
   .input {
-    @apply w-full rounded-xl px-4 py-3
-           text-white placeholder:text-muted/60
+    @apply w-full rounded-none px-0 py-3
+           text-ink placeholder:text-ink/40 bg-transparent
+           border-0 border-b border-border
            transition-all duration-300 ease-out
-           focus:outline-none;
-    background: #161616;
-    border: 1px solid #1E1E1E;
-  }
-
-  .input:focus {
-    border-color: rgba(212, 175, 55, 0.5);
+           focus:outline-none focus:border-gold;
   }
 
   .input-error {
     @apply border-red-500 focus:border-red-500;
   }
 
-  .gold-shimmer {
-    background: linear-gradient(135deg, #009624 0%, #00C853 40%, #33D375 70%, #00C853 100%);
-    background-size: 200% 100%;
-    animation: shimmer 2s infinite linear;
-  }
-
   .text-gradient {
-    @apply bg-gradient-to-r from-gold via-gold-light to-gold bg-clip-text text-transparent;
+    @apply text-gold;
   }
 
   .skeleton {
-    @apply bg-surface-light rounded-lg animate-pulse;
+    @apply bg-[#F0EDE9] rounded-none animate-pulse;
   }
 
   .blur-bg {
     @apply backdrop-blur-xl;
-    background: rgba(8, 8, 8, 0.6);
+    background: rgba(250, 249, 247, 0.8);
   }
 
   .page-container {
-    @apply min-h-screen max-w-app mx-auto px-4 pb-24;
-    background: #080808;
+    @apply min-h-screen max-w-app mx-auto px-8 pb-24;
+    background: #FAF9F7;
   }
 
   .page-header {
@@ -109,39 +93,34 @@ html, body { background: #0A0A0A!important; }
   }
 
   .empty-state {
-    @apply flex flex-col items-center;
-    html, body { background: #0A0A0A!important; }
-    * { -webkit-tap-highlight-color: transparent; }
-    @apply justify-center py-20 text-center;
+    @apply flex flex-col items-center justify-center py-20 text-center;
   }
 
   .empty-state-icon {
-    @apply w-16 h-16 rounded-full flex items-center justify-center mb-4 text-muted;
-    background: #111111;
+    @apply w-16 h-16 rounded-full flex items-center justify-center mb-4 text-ink/40 bg-[#F0EDE9];
   }
 
   .empty-state-title {
-    @apply text-lg font-medium text-white mb-2;
+    @apply text-lg font-medium text-ink mb-2;
   }
 
   .empty-state-text {
-    @apply text-muted text-sm max-w-xs;
+    @apply text-ink/50 text-sm max-w-xs;
   }
 
   .hairline {
     height: 1px;
     width: 100%;
-    background: rgba(212, 175, 55, 0.25);
+    background: #E8E6E1;
   }
 
   .nav-glass {
-    @apply backdrop-blur-xl;
-    background: rgba(8, 8, 8, 0.65);
-    border-top: 1px solid rgba(212, 175, 55, 0.15);
+    @apply backdrop-blur-xl border-t border-border;
+    background: rgba(250, 249, 247, 0.8);
   }
 
   .gold-border-left {
-    border-left: 2px solid rgba(212, 175, 55, 0.6);
+    border-left: 2px solid #C9A961;
   }
 
   .match-arc {
@@ -156,13 +135,13 @@ html, body { background: #0A0A0A!important; }
 
   .match-arc-bg {
     fill: none;
-    stroke: #1E1E1E;
+    stroke: #E8E6E1;
     stroke-width: 2;
   }
 
   .match-arc-fill {
     fill: none;
-    stroke: #00C853;
+    stroke: #C9A961;
     stroke-width: 2;
     stroke-linecap: round;
     transition: stroke-dashoffset 1s ease-out;

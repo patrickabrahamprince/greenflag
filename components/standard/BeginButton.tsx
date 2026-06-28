@@ -47,7 +47,7 @@ export function BeginButton({ womanId, coinBalance, onStarted }: BeginButtonProp
       <button
         onClick={() => (canBegin ? setShowConfirm(true) : router.push('/coins'))}
         disabled={starting}
-        className="w-full h-14 rounded-xl bg-[#00C853] text-black text-sm font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-50"
+        className="w-full h-14 rounded-xl bg-[#C9A961] text-black text-sm font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-50"
       >
         {starting ? (
           <Loader2 className="w-5 h-5 animate-spin" />

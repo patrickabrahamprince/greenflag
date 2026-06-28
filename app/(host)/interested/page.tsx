@@ -28,7 +28,7 @@ function GuestCardComponent({ guest, onNavigate }: { guest: GuestCard; onNavigat
           <p className="text-sm text-muted font-thin mt-0.5">{guest.tasksCompleted}/{TOTAL_TASKS} tasks</p>
           <div className="flex items-center gap-2 mt-2">
             <div className="flex-1 h-0.5 rounded-full overflow-hidden" style={{ background: '#1E1E1E' }}>
-              <div className="h-full rounded-full transition-all duration-700 ease-out" style={{ width: `${pct}%`, background: 'linear-gradient(90deg, #009624, #00C853)' }} />
+              <div className="h-full rounded-full transition-all duration-700 ease-out" style={{ width: `${pct}%`, background: 'linear-gradient(90deg, #B89851, #C9A961)' }} />
             </div>
             <span className="text-xs text-muted font-thin">{pct}%</span>
           </div>

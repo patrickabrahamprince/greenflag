@@ -407,7 +407,7 @@ export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSub
                 <button
                   onClick={() => { setError(null); togglePlay(); }}
                   className="w-14 h-14 rounded-full flex items-center justify-center text-black active:scale-95 transition-all mx-auto"
-                  style={{ background: '#00C853' }}
+                  style={{ background: '#C9A961' }}
                 >
                   {isPlaying ? (
                     <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">

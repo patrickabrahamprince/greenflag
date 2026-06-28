@@ -21,7 +21,7 @@ export function FinalDecisionBar({ onPass, onGreenFlag, processing }: FinalDecis
         <button
           onClick={onGreenFlag}
           disabled={processing}
-          className="flex-1 h-12 rounded-xl bg-[#00C853] text-black font-semibold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
+          className="flex-1 h-12 rounded-xl bg-[#C9A961] text-black font-semibold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
         >
           {processing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Flag className="w-5 h-5" />}
           Green Flag

@@ -105,14 +105,14 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0A0A0A' }}>
-        <Loader2 className="w-6 h-6 animate-spin" style={{ color: '#00C853' }} />
+      <div className="min-h-screen flex items-center justify-center bg-[#FAF9F7]">
+        <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#0A0A0A' }}>
+    <div className="min-h-screen flex flex-col bg-[#FAF9F7]">
       <div className="max-w-app mx-auto w-full flex-1 flex flex-col">
         <ChatHeader
           partnerName={partnerName}

@@ -8,20 +8,22 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        black: '#0A0A0A',
-        'black-deep': '#080808',
-        gold: '#00C853',
-        'gold-light': '#33D375',
-        'gold-dark': '#009624',
-        blush: '#00C853',
-        surface: '#111111',
-        'surface-light': '#161616',
-        border: '#1E1E1E',
-        muted: '#9A9A9A',
+        cream: '#FAF9F7',
+        ink: '#1A1A1A',
+        black: '#1A1A1A',
+        'black-deep': '#1A1A1A',
+        gold: '#C9A961',
+        'gold-light': '#D4B876',
+        'gold-dark': '#B89851',
+        blush: '#C9A961',
+        surface: '#FFFFFF',
+        'surface-light': '#F0EDE9',
+        border: '#E8E6E1',
+        muted: '#1A1A1A99',
       },
       fontFamily: {
         display: ['Playfair Display', 'serif'],
-        sans: ['Satoshi', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       letterSpacing: {
         'widest-xl': '0.25em',

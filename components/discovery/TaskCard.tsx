@@ -47,7 +47,7 @@ export function TaskCard({
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-medium text-[#00C853]">
+        <span className="text-xs font-medium text-[#C9A961]">
           Task {taskNumber}/8
         </span>
         {isTaskSubmitted && (
@@ -99,7 +99,7 @@ export function TaskCard({
               ) : (
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-white/10 rounded-xl p-6 text-center cursor-pointer hover:border-[#00C853]/30 transition-colors"
+                  className="border-2 border-dashed border-white/10 rounded-xl p-6 text-center cursor-pointer hover:border-[#C9A961]/30 transition-colors"
                 >
                   <Image className="w-6 h-6 text-[#8E8E93] mx-auto mb-2" />
                   <p className="text-xs text-[#8E8E93]">Tap to upload an image</p>
@@ -132,8 +132,8 @@ export function TaskCard({
             onClick={onSubmit}
             disabled={isSubmitting || isUploading}
             className={cn(
-              'mt-2 w-full h-9 rounded-lg bg-[#00C853]/10 border border-[#00C853]/30',
-              'text-[#00C853] text-xs font-medium active:scale-95 transition-all',
+              'mt-2 w-full h-9 rounded-lg bg-[#C9A961]/10 border border-[#C9A961]/30',
+              'text-[#C9A961] text-xs font-medium active:scale-95 transition-all',
               'disabled:opacity-50 flex items-center justify-center gap-2'
             )}
           >

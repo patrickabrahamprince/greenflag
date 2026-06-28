@@ -23,12 +23,12 @@ export function Header({
   className,
 }: HeaderProps) {
   return (
-    <div className={cn('relative flex items-center justify-center py-4', className)}>
+    <div className={cn('relative flex items-center justify-center h-16 px-8 bg-[#FAF9F7]/80 backdrop-blur-xl border-b border-[#E8E6E1]', className)}>
       {showBack && <BackButton />}
       <div className="flex flex-col items-center">
-        <h1 className="text-lg font-display font-semibold text-white">{title}</h1>
+        <h1 className="font-['Playfair_Display'] text-2xl text-ink tracking-tight">{title}</h1>
         {subtitle && (
-          <p className="text-[10px] text-[#8E8E93]">{subtitle}</p>
+          <p className="text-[10px] uppercase tracking-widest text-ink/40">{subtitle}</p>
         )}
       </div>
       {rightElement ? (

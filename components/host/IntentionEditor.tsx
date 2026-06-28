@@ -59,7 +59,7 @@ export function IntentionEditor({
           placeholder="What should he share?"
           maxLength={150}
           rows={3}
-          className="w-full bg-[#0A0A0A] border border-[#2C2C2E] rounded-xl px-4 py-3 text-sm text-[#EDEADE] placeholder:text-[#8E8E93] resize-none focus:outline-none focus:border-[#00C853] transition-colors"
+          className="w-full bg-[#0A0A0A] border border-[#2C2C2E] rounded-xl px-4 py-3 text-sm text-[#EDEADE] placeholder:text-[#8E8E93] resize-none focus:outline-none focus:border-[#C9A961] transition-colors"
         />
         <p className="text-right text-[10px] text-[#8E8E93] mt-1">{prompt.length}/150</p>
       </div>

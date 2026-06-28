@@ -41,7 +41,7 @@ export function ProfileActionBar({
       ) : hasConnection ? (
         <button
           onClick={onContinue}
-          className="w-full h-14 rounded-full bg-[#00C853] text-[#0A0A0A] font-medium active:scale-95 transition-all duration-200"
+          className="w-full h-14 rounded-full bg-[#C9A961] text-[#0A0A0A] font-medium active:scale-95 transition-all duration-200"
         >
           Continue to Tasks
         </button>
@@ -65,7 +65,7 @@ export function ProfileActionBar({
             }
           }}
           disabled={loading || connecting}
-          className="w-full h-14 rounded-full bg-[#00C853] text-[#0A0A0A] font-medium active:scale-95 transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full h-14 rounded-full bg-[#C9A961] text-[#0A0A0A] font-medium active:scale-95 transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
         >
           {loading || connecting ? (
             <>

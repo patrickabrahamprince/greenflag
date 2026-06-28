@@ -92,7 +92,7 @@ export default function StandardBuilderPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-[#00C853] border-t-transparent rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-[#C9A961] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -120,7 +120,7 @@ export default function StandardBuilderPage() {
         <button
           onClick={handleSetActive}
           disabled={!allFilled || activating}
-          className="w-full h-12 rounded-xl bg-[#00C853] text-black text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full h-12 rounded-xl bg-[#C9A961] text-black text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <Sparkles className="w-4 h-4" />
           {activating ? 'Activating...' : 'Set Active'}

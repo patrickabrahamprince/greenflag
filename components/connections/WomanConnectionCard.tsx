@@ -48,7 +48,7 @@ export function WomanConnectionCard({
       data-testid="connection-card"
       onClick={() => router.push(`/review/${connectionId}`)}
       className={`card w-full text-left p-4 transition-all duration-300 ${
-        isEnded ? 'opacity-50' : 'hover:border-[#00C853]/20'
+        isEnded ? 'opacity-50' : 'hover:border-[#C9A961]/20'
       }`}
       style={{ background: '#1C1C1E' }}
     >

@@ -11,15 +11,12 @@ export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
     <div className={cn('flex', isOwn ? 'justify-end' : 'justify-start')}>
       <div
         className={cn(
-          'max-w-[80%] rounded-2xl px-4 py-2.5 animate-fade-in',
-          isOwn ? 'rounded-br-md' : 'rounded-bl-md'
+          'max-w-[80%] rounded-none px-5 py-3 animate-fade-in',
+          isOwn ? 'bg-[#1A1A1A] text-white ml-auto' : 'bg-[#F0EDE9] text-ink'
         )}
-        style={{
-          background: isOwn ? '#FFFFFF' : '#1C1C1E',
-        }}
       >
-        <p className="text-sm leading-relaxed" style={{ color: isOwn ? '#0A0A0A' : '#EDEADE' }}>{message.content}</p>
-        <p className="text-[10px] mt-1 text-right" style={{ color: isOwn ? '#8E8E93' : '#8E8E93' }}>
+        <p className="text-sm leading-relaxed">{message.content}</p>
+        <p className={cn('text-[10px] mt-1 text-right', isOwn ? 'text-white/50' : 'text-ink/40')}>
           {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </p>
       </div>

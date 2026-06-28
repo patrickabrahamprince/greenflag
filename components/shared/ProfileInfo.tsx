@@ -14,7 +14,6 @@ interface ProfileInfoProps {
 }
 
 export function ProfileInfo({
-  name,
   age,
   bio,
   job,
@@ -26,48 +25,40 @@ export function ProfileInfo({
   matchOverlapping = [],
 }: ProfileInfoProps) {
   return (
-    <div className="px-5 -mt-20 relative z-10">
-      <div className="flex items-end gap-3 mb-1">
-        <h1 className="font-display text-3xl text-[#EDEADE]">
-          {name}, {age}
-        </h1>
-        {matchPercent !== undefined && (
-          <div className="flex items-center gap-1 bg-[#00C853]/20 backdrop-blur-md rounded-full px-3 py-1">
-            <span className="text-[#00C853] text-sm font-bold">{matchPercent}%</span>
-            <span className="text-[#00C853]/60 text-xs">match</span>
-          </div>
-        )}
-      </div>
-
-      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm text-[#EDEADE]/60">
+    <div className="bg-[#FAF9F7] px-8 pt-8">
+      <div className="flex items-center gap-x-4 gap-y-1 flex-wrap text-sm text-ink/60 border-b border-[#E8E6E1] py-6">
+        <span className="text-ink/80">{age}</span>
         {city_auto && (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             <MapPin className="w-3.5 h-3.5" />
             <span>{city_auto}</span>
           </div>
         )}
         {job && (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             <Briefcase className="w-3.5 h-3.5" />
             <span>{job}</span>
           </div>
         )}
         {height && (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             <Ruler className="w-3.5 h-3.5" />
             <span>{height}</span>
           </div>
         )}
+        {matchPercent !== undefined && (
+          <span className="text-[#C9A961] text-xs uppercase tracking-wide">{matchPercent}% match</span>
+        )}
       </div>
 
       {matchOverlapping.length > 0 && (
-        <div className="mt-4">
-          <p className="text-xs text-[#EDEADE]/40 uppercase tracking-wider mb-2">Shared Interests</p>
+        <div className="border-b border-[#E8E6E1] py-6">
+          <p className="text-xs text-ink/40 uppercase tracking-widest mb-3">Shared Interests</p>
           <div className="flex flex-wrap gap-2">
             {matchOverlapping.map((interest) => (
               <span
                 key={interest}
-                className="px-3 py-1 rounded-full text-xs border border-[#00C853] bg-[#00C853]/15 text-[#00C853]"
+                className="px-3 py-1 text-xs uppercase tracking-wide border border-[#C9A961] text-[#C9A961]"
               >
                 {interest}
               </span>
@@ -76,18 +67,18 @@ export function ProfileInfo({
         </div>
       )}
 
-      <div className="mt-4">
-        <p className="text-xs text-[#EDEADE]/40 uppercase tracking-wider mb-2">Interests</p>
+      <div className="border-b border-[#E8E6E1] py-6">
+        <p className="text-xs text-ink/40 uppercase tracking-widest mb-3">Interests</p>
         <div className="flex flex-wrap gap-2">
           {interests.map((interest) => {
             const isMatch = matchOverlapping.includes(interest);
             return (
               <span
                 key={interest}
-                className={`px-3 py-1 rounded-full text-xs border ${
+                className={`px-3 py-1 text-xs uppercase tracking-wide border ${
                   isMatch
-                    ? 'border-[#00C853] bg-[#00C853]/15 text-[#00C853]'
-                    : 'border-white/10 bg-white/5 text-[#EDEADE]/70'
+                    ? 'border-[#C9A961] text-[#C9A961]'
+                    : 'border-[#E8E6E1] text-ink/60'
                 }`}
               >
                 {interest}
@@ -98,7 +89,7 @@ export function ProfileInfo({
       </div>
 
       {bio && (
-        <p className="text-[#EDEADE]/80 text-sm mt-5 leading-relaxed bg-[#1C1C1E]/30 p-4 rounded-2xl border border-white/5">{bio}</p>
+        <p className="text-ink/80 text-base leading-relaxed border-b border-[#E8E6E1] py-6">{bio}</p>
       )}
 
       {instagram_url && (
@@ -110,7 +101,7 @@ export function ProfileInfo({
           }
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 mt-4 text-[#EDEADE]/50 hover:text-[#EDEADE]/80 transition-colors"
+          className="flex items-center gap-2 py-6 text-ink/50 hover:text-[#C9A961] transition-colors"
         >
           <Instagram className="w-4 h-4" />
           <span className="text-sm">{instagram_url}</span>

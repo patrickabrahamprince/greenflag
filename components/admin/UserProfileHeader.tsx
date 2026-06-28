@@ -20,7 +20,7 @@ export function UserProfileHeader({ user }: UserProfileHeaderProps) {
         <div className="flex items-center gap-2 mb-1">
           <h1 className="text-xl font-display text-[#EDEADE] truncate">{user.name}</h1>
           {user.is_banned && <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 shrink-0">Banned</span>}
-          {user.is_admin && <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#00C853]/10 text-[#00C853] shrink-0">Admin</span>}
+          {user.is_admin && <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] shrink-0">Admin</span>}
         </div>
         <p className="text-xs text-[#8E8E93]">{user.email}</p>
         <p className="text-xs text-[#5A5A5D] mt-1">ID: {user.id.slice(0, 12)}...</p>

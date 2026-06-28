@@ -39,7 +39,7 @@ export function QueueItemCard({ item, isSelected, onSelect }: QueueItemCardProps
   return (
     <button
       onClick={() => onSelect(item)}
-      className={`w-full card text-left flex items-center gap-3 ${isSelected ? 'border-[#00C853]/50' : ''}`}
+      className={`w-full card text-left flex items-center gap-3 ${isSelected ? 'border-[#C9A961]/50' : ''}`}
     >
       <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center overflow-hidden shrink-0">
         {item.img ? (

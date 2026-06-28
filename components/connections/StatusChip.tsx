@@ -9,8 +9,8 @@ interface StatusChipProps {
 
 const VARIANT_STYLES: Record<ChipVariant, string> = {
   review: 'bg-red-500/10 text-red-400',
-  working: 'bg-[#00C853]/10 text-[#00C853]',
-  connected: 'bg-[#00C853]/15 text-[#00C853]',
+  working: 'bg-[#C9A961]/10 text-[#C9A961]',
+  connected: 'bg-[#C9A961]/15 text-[#C9A961]',
   ended: 'bg-[#8E8E93]/10 text-[#8E8E93]',
   progress: 'bg-[#8E8E93]/10 text-[#EDEADE]',
 };

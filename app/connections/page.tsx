@@ -15,7 +15,7 @@ export default function WomanConnectionsPage() {
         className="min-h-screen flex items-center justify-center"
         style={{ background: '#0A0A0A' }}
       >
-        <Loader2 className="w-8 h-8 animate-spin text-[#00C853]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#C9A961]" />
       </div>
     );
   }

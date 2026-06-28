@@ -1,4 +1,4 @@
-import { Send, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 interface MessageInputProps {
   input: string;
@@ -9,8 +9,8 @@ interface MessageInputProps {
 
 export function MessageInput({ input, onInputChange, onSend, sending }: MessageInputProps) {
   return (
-    <div className="p-4" style={{ borderTop: '1px solid #1E1E1E' }}>
-      <div className="flex items-center gap-2">
+    <div className="px-8 py-4 border-t border-[#E8E6E1]">
+      <div className="flex items-center gap-4">
         <input
           type="text"
           value={input}
@@ -22,14 +22,9 @@ export function MessageInput({ input, onInputChange, onSend, sending }: MessageI
         <button
           onClick={onSend}
           disabled={!input.trim() || sending}
-          className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ease-out active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
-          style={{ background: 'linear-gradient(135deg, #009624, #00C853)' }}
+          className="text-[#C9A961] font-semibold uppercase text-xs tracking-wide disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
         >
-          {sending ? (
-            <Loader2 className="w-4 h-4 animate-spin text-black" />
-          ) : (
-            <Send className="w-4 h-4 text-black" />
-          )}
+          {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Send'}
         </button>
       </div>
     </div>

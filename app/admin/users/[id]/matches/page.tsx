@@ -44,7 +44,7 @@ export default function AdminMatchesPage({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-6 h-6 animate-spin text-[#00C853]" />
+        <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
       </div>
     );
   }
@@ -104,7 +104,7 @@ export default function AdminMatchesPage({
               {(match.interests || []).map((tag) => (
                 <span
                   key={tag}
-                  className="px-2 py-0.5 bg-[#00C853]/10 text-[#00C853] text-[10px] rounded"
+                  className="px-2 py-0.5 bg-[#C9A961]/10 text-[#C9A961] text-[10px] rounded"
                 >
                   {tag}
                 </span>

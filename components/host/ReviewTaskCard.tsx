@@ -23,7 +23,7 @@ export function ReviewTaskCard({ task, taskNumber, submission }: ReviewTaskCardP
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-medium text-[#00C853]">Task {taskNumber}/8</span>
+        <span className="text-xs font-medium text-[#C9A961]">Task {taskNumber}/8</span>
         {submission ? (
           <span className="text-xs text-green-400 flex items-center gap-1">
             <Check className="w-3 h-3" /> Submitted

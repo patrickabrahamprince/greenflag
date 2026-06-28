@@ -2,9 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2, Coins } from 'lucide-react'
+import { ArrowLeft, Loader2, Coins, X, Heart } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { Button } from '@/components/ui/button'
 import { CoinBadge } from '@/components/shared/coin-badge'
 import { ProfileImageCarousel } from '@/components/shared/ProfileImageCarousel'
 import { createClient } from '@/lib/supabase/client'
@@ -18,6 +17,8 @@ export default function DiscoverPage() {
   const [confirmProfileId, setConfirmProfileId] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
+
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   const observer = useRef<IntersectionObserver>()
   const lastProfileRef = useCallback((node: HTMLDivElement) => {
@@ -68,6 +69,13 @@ export default function DiscoverPage() {
     }
   }
 
+  function scrollToNext(index: number) {
+    const container = scrollRef.current
+    if (!container) return
+    const next = container.children[index + 1] as HTMLElement | undefined
+    next?.scrollIntoView({ behavior: 'smooth' })
+  }
+
   async function handleBegin(profileId: string) {
     if (loading) return
     setLoading(true)
@@ -95,81 +103,91 @@ export default function DiscoverPage() {
   }
 
   return (
-    <div className="relative bg-[#0A0A0A] min-h-screen">
-      <div className="fixed top-0 z-50 w-full flex items-center justify-between pt-safe px-4 py-4 bg-gradient-to-b from-[#0A0A0A] via-[#0A0A0A]/80 to-transparent">
-        <button onClick={() => router.push('/connections')} className="btn-ghost p-2 -ml-2">
-          <ArrowLeft className="w-5 h-5" />
+    <div className="relative bg-[#FAF9F7] min-h-screen">
+      <div className="fixed top-0 z-50 w-full flex items-center justify-between px-8 py-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent">
+        <button onClick={() => router.push('/connections')} className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center">
+          <ArrowLeft className="w-5 h-5 text-white" />
         </button>
         <CoinBadge />
       </div>
 
-      <div className="snap-y snap-mandatory overflow-y-scroll overscroll-none h-screen">
+      <div ref={scrollRef} className="snap-y snap-mandatory overflow-y-scroll overscroll-none h-screen">
         {profiles.map((p, i) => (
           <div
             key={p.id}
             ref={i === profiles.length - 1 ? lastProfileRef : null}
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
-            className="snap-start h-screen w-full flex flex-col"
+            className="snap-start snap-always min-h-screen w-full flex flex-col relative"
           >
-            <div className="w-full flex-shrink-0 max-h-[55vh] overflow-hidden mt-14" style={{ aspectRatio: '3/4' }}>
+            <div className="absolute inset-0 w-full h-full">
               <ProfileImageCarousel images={p.photos} />
             </div>
 
-            <div className="flex-1 flex flex-col px-4 pb-14">
-              <div className="flex flex-col gap-1 pt-5">
-                <h1 className="text-white text-2xl font-semibold">
-                  {p.name}{p.age ? `, ${p.age}` : ''}
-                </h1>
-                <p className="text-white/50 text-sm">{p.city_auto}</p>
-              </div>
-
+            <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
+              <h1 className="font-['Playfair_Display'] text-4xl text-white font-semibold">
+                {p.name}
+              </h1>
+              <p className="font-['Inter'] text-sm text-white/80 tracking-wide uppercase mt-1">
+                {p.age ? `${p.age}` : ''}{p.age && p.city_auto ? ' · ' : ''}{p.city_auto}
+              </p>
+              {p.bio && (
+                <p className="text-white/90 text-base leading-relaxed max-w-md mt-3">{p.bio}</p>
+              )}
               <div className="flex flex-wrap gap-2 mt-4">
                 {(p.interests_have ?? p.interests ?? []).slice(0, 5).map((interest: string) => (
-                  <span key={interest} className="px-3 py-1 rounded-full bg-white/10 text-[#EDEADE] text-xs">
+                  <span key={interest} className="px-3 py-1 border border-white/30 text-white/90 text-xs uppercase tracking-wide">
                     {interest}
                   </span>
                 ))}
               </div>
+            </div>
 
-              <div className="mt-auto mb-16">
-                <Button
-                  onClick={() => {
-                    if (persona === 'woman') {
-                      handleBegin(p.id);
-                    } else {
-                      setConfirmProfileId(p.id);
-                    }
-                  }}
-                  disabled={loading}
-                  className="w-full bg-[#00C853] text-black text-base font-semibold active:scale-95 disabled:opacity-50 h-14"
-                >
-                  {loading ? <Loader2 className="animate-spin" /> : persona === 'woman' ? 'View Profile' : 'Meet Her Standard'}
-                </Button>
-              </div>
+            <div className="fixed bottom-8 right-8 flex flex-col gap-3 z-40">
+              <button
+                onClick={() => scrollToNext(i)}
+                aria-label="Pass"
+                className="size-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center active:scale-95 transition-all"
+              >
+                <X className="w-6 h-6 text-white" />
+              </button>
+              <button
+                onClick={() => {
+                  if (persona === 'woman') {
+                    handleBegin(p.id);
+                  } else {
+                    setConfirmProfileId(p.id);
+                  }
+                }}
+                disabled={loading}
+                aria-label="Like"
+                className="size-14 rounded-full bg-[#C9A961] flex items-center justify-center active:scale-95 transition-all disabled:opacity-50"
+              >
+                {loading ? <Loader2 className="w-5 h-5 animate-spin text-white" /> : <Heart className="w-6 h-6 text-white" />}
+              </button>
             </div>
           </div>
         ))}
         {loading && (
-          <div className="snap-start h-screen flex items-center justify-center">
-            <Loader2 className="animate-spin text-[#00C853]" size={32} />
+          <div className="snap-start min-h-screen flex items-center justify-center">
+            <Loader2 className="animate-spin text-[#C9A961]" size={32} />
           </div>
         )}
       </div>
 
       {confirmProfileId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)' }}>
-          <div className="w-full max-w-sm rounded-2xl p-6 text-center animate-scale-in" style={{ background: '#1C1C1E', border: '1px solid #2C2C2E' }}>
-            <div className="w-12 h-12 bg-gold/10 border border-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Coins className="w-6 h-6 text-gold" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
+          <div className="w-full max-w-sm bg-[#FAF9F7] p-8 text-center">
+            <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Coins className="w-6 h-6 text-[#C9A961]" />
             </div>
-            <h4 className="text-white font-display text-lg mb-2">Unlock Standard?</h4>
-            <p className="text-[#8E8E93] text-xs font-thin mb-6 leading-relaxed">
+            <h4 className="font-['Playfair_Display'] text-2xl text-ink mb-2">Unlock Standard?</h4>
+            <p className="text-ink/60 text-sm leading-relaxed mb-6">
               This action will deduct 100 coins from your wallet to begin a 3-day connection request.
             </p>
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               <button
                 onClick={() => setConfirmProfileId(null)}
-                className="btn-secondary flex-1 py-2 text-xs font-medium"
+                className="btn-secondary flex-1"
               >
                 Cancel
               </button>
@@ -179,9 +197,9 @@ export default function DiscoverPage() {
                   setConfirmProfileId(null);
                   handleBegin(targetId);
                 }}
-                className="btn-primary flex-1 py-2 text-xs font-semibold"
+                className="btn-primary flex-1"
               >
-                Confirm (100 coins)
+                Confirm
               </button>
             </div>
           </div>
