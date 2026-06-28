@@ -141,7 +141,7 @@ export default function DiscoverPage() {
                     }
                   }}
                   disabled={loading}
-                  className="w-full bg-[#D4AF37] text-black text-base font-semibold active:scale-95 disabled:opacity-50 h-14"
+                  className="w-full bg-[#00C853] text-black text-base font-semibold active:scale-95 disabled:opacity-50 h-14"
                 >
                   {loading ? <Loader2 className="animate-spin" /> : persona === 'woman' ? 'View Profile' : 'Meet Her Standard'}
                 </Button>
@@ -151,7 +151,7 @@ export default function DiscoverPage() {
         ))}
         {loading && (
           <div className="snap-start h-screen flex items-center justify-center">
-            <Loader2 className="animate-spin text-[#D4AF37]" size={32} />
+            <Loader2 className="animate-spin text-[#00C853]" size={32} />
           </div>
         )}
       </div>

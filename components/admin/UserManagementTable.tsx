@@ -61,7 +61,7 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick }: UserManag
                 {u.is_banned ? (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400">Banned</span>
                 ) : u.is_admin ? (
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-[#D4AF37]/10 text-[#D4AF37]">Admin</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-[#00C853]/10 text-[#00C853]">Admin</span>
                 ) : (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-400">Active</span>
                 )}
@@ -78,7 +78,7 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick }: UserManag
                   {u.persona === 'woman' && (
                     <button
                       onClick={() => router.push(`/admin/host-dashboard/${u.id}`)}
-                      className="btn-ghost text-xs p-1.5 text-[#D4AF37]"
+                      className="btn-ghost text-xs p-1.5 text-[#00C853]"
                       title="Woman Dashboard"
                     >
                       <LayoutDashboard className="w-3.5 h-3.5" />

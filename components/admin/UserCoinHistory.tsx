@@ -18,10 +18,10 @@ export function UserCoinHistory({ transactions, currentBalance }: UserCoinHistor
     <div className="bg-[#111111] border border-white/[0.06] rounded-2xl p-5">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Coins className="w-4 h-4 text-[#D4AF37]" />
+          <Coins className="w-4 h-4 text-[#00C853]" />
           <h3 className="text-sm font-medium text-[#EDEADE]">Coin History</h3>
         </div>
-        <span className="text-xs text-[#D4AF37] font-medium">Balance: {currentBalance}</span>
+        <span className="text-xs text-[#00C853] font-medium">Balance: {currentBalance}</span>
       </div>
 
       {transactions.length === 0 ? (

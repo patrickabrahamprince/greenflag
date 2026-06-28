@@ -26,6 +26,20 @@ export async function POST(
       return NextResponse.json({ error: 'text or media_url required' }, { status: 400 });
     }
 
+    const SUBMIT_COST = 10;
+    const { data: wallet } = await admin
+      .from('wallets')
+      .select('balance')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if ((wallet?.balance ?? 0) < SUBMIT_COST) {
+      return NextResponse.json(
+        { error: 'INSUFFICIENT_COINS', coins_needed: SUBMIT_COST },
+        { status: 402 }
+      );
+    }
+
     const { data: connection, error: connErr } = await admin
       .from('connections')
       .select('id, guest_id, host_id, current_day, status')
@@ -108,21 +122,21 @@ export async function POST(
         .eq('task_number', task_number ?? 1);
 
       if (!approveErr) {
-        const { error: advErr } = await admin.rpc('advance_day_if_complete', {
+        const { data: advanced, error: advErr } = await admin.rpc('advance_day_if_complete', {
           p_connection_id: id,
         });
         if (!advErr) {
-          const { data: updatedConn } = await admin
-            .from('connections')
-            .select('current_day')
-            .eq('id', id)
-            .single();
-          if (updatedConn && updatedConn.current_day !== day_number) {
-            dayAdvanced = true;
-          }
+          dayAdvanced = advanced === true;
         }
       }
     }
+
+    await admin.rpc('deduct_coins', {
+      p_user_id: user.id,
+      p_amount: SUBMIT_COST,
+      p_description: 'Task submission',
+      p_metadata: { connection_id: id, day_number, task_number },
+    });
 
     return NextResponse.json({ success: true, day_advanced: dayAdvanced });
   } catch (e) {

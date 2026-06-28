@@ -28,7 +28,7 @@ function GuestCardComponent({ guest, onNavigate }: { guest: GuestCard; onNavigat
           <p className="text-sm text-muted font-thin mt-0.5">{guest.tasksCompleted}/{TOTAL_TASKS} tasks</p>
           <div className="flex items-center gap-2 mt-2">
             <div className="flex-1 h-0.5 rounded-full overflow-hidden" style={{ background: '#1E1E1E' }}>
-              <div className="h-full rounded-full transition-all duration-700 ease-out" style={{ width: `${pct}%`, background: 'linear-gradient(90deg, #B8962F, #D4AF37)' }} />
+              <div className="h-full rounded-full transition-all duration-700 ease-out" style={{ width: `${pct}%`, background: 'linear-gradient(90deg, #009624, #00C853)' }} />
             </div>
             <span className="text-xs text-muted font-thin">{pct}%</span>
           </div>
@@ -76,13 +76,14 @@ export default function InterestedPage() {
   }, [supabase, router]);
 
   const applicants = connections.filter((c) => c.status === 'pending' || c.status === 'tasks_submitted');
-  const inProgress = connections.filter((c) => c.status === 'active');
+  const inProgress = connections.filter((c) => c.status === 'active' || c.status === 'awaiting_decision');
   const connected = connections.filter((c) => c.status === 'chat_unlocked' || c.status === 'completed');
   const tabData: Record<typeof TABS[number], GuestCard[]> = { Applicants: applicants, 'In Progress': inProgress, Connected: connected };
   const currentList = tabData[activeTab];
 
   function handleNavigate(connectionId: string, status: string) {
-    if (status === 'chat_unlocked' || status === 'completed') router.push(`/messages/${connectionId}`);
+    if (status === 'awaiting_decision') router.push(`/decide/${connectionId}`);
+    else if (status === 'chat_unlocked' || status === 'completed') router.push(`/messages/${connectionId}`);
     else router.push(`/review/${connectionId}`);
   }
 

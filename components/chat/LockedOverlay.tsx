@@ -13,7 +13,7 @@ export function LockedOverlay({ backRoute, currentDay }: LockedOverlayProps) {
   return (
     <div className="absolute inset-0 z-10 flex flex-col items-center justify-center backdrop-blur-sm px-8" style={{ background: 'rgba(10,10,10,0.92)' }}>
       <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4" style={{ background: '#1C1C1E' }}>
-        <Lock className="w-7 h-7" style={{ color: '#D4AF37' }} />
+        <Lock className="w-7 h-7" style={{ color: '#00C853' }} />
       </div>
       <h3 className="text-lg font-display italic mb-2" style={{ color: '#EDEADE' }}>Messages Locked</h3>
       <p className="text-sm text-center mb-6 font-thin" style={{ color: '#8E8E93' }}>
@@ -22,7 +22,7 @@ export function LockedOverlay({ backRoute, currentDay }: LockedOverlayProps) {
       <div className="w-48 h-1.5 rounded-full mb-6" style={{ background: '#1C1C1E' }}>
         <div
           className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${progress}%`, background: '#D4AF37' }}
+          style={{ width: `${progress}%`, background: '#00C853' }}
         />
       </div>
       <button onClick={() => router.push(backRoute)} className="btn-primary">

@@ -21,7 +21,7 @@ export function ReportTabs({ activeTab, onTabChange }: ReportTabsProps) {
           onClick={() => onTabChange(t.key)}
           className={`flex-1 text-sm font-medium rounded-lg px-3 py-2 transition-all whitespace-nowrap ${
             activeTab === t.key
-              ? 'bg-[#D4AF37] text-black'
+              ? 'bg-[#00C853] text-black'
               : 'text-[#8E8E93] hover:text-white'
           }`}
         >

@@ -17,7 +17,7 @@ export default async function TestFeedPage() {
 
   const { data: current } = await supabase
     .from('profiles')
-    .select('name, gender')
+    .select('name, persona')
     .eq('id', user.id)
     .single()
 
@@ -29,7 +29,7 @@ export default async function TestFeedPage() {
 
       <div className="text-sm text-gray-400 space-y-1">
         <p><strong>Logged in as:</strong> {user.email}</p>
-        <p><strong>Your gender:</strong> {current?.gender ?? '(not set)'}</p>
+        <p><strong>Your persona:</strong> {current?.persona ?? '(not set)'}</p>
       </div>
 
       <hr className="border-white/10" />
@@ -47,7 +47,7 @@ export default async function TestFeedPage() {
             {profiles.map((p) => (
               <li key={p.id} className="border border-white/10 rounded-lg p-3">
                 <p className="font-medium">{p.name}</p>
-                <p className="text-sm text-gray-400">Gender: {p.gender}</p>
+                <p className="text-sm text-gray-400">Persona: {p.persona}</p>
               </li>
             ))}
           </ul>

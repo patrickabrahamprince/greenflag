@@ -22,7 +22,7 @@ export function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-6 h-6 animate-spin text-[#D4AF37]" />
+        <Loader2 className="w-6 h-6 animate-spin text-[#00C853]" />
       </div>
     );
   }
@@ -36,10 +36,10 @@ export function AdminDashboard() {
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
-        <KpiCard dataTestId="total-users" label="Total Users" value={stats.totalUsers} icon={Users} accent="text-[#D4AF37]" subtitle={`${stats.guests} men / ${stats.hosts} women`} />
+        <KpiCard dataTestId="total-users" label="Total Users" value={stats.totalUsers} icon={Users} accent="text-[#00C853]" subtitle={`${stats.guests} men / ${stats.hosts} women`} />
         <KpiCard label="Active Connections" value={stats.activeConnections} icon={Link2} accent="text-green-400" />
         <KpiCard label="Pending Moderation" value={stats.pendingModeration} icon={Shield} accent="text-orange-400" />
-        <KpiCard label="Revenue" value={`₹${stats.revenue.toLocaleString()}`} icon={IndianRupee} accent="text-[#D4AF37]" />
+        <KpiCard label="Revenue" value={`₹${stats.revenue.toLocaleString()}`} icon={IndianRupee} accent="text-[#00C853]" />
         <KpiCard dataTestId="connected-today" label="Connected Today" value={stats.connectedPairsToday} icon={Heart} accent="text-pink-400" />
       </div>
 

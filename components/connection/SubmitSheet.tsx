@@ -138,7 +138,11 @@ export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSub
 
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        setError(body?.error || 'Submission failed.');
+        if (body?.error === 'INSUFFICIENT_COINS') {
+          setError(`Not enough coins. You need ${body.coins_needed} coins to submit.`);
+        } else {
+          setError(body?.error || 'Submission failed.');
+        }
         setSubmitting(false);
         return;
       }
@@ -403,7 +407,7 @@ export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSub
                 <button
                   onClick={() => { setError(null); togglePlay(); }}
                   className="w-14 h-14 rounded-full flex items-center justify-center text-black active:scale-95 transition-all mx-auto"
-                  style={{ background: '#D4AF37' }}
+                  style={{ background: '#00C853' }}
                 >
                   {isPlaying ? (
                     <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">

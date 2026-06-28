@@ -21,14 +21,14 @@ export async function GET(
 
     const { data: target, error: targetErr } = await supabase
       .from('profiles')
-      .select('id, name, gender, interests, looking_for_interests, lat, lng')
+      .select('id, name, persona, interests, looking_for_interests, lat, lng')
       .eq('id', id)
       .single();
     if (targetErr || !target) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const isGuest = target.gender === 'man';
+    const isGuest = target.persona === 'man';
     const { data: matches, error: matchErr } = await supabase.rpc('get_matching_profiles', {
       p_user_id: target.id,
       p_viewing_gender: isGuest ? 'woman' : 'man',
@@ -48,7 +48,7 @@ export async function GET(
       user: {
         id: target.id,
         name: target.name,
-        gender: target.gender,
+        persona: target.persona,
         interests: target.interests || target.looking_for_interests || [],
       },
       matches: matches || [],

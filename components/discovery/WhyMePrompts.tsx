@@ -32,11 +32,11 @@ export function WhyMePrompts({ prompts, onPromptChange }: WhyMePromptsProps) {
               className="input resize-none"
             />
             <div className="flex justify-between mt-1">
-              <span className={`text-xs ${prompt.length > 0 && prompt.length < 50 ? 'text-[#D4AF37]' : 'text-[#8E8E93]'}`}>
+              <span className={`text-xs ${prompt.length > 0 && prompt.length < 50 ? 'text-[#00C853]' : 'text-[#8E8E93]'}`}>
                 {prompt.length}/150
               </span>
               {prompt.length > 0 && prompt.length < 50 && (
-                <span className="text-xs text-[#D4AF37]">Min 50 chars</span>
+                <span className="text-xs text-[#00C853]">Min 50 chars</span>
               )}
             </div>
           </div>

@@ -29,7 +29,7 @@ export function UsersTable({ users, onBan, onUnban, onToggleAdmin, onDelete }: U
               </td>
               <td className="p-3">
                 {u.is_admin && (
-                  <span className="bg-[#D4AF37] text-black text-xs px-2 py-1 rounded">Admin</span>
+                  <span className="bg-[#00C853] text-black text-xs px-2 py-1 rounded">Admin</span>
                 )}
                 {u.is_banned && (
                   <span className="bg-red-500 text-white text-xs px-2 py-1 rounded ml-1">Banned</span>

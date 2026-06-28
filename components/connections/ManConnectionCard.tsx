@@ -34,7 +34,7 @@ export function ManConnectionCard({
       data-testid="connection-card"
       onClick={() => router.push(`/connection/${connectionId}`)}
       className={`card w-full text-left p-4 transition-all duration-300 ${
-        isEnded ? 'opacity-50' : 'hover:border-[#D4AF37]/20'
+        isEnded ? 'opacity-50' : 'hover:border-[#00C853]/20'
       }`}
       style={{ background: '#1C1C1E' }}
     >

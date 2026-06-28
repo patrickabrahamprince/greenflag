@@ -72,7 +72,7 @@ export async function POST(req: Request) {
     const { data: standard } = await admin
       .from('standards')
       .select('required_interests, values, deal_breakers')
-      .eq('user_id', user.id)
+      .eq('woman_id', user.id)
       .maybeSingle();
 
     let matchData = null;
@@ -114,7 +114,7 @@ export async function POST(req: Request) {
     const { data: standardRef } = await admin
       .from('standards')
       .select('id')
-      .eq('user_id', woman_id)
+      .eq('woman_id', woman_id)
       .eq('is_active', true)
       .limit(1)
       .maybeSingle();

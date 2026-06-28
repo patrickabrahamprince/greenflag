@@ -9,7 +9,7 @@ export function ConnectionsTable({ connections, onForceEnd }: ConnectionsTablePr
   const statusColor = (status: string) => {
     switch (status) {
       case 'active': return 'text-green-500 bg-green-500/10';
-      case 'chat_unlocked': return 'text-[#D4AF37] bg-[#D4AF37]/10';
+      case 'chat_unlocked': return 'text-[#00C853] bg-[#00C853]/10';
       case 'completed': return 'text-blue-500 bg-blue-500/10';
       case 'expired': return 'text-red-500 bg-red-500/10';
       case 'ended': return 'text-orange-500 bg-orange-500/10';

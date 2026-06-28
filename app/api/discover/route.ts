@@ -54,7 +54,7 @@ export async function GET(req: Request) {
     const { data: standard } = await admin
       .from('standards')
       .select('required_interests, values, deal_breakers')
-      .or(`user_id.eq.${user.id},woman_id.eq.${user.id}`)
+      .eq('woman_id', user.id)
       .maybeSingle();
 
     const manInterests = standard?.required_interests ?? [];

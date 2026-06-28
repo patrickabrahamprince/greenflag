@@ -32,9 +32,9 @@ export function ProfileInfo({
           {name}, {age}
         </h1>
         {matchPercent !== undefined && (
-          <div className="flex items-center gap-1 bg-[#D4AF37]/20 backdrop-blur-md rounded-full px-3 py-1">
-            <span className="text-[#D4AF37] text-sm font-bold">{matchPercent}%</span>
-            <span className="text-[#D4AF37]/60 text-xs">match</span>
+          <div className="flex items-center gap-1 bg-[#00C853]/20 backdrop-blur-md rounded-full px-3 py-1">
+            <span className="text-[#00C853] text-sm font-bold">{matchPercent}%</span>
+            <span className="text-[#00C853]/60 text-xs">match</span>
           </div>
         )}
       </div>
@@ -67,7 +67,7 @@ export function ProfileInfo({
             {matchOverlapping.map((interest) => (
               <span
                 key={interest}
-                className="px-3 py-1 rounded-full text-xs border border-[#D4AF37] bg-[#D4AF37]/15 text-[#D4AF37]"
+                className="px-3 py-1 rounded-full text-xs border border-[#00C853] bg-[#00C853]/15 text-[#00C853]"
               >
                 {interest}
               </span>
@@ -86,7 +86,7 @@ export function ProfileInfo({
                 key={interest}
                 className={`px-3 py-1 rounded-full text-xs border ${
                   isMatch
-                    ? 'border-[#D4AF37] bg-[#D4AF37]/15 text-[#D4AF37]'
+                    ? 'border-[#00C853] bg-[#00C853]/15 text-[#00C853]'
                     : 'border-white/10 bg-white/5 text-[#EDEADE]/70'
                 }`}
               >

@@ -31,7 +31,7 @@ export function IntentionList({ intentions }: IntentionListProps) {
             data-testid="intention-item"
             className="flex items-center gap-3 bg-[#1C1C1E] rounded-xl p-4"
           >
-            <div className="w-9 h-9 rounded-full bg-[#D4AF37] flex items-center justify-center shrink-0">
+            <div className="w-9 h-9 rounded-full bg-[#00C853] flex items-center justify-center shrink-0">
               <span className="text-xs font-bold text-black">{intent.day_number}</span>
             </div>
             <div className="flex-1 min-w-0">

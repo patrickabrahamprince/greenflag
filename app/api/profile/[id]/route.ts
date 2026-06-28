@@ -26,8 +26,8 @@ export async function GET(
     }
 
     let matchData: { percent: number; overlapping: string[]; viewerIsHost: boolean } | null = null;
-    if (viewer && viewer.gender !== target.gender) {
-      const viewerIsHost = viewer.gender === 'woman';
+    if (viewer && viewer.persona !== target.persona) {
+      const viewerIsHost = viewer.persona === 'woman';
       const standards = viewerIsHost ? viewer.looking_for_interests : target.looking_for_interests;
       const interests = viewerIsHost ? target.interests : viewer.interests;
       const overlap = (interests || []).filter((i: string) => (standards || []).includes(i));

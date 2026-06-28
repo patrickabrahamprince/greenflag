@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
     const { data: connection } = await supabase
       .from('connections')
-      .select('guest_id, host_id')
+      .select('guest_id, host_id, chat_unlocked')
       .eq('id', connection_id)
       .single();
 
@@ -26,6 +26,13 @@ export async function POST(req: Request) {
 
     if (connection.guest_id !== user.id && connection.host_id !== user.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!connection.chat_unlocked) {
+      return NextResponse.json(
+        { error: 'Chat is locked until the 3-day journey is complete' },
+        { status: 403 }
+      );
     }
 
     const { data, error } = await supabase

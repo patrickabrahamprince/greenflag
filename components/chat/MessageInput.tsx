@@ -23,7 +23,7 @@ export function MessageInput({ input, onInputChange, onSend, sending }: MessageI
           onClick={onSend}
           disabled={!input.trim() || sending}
           className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ease-out active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
-          style={{ background: 'linear-gradient(135deg, #B8962F, #D4AF37)' }}
+          style={{ background: 'linear-gradient(135deg, #009624, #00C853)' }}
         >
           {sending ? (
             <Loader2 className="w-4 h-4 animate-spin text-black" />

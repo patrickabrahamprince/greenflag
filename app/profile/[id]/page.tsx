@@ -21,7 +21,7 @@ export default function ViewProfilePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#D4AF37]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#00C853]" />
       </div>
     );
   }
@@ -60,7 +60,7 @@ export default function ViewProfilePage() {
         <ProfileActionBar
           isOwn={isOwn}
           hasConnection={!!connection}
-          isGuest={user?.gender === 'man'}
+          isGuest={user?.persona === 'man'}
           connecting={connecting}
           onEdit={() => router.push('/profile')}
           onContinue={() => router.push(`/${profile.name.toLowerCase()}`)}

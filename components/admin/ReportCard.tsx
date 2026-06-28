@@ -60,7 +60,7 @@ export function ReportCard({ report: r, showActions, onStatusChange, onBanUser }
           </button>
           <button
             onClick={() => onStatusChange(r.id, 'actioned')}
-            className="btn-ghost text-xs flex items-center gap-1 text-[#D4AF37]"
+            className="btn-ghost text-xs flex items-center gap-1 text-[#00C853]"
           >
             <Flag className="w-3 h-3" /> Mark Actioned
           </button>

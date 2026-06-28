@@ -73,7 +73,7 @@ export function UserActions({ userId, isBanned, onRefresh }: UserActionsProps) {
             <Ban className="w-3.5 h-3.5" /> Ban
           </button>
         )}
-        <button onClick={() => setShowCreditModal(true)} disabled={loading} className="flex items-center gap-1.5 px-3 py-2 bg-[#D4AF37]/10 text-[#D4AF37] rounded-xl text-xs font-medium hover:bg-[#D4AF37]/20 transition-colors disabled:opacity-50">
+        <button onClick={() => setShowCreditModal(true)} disabled={loading} className="flex items-center gap-1.5 px-3 py-2 bg-[#00C853]/10 text-[#00C853] rounded-xl text-xs font-medium hover:bg-[#00C853]/20 transition-colors disabled:opacity-50">
           <Coins className="w-3.5 h-3.5" /> Credit Coins
         </button>
       </div>

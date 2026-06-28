@@ -9,8 +9,8 @@ export async function GET() {
 
     const [totalUsersRes, hostsRes, guestsRes, activeConnsRes, pendingModRes, revenueRes, todayConnsRes, activityRes] = await Promise.all([
       supabase.from('profiles').select('*', { count: 'exact', head: true }),
-      supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('gender', 'woman'),
-      supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('gender', 'man'),
+      supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('persona', 'woman'),
+      supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('persona', 'man'),
       supabase.from('connections').select('*', { count: 'exact', head: true }).eq('status', 'active'),
       supabase.from('submissions').select('*', { count: 'exact', head: true }).eq('moderation_status', 'pending'),
       supabase.from('coin_transactions').select('amount').eq('type', 'purchase'),

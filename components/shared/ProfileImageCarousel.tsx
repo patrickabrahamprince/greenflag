@@ -136,7 +136,7 @@ export function ProfileImageCarousel({ images }: ProfileImageCarouselProps) {
                 key={i}
                 onClick={() => setMainIdx(i)}
                 className={`w-2 h-2 rounded-full transition-all ${
-                  i === mainIdx ? 'bg-[#D4AF37] w-5' : 'bg-white/40'
+                  i === mainIdx ? 'bg-[#00C853] w-5' : 'bg-white/40'
                 }`}
               />
             ))}

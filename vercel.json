@@ -3,5 +3,10 @@
   "outputDirectory": ".next",
   "framework": "nextjs",
   "installCommand": "npm install",
-  "regions": ["bom1"]
+  "regions": ["bom1"],
+  "crons": [
+    { "path": "/api/cron/expire-connections", "schedule": "0 * * * *" },
+    { "path": "/api/cron/auto-approve", "schedule": "*/30 * * * *" },
+    { "path": "/api/cron/monthly-bonus", "schedule": "30 18 * * *" }
+  ]
 }

@@ -21,12 +21,12 @@ export async function GET() {
     const { count: hosts } = await supabase
       .from('profiles')
       .select('*', { count: 'exact', head: true })
-      .eq('gender', 'woman');
+      .eq('persona', 'woman');
 
     const { count: guests } = await supabase
       .from('profiles')
       .select('*', { count: 'exact', head: true })
-      .eq('gender', 'man');
+      .eq('persona', 'man');
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);

@@ -31,7 +31,7 @@ export default function AdminAnalytics() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-6 h-6 animate-spin text-[#D4AF37]" />
+        <Loader2 className="w-6 h-6 animate-spin text-[#00C853]" />
       </div>
     );
   }
@@ -48,12 +48,12 @@ export default function AdminAnalytics() {
       <h1 className="text-2xl font-display text-[#EDEADE] mb-6">Analytics</h1>
 
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mb-8">
-        <KpiCard label="DAU" value={data?.activeToday ?? 0} icon={Users} accent="text-[#D4AF37]" />
+        <KpiCard label="DAU" value={data?.activeToday ?? 0} icon={Users} accent="text-[#00C853]" />
         <KpiCard label="Signups (30d)" value={totalSignups} icon={Activity} accent="text-green-400" />
         <KpiCard label="Total Users" value={data?.totalUsers ?? 0} icon={Users} accent="text-blue-400" />
         <KpiCard label="Connections" value={data?.connectionsCreated ?? 0} icon={Target} accent="text-green-400" />
-        <KpiCard label="Revenue (INR)" value={`₹${totalRevenue.toLocaleString()}`} icon={DollarSign} accent="text-[#D4AF37]" />
-        <KpiCard label="Coins in Circ." value={data?.coinsInCirculation ?? 0} icon={BarChart3} accent="text-[#D4AF37]" />
+        <KpiCard label="Revenue (INR)" value={`₹${totalRevenue.toLocaleString()}`} icon={DollarSign} accent="text-[#00C853]" />
+        <KpiCard label="Coins in Circ." value={data?.coinsInCirculation ?? 0} icon={BarChart3} accent="text-[#00C853]" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -62,7 +62,7 @@ export default function AdminAnalytics() {
           <div className="flex items-end gap-[2px] h-32">
             {signups.map((val, i) => (
               <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
-                <div className="w-full bg-[#D4AF37]/30 rounded-t" style={{ height: `${(val / maxSignup) * 100}%` }} />
+                <div className="w-full bg-[#00C853]/30 rounded-t" style={{ height: `${(val / maxSignup) * 100}%` }} />
               </div>
             ))}
           </div>
@@ -78,8 +78,8 @@ export default function AdminAnalytics() {
             {revenue.map((val, i) => (
               <div key={i} className="flex-1 flex flex-col items-center justify-end">
                 <div className="w-full relative flex flex-col items-center">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] mb-0.5" />
-                  <div className="w-full bg-[#D4AF37]/20" style={{ height: `${(val / maxRevenue) * 80}px` }} />
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#00C853] mb-0.5" />
+                  <div className="w-full bg-[#00C853]/20" style={{ height: `${(val / maxRevenue) * 80}px` }} />
                 </div>
               </div>
             ))}

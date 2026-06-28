@@ -14,7 +14,7 @@ export default function MyConnectionsPage() {
         className="min-h-screen flex items-center justify-center"
         style={{ background: '#0A0A0A' }}
       >
-        <Loader2 className="w-8 h-8 animate-spin text-[#D4AF37]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#00C853]" />
       </div>
     );
   }

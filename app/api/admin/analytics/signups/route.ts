@@ -19,7 +19,7 @@ export async function GET() {
 
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('created_at, gender')
+      .select('created_at, persona')
       .gte('created_at', thirtyDaysAgo.toISOString())
       .order('created_at', { ascending: true });
 
@@ -36,7 +36,7 @@ export async function GET() {
     for (const p of profiles) {
       const key = new Date(p.created_at ?? '').toISOString().split('T')[0];
       if (daily[key]) {
-        if (p.gender === 'woman') daily[key].hosts++;
+        if (p.persona === 'woman') daily[key].hosts++;
         else daily[key].guests++;
       }
     }

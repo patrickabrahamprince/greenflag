@@ -128,8 +128,17 @@ export function useTaskActions(connection: ConnectionData | null, setConnection:
         }),
       });
       const data = await res.json();
-      if (data.error) { toast.error(data.error); return; }
-      toast.success(`Task ${taskNumber} submitted`);
+      if (data.error) {
+        if (data.error === 'INSUFFICIENT_COINS') {
+          toast.error(`Not enough coins. You need ${data.coins_needed} coins to submit.`);
+        } else {
+          toast.error(data.error);
+        }
+        return;
+      }
+      toast.success(
+        data.day_advanced ? `Day complete! Moving to the next day.` : `Task ${taskNumber} submitted`
+      );
 
       setTaskInputs((prev) => ({ ...prev, [taskNumber]: '' }));
       setTaskImages((prev) => ({ ...prev, [taskNumber]: null }));

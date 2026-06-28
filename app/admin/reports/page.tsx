@@ -76,7 +76,7 @@ export default function AdminReports() {
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-6 h-6 animate-spin text-[#D4AF37]" />
+          <Loader2 className="w-6 h-6 animate-spin text-[#00C853]" />
         </div>
       ) : reports.length === 0 ? (
         <EmptyReportsState tab={tab} />

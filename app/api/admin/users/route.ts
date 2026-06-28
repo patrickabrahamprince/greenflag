@@ -16,7 +16,7 @@ export async function GET(req: Request) {
 
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search') || '';
-    const gender = searchParams.get('gender') || '';
+    const persona = searchParams.get('gender') || searchParams.get('persona') || '';
     const status = searchParams.get('status') || '';
     const page = parseInt(searchParams.get('page') || '0');
     const limit = 20;
@@ -24,13 +24,13 @@ export async function GET(req: Request) {
 
     let query = supabase
       .from('profiles')
-      .select('id, name, age, gender, city_auto, created_at, last_active, is_banned, is_admin, photos, persona', { count: 'exact' });
+      .select('id, name, age, city_auto, created_at, last_active, is_banned, is_admin, photos, persona', { count: 'exact' });
 
     if (search) {
       query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%`);
     }
-    if (gender) {
-      query = query.eq('gender', gender);
+    if (persona) {
+      query = query.eq('persona', persona as 'man' | 'woman');
     }
     if (status === 'banned') {
       query = query.eq('is_banned', true);

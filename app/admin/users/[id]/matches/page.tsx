@@ -19,7 +19,7 @@ interface MatchProfile {
 }
 
 interface MatchesData {
-  user: { id: string; name: string; gender: string; interests: string[] };
+  user: { id: string; name: string; persona: string; interests: string[] };
   matches: MatchProfile[];
   total: number;
 }
@@ -44,7 +44,7 @@ export default function AdminMatchesPage({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-6 h-6 animate-spin text-[#D4AF37]" />
+        <Loader2 className="w-6 h-6 animate-spin text-[#00C853]" />
       </div>
     );
   }
@@ -75,7 +75,7 @@ export default function AdminMatchesPage({
         Matches for {data.user.name}
       </h1>
       <p className="text-sm text-[#8E8E93] mb-6">
-        Gender: {data.user.gender} | Interests: {data.user.interests?.join(', ') || '(none)'} | Total matches: {data.total}
+        Persona: {data.user.persona} | Interests: {data.user.interests?.join(', ') || '(none)'} | Total matches: {data.total}
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -104,7 +104,7 @@ export default function AdminMatchesPage({
               {(match.interests || []).map((tag) => (
                 <span
                   key={tag}
-                  className="px-2 py-0.5 bg-[#D4AF37]/10 text-[#D4AF37] text-[10px] rounded"
+                  className="px-2 py-0.5 bg-[#00C853]/10 text-[#00C853] text-[10px] rounded"
                 >
                   {tag}
                 </span>

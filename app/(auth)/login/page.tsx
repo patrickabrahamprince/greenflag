@@ -56,7 +56,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-12">
           <div className="relative inline-block">
-            <div className="absolute inset-0 blur-3xl opacity-20" style={{ background: 'radial-gradient(circle, #D4AF37 0%, transparent 70%)' }} />
+            <div className="absolute inset-0 blur-3xl opacity-20" style={{ background: 'radial-gradient(circle, #00C853 0%, transparent 70%)' }} />
             <h1 className="relative text-5xl font-display italic text-white mb-3" style={{ fontWeight: 500 }}>
               GreenFlag
             </h1>

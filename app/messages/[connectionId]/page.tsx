@@ -106,7 +106,7 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#0A0A0A' }}>
-        <Loader2 className="w-6 h-6 animate-spin" style={{ color: '#D4AF37' }} />
+        <Loader2 className="w-6 h-6 animate-spin" style={{ color: '#00C853' }} />
       </div>
     );
   }

@@ -30,64 +30,30 @@ export async function POST(
       return NextResponse.json({ error: 'Connection is no longer active' }, { status: 400 });
     }
 
-    if ((connection.freezes_used ?? 0) >= 1) {
-      return NextResponse.json({ error: 'Freeze already used' }, { status: 400 });
+    const { data: rpcData, error: freezeErr } = await supabase.rpc(
+      'freeze_connection' as never,
+      { p_connection_id: id } as never
+    );
+    const result = rpcData as {
+      success?: boolean;
+      error?: string;
+      coins_needed?: number;
+      frozen_until?: string;
+    } | null;
+
+    if (freezeErr) {
+      return NextResponse.json({ error: freezeErr.message }, { status: 400 });
     }
 
-    const { data: wallet } = await supabase
-      .from('wallets')
-      .select('balance')
-      .eq('user_id', user.id)
-      .single();
-
-    if (!wallet || wallet.balance < 300) {
-      return NextResponse.json({ error: 'Insufficient coins. Need 300.' }, { status: 400 });
+    if (!result?.success) {
+      const status = result?.error === 'insufficient_funds' ? 402 : 400;
+      return NextResponse.json(
+        { error: result?.error || 'freeze_failed', coins_needed: result?.coins_needed },
+        { status }
+      );
     }
 
-    const { error: deductErr } = await supabase.rpc('deduct_coins', {
-      p_user_id: user.id,
-      p_amount: 300,
-      p_description: 'Freeze for 24h extension',
-      p_metadata: { connection_id: id },
-    });
-
-    if (deductErr) {
-      return NextResponse.json({ error: deductErr.message }, { status: 400 });
-    }
-
-    const now = new Date();
-    const frozenUntil = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString();
-
-    const { error: updateErr } = await supabase
-      .from('connections')
-      .update({
-        frozen_until: frozenUntil,
-        freezes_used: 1,
-      })
-      .eq('id', id);
-
-    if (updateErr) {
-      return NextResponse.json({ error: updateErr.message }, { status: 400 });
-    }
-
-    // Extend deadline for ALL pending submissions this day (multi-task support)
-    const { error: extendErr } = await supabase
-      .from('submissions')
-      .update({ deadline: frozenUntil })
-      .eq('connection_id', id)
-      .eq('day_number', connection.current_day ?? 1)
-      .neq('approved', true);
-
-    if (extendErr) {
-      console.error('Failed to extend submission deadlines:', extendErr);
-    }
-
-    await supabase.from('freeze_transactions').insert({
-      connection_id: id,
-      man_id: user.id,
-      coins_paid: 300,
-      extended_until: frozenUntil,
-    });
+    const frozenUntil = result.frozen_until;
 
     const { data: guestProfile } = await supabase
       .from('profiles')
