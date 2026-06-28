@@ -29,10 +29,10 @@ export function StandardDaySlot({ intention, onEdit }: StandardDaySlotProps) {
     <button
       data-testid="day-slot"
       onClick={onEdit}
-      className="w-full flex items-center gap-3 bg-[#1C1C1E] rounded-xl p-4 text-left active:scale-[0.98] transition-transform"
+      className="w-full flex items-center gap-3 bg-[#F0EDE9] rounded-xl p-4 text-left active:scale-[0.98] transition-transform"
     >
       <div className="w-9 h-9 rounded-full bg-[#C9A961] flex items-center justify-center shrink-0">
-        <span className="text-xs font-bold text-black">{intention.dayNumber}</span>
+        <span className="text-xs font-bold text-white">{intention.dayNumber}</span>
       </div>
 
       <div className="flex-1 min-w-0">
@@ -42,7 +42,7 @@ export function StandardDaySlot({ intention, onEdit }: StandardDaySlotProps) {
             {config.label}
           </span>
         </div>
-        <p className="text-sm text-[#EDEADE] truncate">{intention.prompt || 'Tap to set prompt'}</p>
+        <p className="text-sm text-ink truncate">{intention.prompt || 'Tap to set prompt'}</p>
       </div>
 
       <Pencil className="w-4 h-4 text-[#8E8E93] shrink-0" />

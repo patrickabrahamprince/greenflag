@@ -27,12 +27,10 @@ function ChatListItem({ conn, userId }: { conn: ChatConnection; userId: string }
   return (
     <button
       onClick={() => router.push(`/messages/${conn.id}`)}
-      className="w-full flex items-center gap-3 p-4 text-left transition-colors"
-      style={{ borderBottom: '1px solid #1C1C1E' }}
+      className="w-full flex items-center gap-3 p-4 text-left transition-colors border-b border-[#E8E6E1]"
     >
       <div
-        className="w-12 h-12 rounded-full flex-shrink-0 overflow-hidden flex items-center justify-center"
-        style={{ background: '#1C1C1E' }}
+        className="w-12 h-12 rounded-full flex-shrink-0 overflow-hidden flex items-center justify-center bg-[#F0EDE9]"
       >
         {partnerPhoto ? (
           <img
@@ -42,14 +40,14 @@ function ChatListItem({ conn, userId }: { conn: ChatConnection; userId: string }
             onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }}
           />
         ) : (
-          <span className="text-sm font-display italic" style={{ color: '#8E8E93' }}>
+          <span className="font-['Playfair_Display'] text-sm italic text-ink/50">
             {conn.partner?.name?.[0] ?? '?'}
           </span>
         )}
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-0.5">
-          <span className="text-sm font-display italic truncate" style={{ color: '#EDEADE' }}>
+          <span className="font-['Playfair_Display'] text-sm italic text-ink truncate">
             {conn.partner?.name}
           </span>
           {conn.last_message && (
@@ -110,7 +108,7 @@ function ChatList({ userId, supabase }: ChatListPageProps) {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="w-5 h-5 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: '#8E8E93', borderTopColor: 'transparent' }} />
+        <div className="w-5 h-5 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: '#C9A961', borderTopColor: 'transparent' }} />
       </div>
     );
   }
@@ -146,14 +144,14 @@ export default function MessagesListPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#0A0A0A' }}>
+    <div className="min-h-screen flex flex-col bg-[#FAF9F7]">
       <div className="max-w-app mx-auto w-full flex-1 flex flex-col">
         <div className="px-4 pt-4 pb-0">
           <div className="page-header">
             <button onClick={() => router.back()} className="btn-ghost p-2 -ml-2">
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <h1 className="text-lg font-display italic" style={{ color: '#EDEADE' }}>Messages</h1>
+            <h1 className="font-['Playfair_Display'] text-lg text-ink italic">Messages</h1>
             <div className="w-9" />
           </div>
           <div className="hairline" />

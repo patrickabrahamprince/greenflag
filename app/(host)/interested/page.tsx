@@ -16,18 +16,18 @@ function GuestCardComponent({ guest, onNavigate }: { guest: GuestCard; onNavigat
   return (
     <div className="card animate-fade-in hover:gold-border-left transition-all duration-300">
       <div className="flex items-center gap-4">
-        <div className="w-14 h-14 rounded-full flex items-center justify-center text-muted shrink-0 overflow-hidden" style={{ background: '#161616' }}>
-          {guest.photo ? (<img src={guest.photo} alt={guest.name} className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />) : (<span className="text-lg font-display italic text-white">{guest.name.charAt(0)}</span>)}
+        <div className="w-14 h-14 rounded-full flex items-center justify-center text-muted shrink-0 overflow-hidden" style={{ background: '#F0EDE9' }}>
+          {guest.photo ? (<img src={guest.photo} alt={guest.name} className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />) : (<span className="text-lg font-['Playfair_Display'] italic text-ink">{guest.name.charAt(0)}</span>)}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <p className="font-display italic text-white truncate">{guest.name}, {guest.age}</p>
+            <p className="font-['Playfair_Display'] italic text-ink truncate">{guest.name}, {guest.age}</p>
             {hasSubmitted && <span className="text-xs text-blush px-2 py-0.5 rounded-full" style={{ background: 'rgba(196,149,106,0.1)' }}>Pending review</span>}
             {(guest.unreadCount || 0) > 0 && <span className="min-w-[18px] h-[18px] px-1 bg-red-500 rounded-full flex items-center justify-center"><span className="text-[10px] font-bold text-white">{guest.unreadCount}</span></span>}
           </div>
           <p className="text-sm text-muted font-thin mt-0.5">{guest.tasksCompleted}/{TOTAL_TASKS} tasks</p>
           <div className="flex items-center gap-2 mt-2">
-            <div className="flex-1 h-0.5 rounded-full overflow-hidden" style={{ background: '#1E1E1E' }}>
+            <div className="flex-1 h-0.5 rounded-full overflow-hidden" style={{ background: '#E8E6E1' }}>
               <div className="h-full rounded-full transition-all duration-700 ease-out" style={{ width: `${pct}%`, background: 'linear-gradient(90deg, #B89851, #C9A961)' }} />
             </div>
             <span className="text-xs text-muted font-thin">{pct}%</span>
@@ -44,7 +44,7 @@ function GuestCardComponent({ guest, onNavigate }: { guest: GuestCard; onNavigat
 function EmptyState({ tab }: { tab: string }) {
   const messages: Record<string, { title: string; text: string }> = { Applicants: { title: 'No applicants yet', text: 'No one has started your standard yet.' }, 'In Progress': { title: 'No active connections', text: 'No guests are currently working on your standards.' }, Connected: { title: 'No completed connections', text: 'No one has completed all tasks yet.' } };
   const info = messages[tab] || messages.Applicants;
-  return (<div className="empty-state py-16"><div className="empty-state-icon"><Users className="w-8 h-8" /></div><h3 className="text-lg font-display italic text-white mb-1">{info.title}</h3><p className="text-muted text-sm font-thin">{info.text}</p></div>);
+  return (<div className="empty-state py-16"><div className="empty-state-icon"><Users className="w-8 h-8" /></div><h3 className="text-lg font-['Playfair_Display'] italic text-ink mb-1">{info.title}</h3><p className="text-muted text-sm font-thin">{info.text}</p></div>);
 }
 
 export default function InterestedPage() {
@@ -87,14 +87,14 @@ export default function InterestedPage() {
     else router.push(`/review/${connectionId}`);
   }
 
-  if (loading) return (<div className="animate-fade-in py-6"><button onClick={() => router.back()} className="btn-ghost flex items-center gap-2 text-muted hover:text-white -ml-2 mb-4"><ArrowLeft className="w-5 h-5" />Back</button><h1 className="font-display italic text-3xl text-white mb-6">Interested In You</h1><div className="flex items-center justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-gold" /></div></div>);
+  if (loading) return (<div className="animate-fade-in py-6"><button onClick={() => router.back()} className="btn-ghost flex items-center gap-2 text-muted hover:text-ink -ml-2 mb-4"><ArrowLeft className="w-5 h-5" />Back</button><h1 className="font-['Playfair_Display'] text-3xl text-ink mb-6">Interested In You</h1><div className="flex items-center justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-gold" /></div></div>);
 
   return (
     <div className="animate-fade-in py-6">
-      <button onClick={() => router.back()} className="btn-ghost flex items-center gap-2 text-muted hover:text-white -ml-2 mb-4"><ArrowLeft className="w-5 h-5" />Back</button>
-      <h1 className="font-display italic text-3xl text-white mb-6">Interested In You</h1>
-      <div className="flex gap-1 rounded-full p-1 mb-6" style={{ background: '#111111' }}>
-        {TABS.map((tab) => (<button key={tab} onClick={() => setActiveTab(tab)} className={cn('flex-1 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ease-out', activeTab === tab ? 'btn-primary !py-2.5' : 'text-muted hover:text-white')}>{tab}</button>))}
+      <button onClick={() => router.back()} className="btn-ghost flex items-center gap-2 text-muted hover:text-ink -ml-2 mb-4"><ArrowLeft className="w-5 h-5" />Back</button>
+      <h1 className="font-['Playfair_Display'] text-3xl text-ink mb-6">Interested In You</h1>
+      <div className="flex gap-1 rounded-full p-1 mb-6" style={{ background: '#F0EDE9' }}>
+        {TABS.map((tab) => (<button key={tab} onClick={() => setActiveTab(tab)} className={cn('flex-1 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ease-out', activeTab === tab ? 'btn-primary !py-2.5' : 'text-muted hover:text-ink')}>{tab}</button>))}
       </div>
       <div className="space-y-3">
         {currentList.length > 0 ? currentList.map((guest) => (<GuestCardComponent key={guest.id} guest={guest} onNavigate={handleNavigate} />)) : <EmptyState tab={activeTab} />}

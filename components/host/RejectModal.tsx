@@ -35,8 +35,8 @@ export function RejectModal({
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onCancel}
       />
-      <div className="relative bg-[#1C1C1E] border border-white/10 rounded-2xl p-6 w-full max-w-app mx-4 mb-0 sm:mb-8 animate-slide-up">
-        <h3 className="text-lg font-medium text-[#EDEADE] mb-4">Reject Application</h3>
+      <div className="relative bg-[#FAF9F7] border border-[#E8E6E1] rounded-2xl p-6 w-full max-w-app mx-4 mb-0 sm:mb-8 animate-slide-up">
+        <h3 className="font-['Playfair_Display'] text-lg text-ink mb-4">Reject Application</h3>
 
         <div className="space-y-3 mb-4">
           <p className="text-sm text-[#8E8E93]">Reason</p>
@@ -46,8 +46,8 @@ export function RejectModal({
               onClick={() => onReasonChange(reason.value)}
               className={`w-full text-left py-3 px-4 rounded-xl text-sm transition-all ${
                 rejectReason === reason.value
-                  ? 'bg-red-500/10 text-red-400 border border-red-500/30'
-                  : 'bg-white/5 text-[#8E8E93] border border-transparent hover:text-[#EDEADE]'
+                  ? 'bg-red-50 text-red-500 border border-red-200'
+                  : 'bg-[#F0EDE9] text-[#8E8E93] border border-transparent hover:text-ink'
               }`}
             >
               {reason.label}
@@ -59,13 +59,13 @@ export function RejectModal({
           value={rejectNote}
           onChange={(e) => onNoteChange(e.target.value)}
           placeholder="Optional note..."
-          className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-[#EDEADE] placeholder-[#5A5A5D] min-h-[80px] resize-none mb-6"
+          className="w-full bg-[#F0EDE9] border border-[#E8E6E1] rounded-xl p-3 text-sm text-ink placeholder-[#8E8E93] min-h-[80px] resize-none mb-6"
         />
 
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 h-11 rounded-xl bg-white/10 text-[#EDEADE] text-sm font-medium"
+            className="flex-1 h-11 rounded-xl bg-[#F0EDE9] text-ink text-sm font-medium"
           >
             Cancel
           </button>

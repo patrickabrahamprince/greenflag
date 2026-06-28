@@ -43,17 +43,17 @@ export const InterestGrid: React.FC<InterestGridProps> = ({
 
   return (
     <div className="interest-grid my-6">
-      {title && <h2 className="text-xl font-display text-white mb-2">{title}</h2>}
+      {title && <h2 className="font-['Playfair_Display'] text-xl text-ink mb-2">{title}</h2>}
       {description && <p className="text-sm text-[#8E8E93] mb-4">{description}</p>}
       <div className="flex flex-wrap gap-2">
         {options.map((opt) => {
           const isSelected = selected.includes(opt);
           const baseClasses =
-            'px-3 py-1 rounded-full text-xs transition-all cursor-pointer select-none';
+            'px-3 py-1 rounded-xl text-xs transition-all cursor-pointer select-none';
           const selectedClasses =
-            'bg-gold/10 border border-gold text-white font-medium shadow-md shadow-gold/5';
+            'bg-gold/10 border border-gold text-ink font-medium';
           const unselectedClasses =
-            'bg-[#1C1C1E] border border-[#2C2CE] text-[#EDEADE]/80 hover:border-[#3C3C3E]';
+            'bg-[#F0EDE9] border border-[#E8E6E1] text-ink/70 hover:border-ink/30';
           return (
             <span
               key={opt}

@@ -34,7 +34,7 @@ export function PackageCard({ pkg, purchasing, onBuy }: PackageCardProps) {
             <Zap className="w-6 h-6 text-gold" />
           )}
           <div>
-            <p className="text-white font-medium">{pkg.coins} Coins</p>
+            <p className="text-ink font-medium">{pkg.coins} Coins</p>
             <p className="text-xs text-muted">₹{pkg.price}</p>
           </div>
         </div>

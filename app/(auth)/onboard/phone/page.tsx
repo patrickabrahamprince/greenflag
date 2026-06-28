@@ -109,13 +109,13 @@ export default function PhonePage() {
     <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6">
       <button
         onClick={() => router.push('/onboard')}
-        className="text-[#8E8E93] hover:text-white transition-colors mb-8 w-fit"
+        className="text-ink/40 hover:text-ink transition-colors mb-8 w-fit"
       >
         <ArrowLeft size={24} />
       </button>
 
       <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
-        <h1 className="text-2xl font-display font-semibold text-white mb-2">
+        <h1 className="text-2xl font-display font-semibold text-ink mb-2">
           {otpSent ? "Verify your number" : "What's your number?"}
         </h1>
         <p className="text-[#8E8E93] text-sm mb-8">
@@ -167,7 +167,7 @@ export default function PhonePage() {
             <button
               onClick={handleSendOtp}
               disabled={loading}
-              className="w-full text-center text-sm text-[#8E8E93] hover:text-white transition-colors"
+              className="w-full text-center text-sm text-ink/40 hover:text-ink transition-colors"
             >
               Resend OTP
             </button>
@@ -177,7 +177,7 @@ export default function PhonePage() {
         <button
           onClick={handleSkip}
           disabled={skipping}
-          className="mt-6 w-full text-sm text-[#8E8E93] underline underline-offset-4 decoration-white/20 hover:text-white hover:decoration-white/40 transition-colors disabled:opacity-50"
+          className="mt-6 w-full text-sm text-[#8E8E93] underline underline-offset-4 decoration-ink/20 hover:text-ink hover:decoration-ink/40 transition-colors disabled:opacity-50"
         >
           Skip for now
         </button>
@@ -189,9 +189,9 @@ export default function PhonePage() {
         )}
 
         <div className="flex items-center gap-3 my-6">
-          <div className="flex-1 h-px bg-white/10" />
+          <div className="flex-1 h-px bg-[#E8E6E1]" />
           <span className="text-[#8E8E93] text-xs">or</span>
-          <div className="flex-1 h-px bg-white/10" />
+          <div className="flex-1 h-px bg-[#E8E6E1]" />
         </div>
 
         <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />

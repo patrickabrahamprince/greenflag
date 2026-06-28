@@ -7,7 +7,7 @@ export default function HostLayout({
 }) {
   return (
     <>
-      <div className="min-h-screen bg-black max-w-app mx-auto px-4 pb-24">
+      <div className="min-h-screen bg-[#FAF9F7] max-w-app mx-auto px-4 pb-24">
         {children}
       </div>
       <BottomNav />

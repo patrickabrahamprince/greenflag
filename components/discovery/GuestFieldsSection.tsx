@@ -21,7 +21,7 @@ export function GuestFieldsSection({
   return (
     <>
       <div>
-        <label className="block text-sm font-medium text-white mb-1.5">City</label>
+        <label className="block text-sm font-medium text-ink mb-1.5">City</label>
         <select
           value={city}
           onChange={(e) => onCityChange(e.target.value)}
@@ -36,7 +36,7 @@ export function GuestFieldsSection({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-white mb-1.5">
+        <label className="block text-sm font-medium text-ink mb-1.5">
           Instagram Handle <span className="text-red-400">*</span>
         </label>
         <div className="relative">

@@ -28,7 +28,7 @@ export function VoiceRecorder({ onRecord }: VoiceRecorderProps) {
             <Music className="w-5 h-5 text-gold" />
           </div>
           <div>
-            <p className="text-sm text-white font-medium">Voice note recorded</p>
+            <p className="text-sm text-ink font-medium">Voice note recorded</p>
             <p className="text-xs text-muted font-thin">0:24</p>
           </div>
         </div>
@@ -46,8 +46,8 @@ export function VoiceRecorder({ onRecord }: VoiceRecorderProps) {
           isRecording ? 'animate-pulse' : ''
         )}
         style={{
-          background: isRecording ? 'rgba(239,68,68,0.15)' : '#111111',
-          border: isRecording ? '2px solid rgba(239,68,68,0.4)' : '1px solid #1E1E1E',
+          background: isRecording ? 'rgba(239,68,68,0.15)' : '#F0EDE9',
+          border: isRecording ? '2px solid rgba(239,68,68,0.4)' : '1px solid #E8E6E1',
         }}
       >
         <Mic className={cn('w-8 h-8', isRecording ? 'text-red-500' : 'text-gold')} />
@@ -56,7 +56,7 @@ export function VoiceRecorder({ onRecord }: VoiceRecorderProps) {
         {isRecording ? 'Recording... tap to stop' : 'Tap to start recording'}
       </p>
       <div className="w-full max-w-xs">
-        <div className="h-12 rounded-xl flex items-center justify-center gap-1 px-4" style={{ background: '#111111' }}>
+        <div className="h-12 rounded-xl flex items-center justify-center gap-1 px-4" style={{ background: '#F0EDE9' }}>
           {isRecording && Array.from({ length: 20 }).map((_, i) => (
             <div key={i} className="w-0.5 rounded-full animate-pulse" style={{ height: `${Math.random() * 100}%`, background: 'rgba(212,175,55,0.5)', animationDelay: `${i * 0.05}s` }} />
           ))}

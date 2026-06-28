@@ -58,12 +58,12 @@ export function TaskEmptyState({ type, hostName, onNavigate }: TaskEmptyStatePro
       className={cn(
         type === 'submitted'
           ? 'card text-center py-8'
-          : 'min-h-screen bg-[#0A0A0A] flex items-center justify-center px-6'
+          : 'min-h-screen bg-[#FAF9F7] flex items-center justify-center px-6'
       )}
     >
       <div className="text-center">
         {config.icon}
-        <h2 className="text-lg font-display text-[#EDEADE] mb-2">{config.title}</h2>
+        <h2 className="font-['Playfair_Display'] text-lg text-ink mb-2">{config.title}</h2>
         <p className="text-sm text-[#8E8E93] mb-2">
           {type === 'no-connection'
             ? `You haven\u2019t applied to meet ${hostName} yet.`

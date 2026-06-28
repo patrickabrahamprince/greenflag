@@ -52,38 +52,35 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#080808' }}>
+    <div className="min-h-screen flex items-center justify-center p-6 bg-[#FAF9F7]">
       <div className="w-full max-w-sm">
         <div className="text-center mb-12">
-          <div className="relative inline-block">
-            <div className="absolute inset-0 blur-3xl opacity-20" style={{ background: 'radial-gradient(circle, #C9A961 0%, transparent 70%)' }} />
-            <h1 className="relative text-5xl font-display italic text-white mb-3" style={{ fontWeight: 500 }}>
-              GreenFlag
-            </h1>
-          </div>
+          <h1 className="font-['Playfair_Display'] text-5xl text-ink mb-3" style={{ fontWeight: 600 }}>
+            GreenFlag
+          </h1>
           <div className="hairline mx-auto mt-6 mb-2 w-16" />
-          <p className="text-muted text-sm font-thin tracking-wide mt-4">Set your standards. Meet your match.</p>
+          <p className="text-ink/50 text-sm tracking-wide mt-4">Set your standards. Meet your match.</p>
         </div>
-        <h2 className="text-white text-center text-2xl font-bold mb-4">Welcome to GreenFlag</h2>
+        <h2 className="font-['Playfair_Display'] text-ink text-center text-2xl mb-4">Welcome to GreenFlag</h2>
         <form onSubmit={handleLogin} className="space-y-4">
           <input data-testid="email" type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required className="input w-full" />
           <input data-testid="password" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required className="input w-full" />
-          {error && <p className="text-red-400 text-sm">{error}</p>}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
           <button data-testid="login-btn" type="submit" disabled={loading} className="btn-primary w-full">
             {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Log in'}
           </button>
         </form>
 
         <div className="flex items-center gap-3 my-6">
-          <div className="flex-1 h-px bg-white/10" />
-          <span className="text-muted text-xs">or</span>
-          <div className="flex-1 h-px bg-white/10" />
+          <div className="flex-1 h-px bg-[#E8E6E1]" />
+          <span className="text-ink/40 text-xs uppercase tracking-wide">or</span>
+          <div className="flex-1 h-px bg-[#E8E6E1]" />
         </div>
         <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />
 
-        <p className="text-muted text-sm mt-8 text-center font-thin">
+        <p className="text-ink/50 text-sm mt-8 text-center">
           New here? Your journey starts at{' '}
-          <Link href="/signup" className="text-white underline underline-offset-4 decoration-white/30 hover:decoration-white/60 transition-colors">
+          <Link href="/signup" className="text-[#C9A961] underline underline-offset-4 decoration-[#C9A961]/40 hover:decoration-[#C9A961] transition-colors">
             onboarding
           </Link>
         </p>

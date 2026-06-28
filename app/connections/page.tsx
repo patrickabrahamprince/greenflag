@@ -13,7 +13,7 @@ export default function WomanConnectionsPage() {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
-        style={{ background: '#0A0A0A' }}
+        style={{ background: '#FAF9F7' }}
       >
         <Loader2 className="w-8 h-8 animate-spin text-[#C9A961]" />
       </div>
@@ -23,7 +23,7 @@ export default function WomanConnectionsPage() {
   return (
     <div
       className="min-h-screen px-4 pt-6 pb-24 max-w-app mx-auto"
-      style={{ background: '#0A0A0A' }}
+      style={{ background: '#FAF9F7' }}
     >
       <StandardHeader
         intentionCount={intentionCount}

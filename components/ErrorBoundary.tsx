@@ -32,12 +32,12 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
       if (this.props.fallback) return this.props.fallback;
 
       return (
-        <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center px-6">
+        <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center px-6">
           <div className="text-center max-w-sm">
-            <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
               <AlertTriangle className="w-8 h-8 text-red-500" />
             </div>
-            <h2 className="text-lg font-display text-[#EDEADE] mb-2">Something went wrong</h2>
+            <h2 className="font-['Playfair_Display'] text-lg text-ink mb-2">Something went wrong</h2>
             <p className="text-sm text-[#8E8E93] mb-6">
               An unexpected error occurred. Please try again.
             </p>

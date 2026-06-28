@@ -128,7 +128,7 @@ export default function QuizPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-[#FAF9F7]">
         <Loader2 className="w-8 h-8 animate-spin text-gold" />
       </div>
     );
@@ -139,14 +139,14 @@ export default function QuizPage() {
   const currentAnswer = answers[currentQuestion.id];
 
   return (
-    <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6 bg-black">
+    <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6 bg-[#FAF9F7]">
       <div className="max-w-md mx-auto w-full flex flex-col justify-between flex-1 pb-8">
         <div>
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <button
               onClick={handleBack}
-              className="text-[#8E8E93] hover:text-white transition-colors p-1 -ml-1"
+              className="text-ink/40 hover:text-ink transition-colors p-1 -ml-1"
             >
               <ArrowLeft size={24} />
             </button>
@@ -157,7 +157,7 @@ export default function QuizPage() {
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full bg-[#1C1C1E] h-1 rounded-full mb-10 overflow-hidden">
+          <div className="w-full bg-[#F0EDE9] h-1 rounded-full mb-10 overflow-hidden">
             <div
               className="bg-gold h-full transition-all duration-300 ease-out"
               style={{ width: `${progressPercent}%` }}
@@ -166,7 +166,7 @@ export default function QuizPage() {
 
           {/* Question Card */}
           <div className="mb-8">
-            <h2 className="text-xl font-display font-medium text-white mb-2 leading-snug">
+            <h2 className="text-xl font-display font-medium text-ink mb-2 leading-snug">
               {currentQuestion.question}
             </h2>
             <p className="text-[#8E8E93] text-xs">Pick one answer that fits you best</p>
@@ -180,10 +180,10 @@ export default function QuizPage() {
                 <button
                   key={option}
                   onClick={() => handleOptionSelect(option)}
-                  className={`w-full py-4 px-5 rounded-2xl text-left text-sm transition-all flex items-center justify-between border ${
+                  className={`w-full py-4 px-5 rounded-xl text-left text-sm transition-all flex items-center justify-between border ${
                     isSelected
-                      ? 'bg-gold/10 border-gold text-white font-medium shadow-md shadow-gold/5'
-                      : 'bg-[#1C1C1E] border-[#2C2C2E] text-[#EDEADE]/80 hover:border-[#3C3C3E]'
+                      ? 'bg-gold/10 border-gold text-ink font-medium'
+                      : 'bg-[#F0EDE9] border-[#E8E6E1] text-ink/70 hover:border-ink/30'
                   }`}
                 >
                   <span>{option}</span>

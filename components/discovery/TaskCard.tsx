@@ -51,16 +51,16 @@ export function TaskCard({
           Task {taskNumber}/8
         </span>
         {isTaskSubmitted && (
-          <span className="text-xs text-green-400 flex items-center gap-1">
+          <span className="text-xs text-green-600 flex items-center gap-1">
             <CheckCircle className="w-3 h-3" /> Done
           </span>
         )}
       </div>
-      <h3 className="text-sm font-medium text-[#EDEADE] mb-1">{task.title}</h3>
+      <h3 className="text-sm font-medium text-ink mb-1">{task.title}</h3>
       <p className="text-xs text-[#8E8E93] mb-3">{task.prompt}</p>
 
       {isTaskSubmitted ? (
-        <div className="text-xs text-[#8E8E93] bg-white/5 rounded-lg p-3">
+        <div className="text-xs text-[#8E8E93] bg-[#F0EDE9] rounded-lg p-3">
           {submission.media_url ? (
             <img
               src={submission.media_url}
@@ -99,7 +99,7 @@ export function TaskCard({
               ) : (
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-white/10 rounded-xl p-6 text-center cursor-pointer hover:border-[#C9A961]/30 transition-colors"
+                  className="border-2 border-dashed border-[#E8E6E1] rounded-xl p-6 text-center cursor-pointer hover:border-[#C9A961] transition-colors"
                 >
                   <Image className="w-6 h-6 text-[#8E8E93] mx-auto mb-2" />
                   <p className="text-xs text-[#8E8E93]">Tap to upload an image</p>

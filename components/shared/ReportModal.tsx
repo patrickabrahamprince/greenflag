@@ -29,7 +29,7 @@ export function ReportModal({
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
       <div className="card max-w-md w-full p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-display text-[#EDEADE]">Report User</h3>
+          <h3 className="font-['Playfair_Display'] text-lg text-ink">Report User</h3>
           <button onClick={onClose} className="btn-ghost p-1">
             <X className="w-5 h-5 text-[#8E8E93]" />
           </button>
@@ -42,7 +42,7 @@ export function ReportModal({
               {['Fake profile', 'Inappropriate content', 'Harassment', 'Other'].map((r) => (
                 <label
                   key={r}
-                  className="flex items-center gap-3 p-3 rounded-lg border border-[#2C2C2E] cursor-pointer transition-colors hover:border-[#C9A961]/40"
+                  className="flex items-center gap-3 p-3 rounded-lg border border-[#E8E6E1] cursor-pointer transition-colors hover:border-[#C9A961]/40"
                 >
                   <span
                     className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
@@ -51,7 +51,7 @@ export function ReportModal({
                   >
                     {reason === r && <span className="w-2 h-2 rounded-full bg-[#C9A961]" />}
                   </span>
-                  <span className="text-sm text-[#EDEADE]">{r}</span>
+                  <span className="text-sm text-ink">{r}</span>
                   <input
                     type="radio"
                     name="report-reason"

@@ -30,9 +30,9 @@ export function IntentionEditor({
     <div className="fixed inset-0 z-50 flex items-end justify-center">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
 
-      <div data-testid="intention-editor" className="relative w-full max-w-app bg-[#1C1C1E] rounded-t-2xl p-5 pb-8 animate-slide-up">
+      <div data-testid="intention-editor" className="relative w-full max-w-app bg-[#FAF9F7] rounded-t-2xl p-5 pb-8 animate-slide-up">
         <div className="flex items-center justify-between mb-5">
-          <h3 className="text-lg font-semibold text-[#EDEADE]">Day {dayNumber}</h3>
+          <h3 className="font-['Playfair_Display'] text-lg text-ink">Day {dayNumber}</h3>
           <button onClick={onClose} className="text-sm text-[#8E8E93]">
             Done
           </button>
@@ -59,7 +59,7 @@ export function IntentionEditor({
           placeholder="What should he share?"
           maxLength={150}
           rows={3}
-          className="w-full bg-[#0A0A0A] border border-[#2C2C2E] rounded-xl px-4 py-3 text-sm text-[#EDEADE] placeholder:text-[#8E8E93] resize-none focus:outline-none focus:border-[#C9A961] transition-colors"
+          className="w-full bg-[#F0EDE9] border border-[#E8E6E1] rounded-xl px-4 py-3 text-sm text-ink placeholder:text-[#8E8E93] resize-none focus:outline-none focus:border-[#C9A961] transition-colors"
         />
         <p className="text-right text-[10px] text-[#8E8E93] mt-1">{prompt.length}/150</p>
       </div>

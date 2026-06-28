@@ -19,12 +19,12 @@ interface ConnectionViewProps {
 
 function EndedCard({ reason }: { reason: string | null }) {
   return (
-    <div className="card p-6 text-center" style={{ background: '#141414' }}>
-      <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: '#1C1C1E' }}>
+    <div className="card p-6 text-center">
+      <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center bg-[#F0EDE9]">
         <span className="text-2xl">✕</span>
       </div>
-      <h3 className="text-white font-display text-lg mb-2">Connection Ended</h3>
-      <p className="text-[#8E8E93] text-sm font-thin">
+      <h3 className="font-['Playfair_Display'] text-ink text-lg mb-2">Connection Ended</h3>
+      <p className="text-[#8E8E93] text-sm">
         {reason === 'rejected' ? 'She didn\'t accept your application.' : 'This connection has expired.'}
       </p>
     </div>
@@ -83,28 +83,28 @@ export function ConnectionView({ connection, submissions, intentions, onRefresh 
         <button onClick={() => router.back()} className="btn-ghost p-2 -ml-2">
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-lg font-display text-white truncate">{connection.host?.name}</h1>
+        <h1 className="font-['Playfair_Display'] text-lg text-ink truncate">{connection.host?.name}</h1>
       </div>
 
       <ProgressSegmentBar currentDay={currentDay} className="mb-6" />
 
-      <p className="text-center text-sm text-[#8E8E93] font-thin mb-3">
+      <p className="text-center text-sm text-[#8E8E93] mb-3">
         Day {currentDay} of 3
       </p>
 
       {intentions.length === 0 && (
         <div className="text-center px-6 mb-6">
-          <p className="text-[#8E8E93] text-sm font-thin">
+          <p className="text-[#8E8E93] text-sm">
             Waiting for her to set up tasks for this day.
           </p>
         </div>
       )}
 
       {isChatUnlocked && (
-        <div className="card mb-5 p-4 flex items-center gap-4" style={{ background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.2)' }}>
+        <div className="card mb-5 p-4 flex items-center gap-4" style={{ background: 'rgba(201,169,97,0.06)', border: '1px solid rgba(201,169,97,0.2)' }}>
           <div className="flex-1">
             <p className="text-gold text-sm font-medium">You&apos;ve earned access</p>
-            <p className="text-[#8E8E93] text-xs font-thin mt-0.5">Message her anytime</p>
+            <p className="text-[#8E8E93] text-xs mt-0.5">Message her anytime</p>
           </div>
           <button
             onClick={() => router.push(`/messages/${connection.id}`)}
@@ -118,8 +118,8 @@ export function ConnectionView({ connection, submissions, intentions, onRefresh 
 
       {deadlinePassed && (
         <>
-          <div className="card p-5 text-center mb-5" style={{ background: '#141414' }}>
-            <p className="text-white/80 text-sm">You missed the deadline</p>
+          <div className="card p-5 text-center mb-5">
+            <p className="text-ink/70 text-sm">You missed the deadline</p>
           </div>
           {connection.freezes_used === 0 ? (
             <button
@@ -132,11 +132,11 @@ export function ConnectionView({ connection, submissions, intentions, onRefresh 
               className="btn-secondary w-full flex items-center justify-center gap-2"
             >
               <Snowflake className="w-4 h-4" />
-              Freeze for 300 coins — get 24 more hours
+              Freeze for 10 coins — get 24 more hours
             </button>
           ) : (
-            <div className="card p-5 text-center" style={{ background: '#141414' }}>
-              <p className="text-[#8E8E93] text-sm font-thin">No freezes remaining. Connection ended.</p>
+            <div className="card p-5 text-center">
+              <p className="text-[#8E8E93] text-sm">No freezes remaining. Connection ended.</p>
             </div>
           )}
         </>
@@ -152,15 +152,15 @@ export function ConnectionView({ connection, submissions, intentions, onRefresh 
             const isTaskPendingSubmission = !matchingSub || (!isTaskApproved && !hasSubmittedContent);
 
             return (
-              <div key={intentionItem.id} className="card p-5" style={{ background: '#1C1C1E' }}>
+              <div key={intentionItem.id} className="card p-5">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-[#8E8E93] font-thin">Task {intentionItem.task_number} ({intentionItem.type})</span>
-                  {isTaskApproved && <span className="text-xs text-green-500 font-medium">Done (Approved) ✓</span>}
+                  <span className="text-xs text-[#8E8E93]">Task {intentionItem.task_number} ({intentionItem.type})</span>
+                  {isTaskApproved && <span className="text-xs text-green-600 font-medium">Done (Approved) ✓</span>}
                   {isTaskPendingReview && <span className="text-xs text-gold font-medium">Done (Pending Review) ✓</span>}
-                  {isTaskPendingSubmission && <span className="text-xs text-[#8E8E93] font-thin">Pending Submission</span>}
+                  {isTaskPendingSubmission && <span className="text-xs text-[#8E8E93]">Pending Submission</span>}
                 </div>
-                <p className={`text-sm mb-4 ${hasSubmittedContent ? 'line-through text-white/40 font-light' : 'text-white font-normal'}`}>{intentionItem.prompt}</p>
-                
+                <p className={`text-sm mb-4 ${hasSubmittedContent ? 'line-through text-ink/40 font-light' : 'text-ink font-normal'}`}>{intentionItem.prompt}</p>
+
                 {isTaskPendingSubmission && (
                   <button
                     onClick={() => {
@@ -174,9 +174,9 @@ export function ConnectionView({ connection, submissions, intentions, onRefresh 
                 )}
 
                 {matchingSub && (matchingSub.content || matchingSub.media_url) && (
-                  <div className="border-t border-[#2C2C2E] pt-3 mt-3">
+                  <div className="border-t border-[#E8E6E1] pt-3 mt-3">
                     <p className="text-xs text-[#8E8E93] mb-1">Your Submission:</p>
-                    {matchingSub.content && <p className="text-xs text-white/90 italic">"{matchingSub.content}"</p>}
+                    {matchingSub.content && <p className="text-xs text-ink/80 italic">"{matchingSub.content}"</p>}
                     {matchingSub.media_url && (
                       matchingSub.media_type === 'photo' || matchingSub.media_url.match(/\.(jpeg|jpg|gif|png)/i) ? (
                         <img src={matchingSub.media_url} alt="" className="mt-2 rounded-lg max-h-40 object-cover" />

@@ -170,12 +170,12 @@ export default function ProfilePage() {
     <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6">
       <button
         onClick={() => router.push(isGoogleUser ? '/onboard' : '/onboard/phone')}
-        className="text-[#8E8E93] hover:text-white transition-colors mb-6 w-fit"
+        className="text-ink/40 hover:text-ink transition-colors mb-6 w-fit"
       >
         <ArrowLeft size={24} />
       </button>
 
-      <h1 className="text-xl font-display font-semibold text-white text-center mb-6">
+      <h1 className="text-xl font-display font-semibold text-ink text-center mb-6">
         {persona === 'woman' ? 'Set Your Standards' : 'Tell Us About Yourself'}
       </h1>
 

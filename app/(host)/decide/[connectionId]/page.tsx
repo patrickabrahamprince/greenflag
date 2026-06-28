@@ -68,19 +68,19 @@ export default function DecidePage({
 
   if (connection.status !== 'awaiting_decision') {
     return (
-      <div className="min-h-screen bg-[#0A0A0A] text-white flex items-center justify-center p-6 text-center">
-        <p className="text-white/60">This connection isn&apos;t ready for a final decision yet.</p>
+      <div className="min-h-screen bg-[#FAF9F7] text-ink flex items-center justify-center p-6 text-center">
+        <p className="text-ink/50">This connection isn&apos;t ready for a final decision yet.</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-white pb-28">
+    <div className="min-h-screen bg-[#FAF9F7] text-ink pb-28">
       <ReviewBackButton onClick={() => router.back()} />
       <ReviewGuestHeader guest={connection.guest} submissionCount={connection.submissions?.length ?? 9} />
       <div className="px-4 pt-6 text-center">
-        <h1 className="text-xl font-semibold">3 days complete</h1>
-        <p className="text-white/60 text-sm mt-2">
+        <h1 className="font-['Playfair_Display'] text-xl">3 days complete</h1>
+        <p className="text-ink/50 text-sm mt-2">
           {connection.guest.name} finished every task. Is he a Green Flag?
         </p>
       </div>

@@ -12,7 +12,7 @@ export default function MyConnectionsPage() {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
-        style={{ background: '#0A0A0A' }}
+        style={{ background: '#FAF9F7' }}
       >
         <Loader2 className="w-8 h-8 animate-spin text-[#C9A961]" />
       </div>
@@ -22,9 +22,9 @@ export default function MyConnectionsPage() {
   return (
     <div
       className="min-h-screen px-4 pt-6 pb-24 max-w-app mx-auto"
-      style={{ background: '#0A0A0A' }}
+      style={{ background: '#FAF9F7' }}
     >
-      <h1 className="font-display italic text-2xl text-[#EDEADE] mb-6">
+      <h1 className="font-['Playfair_Display'] text-2xl text-ink mb-6">
         My Connections
       </h1>
 

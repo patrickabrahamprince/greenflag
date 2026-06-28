@@ -12,7 +12,7 @@ const VARIANT_STYLES: Record<ChipVariant, string> = {
   working: 'bg-[#C9A961]/10 text-[#C9A961]',
   connected: 'bg-[#C9A961]/15 text-[#C9A961]',
   ended: 'bg-[#8E8E93]/10 text-[#8E8E93]',
-  progress: 'bg-[#8E8E93]/10 text-[#EDEADE]',
+  progress: 'bg-[#8E8E93]/10 text-ink/70',
 };
 
 const LABELS: Record<ChipVariant, string> = {

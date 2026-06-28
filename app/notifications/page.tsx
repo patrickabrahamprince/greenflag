@@ -79,21 +79,21 @@ export default function NotificationsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-gold" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A]">
+    <div className="min-h-screen bg-[#FAF9F7]">
       <div className="max-w-app mx-auto px-4 py-4">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <button onClick={() => router.back()} className="btn-ghost p-2">
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <h1 className="text-xl font-display text-white">Notifications</h1>
+            <h1 className="font-['Playfair_Display'] text-xl text-ink">Notifications</h1>
             {unreadCount > 0 && (
               <span className="text-xs bg-gold/20 text-gold px-2 py-0.5 rounded-full">
                 {unreadCount} new
@@ -115,7 +115,7 @@ export default function NotificationsPage() {
             <div className="w-16 h-16 rounded-full bg-surface flex items-center justify-center mb-4">
               <Bell className="w-7 h-7 text-muted" />
             </div>
-            <h3 className="text-lg font-medium text-white mb-1">No notifications</h3>
+            <h3 className="text-lg font-medium text-ink mb-1">No notifications</h3>
             <p className="text-sm text-muted text-center">
               You&apos;ll be notified when there&apos;s activity on your connections.
             </p>
@@ -139,7 +139,7 @@ export default function NotificationsPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <p className={`text-sm font-medium ${
-                        notif.read_at ? 'text-muted' : 'text-white'
+                        notif.read_at ? 'text-muted' : 'text-ink'
                       }`}>
                         {notif.title}
                       </p>

@@ -25,14 +25,14 @@ export function ReviewTaskCard({ task, taskNumber, submission }: ReviewTaskCardP
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs font-medium text-[#C9A961]">Task {taskNumber}/8</span>
         {submission ? (
-          <span className="text-xs text-green-400 flex items-center gap-1">
+          <span className="text-xs text-green-600 flex items-center gap-1">
             <Check className="w-3 h-3" /> Submitted
           </span>
         ) : (
           <span className="text-xs text-[#8E8E93]">Not submitted</span>
         )}
       </div>
-      <h3 className="text-sm font-medium text-[#EDEADE] mb-1">{task.title}</h3>
+      <h3 className="text-sm font-medium text-ink mb-1">{task.title}</h3>
       <p className="text-xs text-[#8E8E93] mb-2">{task.prompt}</p>
 
       {submission ? (
@@ -50,25 +50,25 @@ export function ReviewTaskCard({ task, taskNumber, submission }: ReviewTaskCardP
                   if (fallback) fallback.classList.remove('hidden');
                 }}
               />
-              <div className="hidden bg-white/5 rounded-xl p-4 text-center">
+              <div className="hidden bg-[#F0EDE9] rounded-xl p-4 text-center">
                 <Image className="w-6 h-6 text-[#8E8E93] mx-auto mb-1" />
                 <p className="text-xs text-[#8E8E93]">Image unavailable</p>
               </div>
             </div>
           )}
           {submission.text_content && (
-            <div className="bg-white/5 rounded-lg p-3">
-              <p className="text-sm text-[#EDEADE] leading-relaxed">{submission.text_content}</p>
+            <div className="bg-[#F0EDE9] rounded-lg p-3">
+              <p className="text-sm text-ink leading-relaxed">{submission.text_content}</p>
             </div>
           )}
           {!submission.media_url && !submission.text_content && (
-            <div className="bg-white/5 rounded-lg p-3">
+            <div className="bg-[#F0EDE9] rounded-lg p-3">
               <p className="text-xs text-[#5A5A5D] italic">Empty submission</p>
             </div>
           )}
         </div>
       ) : (
-        <div className="bg-white/5 rounded-lg p-3">
+        <div className="bg-[#F0EDE9] rounded-lg p-3">
           <p className="text-xs text-[#5A5A5D] italic">Awaiting submission</p>
         </div>
       )}

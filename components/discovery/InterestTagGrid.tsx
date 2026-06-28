@@ -21,7 +21,7 @@ export function InterestTagGrid({
 }: InterestTagGridProps) {
   return (
     <div>
-      <h2 className="text-xl font-display text-white mb-1">{title}</h2>
+      <h2 className="font-['Playfair_Display'] text-xl text-ink mb-1">{title}</h2>
       <p className="text-sm text-muted mb-4">{description}</p>
       <div className="flex flex-wrap gap-2">
         {options.map((item) => {
@@ -36,10 +36,10 @@ export function InterestTagGrid({
               className={cn(
                 'px-4 py-2 rounded-full text-sm transition-all duration-300 active:scale-95',
                 isSelected
-                  ? 'border border-[#C9A961] bg-[#C9A961]/10 text-[#EDEADE]'
+                  ? 'border border-[#C9A961] bg-[#C9A961]/10 text-ink'
                   : locked
-                  ? 'border border-white/5 bg-transparent text-muted/30 cursor-not-allowed'
-                  : 'border border-white/10 bg-transparent text-muted hover:text-white'
+                  ? 'border border-[#E8E6E1] bg-transparent text-muted/30 cursor-not-allowed'
+                  : 'border border-[#E8E6E1] bg-transparent text-muted hover:text-ink'
               )}
             >
               {item}

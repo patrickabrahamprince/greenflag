@@ -19,7 +19,7 @@ export function PhotoUploadSection({
 }: PhotoUploadSectionProps) {
   return (
     <div>
-      <label className="block text-sm font-medium text-white mb-1.5">
+      <label className="block text-sm font-medium text-ink mb-1.5">
         Photos {isHost ? '(3 required)' : '(3-6 required)'}
       </label>
       <div className="grid grid-cols-3 gap-2">
@@ -33,8 +33,8 @@ export function PhotoUploadSection({
                 photo
                   ? 'border-transparent'
                   : canAdd
-                  ? 'border-white/10 hover:border-gold/30 cursor-pointer'
-                  : 'border-white/10 opacity-50'
+                  ? 'border-[#E8E6E1] hover:border-gold cursor-pointer'
+                  : 'border-[#E8E6E1] opacity-50'
               }`}
               onClick={() => { if (!photo && canAdd) document.getElementById(`photo-input-${i}`)?.click(); }}
             >

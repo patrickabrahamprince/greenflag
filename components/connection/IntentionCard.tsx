@@ -28,7 +28,7 @@ export function IntentionCard({ intention }: IntentionCardProps) {
           {config.label} Intention
         </span>
       </div>
-      <p className="text-white/90 text-[15px] leading-relaxed font-thin">
+      <p className="text-ink/90 text-[15px] leading-relaxed">
         {intention.prompt}
       </p>
     </div>

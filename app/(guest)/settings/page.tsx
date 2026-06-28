@@ -76,7 +76,7 @@ export default function SettingsPage() {
         <button onClick={() => router.back()} className="btn-ghost p-2">
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-xl font-display flex-1">Settings</h1>
+        <h1 className="font-['Playfair_Display'] text-xl text-ink flex-1">Settings</h1>
       </div>
 
       <div className="px-4 space-y-6">
@@ -88,7 +88,7 @@ export default function SettingsPage() {
               </div>
               <div>
                 <p className="text-sm text-muted">Phone</p>
-                <p className="text-white font-medium">{formatPhoneDisplay(phone)}</p>
+                <p className="text-ink font-medium">{formatPhoneDisplay(phone)}</p>
               </div>
             </div>
             <span className="text-xs text-green-500 bg-green-500/10 px-2 py-1 rounded-full flex items-center gap-1">
@@ -148,7 +148,7 @@ export default function SettingsPage() {
               { label: 'Email Notifications', value: emailNotif, set: setEmailNotif },
             ].map((item) => (
               <div key={item.label} className="flex items-center justify-between">
-                <span className="text-sm text-white">{item.label}</span>
+                <span className="text-sm text-ink">{item.label}</span>
                 <button
                   onClick={() => item.set(!item.value)}
                   className={`w-11 h-6 rounded-full transition-colors ${
@@ -192,7 +192,7 @@ export default function SettingsPage() {
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
           <div className="card max-w-sm w-full p-6 text-center">
             <Trash2 className="w-12 h-12 text-red-500 mx-auto mb-4" />
-            <h3 className="text-lg font-display text-white mb-2">Delete Account?</h3>
+            <h3 className="font-['Playfair_Display'] text-lg text-ink mb-2">Delete Account?</h3>
             <p className="text-sm text-muted mb-6">
               This action cannot be undone. All your data will be permanently deleted.
             </p>

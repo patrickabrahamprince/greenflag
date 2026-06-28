@@ -19,7 +19,7 @@ export function ProgressSegmentBar({ currentDay, total = 8, className }: Progres
               'h-1.5 flex-1 rounded-full transition-all duration-500',
               isCompleted && 'bg-gold',
               isCurrent && 'bg-gold animate-pulse',
-              !isCompleted && !isCurrent && 'bg-[#1E1E1E]'
+              !isCompleted && !isCurrent && 'bg-[#E8E6E1]'
             )}
           />
         );

@@ -9,17 +9,17 @@ interface AuthModeToggleProps {
 
 export function AuthModeToggle({ mode, onModeChange }: AuthModeToggleProps) {
   return (
-    <div className="flex gap-1 rounded-full p-1 mb-6" style={{ background: '#111111' }}>
+    <div className="flex gap-1 rounded-xl p-1 mb-6 bg-[#F0EDE9]">
       <button
         onClick={() => onModeChange('email')}
-        className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${mode === 'email' ? 'bg-gold text-black' : 'text-muted hover:text-white'}`}
+        className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${mode === 'email' ? 'bg-gold text-white' : 'text-ink/50 hover:text-ink'}`}
       >
         <Mail className="w-4 h-4" />
         Email
       </button>
       <button
         onClick={() => onModeChange('phone')}
-        className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${mode === 'phone' ? 'bg-gold text-black' : 'text-muted hover:text-white'}`}
+        className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${mode === 'phone' ? 'bg-gold text-white' : 'text-ink/50 hover:text-ink'}`}
       >
         <Phone className="w-4 h-4" />
         Phone

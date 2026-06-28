@@ -28,7 +28,7 @@ export function PhotoUploadSlots({
 
   return (
     <div>
-      <label className="block text-sm font-medium text-white mb-1.5">
+      <label className="block text-sm font-medium text-ink mb-1.5">
         Photos <span className="text-[#8E8E93] font-normal">({maxPhotos} required)</span>
       </label>
       <div className="grid grid-cols-3 gap-3">
@@ -43,7 +43,7 @@ export function PhotoUploadSlots({
               className={`aspect-square rounded-xl border-2 border-dashed flex items-center justify-center relative overflow-hidden transition-all duration-300 ${
                 photo
                   ? 'border-transparent'
-                  : 'border-white/10 hover:border-[#C9A961]/30 cursor-pointer'
+                  : 'border-[#E8E6E1] hover:border-[#C9A961] cursor-pointer'
               }`}
             >
               {photo ? (

@@ -17,7 +17,7 @@ export function LocationPicker({ onLocation }: LocationPickerProps) {
             <MapPin className="w-5 h-5 text-gold" />
           </div>
           <div>
-            <p className="text-sm text-white font-medium">Location shared</p>
+            <p className="text-sm text-ink font-medium">Location shared</p>
             <p className="text-xs text-muted font-thin">27.1751° N, 78.0421° E</p>
           </div>
         </div>
@@ -28,7 +28,7 @@ export function LocationPicker({ onLocation }: LocationPickerProps) {
 
   return (
     <div className="space-y-3">
-      <div className="card p-0 overflow-hidden h-48 flex items-center justify-center" style={{ background: '#111111' }}>
+      <div className="card p-0 overflow-hidden h-48 flex items-center justify-center" style={{ background: '#F0EDE9' }}>
         <div className="text-center">
           <MapPin className="w-8 h-8 text-muted/30 mx-auto mb-2" />
           <p className="text-xs text-muted font-thin">Map preview placeholder</p>

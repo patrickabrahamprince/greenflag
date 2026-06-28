@@ -21,38 +21,37 @@ export default function OnboardPage() {
   };
 
   return (
-    <div className="w-full animate-fade-in min-h-screen flex flex-col justify-center px-4">
+    <div className="w-full animate-fade-in min-h-screen flex flex-col justify-center px-4 bg-[#FAF9F7]">
       <div className="absolute top-4 right-4">
         <button
           onClick={handleSignOut}
-          className="text-xs text-gray-500 hover:text-red-400 flex items-center gap-1 transition-colors"
+          className="text-xs text-ink/40 hover:text-red-500 flex items-center gap-1 transition-colors"
         >
           <LogOut className="w-3 h-3" />
           Sign out
         </button>
       </div>
       <div className="text-center mb-10">
-        <h1 className="text-3xl font-display font-semibold text-white mb-3">
+        <h1 className="font-['Playfair_Display'] text-3xl text-ink mb-3">
           Welcome to GreenFlag
         </h1>
-        <p className="text-[#8E8E93] text-sm">Choose your path</p>
+        <p className="text-ink/50 text-sm">Choose your path</p>
       </div>
 
       <div className="space-y-4">
         <button
           onClick={() => handleSelect('woman')}
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'persona-woman' : undefined}
-          className="w-full h-56 rounded-2xl bg-gradient-to-br from-[#C9A961]/20 to-[#C9A961]/5 border border-[#C9A961]/20 hover:border-[#C9A961]/60 transition-all duration-300 relative overflow-hidden group active:scale-[0.98]"
+          className="w-full h-56 rounded-xl bg-gradient-to-br from-[#C9A961]/10 to-[#C9A961]/5 border border-[#C9A961]/30 hover:border-[#C9A961] transition-all duration-300 relative overflow-hidden group active:scale-[0.98]"
         >
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
           <div className="relative z-10 h-full flex flex-col items-center justify-center gap-3">
-            <div className="w-16 h-16 rounded-full bg-[#C9A961]/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-16 h-16 rounded-full bg-[#C9A961]/15 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Crown className="w-8 h-8 text-[#C9A961]" />
             </div>
-            <span className="text-2xl font-display text-[#EDEADE]">
+            <span className="font-['Playfair_Display'] text-2xl text-ink">
               I set the Standard
             </span>
-            <span className="text-sm text-[#EDEADE]/60 max-w-[260px] leading-relaxed">
+            <span className="text-sm text-ink/60 max-w-[260px] leading-relaxed">
               Build your 8-day Standard. Men earn their way to you.
             </span>
           </div>
@@ -61,17 +60,16 @@ export default function OnboardPage() {
         <button
           onClick={() => handleSelect('man')}
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'persona-man' : undefined}
-          className="w-full h-56 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:border-white/30 transition-all duration-300 relative overflow-hidden group active:scale-[0.98]"
+          className="w-full h-56 rounded-xl bg-[#F0EDE9] border border-[#E8E6E1] hover:border-ink/30 transition-all duration-300 relative overflow-hidden group active:scale-[0.98]"
         >
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
           <div className="relative z-10 h-full flex flex-col items-center justify-center gap-3">
-            <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Compass className="w-8 h-8 text-white/80" />
+            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Compass className="w-8 h-8 text-ink/70" />
             </div>
-            <span className="text-2xl font-display text-[#EDEADE]">
+            <span className="font-['Playfair_Display'] text-2xl text-ink">
               I rise to it
             </span>
-            <span className="text-sm text-[#EDEADE]/60 max-w-[260px] leading-relaxed">
+            <span className="text-sm text-ink/60 max-w-[260px] leading-relaxed">
               Discover women. Prove your worth. Earn the chat.
             </span>
           </div>

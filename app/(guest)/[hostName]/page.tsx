@@ -74,7 +74,7 @@ export default function TasksPage({ params }: { params: { hostName: string } }) 
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
         <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
       </div>
     );
@@ -96,7 +96,7 @@ export default function TasksPage({ params }: { params: { hostName: string } }) 
   if (status === 'expired') return <TaskEmptyState type="expired" onNavigate={router.push} />;
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] pb-24">
+    <div className="min-h-screen bg-[#FAF9F7] pb-24">
       <div className="px-4 py-4">
         <HostHeader host={connection.host} timeLeft={timeLeft} onBack={() => router.push('/discover')} />
         <TaskProgressBar completedCount={completedCount} isSubmitted={isSubmitted} />

@@ -35,7 +35,7 @@ export function ProfileFormFields({
   return (
     <>
       <div>
-        <label className="block text-sm font-medium text-white mb-1.5">Name</label>
+        <label className="block text-sm font-medium text-ink mb-1.5">Name</label>
         <input
           type="text"
           value={name}
@@ -48,7 +48,7 @@ export function ProfileFormFields({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-white mb-1.5">Age</label>
+        <label className="block text-sm font-medium text-ink mb-1.5">Age</label>
         <input
           type="number"
           min={18}
@@ -63,7 +63,7 @@ export function ProfileFormFields({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-white mb-1.5">
+        <label className="block text-sm font-medium text-ink mb-1.5">
           Location <span className="text-red-400">*</span>
           {gpsDetecting && <span className="text-[#8E8E93] font-normal text-xs ml-1">(detecting...)</span>}
         </label>
@@ -79,7 +79,7 @@ export function ProfileFormFields({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-white mb-1.5">
+        <label className="block text-sm font-medium text-ink mb-1.5">
           Instagram Handle <span className="text-red-400">*</span>
         </label>
         <div className="relative">
@@ -96,7 +96,7 @@ export function ProfileFormFields({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-white mb-1.5">
+        <label className="block text-sm font-medium text-ink mb-1.5">
           Bio <span className="text-[#8E8E93] font-normal">(optional)</span>
         </label>
         <textarea

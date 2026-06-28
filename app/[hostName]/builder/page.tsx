@@ -91,20 +91,20 @@ export default function StandardBuilderPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
         <div className="w-6 h-6 border-2 border-[#C9A961] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] pb-24">
+    <div className="min-h-screen bg-[#FAF9F7] pb-24">
       <div className="px-4 py-4">
         <button onClick={() => router.back()} className="text-[#8E8E93] mb-4">
           <ArrowLeft className="w-5 h-5" />
         </button>
 
-        <h1 className="text-xl font-semibold text-[#EDEADE] mb-1">Build Your Standard</h1>
+        <h1 className="font-['Playfair_Display'] text-xl text-ink mb-1">Build Your Standard</h1>
         <p className="text-xs text-[#8E8E93] mb-6">3 days. 3 intentions. Let him prove it.</p>
 
         <div className="space-y-3 mb-8">
@@ -120,7 +120,7 @@ export default function StandardBuilderPage() {
         <button
           onClick={handleSetActive}
           disabled={!allFilled || activating}
-          className="w-full h-12 rounded-xl bg-[#C9A961] text-black text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full h-12 rounded-xl bg-[#C9A961] text-white text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <Sparkles className="w-4 h-4" />
           {activating ? 'Activating...' : 'Set Active'}
@@ -140,12 +140,12 @@ export default function StandardBuilderPage() {
 
       {showSuccessPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)' }}>
-          <div className="w-full max-w-sm rounded-2xl p-6 text-center animate-scale-in" style={{ background: '#1C1C1E', border: '1px solid #2C2C2E' }}>
-            <div className="w-12 h-12 bg-green-500/10 border border-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-xl text-green-500 font-bold">✓</span>
+          <div className="w-full max-w-sm rounded-2xl p-6 text-center animate-scale-in bg-[#FAF9F7] border border-[#E8E6E1]">
+            <div className="w-12 h-12 bg-green-50 border border-green-200 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-xl text-green-600 font-bold">✓</span>
             </div>
-            <h4 className="text-white font-display text-lg mb-2">Standard Activated!</h4>
-            <p className="text-[#8E8E93] text-xs font-thin mb-6 leading-relaxed">
+            <h4 className="font-['Playfair_Display'] text-ink text-lg mb-2">Standard Activated!</h4>
+            <p className="text-[#8E8E93] text-xs mb-6 leading-relaxed">
               Your 3-day standard is live. Men will now have to prove themselves by completing these intentions to connect with you.
             </p>
             <button

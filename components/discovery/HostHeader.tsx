@@ -22,7 +22,7 @@ export function HostHeader({ host, timeLeft, onBack }: HostHeaderProps) {
       <div className="flex items-center gap-3 mb-4">
         <Avatar src={host.photos?.[0]} name={host.name} size="md" />
         <div>
-          <h1 className="text-xl font-display text-[#EDEADE]">
+          <h1 className="font-['Playfair_Display'] text-xl text-ink">
             {host.name}, {host.age}
           </h1>
           <p className="text-xs text-[#8E8E93]">Complete 8 tasks to unlock chat</p>

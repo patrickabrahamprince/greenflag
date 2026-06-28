@@ -40,7 +40,7 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 text-muted hover:text-white transition-colors">
+      <DialogPrimitive.Close className="absolute right-4 top-4 text-muted hover:text-ink transition-colors">
         <X size={18} />
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
@@ -62,7 +62,7 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn('text-lg font-semibold text-white', className)}
+    className={cn('text-lg font-semibold text-ink', className)}
     {...props}
   />
 ));

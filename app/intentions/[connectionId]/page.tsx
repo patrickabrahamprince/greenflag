@@ -66,7 +66,7 @@ export default function ConnectionPage({ params }: { params: { connectionId: str
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#080808' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#FAF9F7' }}>
         <Loader2 className="w-8 h-8 animate-spin text-gold" />
       </div>
     );
@@ -74,7 +74,7 @@ export default function ConnectionPage({ params }: { params: { connectionId: str
 
   if (!connection) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#080808' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#FAF9F7' }}>
         <p className="text-[#8E8E93] text-sm font-thin">Connection not found</p>
       </div>
     );

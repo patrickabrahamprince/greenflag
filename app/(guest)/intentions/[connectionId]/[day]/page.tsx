@@ -49,8 +49,8 @@ export default function IntentionPage({
     return (
       <div className="page-container flex flex-col justify-center">
         <div className="empty-state">
-          <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4" style={{ background: '#111111' }}><MapPin className="w-8 h-8 text-muted/30" /></div>
-          <h3 className="text-lg font-display italic text-white mb-2">No Intention Found</h3>
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4" style={{ background: '#F0EDE9' }}><MapPin className="w-8 h-8 text-muted/30" /></div>
+          <h3 className="font-['Playfair_Display'] text-lg italic text-ink mb-2">No Intention Found</h3>
           <p className="text-sm text-muted text-center max-w-xs font-thin">{error || 'There is no intention set for this day yet.'}</p>
           <button onClick={() => router.back()} className="btn-primary mt-6">Go Back</button>
         </div>
@@ -67,7 +67,7 @@ export default function IntentionPage({
       <div className="page-container flex flex-col justify-center">
         <div className="empty-state">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4" style={{ background: 'rgba(212,175,55,0.1)' }}><Check className="w-8 h-8 text-gold" /></div>
-          <h3 className="text-lg font-display italic text-white mb-2">Submitted!</h3>
+          <h3 className="font-['Playfair_Display'] text-lg italic text-ink mb-2">Submitted!</h3>
           <p className="text-sm text-muted text-center max-w-xs font-thin">She&apos;ll review your intention soon.</p>
           <button onClick={() => router.back()} className="btn-primary mt-6">Back to Standard</button>
         </div>
@@ -84,7 +84,7 @@ export default function IntentionPage({
       <div className="text-center mb-8">
         <p className="text-5xl font-display italic text-gold mb-2" style={{ fontWeight: 500 }}>Day {intention.day_number}</p>
         <div className="hairline mx-auto mt-4 mb-4 w-12" />
-        <p className="text-lg font-display italic text-white/80 leading-relaxed max-w-sm mx-auto">{intention.prompt}</p>
+        <p className="font-['Playfair_Display'] text-lg italic text-ink/80 leading-relaxed max-w-sm mx-auto">{intention.prompt}</p>
       </div>
 
       <div className="flex items-center justify-center gap-3 mb-8">

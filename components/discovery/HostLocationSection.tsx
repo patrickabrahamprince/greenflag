@@ -17,7 +17,7 @@ export function HostLocationSection({
 }: HostLocationSectionProps) {
   return (
     <div>
-      <label className="block text-sm font-medium text-white mb-1.5">Location</label>
+      <label className="block text-sm font-medium text-ink mb-1.5">Location</label>
       <button
         onClick={onDetectLocation}
         disabled={gpsDetecting}

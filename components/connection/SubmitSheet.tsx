@@ -293,13 +293,13 @@ export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSub
 
   if (showSuccessPopup) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)' }}>
-        <div className="w-full max-w-sm rounded-2xl p-6 text-center animate-scale-in" style={{ background: '#1C1C1E', border: '1px solid #2C2C2E' }}>
-          <div className="w-12 h-12 bg-green-500/10 border border-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-xl text-green-500 font-bold">✓</span>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
+        <div className="w-full max-w-sm rounded-none p-6 text-center animate-scale-in bg-[#FAF9F7]">
+          <div className="w-12 h-12 bg-green-50 border border-green-200 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-xl text-green-600 font-bold">✓</span>
           </div>
-          <h4 className="text-white font-display text-lg mb-2">Response Submitted!</h4>
-          <p className="text-[#8E8E93] text-xs font-thin mb-6 leading-relaxed">
+          <h4 className="font-['Playfair_Display'] text-ink text-lg mb-2">Response Submitted!</h4>
+          <p className="text-[#8E8E93] text-xs mb-6 leading-relaxed">
             Move on to the next task for today, or explore other profiles in the meantime.
           </p>
           <div className="flex gap-3">
@@ -327,17 +327,16 @@ export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSub
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center" style={{ background: 'rgba(0,0,0,0.7)' }}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center" style={{ background: 'rgba(0,0,0,0.5)' }}>
       <div
-        className="w-full max-w-app rounded-t-3xl p-5 pb-8 animate-slide-up"
-        style={{ background: '#1C1C1E' }}
+        className="w-full max-w-app rounded-t-none p-5 pb-8 animate-slide-up bg-[#FAF9F7]"
       >
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
             <Icon className="w-5 h-5 text-gold" />
-            <h3 className="text-white font-display">Day {dayNumber}</h3>
+            <h3 className="font-['Playfair_Display'] text-ink">Day {dayNumber}</h3>
           </div>
-          <button onClick={onClose} className="p-1 text-[#8E8E93] hover:text-white">
+          <button onClick={onClose} className="p-1 text-[#8E8E93] hover:text-ink">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -351,14 +350,14 @@ export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSub
               rows={5}
               className="input resize-none"
             />
-            <p className="text-right text-xs text-[#8E8E93] font-thin">{textContent.length}/500</p>
+            <p className="text-right text-xs text-[#8E8E93]">{textContent.length}/500</p>
           </div>
         )}
 
         {intention.type === 'photo' && (
           <div className="space-y-4">
             {photoPreview ? (
-              <div className="relative rounded-xl overflow-hidden aspect-video" style={{ background: '#111' }}>
+              <div className="relative rounded-none overflow-hidden aspect-video bg-[#F0EDE9]">
                 <img src={photoPreview} alt="" className="w-full h-full object-cover" />
                 <button
                   onClick={() => { setPhotoFile(null); setPhotoPreview(null); }}
@@ -371,11 +370,10 @@ export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSub
             ) : (
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full aspect-video rounded-xl flex flex-col items-center justify-center gap-3 border border-dashed border-[#3A3A3C] hover:border-gold/50 transition-colors"
-                style={{ background: '#111' }}
+                className="w-full aspect-video flex flex-col items-center justify-center gap-3 border border-dashed border-[#E8E6E1] hover:border-gold/50 transition-colors bg-[#F0EDE9]"
               >
                 <Camera className="w-10 h-10 text-[#8E8E93]" />
-                <span className="text-sm text-[#8E8E93] font-thin">Tap to select photo</span>
+                <span className="text-sm text-[#8E8E93]">Tap to select photo</span>
               </button>
             )}
             <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoSelect} />
@@ -435,7 +433,7 @@ export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSub
                     setDebugInfo('');
                     setError(null);
                   }}
-                  className="text-xs text-[#8E8E93] underline hover:text-white mt-1"
+                  className="text-xs text-[#8E8E93] underline hover:text-ink mt-1"
                 >
                   Re-record
                 </button>
@@ -459,8 +457,8 @@ export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSub
                   onClick={isRecording ? stopRecording : startRecording}
                   className="w-20 h-20 rounded-full flex items-center justify-center transition-all"
                   style={{
-                    background: isRecording ? 'rgba(239,68,68,0.15)' : '#111',
-                    border: isRecording ? '2px solid rgba(239,68,68,0.4)' : '1px solid #2A2A2C',
+                    background: isRecording ? 'rgba(239,68,68,0.1)' : '#F0EDE9',
+                    border: isRecording ? '2px solid rgba(239,68,68,0.4)' : '1px solid #E8E6E1',
                   }}
                 >
                   <Mic className={`w-8 h-8 ${isRecording ? 'text-red-500 animate-pulse' : 'text-gold'}`} />

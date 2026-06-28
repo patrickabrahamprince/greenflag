@@ -79,7 +79,7 @@ export default function StandardViewPage() {
             transform: 'scale(1.1)',
           }}
         />
-        {!photo && <div className="absolute inset-0 bg-[#1C1C1E]" />}
+        {!photo && <div className="absolute inset-0 bg-[#F0EDE9]" />}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
         <div className="absolute bottom-4 left-4">
           <h1 className="text-2xl font-bold text-[#EDEADE]">
@@ -90,7 +90,7 @@ export default function StandardViewPage() {
       </div>
 
       {woman.bio && (
-        <p className="text-sm text-[#EDEADE]/80 italic mb-6 px-1">"{woman.bio}"</p>
+        <p className="text-sm text-ink/80 italic mb-6 px-1">"{woman.bio}"</p>
       )}
 
       <h2 className="text-xs font-semibold text-[#8E8E93] uppercase tracking-wider mb-3">

@@ -48,14 +48,12 @@ export function WomanConnectionCard({
       data-testid="connection-card"
       onClick={() => router.push(`/review/${connectionId}`)}
       className={`card w-full text-left p-4 transition-all duration-300 ${
-        isEnded ? 'opacity-50' : 'hover:border-[#C9A961]/20'
+        isEnded ? 'opacity-50' : 'hover:border-[#C9A961]'
       }`}
-      style={{ background: '#1C1C1E' }}
     >
       <div className="flex items-center gap-3.5">
         <div
-          className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden"
-          style={{ background: '#161616' }}
+          className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden bg-[#F0EDE9]"
         >
           {manPhoto ? (
             <img
@@ -68,7 +66,7 @@ export function WomanConnectionCard({
               }}
             />
           ) : (
-            <span className="text-sm font-display italic text-[#8E8E93]">
+            <span className="font-['Playfair_Display'] text-sm italic text-ink/50">
               {manName.charAt(0)}
             </span>
           )}
@@ -76,7 +74,7 @@ export function WomanConnectionCard({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-sm font-display italic text-[#EDEADE] truncate">
+            <h3 className="font-['Playfair_Display'] text-sm italic text-ink truncate">
               {manName}
             </h3>
             <StatusChip variant={chipVariant} />
