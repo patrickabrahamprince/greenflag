@@ -59,10 +59,10 @@ export function useInterestsForm(persona: 'woman' | 'man' | null) {
       onboarding_completed: true,
       interests: isWoman ? undefined : genericInterests.selected,
       looking_for_interests: isWoman ? standard.selected : genericLookingFor.selected,
-      gender: isWoman ? 'woman' : 'man',
+      persona: isWoman ? 'woman' : 'man',
     };
 
-    const { error } = await supabase.from('profiles').upsert(payload);
+    const { error } = await supabase.from('profiles').upsert(payload as any);
     setLoading(false);
     if (error) {
       toast.error(error.message);
