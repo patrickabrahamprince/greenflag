@@ -61,10 +61,15 @@ $$;
 GRANT EXECUTE ON FUNCTION get_ranked_women TO authenticated;
 
 -- 1.3 — standards.user_id cleanup (woman_id is already canonical per 20261106 migration)
-ALTER TABLE standards DROP COLUMN IF EXISTS user_id;
+-- CASCADE: a pre-existing "standards_modify_own" RLS policy (not present in any
+-- tracked migration — created out-of-band on the live DB) still references
+-- user_id. Its logic is already superseded by the woman_id-based policies
+-- "Women manage own standards" / "Anyone can read active standards" added in
+-- 20261106000000_full_spec.sql, so dropping it here is safe.
+ALTER TABLE standards DROP COLUMN IF EXISTS user_id CASCADE;
 
 -- 1.4 — persona as source of truth; backfill + drop gender
-UPDATE profiles SET persona = CASE WHEN gender IN ('woman','host') THEN 'woman' ELSE 'man' END
+UPDATE profiles SET persona = (CASE WHEN gender IN ('woman','host') THEN 'woman' ELSE 'man' END)::user_role
 WHERE persona IS NULL AND gender IS NOT NULL;
 
 CREATE OR REPLACE FUNCTION public.get_my_gender()
@@ -74,14 +79,14 @@ SECURITY DEFINER
 STABLE
 SET search_path = public
 AS $$
-  SELECT persona FROM public.profiles WHERE id = auth.uid();
+  SELECT persona::TEXT FROM public.profiles WHERE id = auth.uid();
 $$;
 
 DROP POLICY IF EXISTS "view_opposite_gender" ON profiles;
 CREATE POLICY "view_opposite_gender" ON profiles
   FOR SELECT USING (
     is_active = true
-    AND persona != public.get_my_gender()
+    AND persona != public.get_my_gender()::user_role
   );
 
 CREATE OR REPLACE FUNCTION public.get_matching_profiles(
@@ -136,7 +141,7 @@ BEGIN
       ) AS distance_km,
       p.last_active
     FROM profiles p
-    WHERE p.persona = $1
+    WHERE p.persona = $1::user_role
       AND p.onboarding_completed = true
       AND p.is_banned = false
       AND p.id != $5
@@ -164,7 +169,11 @@ BEGIN
 END;
 $$;
 
-ALTER TABLE profiles DROP COLUMN IF EXISTS gender;
+-- CASCADE: same drift pattern as standards.user_id above — untracked policies
+-- or indexes on the live DB may still reference gender. Functions/dynamic SQL
+-- bodies are not tracked as catalog dependencies, so CASCADE here only drops
+-- direct dependents (policies/indexes/check constraints), not other functions.
+ALTER TABLE profiles DROP COLUMN IF EXISTS gender CASCADE;
 
 -- 1.5 — messages RLS requires chat_unlocked
 DROP POLICY IF EXISTS "messages_participant" ON messages;
