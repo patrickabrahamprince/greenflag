@@ -33,22 +33,14 @@ export async function GET(req: Request) {
       const { searchParams } = new URL(req.url);
       const page = parseInt(searchParams.get('page') || '0');
 
-      const { data, error } = await admin.rpc('get_matching_profiles', {
-        p_user_id: user.id,
-        p_viewing_gender: 'man',
-        p_user_interests: [],
-        p_user_standards: profile.looking_for_interests || [],
-        p_user_lat: profile.lat || 0,
-        p_user_lng: profile.lng || 0,
-        p_limit: 20,
-        p_offset: page * 20,
-      });
+      const { data: profiles, error } = await admin
+        .rpc('get_matching_profiles', { p_viewer_id: user.id });
 
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
 
-      return NextResponse.json({ profiles: data || [] });
+      return NextResponse.json({ profiles: profiles || [] });
     }
 
     const { data: standard } = await admin
