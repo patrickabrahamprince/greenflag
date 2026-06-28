@@ -1,3 +1,5 @@
+// /components/layout/bottom-nav.tsx
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -12,6 +14,7 @@ const manTabs = [
   { name: 'Discover', href: '/discover', icon: Compass },
   { name: 'My Connections', href: '/my-connections', icon: Heart },
   { name: 'Chat', href: '/messages', icon: MessageSquare },
+  { name: 'Likes', href: '/likes', icon: Heart },
   { name: 'Profile', href: '/profile', icon: User },
   { name: 'Coins', href: '/coins', icon: Coins },
 ];
@@ -20,6 +23,7 @@ const womanTabs = [
   { name: 'Standard', href: '/standard/builder', icon: Star },
   { name: 'Connections', href: '/connections', icon: Heart },
   { name: 'Chat', href: '/messages', icon: MessageSquare },
+  { name: 'Likes', href: '/likes', icon: Heart },
   { name: 'Profile', href: '/profile', icon: User },
 ];
 
@@ -27,21 +31,55 @@ export function BottomNav() {
   const pathname = usePathname();
   const user = useUserStore((s) => s.user);
   const tabs = user?.persona === 'woman' ? womanTabs : manTabs;
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [unreadLikes, setUnreadLikes] = useState(0);
 
   useEffect(() => {
     if (!user?.id) return;
     const supabase = createClient();
-    const fetchCount = async () => {
-      const { data } = await supabase.rpc('get_unread_count', { p_user_id: user.id });
-      setUnreadCount(data || 0);
+
+    const fetchCounts = async () => {
+      // 1. Fetch unread notifications count
+      const { data: notifData } = await supabase.rpc('get_unread_count', { p_user_id: user.id });
+      setUnreadNotifications(notifData || 0);
+
+      // 2. Fetch unread likes count (from likes_received view)
+      const { count: likesCount } = await supabase
+        .from('likes_received' as any)
+        .select('*', { count: 'exact', head: true });
+      setUnreadLikes(likesCount || 0);
     };
-    fetchCount();
-    const channel = supabase
+
+    fetchCounts();
+
+    // Listen to changes in notifications
+    const notificationsChannel = supabase
       .channel('notifications-changes')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, () => { setUnreadCount((prev) => prev + 1); })
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
+        () => {
+          setUnreadNotifications((prev) => prev + 1);
+        }
+      )
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+
+    // Listen to changes in likes
+    const likesChannel = supabase
+      .channel('likes-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'likes', filter: `to_user_id=eq.${user.id}` },
+        () => {
+          fetchCounts();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(notificationsChannel);
+      supabase.removeChannel(likesChannel);
+    };
   }, [user?.id]);
 
   return (
@@ -50,13 +88,26 @@ export function BottomNav() {
         {tabs.map((tab) => {
           const active = pathname === tab.href;
           const isNotifications = tab.name === 'Notifications';
+          const isLikes = tab.name === 'Likes';
+
           return (
             <Link key={tab.name} href={tab.href} className="flex items-center justify-center relative w-12 h-12">
               <div className="relative">
                 <tab.icon className={cn('transition-all duration-200', active ? 'text-[#C9A961] w-6 h-6' : 'text-ink/40 w-5 h-5')} strokeWidth={active ? 2.5 : 1.5} />
-                {isNotifications && unreadCount > 0 && (
+                
+                {isNotifications && unreadNotifications > 0 && (
                   <span className="absolute -top-1 -right-2 min-w-[16px] h-4 px-1 bg-red-500 rounded-full flex items-center justify-center">
-                    <span className="text-[9px] font-bold text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>
+                    <span className="text-[9px] font-bold text-white">
+                      {unreadNotifications > 99 ? '99+' : unreadNotifications}
+                    </span>
+                  </span>
+                )}
+
+                {isLikes && unreadLikes > 0 && (
+                  <span className="absolute -top-1 -right-2 min-w-[16px] h-4 px-1 bg-[#C9A961] rounded-full flex items-center justify-center">
+                    <span className="text-[9px] font-bold text-white">
+                      {unreadLikes > 99 ? '99+' : unreadLikes}
+                    </span>
                   </span>
                 )}
               </div>

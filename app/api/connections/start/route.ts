@@ -41,6 +41,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Only men can begin standards' }, { status: 403 });
     }
 
+    const { data: blocked } = await admin
+      .from('blocked_pairs')
+      .select('host_id')
+      .or(
+        `and(host_id.eq.${user.id},guest_id.eq.${woman_id}),and(host_id.eq.${woman_id},guest_id.eq.${user.id})`
+      )
+      .maybeSingle();
+
+    if (blocked) {
+      return NextResponse.json({ error: 'Cannot connect with blocked user' }, { status: 403 });
+    }
+
     const { data: wallet } = await admin
       .from('wallets')
       .select('balance')

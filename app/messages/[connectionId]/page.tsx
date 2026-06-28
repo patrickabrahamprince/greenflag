@@ -39,7 +39,21 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
       if (!authUser) { router.push('/login'); return; }
       const res = await fetch(`/api/connections/${connectionId}`);
       const data = await res.json();
-      if (data.id) setConnection(data);
+      if (!data.id) { setLoading(false); return; }
+
+      const otherId = data.man?.id === authUser.id ? data.woman?.id : data.man?.id;
+      if (otherId) {
+        const { data: blocked } = await supabase
+          .from('blocked_pairs')
+          .select('host_id')
+          .or(
+            `and(host_id.eq.${authUser.id},guest_id.eq.${otherId}),and(host_id.eq.${otherId},guest_id.eq.${authUser.id})`
+          )
+          .maybeSingle();
+        if (blocked) { router.push('/discover?error=blocked'); return; }
+      }
+
+      setConnection(data);
       const { data: msgs } = await supabase
         .from('messages')
         .select('*')

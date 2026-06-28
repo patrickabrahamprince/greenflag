@@ -77,6 +77,22 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(destination);
   }
 
+  // Check if accessing discover or likes with 0 photos
+  if (pathname.startsWith('/discover') || pathname.startsWith('/likes')) {
+    const { data: photos } = await supabase
+      .from('photos')
+      .select('id')
+      .eq('user_id', user.id)
+      .limit(1);
+
+    if (!photos || photos.length === 0) {
+      console.log('MIDDLEWARE: No photos, redirecting to /profile/edit?error=no-photos');
+      const destination = new URL('/profile/edit', req.url);
+      destination.searchParams.set('error', 'no-photos');
+      return NextResponse.redirect(destination);
+    }
+  }
+
   // Fetch profile for authz checks
   const { data: profile } = await supabase
     .from('profiles')

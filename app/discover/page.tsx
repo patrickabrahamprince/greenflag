@@ -8,6 +8,8 @@ import { CoinBadge } from '@/components/shared/coin-badge'
 import { ProfileImageCarousel } from '@/components/shared/ProfileImageCarousel'
 import { createClient } from '@/lib/supabase/client'
 
+import { ProfileCard } from '@/components/discover/ProfileCard'
+
 export default function DiscoverPage() {
   const [profiles, setProfiles] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
@@ -76,32 +78,6 @@ export default function DiscoverPage() {
     next?.scrollIntoView({ behavior: 'smooth' })
   }
 
-  async function handleBegin(profileId: string) {
-    if (loading) return
-    setLoading(true)
-    try {
-      if (persona === 'woman') {
-        router.push(`/profile/${profileId}`)
-        return
-      }
-      const res = await fetch('/api/connections/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ woman_id: profileId })
-      })
-      if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.error || 'Failed to start')
-      }
-      const { connectionId: connection_id } = await res.json()
-      router.push(`/intentions/${connection_id}`)
-    } catch (e: any) {
-      toast.error(e.message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   return (
     <div className="relative bg-[#FAF9F7] min-h-screen">
       <div className="fixed top-0 z-50 w-full flex items-center justify-between px-8 py-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent">
@@ -119,62 +95,7 @@ export default function DiscoverPage() {
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
             className="snap-start snap-always min-h-screen w-full flex flex-col"
           >
-            <div className="relative w-full aspect-[3/4] flex-shrink-0">
-              <ProfileImageCarousel images={p.photos} />
-              <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#FAF9F7] to-transparent pointer-events-none" />
-            </div>
-
-            <div className="flex-1 flex flex-col px-8 pt-2 pb-10">
-              <h1 className="font-['Playfair_Display'] text-4xl text-ink font-semibold">
-                {p.name}
-              </h1>
-              <p className="font-['Inter'] text-sm text-ink/60 tracking-wide uppercase mt-1">
-                {p.age ? `${p.age}` : ''}{p.age && p.city_auto ? ' · ' : ''}{p.city_auto}
-              </p>
-              {p.bio && (
-                <p className="text-ink/80 text-base leading-relaxed max-w-md mt-3">{p.bio}</p>
-              )}
-              <div className="flex flex-wrap gap-2 mt-4">
-                {(p.interests_have ?? p.interests ?? []).slice(0, 5).map((interest: string) => (
-                  <span key={interest} className="px-3 py-1 border border-[#E8E6E1] text-ink/70 text-xs uppercase tracking-wide">
-                    {interest}
-                  </span>
-                ))}
-              </div>
-
-              <div className="flex items-center gap-4 mt-auto pt-6">
-                <button
-                  onClick={() => scrollToNext(i)}
-                  aria-label="Pass"
-                  className="size-14 rounded-full bg-[#F0EDE9] border border-[#E8E6E1] flex items-center justify-center active:scale-95 transition-all"
-                >
-                  <X className="w-6 h-6 text-ink/60" />
-                </button>
-                <button
-                  onClick={() => {
-                    if (persona === 'woman') {
-                      handleBegin(p.id);
-                    } else {
-                      setConfirmProfileId(p.id);
-                    }
-                  }}
-                  disabled={loading}
-                  aria-label="Like"
-                  className="flex-1 h-14 rounded-full bg-[#C9A961] flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
-                >
-                  {loading ? (
-                    <Loader2 className="w-5 h-5 animate-spin text-white" />
-                  ) : (
-                    <>
-                      <Heart className="w-5 h-5 text-white" />
-                      <span className="text-white text-xs uppercase tracking-wide font-medium">
-                        {persona === 'woman' ? 'View Profile' : 'Meet Her Standard'}
-                      </span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
+            <ProfileCard profile={p} onSwipe={() => scrollToNext(i)} />
           </div>
         ))}
         {loading && (
@@ -183,38 +104,6 @@ export default function DiscoverPage() {
           </div>
         )}
       </div>
-
-      {confirmProfileId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
-          <div className="w-full max-w-sm bg-[#FAF9F7] p-8 text-center">
-            <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Coins className="w-6 h-6 text-[#C9A961]" />
-            </div>
-            <h4 className="font-['Playfair_Display'] text-2xl text-ink mb-2">Unlock Standard?</h4>
-            <p className="text-ink/60 text-sm leading-relaxed mb-6">
-              This action will deduct 100 coins from your wallet to begin a 3-day connection request.
-            </p>
-            <div className="flex gap-4">
-              <button
-                onClick={() => setConfirmProfileId(null)}
-                className="btn-secondary flex-1"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  const targetId = confirmProfileId;
-                  setConfirmProfileId(null);
-                  handleBegin(targetId);
-                }}
-                className="btn-primary flex-1"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

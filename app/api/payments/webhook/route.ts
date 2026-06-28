@@ -1,3 +1,5 @@
+// /app/api/payments/webhook/route.ts
+
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
@@ -95,6 +97,20 @@ export async function POST(req: Request) {
     if (error) {
       console.error('add_coins RPC error:', error);
       return new NextResponse('ok');
+    }
+
+    // Trigger Coin Purchase Notification
+    try {
+      await supabaseAdmin.rpc('create_notification', {
+        p_user_id: userId,
+        p_type: 'coin_purchase',
+        p_title: 'Coins added!',
+        p_body: `${coins} coins credited to your wallet`,
+        p_link: '/coins',
+        p_metadata: { amount: coins },
+      });
+    } catch (notifyErr) {
+      console.error('Failed to create webhook notification:', notifyErr);
     }
 
     return new NextResponse('ok');

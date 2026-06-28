@@ -1,13 +1,14 @@
-// /app/notifications/page.tsx
+// /app/likes/page.tsx
 
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { NotificationList } from '@/components/notifications/NotificationList';
+import { TopNav } from '@/components/layout/TopNav';
+import { LikesList } from '@/components/likes/LikesList';
 
 export const dynamic = 'force-dynamic';
 
-export default async function NotificationsPage() {
+export default async function LikesPage() {
   const cookieStore = cookies();
   const supabase = createServerComponentClient({ cookies: () => cookieStore });
 
@@ -21,7 +22,8 @@ export default async function NotificationsPage() {
 
   return (
     <main className="min-h-screen bg-[#FAF9F7]">
-      <NotificationList />
+      <TopNav />
+      <LikesList />
     </main>
   );
 }

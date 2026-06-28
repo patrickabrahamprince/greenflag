@@ -417,6 +417,42 @@ export type Database = {
           },
         ]
       }
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+          user1_id: string
+          user2_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user1_id: string
+          user2_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user1_id?: string
+          user2_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_user1_id_fkey"
+            columns: ["user1_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_user2_id_fkey"
+            columns: ["user2_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daily_discover_views: {
         Row: {
           id: string
@@ -560,35 +596,126 @@ export type Database = {
         }
         Relationships: []
       }
+      likes: {
+        Row: {
+          created_at: string
+          from_user_id: string
+          id: string
+          to_user_id: string
+          type: string | null
+        }
+        Insert: {
+          created_at?: string
+          from_user_id: string
+          id?: string
+          to_user_id: string
+          type?: string | null
+        }
+        Update: {
+          created_at?: string
+          from_user_id?: string
+          id?: string
+          to_user_id?: string
+          type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "likes_from_user_id_fkey"
+            columns: ["from_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "likes_to_user_id_fkey"
+            columns: ["to_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      matches: {
+        Row: {
+          created_at: string
+          id: string
+          user1_id: string
+          user2_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user1_id: string
+          user2_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user1_id?: string
+          user2_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_user1_id_fkey"
+            columns: ["user1_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_user2_id_fkey"
+            columns: ["user2_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
+          audio_url: string | null
           connection_id: string | null
           content: string
+          conversation_id: string | null
           created_at: string | null
           id: string
           message_type: string | null
           read_at: string | null
           sender_id: string | null
+          type: string | null
         }
         Insert: {
+          audio_url?: string | null
           connection_id?: string | null
           content: string
+          conversation_id?: string | null
           created_at?: string | null
           id?: string
           message_type?: string | null
           read_at?: string | null
           sender_id?: string | null
+          type?: string | null
         }
         Update: {
+          audio_url?: string | null
           connection_id?: string | null
           content?: string
+          conversation_id?: string | null
           created_at?: string | null
           id?: string
           message_type?: string | null
           read_at?: string | null
           sender_id?: string | null
+          type?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "messages_sender_id_fkey"
             columns: ["sender_id"]
@@ -641,6 +768,7 @@ export type Database = {
           delivered_at: string | null
           id: string
           link: string | null
+          metadata: Json | null
           read: boolean
           read_at: string | null
           title: string
@@ -654,6 +782,7 @@ export type Database = {
           delivered_at?: string | null
           id?: string
           link?: string | null
+          metadata?: Json | null
           read?: boolean
           read_at?: string | null
           title: string
@@ -667,6 +796,7 @@ export type Database = {
           delivered_at?: string | null
           id?: string
           link?: string | null
+          metadata?: Json | null
           read?: boolean
           read_at?: string | null
           title?: string
@@ -753,6 +883,41 @@ export type Database = {
           verified?: boolean | null
         }
         Relationships: []
+      }
+      photos: {
+        Row: {
+          created_at: string
+          id: string
+          is_primary: boolean | null
+          position: number
+          url: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_primary?: boolean | null
+          position?: number
+          url: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_primary?: boolean | null
+          position?: number
+          url?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "photos_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       posts: {
         Row: {
@@ -1454,6 +1619,25 @@ export type Database = {
         }
         Relationships: []
       }
+      likes_received: {
+        Row: {
+          age: number | null
+          created_at: string | null
+          from_user_id: string | null
+          id: string | null
+          name: string | null
+          photo_url: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "likes_from_user_id_fkey"
+            columns: ["from_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       _postgis_deprecate: {
@@ -1628,6 +1812,17 @@ export type Database = {
         }
         Returns: Json
       }
+      create_notification: {
+        Args: {
+          p_body?: string
+          p_link?: string
+          p_metadata?: Json
+          p_title: string
+          p_type: string
+          p_user_id: string
+        }
+        Returns: string
+      }
       decide_connection: {
         Args: { p_connection_id: string; p_green_flag: boolean }
         Returns: Json
@@ -1636,15 +1831,20 @@ export type Database = {
         Args: { connection_id: string }
         Returns: undefined
       }
-      deduct_coins: {
-        Args: {
-          p_amount: number
-          p_description: string
-          p_metadata?: Json
-          p_user_id: string
-        }
-        Returns: Json
-      }
+      deduct_coins:
+        | {
+            Args: {
+              p_amount: number
+              p_description: string
+              p_metadata?: Json
+              p_user_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: { p_amount: number; p_reason: string; p_user_id: string }
+            Returns: boolean
+          }
       disablelongtransactions: { Args: never; Returns: string }
       dropgeometrycolumn:
         | {
@@ -1944,6 +2144,7 @@ export type Database = {
       }
       postgis_version: { Args: never; Returns: string }
       postgis_wagyu_version: { Args: never; Returns: string }
+      reveal_likes: { Args: never; Returns: boolean }
       review_connection: {
         Args: { p_approved: boolean; p_connection_id: string }
         Returns: undefined
@@ -2540,6 +2741,7 @@ export type Database = {
         Returns: Json
       }
       unlockrows: { Args: { "": string }; Returns: number }
+      unmatch_user: { Args: { p_other_user_id: string }; Returns: Json }
       updategeometrysrid: {
         Args: {
           catalogn_name: string

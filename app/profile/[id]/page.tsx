@@ -1,82 +1,77 @@
-'use client';
+// /app/profile/[id]/page.tsx
 
-import { useParams } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
-import { useProfilePage } from '@/hooks/useProfilePage';
-import { ProfileHeroSection } from '@/components/shared/ProfileHeroSection';
-import { ProfileInfo } from '@/components/shared/ProfileInfo';
-import { ProfileActionBar } from '@/components/shared/ProfileActionBar';
-import { InterestGrid } from '../../components/discovery/InterestGrid';
-import { ReportModal } from '@/components/shared/ReportModal';
+import { notFound, redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { TopNav } from '@/components/layout/TopNav';
+import { PhotoGrid } from '@/components/profile/PhotoGrid';
+import { getProfile } from '@/lib/supabase/profile';
+import { ProfileActions } from './ProfileActions';
 
-export default function ViewProfilePage() {
-  const params = useParams();
+export const dynamic = 'force-dynamic';
+
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default async function ViewProfilePage({ params }: PageProps) {
+  const cookieStore = cookies();
+  const supabase = createServerComponentClient({ cookies: () => cookieStore });
+
   const {
-    user, profile, match, connection, isOwn, loading, connecting,
-    photoIdx, setPhotoIdx, showReport, setShowReport,
-    reportReason, setReportReason, reportDetails, setReportDetails,
-    submittingReport, handleMeet, handleReport, router,
-  } = useProfilePage(params.id);
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#C9A961]" />
-      </div>
-    );
+  if (!session) {
+    redirect('/login');
   }
 
-  if (!profile) return null;
+  const profile = await getProfile(params.id);
 
-  const photos = profile.photos || [];
-  const photo = photos[photoIdx] || '';
+  if (!profile) {
+    notFound();
+  }
+
+  const isOwn = session.user.id === profile.id;
 
   return (
-    <div className="min-h-screen bg-[#FAF9F7] pb-24">
-      <ProfileHeroSection
-        photo={photo}
-        name={profile.name}
-        photos={photos}
-        photoIdx={photoIdx}
-        isOwn={isOwn}
-        onBack={() => router.back()}
-        onReport={() => setShowReport(true)}
-        onPhotoSelect={setPhotoIdx}
-      />
-      <ProfileInfo
-        name={profile.name}
-        age={profile.age}
-        bio={profile.bio}
-        job={profile.job}
-        height={profile.height}
-        city_auto={profile.city_auto}
-        instagram_url={profile.instagram_url}
-        interests={profile.interests}
-        matchPercent={match?.percent}
-        matchOverlapping={match?.overlapping}
-      />
-      <InterestGrid title="Interests" options={profile.interests ?? []} selected={profile.interests ?? []} readOnly />
-      <div className="px-8 pb-6">
-        <ProfileActionBar
-          isOwn={isOwn}
-          hasConnection={!!connection}
-          isGuest={user?.persona === 'man'}
-          connecting={connecting}
-          onEdit={() => router.push('/profile')}
-          onContinue={() => router.push(`/${profile.name.toLowerCase()}`)}
-          onMeet={handleMeet}
-        />
+    <main className="min-h-screen bg-[#FAF9F7] pb-24">
+      <TopNav />
+      
+      <div className="max-w-md mx-auto w-full px-4 py-6 flex flex-col gap-6">
+        <h1 className="font-['Playfair_Display'] text-2xl italic font-bold text-[#1A1A1A]">
+          {profile.name}, {profile.age}
+        </h1>
+
+        <PhotoGrid photos={profile.photos} editable={false} />
+
+        <div className="bg-white border border-[#E8E6E1] p-5 rounded-xl">
+          <h3 className="text-xs uppercase tracking-wider font-bold text-[#1A1A1A]/50 mb-2">
+            Bio
+          </h3>
+          <p className="text-sm leading-relaxed text-[#1A1A1A]/85 whitespace-pre-wrap">
+            {profile.bio || "No bio description written yet."}
+          </p>
+        </div>
+
+        {profile.instagram_handle && (
+          <div className="bg-white border border-[#E8E6E1] px-5 py-3 rounded-xl flex items-center justify-between text-xs">
+            <span className="text-[#1A1A1A]/50 font-medium">Instagram</span>
+            <a
+              href={`https://instagram.com/${profile.instagram_handle}`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-[#C9A961] font-bold"
+            >
+              @{profile.instagram_handle}
+            </a>
+          </div>
+        )}
+
+        {!isOwn && <ProfileActions otherUserId={profile.id} />}
       </div>
-      <ReportModal
-        open={showReport}
-        reason={reportReason}
-        details={reportDetails}
-        submitting={submittingReport}
-        onClose={() => { setShowReport(false); setReportReason(''); setReportDetails(''); }}
-        onReasonChange={setReportReason}
-        onDetailsChange={setReportDetails}
-        onSubmit={handleReport}
-      />
-    </div>
+    </main>
   );
 }
