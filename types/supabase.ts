@@ -1789,33 +1789,90 @@ export type Database = {
           title: string
         }[]
       }
-      get_matching_profiles: {
-        Args: {
-          p_limit?: number
-          p_offset?: number
-          p_user_id: string
-          p_user_interests: string[]
-          p_user_lat: number
-          p_user_lng: number
-          p_user_standards: string[]
-          p_viewing_gender: string
-        }
-        Returns: {
-          age: number
-          bio: string
-          city_auto: string
-          distance_km: number
-          height: string
-          id: string
-          interests: string[]
-          job: string
-          last_active: string
-          looking_for_interests: string[]
-          match_percent: number
-          name: string
-          photos: string[]
-        }[]
-      }
+      get_matching_profiles:
+        | {
+            Args: {
+              p_limit?: number
+              p_offset?: number
+              p_user_id: string
+              p_user_interests: string[]
+              p_user_lat: number
+              p_user_lng: number
+              p_user_standards: string[]
+              p_viewing_gender: string
+            }
+            Returns: {
+              age: number
+              bio: string
+              city_auto: string
+              distance_km: number
+              height: string
+              id: string
+              interests: string[]
+              job: string
+              last_active: string
+              looking_for_interests: string[]
+              match_percent: number
+              name: string
+              photos: string[]
+            }[]
+          }
+        | {
+            Args: { p_viewer_id: string }
+            Returns: {
+              about_me_tags: string[] | null
+              age: number | null
+              avatar: string | null
+              ban_reason: string | null
+              banned_at: string | null
+              banned_by: string | null
+              banned_reason: string | null
+              bio: string | null
+              blur_key: string | null
+              city: string | null
+              city_auto: string | null
+              coins: number | null
+              connected_count: number | null
+              created_at: string | null
+              elo_score: number | null
+              height: string | null
+              id: string
+              instagram_url: string | null
+              interests: string[] | null
+              interests_have: string[] | null
+              interests_looking_for: string[] | null
+              is_active: boolean | null
+              is_admin: boolean | null
+              is_banned: boolean | null
+              is_verified: boolean | null
+              job: string | null
+              language_preference: string | null
+              last_active: string | null
+              lat: number | null
+              lng: number | null
+              looking_for_interests: string[] | null
+              looking_for_tags: string[] | null
+              name: string
+              onboarding_complete: boolean | null
+              onboarding_completed: boolean | null
+              persona: Database["public"]["Enums"]["user_role"]
+              phone: string | null
+              phone_verified: boolean | null
+              photos: string[] | null
+              push_token: string | null
+              quiz_answers: Json | null
+              standards: Json | null
+              tastes: string | null
+              verification_status: string | null
+              why_me_prompts: string[] | null
+            }[]
+            SetofOptions: {
+              from: "*"
+              to: "profiles"
+              isOneToOne: false
+              isSetofReturn: true
+            }
+          }
       get_my_gender: { Args: never; Returns: string }
       get_ranked_women: {
         Args: {
