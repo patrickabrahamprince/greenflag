@@ -108,8 +108,8 @@ export default function DiscoverPage() {
   }
 
   return (
-    <div className="relative bg-[#FAF9F7] min-h-screen">
-      <div className="fixed top-0 z-50 w-full flex items-center justify-between px-8 py-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent">
+    <div className="relative bg-[#FAF9F7] min-h-screen max-w-app mx-auto">
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex items-center justify-between px-8 py-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent">
         <button onClick={() => router.push('/messages')} className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center">
           <ArrowLeft className="w-5 h-5 text-white" />
         </button>
