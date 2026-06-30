@@ -152,6 +152,7 @@ export default function EditProfilePage() {
                   ref={(el) => { fileInputRefs.current[i] = el; }}
                   type="file"
                   accept="image/*"
+                  capture="environment"
                   className="hidden"
                   onChange={(e) => handlePhotoSelect(i, e.target.files?.[0] || null)}
                 />

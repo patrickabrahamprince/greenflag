@@ -378,10 +378,10 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
                 className="w-full aspect-video flex flex-col items-center justify-center gap-3 border border-dashed border-[#E8E6E1] hover:border-gold/50 transition-colors bg-[#F0EDE9]"
               >
                 <Camera className="w-10 h-10 text-[#8E8E93]" />
-                <span className="text-sm text-[#8E8E93]">Tap to select photo</span>
+                <span className="text-sm text-[#8E8E93]">Tap to take a photo</span>
               </button>
             )}
-            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoSelect} />
+            <input ref={fileInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handlePhotoSelect} />
           </div>
         )}
 

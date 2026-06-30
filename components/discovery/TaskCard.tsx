@@ -102,7 +102,7 @@ export function TaskCard({
                   className="border-2 border-dashed border-[#E8E6E1] rounded-xl p-6 text-center cursor-pointer hover:border-[#C9A961] transition-colors"
                 >
                   <Image className="w-6 h-6 text-[#8E8E93] mx-auto mb-2" />
-                  <p className="text-xs text-[#8E8E93]">Tap to upload an image</p>
+                  <p className="text-xs text-[#8E8E93]">Tap to take a photo</p>
                   <p className="text-[10px] text-[#5A5A5D] mt-1">JPG, PNG up to 5MB</p>
                 </div>
               )}
@@ -110,6 +110,7 @@ export function TaskCard({
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
+                capture="environment"
                 className="hidden"
                 onChange={(e) => onImageSelect(e.target.files?.[0] || null)}
               />
