@@ -9,6 +9,7 @@ import { UserFilterBar } from '@/components/admin/UserFilterBar';
 import { UserManagementTable } from '@/components/admin/UserManagementTable';
 import { UserPagination } from '@/components/admin/UserPagination';
 import { BanUserModal } from '@/components/admin/BanUserModal';
+import { RejectUserModal } from '@/components/admin/RejectUserModal';
 
 const PAGE_SIZE = 20;
 
@@ -23,6 +24,9 @@ export default function AdminUsers() {
   const [banTarget, setBanTarget] = useState<AdminUser | null>(null);
   const [banReason, setBanReason] = useState('');
   const [banning, setBanning] = useState(false);
+  const [rejectTarget, setRejectTarget] = useState<AdminUser | null>(null);
+  const [rejectReason, setRejectReason] = useState('');
+  const [rejecting, setRejecting] = useState(false);
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -69,6 +73,46 @@ export default function AdminUsers() {
     }
   };
 
+  const handleApprove = async (userId: string) => {
+    try {
+      const res = await fetch(`/api/admin/users/${userId}/approve`, { method: 'POST' });
+      const d = await res.json();
+      if (d.success) {
+        toast.success('Application approved');
+        fetchUsers();
+      } else {
+        toast.error(d.error || 'Failed to approve');
+      }
+    } catch {
+      toast.error('Network error');
+    }
+  };
+
+  const handleReject = async () => {
+    if (!rejectTarget || !rejectReason.trim()) return;
+    setRejecting(true);
+    try {
+      const res = await fetch(`/api/admin/users/${rejectTarget.id}/reject`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: rejectReason.trim() }),
+      });
+      const d = await res.json();
+      if (d.success) {
+        toast.success('Application rejected');
+        setRejectTarget(null);
+        setRejectReason('');
+        fetchUsers();
+      } else {
+        toast.error(d.error || 'Failed to reject');
+      }
+    } catch {
+      toast.error('Network error');
+    } finally {
+      setRejecting(false);
+    }
+  };
+
   const handleSetAdmin = async (userId: string) => {
     try {
       const res = await fetch(`/api/admin/users/${userId}/set-admin`, { method: 'POST' });
@@ -104,7 +148,13 @@ export default function AdminUsers() {
         </div>
       ) : (
         <>
-          <UserManagementTable users={users} onSetAdmin={handleSetAdmin} onBanClick={setBanTarget} />
+          <UserManagementTable
+            users={users}
+            onSetAdmin={handleSetAdmin}
+            onBanClick={setBanTarget}
+            onApproveClick={(u) => handleApprove(u.id)}
+            onRejectClick={setRejectTarget}
+          />
 
           {users.length === 0 && (
             <div className="empty-state py-16">
@@ -122,6 +172,14 @@ export default function AdminUsers() {
           user={banTarget} reason={banReason} banning={banning}
           onReasonChange={setBanReason} onConfirm={handleBan}
           onClose={() => { setBanTarget(null); setBanReason(''); }}
+        />
+      )}
+
+      {rejectTarget && (
+        <RejectUserModal
+          user={rejectTarget} reason={rejectReason} rejecting={rejecting}
+          onReasonChange={setRejectReason} onConfirm={handleReject}
+          onClose={() => { setRejectTarget(null); setRejectReason(''); }}
         />
       )}
     </div>

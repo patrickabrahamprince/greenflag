@@ -60,6 +60,7 @@ export default function RulesPage() {
   const supabase = createClient();
   const [loading, setLoading] = useState(true);
   const [persona, setPersona] = useState<'man' | 'woman' | null>(null);
+  const [approvalStatus, setApprovalStatus] = useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Fetch persona on mount.
@@ -73,10 +74,11 @@ export default function RulesPage() {
       }
       const { data: profile } = await supabase
         .from('profiles')
-        .select('persona')
+        .select('persona, approval_status')
         .eq('id', user.id)
         .single();
       setPersona(profile?.persona as 'man' | 'woman' | null);
+      setApprovalStatus((profile as any)?.approval_status ?? null);
       setLoading(false);
     };
     fetchProfile();
@@ -94,7 +96,11 @@ export default function RulesPage() {
     if (currentSlide < slides.length - 1) {
       setCurrentSlide((prev) => prev + 1);
     } else {
-      // Finished all slides – proceed based on persona.
+      // Finished all slides – pending applicants wait for admin review.
+      if (approvalStatus === 'pending') {
+        router.push('/onboard/pending');
+        return;
+      }
       if (persona === 'woman') {
         router.push('/connections');
       } else {

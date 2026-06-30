@@ -1,0 +1,5 @@
+-- Placeholder: this migration was applied directly to the remote database
+-- (project waqmflgufshwvyepusux) outside of this repo's migration history.
+-- Its actual SQL content is unknown locally; this stub exists only so
+-- `supabase migration repair --status applied` has a file to register
+-- against the remote ledger entry. Do not edit or re-run.

@@ -533,6 +533,78 @@ export type Database = {
           },
         ]
       }
+      likes: {
+        Row: {
+          created_at: string | null
+          from_user_id: string
+          id: string
+          to_user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          from_user_id: string
+          id?: string
+          to_user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          from_user_id?: string
+          id?: string
+          to_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "likes_from_user_id_fkey"
+            columns: ["from_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "likes_to_user_id_fkey"
+            columns: ["to_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      matches: {
+        Row: {
+          created_at: string | null
+          id: string
+          user1_id: string
+          user2_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          user1_id: string
+          user2_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          user1_id?: string
+          user2_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_user1_id_fkey"
+            columns: ["user1_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_user2_id_fkey"
+            columns: ["user2_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invite_codes: {
         Row: {
           code: string
@@ -785,6 +857,9 @@ export type Database = {
         Row: {
           about_me_tags: string[] | null
           age: number | null
+          approval_reason: string | null
+          approval_status: string
+          approved_at: string | null
           avatar: string | null
           ban_reason: string | null
           banned_at: string | null
@@ -832,6 +907,9 @@ export type Database = {
         Insert: {
           about_me_tags?: string[] | null
           age?: number | null
+          approval_reason?: string | null
+          approval_status?: string
+          approved_at?: string | null
           avatar?: string | null
           ban_reason?: string | null
           banned_at?: string | null
@@ -879,6 +957,9 @@ export type Database = {
         Update: {
           about_me_tags?: string[] | null
           age?: number | null
+          approval_reason?: string | null
+          approval_status?: string
+          approved_at?: string | null
           avatar?: string | null
           ban_reason?: string | null
           banned_at?: string | null
@@ -1599,7 +1680,12 @@ export type Database = {
             }
             Returns: string
           }
+      admin_approve_user: { Args: { p_user_id: string }; Returns: undefined }
       admin_ban_user: {
+        Args: { p_reason: string; p_user_id: string }
+        Returns: undefined
+      }
+      admin_reject_user: {
         Args: { p_reason: string; p_user_id: string }
         Returns: undefined
       }
@@ -1626,6 +1712,10 @@ export type Database = {
           p_max_requests: number
           p_window_seconds: number
         }
+        Returns: Json
+      }
+      create_like: {
+        Args: { p_to_user_id: string }
         Returns: Json
       }
       decide_connection: {

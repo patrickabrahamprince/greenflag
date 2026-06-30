@@ -36,28 +36,26 @@ export async function deleteMockData() {
   console.log(`[cleanup] Found ${ids.length} mock auth users`)
 
   // 2. Delete child rows first (dependency order), bulk where possible
-  const idList = ids.join(',')
-
   await safeDeleteMulti('daily_discover_views', ids, ['man_id', 'woman_id'])
   await safeDeleteMulti('reports', ids, ['reporter_id', 'reported_id'])
   await safeDeleteMulti('audit_logs', ids, ['admin_id'])
   await safeDeleteMulti('admin_actions', ids, ['admin_id'])
-  await safeDeleteMulti('freeze_transactions', ids, ['man_id'])
   await safeDeleteMulti('mod_queue', ids, ['reviewed_by'])
+  
   await supabase.from('messages').delete().in('sender_id', ids)
   await supabase.from('coin_transactions').delete().in('user_id', ids)
-  // Also delete coin_transactions that reference connections we're about to drop
-  const { data: conns } = await supabase
-    .from('connections')
-    .select('id')
-    .or(`guest_id.in.(${ids.join(',')}),host_id.in.(${ids.join(',')})`)
-  if (conns && conns.length > 0) {
-    const connIds = conns.map(c => c.id)
-    await supabase.from('coin_transactions').delete().in('connection_id', connIds)
-  }
-  await supabase.from('connections').delete().or(
-    `guest_id.in.(${ids.join(',')}),host_id.in.(${ids.join(',')})`
+  
+  await supabase.from('likes' as any).delete().or(
+    `from_user_id.in.(${ids.join(',')}),to_user_id.in.(${ids.join(',')})`
   )
+  await supabase.from('matches' as any).delete().or(
+    `user1_id.in.(${ids.join(',')}),user2_id.in.(${ids.join(',')})`
+  )
+  await supabase.from('conversations' as any).delete().or(
+    `user1_id.in.(${ids.join(',')}),user2_id.in.(${ids.join(',')})`
+  )
+  await supabase.from('photos' as any).delete().in('user_id', ids)
+  
   await supabase.from('wallets').delete().in('user_id', ids)
   await supabase.from('profiles').delete().in('id', ids)
 
@@ -81,7 +79,6 @@ export async function deleteMockData() {
     await safeDeleteMulti('reports', orphanIds, ['reporter_id', 'reported_id'])
     await safeDeleteMulti('audit_logs', orphanIds, ['admin_id'])
     await safeDeleteMulti('admin_actions', orphanIds, ['admin_id'])
-    await safeDeleteMulti('freeze_transactions', orphanIds, ['man_id'])
     await supabase.from('profiles').delete().in('id', orphanIds)
   }
 

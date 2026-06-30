@@ -36,8 +36,8 @@ export async function GET() {
       .select('*', { count: 'exact', head: true })
       .gte('created_at', today.toISOString());
 
-    const { count: connectionsCreated } = await supabase
-      .from('connections')
+    const { count: matchesCreated } = await supabase
+      .from('matches' as any)
       .select('*', { count: 'exact', head: true })
       .gte('created_at', today.toISOString());
 
@@ -58,7 +58,7 @@ export async function GET() {
       guests: guests || 0,
       activeToday: activeToday || 0,
       signupsToday: signupsToday || 0,
-      connectionsCreated: connectionsCreated || 0,
+      connectionsCreated: matchesCreated || 0, // mapped to matchesCreated count to avoid UI regressions
       coinsInCirculation,
     });
   } catch {

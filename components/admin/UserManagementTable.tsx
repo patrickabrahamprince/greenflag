@@ -1,16 +1,18 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Eye, LayoutDashboard, Ban, Shield } from 'lucide-react';
+import { Eye, LayoutDashboard, Ban, Shield, Check, UserX } from 'lucide-react';
 import type { AdminUser } from './types';
 
 export interface UserManagementTableProps {
   users: AdminUser[];
   onSetAdmin: (userId: string) => void;
   onBanClick: (user: AdminUser) => void;
+  onApproveClick: (user: AdminUser) => void;
+  onRejectClick: (user: AdminUser) => void;
 }
 
-export function UserManagementTable({ users, onSetAdmin, onBanClick }: UserManagementTableProps) {
+export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveClick, onRejectClick }: UserManagementTableProps) {
   const router = useRouter();
 
   return (
@@ -60,6 +62,10 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick }: UserManag
               <td className="py-3 px-2">
                 {u.is_banned ? (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400">Banned</span>
+                ) : u.approval_status === 'pending' ? (
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400">Pending</span>
+                ) : u.approval_status === 'rejected' ? (
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400">Rejected</span>
                 ) : u.is_admin ? (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-[#C9A961]/10 text-[#C9A961]">Admin</span>
                 ) : (
@@ -75,6 +81,24 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick }: UserManag
                   >
                     <Eye className="w-3.5 h-3.5" />
                   </button>
+                  {u.approval_status === 'pending' && (
+                    <>
+                      <button
+                        onClick={() => onApproveClick(u)}
+                        className="btn-ghost text-xs p-1.5 text-green-400"
+                        title="Approve Application"
+                      >
+                        <Check className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => onRejectClick(u)}
+                        className="btn-ghost text-xs p-1.5 text-red-400"
+                        title="Reject Application"
+                      >
+                        <UserX className="w-3.5 h-3.5" />
+                      </button>
+                    </>
+                  )}
                   {u.persona === 'woman' && (
                     <button
                       onClick={() => router.push(`/admin/host-dashboard/${u.id}`)}

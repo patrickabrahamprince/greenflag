@@ -21,6 +21,7 @@ export interface AdminUser {
   ban_reason?: string;
   interests?: string[];
   role?: string;
+  approval_status?: 'pending' | 'approved' | 'rejected';
 }
 
 export interface AdminReport {

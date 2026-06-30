@@ -47,6 +47,7 @@ export function UserFilterBar({
         <option value="">All status</option>
         <option value="active">Active</option>
         <option value="banned">Banned</option>
+        <option value="pending">Pending approval</option>
       </select>
     </div>
   );

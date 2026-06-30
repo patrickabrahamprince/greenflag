@@ -38,21 +38,16 @@ export async function GET(
       };
     }
 
-    const viewerId = viewer?.persona === 'woman' ? viewer.id : target.id;
-    const targetId = viewer?.persona === 'woman' ? target.id : viewer?.id;
-
-    const { data: connection } = await supabase
-      .from('connections')
-      .select('id, status')
-      .or(
-        `and(host_id.eq.${viewerId},guest_id.eq.${targetId})`
-      )
+    const { data: match } = await supabase
+      .from('matches' as any)
+      .select('id')
+      .or(`and(user1_id.eq.${user.id},user2_id.eq.${id}),and(user1_id.eq.${id},user2_id.eq.${user.id})`)
       .maybeSingle();
 
     return NextResponse.json({
       profile: target,
       match: matchData,
-      connection,
+      connection: match ? { id: match.id, status: 'completed' } : null,
       isOwnProfile: user.id === id,
     });
   } catch {

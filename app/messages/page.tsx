@@ -7,10 +7,12 @@ import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
 import type { Database } from '@/types/supabase';
 
-type ConnectionRow = Database['public']['Tables']['connections']['Row'];
 type ProfileRow = Database['public']['Tables']['profiles']['Row'];
 
-interface ChatConnection extends ConnectionRow {
+interface ChatConversation {
+  id: string;
+  user1_id: string;
+  user2_id: string;
   partner: Pick<ProfileRow, 'id' | 'name' | 'photos'> | null;
   last_message: { content: string; created_at: string | null } | null;
 }
@@ -20,13 +22,13 @@ interface ChatListPageProps {
   supabase: ReturnType<typeof createClient>;
 }
 
-function ChatListItem({ conn, userId }: { conn: ChatConnection; userId: string }) {
+function ChatListItem({ conv }: { conv: ChatConversation }) {
   const router = useRouter();
-  const partnerPhoto = conn.partner?.photos?.[0];
+  const partnerPhoto = conv.partner?.photos?.[0];
 
   return (
     <button
-      onClick={() => router.push(`/messages/${conn.id}`)}
+      onClick={() => router.push(`/chat/${conv.id}`)}
       className="w-full flex items-center gap-3 p-4 text-left transition-colors border-b border-[#E8E6E1]"
     >
       <div
@@ -41,24 +43,24 @@ function ChatListItem({ conn, userId }: { conn: ChatConnection; userId: string }
           />
         ) : (
           <span className="font-['Playfair_Display'] text-sm italic text-ink/50">
-            {conn.partner?.name?.[0] ?? '?'}
+            {conv.partner?.name?.[0] ?? '?'}
           </span>
         )}
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-0.5">
           <span className="font-['Playfair_Display'] text-sm italic text-ink truncate">
-            {conn.partner?.name}
+            {conv.partner?.name}
           </span>
-          {conn.last_message && (
+          {conv.last_message && (
             <span className="text-[10px] flex-shrink-0 ml-2" style={{ color: '#8E8E93' }}>
-              {conn.last_message.created_at ? new Date(conn.last_message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+              {conv.last_message.created_at ? new Date(conv.last_message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
             </span>
           )}
         </div>
-        {conn.last_message && (
+        {conv.last_message && (
           <p className="text-xs truncate font-thin" style={{ color: '#8E8E93' }}>
-            {conn.last_message.content}
+            {conv.last_message.content}
           </p>
         )}
       </div>
@@ -67,40 +69,45 @@ function ChatListItem({ conn, userId }: { conn: ChatConnection; userId: string }
 }
 
 function ChatList({ userId, supabase }: ChatListPageProps) {
-  const [connections, setConnections] = useState<ChatConnection[]>([]);
+  const [conversations, setConversations] = useState<ChatConversation[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
-      const { data } = await supabase
-        .from('connections')
-        .select('*')
-        .or('chat_unlocked.eq.true,connected.eq.true')
-        .order('created_at', { ascending: false });
+      try {
+        const { data } = await supabase
+          .from('conversations' as any)
+          .select('*')
+          .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
+          .order('created_at', { ascending: false });
 
-      if (!data) { setLoading(false); return; }
+        if (!data) { setLoading(false); return; }
 
-      const enriched = await Promise.all(
-        data.map(async (conn) => {
-          const partnerId = conn.host_id === userId ? conn.guest_id : conn.host_id;
-          const { data: partner } = await supabase
-            .from('profiles')
-            .select('id, name, photos')
-            .eq('id', partnerId)
-            .single();
-          const { data: lastMsg } = await supabase
-            .from('messages')
-            .select('content, created_at')
-            .eq('connection_id', conn.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle();
-          return { ...conn, partner, last_message: lastMsg };
-        })
-      );
+        const enriched = await Promise.all(
+          data.map(async (conv: any) => {
+            const partnerId = conv.user1_id === userId ? conv.user2_id : conv.user1_id;
+            const { data: partner } = await supabase
+              .from('profiles')
+              .select('id, name, photos')
+              .eq('id', partnerId)
+              .single();
+            const { data: lastMsg } = await supabase
+              .from('messages' as any)
+              .select('content, created_at')
+              .eq('conversation_id', conv.id)
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            return { ...conv, partner, last_message: lastMsg };
+          })
+        );
 
-      setConnections(enriched);
-      setLoading(false);
+        setConversations(enriched);
+      } catch (err) {
+        // Safe catch
+      } finally {
+        setLoading(false);
+      }
     };
     load();
   }, [userId, supabase]);
@@ -113,11 +120,11 @@ function ChatList({ userId, supabase }: ChatListPageProps) {
     );
   }
 
-  if (connections.length === 0) {
+  if (conversations.length === 0) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         <p className="text-sm font-thin" style={{ color: '#8E8E93' }}>
-          No chats yet. Complete Day 5 to unlock messaging.
+          No chats yet. Swipe in Discover to find matches!
         </p>
       </div>
     );
@@ -125,8 +132,8 @@ function ChatList({ userId, supabase }: ChatListPageProps) {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      {connections.map((conn) => (
-        <ChatListItem key={conn.id} conn={conn} userId={userId} />
+      {conversations.map((conv) => (
+        <ChatListItem key={conv.id} conv={conv} />
       ))}
     </div>
   );

@@ -33,32 +33,35 @@ export async function POST(req: Request) {
       .eq('owner', user_id);
     if (!storageErr) deleted_tables.push('storage.objects');
 
-    const { data: conns } = await adminSupabase
-      .from('connections')
-      .select('id')
-      .or(`host_id.eq.${user_id},guest_id.eq.${user_id}`);
-
-    const connIds = conns?.map((c) => c.id) || [];
-
-    if (connIds.length > 0) {
-      const { error: subsErr } = await adminSupabase
-        .from('submissions')
-        .delete()
-        .in('connection_id', connIds);
-      if (!subsErr) deleted_tables.push('submissions');
-
-      const { error: msgsErr } = await adminSupabase
-        .from('messages')
-        .delete()
-        .in('connection_id', connIds);
-      if (!msgsErr) deleted_tables.push('messages');
-    }
-
-    const { error: connDelErr } = await adminSupabase
-      .from('connections')
+    const { error: photosErr } = await adminSupabase
+      .from('photos' as any)
       .delete()
-      .or(`host_id.eq.${user_id},guest_id.eq.${user_id}`);
-    if (!connDelErr) deleted_tables.push('connections');
+      .eq('user_id', user_id);
+    if (!photosErr) deleted_tables.push('photos');
+
+    const { error: likesErr } = await adminSupabase
+      .from('likes' as any)
+      .delete()
+      .or(`from_user_id.eq.${user_id},to_user_id.eq.${user_id}`);
+    if (!likesErr) deleted_tables.push('likes');
+
+    const { error: matchesErr } = await adminSupabase
+      .from('matches' as any)
+      .delete()
+      .or(`user1_id.eq.${user_id},user2_id.eq.${user_id}`);
+    if (!matchesErr) deleted_tables.push('matches');
+
+    const { error: convErr } = await adminSupabase
+      .from('conversations' as any)
+      .delete()
+      .or(`user1_id.eq.${user_id},user2_id.eq.${user_id}`);
+    if (!convErr) deleted_tables.push('conversations');
+
+    const { error: msgsErr } = await adminSupabase
+      .from('messages')
+      .delete()
+      .eq('sender_id', user_id);
+    if (!msgsErr) deleted_tables.push('messages');
 
     const { error: modErr } = await adminSupabase
       .from('mod_queue')

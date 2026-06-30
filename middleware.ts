@@ -80,7 +80,7 @@ export async function middleware(req: NextRequest) {
   // Fetch profile for authz checks
   const { data: profile } = await supabase
     .from('profiles')
-    .select('is_admin, onboarding_completed')
+    .select('is_admin, onboarding_completed, approval_status')
     .eq('id', user.id)
     .single();
 
@@ -105,6 +105,16 @@ export async function middleware(req: NextRequest) {
   // Only checks profiles.onboarding_completed for redirect to /onboard
   if (!profile?.onboarding_completed && !pathname.startsWith('/onboard')) {
     const destination = new URL('/onboard', req.url);
+    return NextResponse.redirect(destination);
+  }
+
+  // Onboarded but still awaiting admin review — keep them on the waiting screen.
+  if (
+    profile?.onboarding_completed &&
+    profile?.approval_status === 'pending' &&
+    pathname !== '/onboard/pending'
+  ) {
+    const destination = new URL('/onboard/pending', req.url);
     return NextResponse.redirect(destination);
   }
 

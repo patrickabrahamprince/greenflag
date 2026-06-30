@@ -84,17 +84,17 @@ export default function DiscoverPage() {
         router.push(`/profile/${profileId}`)
         return
       }
-      const res = await fetch('/api/connections/start', {
+      const res = await fetch('/api/likes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ woman_id: profileId })
+        body: JSON.stringify({ to_user_id: profileId })
       })
       if (!res.ok) {
         const err = await res.json()
-        throw new Error(err.error || 'Failed to start')
+        throw new Error(err.error || 'Failed to like profile')
       }
-      const { connectionId: connection_id } = await res.json()
-      router.push(`/intentions/${connection_id}`)
+      toast.success("You've met her Standard")
+      setProfiles(prev => prev.filter(p => p.id !== profileId))
     } catch (e: any) {
       toast.error(e.message)
     } finally {
@@ -105,7 +105,7 @@ export default function DiscoverPage() {
   return (
     <div className="relative bg-[#FAF9F7] min-h-screen">
       <div className="fixed top-0 z-50 w-full flex items-center justify-between px-8 py-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent">
-        <button onClick={() => router.push('/connections')} className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center">
+        <button onClick={() => router.push('/messages')} className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center">
           <ArrowLeft className="w-5 h-5 text-white" />
         </button>
         <CoinBadge />
@@ -119,30 +119,45 @@ export default function DiscoverPage() {
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
             className="snap-start snap-always min-h-screen w-full flex flex-col"
           >
-            <div className="relative w-full aspect-[3/4] flex-shrink-0">
+            <div className="relative w-full aspect-[3/4] flex-shrink-0 overflow-hidden rounded-b-[2rem] shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
               <ProfileImageCarousel images={p.photos} />
+              {typeof p.match_percentage === 'number' && (
+                <div className="absolute top-5 left-5 z-10 flex items-center gap-1.5 bg-black/30 backdrop-blur-md border border-white/20 rounded-full px-3 py-1.5">
+                  <span className="text-[#C9A961] text-xs">◆</span>
+                  <span className="font-['Playfair_Display'] italic text-white text-sm">
+                    {p.match_percentage}% Standard Match
+                  </span>
+                </div>
+              )}
               <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#FAF9F7] to-transparent pointer-events-none" />
             </div>
 
-            <div className="flex-1 flex flex-col px-8 pt-2 pb-10">
-              <h1 className="font-['Playfair_Display'] text-4xl text-ink font-semibold">
+            <div className="flex-1 flex flex-col px-8 pt-3 pb-10">
+              <h1 className="font-['Playfair_Display'] text-4xl text-ink font-semibold tracking-tight">
                 {p.name}
               </h1>
               <p className="font-['Inter'] text-sm text-ink/60 tracking-wide uppercase mt-1">
                 {p.age ? `${p.age}` : ''}{p.age && p.city_auto ? ' · ' : ''}{p.city_auto}
               </p>
               {p.bio && (
-                <p className="text-ink/80 text-base leading-relaxed max-w-md mt-3">{p.bio}</p>
+                <p className="text-ink/80 text-base leading-relaxed max-w-md mt-3 font-light">{p.bio}</p>
               )}
-              <div className="flex flex-wrap gap-2 mt-4">
+              {Array.isArray(p.match_reasons) && p.match_reasons.length > 0 && (
+                <p className="text-[#C9A961] text-xs uppercase tracking-wide mt-4">
+                  Shares your standard on {p.match_reasons.slice(0, 3).join(', ')}
+                </p>
+              )}
+              <div className="flex flex-wrap gap-2 mt-3">
                 {(p.interests_have ?? p.interests ?? []).slice(0, 5).map((interest: string) => (
-                  <span key={interest} className="px-3 py-1 border border-[#E8E6E1] text-ink/70 text-xs uppercase tracking-wide">
+                  <span key={interest} className="px-3 py-1 rounded-full border border-[#E8E6E1] text-ink/70 text-xs uppercase tracking-wide">
                     {interest}
                   </span>
                 ))}
               </div>
 
-              <div className="flex items-center gap-4 mt-auto pt-6">
+              <div className="h-px bg-[#E8E6E1] mt-6" />
+
+              <div className="flex items-center gap-4 mt-6">
                 <button
                   onClick={() => scrollToNext(i)}
                   aria-label="Pass"
@@ -160,7 +175,7 @@ export default function DiscoverPage() {
                   }}
                   disabled={loading}
                   aria-label="Like"
-                  className="flex-1 h-14 rounded-full bg-[#C9A961] flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
+                  className="flex-1 h-14 rounded-full bg-[#C9A961] shadow-[0_4px_16px_rgba(201,169,97,0.35)] flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
                 >
                   {loading ? (
                     <Loader2 className="w-5 h-5 animate-spin text-white" />
@@ -186,7 +201,7 @@ export default function DiscoverPage() {
 
       {confirmProfileId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
-          <div className="w-full max-w-sm bg-[#FAF9F7] p-8 text-center">
+          <div className="w-full max-w-sm bg-[#FAF9F7] rounded-2xl shadow-2xl p-8 text-center">
             <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <Coins className="w-6 h-6 text-[#C9A961]" />
             </div>
