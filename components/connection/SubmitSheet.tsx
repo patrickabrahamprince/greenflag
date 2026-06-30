@@ -187,7 +187,12 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
         if (AC) {
           const audioCtx = new AC();
           if (audioCtx.state === 'suspended') {
-            audioCtx.resume().catch(() => {});
+            // getUserMedia() above is awaited, so by the time we get here we're
+            // outside the original click's gesture context — Chrome creates the
+            // AudioContext suspended in that case. Without awaiting resume()
+            // here, the analyser starts reading silence before it's running,
+            // so the visualizer bars never move off their flat minimum height.
+            await audioCtx.resume();
           }
           const source = audioCtx.createMediaStreamSource(stream);
           const analyser = audioCtx.createAnalyser();
