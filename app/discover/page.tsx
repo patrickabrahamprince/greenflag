@@ -109,20 +109,22 @@ export default function DiscoverPage() {
 
   return (
     <div className="relative bg-[#FAF9F7] min-h-screen max-w-app mx-auto">
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex items-center justify-between px-8 py-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent">
-        <button onClick={() => router.push('/messages')} className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center">
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex items-center justify-between px-5 py-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent pointer-events-none">
+        <button onClick={() => router.push('/messages')} className="pointer-events-auto w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center">
           <ArrowLeft className="w-5 h-5 text-white" />
         </button>
-        <CoinBadge />
+        <div className="pointer-events-auto">
+          <CoinBadge />
+        </div>
       </div>
 
-      <div ref={scrollRef} className="snap-y snap-mandatory overflow-y-scroll overscroll-none h-screen">
+      <div ref={scrollRef} className="snap-y snap-mandatory overflow-y-scroll overscroll-none h-[calc(100vh-5rem)]">
         {profiles.map((p, i) => (
           <div
             key={p.id}
             ref={i === profiles.length - 1 ? lastProfileRef : null}
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
-            className="snap-start snap-always min-h-screen w-full flex flex-col"
+            className="snap-start snap-always min-h-[calc(100vh-5rem)] w-full flex flex-col"
           >
             <div className="relative w-full aspect-[3/4] flex-shrink-0 overflow-hidden rounded-b-[2rem] shadow-[0_8px_30px_rgba(0,0,0,0.12)] grid grid-cols-3 gap-0.5 bg-black">
               <div className="col-span-2 relative">
@@ -132,8 +134,16 @@ export default function DiscoverPage() {
                   className="w-full h-full object-cover"
                   onError={e => { e.currentTarget.src = '/placeholder-avatar.svg' }}
                 />
+                {typeof p.match_percentage === 'number' && (
+                  <div className="absolute top-16 left-3 z-10 flex items-center gap-1.5 bg-black/30 backdrop-blur-md border border-white/20 rounded-full px-3 py-1.5">
+                    <span className="text-[#C9A961] text-xs">◆</span>
+                    <span className="font-['Playfair_Display'] italic text-white text-sm whitespace-nowrap">
+                      {p.match_percentage}% Standard Match
+                    </span>
+                  </div>
+                )}
               </div>
-              <div className="col-span-1 grid grid-rows-2 gap-0.5">
+              <div className="relative col-span-1 grid grid-rows-2 gap-0.5">
                 {[p.photos?.[1] ?? p.photos?.[0], p.photos?.[2] ?? p.photos?.[0]].map((src: string | undefined, idx: number) => (
                   <div key={idx} className="relative overflow-hidden">
                     {src ? (
@@ -148,28 +158,20 @@ export default function DiscoverPage() {
                     )}
                   </div>
                 ))}
+                {persona !== 'woman' && (
+                  <button
+                    onClick={() => setConfirmProfileId(p.id)}
+                    className="absolute inset-0 m-auto z-20 flex items-center justify-center gap-1.5 h-9 w-fit px-3 bg-black/50 backdrop-blur-md border border-white/30 rounded-full active:scale-95 transition-all"
+                  >
+                    <Lock className="w-3.5 h-3.5 text-white shrink-0" />
+                    <span className="text-white text-xs uppercase tracking-wide font-medium whitespace-nowrap">Unlock</span>
+                  </button>
+                )}
               </div>
-              {persona !== 'woman' && (
-                <button
-                  onClick={() => setConfirmProfileId(p.id)}
-                  className="absolute top-1/2 right-[16.5%] -translate-y-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 bg-black/50 backdrop-blur-md border border-white/30 rounded-full px-4 py-2 active:scale-95 transition-all"
-                >
-                  <Lock className="w-3.5 h-3.5 text-white" />
-                  <span className="text-white text-xs uppercase tracking-wide font-medium">Unlock</span>
-                </button>
-              )}
-              {typeof p.match_percentage === 'number' && (
-                <div className="absolute top-5 left-5 z-10 flex items-center gap-1.5 bg-black/30 backdrop-blur-md border border-white/20 rounded-full px-3 py-1.5">
-                  <span className="text-[#C9A961] text-xs">◆</span>
-                  <span className="font-['Playfair_Display'] italic text-white text-sm">
-                    {p.match_percentage}% Standard Match
-                  </span>
-                </div>
-              )}
               <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#FAF9F7] to-transparent pointer-events-none" />
             </div>
 
-            <div className="flex-1 flex flex-col px-8 pt-3 pb-10">
+            <div className="flex-1 flex flex-col px-6 pt-4 pb-6">
               <h1 className="font-['Playfair_Display'] text-4xl text-ink font-semibold tracking-tight">
                 {p.name}
               </h1>
