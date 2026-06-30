@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2, Coins, X, Heart, Lock } from 'lucide-react'
+import { ArrowLeft, Loader2, Coins, X, Heart, Lock, Instagram } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
 import { createClient } from '@/lib/supabase/client'
@@ -138,7 +138,7 @@ export default function DiscoverPage() {
                   <div className="absolute top-16 left-3 z-10 flex items-center gap-1.5 bg-black/35 backdrop-blur-md rounded-full px-3 py-1.5">
                     <span className="text-[#C9A961] text-xs">◆</span>
                     <span className="font-['Playfair_Display'] italic text-white text-sm whitespace-nowrap">
-                      {p.match_percentage}% Standard Match
+                      {p.match_percentage}% GreenFlag Match
                     </span>
                   </div>
                 )}
@@ -174,26 +174,42 @@ export default function DiscoverPage() {
               <h1 className="font-['Playfair_Display'] text-4xl text-ink font-semibold tracking-tight">
                 {p.name}
               </h1>
-              <p className="font-['Inter'] text-sm text-ink/60 tracking-wide uppercase mt-1.5">
-                {p.age ? `${p.age}` : ''}{p.age && p.city_auto ? ' · ' : ''}{p.city_auto}
-              </p>
-              <div className="flex flex-wrap gap-2 mt-3">
-                {(p.interests_have?.length ? p.interests_have : p.interests ?? []).slice(0, 5).map((interest: string) => (
-                  <span
-                    key={interest}
-                    className="px-4 py-2 rounded-full bg-white text-ink text-sm font-medium shadow-[0_2px_10px_rgba(0,0,0,0.08)]"
+              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                <p className="font-['Inter'] text-sm text-ink/60 tracking-wide uppercase">
+                  {p.age ? `${p.age}` : ''}{p.age && p.city_auto ? ' · ' : ''}{p.city_auto}
+                </p>
+                {p.instagram_url && (
+                  <a
+                    href={p.instagram_url.startsWith('http') ? p.instagram_url : `https://instagram.com/${p.instagram_url}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-1 text-xs text-[#C9A961] font-medium"
                   >
-                    {interest}
-                  </span>
-                ))}
+                    <Instagram className="w-3.5 h-3.5" />
+                    {p.instagram_url.replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '') || 'Instagram'}
+                  </a>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2 mt-3">
+                {(p.interests_have?.length ? p.interests_have : p.interests ?? []).slice(0, 5).map((interest: string) => {
+                  const isMatched = Array.isArray(p.match_reasons) && p.match_reasons.includes(interest);
+                  return (
+                    <span
+                      key={interest}
+                      className={
+                        isMatched
+                          ? 'px-4 py-2 rounded-full bg-[#C9A961] text-white text-sm font-medium shadow-[0_2px_10px_rgba(201,169,97,0.35)]'
+                          : 'px-4 py-2 rounded-full bg-white text-ink text-sm font-medium shadow-[0_2px_10px_rgba(0,0,0,0.08)]'
+                      }
+                    >
+                      {interest}
+                    </span>
+                  );
+                })}
               </div>
               {p.bio && (
                 <p className="text-ink/80 text-base leading-relaxed max-w-md mt-4 font-light">{p.bio}</p>
-              )}
-              {Array.isArray(p.match_reasons) && p.match_reasons.length > 0 && (
-                <p className="text-[#C9A961] text-xs uppercase tracking-wide mt-4">
-                  Shares your standard on {p.match_reasons.slice(0, 3).join(', ')}
-                </p>
               )}
 
               <div className="flex items-center gap-4 mt-7">

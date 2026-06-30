@@ -21,7 +21,7 @@ export async function GET(req: Request) {
 
     const { data: profile } = await admin
       .from('profiles')
-      .select('persona, elo_score, interests, looking_for_interests, lat, lng')
+      .select('persona, elo_score, interests, interests_have, looking_for_interests, lat, lng')
       .eq('id', user.id)
       .single();
 
@@ -30,9 +30,6 @@ export async function GET(req: Request) {
     }
 
     if (profile.persona === 'woman') {
-      const { searchParams } = new URL(req.url);
-      const page = parseInt(searchParams.get('page') || '0');
-
       const { data: profiles, error } = await admin
         .rpc('get_matching_profiles', { p_viewer_id: user.id });
 
@@ -40,7 +37,23 @@ export async function GET(req: Request) {
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
 
-      return NextResponse.json({ profiles: profiles || [] });
+      // get_matching_profiles() returns plain profile rows with no match
+      // score, unlike get_ranked_women() on the men's side. Compute the
+      // same style of overlap score here so the Standard Match badge and
+      // interest-overlap highlighting show on the women's feed too: her
+      // own interests vs what each man says he's looking for.
+      const herInterests = (profile.interests_have?.length ? profile.interests_have : profile.interests) ?? [];
+      const scored = (profiles || []).map((p: any) => {
+        const hisLookingFor = (p.interests_looking_for?.length ? p.interests_looking_for : p.looking_for_interests) ?? [];
+        const overlap = herInterests.filter((i: string) => hisLookingFor.includes(i));
+        return {
+          ...p,
+          match_percentage: Math.min(100, overlap.length * 20),
+          match_reasons: overlap,
+        };
+      });
+
+      return NextResponse.json({ profiles: scored });
     }
 
     // get_ranked_women() intersects man_interests against each woman's
@@ -79,7 +92,7 @@ export async function GET(req: Request) {
 
     const { data: fullProfiles } = await admin
       .from('profiles')
-      .select('id, name, age, city, city_auto, bio, photos, interests, looking_for_interests, interests_have, interests_looking_for, blur_key')
+      .select('id, name, age, city, city_auto, bio, photos, interests, looking_for_interests, interests_have, interests_looking_for, blur_key, instagram_url')
       .in('id', rankedIds);
 
     const idOrder = new Map<string, number>(rankedIds.map((id, i) => [id, i]));
