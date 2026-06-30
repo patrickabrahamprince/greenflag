@@ -1,9 +1,11 @@
 'use client';
 
-import { Hourglass, LogOut } from 'lucide-react';
+import { Hourglass, LogOut, Compass } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
 export default function PendingApprovalPage() {
+  const router = useRouter();
   const supabase = createClient();
 
   const handleSignOut = async () => {
@@ -30,10 +32,18 @@ export default function PendingApprovalPage() {
       <h1 className="font-['Playfair_Display'] text-3xl text-ink mb-3">
         Your application is under review
       </h1>
-      <p className="text-ink/60 text-sm leading-relaxed max-w-sm">
+      <p className="text-ink/60 text-sm leading-relaxed max-w-sm mb-8">
         GreenFlag is a curated community. We're reviewing your profile to make sure
         it's the right fit — you'll be notified the moment you're approved.
       </p>
+
+      <button
+        onClick={() => router.push('/discover')}
+        className="btn-primary flex items-center gap-2 px-6"
+      >
+        <Compass className="w-4 h-4" />
+        Start Discovering
+      </button>
     </div>
   );
 }

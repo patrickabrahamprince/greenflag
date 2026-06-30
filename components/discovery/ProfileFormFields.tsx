@@ -50,11 +50,12 @@ export function ProfileFormFields({
       <div>
         <label className="block text-sm font-medium text-ink mb-1.5">Age</label>
         <input
-          type="number"
-          min={18}
-          max={100}
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          maxLength={3}
           value={age}
-          onChange={(e) => onAgeChange(e.target.value)}
+          onChange={(e) => onAgeChange(e.target.value.replace(/\D/g, ''))}
           placeholder="18"
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-age' : undefined}
           className={`input ${errors.age ? 'border-red-500' : ''}`}

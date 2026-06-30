@@ -175,12 +175,13 @@ export default function EditProfilePage() {
         <div>
           <label className="text-sm text-muted mb-1.5 block">Age</label>
           <input
-            type="number"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            maxLength={3}
             className="input"
-            value={age}
-            onChange={(e) => setAge(Number(e.target.value))}
-            min={18}
-            max={60}
+            value={age || ''}
+            onChange={(e) => setAge(Number(e.target.value.replace(/\D/g, '')) || 0)}
           />
         </div>
 

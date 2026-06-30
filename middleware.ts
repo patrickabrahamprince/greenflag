@@ -108,11 +108,14 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(destination);
   }
 
-  // Onboarded but still awaiting admin review — keep them on the waiting screen.
+  // Onboarded but still awaiting admin review — keep them on the waiting
+  // screen, except /discover, which pending users can browse read-only
+  // while they wait (they just won't be shown to others themselves).
+  const PENDING_ALLOWED_PATHS = ['/onboard/pending', '/discover'];
   if (
     profile?.onboarding_completed &&
     profile?.approval_status === 'pending' &&
-    pathname !== '/onboard/pending'
+    !PENDING_ALLOWED_PATHS.some((p) => pathname.startsWith(p))
   ) {
     const destination = new URL('/onboard/pending', req.url);
     return NextResponse.redirect(destination);
