@@ -177,16 +177,8 @@ export default function DiscoverPage() {
               <p className="font-['Inter'] text-sm text-ink/60 tracking-wide uppercase mt-1.5">
                 {p.age ? `${p.age}` : ''}{p.age && p.city_auto ? ' · ' : ''}{p.city_auto}
               </p>
-              {p.bio && (
-                <p className="text-ink/80 text-base leading-relaxed max-w-md mt-3 font-light">{p.bio}</p>
-              )}
-              {Array.isArray(p.match_reasons) && p.match_reasons.length > 0 && (
-                <p className="text-[#C9A961] text-xs uppercase tracking-wide mt-4">
-                  Shares your standard on {p.match_reasons.slice(0, 3).join(', ')}
-                </p>
-              )}
-              <div className="flex flex-wrap gap-2 mt-4">
-                {(p.interests_have ?? p.interests ?? []).slice(0, 5).map((interest: string) => (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {(p.interests_have?.length ? p.interests_have : p.interests ?? []).slice(0, 5).map((interest: string) => (
                   <span
                     key={interest}
                     className="px-4 py-2 rounded-full bg-white text-ink text-sm font-medium shadow-[0_2px_10px_rgba(0,0,0,0.08)]"
@@ -195,6 +187,14 @@ export default function DiscoverPage() {
                   </span>
                 ))}
               </div>
+              {p.bio && (
+                <p className="text-ink/80 text-base leading-relaxed max-w-md mt-4 font-light">{p.bio}</p>
+              )}
+              {Array.isArray(p.match_reasons) && p.match_reasons.length > 0 && (
+                <p className="text-[#C9A961] text-xs uppercase tracking-wide mt-4">
+                  Shares your standard on {p.match_reasons.slice(0, 3).join(', ')}
+                </p>
+              )}
 
               <div className="flex items-center gap-4 mt-7">
                 <button
