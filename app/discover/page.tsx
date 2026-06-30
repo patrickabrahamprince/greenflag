@@ -110,7 +110,7 @@ export default function DiscoverPage() {
   return (
     <div className="relative bg-[#FAF9F7] min-h-screen max-w-app mx-auto">
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex items-center justify-between px-5 py-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent pointer-events-none">
-        <button onClick={() => router.push('/messages')} className="pointer-events-auto w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center">
+        <button onClick={() => router.push('/messages')} className="pointer-events-auto w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center">
           <ArrowLeft className="w-5 h-5 text-white" />
         </button>
         <div className="pointer-events-auto">
@@ -126,7 +126,7 @@ export default function DiscoverPage() {
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
             className="snap-start snap-always min-h-[calc(100vh-5rem)] w-full flex flex-col"
           >
-            <div className="relative w-full aspect-[3/4] flex-shrink-0 overflow-hidden rounded-b-[2rem] shadow-[0_8px_30px_rgba(0,0,0,0.12)] grid grid-cols-3 gap-0.5 bg-black">
+            <div className="relative w-full aspect-[3/4] flex-shrink-0 overflow-hidden rounded-b-[2rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.35)] grid grid-cols-3 gap-0.5 bg-black">
               <div className="col-span-2 relative">
                 <img
                   src={p.photos?.[0]}
@@ -135,7 +135,7 @@ export default function DiscoverPage() {
                   onError={e => { e.currentTarget.src = '/placeholder-avatar.svg' }}
                 />
                 {typeof p.match_percentage === 'number' && (
-                  <div className="absolute top-16 left-3 z-10 flex items-center gap-1.5 bg-black/30 backdrop-blur-md border border-white/20 rounded-full px-3 py-1.5">
+                  <div className="absolute top-16 left-3 z-10 flex items-center gap-1.5 bg-black/35 backdrop-blur-md rounded-full px-3 py-1.5">
                     <span className="text-[#C9A961] text-xs">◆</span>
                     <span className="font-['Playfair_Display'] italic text-white text-sm whitespace-nowrap">
                       {p.match_percentage}% Standard Match
@@ -161,21 +161,20 @@ export default function DiscoverPage() {
                 {persona !== 'woman' && (
                   <button
                     onClick={() => setConfirmProfileId(p.id)}
-                    className="absolute inset-0 m-auto z-20 flex items-center justify-center gap-1.5 h-9 w-fit px-3 bg-black/50 backdrop-blur-md border border-white/30 rounded-full active:scale-95 transition-all"
+                    className="absolute inset-0 m-auto z-20 flex items-center justify-center gap-1.5 h-9 w-fit px-3 bg-black/55 backdrop-blur-md rounded-full active:scale-95 transition-all"
                   >
                     <Lock className="w-3.5 h-3.5 text-white shrink-0" />
                     <span className="text-white text-xs uppercase tracking-wide font-medium whitespace-nowrap">Unlock</span>
                   </button>
                 )}
               </div>
-              <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#FAF9F7] to-transparent pointer-events-none" />
             </div>
 
-            <div className="flex-1 flex flex-col px-6 pt-4 pb-6">
+            <div className="flex-1 flex flex-col px-6 pt-5 pb-6">
               <h1 className="font-['Playfair_Display'] text-4xl text-ink font-semibold tracking-tight">
                 {p.name}
               </h1>
-              <p className="font-['Inter'] text-sm text-ink/60 tracking-wide uppercase mt-1">
+              <p className="font-['Inter'] text-sm text-ink/60 tracking-wide uppercase mt-1.5">
                 {p.age ? `${p.age}` : ''}{p.age && p.city_auto ? ' · ' : ''}{p.city_auto}
               </p>
               {p.bio && (
@@ -186,24 +185,22 @@ export default function DiscoverPage() {
                   Shares your standard on {p.match_reasons.slice(0, 3).join(', ')}
                 </p>
               )}
-              <div className="flex flex-wrap gap-2 mt-3">
+              <div className="flex flex-wrap gap-2 mt-4">
                 {(p.interests_have ?? p.interests ?? []).slice(0, 5).map((interest: string) => (
                   <span
                     key={interest}
-                    className="px-4 py-2 rounded-full bg-white border border-[#C9A961]/40 text-ink text-sm font-medium shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+                    className="px-4 py-2 rounded-full bg-white text-ink text-sm font-medium shadow-[0_2px_10px_rgba(0,0,0,0.08)]"
                   >
                     {interest}
                   </span>
                 ))}
               </div>
 
-              <div className="h-px bg-[#E8E6E1] mt-6" />
-
-              <div className="flex items-center gap-4 mt-6">
+              <div className="flex items-center gap-4 mt-7">
                 <button
                   onClick={() => scrollToNext(i)}
                   aria-label="Pass"
-                  className="size-14 rounded-full bg-[#F0EDE9] border border-[#E8E6E1] flex items-center justify-center active:scale-95 transition-all"
+                  className="size-14 rounded-full bg-[#F0EDE9] shadow-[0_2px_10px_rgba(0,0,0,0.06)] flex items-center justify-center active:scale-95 transition-all"
                 >
                   <X className="w-6 h-6 text-ink/60" />
                 </button>
