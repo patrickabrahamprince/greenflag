@@ -236,6 +236,17 @@ export default function DiscoverPage() {
             <Loader2 className="animate-spin text-[#C9A961]" size={32} />
           </div>
         )}
+        {!pageLoading && profiles.length === 0 && (
+          <div className="snap-start min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center px-8 text-center">
+            <div className="w-14 h-14 rounded-full bg-[#C9A961]/10 flex items-center justify-center mb-5">
+              <Heart className="w-6 h-6 text-[#C9A961]" />
+            </div>
+            <h2 className="font-['Playfair_Display'] text-2xl text-ink mb-2">You&apos;ve seen everyone</h2>
+            <p className="text-ink/50 text-sm max-w-xs">
+              No new profiles match your standard right now. Check back soon, or revisit your existing connections.
+            </p>
+          </div>
+        )}
       </div>
 
       {confirmProfileId && (
