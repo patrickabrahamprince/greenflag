@@ -198,7 +198,7 @@ export function ConnectionView({ connection, submissions, intentions, onRefresh 
 
       {showSheet && activeIntention && (
         <SubmitSheet
-          connectionId={connection.id}
+          matchId={connection.id}
           dayNumber={currentDay}
           intention={activeIntention}
           onClose={() => {

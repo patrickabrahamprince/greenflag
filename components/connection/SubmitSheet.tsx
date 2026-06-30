@@ -7,14 +7,14 @@ import { createClient } from '@/lib/supabase/client';
 import type { IntentionRecord } from './types';
 
 interface SubmitSheetProps {
-  connectionId: string;
+  matchId: string;
   dayNumber: number;
   intention: IntentionRecord;
   onClose: () => void;
   onSubmit: () => void;
 }
 
-export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSubmit }: SubmitSheetProps) {
+export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }: SubmitSheetProps) {
   const supabase = createClient();
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
@@ -125,7 +125,7 @@ export function SubmitSheet({ connectionId, dayNumber, intention, onClose, onSub
         return;
       }
 
-      const res = await fetch(`/api/connections/${connectionId}/submit-task`, {
+      const res = await fetch(`/api/matches/${matchId}/submit-task`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

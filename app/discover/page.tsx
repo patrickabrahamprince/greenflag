@@ -93,8 +93,13 @@ export default function DiscoverPage() {
         const err = await res.json()
         throw new Error(err.error || 'Failed to like profile')
       }
-      toast.success("You've met her Standard")
+      const { matchId } = await res.json()
       setProfiles(prev => prev.filter(p => p.id !== profileId))
+      if (matchId) {
+        router.push(`/task/${matchId}`)
+      } else {
+        toast.success("You've met her Standard")
+      }
     } catch (e: any) {
       toast.error(e.message)
     } finally {
@@ -129,7 +134,7 @@ export default function DiscoverPage() {
                 />
               </div>
               <div className="col-span-1 grid grid-rows-2 gap-0.5">
-                {[p.photos?.[1], p.photos?.[2]].map((src: string | undefined, idx: number) => (
+                {[p.photos?.[1] ?? p.photos?.[0], p.photos?.[2] ?? p.photos?.[0]].map((src: string | undefined, idx: number) => (
                   <div key={idx} className="relative overflow-hidden">
                     {src ? (
                       <img
