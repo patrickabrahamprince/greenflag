@@ -2,15 +2,15 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2, Coins, X, Heart } from 'lucide-react'
+import { ArrowLeft, Loader2, Coins, X, Heart, Lock } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
-import { ProfileImageCarousel } from '@/components/shared/ProfileImageCarousel'
 import { createClient } from '@/lib/supabase/client'
 
 export default function DiscoverPage() {
   const [profiles, setProfiles] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
+  const [pageLoading, setPageLoading] = useState(false)
+  const [likingId, setLikingId] = useState<string | null>(null)
   const [page, setPage] = useState(0)
   const [hasMore, setHasMore] = useState(true)
   const [persona, setPersona] = useState<string | null>(null)
@@ -22,7 +22,7 @@ export default function DiscoverPage() {
 
   const observer = useRef<IntersectionObserver>()
   const lastProfileRef = useCallback((node: HTMLDivElement) => {
-    if (loading) return
+    if (pageLoading) return
     if (observer.current) observer.current.disconnect()
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMore) {
@@ -30,7 +30,7 @@ export default function DiscoverPage() {
       }
     })
     if (node) observer.current.observe(node)
-  }, [loading, hasMore])
+  }, [pageLoading, hasMore])
 
   const fetchedForPage = useRef<Set<number>>(new Set())
 
@@ -51,7 +51,7 @@ export default function DiscoverPage() {
   }, [page])
 
   async function fetchProfiles() {
-    setLoading(true)
+    setPageLoading(true)
     try {
       const res = await fetch('/api/discover')
       const json = await res.json()
@@ -65,7 +65,7 @@ export default function DiscoverPage() {
     } catch {
       toast.error('Failed to load profiles')
     } finally {
-      setLoading(false)
+      setPageLoading(false)
     }
   }
 
@@ -77,8 +77,8 @@ export default function DiscoverPage() {
   }
 
   async function handleBegin(profileId: string) {
-    if (loading) return
-    setLoading(true)
+    if (likingId) return
+    setLikingId(profileId)
     try {
       if (persona === 'woman') {
         router.push(`/profile/${profileId}`)
@@ -98,7 +98,7 @@ export default function DiscoverPage() {
     } catch (e: any) {
       toast.error(e.message)
     } finally {
-      setLoading(false)
+      setLikingId(null)
     }
   }
 
@@ -119,8 +119,40 @@ export default function DiscoverPage() {
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
             className="snap-start snap-always min-h-screen w-full flex flex-col"
           >
-            <div className="relative w-full aspect-[3/4] flex-shrink-0 overflow-hidden rounded-b-[2rem] shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
-              <ProfileImageCarousel images={p.photos} />
+            <div className="relative w-full aspect-[3/4] flex-shrink-0 overflow-hidden rounded-b-[2rem] shadow-[0_8px_30px_rgba(0,0,0,0.12)] grid grid-cols-3 gap-0.5 bg-black">
+              <div className="col-span-2 relative">
+                <img
+                  src={p.photos?.[0]}
+                  alt=""
+                  className="w-full h-full object-cover"
+                  onError={e => { e.currentTarget.src = '/placeholder-avatar.svg' }}
+                />
+              </div>
+              <div className="col-span-1 grid grid-rows-2 gap-0.5">
+                {[p.photos?.[1], p.photos?.[2]].map((src: string | undefined, idx: number) => (
+                  <div key={idx} className="relative overflow-hidden">
+                    {src ? (
+                      <img
+                        src={src}
+                        alt=""
+                        className="w-full h-full object-cover blur-md scale-110"
+                        onError={e => { e.currentTarget.style.display = 'none' }}
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-[#F0EDE9]" />
+                    )}
+                  </div>
+                ))}
+              </div>
+              {persona !== 'woman' && (
+                <button
+                  onClick={() => setConfirmProfileId(p.id)}
+                  className="absolute top-1/2 right-[16.5%] -translate-y-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 bg-black/50 backdrop-blur-md border border-white/30 rounded-full px-4 py-2 active:scale-95 transition-all"
+                >
+                  <Lock className="w-3.5 h-3.5 text-white" />
+                  <span className="text-white text-xs uppercase tracking-wide font-medium">Unlock</span>
+                </button>
+              )}
               {typeof p.match_percentage === 'number' && (
                 <div className="absolute top-5 left-5 z-10 flex items-center gap-1.5 bg-black/30 backdrop-blur-md border border-white/20 rounded-full px-3 py-1.5">
                   <span className="text-[#C9A961] text-xs">◆</span>
@@ -149,7 +181,10 @@ export default function DiscoverPage() {
               )}
               <div className="flex flex-wrap gap-2 mt-3">
                 {(p.interests_have ?? p.interests ?? []).slice(0, 5).map((interest: string) => (
-                  <span key={interest} className="px-3 py-1 rounded-full border border-[#E8E6E1] text-ink/70 text-xs uppercase tracking-wide">
+                  <span
+                    key={interest}
+                    className="px-4 py-2 rounded-full bg-white border border-[#C9A961]/40 text-ink text-sm font-medium shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+                  >
                     {interest}
                   </span>
                 ))}
@@ -173,11 +208,11 @@ export default function DiscoverPage() {
                       setConfirmProfileId(p.id);
                     }
                   }}
-                  disabled={loading}
+                  disabled={likingId === p.id}
                   aria-label="Like"
                   className="flex-1 h-14 rounded-full bg-[#C9A961] shadow-[0_4px_16px_rgba(201,169,97,0.35)] flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
                 >
-                  {loading ? (
+                  {likingId === p.id ? (
                     <Loader2 className="w-5 h-5 animate-spin text-white" />
                   ) : (
                     <>
@@ -192,7 +227,7 @@ export default function DiscoverPage() {
             </div>
           </div>
         ))}
-        {loading && (
+        {pageLoading && (
           <div className="snap-start min-h-screen flex items-center justify-center">
             <Loader2 className="animate-spin text-[#C9A961]" size={32} />
           </div>

@@ -21,7 +21,7 @@ export async function GET(req: Request) {
 
     const { data: profile } = await admin
       .from('profiles')
-      .select('persona, elo_score, looking_for_interests, lat, lng')
+      .select('persona, elo_score, interests, looking_for_interests, lat, lng')
       .eq('id', user.id)
       .single();
 
@@ -43,15 +43,14 @@ export async function GET(req: Request) {
       return NextResponse.json({ profiles: profiles || [] });
     }
 
-    const { data: standard } = await admin
-      .from('standards')
-      .select('required_interests, values, deal_breakers')
-      .eq('woman_id', user.id)
-      .maybeSingle();
-
-    const manInterests = standard?.required_interests ?? [];
-    const manValues = standard?.values ?? [];
-    const manDealbreakers = standard?.deal_breakers ?? [];
+    // get_ranked_women() intersects man_interests against each woman's
+    // looking_for_interests, so this must be the man's own interests — not a
+    // `standards` row, which belongs to a woman (standards.woman_id), never
+    // to the man viewing the feed. The old `standards.woman_id = user.id`
+    // lookup always returned nothing, so every match scored 0%.
+    const manInterests = profile.interests ?? [];
+    const manValues: string[] = [];
+    const manDealbreakers: string[] = [];
 
     const { data: matchResults, error: fetchError } = await admin.rpc('get_ranked_women', {
       man_interests: manInterests,
