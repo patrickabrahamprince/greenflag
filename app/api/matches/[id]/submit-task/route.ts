@@ -42,7 +42,7 @@ export async function POST(
 
     const { data: match, error: matchErr } = await admin
       .from('matches')
-      .select('id, user1_id, user2_id, current_day, status')
+      .select('id, user1_id, user2_id, current_day, status, next_day_unlocks_at')
       .eq('id', id)
       .maybeSingle();
 
@@ -56,6 +56,10 @@ export async function POST(
 
     if (match.status === 'completed') {
       return NextResponse.json({ error: 'Match is already complete' }, { status: 400 });
+    }
+
+    if (match.next_day_unlocks_at && new Date(match.next_day_unlocks_at) > new Date()) {
+      return NextResponse.json({ error: 'Tomorrow\'s tasks aren\'t unlocked yet' }, { status: 400 });
     }
 
     const day_number = match.current_day;
@@ -105,22 +109,26 @@ export async function POST(
 
     let dayAdvanced = false;
     let chatUnlocked = false;
+    let nextDayUnlocksAt: string | null = null;
 
-    if (isText) {
-      const { error: approveErr } = await admin
-        .from('submissions')
-        .update({ approved: true, auto_approved: true })
-        .eq('match_id', id)
-        .eq('day_number', day_number ?? 1)
-        .eq('task_number', task_number ?? 1);
+    // No moderation queue exists yet for photo/voice submissions, so every
+    // task type auto-approves for now — otherwise a day with any photo/voice
+    // task could never complete (moderation_status would stay 'pending'
+    // forever and the day-advance count would never reach the total).
+    const { error: approveErr } = await admin
+      .from('submissions')
+      .update({ approved: true, auto_approved: isText })
+      .eq('match_id', id)
+      .eq('day_number', day_number ?? 1)
+      .eq('task_number', task_number ?? 1);
 
-      if (!approveErr) {
-        const { data: advanceResult } = await admin.rpc('advance_match_day_if_complete', {
-          p_match_id: id,
-        });
-        dayAdvanced = advanceResult?.day_advanced === true;
-        chatUnlocked = advanceResult?.chat_unlocked === true;
-      }
+    if (!approveErr) {
+      const { data: advanceResult } = await admin.rpc('advance_match_day_if_complete', {
+        p_match_id: id,
+      });
+      dayAdvanced = advanceResult?.day_advanced === true;
+      chatUnlocked = advanceResult?.chat_unlocked === true;
+      nextDayUnlocksAt = advanceResult?.next_day_unlocks_at ?? null;
     }
 
     await admin.rpc('deduct_coins', {
@@ -130,7 +138,7 @@ export async function POST(
       p_metadata: { match_id: id, day_number, task_number },
     });
 
-    return NextResponse.json({ success: true, day_advanced: dayAdvanced, chat_unlocked: chatUnlocked });
+    return NextResponse.json({ success: true, day_advanced: dayAdvanced, chat_unlocked: chatUnlocked, next_day_unlocks_at: nextDayUnlocksAt });
   } catch (e) {
     console.error('submit-task error:', e);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, Loader2, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Loader2, MessageCircle, Hourglass } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ConnectedScreen } from '@/components/ConnectedScreen';
 import { ProgressSegmentBar } from '@/components/connection/ProgressSegmentBar';
@@ -14,6 +14,57 @@ interface MatchData {
   current_day: number;
   status: string;
   chat_unlocked: boolean;
+  next_day_unlocks_at: string | null;
+}
+
+function useCountdown(target: string | null) {
+  const [remainingMs, setRemainingMs] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!target) {
+      setRemainingMs(null);
+      return;
+    }
+    const targetMs = new Date(target).getTime();
+    const tick = () => setRemainingMs(Math.max(0, targetMs - Date.now()));
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [target]);
+
+  return remainingMs;
+}
+
+function formatCountdown(ms: number) {
+  const totalSeconds = Math.floor(ms / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function DayCompleteModal({ unlocksAt, onClose }: { unlocksAt: string; onClose: () => void }) {
+  const remainingMs = useCountdown(unlocksAt);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.6)' }}>
+      <div className="w-full max-w-sm bg-[#FAF9F7] rounded-2xl shadow-2xl p-8 text-center">
+        <div className="w-14 h-14 rounded-full bg-[#C9A961]/10 flex items-center justify-center mx-auto mb-5">
+          <Hourglass className="w-6 h-6 text-[#C9A961]" />
+        </div>
+        <h3 className="font-['Playfair_Display'] text-2xl text-ink mb-2">Day Complete</h3>
+        <p className="text-ink/60 text-sm leading-relaxed mb-6">
+          Tomorrow&apos;s tasks unlock at the same time tomorrow.
+        </p>
+        <p className="font-['Playfair_Display'] text-4xl text-[#C9A961] tracking-wider mb-6">
+          {remainingMs !== null ? formatCountdown(remainingMs) : '--:--:--'}
+        </p>
+        <button onClick={onClose} className="btn-primary w-full">
+          Got it
+        </button>
+      </div>
+    </div>
+  );
 }
 
 interface OtherProfile {
@@ -36,6 +87,7 @@ export default function TaskPage() {
   const [error, setError] = useState<string | null>(null);
   const [showSheet, setShowSheet] = useState(false);
   const [activeIntention, setActiveIntention] = useState<IntentionRecord | null>(null);
+  const [dayCompleteUnlockAt, setDayCompleteUnlockAt] = useState<string | null>(null);
 
   const fetchMatch = useCallback(async () => {
     try {
@@ -94,6 +146,7 @@ export default function TaskPage() {
   }
 
   const currentDay = match.current_day;
+  const isLocked = !!match.next_day_unlocks_at && new Date(match.next_day_unlocks_at) > new Date();
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] px-6 pt-6 pb-10 max-w-app mx-auto flex flex-col">
@@ -125,6 +178,19 @@ export default function TaskPage() {
         </div>
       )}
 
+      {isLocked && match.next_day_unlocks_at ? (
+        <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
+          <div className="w-14 h-14 rounded-full bg-[#C9A961]/10 flex items-center justify-center mb-5">
+            <Hourglass className="w-6 h-6 text-[#C9A961]" />
+          </div>
+          <h2 className="font-['Playfair_Display'] text-2xl text-ink mb-2">Day {currentDay} unlocks in</h2>
+          <p className="font-['Playfair_Display'] text-4xl text-[#C9A961] tracking-wider mb-3">
+            <LiveCountdown target={match.next_day_unlocks_at} />
+          </p>
+          <p className="text-ink/50 text-sm">Come back then to continue with {otherProfile.name}.</p>
+        </div>
+      ) : (
+        <>
       {intentions.length === 0 && (
         <div className="text-center px-6 mb-6">
           <p className="text-ink/50 text-sm">Waiting for her to set up tasks for this day.</p>
@@ -182,6 +248,8 @@ export default function TaskPage() {
           );
         })}
       </div>
+        </>
+      )}
 
       {showSheet && activeIntention && (
         <SubmitSheet
@@ -192,14 +260,32 @@ export default function TaskPage() {
             setShowSheet(false);
             setActiveIntention(null);
           }}
-          onSubmit={() => {
+          onSubmit={(result) => {
             setShowSheet(false);
             setActiveIntention(null);
-            toast.success('Response submitted');
+            if (result?.day_advanced && !result?.chat_unlocked && result?.next_day_unlocks_at) {
+              setDayCompleteUnlockAt(result.next_day_unlocks_at);
+            } else if (result?.chat_unlocked) {
+              toast.success('All 3 days complete — chat unlocked!');
+            } else {
+              toast.success('Response submitted');
+            }
             fetchMatch();
           }}
         />
       )}
+
+      {dayCompleteUnlockAt && (
+        <DayCompleteModal
+          unlocksAt={dayCompleteUnlockAt}
+          onClose={() => setDayCompleteUnlockAt(null)}
+        />
+      )}
     </div>
   );
+}
+
+function LiveCountdown({ target }: { target: string }) {
+  const remainingMs = useCountdown(target);
+  return <>{remainingMs !== null ? formatCountdown(remainingMs) : '--:--:--'}</>;
 }

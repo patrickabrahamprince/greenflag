@@ -11,7 +11,7 @@ interface SubmitSheetProps {
   dayNumber: number;
   intention: IntentionRecord;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (result?: { day_advanced?: boolean; chat_unlocked?: boolean; next_day_unlocks_at?: string | null }) => void;
 }
 
 export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }: SubmitSheetProps) {
@@ -26,6 +26,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
   const [recordedDuration, setRecordedDuration] = useState(0);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [submitResult, setSubmitResult] = useState<{ day_advanced?: boolean; chat_unlocked?: boolean; next_day_unlocks_at?: string | null }>({});
   const [debugInfo, setDebugInfo] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -147,6 +148,8 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
         return;
       }
 
+      const result = await res.json().catch(() => ({}));
+      setSubmitResult(result);
       setShowSuccessPopup(true);
     } catch (e) {
       setError('Network error. Please try again.');
@@ -310,7 +313,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
           <div className="flex gap-3">
             <button
               onClick={() => {
-                onSubmit();
+                onSubmit(submitResult);
               }}
               className="btn-primary flex-1 py-2.5 text-xs font-semibold"
             >
@@ -318,7 +321,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
             </button>
             <button
               onClick={() => {
-                onSubmit();
+                onSubmit(submitResult);
                 router.push('/discover');
               }}
               className="btn-secondary flex-1 py-2.5 text-xs font-medium"
