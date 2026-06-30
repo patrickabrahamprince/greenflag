@@ -39,7 +39,7 @@ export async function GET(
     }
 
     const { data: match } = await supabase
-      .from('matches' as any)
+      .from('matches')
       .select('id')
       .or(`and(user1_id.eq.${user.id},user2_id.eq.${id}),and(user1_id.eq.${id},user2_id.eq.${user.id})`)
       .maybeSingle();

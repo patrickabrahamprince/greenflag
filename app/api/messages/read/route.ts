@@ -16,7 +16,7 @@ export async function POST(req: Request) {
       .from('conversations' as any)
       .select('user1_id, user2_id')
       .eq('id', conversation_id)
-      .single();
+      .single() as { data: { user1_id: string; user2_id: string } | null };
 
     if (!conversation) {
       return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });

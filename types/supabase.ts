@@ -872,6 +872,7 @@ export type Database = {
           coins: number | null
           connected_count: number | null
           created_at: string | null
+          dob: string | null
           elo_score: number | null
           height: string | null
           id: string
@@ -922,6 +923,7 @@ export type Database = {
           coins?: number | null
           connected_count?: number | null
           created_at?: string | null
+          dob?: string | null
           elo_score?: number | null
           height?: string | null
           id: string
@@ -972,6 +974,7 @@ export type Database = {
           coins?: number | null
           connected_count?: number | null
           created_at?: string | null
+          dob?: string | null
           elo_score?: number | null
           height?: string | null
           id?: string
@@ -1718,6 +1721,17 @@ export type Database = {
         Args: { p_to_user_id: string }
         Returns: Json
       }
+      create_notification: {
+        Args: {
+          p_link?: string
+          p_metadata?: Json
+          p_title: string
+          p_type: string
+          p_user_id: string
+          p_body: string
+        }
+        Returns: undefined
+      }
       decide_connection: {
         Args: { p_connection_id: string; p_green_flag: boolean }
         Returns: Json
@@ -1980,14 +1994,14 @@ export type Database = {
       }
       get_unread_count: { Args: { p_user_id: string }; Returns: number }
       get_unread_messages_count: {
-        Args: { p_connection_id: string }
+        Args: { p_conversation_id: string }
         Returns: number
       }
       gettransactionid: { Args: never; Returns: unknown }
       is_admin: { Args: never; Returns: boolean }
       longtransactionsenabled: { Args: never; Returns: boolean }
       mark_messages_read: {
-        Args: { p_connection_id: string }
+        Args: { p_conversation_id: string }
         Returns: undefined
       }
       mark_notifications_read: {
