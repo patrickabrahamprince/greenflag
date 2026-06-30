@@ -43,7 +43,7 @@ function formatCountdown(ms: number) {
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
-function DayCompleteModal({ unlocksAt, onClose }: { unlocksAt: string; onClose: () => void }) {
+function DayCompleteModal({ unlocksAt, onClose, onExplore }: { unlocksAt: string; onClose: () => void; onExplore: () => void }) {
   const remainingMs = useCountdown(unlocksAt);
 
   return (
@@ -59,9 +59,14 @@ function DayCompleteModal({ unlocksAt, onClose }: { unlocksAt: string; onClose: 
         <p className="font-['Playfair_Display'] text-4xl text-[#C9A961] tracking-wider mb-6">
           {remainingMs !== null ? formatCountdown(remainingMs) : '--:--:--'}
         </p>
-        <button onClick={onClose} className="btn-primary w-full">
-          Got it
-        </button>
+        <div className="flex gap-3">
+          <button onClick={onClose} className="btn-secondary flex-1">
+            Got it
+          </button>
+          <button onClick={onExplore} className="btn-primary flex-1">
+            Explore Profiles
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -279,6 +284,7 @@ export default function TaskPage() {
         <DayCompleteModal
           unlocksAt={dayCompleteUnlockAt}
           onClose={() => setDayCompleteUnlockAt(null)}
+          onExplore={() => router.push('/discover')}
         />
       )}
     </div>
