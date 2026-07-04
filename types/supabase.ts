@@ -1254,33 +1254,27 @@ export type Database = {
       }
       standards: {
         Row: {
-          active: boolean | null
           created_at: string | null
           deal_breakers: string[] | null
           id: string
-          intentions: Json
           is_active: boolean | null
           required_interests: string[] | null
           values: string[] | null
           woman_id: string | null
         }
         Insert: {
-          active?: boolean | null
           created_at?: string | null
           deal_breakers?: string[] | null
           id?: string
-          intentions: Json
           is_active?: boolean | null
           required_interests?: string[] | null
           values?: string[] | null
           woman_id?: string | null
         }
         Update: {
-          active?: boolean | null
           created_at?: string | null
           deal_breakers?: string[] | null
           id?: string
-          intentions?: Json
           is_active?: boolean | null
           required_interests?: string[] | null
           values?: string[] | null

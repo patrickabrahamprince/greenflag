@@ -16,7 +16,7 @@ export async function GET() {
       .maybeSingle();
 
     if (activeStandard) {
-      return NextResponse.json({ redirect: '/connections' });
+      return NextResponse.json({ redirect: '/my-connections' });
     }
 
     const { data: standard } = await supabase
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     if (!sid) {
       const { data: created, error: createErr } = await supabase
         .from('standards')
-        .insert({ woman_id: user.id, intentions: {} })
+        .insert({ woman_id: user.id })
         .select('id')
         .single();
       if (createErr || !created) {

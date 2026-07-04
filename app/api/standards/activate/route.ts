@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     } else {
       const { data: created, error: createErr } = await supabase
         .from('standards')
-        .insert({ woman_id: user.id, intentions: {} })
+        .insert({ woman_id: user.id })
         .select('id')
         .single();
       if (createErr || !created) {
@@ -89,7 +89,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true, standardId });
-  } catch {
+  } catch (e) {
+    console.error('standards/activate error:', e);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
