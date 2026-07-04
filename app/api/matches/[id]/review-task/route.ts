@@ -1,0 +1,100 @@
+import { NextResponse } from 'next/server';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js';
+import { notifyManOfDayApproval, notifyBothOfCompletion, notifyManOfRejection } from '@/lib/notifications';
+
+function getAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
+
+const TERMINAL_STATUSES = ['completed', 'rejected', 'expired_no_submission', 'refunded'];
+
+export async function POST(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const admin = getAdmin();
+    const { id } = await params;
+    const supabase = await createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const { day_number, task_number, decision } = await req.json();
+    if (decision !== 'approve' && decision !== 'reject') {
+      return NextResponse.json({ error: 'decision must be approve or reject' }, { status: 400 });
+    }
+
+    const { data: match, error: matchErr } = await admin
+      .from('matches')
+      .select('id, user1_id, user2_id, current_day, status')
+      .eq('id', id)
+      .maybeSingle();
+    if (matchErr || !match) return NextResponse.json({ error: 'Match not found' }, { status: 404 });
+    if (match.user2_id !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    if (TERMINAL_STATUSES.includes(match.status)) {
+      return NextResponse.json({ error: 'Match already resolved' }, { status: 400 });
+    }
+
+    const { data: submission, error: subErr } = await admin
+      .from('submissions')
+      .select('id, approved, submitted_at')
+      .eq('match_id', id)
+      .eq('day_number', day_number ?? match.current_day)
+      .eq('task_number', task_number ?? 1)
+      .maybeSingle();
+    if (subErr || !submission || !submission.submitted_at) {
+      return NextResponse.json({ error: 'Nothing submitted for this task yet' }, { status: 404 });
+    }
+    if (submission.approved === true) {
+      return NextResponse.json({ error: 'Already approved' }, { status: 400 });
+    }
+
+    if (decision === 'reject') {
+      await admin.from('matches').update({ status: 'rejected', next_day_unlocks_at: null }).eq('id', id);
+      await admin.from('funnel_events').insert({ match_id: id, event_type: 'rejected' });
+      try {
+        await notifyManOfRejection(admin, match.user1_id, id);
+      } catch {
+        // Safe catch for notification failure
+      }
+      return NextResponse.json({ success: true, status: 'rejected' });
+    }
+
+    const { error: approveErr } = await admin
+      .from('submissions')
+      .update({ approved: true, reviewed_at: new Date().toISOString() })
+      .eq('id', submission.id);
+    if (approveErr) return NextResponse.json({ error: approveErr.message }, { status: 400 });
+
+    await admin.from('funnel_events').insert({ match_id: id, event_type: 'approved' });
+
+    const { data: gateResult } = await admin.rpc('recompute_match_gate', { p_match_id: id });
+    const dayAdvanced = gateResult?.day_advanced === true;
+    const chatUnlocked = gateResult?.chat_unlocked === true;
+
+    try {
+      if (chatUnlocked) {
+        await notifyBothOfCompletion(admin, match.user1_id, match.user2_id, id);
+      } else if (dayAdvanced) {
+        await notifyManOfDayApproval(admin, match.user1_id, (match.current_day ?? 1) + 1, id);
+      }
+    } catch {
+      // Safe catch for notification failure
+    }
+
+    return NextResponse.json({
+      success: true,
+      status: gateResult?.status ?? 'pending_submission',
+      day_advanced: dayAdvanced,
+      chat_unlocked: chatUnlocked,
+      next_day_unlocks_at: gateResult?.next_day_unlocks_at ?? null,
+    });
+  } catch (e) {
+    console.error('review-task error:', e);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

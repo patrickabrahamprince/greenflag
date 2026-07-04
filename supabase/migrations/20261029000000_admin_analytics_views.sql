@@ -13,9 +13,11 @@ FROM profiles
 GROUP BY 1 ORDER BY 1 DESC;
 
 -- 3. Analytics view: Match activity
+-- connections has started_at, not created_at (see 20261019000000_init.sql) --
+-- same class of pre-existing column-name drift as the earlier fixes above.
 CREATE OR REPLACE VIEW admin_match_stats AS
 SELECT
-  date_trunc('day', created_at) as date,
+  date_trunc('day', started_at) as date,
   count(*) as matches_created,
   count(*) FILTER (WHERE status = 'accepted') as accepted,
   count(*) FILTER (WHERE status = 'rejected') as rejected

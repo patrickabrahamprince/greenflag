@@ -11,7 +11,7 @@ interface SubmitSheetProps {
   dayNumber: number;
   intention: IntentionRecord;
   onClose: () => void;
-  onSubmit: (result?: { day_advanced?: boolean; chat_unlocked?: boolean; next_day_unlocks_at?: string | null }) => void;
+  onSubmit: (result?: { status?: string }) => void;
 }
 
 export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }: SubmitSheetProps) {
@@ -26,7 +26,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
   const [recordedDuration, setRecordedDuration] = useState(0);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-  const [submitResult, setSubmitResult] = useState<{ day_advanced?: boolean; chat_unlocked?: boolean; next_day_unlocks_at?: string | null }>({});
+  const [submitResult, setSubmitResult] = useState<{ status?: string }>({});
   const [debugInfo, setDebugInfo] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -308,7 +308,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
           </div>
           <h4 className="font-['Playfair_Display'] text-ink text-lg mb-2">Response Submitted!</h4>
           <p className="text-[#8E8E93] text-xs mb-6 leading-relaxed">
-            Move on to the next task for today, or explore other profiles in the meantime.
+            Awaiting her review. Move on to the next task for today, or explore other profiles in the meantime.
           </p>
           <div className="flex gap-3">
             <button

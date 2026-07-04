@@ -28,7 +28,7 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
 
   return (
     <button
-      onClick={() => router.push(`/chat/${conv.id}`)}
+      onClick={() => router.push(`/messages/${conv.id}`)}
       className="w-full flex items-center gap-3 p-4 text-left transition-colors border-b border-[#E8E6E1]"
     >
       <div
@@ -76,8 +76,9 @@ function ChatList({ userId, supabase }: ChatListPageProps) {
     const load = async () => {
       try {
         const { data } = await supabase
-          .from('conversations' as any)
+          .from('matches')
           .select('*')
+          .eq('chat_unlocked', true)
           .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
           .order('created_at', { ascending: false });
 
@@ -92,9 +93,9 @@ function ChatList({ userId, supabase }: ChatListPageProps) {
               .eq('id', partnerId)
               .single();
             const { data: lastMsg } = await supabase
-              .from('messages' as any)
+              .from('messages')
               .select('content, created_at')
-              .eq('conversation_id', conv.id)
+              .eq('match_id', conv.id)
               .order('created_at', { ascending: false })
               .limit(1)
               .maybeSingle();

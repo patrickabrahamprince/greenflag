@@ -4,10 +4,14 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Loader2, MessageCircle, Hourglass } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useUserStore } from '@/lib/store';
 import { ConnectedScreen } from '@/components/ConnectedScreen';
+import { EndedScreen } from '@/components/connection/EndedScreen';
 import { ProgressSegmentBar } from '@/components/connection/ProgressSegmentBar';
 import { SubmitSheet } from '@/components/connection/SubmitSheet';
 import type { IntentionRecord, SubmissionRecord } from '@/components/connection/types';
+
+const TERMINAL_STATUSES = ['rejected', 'expired_no_submission', 'refunded'];
 
 interface MatchData {
   id: string;
@@ -83,6 +87,8 @@ export default function TaskPage() {
   const router = useRouter();
   const params = useParams<{ matchId: string }>();
   const matchId = params.matchId;
+  const currentUser = useUserStore((s) => s.user);
+  const isWoman = currentUser?.persona === 'woman';
 
   const [match, setMatch] = useState<MatchData | null>(null);
   const [otherProfile, setOtherProfile] = useState<OtherProfile | null>(null);
@@ -93,6 +99,7 @@ export default function TaskPage() {
   const [showSheet, setShowSheet] = useState(false);
   const [activeIntention, setActiveIntention] = useState<IntentionRecord | null>(null);
   const [dayCompleteUnlockAt, setDayCompleteUnlockAt] = useState<string | null>(null);
+  const [reviewingTaskNumber, setReviewingTaskNumber] = useState<number | null>(null);
 
   const fetchMatch = useCallback(async () => {
     try {
@@ -121,7 +128,7 @@ export default function TaskPage() {
     fetchMatch();
   }, [fetchMatch]);
 
-  if (loading) {
+  if (loading || !currentUser) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#FAF9F7]">
         <Loader2 className="w-8 h-8 animate-spin text-[#C9A961]" />
@@ -150,8 +157,48 @@ export default function TaskPage() {
     );
   }
 
+  if (TERMINAL_STATUSES.includes(match.status)) {
+    return (
+      <EndedScreen
+        reason={match.status}
+        otherName={otherProfile.name}
+        onBack={() => router.push('/discover')}
+      />
+    );
+  }
+
   const currentDay = match.current_day;
   const isLocked = !!match.next_day_unlocks_at && new Date(match.next_day_unlocks_at) > new Date();
+
+  const handleReview = async (intentionItem: IntentionRecord, decision: 'approve' | 'reject') => {
+    setReviewingTaskNumber(intentionItem.task_number ?? 1);
+    try {
+      const res = await fetch(`/api/matches/${matchId}/review-task`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ day_number: currentDay, task_number: intentionItem.task_number ?? 1, decision }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast.error(data?.error || 'Review failed');
+        return;
+      }
+      if (decision === 'reject') {
+        toast.success('Match ended.');
+      } else if (data.chat_unlocked) {
+        toast.success('All 3 days complete — chat unlocked!');
+      } else if (data.day_advanced && data.next_day_unlocks_at) {
+        setDayCompleteUnlockAt(data.next_day_unlocks_at);
+      } else {
+        toast.success('Approved.');
+      }
+      fetchMatch();
+    } catch {
+      toast.error('Network error.');
+    } finally {
+      setReviewingTaskNumber(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] px-6 pt-6 pb-10 max-w-app mx-auto flex flex-col">
@@ -224,7 +271,7 @@ export default function TaskPage() {
                 {intentionItem.prompt}
               </p>
 
-              {isTaskPendingSubmission && (
+              {isTaskPendingSubmission && !isWoman && (
                 <button
                   onClick={() => {
                     setActiveIntention(intentionItem);
@@ -234,6 +281,27 @@ export default function TaskPage() {
                 >
                   Submit Response
                 </button>
+              )}
+              {isTaskPendingSubmission && isWoman && (
+                <p className="text-xs text-ink/40 italic">Waiting for his submission…</p>
+              )}
+              {isTaskPendingReview && isWoman && (
+                <div className="flex gap-2 mt-1">
+                  <button
+                    onClick={() => handleReview(intentionItem, 'approve')}
+                    disabled={reviewingTaskNumber === intentionItem.task_number}
+                    className="btn-primary text-xs px-4 py-2 flex-1"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => handleReview(intentionItem, 'reject')}
+                    disabled={reviewingTaskNumber === intentionItem.task_number}
+                    className="btn-secondary text-xs px-4 py-2 flex-1"
+                  >
+                    Reject
+                  </button>
+                </div>
               )}
 
               {matchingSub && (matchingSub.content || matchingSub.media_url) && (
@@ -265,16 +333,10 @@ export default function TaskPage() {
             setShowSheet(false);
             setActiveIntention(null);
           }}
-          onSubmit={(result) => {
+          onSubmit={() => {
             setShowSheet(false);
             setActiveIntention(null);
-            if (result?.day_advanced && !result?.chat_unlocked && result?.next_day_unlocks_at) {
-              setDayCompleteUnlockAt(result.next_day_unlocks_at);
-            } else if (result?.chat_unlocked) {
-              toast.success('All 3 days complete — chat unlocked!');
-            } else {
-              toast.success('Response submitted');
-            }
+            toast.success('Response submitted — awaiting her review');
             fetchMatch();
           }}
         />

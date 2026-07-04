@@ -453,6 +453,35 @@ export type Database = {
           },
         ]
       }
+      funnel_events: {
+        Row: {
+          id: string
+          match_id: string | null
+          event_type: string
+          occurred_at: string
+        }
+        Insert: {
+          id?: string
+          match_id?: string | null
+          event_type: string
+          occurred_at?: string
+        }
+        Update: {
+          id?: string
+          match_id?: string | null
+          event_type?: string
+          occurred_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "funnel_events_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       freeze_transactions: {
         Row: {
           coins_paid: number | null
@@ -575,18 +604,51 @@ export type Database = {
           id: string
           user1_id: string
           user2_id: string
+          current_day: number
+          status: string
+          chat_unlocked: boolean
+          completed_at: string | null
+          next_day_unlocks_at: string | null
+          submit_deadline: string | null
+          review_deadline: string | null
+          refund_issued: boolean
+          review_reminder_24h_sent: boolean
+          review_reminder_6h_sent: boolean
+          review_reminder_1h_sent: boolean
         }
         Insert: {
           created_at?: string | null
           id?: string
           user1_id: string
           user2_id: string
+          current_day?: number
+          status?: string
+          chat_unlocked?: boolean
+          completed_at?: string | null
+          next_day_unlocks_at?: string | null
+          submit_deadline?: string | null
+          review_deadline?: string | null
+          refund_issued?: boolean
+          review_reminder_24h_sent?: boolean
+          review_reminder_6h_sent?: boolean
+          review_reminder_1h_sent?: boolean
         }
         Update: {
           created_at?: string | null
           id?: string
           user1_id?: string
           user2_id?: string
+          current_day?: number
+          status?: string
+          chat_unlocked?: boolean
+          completed_at?: string | null
+          next_day_unlocks_at?: string | null
+          submit_deadline?: string | null
+          review_deadline?: string | null
+          refund_issued?: boolean
+          review_reminder_24h_sent?: boolean
+          review_reminder_6h_sent?: boolean
+          review_reminder_1h_sent?: boolean
         }
         Relationships: [
           {
@@ -635,6 +697,7 @@ export type Database = {
       messages: {
         Row: {
           connection_id: string | null
+          match_id: string | null
           content: string
           created_at: string | null
           id: string
@@ -644,6 +707,7 @@ export type Database = {
         }
         Insert: {
           connection_id?: string | null
+          match_id?: string | null
           content: string
           created_at?: string | null
           id?: string
@@ -653,6 +717,7 @@ export type Database = {
         }
         Update: {
           connection_id?: string | null
+          match_id?: string | null
           content?: string
           created_at?: string | null
           id?: string
@@ -666,6 +731,13 @@ export type Database = {
             columns: ["sender_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
             referencedColumns: ["id"]
           },
         ]
@@ -874,6 +946,7 @@ export type Database = {
           created_at: string | null
           dob: string | null
           elo_score: number | null
+          late_review_count: number
           height: string | null
           id: string
           instagram_url: string | null
@@ -925,6 +998,7 @@ export type Database = {
           created_at?: string | null
           dob?: string | null
           elo_score?: number | null
+          late_review_count?: number
           height?: string | null
           id: string
           instagram_url?: string | null
@@ -976,6 +1050,7 @@ export type Database = {
           created_at?: string | null
           dob?: string | null
           elo_score?: number | null
+          late_review_count?: number
           height?: string | null
           id?: string
           instagram_url?: string | null
@@ -1225,10 +1300,11 @@ export type Database = {
         Row: {
           approved: boolean | null
           auto_approved: boolean | null
-          connection_id: string
+          connection_id: string | null
+          match_id: string | null
           content: string | null
-          day: number
-          day_number: number
+          day: number | null
+          day_number: number | null
           deadline: string | null
           id: string
           media_type: string | null
@@ -1241,10 +1317,11 @@ export type Database = {
         Insert: {
           approved?: boolean | null
           auto_approved?: boolean | null
-          connection_id: string
+          connection_id?: string | null
+          match_id?: string | null
           content?: string | null
-          day: number
-          day_number?: number
+          day?: number | null
+          day_number?: number | null
           deadline?: string | null
           id?: string
           media_type?: string | null
@@ -1257,10 +1334,11 @@ export type Database = {
         Update: {
           approved?: boolean | null
           auto_approved?: boolean | null
-          connection_id?: string
+          connection_id?: string | null
+          match_id?: string | null
           content?: string | null
-          day?: number
-          day_number?: number
+          day?: number | null
+          day_number?: number | null
           deadline?: string | null
           id?: string
           media_type?: string | null
@@ -1992,16 +2070,33 @@ export type Database = {
           match_reasons: string[]
         }[]
       }
+      get_ranked_men: {
+        Args: { woman_id: string }
+        Returns: {
+          id: string
+          match_percentage: number
+          match_reasons: string[]
+        }[]
+      }
+      compute_match_score: {
+        Args: { p_viewer_id: string; p_target_id: string; p_viewer_is_man: boolean }
+        Returns: number
+      }
+      man_quality_multiplier: { Args: { p_man_id: string }; Returns: number }
+      woman_responsiveness_multiplier: { Args: { p_woman_id: string }; Returns: number }
+      recompute_match_gate: { Args: { p_match_id: string }; Returns: Json }
+      sweep_expired_matches: { Args: never; Returns: Json }
+      send_review_reminders: { Args: never; Returns: Json }
       get_unread_count: { Args: { p_user_id: string }; Returns: number }
       get_unread_messages_count: {
-        Args: { p_conversation_id: string }
+        Args: { p_match_id: string }
         Returns: number
       }
       gettransactionid: { Args: never; Returns: unknown }
       is_admin: { Args: never; Returns: boolean }
       longtransactionsenabled: { Args: never; Returns: boolean }
       mark_messages_read: {
-        Args: { p_conversation_id: string }
+        Args: { p_match_id: string }
         Returns: undefined
       }
       mark_notifications_read: {

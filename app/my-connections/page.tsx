@@ -40,6 +40,16 @@ function formatCountdown(ms: number) {
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
+function statusLabel(m: MatchListItem) {
+  switch (m.status) {
+    case 'completed': return 'Chat unlocked';
+    case 'rejected': return 'She passed';
+    case 'expired_no_submission': return 'Expired — no response';
+    case 'refunded': return 'Refunded — not reviewed in time';
+    default: return `Day ${m.current_day} of 3`;
+  }
+}
+
 function MatchRow({ match, onClick }: { match: MatchListItem; onClick: () => void }) {
   const remainingMs = useCountdown(match.next_day_unlocks_at);
   const isLocked = remainingMs !== null && remainingMs > 0;
@@ -58,9 +68,7 @@ function MatchRow({ match, onClick }: { match: MatchListItem; onClick: () => voi
       </div>
       <div className="flex-1 text-left min-w-0">
         <p className="font-['Playfair_Display'] text-base text-ink truncate">{match.otherName}</p>
-        <p className="text-xs text-ink/50">
-          {match.status === 'completed' ? 'Chat unlocked' : `Day ${match.current_day} of 3`}
-        </p>
+        <p className="text-xs text-ink/50">{statusLabel(match)}</p>
       </div>
       {isLocked && (
         <span className="text-xs font-medium text-[#C9A961] tabular-nums flex-shrink-0">

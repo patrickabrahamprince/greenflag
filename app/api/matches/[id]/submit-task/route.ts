@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { createClient } from '@supabase/supabase-js';
+import { notifyWomanOfMediaReady } from '@/lib/notifications';
+
+const TERMINAL_STATUSES = ['completed', 'rejected', 'expired_no_submission', 'refunded'];
 
 function getAdmin() {
   return createClient(
@@ -54,8 +57,8 @@ export async function POST(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    if (match.status === 'completed') {
-      return NextResponse.json({ error: 'Match is already complete' }, { status: 400 });
+    if (TERMINAL_STATUSES.includes(match.status)) {
+      return NextResponse.json({ error: 'Match is no longer active' }, { status: 400 });
     }
 
     if (match.next_day_unlocks_at && new Date(match.next_day_unlocks_at) > new Date()) {
@@ -75,61 +78,31 @@ export async function POST(
     if (existingSub && existingSub.approved === true) {
       return NextResponse.json({ error: 'Task already completed' }, { status: 400 });
     }
-
-    const isText = media_type === 'text';
-    const moderationStatus = isText ? 'approved' : 'pending';
+    if (existingSub && existingSub.approved !== true) {
+      return NextResponse.json({ error: 'Already submitted — awaiting her review' }, { status: 400 });
+    }
 
     const basePayload: Record<string, unknown> = {
       match_id: id,
       day_number,
       task_number: task_number ?? 1,
-      moderation_status: moderationStatus,
+      moderation_status: 'pending',
       submitted_at: new Date().toISOString(),
       media_type,
       media_url: media_url || null,
-      content: isText ? text : null,
+      content: media_type === 'text' ? text : null,
+      approved: false,
+      auto_approved: false,
     };
 
-    if (existingSub) {
-      const { error: updateErr } = await admin
-        .from('submissions')
-        .update(basePayload)
-        .eq('id', existingSub.id);
-      if (updateErr) {
-        return NextResponse.json({ error: updateErr.message }, { status: 400 });
-      }
-    } else {
-      const { error: insertErr } = await admin
-        .from('submissions')
-        .insert(basePayload);
-      if (insertErr) {
-        return NextResponse.json({ error: insertErr.message }, { status: 400 });
-      }
+    const { error: insertErr } = await admin.from('submissions').insert(basePayload);
+    if (insertErr) {
+      return NextResponse.json({ error: insertErr.message }, { status: 400 });
     }
 
-    let dayAdvanced = false;
-    let chatUnlocked = false;
-    let nextDayUnlocksAt: string | null = null;
+    await admin.from('funnel_events').insert({ match_id: id, event_type: 'submitted' });
 
-    // No moderation queue exists yet for photo/voice submissions, so every
-    // task type auto-approves for now — otherwise a day with any photo/voice
-    // task could never complete (moderation_status would stay 'pending'
-    // forever and the day-advance count would never reach the total).
-    const { error: approveErr } = await admin
-      .from('submissions')
-      .update({ approved: true, auto_approved: isText })
-      .eq('match_id', id)
-      .eq('day_number', day_number ?? 1)
-      .eq('task_number', task_number ?? 1);
-
-    if (!approveErr) {
-      const { data: advanceResult } = await admin.rpc('advance_match_day_if_complete', {
-        p_match_id: id,
-      });
-      dayAdvanced = advanceResult?.day_advanced === true;
-      chatUnlocked = advanceResult?.chat_unlocked === true;
-      nextDayUnlocksAt = advanceResult?.next_day_unlocks_at ?? null;
-    }
+    const { data: gateResult } = await admin.rpc('recompute_match_gate', { p_match_id: id });
 
     await admin.rpc('deduct_coins', {
       p_user_id: user.id,
@@ -138,7 +111,14 @@ export async function POST(
       p_metadata: { match_id: id, day_number, task_number },
     });
 
-    return NextResponse.json({ success: true, day_advanced: dayAdvanced, chat_unlocked: chatUnlocked, next_day_unlocks_at: nextDayUnlocksAt });
+    try {
+      const { data: manProfile } = await admin.from('profiles').select('name').eq('id', user.id).single();
+      await notifyWomanOfMediaReady(admin, match.user2_id, manProfile?.name || 'Your match', day_number ?? 1, id);
+    } catch {
+      // Safe catch for notification failure
+    }
+
+    return NextResponse.json({ success: true, status: gateResult?.status ?? 'pending_review' });
   } catch (e) {
     console.error('submit-task error:', e);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

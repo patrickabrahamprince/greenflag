@@ -17,7 +17,15 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS lng DOUBLE PRECISION;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS job TEXT;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS height TEXT;
 
-UPDATE profiles SET onboarding_completed = true WHERE onboarding_complete = true;
+-- Backfill from an older typo'd column name (onboarding_complete, no "d")
+-- that isn't part of this repo's tracked history -- same class of drift as
+-- the connections/blocked_pairs backfills above. No-op on a fresh replay.
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'profiles' AND column_name = 'onboarding_complete') THEN
+    UPDATE profiles SET onboarding_completed = true WHERE onboarding_complete = true;
+  END IF;
+END $$;
 
 -- ========================================
 -- 3. Blocked pairs table

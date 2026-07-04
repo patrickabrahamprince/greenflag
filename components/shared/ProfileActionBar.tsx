@@ -1,9 +1,6 @@
 'use client';
 
 import { Loader2 } from 'lucide-react';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
 
 interface ProfileActionBarProps {
   profile?: { id: string };
@@ -17,7 +14,6 @@ interface ProfileActionBarProps {
 }
 
 export function ProfileActionBar({
-  profile,
   isOwn,
   hasConnection,
   isGuest,
@@ -26,9 +22,6 @@ export function ProfileActionBar({
   onContinue,
   onMeet,
 }: ProfileActionBarProps) {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-
   return (
     <div className="mt-8">
       {isOwn ? (
@@ -47,27 +40,11 @@ export function ProfileActionBar({
         </button>
       ) : isGuest ? (
         <button
-          onClick={async () => {
-            if (loading) return;
-            setLoading(true);
-            try {
-              const res = await fetch('/api/connections/start', {
-                method: 'POST',
-                body: JSON.stringify({ woman_id: profile?.id }),
-              });
-              if (!res.ok) throw new Error('Failed to start');
-              const { connection_id } = await res.json();
-              router.push(`/intentions/${connection_id}`);
-            } catch (e) {
-              toast.error((e as Error).message);
-            } finally {
-              setLoading(false);
-            }
-          }}
-          disabled={loading || connecting}
+          onClick={onMeet}
+          disabled={connecting}
           className="w-full h-14 rounded-full bg-[#C9A961] text-white font-medium active:scale-95 transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
         >
-          {loading || connecting ? (
+          {connecting ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" /> Starting...
             </>

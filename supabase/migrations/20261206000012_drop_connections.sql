@@ -12,13 +12,21 @@ DROP FUNCTION IF EXISTS public.decide_connection(UUID, BOOLEAN) CASCADE;
 DROP FUNCTION IF EXISTS public.expire_connections() CASCADE;
 DROP FUNCTION IF EXISTS public.expire_old_connections() CASCADE;
 
--- 3. Re-define get_matching_profiles to filter using likes/matches instead of connections
+-- 3. Re-define get_matching_profiles to filter using likes/matches instead of connections.
+-- LANGUAGE plpgsql (not sql): this file runs before 20261207000000_create_
+-- likes_matches.sql, which is what actually creates the `likes` table this
+-- body references. A LANGUAGE sql function is validated eagerly at CREATE
+-- time and would fail here on a fresh replay; plpgsql defers body
+-- validation until the function is actually called, by which point every
+-- later migration (including the one that creates `likes`) has run.
 CREATE OR REPLACE FUNCTION public.get_matching_profiles(p_viewer_id uuid)
 RETURNS SETOF profiles
-LANGUAGE sql
+LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = public, extensions
 AS $$
+BEGIN
+  RETURN QUERY
   SELECT p.*
   FROM profiles p
   WHERE p.persona = CASE
@@ -47,6 +55,7 @@ AS $$
   )
   ORDER BY p.created_at DESC
   LIMIT 20;
+END;
 $$;
 GRANT EXECUTE ON FUNCTION public.get_matching_profiles(uuid) TO authenticated;
 

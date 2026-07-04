@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { notifyWomanOfStandardBegin } from '@/lib/notifications';
 
 export async function POST(req: Request) {
   try {
@@ -22,6 +23,19 @@ export async function POST(req: Request) {
     if (!data?.success) {
       const status = data?.error === 'insufficient_funds' ? 402 : 400;
       return NextResponse.json({ error: data?.error || 'Failed to like profile' }, { status });
+    }
+
+    if (data.match_id) {
+      try {
+        const { data: senderProfile } = await supabase
+          .from('profiles')
+          .select('name')
+          .eq('id', user.id)
+          .single();
+        await notifyWomanOfStandardBegin(supabase, to_user_id, senderProfile?.name || 'Someone', data.match_id);
+      } catch {
+        // Safe catch for notification failure
+      }
     }
 
     return NextResponse.json({ likeId: data.like_id, matchId: data.match_id });

@@ -13,17 +13,40 @@ ALTER TABLE connections ADD COLUMN IF NOT EXISTS tasks_completed INT DEFAULT 0;
 ALTER TABLE connections ADD COLUMN IF NOT EXISTS host_reviewed_at TIMESTAMPTZ;
 ALTER TABLE connections ADD COLUMN IF NOT EXISTS chat_unlocked_at TIMESTAMPTZ;
 
--- Populate new columns from old ones
-UPDATE connections SET guest_id = initiator_id WHERE guest_id IS NULL;
-UPDATE connections SET host_id = recipient_id WHERE host_id IS NULL;
-UPDATE connections SET status = CASE
-  WHEN state = 'pending' THEN 'pending'
-  WHEN state = 'approved' THEN 'chat_unlocked'
-  WHEN state = 'rejected' THEN 'rejected'
-  WHEN state = 'expired' THEN 'expired'
-  ELSE 'pending'
-END WHERE status IS NULL;
-UPDATE connections SET deadline = expires_at WHERE deadline IS NULL;
+-- Populate new columns from old ones. This backfill targets an even-older
+-- connections generation (initiator_id/recipient_id/state/expires_at) that
+-- predates 20261019000000_init.sql's tracked version of this table (which
+-- already has guest_id/host_id directly) -- i.e. it's from production
+-- history that isn't reflected in this repo's migration files at all. Guard
+-- each backfill so it only runs if the old column genuinely exists; on a
+-- fresh replay starting from this repo's first migration, these are all
+-- no-ops, which is correct since there's nothing to backfill from.
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'connections' AND column_name = 'initiator_id') THEN
+    UPDATE connections SET guest_id = initiator_id WHERE guest_id IS NULL;
+  END IF;
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'connections' AND column_name = 'recipient_id') THEN
+    UPDATE connections SET host_id = recipient_id WHERE host_id IS NULL;
+  END IF;
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'connections' AND column_name = 'state') THEN
+    UPDATE connections SET status = CASE
+      WHEN state = 'pending' THEN 'pending'
+      WHEN state = 'approved' THEN 'chat_unlocked'
+      WHEN state = 'rejected' THEN 'rejected'
+      WHEN state = 'expired' THEN 'expired'
+      ELSE 'pending'
+    END WHERE status IS NULL;
+  END IF;
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'connections' AND column_name = 'expires_at') THEN
+    UPDATE connections SET deadline = expires_at WHERE deadline IS NULL;
+  END IF;
+END $$;
+
+-- Fresh replay: status was just added and never backfilled above (no old
+-- `state` column to backfill from), so give it the same default the column
+-- had historically before this file made it NOT NULL below.
+UPDATE connections SET status = 'pending' WHERE status IS NULL;
 
 ALTER TABLE connections ALTER COLUMN guest_id SET NOT NULL;
 ALTER TABLE connections ALTER COLUMN host_id SET NOT NULL;

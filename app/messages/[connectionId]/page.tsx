@@ -28,8 +28,8 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
   const channelRef = useRef<RealtimeChannel | null>(null);
 
   const isWoman = user?.persona === 'woman';
-  const partnerName = isWoman ? connection?.woman?.name : connection?.man?.name;
-  const partnerPhoto = isWoman ? connection?.woman?.photos?.[0] : connection?.man?.photos?.[0];
+  const partnerName = connection?.partner?.name;
+  const partnerPhoto = connection?.partner?.photos?.[0];
   const backRoute = isWoman ? '/interested' : '/connections';
   const isLocked = connection ? !connection.chat_unlocked : true;
 
@@ -37,13 +37,24 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
     const load = async () => {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) { router.push('/login'); return; }
-      const res = await fetch(`/api/connections/${connectionId}`);
+      const res = await fetch(`/api/matches/${connectionId}`);
       const data = await res.json();
-      if (data.id) setConnection(data);
+      if (data.match) {
+        setConnection({
+          id: data.match.id,
+          status: data.match.status,
+          chat_unlocked: data.match.chat_unlocked,
+          connected: data.match.status === 'completed' || data.match.chat_unlocked,
+          current_day: data.match.current_day,
+          partner: data.otherProfile
+            ? { id: data.otherProfile.id, name: data.otherProfile.name, photos: data.otherProfile.photos || [] }
+            : null,
+        });
+      }
       const { data: msgs } = await supabase
         .from('messages')
         .select('*')
-        .eq('connection_id', connectionId)
+        .eq('match_id', connectionId)
         .order('created_at', { ascending: true });
       setMessages((msgs as Message[]) || []);
       setLoading(false);
@@ -57,7 +68,7 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
       .channel(`messages:${connectionId}`)
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'messages', filter: `connection_id=eq.${connectionId}` },
+        { event: 'INSERT', schema: 'public', table: 'messages', filter: `match_id=eq.${connectionId}` },
         (payload) => {
           const newMsg = payload.new as Message;
           setMessages((prev) => {
@@ -68,7 +79,7 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
       )
       .on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'messages', filter: `connection_id=eq.${connectionId}` },
+        { event: 'UPDATE', schema: 'public', table: 'messages', filter: `match_id=eq.${connectionId}` },
         (payload) => {
           const updated = payload.new as Message;
           setMessages((prev) => prev.map((m) => (m.id === updated.id ? updated : m)));
@@ -92,7 +103,7 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
       const res = await fetch('/api/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ connection_id: connectionId, content: text }),
+        body: JSON.stringify({ match_id: connectionId, content: text }),
       });
       const data = await res.json();
       if (data.error) console.error('Send failed:', data.error);

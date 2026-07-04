@@ -26,6 +26,30 @@ CREATE TABLE IF NOT EXISTS public.blocked_pairs (
   UNIQUE(host_id, guest_id)
 );
 
+-- 20261023000000_discover_men.sql created this table one migration earlier
+-- under blocker_id/blocked_id, so the CREATE TABLE IF NOT EXISTS above is a
+-- no-op on a fresh replay and the columns below never actually appear.
+-- Production's real table already has host_id/guest_id (later functions
+-- like get_ranked_women/get_ranked_men depend on those names), so this was
+-- clearly renamed on production via one of the untracked hotfixes mentioned
+-- elsewhere in this migration set. Reproduce that rename here so a fresh
+-- replay matches what every later migration actually assumes.
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'blocked_pairs' AND column_name = 'blocker_id'
+  ) THEN
+    ALTER TABLE public.blocked_pairs RENAME COLUMN blocker_id TO host_id;
+  END IF;
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'blocked_pairs' AND column_name = 'blocked_id'
+  ) THEN
+    ALTER TABLE public.blocked_pairs RENAME COLUMN blocked_id TO guest_id;
+  END IF;
+END $$;
+
 -- 1.4 Update last_active trigger on auth sign-in
 CREATE OR REPLACE FUNCTION public.update_last_active()
 RETURNS TRIGGER

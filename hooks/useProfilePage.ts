@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useCoinStore, useUserStore } from '@/lib/store';
+import { useUserStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 import type { ProfileData, MatchInfo, ConnectionInfo } from '@/components/shared/profile-types';
 
 export function useProfilePage(id: string | string[]) {
   const router = useRouter();
   const user = useUserStore((s) => s.user);
-  const balance = useCoinStore((s) => s.balance);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [match, setMatch] = useState<MatchInfo | null>(null);
   const [connection, setConnection] = useState<ConnectionInfo | null>(null);
@@ -48,33 +47,31 @@ export function useProfilePage(id: string | string[]) {
 
   const handleMeet = async () => {
     if (!profile) return;
-    if (balance < 5) {
-      toast.error('Not enough coins');
-      router.push('/coins');
-      return;
-    }
     setConnecting(true);
     try {
-      const res = await fetch('/api/connections/start', {
+      const res = await fetch('/api/likes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ host_id: profile.id }),
+        body: JSON.stringify({ to_user_id: profile.id }),
       });
-      const data = await res.json();
-      if (data.error === 'insufficient_funds') {
-        toast.error('Not enough coins');
-        router.push('/coins');
-        return;
+      if (!res.ok) {
+        const err = await res.json();
+        if (err.error === 'insufficient_funds') {
+          toast.error('Not enough coins');
+          router.push('/coins');
+          return;
+        }
+        throw new Error(err.error || 'Failed to like profile');
       }
-      if (data.success) {
-        useCoinStore.getState().deduct(5);
-        toast.success('Connection started!');
-        router.push('/connections');
+      const { matchId } = await res.json();
+      if (matchId) {
+        router.push(`/task/${matchId}`);
       } else {
-        toast.error('Something went wrong');
+        toast.success("You've met her Standard");
+        router.back();
       }
-    } catch {
-      toast.error('Something went wrong');
+    } catch (e) {
+      toast.error((e as Error).message || 'Something went wrong');
     } finally {
       setConnecting(false);
     }

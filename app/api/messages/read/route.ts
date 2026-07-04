@@ -7,27 +7,27 @@ export async function POST(req: Request) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { conversation_id } = await req.json();
-    if (!conversation_id) {
-      return NextResponse.json({ error: 'conversation_id required' }, { status: 400 });
+    const { match_id } = await req.json();
+    if (!match_id) {
+      return NextResponse.json({ error: 'match_id required' }, { status: 400 });
     }
 
-    const { data: conversation } = await supabase
-      .from('conversations' as any)
+    const { data: match } = await supabase
+      .from('matches')
       .select('user1_id, user2_id')
-      .eq('id', conversation_id)
+      .eq('id', match_id)
       .single() as { data: { user1_id: string; user2_id: string } | null };
 
-    if (!conversation) {
-      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
+    if (!match) {
+      return NextResponse.json({ error: 'Match not found' }, { status: 404 });
     }
 
-    if (conversation.user1_id !== user.id && conversation.user2_id !== user.id) {
+    if (match.user1_id !== user.id && match.user2_id !== user.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const { error } = await supabase.rpc('mark_messages_read', {
-      p_conversation_id: conversation_id,
+      p_match_id: match_id,
     });
 
     if (error) {

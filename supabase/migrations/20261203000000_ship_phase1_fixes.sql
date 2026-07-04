@@ -69,6 +69,39 @@ GRANT EXECUTE ON FUNCTION get_ranked_women TO authenticated;
 ALTER TABLE standards DROP COLUMN IF EXISTS user_id CASCADE;
 
 -- 1.4 — persona as source of truth; backfill + drop gender
+-- profiles.persona exists as TEXT at this point (renamed from `role` in
+-- 20261106000000_full_spec.sql, with a persona_check CHECK constraint, not
+-- an enum). Production later converts it to a `user_role` enum via an
+-- untracked hotfix -- neither that conversion nor the enum type itself is
+-- in any tracked migration. Do the conversion here, guarded, so a fresh
+-- replay has the real column type before this file's own ::user_role casts
+-- need it.
+--
+-- Reproduced in isolation: the rename from `role` to `persona` in
+-- 20261106000000_full_spec.sql leaves behind the ORIGINAL inline column
+-- constraint too -- `role TEXT NOT NULL CHECK (role IN ('guest','host'))`
+-- from 20261019000000_init.sql auto-named itself "profiles_role_check" at
+-- creation time, and renaming the column does not rename that constraint.
+-- persona_check (added later, in full_spec) is a second, different
+-- constraint. Both reference persona by the time this file runs, and both
+-- must be dropped -- dropping only persona_check still left
+-- profiles_role_check (CHECK (persona IN ('guest','host'))) bound to the
+-- text representation, which is what actually broke the type conversion.
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role') THEN
+    CREATE TYPE public.user_role AS ENUM ('man', 'woman');
+  END IF;
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'profiles' AND column_name = 'persona' AND data_type <> 'USER-DEFINED'
+  ) THEN
+    ALTER TABLE profiles DROP CONSTRAINT IF EXISTS persona_check;
+    ALTER TABLE profiles DROP CONSTRAINT IF EXISTS profiles_role_check;
+    ALTER TABLE profiles ALTER COLUMN persona TYPE public.user_role USING persona::text::public.user_role;
+  END IF;
+END $$;
+
 UPDATE profiles SET persona = (CASE WHEN gender IN ('woman','host') THEN 'woman' ELSE 'man' END)::user_role
 WHERE persona IS NULL AND gender IS NOT NULL;
 

@@ -9,10 +9,8 @@ export interface Message {
 export interface ConnectionData {
   id: string;
   status: string;
-  tasks_completed: number;
   chat_unlocked: boolean;
   connected: boolean;
   current_day: number;
-  woman: { id: string; name: string; photos: string[] };
-  man: { id: string; name: string; photos: string[] };
+  partner: { id: string; name: string; photos: string[] } | null;
 }

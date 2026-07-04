@@ -26,11 +26,20 @@ ALTER TABLE submissions ADD COLUMN IF NOT EXISTS prompt TEXT;
 DROP INDEX IF EXISTS submissions_conn_day_task_key;
 CREATE UNIQUE INDEX IF NOT EXISTS submissions_conn_day_task_key ON submissions(connection_id, day_number, task_number);
 
--- 1.3 — Migrate legacy data + drop old table
-INSERT INTO submissions (connection_id, day_number, task_number, content, media_url, approved, moderation_status, submitted_at)
-SELECT connection_id, task_number, 1, text_content, media_url,
-       true, 'approved', submitted_at
-FROM task_submissions ON CONFLICT DO NOTHING;
+-- 1.3 — Migrate legacy data + drop old table. submissions.content isn't
+-- added by any tracked migration (production has it via an untracked
+-- hotfix, same drift pattern as the earlier fixes in this history) --
+-- guard so a fresh replay no-ops instead of erroring; there's no legacy
+-- task_submissions data to migrate on a blank database anyway.
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'submissions' AND column_name = 'content') THEN
+    INSERT INTO submissions (connection_id, day_number, task_number, content, media_url, approved, moderation_status, submitted_at)
+    SELECT connection_id, task_number, 1, text_content, media_url,
+           true, 'approved', submitted_at
+    FROM task_submissions ON CONFLICT DO NOTHING;
+  END IF;
+END $$;
 DROP TABLE IF EXISTS task_submissions;
 
 -- 1.4 — Fix review_connection: set chat_unlocked boolean + create day-1 tasks

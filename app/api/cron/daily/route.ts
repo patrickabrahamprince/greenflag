@@ -25,7 +25,16 @@ export async function GET(req: Request) {
 
   // Vercel Hobby plan only allows one cron per day, so all daily jobs run
   // from this single consolidated endpoint instead of separate crons.
-  const expireConnections = await callEdgeFunction('expire-connections');
+  //
+  // NOTE: this used to also call an `expire-connections` edge function, a
+  // leftover from the pre-pivot host/builder/connections model. That
+  // function doesn't exist on disk anymore (connections was dropped in
+  // 20261206000012_drop_connections.sql) so the call silently 502'd every
+  // run. There is currently no equivalent expiry concept for the
+  // matches/task-flow model (see 20261211000000_match_next_day_timer.sql) —
+  // stale matches with no submissions just sit at their current day
+  // indefinitely. If match/task expiry is wanted, it needs to be designed
+  // and built fresh rather than resurrecting the old function name.
   const autoApprove = await callEdgeFunction('auto-approve');
 
   // monthly-bonus self-gates to only run on the 1st of the month in IST,
@@ -35,10 +44,10 @@ export async function GET(req: Request) {
     ? await callEdgeFunction('monthly-bonus')
     : { ok: true, skipped: true, reason: 'not_first_of_month_ist' };
 
-  const allOk = expireConnections.ok && autoApprove.ok && monthlyBonus.ok;
+  const allOk = autoApprove.ok && monthlyBonus.ok;
 
   return NextResponse.json(
-    { ok: allOk, expireConnections, autoApprove, monthlyBonus },
+    { ok: allOk, autoApprove, monthlyBonus },
     { status: allOk ? 200 : 502 }
   );
 }

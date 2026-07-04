@@ -29,7 +29,7 @@ CREATE OR REPLACE FUNCTION public.get_matching_profiles(p_viewer_id uuid)
 RETURNS SETOF profiles
 LANGUAGE sql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = public, extensions
 AS $$
   SELECT p.*
   FROM profiles p

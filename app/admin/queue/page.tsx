@@ -23,18 +23,18 @@ export default function AdminQueue() {
         moderation_status,
         submitted_at,
         day_number,
-        connection_id,
-        connections(guest:guest_id(name), host:host_id(name))
+        match_id,
+        matches(user1:user1_id(name), user2:user2_id(name))
       `)
       .eq('moderation_status', 'pending')
       .order('submitted_at', { ascending: false });
 
     if (!error && data) {
       const queueItems: QueueItem[] = data.map((s: Record<string, unknown>) => {
-        const conns = s.connections as { guest?: { name?: string }; host?: { name?: string } } | null;
+        const match = s.matches as { user1?: { name?: string }; user2?: { name?: string } } | null;
         return {
           id: String(s.id),
-          name: conns?.guest?.name || conns?.host?.name || 'Unknown',
+          name: match?.user1?.name || match?.user2?.name || 'Unknown',
           day: Number(s.day_number) || 0,
           task: '',
           status: '',

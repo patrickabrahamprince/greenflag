@@ -164,7 +164,7 @@ export default function RulesPage() {
           className="btn-primary w-full py-4 mt-8 font-semibold text-sm active:scale-95 transition-transform"
         >
           {currentSlide === slides.length - 1 ? (
-            persona === 'woman' ? 'Go to Builder' : 'Start Exploring'
+            persona === 'woman' ? 'View Connections' : 'Start Exploring'
           ) : (
             'Next Rule'
           )}
