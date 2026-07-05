@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 export async function GET(req: Request) {
   try {
@@ -50,14 +54,16 @@ export async function GET(req: Request) {
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-    // Coin balances live in `wallets`, not `profiles.coins` (a legacy column
-    // from before the wallet system existed that no longer gets updated by
-    // purchases or spends). Join the real balance in here so the admin table
-    // doesn't show a stale or always-zero number.
+    // Coin balances live in `wallets`, not `profiles.coins` (legacy/dead
+    // column). `wallets` only has a `wallets_self_read` RLS policy
+    // (auth.uid() = user_id), so reading other users' balances requires a
+    // service-role client -- the normal session-scoped client silently
+    // returns zero rows for any user that isn't the current admin.
     const ids = (users || []).map((u) => u.id);
     let balanceMap = new Map<string, number>();
     if (ids.length > 0) {
-      const { data: wallets } = await supabase
+      const adminClient = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
+      const { data: wallets } = await adminClient
         .from('wallets')
         .select('user_id, balance')
         .in('user_id', ids);
