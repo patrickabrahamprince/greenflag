@@ -61,7 +61,7 @@ export async function GET(
 
     const { data: submissions } = await admin
       .from('submissions')
-      .select('id, match_id, day_number, task_number, content, media_url, media_type, approved, moderation_status, submitted_at')
+      .select('id, match_id, day_number, task_number, content, media_url, media_type, approved, moderation_status, submitted_at, deadline')
       .eq('match_id', id)
       .eq('day_number', match.current_day);
 
