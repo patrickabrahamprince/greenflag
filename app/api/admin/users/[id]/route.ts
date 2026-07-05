@@ -21,6 +21,23 @@ export async function GET(
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    // The real coin balance lives in `wallets`, not `profiles.coins`.
+    // `profiles.coins` is a legacy column from before the wallet system
+    // existed -- it was backfilled once and is never updated by real
+    // purchases or spends, so it drifts from the truth and disagrees with
+    // the transaction history shown right below it. Overwrite it with the
+    // live wallet balance before returning.
+    const { data: wallet } = await supabase
+      .from('wallets')
+      .select('balance')
+      .eq('user_id', id)
+      .maybeSingle();
+
+    const userWithRealBalance = {
+      ...user,
+      coins: wallet?.balance ?? 0,
+    };
+
     const { data: coinTransactions } = await supabase
       .from('coin_transactions')
       .select('*')
@@ -40,7 +57,7 @@ export async function GET(
       userIds.add(m.user2_id);
     });
 
-    const { data: matchedProfiles } = userIds.size > 0 
+    const { data: matchedProfiles } = userIds.size > 0
       ? await supabase.from('profiles').select('id, name').in('id', Array.from(userIds))
       : { data: [] };
 
@@ -55,7 +72,7 @@ export async function GET(
     }));
 
     return NextResponse.json({
-      user,
+      user: userWithRealBalance,
       coinTransactions: coinTransactions || [],
       connections: mappedMatches, // Kept key as 'connections' to avoid breaking Admin UI layout expectation
     });
