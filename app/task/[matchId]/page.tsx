@@ -1,17 +1,26 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Loader2, MessageCircle, Hourglass } from 'lucide-react';
 import toast from 'react-hot-toast';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 import { useUserStore } from '@/lib/store';
+import { createClient } from '@/lib/supabase/client';
 import { ConnectedScreen } from '@/components/ConnectedScreen';
 import { EndedScreen } from '@/components/connection/EndedScreen';
 import { ProgressSegmentBar } from '@/components/connection/ProgressSegmentBar';
 import { SubmitSheet } from '@/components/connection/SubmitSheet';
+import { CountdownTimer } from '@/components/connection/CountdownTimer';
 import type { IntentionRecord, SubmissionRecord } from '@/components/connection/types';
 
 const TERMINAL_STATUSES = ['rejected', 'expired_no_submission', 'refunded'];
+
+// Local actions (this user's own submit/approve/reject) already get their own
+// toast feedback from the request handler. Realtime events that land within
+// this window of a local action are treated as an echo of that action, so we
+// refresh state without showing a duplicate toast.
+const SELF_ECHO_WINDOW_MS = 4000;
 
 interface MatchData {
   id: string;
@@ -89,6 +98,7 @@ export default function TaskPage() {
   const matchId = params.matchId;
   const currentUser = useUserStore((s) => s.user);
   const isWoman = currentUser?.persona === 'woman';
+  const supabase = createClient();
 
   const [match, setMatch] = useState<MatchData | null>(null);
   const [otherProfile, setOtherProfile] = useState<OtherProfile | null>(null);
@@ -100,6 +110,12 @@ export default function TaskPage() {
   const [activeIntention, setActiveIntention] = useState<IntentionRecord | null>(null);
   const [dayCompleteUnlockAt, setDayCompleteUnlockAt] = useState<string | null>(null);
   const [reviewingTaskNumber, setReviewingTaskNumber] = useState<number | null>(null);
+
+  const lastLocalActionAt = useRef(0);
+  const otherProfileRef = useRef<OtherProfile | null>(null);
+  const matchRef = useRef<MatchData | null>(null);
+  useEffect(() => { otherProfileRef.current = otherProfile; }, [otherProfile]);
+  useEffect(() => { matchRef.current = match; }, [match]);
 
   const fetchMatch = useCallback(async () => {
     try {
@@ -127,6 +143,68 @@ export default function TaskPage() {
   useEffect(() => {
     fetchMatch();
   }, [fetchMatch]);
+
+  // Real-time in-app notifications: pick up the other person's submissions,
+  // approvals, rejections, and day advances the moment they happen, without
+  // needing to refresh. Actions we just took ourselves are echoed back on the
+  // same channel — those are suppressed (see SELF_ECHO_WINDOW_MS) since the
+  // local action already showed its own toast.
+  useEffect(() => {
+    if (!matchId) return;
+    const isEcho = () => Date.now() - lastLocalActionAt.current < SELF_ECHO_WINDOW_MS;
+
+    const channel: RealtimeChannel = supabase
+      .channel(`task:${matchId}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'submissions', filter: `match_id=eq.${matchId}` },
+        (payload) => {
+          if (!isEcho()) {
+            const sub = payload.new as { day_number?: number };
+            const name = otherProfileRef.current?.name || 'They';
+            toast(`${name} just submitted Day ${sub.day_number ?? matchRef.current?.current_day ?? ''}! 📨`);
+          }
+          fetchMatch();
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'submissions', filter: `match_id=eq.${matchId}` },
+        (payload) => {
+          if (!isEcho()) {
+            const sub = payload.new as { approved?: boolean };
+            if (sub.approved) {
+              toast.success('Your task was approved! 🎉');
+            }
+          }
+          fetchMatch();
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'matches', filter: `id=eq.${matchId}` },
+        (payload) => {
+          if (!isEcho()) {
+            const m = payload.new as { status?: string; current_day?: number; chat_unlocked?: boolean };
+            const prevDay = matchRef.current?.current_day ?? 0;
+            if (m.status === 'rejected') {
+              toast.error('She chose not to continue.');
+            } else if (m.chat_unlocked) {
+              toast.success('Chat unlocked — you can message her now! 💬');
+            } else if (m.current_day && m.current_day > prevDay) {
+              toast.success(`Day ${m.current_day} unlocked! 🔓`);
+            }
+          }
+          fetchMatch();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [matchId]);
 
   if (loading || !currentUser) {
     return (
@@ -171,6 +249,7 @@ export default function TaskPage() {
   const isLocked = !!match.next_day_unlocks_at && new Date(match.next_day_unlocks_at) > new Date();
 
   const handleReview = async (intentionItem: IntentionRecord, decision: 'approve' | 'reject') => {
+    lastLocalActionAt.current = Date.now();
     setReviewingTaskNumber(intentionItem.task_number ?? 1);
     try {
       const res = await fetch(`/api/matches/${matchId}/review-task`, {
@@ -304,6 +383,14 @@ export default function TaskPage() {
                 </div>
               )}
 
+              {isTaskPendingReview && matchingSub?.deadline && (
+                <CountdownTimer
+                  deadline={matchingSub.deadline}
+                  label={isWoman ? 'Time left to review' : "Awaiting her review — auto-approves in"}
+                  onComplete={fetchMatch}
+                />
+              )}
+
               {matchingSub && (matchingSub.content || matchingSub.media_url) && (
                 <div className="border-t border-[#E8E6E1] pt-3 mt-3">
                   <p className="text-xs text-ink/40 mb-1">Your Submission:</p>
@@ -334,6 +421,7 @@ export default function TaskPage() {
             setActiveIntention(null);
           }}
           onSubmit={() => {
+            lastLocalActionAt.current = Date.now();
             setShowSheet(false);
             setActiveIntention(null);
             toast.success('Response submitted — awaiting her review');
