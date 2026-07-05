@@ -27,7 +27,11 @@ export async function GET(req: Request) {
       .select('id, name, age, city_auto, created_at, last_active, is_banned, is_admin, photos, persona, approval_status', { count: 'exact' });
 
     if (search) {
-      query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%`);
+      // NOTE: profiles has no `email` column -- searching by email here
+      // previously caused every search request to fail with a Postgres
+      // "column does not exist" error. Name is the only searchable field
+      // available on this table.
+      query = query.ilike('name', `%${search}%`);
     }
     if (persona) {
       query = query.eq('persona', persona as 'man' | 'woman');
@@ -46,7 +50,26 @@ export async function GET(req: Request) {
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-    return NextResponse.json({ users: users || [], total: count || 0 });
+    // Coin balances live in `wallets`, not `profiles.coins` (a legacy column
+    // from before the wallet system existed that no longer gets updated by
+    // purchases or spends). Join the real balance in here so the admin table
+    // doesn't show a stale or always-zero number.
+    const ids = (users || []).map((u) => u.id);
+    let balanceMap = new Map<string, number>();
+    if (ids.length > 0) {
+      const { data: wallets } = await supabase
+        .from('wallets')
+        .select('user_id, balance')
+        .in('user_id', ids);
+      balanceMap = new Map((wallets || []).map((w) => [w.user_id, w.balance]));
+    }
+
+    const usersWithCoins = (users || []).map((u) => ({
+      ...u,
+      coins: balanceMap.get(u.id) ?? 0,
+    }));
+
+    return NextResponse.json({ users: usersWithCoins, total: count || 0 });
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
