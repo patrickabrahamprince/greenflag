@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/auth';
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 export async function GET(
   _req: Request,
@@ -21,13 +25,13 @@ export async function GET(
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // The real coin balance lives in `wallets`, not `profiles.coins`.
-    // `profiles.coins` is a legacy column from before the wallet system
-    // existed -- it was backfilled once and is never updated by real
-    // purchases or spends, so it drifts from the truth and disagrees with
-    // the transaction history shown right below it. Overwrite it with the
-    // live wallet balance before returning.
-    const { data: wallet } = await supabase
+    // `wallets` and `coin_transactions` both only have "view own row(s)"
+    // RLS policies (auth.uid() = user_id). The admin's session client can
+    // only ever see the admin's own wallet/transactions, so cross-user
+    // reads here must go through a service-role client instead.
+    const adminClient = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
+
+    const { data: wallet } = await adminClient
       .from('wallets')
       .select('balance')
       .eq('user_id', id)
@@ -38,7 +42,7 @@ export async function GET(
       coins: wallet?.balance ?? 0,
     };
 
-    const { data: coinTransactions } = await supabase
+    const { data: coinTransactions } = await adminClient
       .from('coin_transactions')
       .select('*')
       .eq('user_id', id)
@@ -74,7 +78,7 @@ export async function GET(
     return NextResponse.json({
       user: userWithRealBalance,
       coinTransactions: coinTransactions || [],
-      connections: mappedMatches, // Kept key as 'connections' to avoid breaking Admin UI layout expectation
+      connections: mappedMatches,
     });
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
