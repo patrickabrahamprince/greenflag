@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 export async function GET() {
   try {
@@ -46,7 +50,13 @@ export async function GET() {
       .select('*', { count: 'exact', head: true })
       .gte('last_active', today.toISOString());
 
-    const { data: wallets } = await supabase
+    // `wallets` only has a self-read RLS policy (auth.uid() = user_id), so
+    // the admin's session client can only ever see the admin's own wallet
+    // row here -- this was silently undercounting "coins in circulation"
+    // down to just the admin's own balance. Use a service-role client to
+    // read every wallet.
+    const adminClient = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
+    const { data: wallets } = await adminClient
       .from('wallets')
       .select('balance');
 
