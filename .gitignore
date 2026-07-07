@@ -10,3 +10,5 @@ yarn-error.log*
 supabase/.temp
 test-results/
 tsconfig.tsbuildinfo
+dist/
+.expo/
