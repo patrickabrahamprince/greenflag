@@ -143,28 +143,44 @@ export default function DiscoverPage() {
                   </div>
                 )}
               </div>
-              <div className="relative col-span-1 grid grid-rows-2 gap-0.5">
-                {[p.photos?.[1] ?? p.photos?.[0], p.photos?.[2] ?? p.photos?.[0]].map((src: string | undefined, idx: number) => (
-                  <div key={idx} className="relative overflow-hidden">
-                    {src ? (
+              <div className="relative col-span-1 overflow-hidden">
+                {(() => {
+                  const extraPhotos = [p.photos?.[1], p.photos?.[2]].filter(Boolean) as string[]
+                  if (extraPhotos.length === 0) {
+                    return (
                       <img
-                        src={src}
+                        src={p.photos?.[0]}
                         alt=""
                         className="w-full h-full object-cover blur-md scale-110"
                         onError={e => { e.currentTarget.style.display = 'none' }}
                       />
-                    ) : (
-                      <div className="w-full h-full bg-[#F0EDE9]" />
-                    )}
-                  </div>
-                ))}
+                    )
+                  }
+                  return (
+                    <div
+                      className="grid gap-0.5 h-full"
+                      style={{ gridTemplateRows: `repeat(${extraPhotos.length}, 1fr)` }}
+                    >
+                      {extraPhotos.map((src, idx) => (
+                        <div key={idx} className="relative overflow-hidden">
+                          <img
+                            src={src}
+                            alt=""
+                            className="w-full h-full object-cover blur-md scale-110"
+                            onError={e => { e.currentTarget.style.display = 'none' }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )
+                })()}
                 {persona !== 'woman' && (
                   <button
                     onClick={() => setConfirmProfileId(p.id)}
-                    className="absolute inset-0 m-auto z-20 flex items-center justify-center gap-1.5 h-9 w-fit px-3 bg-black/55 backdrop-blur-md rounded-full active:scale-95 transition-all"
+                    className="absolute inset-0 m-auto z-20 flex items-center justify-center gap-2 h-12 w-fit px-4 bg-black/60 backdrop-blur-md rounded-full active:scale-95 transition-all shadow-lg"
                   >
-                    <Lock className="w-3.5 h-3.5 text-white shrink-0" />
-                    <span className="text-white text-xs uppercase tracking-wide font-medium whitespace-nowrap">Unlock</span>
+                    <Lock className="w-4 h-4 text-white shrink-0" />
+                    <span className="text-white text-sm uppercase tracking-wide font-semibold whitespace-nowrap">Unlock</span>
                   </button>
                 )}
               </div>
