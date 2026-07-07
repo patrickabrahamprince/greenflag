@@ -1254,6 +1254,7 @@ export type Database = {
       }
       standards: {
         Row: {
+          active: boolean | null
           created_at: string | null
           deal_breakers: string[] | null
           id: string
@@ -1264,6 +1265,7 @@ export type Database = {
           woman_id: string | null
         }
         Insert: {
+          active?: boolean | null
           created_at?: string | null
           deal_breakers?: string[] | null
           id?: string
@@ -1274,6 +1276,7 @@ export type Database = {
           woman_id?: string | null
         }
         Update: {
+          active?: boolean | null
           created_at?: string | null
           deal_breakers?: string[] | null
           id?: string
