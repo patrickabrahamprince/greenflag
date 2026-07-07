@@ -18,7 +18,7 @@ const manTabs = [
 
 const womanTabs = [
   { name: 'Standard', href: '/standard/builder', icon: Star },
-  { name: 'Connections', href: '/connections', icon: Heart },
+  { name: 'Connections', href: '/my-connections', icon: Heart },
   { name: 'Chat', href: '/messages', icon: MessageSquare },
   { name: 'Profile', href: '/profile', icon: User },
 ];

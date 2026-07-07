@@ -27,10 +27,13 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
   const bottomRef = useRef<HTMLDivElement>(null);
   const channelRef = useRef<RealtimeChannel | null>(null);
 
-  const isWoman = user?.persona === 'woman';
   const partnerName = connection?.partner?.name;
   const partnerPhoto = connection?.partner?.photos?.[0];
-  const backRoute = isWoman ? '/interested' : '/connections';
+  // Both branches were dead (/interested and /connections never existed as
+  // real routes -- leftover host/guest-era naming). This page lives under
+  // /messages/, so back should just go to the chat list, same for both
+  // personas -- no reason for it to differ here.
+  const backRoute = '/messages';
   const isLocked = connection ? !connection.chat_unlocked : true;
 
   useEffect(() => {
