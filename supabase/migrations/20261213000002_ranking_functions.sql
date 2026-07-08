@@ -163,7 +163,7 @@ DECLARE
 BEGIN
   SELECT lat, lng, interests_have, interests
     INTO v_woman_lat, v_woman_lng, v_woman_interests_have, v_woman_interests
-  FROM profiles WHERE id = woman_id;
+  FROM profiles WHERE profiles.id = woman_id;
 
   RETURN QUERY
   SELECT

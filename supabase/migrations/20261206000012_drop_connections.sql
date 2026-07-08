@@ -125,13 +125,24 @@ END;
 $$;
 GRANT EXECUTE ON FUNCTION public.mark_messages_read TO authenticated;
 
+-- LANGUAGE plpgsql (not sql): messages.conversation_id was never a real
+-- column (the "conversations" table this assumed was never created --
+-- see 20261212000000_fix_messaging_split_brain.sql, which supersedes this
+-- function to use match_id instead). LANGUAGE sql validates eagerly at
+-- CREATE time and would fail here on a fresh replay; plpgsql defers to
+-- call time, by which point the superseding definition further down the
+-- migration history has already replaced this one anyway.
 DROP FUNCTION IF EXISTS public.get_unread_messages_count(UUID) CASCADE;
 CREATE OR REPLACE FUNCTION public.get_unread_messages_count(p_conversation_id UUID)
-RETURNS INT LANGUAGE sql SECURITY DEFINER AS $$
-  SELECT COUNT(*)::INT FROM messages
-  WHERE conversation_id = p_conversation_id
-    AND sender_id != auth.uid()
-    AND read_at IS NULL;
+RETURNS INT LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  RETURN (
+    SELECT COUNT(*)::INT FROM messages
+    WHERE conversation_id = p_conversation_id
+      AND sender_id != auth.uid()
+      AND read_at IS NULL
+  );
+END;
 $$;
 GRANT EXECUTE ON FUNCTION public.get_unread_messages_count TO authenticated;
 

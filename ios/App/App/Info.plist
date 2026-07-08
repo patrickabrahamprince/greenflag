@@ -47,5 +47,15 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<!-- Local-dev only: allows plain-HTTP fetch/XHR to the localhost dev
+	     server. server.url's cleartext:true in capacitor.config.ts only
+	     covers Android; iOS needs this ATS exception separately. Remove
+	     or scope down before any real device / TestFlight / App Store
+	     build, which should point at the real HTTPS production URL. -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>
