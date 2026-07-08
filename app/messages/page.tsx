@@ -20,6 +20,7 @@ interface ChatConversation {
 interface ChatListPageProps {
   userId: string;
   supabase: ReturnType<typeof createClient>;
+  persona: string | null | undefined;
 }
 
 function ChatListItem({ conv }: { conv: ChatConversation }) {
@@ -68,7 +69,7 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
   );
 }
 
-function ChatList({ userId, supabase }: ChatListPageProps) {
+function ChatList({ userId, supabase, persona }: ChatListPageProps) {
   const [conversations, setConversations] = useState<ChatConversation[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -125,7 +126,9 @@ function ChatList({ userId, supabase }: ChatListPageProps) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         <p className="text-sm font-thin" style={{ color: '#8E8E93' }}>
-          No chats yet. Swipe in Discover to find matches!
+          {persona === 'woman'
+            ? 'No chats yet — matches unlock once he completes your Standard.'
+            : 'No chats yet. Swipe in Discover to find matches!'}
         </p>
       </div>
     );
@@ -164,7 +167,7 @@ export default function MessagesListPage() {
           </div>
           <div className="hairline" />
         </div>
-        <ChatList userId={user.id} supabase={supabase} />
+        <ChatList userId={user.id} supabase={supabase} persona={user.persona} />
       </div>
     </div>
   );

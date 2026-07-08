@@ -102,7 +102,7 @@ export default function RulesPage() {
         return;
       }
       if (persona === 'woman') {
-        router.push('/my-connections');
+        router.push('/standard/builder');
       } else {
         router.push('/discover');
       }

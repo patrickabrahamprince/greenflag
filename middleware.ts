@@ -109,9 +109,14 @@ export async function middleware(req: NextRequest) {
   }
 
   // Onboarded but still awaiting admin review — keep them on the waiting
-  // screen, except /discover, which pending users can browse read-only
-  // while they wait (they just won't be shown to others themselves).
-  const PENDING_ALLOWED_PATHS = ['/onboard/pending', '/discover'];
+  // screen, except /discover (pending users can browse read-only while
+  // they wait), the rest of /onboard (mid-sequence steps like quiz/
+  // interests/rules run with onboarding_completed already true, since
+  // that flag flips early at the profile step -- this same gate would
+  // otherwise bounce her back to /onboard/pending mid-onboarding), and
+  // /standard/builder (the mandatory first-Standard step for women,
+  // which lives outside /onboard/ as a top-level route).
+  const PENDING_ALLOWED_PATHS = ['/onboard', '/discover', '/standard/builder'];
   if (
     profile?.onboarding_completed &&
     profile?.approval_status === 'pending' &&

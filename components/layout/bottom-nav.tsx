@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Compass, Heart, User, MessageSquare, Star, Coins } from 'lucide-react';
+import { Compass, Heart, User, MessageSquare, Coins } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
@@ -17,7 +17,7 @@ const manTabs = [
 ];
 
 const womanTabs = [
-  { name: 'Standard', href: '/standard/builder', icon: Star },
+  { name: 'Discover', href: '/discover', icon: Compass },
   { name: 'Connections', href: '/my-connections', icon: Heart },
   { name: 'Chat', href: '/messages', icon: MessageSquare },
   { name: 'Profile', href: '/profile', icon: User },
@@ -25,6 +25,7 @@ const womanTabs = [
 
 export function BottomNav() {
   const pathname = usePathname();
+  const router = useRouter();
   const user = useUserStore((s) => s.user);
   const tabs = user?.persona === 'woman' ? womanTabs : manTabs;
   const [unreadCount, setUnreadCount] = useState(0);
@@ -43,6 +44,23 @@ export function BottomNav() {
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [user?.id]);
+
+  // Safety net for any woman without an active Standard (e.g. seeded via
+  // admin API, or a pre-existing account from before Standard-setting
+  // moved into onboarding) -- reuses the same endpoint the onboarding
+  // step itself uses, no new backend needed. Mounted on every page that
+  // shows this nav, so it catches her regardless of where she lands.
+  useEffect(() => {
+    if (user?.persona !== 'woman') return;
+    fetch('/api/standards/standard-builder')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && data.redirect !== '/my-connections' && pathname !== '/standard/builder') {
+          router.replace('/standard/builder');
+        }
+      })
+      .catch(() => {});
+  }, [user?.persona, pathname, router]);
 
   return (
     <nav className="fixed bottom-0 w-full nav-glass z-50">
