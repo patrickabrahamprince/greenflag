@@ -149,8 +149,18 @@ export default function MessagesListPage() {
   const supabase = createClient();
 
   useEffect(() => {
-    if (!user) router.push('/login');
-  }, [user, router]);
+    // Checking the client-side user store directly here raced against
+    // Providers' own async hydration on a fresh page load -- an already
+    // logged-in user could get bounced to /login before the store caught
+    // up. A real auth check (same pattern used elsewhere, e.g.
+    // messages/[connectionId]) isn't racy: it's authoritative regardless
+    // of whether the store has populated yet.
+    let cancelled = false;
+    supabase.auth.getUser().then(({ data: { user: authUser } }) => {
+      if (!cancelled && !authUser) router.push('/login');
+    });
+    return () => { cancelled = true; };
+  }, [supabase, router]);
 
   if (!user) return null;
 
