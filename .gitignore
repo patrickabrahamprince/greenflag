@@ -3,6 +3,9 @@ node_modules
 .env
 .env.local
 .env.*.local
+.env.production
+.env.test
+.env.vercel
 .vercel
 .DS_Store
 npm-debug.log*
