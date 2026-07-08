@@ -11,7 +11,7 @@ const INSTAGRAM_REGEX = /^@?[a-zA-Z0-9._]{1,30}$/;
 
 interface ProfileFormFieldsProps {
   name: string;
-  age: string;
+  dob: string;
   city: string;
   bio: string;
   instagramHandle: string;
@@ -19,7 +19,7 @@ interface ProfileFormFieldsProps {
   gpsDenied: boolean;
   errors: Record<string, string>;
   onNameChange: (v: string) => void;
-  onAgeChange: (v: string) => void;
+  onDobChange: (v: string) => void;
   onCityChange: (v: string) => void;
   onBioChange: (v: string) => void;
   onInstagramChange: (v: string) => void;
@@ -27,9 +27,9 @@ interface ProfileFormFieldsProps {
 }
 
 export function ProfileFormFields({
-  name, age, city, bio, instagramHandle,
+  name, dob, city, bio, instagramHandle,
   gpsDetecting, gpsDenied, errors,
-  onNameChange, onAgeChange, onCityChange, onBioChange,
+  onNameChange, onDobChange, onCityChange, onBioChange,
   onInstagramChange, onDetectLocation,
 }: ProfileFormFieldsProps) {
   return (
@@ -48,19 +48,15 @@ export function ProfileFormFields({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-ink mb-1.5">Age</label>
+        <label className="block text-sm font-medium text-ink mb-1.5">Date of birth</label>
         <input
-          type="text"
-          inputMode="numeric"
-          pattern="[0-9]*"
-          maxLength={3}
-          value={age}
-          onChange={(e) => onAgeChange(e.target.value.replace(/\D/g, ''))}
-          placeholder="18"
-          data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-age' : undefined}
-          className={`input ${errors.age ? 'border-red-500' : ''}`}
+          type="date"
+          value={dob}
+          onChange={(e) => onDobChange(e.target.value)}
+          data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-dob' : undefined}
+          className={`input ${errors.dob ? 'border-red-500' : ''}`}
         />
-        {errors.age && <p className="text-red-500 text-xs mt-1">{errors.age}</p>}
+        {errors.dob && <p className="text-red-500 text-xs mt-1">{errors.dob}</p>}
       </div>
 
       <div>

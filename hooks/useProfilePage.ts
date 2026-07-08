@@ -20,6 +20,8 @@ export function useProfilePage(id: string | string[]) {
   const [reportReason, setReportReason] = useState('');
   const [reportDetails, setReportDetails] = useState('');
   const [submittingReport, setSubmittingReport] = useState(false);
+  const [showBlockConfirm, setShowBlockConfirm] = useState(false);
+  const [blocking, setBlocking] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -102,6 +104,30 @@ export function useProfilePage(id: string | string[]) {
     }
   };
 
+  const handleBlock = async () => {
+    if (!profile) return;
+    setBlocking(true);
+    try {
+      const res = await fetch('/api/block', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ blocked_id: profile.id }),
+      });
+      const d = await res.json();
+      if (d.success) {
+        toast.success(`You won't see ${profile.name} again.`);
+        setShowBlockConfirm(false);
+        router.back();
+      } else {
+        toast.error(d.error || 'Failed to block');
+      }
+    } catch {
+      toast.error('Network error');
+    } finally {
+      setBlocking(false);
+    }
+  };
+
   return {
     user,
     profile,
@@ -119,8 +145,12 @@ export function useProfilePage(id: string | string[]) {
     reportDetails,
     setReportDetails,
     submittingReport,
+    showBlockConfirm,
+    setShowBlockConfirm,
+    blocking,
     handleMeet,
     handleReport,
+    handleBlock,
     router,
   };
 }

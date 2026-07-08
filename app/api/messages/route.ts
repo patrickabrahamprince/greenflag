@@ -32,6 +32,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Chat is not unlocked yet' }, { status: 403 });
     }
 
+    const otherUserId = match.user1_id === user.id ? match.user2_id : match.user1_id;
+    const { data: blocked } = await supabase
+      .from('blocked_pairs')
+      .select('host_id')
+      .or(`and(host_id.eq.${user.id},guest_id.eq.${otherUserId}),and(host_id.eq.${otherUserId},guest_id.eq.${user.id})`)
+      .limit(1)
+      .maybeSingle();
+
+    if (blocked) {
+      return NextResponse.json({ error: 'Cannot message this user' }, { status: 403 });
+    }
+
     const { data, error } = await supabase
       .from('messages')
       .insert({

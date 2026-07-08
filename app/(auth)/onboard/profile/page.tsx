@@ -20,7 +20,7 @@ export default function ProfilePage() {
   const persona = useOnboardingStore((s) => s.persona);
 
   const [name, setName] = useState('');
-  const [age, setAge] = useState('');
+  const [dob, setDob] = useState('');
   const [city, setCity] = useState('');
   const [bio, setBio] = useState('');
   const [instagramHandle, setInstagramHandle] = useState('');
@@ -46,6 +46,23 @@ export default function ProfilePage() {
   }, []);
 
   const clearError = (key: string) => setErrors((p) => ({ ...p, [key]: '' }));
+
+  // Real age from a birthdate, not a self-typed number -- a year off by
+  // one either direction at the boundary would wrongly admit/reject
+  // someone on their birthday, so this checks month/day too, not just
+  // year subtraction.
+  const computeAge = (dobStr: string): number | null => {
+    if (!dobStr) return null;
+    const birth = new Date(dobStr);
+    if (isNaN(birth.getTime())) return null;
+    const today = new Date();
+    let years = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      years--;
+    }
+    return years;
+  };
 
   const handlePhotoAdd = (files: File[]) => {
     const remaining = 3 - photos.length;
@@ -110,8 +127,10 @@ export default function ProfilePage() {
   const validate = (): boolean => {
     const e: Record<string, string> = {};
     if (!name.trim() || name.trim().length < 2) e.name = 'Name is required';
-    const ageNum = parseInt(age, 10);
-    if (!age || isNaN(ageNum) || ageNum < 18 || ageNum > 100) e.age = 'Must be 18-100';
+    const ageNum = computeAge(dob);
+    if (!dob || ageNum === null) e.dob = 'Date of birth is required';
+    else if (ageNum < 18) e.dob = 'You must be 18 or older to use GreenFlag';
+    else if (ageNum > 100) e.dob = 'Please enter a valid date of birth';
     if (!city.trim()) e.city = 'City is required';
     if (photos.length < 1) e.photos = 'Upload at least 1 photo';
     if (bio.length > 200) e.bio = 'Max 200 characters';
@@ -151,7 +170,8 @@ export default function ProfilePage() {
     const { error } = await supabase.from('profiles').upsert({
       id: user.id,
       name: name.trim(),
-      age: parseInt(age, 10),
+      dob,
+      age: computeAge(dob),
       city: city.trim(),
       bio: bio.trim() || null,
       photos: uploadedUrls,
@@ -181,12 +201,12 @@ export default function ProfilePage() {
 
       <div className="space-y-5 flex-1 max-w-md mx-auto w-full">
         <ProfileFormFields
-          name={name} age={age} city={city} bio={bio}
+          name={name} dob={dob} city={city} bio={bio}
           instagramHandle={instagramHandle}
           gpsDetecting={gpsDetecting} gpsDenied={gpsDenied}
           errors={errors}
           onNameChange={(v) => { setName(v); clearError('name'); }}
-          onAgeChange={(v) => { setAge(v); clearError('age'); }}
+          onDobChange={(v) => { setDob(v); clearError('dob'); }}
           onCityChange={(v) => { setCity(v); clearError('city'); }}
           onBioChange={(v) => { setBio(v); clearError('bio'); }}
           onInstagramChange={(v) => { setInstagramHandle(v); clearError('instagram'); }}

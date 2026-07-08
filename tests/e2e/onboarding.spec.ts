@@ -52,7 +52,7 @@ test.describe('Onboarding', () => {
     await page.evaluate(() => (window as any).__e2e?.onboardingStore?.setState({ persona: 'woman' }))
 
     await page.fill('[data-testid="profile-name"]', 'Sarah E2E')
-    await page.fill('[data-testid="profile-age"]', '28')
+    await page.fill('[data-testid="profile-dob"]', '1998-03-10')
     await page.fill('[data-testid="profile-city"]', 'Bangalore')
     await page.fill('[data-testid="profile-bio"]', 'E2E test bio')
 

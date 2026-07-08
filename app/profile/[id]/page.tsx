@@ -8,6 +8,7 @@ import { ProfileInfo } from '@/components/shared/ProfileInfo';
 import { ProfileActionBar } from '@/components/shared/ProfileActionBar';
 import { InterestGrid } from '../../components/discovery/InterestGrid';
 import { ReportModal } from '@/components/shared/ReportModal';
+import { BlockConfirmModal } from '@/components/shared/BlockConfirmModal';
 
 export default function ViewProfilePage() {
   const params = useParams();
@@ -15,7 +16,8 @@ export default function ViewProfilePage() {
     user, profile, match, connection, isOwn, loading, connecting,
     photoIdx, setPhotoIdx, showReport, setShowReport,
     reportReason, setReportReason, reportDetails, setReportDetails,
-    submittingReport, handleMeet, handleReport, router,
+    submittingReport, showBlockConfirm, setShowBlockConfirm, blocking,
+    handleMeet, handleReport, handleBlock, router,
   } = useProfilePage(params.id);
 
   if (loading) {
@@ -41,6 +43,7 @@ export default function ViewProfilePage() {
         isOwn={isOwn}
         onBack={() => router.back()}
         onReport={() => setShowReport(true)}
+        onBlock={() => setShowBlockConfirm(true)}
         onPhotoSelect={setPhotoIdx}
       />
       <ProfileInfo
@@ -76,6 +79,13 @@ export default function ViewProfilePage() {
         onReasonChange={setReportReason}
         onDetailsChange={setReportDetails}
         onSubmit={handleReport}
+      />
+      <BlockConfirmModal
+        open={showBlockConfirm}
+        name={profile.name}
+        blocking={blocking}
+        onClose={() => setShowBlockConfirm(false)}
+        onConfirm={handleBlock}
       />
     </div>
   );

@@ -103,7 +103,7 @@ test('Demo: Signup and onboarding flow', async ({ page }) => {
   // 8.  Fill profile details
   // ──────────────────────────────────────────────
   await page.fill('[data-testid="profile-name"]', 'Demo User')
-  await page.fill('[data-testid="profile-age"]', '30')
+  await page.fill('[data-testid="profile-dob"]', '1995-06-15')
   await page.fill('[data-testid="profile-city"]', 'Bangalore')
   await page.fill('[data-testid="profile-bio"]', 'Watching Playwright')
   await page.waitForTimeout(1000)

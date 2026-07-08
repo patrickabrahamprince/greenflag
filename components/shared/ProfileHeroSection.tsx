@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, Flag } from 'lucide-react';
+import { ArrowLeft, Flag, UserX } from 'lucide-react';
 import { ProfileImageCarousel } from './ProfileImageCarousel';
 
 interface ProfileHeroSectionProps {
@@ -11,6 +11,7 @@ interface ProfileHeroSectionProps {
   isOwn: boolean;
   onBack: () => void;
   onReport: () => void;
+  onBlock: () => void;
   onPhotoSelect: (idx: number) => void;
 }
 
@@ -22,6 +23,7 @@ export function ProfileHeroSection({
   isOwn,
   onBack,
   onReport,
+  onBlock,
 }: ProfileHeroSectionProps) {
   return (
     <div className="relative w-full aspect-[3/4]">
@@ -36,12 +38,20 @@ export function ProfileHeroSection({
       </button>
 
       {!isOwn && (
-        <button
-          onClick={onReport}
-          className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center"
-        >
-          <Flag className="w-5 h-5 text-white/70" />
-        </button>
+        <div className="absolute top-4 right-4 z-10 flex gap-2">
+          <button
+            onClick={onBlock}
+            className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center"
+          >
+            <UserX className="w-5 h-5 text-white/70" />
+          </button>
+          <button
+            onClick={onReport}
+            className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center"
+          >
+            <Flag className="w-5 h-5 text-white/70" />
+          </button>
+        </div>
       )}
 
       <div className="absolute bottom-8 left-8 z-10 pointer-events-none">
