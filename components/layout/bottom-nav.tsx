@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Compass, Heart, User, MessageSquare, Coins } from 'lucide-react';
+import { Compass, Heart, User, MessageSquare, Coins, Bell } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
@@ -12,6 +12,7 @@ const manTabs = [
   { name: 'Discover', href: '/discover', icon: Compass },
   { name: 'My Connections', href: '/my-connections', icon: Heart },
   { name: 'Chat', href: '/messages', icon: MessageSquare },
+  { name: 'Notifications', href: '/notifications', icon: Bell },
   { name: 'Profile', href: '/profile', icon: User },
   { name: 'Coins', href: '/coins', icon: Coins },
 ];
@@ -20,6 +21,7 @@ const womanTabs = [
   { name: 'Discover', href: '/discover', icon: Compass },
   { name: 'Connections', href: '/my-connections', icon: Heart },
   { name: 'Chat', href: '/messages', icon: MessageSquare },
+  { name: 'Notifications', href: '/notifications', icon: Bell },
   { name: 'Profile', href: '/profile', icon: User },
 ];
 
