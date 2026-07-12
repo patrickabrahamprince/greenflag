@@ -17,7 +17,7 @@ const PASSWORD = 'Test123!'
  */
 test('Demo: Signup and onboarding flow', async ({ page }) => {
   test.slow()
-  test.setTimeout(120000)
+  test.setTimeout(300000)
 
   // ──────────────────────────────────────────────
   // 0.  Create the user (invisible setup — viewer
@@ -34,13 +34,14 @@ test('Demo: Signup and onboarding flow', async ({ page }) => {
 
   // Create a profile with persona but WITHOUT onboarding_completed
   // so the middleware redirects to the onboarding wizard
-  const { error: profileErr } = await adminClient.from('profiles').insert({
+  const { error: profileErr } = await adminClient.from('profiles').upsert({
     id: userId,
     name: 'Demo User',
     persona: 'man',
     age: 30,
     city: 'Bangalore',
     bio: 'Watching Playwright',
+    approval_status: 'approved', // skip the /onboard/pending dead-end at the end of the rules carousel
   })
   if (profileErr) throw new Error(`Profile insert failed: ${profileErr.message}`)
 
@@ -104,7 +105,8 @@ test('Demo: Signup and onboarding flow', async ({ page }) => {
   // ──────────────────────────────────────────────
   await page.fill('[data-testid="profile-name"]', 'Demo User')
   await page.fill('[data-testid="profile-dob"]', '1995-06-15')
-  await page.fill('[data-testid="profile-city"]', 'Bangalore')
+  await page.getByPlaceholder('Your city').fill('Bangalore')
+  await page.getByPlaceholder('username').fill('demo_user')
   await page.fill('[data-testid="profile-bio"]', 'Watching Playwright')
   await page.waitForTimeout(1000)
 
@@ -127,55 +129,79 @@ test('Demo: Signup and onboarding flow', async ({ page }) => {
   await page.waitForTimeout(500)
 
   // ──────────────────────────────────────────────
-  // 10. Submit profile → navigates to /onboard/interests
+  // 10. Submit profile → navigates to /onboard/quiz
   // ──────────────────────────────────────────────
   await page.click('[data-testid="submit-profile"]')
+  await page.waitForURL(/\/onboard\/quiz/, { timeout: 30000 })
+  await page.waitForTimeout(1000)
+
+  // ──────────────────────────────────────────────
+  // 11. Answer all 8 compatibility quiz questions
+  //     (pick the first option each time), then finish
+  // ──────────────────────────────────────────────
+  const quizFirstOptions = [
+    'Long-term relationship',
+    'Cozy coffee & reading',
+    'Quality Time',
+    'A casual coffee walkthrough',
+    'Texting back and forth',
+    'Dry & Sarcastic',
+    'Relaxing beach resort',
+    'Dog lover',
+  ]
+  for (let i = 0; i < quizFirstOptions.length; i++) {
+    await page.getByRole('button', { name: quizFirstOptions[i] }).click()
+    await page.waitForTimeout(300)
+    const isLast = i === quizFirstOptions.length - 1
+    await page.getByRole('button', { name: isLast ? 'Finish Quiz' : 'Next' }).click()
+    await page.waitForTimeout(400)
+  }
   await page.waitForURL(/\/onboard\/interests/, { timeout: 30000 })
   await page.waitForTimeout(1000)
 
   // ──────────────────────────────────────────────
-  // 11. Select "5 things about you" interests
-  //     App's INTEREST_TAGS: Travel, Music, Fitness,
-  //     Cooking, Art, Gaming, Cinema, Tech, Nature …
+  // 12. Select 5 "about you" + 5 "looking for" tags
+  //     testids are lowercased, e.g. interest-have-travel
   // ──────────────────────────────────────────────
-  const tags = ['Travel', 'Music', 'Fitness', 'Cooking', 'Art']
-  for (const tag of tags) {
+  const haveTags = ['travel', 'music', 'fitness', 'cooking', 'art']
+  const lookingTags = ['books', 'nature', 'coffee', 'yoga', 'dance']
+  for (const tag of haveTags) {
     await page.click(`[data-testid="interest-have-${tag}"]`)
+    await page.waitForTimeout(200)
+  }
+  for (const tag of lookingTags) {
+    await page.click(`[data-testid="interest-looking-${tag}"]`)
     await page.waitForTimeout(200)
   }
   await page.waitForTimeout(500)
 
   // ──────────────────────────────────────────────
-  // 12. Fill "Why me?" prompts (man persona only)
-  //     Required: 3 prompts, each 50–150 characters
+  // 13. Click "Complete" → navigates to /onboard/rules
   // ──────────────────────────────────────────────
-  const prompts = [
-    'I am passionate about cooking and love exploring new cuisines from around the world every weekend.',
-    'I have been training in martial arts for over five years and believe discipline shapes character.',
-    'I volunteer at animal shelters on weekends and truly care about making a difference in their lives.',
-  ]
-  const textareas = page.locator('textarea')
-  for (let i = 0; i < prompts.length; i++) {
-    await textareas.nth(i).fill(prompts[i])
-    await page.waitForTimeout(200)
-  }
+  await page.click('[data-testid="submit-onboarding"]')
+  await page.waitForURL(/\/onboard\/rules/, { timeout: 30000 })
   await page.waitForTimeout(1000)
 
   // ──────────────────────────────────────────────
-  // 13. Click "Complete" → onboarding finishes
-  //     User is redirected to /discover
+  // 14. Walk the 6-slide community guidelines carousel.
+  //     approval_status was pre-set to 'approved' above,
+  //     so the final slide routes straight to /discover.
   // ──────────────────────────────────────────────
-  await page.click('[data-testid="submit-onboarding"]')
+  for (let i = 0; i < 5; i++) {
+    await page.getByRole('button', { name: 'Next Rule' }).click()
+    await page.waitForTimeout(400)
+  }
+  await page.getByRole('button', { name: 'Start Exploring' }).click()
   await page.waitForURL(/\/discover/, { timeout: 30000 })
   await page.waitForTimeout(1000)
 
   // ──────────────────────────────────────────────
-  // 14. Assert we landed on the discover page
+  // 15. Assert we landed on the discover page
   // ──────────────────────────────────────────────
   await expect(page).toHaveURL(/\/discover/)
 
   // ──────────────────────────────────────────────
-  // 15. Save screenshot as proof
+  // 16. Save screenshot as proof
   // ──────────────────────────────────────────────
   await page.screenshot({ path: 'automation-demo.png', fullPage: true })
 
