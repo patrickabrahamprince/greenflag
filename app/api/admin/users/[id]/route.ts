@@ -21,9 +21,23 @@ export async function GET(
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    // wallets/coin_transactions are the real source of truth for coin
+    // balance and history -- profiles.coins is never written to by the live
+    // purchase/spend flow, so admin was showing stale data there. Note:
+    // `transactions` (no "coin_") is a separate, currently-unused table --
+    // confirmed directly against production (0 rows) that add_coins/
+    // deduct_coins write to wallets+coin_transactions, not this one, despite
+    // what the tracked init migration implies.
+    const { data: wallet } = await supabase
+      .from('wallets')
+      .select('balance')
+      .eq('user_id', id)
+      .maybeSingle();
+    (user as Record<string, unknown>).coins = wallet?.balance ?? 0;
+
     const { data: coinTransactions } = await supabase
       .from('coin_transactions')
-      .select('*')
+      .select('id, amount, type, description, created_at')
       .eq('user_id', id)
       .order('created_at', { ascending: false })
       .limit(50);

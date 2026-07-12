@@ -70,31 +70,32 @@ export async function POST(req: Request) {
       { auth: { persistSession: false } }
     );
 
-    // Idempotency check — prevent duplicate coin credits
-    const { data: existing } = await supabaseAdmin
-      .from('coin_transactions')
-      .select('id')
-      .eq('razorpay_payment_id', razorpayPaymentId)
-      .limit(1);
-
-    if (existing && existing.length > 0) {
-      return new NextResponse('already processed');
-    }
-
-    const { error } = await supabaseAdmin.rpc('add_coins', {
+    // Idempotency is enforced at the DB level: credit_coins_idempotent()
+    // (see 20261214000000_fix_coin_double_credit.sql) inserts into
+    // coin_transactions with razorpay_payment_id set on its own real
+    // column, which already has a unique index -- a duplicate throws there
+    // before any balance change, and the function catches it and returns
+    // already_processed:true instead of erroring. Deliberately not calling
+    // add_coins() here: verified directly against production that add_coins
+    // writes to coin_transactions but never actually threads
+    // razorpay_payment_id into that column, so its existing unique index
+    // never caught anything. add_coins() is left untouched since its exact
+    // full behavior isn't something we could read back to safely redefine;
+    // this is a new, narrow function used only by this webhook path.
+    const { data, error } = await supabaseAdmin.rpc('credit_coins_idempotent', {
       p_user_id: userId,
       p_amount: coins,
       p_description: `Purchased ${coins} coins`,
-      p_metadata: {
-        razorpay_payment_id: razorpayPaymentId,
-        razorpay_order_id: payment.order_id,
-        amount_paid: amountPaid / 100,
-      },
+      p_razorpay_payment_id: razorpayPaymentId,
     });
 
     if (error) {
-      console.error('add_coins RPC error:', error);
+      console.error('credit_coins_idempotent RPC error:', error);
       return new NextResponse('ok');
+    }
+
+    if (data?.already_processed) {
+      return new NextResponse('already processed');
     }
 
     return new NextResponse('ok');

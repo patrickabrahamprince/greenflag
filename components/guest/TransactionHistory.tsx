@@ -1,10 +1,9 @@
 import { Coins, Zap } from 'lucide-react';
 
 interface Transaction {
-  id: string;
+  id: number;
   type: string;
-  amount_inr: number | null;
-  coins: number;
+  amount: number;
   created_at: string | null;
 }
 
@@ -46,7 +45,7 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
               <span className={`text-sm font-medium ${
                 tx.type === 'purchase' ? 'text-green-500' : 'text-red-500'
               }`}>
-                {tx.type === 'purchase' ? '+' : ''}{tx.coins}
+                {tx.type === 'purchase' ? '+' : ''}{tx.amount}
               </span>
             </div>
           ))}

@@ -9,10 +9,9 @@ interface Package {
 }
 
 interface Transaction {
-  id: string;
+  id: number;
   type: string;
-  amount_inr: number | null;
-  coins: number;
+  amount: number;
   created_at: string | null;
   user_id: string;
 }
@@ -45,8 +44,10 @@ export function useCoinPurchase({ onBalanceUpdate, onTransactionsUpdate }: UseCo
       onBalanceUpdate((wallet as { balance: number }).balance);
     }
 
+    // coin_transactions (not transactions -- confirmed empty on production)
+    // is what add_coins/deduct_coins actually write to.
     const { data: txData } = await supabase
-      .from('transactions')
+      .from('coin_transactions')
       .select('*')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })

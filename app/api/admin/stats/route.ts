@@ -13,6 +13,9 @@ export async function GET() {
       supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('persona', 'man'),
       supabase.from('matches' as any).select('*', { count: 'exact', head: true }),
       supabase.from('reports' as any).select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+      // coin_transactions (not transactions -- confirmed directly against
+      // production, which has 0 rows in `transactions`) is what add_coins/
+      // deduct_coins actually write to.
       supabase.from('coin_transactions').select('amount').eq('type', 'purchase'),
       supabase.from('matches' as any).select('*', { count: 'exact', head: true }).gte('created_at', new Date().toISOString().slice(0, 10)),
       supabase.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(20),

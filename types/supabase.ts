@@ -1436,48 +1436,41 @@ export type Database = {
       }
       transactions: {
         Row: {
-          amount_inr: number | null
-          coins: number
-          connection_id: string | null
+          amount: number
+          balance_after: number
           created_at: string | null
+          description: string
           id: string
-          razorpay_id: string | null
-          type: string
-          user_id: string
+          metadata: Json | null
+          type: string | null
+          user_id: string | null
         }
         Insert: {
-          amount_inr?: number | null
-          coins: number
-          connection_id?: string | null
+          amount: number
+          balance_after: number
           created_at?: string | null
+          description: string
           id?: string
-          razorpay_id?: string | null
-          type: string
-          user_id: string
+          metadata?: Json | null
+          type?: string | null
+          user_id?: string | null
         }
         Update: {
-          amount_inr?: number | null
-          coins?: number
-          connection_id?: string | null
+          amount?: number
+          balance_after?: number
           created_at?: string | null
+          description?: string
           id?: string
-          razorpay_id?: string | null
-          type?: string
-          user_id?: string
+          metadata?: Json | null
+          type?: string | null
+          user_id?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "transactions_connection_id_fkey"
-            columns: ["connection_id"]
-            isOneToOne: false
-            referencedRelation: "connections"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "transactions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
