@@ -9,7 +9,10 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:matchflow:backend": "bash scripts/run-matchflow-backend.sh",
+    "test:matchflow:e2e": "playwright test tests/e2e/matchflow-happy-path.spec.ts tests/e2e/matchflow-rejection.spec.ts",
+    "test:matchflow": "npm run test:matchflow:backend && npm run test:matchflow:e2e"
   },
   "dependencies": {
     "@capacitor/cli": "^8.4.1",
