@@ -191,8 +191,8 @@ export default function DiscoverPage() {
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
             className="snap-start snap-always h-[calc(100dvh-5rem)] w-full flex flex-col animate-fade-in"
           >
-            <div className="w-full flex-shrink-0 px-4 pt-4">
-              <div className="relative w-full aspect-[4/5] overflow-hidden rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] grid grid-cols-3 gap-1 bg-black">
+            <div className="w-full flex-shrink-0 px-6 pt-5">
+              <div className="relative w-full aspect-[4/3] overflow-hidden rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] grid grid-cols-3 gap-1 bg-black">
                 <div className="col-span-2 relative">
                   <img
                     src={p.photos?.[0]}
@@ -255,7 +255,7 @@ export default function DiscoverPage() {
             </div>
 
             <div className="flex-1 min-h-0 flex flex-col px-6 pt-6 pb-6">
-              <div className="flex-1 min-h-0 overflow-y-auto">
+              <div className="flex-1 min-h-0">
                 <h1 className="font-display text-4xl text-ink font-semibold tracking-tight">
                   {p.name}
                 </h1>
@@ -294,7 +294,7 @@ export default function DiscoverPage() {
                   })}
                 </div>
                 {p.bio && (
-                  <p className="text-ink/80 text-base leading-relaxed max-w-md mt-5 font-light">{p.bio}</p>
+                  <p className="text-ink/80 text-base leading-relaxed max-w-md mt-5 font-light line-clamp-3">{p.bio}</p>
                 )}
               </div>
 

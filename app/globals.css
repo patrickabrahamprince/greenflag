@@ -23,22 +23,28 @@ html, body { background: #000000 !important; }
      small positive value rather than 0 or negative. Per-element overrides
      (leading-*, tracking-*) still win since these are base-layer defaults. */
   .font-display {
-    letter-spacing: 0.01em;
-    font-weight: 700;
+    letter-spacing: 0.005em;
+    font-weight: 600;
   }
 
   h1.font-display, h2.font-display {
-    line-height: 1.05;
+    line-height: 1.1;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-gold text-black font-medium rounded-xl px-8 py-3
+    @apply text-black font-medium rounded-xl px-8 py-3.5
            text-xs uppercase tracking-wide
            transition-all duration-300 ease-out
-           hover:bg-gold-dark active:scale-[0.98]
+           active:scale-[0.98]
            disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
+    background: linear-gradient(135deg, #E0C158 0%, #D4AF37 45%, #B8941F 100%);
+    box-shadow: 0 4px 20px -4px rgba(212, 175, 55, 0.45);
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #E8CC70 0%, #D4AF37 45%, #A8850F 100%);
   }
 
   .btn-secondary {
@@ -64,7 +70,7 @@ html, body { background: #000000 !important; }
   }
 
   .card {
-    @apply bg-surface border border-border rounded-none p-6
+    @apply bg-surface border border-border rounded-2xl p-7
            transition-all duration-300 ease-out;
   }
 
@@ -85,7 +91,10 @@ html, body { background: #000000 !important; }
   }
 
   .text-gradient {
-    @apply text-gold;
+    background: linear-gradient(135deg, #E0C158 0%, #D4AF37 50%, #B8941F 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
   .skeleton {

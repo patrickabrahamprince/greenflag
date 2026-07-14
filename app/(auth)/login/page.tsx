@@ -52,11 +52,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-[#000000]">
+    <div className="min-h-screen flex items-center justify-center p-6" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(212,175,55,0.08), transparent), #000000' }}>
       <div className="w-full max-w-sm">
         <div className="text-center mb-12">
           <img src="/logo.png" alt="GreenFlag" className="w-24 h-24 mx-auto mb-6 rounded-2xl" />
-          <h1 className="font-display text-5xl text-ink mb-3" style={{ fontWeight: 600 }}>
+          <h1 className="font-display text-gradient text-5xl mb-3" style={{ fontWeight: 700 }}>
             GreenFlag
           </h1>
           <div className="hairline mx-auto mt-6 mb-2 w-16" />
