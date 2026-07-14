@@ -22,8 +22,8 @@ module.exports = {
         muted: '#FFFFFF99',
       },
       fontFamily: {
-        display: ['Sora', 'system-ui', 'sans-serif'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['var(--font-sora)', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
       },
       letterSpacing: {
         'widest-xl': '0.25em',

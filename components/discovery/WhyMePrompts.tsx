@@ -14,7 +14,7 @@ const PLACEHOLDERS = [
 export function WhyMePrompts({ prompts, onPromptChange }: WhyMePromptsProps) {
   return (
     <div>
-      <h2 className="font-['Sora'] text-xl text-ink mb-1">
+      <h2 className="font-display text-xl text-ink mb-1">
         3 reasons why you&apos;re worth it
       </h2>
       <p className="text-sm text-[#9DA0A6] mb-4">

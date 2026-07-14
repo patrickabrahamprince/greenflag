@@ -306,7 +306,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
           <div className="w-12 h-12 bg-green-50 border border-green-200 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-xl text-green-600 font-bold">✓</span>
           </div>
-          <h4 className="font-['Sora'] text-ink text-lg mb-2">Response Submitted!</h4>
+          <h4 className="font-display text-ink text-lg mb-2">Response Submitted!</h4>
           <p className="text-[#9DA0A6] text-xs mb-6 leading-relaxed">
             Awaiting her review. Move on to the next task for today, or explore other profiles in the meantime.
           </p>
@@ -342,7 +342,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
             <Icon className="w-5 h-5 text-gold" />
-            <h3 className="font-['Sora'] text-ink">Day {dayNumber}</h3>
+            <h3 className="font-display text-ink">Day {dayNumber}</h3>
           </div>
           <button onClick={onClose} className="p-1 text-[#9DA0A6] hover:text-ink">
             <X className="w-5 h-5" />

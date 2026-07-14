@@ -49,7 +49,7 @@ export default function BannedPage() {
         <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-6">
           <Ban className="w-10 h-10 text-red-500" />
         </div>
-        <h1 className="font-['Sora'] text-2xl text-ink mb-3">Account Suspended</h1>
+        <h1 className="font-display text-2xl text-ink mb-3">Account Suspended</h1>
         <p className="text-[#9DA0A6] mb-6">
           {reason || 'Your account has been suspended. If you believe this was a mistake, please contact support.'}
         </p>

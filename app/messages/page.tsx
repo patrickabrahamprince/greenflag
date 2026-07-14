@@ -43,14 +43,14 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
             onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }}
           />
         ) : (
-          <span className="font-['Sora'] text-sm italic text-ink/50">
+          <span className="font-display text-sm italic text-ink/50">
             {conv.partner?.name?.[0] ?? '?'}
           </span>
         )}
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-0.5">
-          <span className="font-['Sora'] text-sm italic text-ink truncate">
+          <span className="font-display text-sm italic text-ink truncate">
             {conv.partner?.name}
           </span>
           {conv.last_message && (
@@ -172,7 +172,7 @@ export default function MessagesListPage() {
             <button onClick={() => router.back()} className="btn-ghost p-2 -ml-2">
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <h1 className="font-['Sora'] text-lg text-ink italic">Messages</h1>
+            <h1 className="font-display text-lg text-ink italic">Messages</h1>
             <div className="w-9" />
           </div>
           <div className="hairline" />

@@ -56,11 +56,11 @@ function DayCompleteModal({ unlocksAt, onClose, onExplore }: { unlocksAt: string
         <div className="w-14 h-14 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mx-auto mb-5">
           <Hourglass className="w-6 h-6 text-[#D4AF37]" />
         </div>
-        <h3 className="font-['Sora'] text-2xl text-ink mb-2">Day Complete</h3>
+        <h3 className="font-display text-2xl text-ink mb-2">Day Complete</h3>
         <p className="text-ink/60 text-sm leading-relaxed mb-6">
           Tomorrow&apos;s tasks unlock at the same time tomorrow.
         </p>
-        <p className="font-['Sora'] text-4xl text-[#D4AF37] tracking-wider mb-6">
+        <p className="font-display text-4xl text-[#D4AF37] tracking-wider mb-6">
           {remainingMs !== null ? formatCountdown(remainingMs) : '--:--:--'}
         </p>
         <div className="flex gap-3">
@@ -206,7 +206,7 @@ export default function TaskPage() {
         <button onClick={() => router.push('/discover')} className="p-1 -ml-1 text-ink/40 hover:text-ink transition-colors">
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="font-['Sora'] text-lg text-ink truncate">{otherProfile.name}</h1>
+        <h1 className="font-display text-lg text-ink truncate">{otherProfile.name}</h1>
         <div className="w-6" />
       </div>
 
@@ -235,8 +235,8 @@ export default function TaskPage() {
           <div className="w-14 h-14 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mb-5">
             <Hourglass className="w-6 h-6 text-[#D4AF37]" />
           </div>
-          <h2 className="font-['Sora'] text-2xl text-ink mb-2">Day {currentDay} unlocks in</h2>
-          <p className="font-['Sora'] text-4xl text-[#D4AF37] tracking-wider mb-3">
+          <h2 className="font-display text-2xl text-ink mb-2">Day {currentDay} unlocks in</h2>
+          <p className="font-display text-4xl text-[#D4AF37] tracking-wider mb-3">
             <LiveCountdown target={match.next_day_unlocks_at} />
           </p>
           <p className="text-ink/50 text-sm">Come back then to continue with {otherProfile.name}.</p>

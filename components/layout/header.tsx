@@ -26,7 +26,7 @@ export function Header({
     <div className={cn('relative flex items-center justify-center h-16 px-8 bg-[#000000]/80 backdrop-blur-xl border-b border-[#2A2A2A]', className)}>
       {showBack && <BackButton />}
       <div className="flex flex-col items-center">
-        <h1 className="font-['Sora'] text-2xl text-ink tracking-tight">{title}</h1>
+        <h1 className="font-display text-2xl text-ink tracking-tight">{title}</h1>
         {subtitle && (
           <p className="text-[10px] uppercase tracking-widest text-ink/40">{subtitle}</p>
         )}
