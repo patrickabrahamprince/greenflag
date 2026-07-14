@@ -254,8 +254,8 @@ export default function DiscoverPage() {
               </div>
             </div>
 
-            <div className="flex-1 min-h-0 flex flex-col px-6 pt-6 pb-6">
-              <div className="flex-1 min-h-0">
+            <div className="flex flex-col px-6 pt-6 pb-6">
+              <div>
                 <h1 className="font-display text-4xl text-ink font-semibold tracking-tight">
                   {p.name}
                 </h1>
