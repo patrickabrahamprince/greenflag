@@ -15,10 +15,14 @@ export default function DiscoverPage() {
   const [hasMore, setHasMore] = useState(true)
   const [persona, setPersona] = useState<string | null>(null)
   const [confirmProfileId, setConfirmProfileId] = useState<string | null>(null)
+  const [pullDistance, setPullDistance] = useState(0)
+  const [refreshing, setRefreshing] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
   const scrollRef = useRef<HTMLDivElement>(null)
+  const touchStartY = useRef<number | null>(null)
+  const pulling = useRef(false)
 
   const observer = useRef<IntersectionObserver>()
   const lastProfileRef = useCallback((node: HTMLDivElement) => {
@@ -69,6 +73,54 @@ export default function DiscoverPage() {
     }
   }
 
+  async function handleRefresh() {
+    setRefreshing(true)
+    fetchedForPage.current.clear()
+    setHasMore(true)
+    try {
+      const res = await fetch('/api/discover')
+      const json = await res.json()
+      const data = (json.profiles ?? []).filter((p: any) => p.photos?.length > 0)
+      if (data.length < 3) setHasMore(false)
+      setProfiles(data)
+      setPage(0)
+      fetchedForPage.current.add(0)
+      scrollRef.current?.scrollTo({ top: 0 })
+    } catch {
+      toast.error('Failed to refresh')
+    } finally {
+      setRefreshing(false)
+      setPullDistance(0)
+    }
+  }
+
+  function onTouchStart(e: React.TouchEvent) {
+    if ((scrollRef.current?.scrollTop ?? 0) > 0) return
+    touchStartY.current = e.touches[0].clientY
+    pulling.current = true
+  }
+
+  function onTouchMove(e: React.TouchEvent) {
+    if (!pulling.current || touchStartY.current === null) return
+    const delta = e.touches[0].clientY - touchStartY.current
+    if (delta > 0 && (scrollRef.current?.scrollTop ?? 0) === 0) {
+      setPullDistance(Math.min(delta * 0.5, 90))
+    } else {
+      pulling.current = false
+    }
+  }
+
+  function onTouchEnd() {
+    if (!pulling.current) return
+    pulling.current = false
+    touchStartY.current = null
+    if (pullDistance > 60) {
+      handleRefresh()
+    } else {
+      setPullDistance(0)
+    }
+  }
+
   function scrollToNext(index: number) {
     const container = scrollRef.current
     if (!container) return
@@ -108,7 +160,7 @@ export default function DiscoverPage() {
   }
 
   return (
-    <div className="relative bg-[#000000] min-h-screen max-w-app mx-auto">
+    <div className="relative bg-[#000000] min-h-dvh max-w-app mx-auto">
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex items-center justify-between px-5 py-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent pointer-events-none">
         <button onClick={() => router.push('/messages')} className="pointer-events-auto w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center">
           <ArrowLeft className="w-5 h-5 text-white" />
@@ -118,75 +170,91 @@ export default function DiscoverPage() {
         </div>
       </div>
 
-      <div ref={scrollRef} className="snap-y snap-mandatory overflow-y-scroll overscroll-none h-[calc(100vh-5rem)]">
+      <div
+        ref={scrollRef}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        className="snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth h-[calc(100dvh-5rem)]"
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
+        <div
+          className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
+          style={{ height: pullDistance }}
+        >
+          <Loader2 className={`w-5 h-5 text-[#D4AF37] ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
+        </div>
         {profiles.map((p, i) => (
           <div
             key={p.id}
             ref={i === profiles.length - 1 ? lastProfileRef : null}
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
-            className="snap-start snap-always h-[calc(100vh-5rem)] w-full flex flex-col"
+            className="snap-start snap-always h-[calc(100dvh-5rem)] w-full flex flex-col animate-fade-in"
           >
-            <div className="relative w-full aspect-[3/4] flex-shrink-0 overflow-hidden rounded-b-[2rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.35)] grid grid-cols-3 gap-0.5 bg-black">
-              <div className="col-span-2 relative">
-                <img
-                  src={p.photos?.[0]}
-                  alt=""
-                  className="w-full h-full object-cover"
-                  onError={e => { e.currentTarget.src = '/placeholder-avatar.svg' }}
-                />
-                {typeof p.match_percentage === 'number' && (
-                  <div className="absolute top-16 left-3 z-10 flex items-center gap-1.5 bg-black/35 backdrop-blur-md rounded-full px-3 py-1.5">
-                    <span className="text-[#D4AF37] text-xs">◆</span>
-                    <span className="font-['Playfair_Display'] italic text-white text-sm whitespace-nowrap">
-                      {p.match_percentage}% GreenFlag Match
-                    </span>
-                  </div>
-                )}
-              </div>
-              <div className="relative col-span-1 overflow-hidden">
-                {(() => {
-                  const extraPhotos = [p.photos?.[1], p.photos?.[2]].filter(Boolean) as string[]
-                  if (extraPhotos.length === 0) {
-                    return (
-                      <img
-                        src={p.photos?.[0]}
-                        alt=""
-                        className="w-full h-full object-cover blur-md scale-110"
-                        onError={e => { e.currentTarget.style.display = 'none' }}
-                      />
-                    )
-                  }
-                  return (
-                    <div
-                      className="grid gap-0.5 h-full"
-                      style={{ gridTemplateRows: `repeat(${extraPhotos.length}, 1fr)` }}
-                    >
-                      {extraPhotos.map((src, idx) => (
-                        <div key={idx} className="relative overflow-hidden">
-                          <img
-                            src={src}
-                            alt=""
-                            className="w-full h-full object-cover blur-md scale-110"
-                            onError={e => { e.currentTarget.style.display = 'none' }}
-                          />
-                        </div>
-                      ))}
+            <div className="w-full flex-shrink-0 px-4 pt-4">
+              <div className="relative w-full aspect-[4/5] overflow-hidden rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] grid grid-cols-3 gap-1 bg-black">
+                <div className="col-span-2 relative">
+                  <img
+                    src={p.photos?.[0]}
+                    alt=""
+                    className="w-full h-full object-cover"
+                    onError={e => { e.currentTarget.src = '/placeholder-avatar.svg' }}
+                  />
+                  {typeof p.match_percentage === 'number' && (
+                    <div className="absolute top-12 left-3 z-10 flex items-center gap-1.5 bg-black/35 backdrop-blur-md rounded-full px-3 py-1.5">
+                      <span className="text-[#D4AF37] text-xs">◆</span>
+                      <span className="font-['Playfair_Display'] italic text-white text-sm whitespace-nowrap">
+                        {p.match_percentage}% GreenFlag Match
+                      </span>
                     </div>
-                  )
-                })()}
-                {persona !== 'woman' && (
-                  <button
-                    onClick={() => setConfirmProfileId(p.id)}
-                    className="absolute inset-0 m-auto z-20 flex items-center justify-center gap-2 h-12 w-fit px-4 bg-black/60 backdrop-blur-md rounded-full active:scale-95 transition-all shadow-lg"
-                  >
-                    <Lock className="w-4 h-4 text-white shrink-0" />
-                    <span className="text-white text-sm uppercase tracking-wide font-semibold whitespace-nowrap">Unlock</span>
-                  </button>
-                )}
+                  )}
+                </div>
+                <div className="relative col-span-1 overflow-hidden">
+                  {(() => {
+                    const extraPhotos = [p.photos?.[1], p.photos?.[2]].filter(Boolean) as string[]
+                    if (extraPhotos.length === 0) {
+                      return (
+                        <img
+                          src={p.photos?.[0]}
+                          alt=""
+                          className="w-full h-full object-cover blur-md scale-110"
+                          onError={e => { e.currentTarget.style.display = 'none' }}
+                        />
+                      )
+                    }
+                    return (
+                      <div
+                        className="grid gap-1 h-full"
+                        style={{ gridTemplateRows: `repeat(${extraPhotos.length}, 1fr)` }}
+                      >
+                        {extraPhotos.map((src, idx) => (
+                          <div key={idx} className="relative overflow-hidden">
+                            <img
+                              src={src}
+                              alt=""
+                              className="w-full h-full object-cover blur-md scale-110"
+                              onError={e => { e.currentTarget.style.display = 'none' }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )
+                  })()}
+                  {persona !== 'woman' && (
+                    <button
+                      onClick={() => setConfirmProfileId(p.id)}
+                      className="absolute inset-0 m-auto z-20 flex items-center justify-center gap-2 h-12 w-fit px-4 bg-black/60 backdrop-blur-md rounded-full active:scale-95 transition-all shadow-lg"
+                    >
+                      <Lock className="w-4 h-4 text-white shrink-0" />
+                      <span className="text-white text-sm uppercase tracking-wide font-semibold whitespace-nowrap">Unlock</span>
+                    </button>
+                  )}
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10 pointer-events-none" />
               </div>
             </div>
 
-            <div className="flex-1 min-h-0 flex flex-col px-6 pt-5 pb-6">
+            <div className="flex-1 min-h-0 flex flex-col px-6 pt-6 pb-6">
               <div className="flex-1 min-h-0 overflow-y-auto">
                 <h1 className="font-['Playfair_Display'] text-4xl text-ink font-semibold tracking-tight">
                   {p.name}
@@ -208,7 +276,7 @@ export default function DiscoverPage() {
                     </a>
                   )}
                 </div>
-                <div className="flex flex-wrap gap-2 mt-3">
+                <div className="flex flex-wrap gap-2 mt-4">
                   {(p.interests_have?.length ? p.interests_have : p.interests ?? []).slice(0, 5).map((interest: string) => {
                     const isMatched = Array.isArray(p.match_reasons) && p.match_reasons.includes(interest);
                     return (
@@ -226,7 +294,7 @@ export default function DiscoverPage() {
                   })}
                 </div>
                 {p.bio && (
-                  <p className="text-ink/80 text-base leading-relaxed max-w-md mt-4 font-light">{p.bio}</p>
+                  <p className="text-ink/80 text-base leading-relaxed max-w-md mt-5 font-light">{p.bio}</p>
                 )}
               </div>
 
@@ -266,12 +334,12 @@ export default function DiscoverPage() {
           </div>
         ))}
         {pageLoading && (
-          <div className="snap-start min-h-screen flex items-center justify-center">
+          <div className="snap-start min-h-[100dvh] flex items-center justify-center">
             <Loader2 className="animate-spin text-[#D4AF37]" size={32} />
           </div>
         )}
         {!pageLoading && profiles.length === 0 && (
-          <div className="snap-start min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center px-8 text-center">
+          <div className="snap-start min-h-[calc(100dvh-5rem)] flex flex-col items-center justify-center px-8 text-center animate-fade-in">
             <div className="w-14 h-14 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mb-5">
               <Heart className="w-6 h-6 text-[#D4AF37]" />
             </div>

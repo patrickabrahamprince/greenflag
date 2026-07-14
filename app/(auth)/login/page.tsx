@@ -28,17 +28,9 @@ export default function LoginPage() {
         router.push('/')
         return
       }
-      const { data: profile } = await supabase.from('profiles').select('persona, is_admin, onboarding_completed').eq('id', user.id).single()
+      const { data: profile } = await supabase.from('profiles').select('is_admin, onboarding_completed').eq('id', user.id).single()
       if (profile?.is_admin) window.location.href = '/admin'
-      // /connections never existed as a real route -- /my-connections is the
-      // real matches-list page, works for both personas already (see
-      // app/my-connections/page.tsx, app/api/matches GET). Mirroring the
-      // man's flat, unconditional redirect rather than adding new
-      // "has she set up a Standard yet" branching -- that would need
-      // /standard/builder to exist first, which it doesn't (no page.tsx;
-      // the API route that returns a redirect for it is currently orphaned,
-      // unreferenced by any client -- separate, larger task, not this one).
-      else if (profile?.persona === 'woman') window.location.href = '/my-connections'
+      else if (!profile?.onboarding_completed) window.location.href = '/onboard'
       else window.location.href = '/discover'
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Login failed')
