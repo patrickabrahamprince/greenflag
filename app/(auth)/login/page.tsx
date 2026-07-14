@@ -63,6 +63,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-6 bg-[#000000]">
       <div className="w-full max-w-sm">
         <div className="text-center mb-12">
+          <img src="/logo.png" alt="GreenFlag" className="w-16 h-16 mx-auto mb-4 rounded-xl" />
           <h1 className="font-['Playfair_Display'] text-5xl text-ink mb-3" style={{ fontWeight: 600 }}>
             GreenFlag
           </h1>

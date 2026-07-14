@@ -43,10 +43,10 @@ html, body { background: #000000 !important; }
   }
 
   .btn-danger {
-    @apply bg-red-50 text-red-600 font-medium rounded-xl px-8 py-3
+    @apply bg-red-950/40 text-red-400 border border-red-900/50 font-medium rounded-xl px-8 py-3
            text-xs uppercase tracking-wide
            transition-all duration-300 ease-out
-           hover:bg-red-100 active:scale-[0.98];
+           hover:bg-red-950/60 active:scale-[0.98];
   }
 
   .card {
