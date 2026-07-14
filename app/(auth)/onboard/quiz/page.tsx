@@ -128,7 +128,7 @@ export default function QuizPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAF9F7]">
+      <div className="min-h-screen flex items-center justify-center bg-[#000000]">
         <Loader2 className="w-8 h-8 animate-spin text-gold" />
       </div>
     );
@@ -139,7 +139,7 @@ export default function QuizPage() {
   const currentAnswer = answers[currentQuestion.id];
 
   return (
-    <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6 bg-[#FAF9F7]">
+    <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6 bg-[#000000]">
       <div className="max-w-md mx-auto w-full flex flex-col justify-between flex-1 pb-8">
         <div>
           {/* Header */}
@@ -150,14 +150,14 @@ export default function QuizPage() {
             >
               <ArrowLeft size={24} />
             </button>
-            <span className="text-xs font-semibold text-[#8E8E93]">
+            <span className="text-xs font-semibold text-[#9DA0A6]">
               Question {currentIdx + 1} of {QUIZ_QUESTIONS.length}
             </span>
             <div className="w-6" /> {/* spacer */}
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full bg-[#F0EDE9] h-1 rounded-full mb-10 overflow-hidden">
+          <div className="w-full bg-[#1C1C1E] h-1 rounded-full mb-10 overflow-hidden">
             <div
               className="bg-gold h-full transition-all duration-300 ease-out"
               style={{ width: `${progressPercent}%` }}
@@ -169,7 +169,7 @@ export default function QuizPage() {
             <h2 className="text-xl font-display font-medium text-ink mb-2 leading-snug">
               {currentQuestion.question}
             </h2>
-            <p className="text-[#8E8E93] text-xs">Pick one answer that fits you best</p>
+            <p className="text-[#9DA0A6] text-xs">Pick one answer that fits you best</p>
           </div>
 
           {/* Options Grid */}
@@ -183,7 +183,7 @@ export default function QuizPage() {
                   className={`w-full py-4 px-5 rounded-xl text-left text-sm transition-all flex items-center justify-between border ${
                     isSelected
                       ? 'bg-gold/10 border-gold text-ink font-medium'
-                      : 'bg-[#F0EDE9] border-[#E8E6E1] text-ink/70 hover:border-ink/30'
+                      : 'bg-[#1C1C1E] border-[#2A2A2A] text-ink/70 hover:border-ink/30'
                   }`}
                 >
                   <span>{option}</span>

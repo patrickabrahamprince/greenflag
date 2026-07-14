@@ -90,7 +90,7 @@ export function ProfileImageCarousel({ images }: ProfileImageCarouselProps) {
                 key={i}
                 onClick={() => setMainIdx(i)}
                 className={`h-0.5 rounded-none transition-all ${
-                  i === mainIdx ? 'bg-[#C9A961] w-6' : 'bg-white/40 w-3'
+                  i === mainIdx ? 'bg-[#D4AF37] w-6' : 'bg-white/40 w-3'
                 }`}
               />
             ))}

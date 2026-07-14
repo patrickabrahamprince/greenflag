@@ -60,7 +60,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-[#FAF9F7]">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-[#000000]">
       <div className="w-full max-w-sm">
         <div className="text-center mb-12">
           <h1 className="font-['Playfair_Display'] text-5xl text-ink mb-3" style={{ fontWeight: 600 }}>
@@ -80,15 +80,15 @@ export default function LoginPage() {
         </form>
 
         <div className="flex items-center gap-3 my-6">
-          <div className="flex-1 h-px bg-[#E8E6E1]" />
+          <div className="flex-1 h-px bg-[#2A2A2A]" />
           <span className="text-ink/40 text-xs uppercase tracking-wide">or</span>
-          <div className="flex-1 h-px bg-[#E8E6E1]" />
+          <div className="flex-1 h-px bg-[#2A2A2A]" />
         </div>
         <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />
 
         <p className="text-ink/50 text-sm mt-8 text-center">
           New here? Your journey starts at{' '}
-          <Link href="/signup" className="text-[#C9A961] underline underline-offset-4 decoration-[#C9A961]/40 hover:decoration-[#C9A961] transition-colors">
+          <Link href="/signup" className="text-[#D4AF37] underline underline-offset-4 decoration-[#D4AF37]/40 hover:decoration-[#D4AF37] transition-colors">
             onboarding
           </Link>
         </p>

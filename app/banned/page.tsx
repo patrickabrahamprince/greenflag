@@ -37,25 +37,25 @@ export default function BannedPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
+      <div className="min-h-screen bg-[#000000] flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-[#D4AF37]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center p-6">
+    <div className="min-h-screen bg-[#000000] flex items-center justify-center p-6">
       <div className="text-center max-w-md">
         <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-6">
           <Ban className="w-10 h-10 text-red-500" />
         </div>
         <h1 className="font-['Playfair_Display'] text-2xl text-ink mb-3">Account Suspended</h1>
-        <p className="text-[#8E8E93] mb-6">
+        <p className="text-[#9DA0A6] mb-6">
           {reason || 'Your account has been suspended. If you believe this was a mistake, please contact support.'}
         </p>
         <button
           onClick={handleLogout}
-          className="w-full max-w-xs mx-auto h-12 rounded-xl border border-[#E8E6E1] text-ink font-medium active:scale-95 transition-all duration-200"
+          className="w-full max-w-xs mx-auto h-12 rounded-xl border border-[#2A2A2A] text-ink font-medium active:scale-95 transition-all duration-200"
         >
           Sign Out
         </button>

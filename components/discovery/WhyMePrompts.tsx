@@ -17,7 +17,7 @@ export function WhyMePrompts({ prompts, onPromptChange }: WhyMePromptsProps) {
       <h2 className="font-['Playfair_Display'] text-xl text-ink mb-1">
         3 reasons why you&apos;re worth it
       </h2>
-      <p className="text-sm text-[#8E8E93] mb-4">
+      <p className="text-sm text-[#9DA0A6] mb-4">
         Each answer 50–150 characters
       </p>
       <div className="space-y-3">
@@ -32,11 +32,11 @@ export function WhyMePrompts({ prompts, onPromptChange }: WhyMePromptsProps) {
               className="input resize-none"
             />
             <div className="flex justify-between mt-1">
-              <span className={`text-xs ${prompt.length > 0 && prompt.length < 50 ? 'text-[#C9A961]' : 'text-[#8E8E93]'}`}>
+              <span className={`text-xs ${prompt.length > 0 && prompt.length < 50 ? 'text-[#D4AF37]' : 'text-[#9DA0A6]'}`}>
                 {prompt.length}/150
               </span>
               {prompt.length > 0 && prompt.length < 50 && (
-                <span className="text-xs text-[#C9A961]">Min 50 chars</span>
+                <span className="text-xs text-[#D4AF37]">Min 50 chars</span>
               )}
             </div>
           </div>

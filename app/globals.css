@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-html, body { background: #FAF9F7 !important; }
+html, body { background: #000000 !important; }
 * { -webkit-tap-highlight-color: transparent; }
 
 @layer base {
@@ -20,10 +20,10 @@ html, body { background: #FAF9F7 !important; }
 
 @layer components {
   .btn-primary {
-    @apply bg-gold text-white font-medium rounded-xl px-8 py-3
+    @apply bg-gold text-black font-medium rounded-xl px-8 py-3
            text-xs uppercase tracking-wide
            transition-all duration-300 ease-out
-           hover:bg-[#B89851] active:scale-[0.98]
+           hover:bg-gold-dark active:scale-[0.98]
            disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
   }
 
@@ -50,7 +50,7 @@ html, body { background: #FAF9F7 !important; }
   }
 
   .card {
-    @apply bg-white border border-border rounded-none p-6
+    @apply bg-surface border border-border rounded-none p-6
            transition-all duration-300 ease-out;
   }
 
@@ -75,17 +75,17 @@ html, body { background: #FAF9F7 !important; }
   }
 
   .skeleton {
-    @apply bg-[#F0EDE9] rounded-none animate-pulse;
+    @apply bg-surface-light rounded-none animate-pulse;
   }
 
   .blur-bg {
     @apply backdrop-blur-xl;
-    background: rgba(250, 249, 247, 0.8);
+    background: rgba(0, 0, 0, 0.8);
   }
 
   .page-container {
     @apply min-h-screen max-w-app mx-auto px-8 pb-24;
-    background: #FAF9F7;
+    background: #000000;
   }
 
   .page-header {
@@ -97,7 +97,7 @@ html, body { background: #FAF9F7 !important; }
   }
 
   .empty-state-icon {
-    @apply w-16 h-16 rounded-full flex items-center justify-center mb-4 text-ink/40 bg-[#F0EDE9];
+    @apply w-16 h-16 rounded-full flex items-center justify-center mb-4 text-ink/40 bg-surface-light;
   }
 
   .empty-state-title {
@@ -111,16 +111,16 @@ html, body { background: #FAF9F7 !important; }
   .hairline {
     height: 1px;
     width: 100%;
-    background: #E8E6E1;
+    background: #2A2A2A;
   }
 
   .nav-glass {
     @apply backdrop-blur-xl border-t border-border;
-    background: rgba(250, 249, 247, 0.8);
+    background: rgba(0, 0, 0, 0.8);
   }
 
   .gold-border-left {
-    border-left: 2px solid #C9A961;
+    border-left: 2px solid #D4AF37;
   }
 
   .match-arc {
@@ -135,13 +135,13 @@ html, body { background: #FAF9F7 !important; }
 
   .match-arc-bg {
     fill: none;
-    stroke: #E8E6E1;
+    stroke: #2A2A2A;
     stroke-width: 2;
   }
 
   .match-arc-fill {
     fill: none;
-    stroke: #C9A961;
+    stroke: #D4AF37;
     stroke-width: 2;
     stroke-linecap: round;
     transition: stroke-dashoffset 1s ease-out;

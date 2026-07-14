@@ -25,8 +25,8 @@ export function ProfileInfo({
   matchOverlapping = [],
 }: ProfileInfoProps) {
   return (
-    <div className="bg-[#FAF9F7] px-8 pt-8">
-      <div className="flex items-center gap-x-4 gap-y-1 flex-wrap text-sm text-ink/60 border-b border-[#E8E6E1] py-6">
+    <div className="bg-[#000000] px-8 pt-8">
+      <div className="flex items-center gap-x-4 gap-y-1 flex-wrap text-sm text-ink/60 border-b border-[#2A2A2A] py-6">
         <span className="text-ink/80">{age}</span>
         {city_auto && (
           <div className="flex items-center gap-1.5">
@@ -47,18 +47,18 @@ export function ProfileInfo({
           </div>
         )}
         {matchPercent !== undefined && (
-          <span className="text-[#C9A961] text-xs uppercase tracking-wide">{matchPercent}% match</span>
+          <span className="text-[#D4AF37] text-xs uppercase tracking-wide">{matchPercent}% match</span>
         )}
       </div>
 
       {matchOverlapping.length > 0 && (
-        <div className="border-b border-[#E8E6E1] py-6">
+        <div className="border-b border-[#2A2A2A] py-6">
           <p className="text-xs text-ink/40 uppercase tracking-widest mb-3">Shared Interests</p>
           <div className="flex flex-wrap gap-2">
             {matchOverlapping.map((interest) => (
               <span
                 key={interest}
-                className="px-3 py-1 text-xs uppercase tracking-wide border border-[#C9A961] text-[#C9A961]"
+                className="px-3 py-1 text-xs uppercase tracking-wide border border-[#D4AF37] text-[#D4AF37]"
               >
                 {interest}
               </span>
@@ -67,7 +67,7 @@ export function ProfileInfo({
         </div>
       )}
 
-      <div className="border-b border-[#E8E6E1] py-6">
+      <div className="border-b border-[#2A2A2A] py-6">
         <p className="text-xs text-ink/40 uppercase tracking-widest mb-3">Interests</p>
         <div className="flex flex-wrap gap-2">
           {interests.map((interest) => {
@@ -77,8 +77,8 @@ export function ProfileInfo({
                 key={interest}
                 className={`px-3 py-1 text-xs uppercase tracking-wide border ${
                   isMatch
-                    ? 'border-[#C9A961] text-[#C9A961]'
-                    : 'border-[#E8E6E1] text-ink/60'
+                    ? 'border-[#D4AF37] text-[#D4AF37]'
+                    : 'border-[#2A2A2A] text-ink/60'
                 }`}
               >
                 {interest}
@@ -89,7 +89,7 @@ export function ProfileInfo({
       </div>
 
       {bio && (
-        <p className="text-ink/80 text-base leading-relaxed border-b border-[#E8E6E1] py-6">{bio}</p>
+        <p className="text-ink/80 text-base leading-relaxed border-b border-[#2A2A2A] py-6">{bio}</p>
       )}
 
       {instagram_url && (
@@ -101,7 +101,7 @@ export function ProfileInfo({
           }
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 py-6 text-ink/50 hover:text-[#C9A961] transition-colors"
+          className="flex items-center gap-2 py-6 text-ink/50 hover:text-[#D4AF37] transition-colors"
         >
           <Instagram className="w-4 h-4" />
           <span className="text-sm">{instagram_url}</span>

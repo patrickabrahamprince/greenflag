@@ -5,7 +5,7 @@ interface TypingIndicatorProps {
 export function TypingIndicator({ name }: TypingIndicatorProps) {
   return (
     <div className="flex items-center gap-2 px-4 py-2">
-      <div className="rounded-none px-4 py-2.5 flex items-center gap-1.5 bg-[#F0EDE9]">
+      <div className="rounded-none px-4 py-2.5 flex items-center gap-1.5 bg-[#1C1C1E]">
         <span className="flex gap-1">
           <span className="w-1.5 h-1.5 bg-gold rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
           <span className="w-1.5 h-1.5 bg-gold rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />

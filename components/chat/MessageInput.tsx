@@ -9,7 +9,7 @@ interface MessageInputProps {
 
 export function MessageInput({ input, onInputChange, onSend, sending }: MessageInputProps) {
   return (
-    <div className="px-8 py-4 border-t border-[#E8E6E1]">
+    <div className="px-8 py-4 border-t border-[#2A2A2A]">
       <div className="flex items-center gap-4">
         <input
           type="text"
@@ -22,7 +22,7 @@ export function MessageInput({ input, onInputChange, onSend, sending }: MessageI
         <button
           onClick={onSend}
           disabled={!input.trim() || sending}
-          className="text-[#C9A961] font-semibold uppercase text-xs tracking-wide disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+          className="text-[#D4AF37] font-semibold uppercase text-xs tracking-wide disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
         >
           {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Send'}
         </button>

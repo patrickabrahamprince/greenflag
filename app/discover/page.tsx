@@ -108,7 +108,7 @@ export default function DiscoverPage() {
   }
 
   return (
-    <div className="relative bg-[#FAF9F7] min-h-screen max-w-app mx-auto">
+    <div className="relative bg-[#000000] min-h-screen max-w-app mx-auto">
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex items-center justify-between px-5 py-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent pointer-events-none">
         <button onClick={() => router.push('/messages')} className="pointer-events-auto w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center">
           <ArrowLeft className="w-5 h-5 text-white" />
@@ -124,7 +124,7 @@ export default function DiscoverPage() {
             key={p.id}
             ref={i === profiles.length - 1 ? lastProfileRef : null}
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
-            className="snap-start snap-always min-h-[calc(100vh-5rem)] w-full flex flex-col"
+            className="snap-start snap-always h-[calc(100vh-5rem)] w-full flex flex-col"
           >
             <div className="relative w-full aspect-[3/4] flex-shrink-0 overflow-hidden rounded-b-[2rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.35)] grid grid-cols-3 gap-0.5 bg-black">
               <div className="col-span-2 relative">
@@ -136,7 +136,7 @@ export default function DiscoverPage() {
                 />
                 {typeof p.match_percentage === 'number' && (
                   <div className="absolute top-16 left-3 z-10 flex items-center gap-1.5 bg-black/35 backdrop-blur-md rounded-full px-3 py-1.5">
-                    <span className="text-[#C9A961] text-xs">◆</span>
+                    <span className="text-[#D4AF37] text-xs">◆</span>
                     <span className="font-['Playfair_Display'] italic text-white text-sm whitespace-nowrap">
                       {p.match_percentage}% GreenFlag Match
                     </span>
@@ -186,53 +186,55 @@ export default function DiscoverPage() {
               </div>
             </div>
 
-            <div className="flex-1 flex flex-col px-6 pt-5 pb-6">
-              <h1 className="font-['Playfair_Display'] text-4xl text-ink font-semibold tracking-tight">
-                {p.name}
-              </h1>
-              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                <p className="font-['Inter'] text-sm text-ink/60 tracking-wide uppercase">
-                  {p.age ? `${p.age}` : ''}{p.age && p.city_auto ? ' · ' : ''}{p.city_auto}
-                </p>
-                {p.instagram_url && (
-                  <a
-                    href={p.instagram_url.startsWith('http') ? p.instagram_url : `https://instagram.com/${p.instagram_url}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex items-center gap-1 text-xs text-[#C9A961] font-medium"
-                  >
-                    <Instagram className="w-3.5 h-3.5" />
-                    {p.instagram_url.replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '') || 'Instagram'}
-                  </a>
+            <div className="flex-1 min-h-0 flex flex-col px-6 pt-5 pb-6">
+              <div className="flex-1 min-h-0 overflow-y-auto">
+                <h1 className="font-['Playfair_Display'] text-4xl text-ink font-semibold tracking-tight">
+                  {p.name}
+                </h1>
+                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                  <p className="font-['Inter'] text-sm text-ink/60 tracking-wide uppercase">
+                    {p.age ? `${p.age}` : ''}{p.age && p.city_auto ? ' · ' : ''}{p.city_auto}
+                  </p>
+                  {p.instagram_url && (
+                    <a
+                      href={p.instagram_url.startsWith('http') ? p.instagram_url : `https://instagram.com/${p.instagram_url}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex items-center gap-1 text-xs text-[#D4AF37] font-medium"
+                    >
+                      <Instagram className="w-3.5 h-3.5" />
+                      {p.instagram_url.replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '') || 'Instagram'}
+                    </a>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {(p.interests_have?.length ? p.interests_have : p.interests ?? []).slice(0, 5).map((interest: string) => {
+                    const isMatched = Array.isArray(p.match_reasons) && p.match_reasons.includes(interest);
+                    return (
+                      <span
+                        key={interest}
+                        className={
+                          isMatched
+                            ? 'px-4 py-2 rounded-full bg-[#D4AF37] text-white text-sm font-medium shadow-[0_2px_10px_rgba(201,169,97,0.35)]'
+                            : 'px-4 py-2 rounded-full bg-[#1C1C1E] text-ink text-sm font-medium shadow-[0_2px_10px_rgba(0,0,0,0.08)]'
+                        }
+                      >
+                        {interest}
+                      </span>
+                    );
+                  })}
+                </div>
+                {p.bio && (
+                  <p className="text-ink/80 text-base leading-relaxed max-w-md mt-4 font-light">{p.bio}</p>
                 )}
               </div>
-              <div className="flex flex-wrap gap-2 mt-3">
-                {(p.interests_have?.length ? p.interests_have : p.interests ?? []).slice(0, 5).map((interest: string) => {
-                  const isMatched = Array.isArray(p.match_reasons) && p.match_reasons.includes(interest);
-                  return (
-                    <span
-                      key={interest}
-                      className={
-                        isMatched
-                          ? 'px-4 py-2 rounded-full bg-[#C9A961] text-white text-sm font-medium shadow-[0_2px_10px_rgba(201,169,97,0.35)]'
-                          : 'px-4 py-2 rounded-full bg-white text-ink text-sm font-medium shadow-[0_2px_10px_rgba(0,0,0,0.08)]'
-                      }
-                    >
-                      {interest}
-                    </span>
-                  );
-                })}
-              </div>
-              {p.bio && (
-                <p className="text-ink/80 text-base leading-relaxed max-w-md mt-4 font-light">{p.bio}</p>
-              )}
 
-              <div className="flex items-center gap-4 mt-7">
+              <div className="flex items-center gap-4 pt-4 shrink-0">
                 <button
                   onClick={() => scrollToNext(i)}
                   aria-label="Pass"
-                  className="size-14 rounded-full bg-[#F0EDE9] shadow-[0_2px_10px_rgba(0,0,0,0.06)] flex items-center justify-center active:scale-95 transition-all"
+                  className="size-14 rounded-full bg-[#1C1C1E] shadow-[0_2px_10px_rgba(0,0,0,0.06)] flex items-center justify-center active:scale-95 transition-all shrink-0"
                 >
                   <X className="w-6 h-6 text-ink/60" />
                 </button>
@@ -246,7 +248,7 @@ export default function DiscoverPage() {
                   }}
                   disabled={likingId === p.id}
                   aria-label="Like"
-                  className="flex-1 h-14 rounded-full bg-[#C9A961] shadow-[0_4px_16px_rgba(201,169,97,0.35)] flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
+                  className="flex-1 h-14 rounded-full bg-[#D4AF37] shadow-[0_4px_16px_rgba(201,169,97,0.35)] flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
                 >
                   {likingId === p.id ? (
                     <Loader2 className="w-5 h-5 animate-spin text-white" />
@@ -265,13 +267,13 @@ export default function DiscoverPage() {
         ))}
         {pageLoading && (
           <div className="snap-start min-h-screen flex items-center justify-center">
-            <Loader2 className="animate-spin text-[#C9A961]" size={32} />
+            <Loader2 className="animate-spin text-[#D4AF37]" size={32} />
           </div>
         )}
         {!pageLoading && profiles.length === 0 && (
           <div className="snap-start min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center px-8 text-center">
-            <div className="w-14 h-14 rounded-full bg-[#C9A961]/10 flex items-center justify-center mb-5">
-              <Heart className="w-6 h-6 text-[#C9A961]" />
+            <div className="w-14 h-14 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mb-5">
+              <Heart className="w-6 h-6 text-[#D4AF37]" />
             </div>
             <h2 className="font-['Playfair_Display'] text-2xl text-ink mb-2">You&apos;ve seen everyone</h2>
             <p className="text-ink/50 text-sm max-w-xs">
@@ -283,9 +285,9 @@ export default function DiscoverPage() {
 
       {confirmProfileId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
-          <div className="w-full max-w-sm bg-[#FAF9F7] rounded-2xl shadow-2xl p-8 text-center">
+          <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
             <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Coins className="w-6 h-6 text-[#C9A961]" />
+              <Coins className="w-6 h-6 text-[#D4AF37]" />
             </div>
             <h4 className="font-['Playfair_Display'] text-2xl text-ink mb-2">Unlock Standard?</h4>
             <p className="text-ink/60 text-sm leading-relaxed mb-6">

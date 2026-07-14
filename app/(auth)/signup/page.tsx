@@ -107,7 +107,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-[#FAF9F7]">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-[#000000]">
       <div className="w-full max-w-sm">
         <SignupHeader />
         <AuthModeToggle mode={mode} onModeChange={handleModeChange} />

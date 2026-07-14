@@ -47,7 +47,7 @@ export function TaskCard({
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-medium text-[#C9A961]">
+        <span className="text-xs font-medium text-[#D4AF37]">
           Task {taskNumber}/8
         </span>
         {isTaskSubmitted && (
@@ -57,10 +57,10 @@ export function TaskCard({
         )}
       </div>
       <h3 className="text-sm font-medium text-ink mb-1">{task.title}</h3>
-      <p className="text-xs text-[#8E8E93] mb-3">{task.prompt}</p>
+      <p className="text-xs text-[#9DA0A6] mb-3">{task.prompt}</p>
 
       {isTaskSubmitted ? (
-        <div className="text-xs text-[#8E8E93] bg-[#F0EDE9] rounded-lg p-3">
+        <div className="text-xs text-[#9DA0A6] bg-[#1C1C1E] rounded-lg p-3">
           {submission.media_url ? (
             <img
               src={submission.media_url}
@@ -99,11 +99,11 @@ export function TaskCard({
               ) : (
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-[#E8E6E1] rounded-xl p-6 text-center cursor-pointer hover:border-[#C9A961] transition-colors"
+                  className="border-2 border-dashed border-[#2A2A2A] rounded-xl p-6 text-center cursor-pointer hover:border-[#D4AF37] transition-colors"
                 >
-                  <Image className="w-6 h-6 text-[#8E8E93] mx-auto mb-2" />
-                  <p className="text-xs text-[#8E8E93]">Tap to take a photo</p>
-                  <p className="text-[10px] text-[#5A5A5D] mt-1">JPG, PNG up to 5MB</p>
+                  <Image className="w-6 h-6 text-[#9DA0A6] mx-auto mb-2" />
+                  <p className="text-xs text-[#9DA0A6]">Tap to take a photo</p>
+                  <p className="text-[10px] text-[#A8A8AC] mt-1">JPG, PNG up to 5MB</p>
                 </div>
               )}
               <input
@@ -133,8 +133,8 @@ export function TaskCard({
             onClick={onSubmit}
             disabled={isSubmitting || isUploading}
             className={cn(
-              'mt-2 w-full h-9 rounded-lg bg-[#C9A961]/10 border border-[#C9A961]/30',
-              'text-[#C9A961] text-xs font-medium active:scale-95 transition-all',
+              'mt-2 w-full h-9 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/30',
+              'text-[#D4AF37] text-xs font-medium active:scale-95 transition-all',
               'disabled:opacity-50 flex items-center justify-center gap-2'
             )}
           >

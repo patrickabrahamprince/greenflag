@@ -111,7 +111,7 @@ export default function RulesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAF9F7]">
+      <div className="min-h-screen flex items-center justify-center bg-[#000000]">
         <Loader2 className="w-8 h-8 animate-spin text-gold" />
       </div>
     );
@@ -121,7 +121,7 @@ export default function RulesPage() {
   const progressPercent = ((currentSlide + 1) / slides.length) * 100;
 
   return (
-    <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6 bg-[#FAF9F7]">
+    <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6 bg-[#000000]">
       <div className="max-w-md mx-auto w-full flex flex-col justify-between flex-1 pb-8">
         {/* Header with back button and slide count */}
         <div className="flex items-center justify-between mb-6">
@@ -131,14 +131,14 @@ export default function RulesPage() {
           >
             <ArrowLeft size={24} />
           </button>
-          <span className="text-xs font-semibold text-[#8E8E93]">
+          <span className="text-xs font-semibold text-[#9DA0A6]">
             Rule {currentSlide + 1} of {slides.length}
           </span>
           <div className="w-6" /> {/* spacer */}
         </div>
 
         {/* Progress bar */}
-        <div className="w-full bg-[#F0EDE9] h-1 rounded-full mb-8 overflow-hidden">
+        <div className="w-full bg-[#1C1C1E] h-1 rounded-full mb-8 overflow-hidden">
           <div
             className="bg-gold h-full transition-all duration-300 ease-out"
             style={{ width: `${progressPercent}%` }}
@@ -146,14 +146,14 @@ export default function RulesPage() {
         </div>
 
         {/* Slide content */}
-        <div className="flex flex-col items-center text-center px-4 py-8 bg-[#F0EDE9] border border-[#E8E6E1] rounded-3xl min-h-[320px] justify-center transition-all duration-300">
+        <div className="flex flex-col items-center text-center px-4 py-8 bg-[#1C1C1E] border border-[#2A2A2A] rounded-3xl min-h-[320px] justify-center transition-all duration-300">
           <div className="w-20 h-20 rounded-full bg-gold/10 flex items-center justify-center mb-6">
             {slide.icon}
           </div>
           <h2 className="text-2xl font-display font-semibold text-ink mb-4">
             {slide.title}
           </h2>
-          <p className="text-[#8E8E93] text-sm leading-relaxed max-w-[280px] font-light">
+          <p className="text-[#9DA0A6] text-sm leading-relaxed max-w-[280px] font-light">
             {slide.desc}
           </p>
         </div>

@@ -12,7 +12,7 @@ export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
       <div
         className={cn(
           'max-w-[80%] rounded-none px-5 py-3 animate-fade-in',
-          isOwn ? 'bg-[#1A1A1A] text-white ml-auto' : 'bg-[#F0EDE9] text-ink'
+          isOwn ? 'bg-[#2A2A2A] text-white ml-auto' : 'bg-[#1C1C1E] text-ink'
         )}
       >
         <p className="text-sm leading-relaxed">{message.content}</p>

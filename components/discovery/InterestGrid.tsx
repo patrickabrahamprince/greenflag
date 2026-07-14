@@ -33,7 +33,7 @@ export const InterestGrid: React.FC<InterestGridProps> = ({
   return (
     <div className="interest-grid my-6">
       {title && <h2 className="text-xl font-display text-white mb-2">{title}</h2>}
-      {description && <p className="text-sm text-[#8E8E93] mb-4">{description}</p>}
+      {description && <p className="text-sm text-[#9DA0A6] mb-4">{description}</p>}
       <div className="flex flex-wrap gap-3">
         {options.map((opt) => {
           const isSelected = selected.includes(opt);

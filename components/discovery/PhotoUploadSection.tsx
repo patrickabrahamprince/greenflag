@@ -33,8 +33,8 @@ export function PhotoUploadSection({
                 photo
                   ? 'border-transparent'
                   : canAdd
-                  ? 'border-[#E8E6E1] hover:border-gold cursor-pointer'
-                  : 'border-[#E8E6E1] opacity-50'
+                  ? 'border-[#2A2A2A] hover:border-gold cursor-pointer'
+                  : 'border-[#2A2A2A] opacity-50'
               }`}
               onClick={() => { if (!photo && canAdd) document.getElementById(`photo-input-${i}`)?.click(); }}
             >

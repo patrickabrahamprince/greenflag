@@ -12,16 +12,16 @@ export function LockedOverlay({ backRoute, currentDay }: LockedOverlayProps) {
 
   return (
     <div className="absolute inset-0 z-10 flex flex-col items-center justify-center backdrop-blur-sm px-8" style={{ background: 'rgba(250,249,247,0.95)' }}>
-      <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-[#F0EDE9]">
-        <Lock className="w-7 h-7 text-[#C9A961]" />
+      <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-[#1C1C1E]">
+        <Lock className="w-7 h-7 text-[#D4AF37]" />
       </div>
       <h3 className="font-['Playfair_Display'] text-2xl text-ink mb-2">Messages Locked</h3>
       <p className="text-sm text-center mb-6 text-ink/50">
         Chat unlocks at Day 5. Keep going.
       </p>
-      <div className="w-48 h-0.5 mb-6 bg-[#E8E6E1]">
+      <div className="w-48 h-0.5 mb-6 bg-[#2A2A2A]">
         <div
-          className="h-full transition-all duration-500 bg-[#C9A961]"
+          className="h-full transition-all duration-500 bg-[#D4AF37]"
           style={{ width: `${progress}%` }}
         />
       </div>

@@ -30,10 +30,10 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
   return (
     <button
       onClick={() => router.push(`/messages/${conv.id}`)}
-      className="w-full flex items-center gap-3 p-4 text-left transition-colors border-b border-[#E8E6E1]"
+      className="w-full flex items-center gap-3 p-4 text-left transition-colors border-b border-[#2A2A2A]"
     >
       <div
-        className="w-12 h-12 rounded-full flex-shrink-0 overflow-hidden flex items-center justify-center bg-[#F0EDE9]"
+        className="w-12 h-12 rounded-full flex-shrink-0 overflow-hidden flex items-center justify-center bg-[#1C1C1E]"
       >
         {partnerPhoto ? (
           <img
@@ -54,13 +54,13 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
             {conv.partner?.name}
           </span>
           {conv.last_message && (
-            <span className="text-[10px] flex-shrink-0 ml-2" style={{ color: '#8E8E93' }}>
+            <span className="text-[10px] flex-shrink-0 ml-2" style={{ color: '#9DA0A6' }}>
               {conv.last_message.created_at ? new Date(conv.last_message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
             </span>
           )}
         </div>
         {conv.last_message && (
-          <p className="text-xs truncate font-thin" style={{ color: '#8E8E93' }}>
+          <p className="text-xs truncate font-thin" style={{ color: '#9DA0A6' }}>
             {conv.last_message.content}
           </p>
         )}
@@ -117,7 +117,7 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="w-5 h-5 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: '#C9A961', borderTopColor: 'transparent' }} />
+        <div className="w-5 h-5 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: '#D4AF37', borderTopColor: 'transparent' }} />
       </div>
     );
   }
@@ -125,7 +125,7 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
   if (conversations.length === 0) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center px-6">
-        <p className="text-sm font-thin" style={{ color: '#8E8E93' }}>
+        <p className="text-sm font-thin" style={{ color: '#9DA0A6' }}>
           {persona === 'woman'
             ? 'No chats yet — matches unlock once he completes your Standard.'
             : 'No chats yet. Swipe in Discover to find matches!'}
@@ -165,7 +165,7 @@ export default function MessagesListPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF9F7]">
+    <div className="min-h-screen flex flex-col bg-[#000000]">
       <div className="max-w-app mx-auto w-full flex-1 flex flex-col">
         <div className="px-4 pt-4 pb-0">
           <div className="page-header">

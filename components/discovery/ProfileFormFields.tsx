@@ -62,7 +62,7 @@ export function ProfileFormFields({
       <div>
         <label className="block text-sm font-medium text-ink mb-1.5">
           Location <span className="text-red-400">*</span>
-          {gpsDetecting && <span className="text-[#8E8E93] font-normal text-xs ml-1">(detecting...)</span>}
+          {gpsDetecting && <span className="text-[#9DA0A6] font-normal text-xs ml-1">(detecting...)</span>}
         </label>
         <input
           type="text"
@@ -94,7 +94,7 @@ export function ProfileFormFields({
 
       <div>
         <label className="block text-sm font-medium text-ink mb-1.5">
-          Bio <span className="text-[#8E8E93] font-normal">(optional)</span>
+          Bio <span className="text-[#9DA0A6] font-normal">(optional)</span>
         </label>
         <textarea
           value={bio}
@@ -105,7 +105,7 @@ export function ProfileFormFields({
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-bio' : undefined}
           className="input resize-none"
         />
-        <p className="text-xs text-[#8E8E93] mt-1 text-right">{bio.length}/200</p>
+        <p className="text-xs text-[#9DA0A6] mt-1 text-right">{bio.length}/200</p>
         {errors.bio && <p className="text-red-500 text-xs mt-1">{errors.bio}</p>}
       </div>
     </>

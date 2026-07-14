@@ -100,7 +100,7 @@ export default function PhonePage() {
   if (skipping) {
     return (
       <div className="w-full animate-fade-in min-h-screen flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-[#8E8E93]" />
+        <Loader2 className="w-6 h-6 animate-spin text-[#9DA0A6]" />
       </div>
     );
   }
@@ -118,7 +118,7 @@ export default function PhonePage() {
         <h1 className="text-2xl font-display font-semibold text-ink mb-2">
           {otpSent ? "Verify your number" : "What's your number?"}
         </h1>
-        <p className="text-[#8E8E93] text-sm mb-8">
+        <p className="text-[#9DA0A6] text-sm mb-8">
           {otpSent
             ? `We sent a 6-digit code to ${phone}`
             : "We'll send you a verification code"}
@@ -138,7 +138,7 @@ export default function PhonePage() {
         ) : (
           <div className="space-y-4">
             <div>
-              <label className="block text-xs text-[#8E8E93] font-thin mb-1.5 tracking-wide">
+              <label className="block text-xs text-[#9DA0A6] font-thin mb-1.5 tracking-wide">
                 6-digit code
               </label>
               <input
@@ -177,7 +177,7 @@ export default function PhonePage() {
         <button
           onClick={handleSkip}
           disabled={skipping}
-          className="mt-6 w-full text-sm text-[#8E8E93] underline underline-offset-4 decoration-ink/20 hover:text-ink hover:decoration-ink/40 transition-colors disabled:opacity-50"
+          className="mt-6 w-full text-sm text-[#9DA0A6] underline underline-offset-4 decoration-ink/20 hover:text-ink hover:decoration-ink/40 transition-colors disabled:opacity-50"
         >
           Skip for now
         </button>
@@ -189,9 +189,9 @@ export default function PhonePage() {
         )}
 
         <div className="flex items-center gap-3 my-6">
-          <div className="flex-1 h-px bg-[#E8E6E1]" />
-          <span className="text-[#8E8E93] text-xs">or</span>
-          <div className="flex-1 h-px bg-[#E8E6E1]" />
+          <div className="flex-1 h-px bg-[#2A2A2A]" />
+          <span className="text-[#9DA0A6] text-xs">or</span>
+          <div className="flex-1 h-px bg-[#2A2A2A]" />
         </div>
 
         <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />

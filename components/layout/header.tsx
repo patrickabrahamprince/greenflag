@@ -23,7 +23,7 @@ export function Header({
   className,
 }: HeaderProps) {
   return (
-    <div className={cn('relative flex items-center justify-center h-16 px-8 bg-[#FAF9F7]/80 backdrop-blur-xl border-b border-[#E8E6E1]', className)}>
+    <div className={cn('relative flex items-center justify-center h-16 px-8 bg-[#000000]/80 backdrop-blur-xl border-b border-[#2A2A2A]', className)}>
       {showBack && <BackButton />}
       <div className="flex flex-col items-center">
         <h1 className="font-['Playfair_Display'] text-2xl text-ink tracking-tight">{title}</h1>

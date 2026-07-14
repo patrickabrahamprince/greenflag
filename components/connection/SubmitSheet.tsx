@@ -302,12 +302,12 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
   if (showSuccessPopup) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
-        <div className="w-full max-w-sm rounded-none p-6 text-center animate-scale-in bg-[#FAF9F7]">
+        <div className="w-full max-w-sm rounded-none p-6 text-center animate-scale-in bg-[#000000]">
           <div className="w-12 h-12 bg-green-50 border border-green-200 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-xl text-green-600 font-bold">✓</span>
           </div>
           <h4 className="font-['Playfair_Display'] text-ink text-lg mb-2">Response Submitted!</h4>
-          <p className="text-[#8E8E93] text-xs mb-6 leading-relaxed">
+          <p className="text-[#9DA0A6] text-xs mb-6 leading-relaxed">
             Awaiting her review. Move on to the next task for today, or explore other profiles in the meantime.
           </p>
           <div className="flex gap-3">
@@ -337,14 +337,14 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center" style={{ background: 'rgba(0,0,0,0.5)' }}>
       <div
-        className="w-full max-w-app rounded-t-none p-5 pb-8 animate-slide-up bg-[#FAF9F7]"
+        className="w-full max-w-app rounded-t-none p-5 pb-8 animate-slide-up bg-[#000000]"
       >
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
             <Icon className="w-5 h-5 text-gold" />
             <h3 className="font-['Playfair_Display'] text-ink">Day {dayNumber}</h3>
           </div>
-          <button onClick={onClose} className="p-1 text-[#8E8E93] hover:text-ink">
+          <button onClick={onClose} className="p-1 text-[#9DA0A6] hover:text-ink">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -358,14 +358,14 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
               rows={5}
               className="input resize-none"
             />
-            <p className="text-right text-xs text-[#8E8E93]">{textContent.length}/500</p>
+            <p className="text-right text-xs text-[#9DA0A6]">{textContent.length}/500</p>
           </div>
         )}
 
         {intention.type === 'photo' && (
           <div className="space-y-4">
             {photoPreview ? (
-              <div className="relative rounded-none overflow-hidden aspect-video bg-[#F0EDE9]">
+              <div className="relative rounded-none overflow-hidden aspect-video bg-[#1C1C1E]">
                 <img src={photoPreview} alt="" className="w-full h-full object-cover" />
                 <button
                   onClick={() => { setPhotoFile(null); setPhotoPreview(null); }}
@@ -378,10 +378,10 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
             ) : (
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full aspect-video flex flex-col items-center justify-center gap-3 border border-dashed border-[#E8E6E1] hover:border-gold/50 transition-colors bg-[#F0EDE9]"
+                className="w-full aspect-video flex flex-col items-center justify-center gap-3 border border-dashed border-[#2A2A2A] hover:border-gold/50 transition-colors bg-[#1C1C1E]"
               >
-                <Camera className="w-10 h-10 text-[#8E8E93]" />
-                <span className="text-sm text-[#8E8E93]">Tap to take a photo</span>
+                <Camera className="w-10 h-10 text-[#9DA0A6]" />
+                <span className="text-sm text-[#9DA0A6]">Tap to take a photo</span>
               </button>
             )}
             <input ref={fileInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handlePhotoSelect} />
@@ -413,7 +413,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
                 <button
                   onClick={() => { setError(null); togglePlay(); }}
                   className="w-14 h-14 rounded-full flex items-center justify-center text-black active:scale-95 transition-all mx-auto"
-                  style={{ background: '#C9A961' }}
+                  style={{ background: '#D4AF37' }}
                 >
                   {isPlaying ? (
                     <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
@@ -426,7 +426,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
                     </svg>
                   )}
                 </button>
-                <p className="text-xs text-[#8E8E93] font-thin">
+                <p className="text-xs text-[#9DA0A6] font-thin">
                   {isPlaying ? 'Playing recording...' : 'Tap to listen'}
                 </p>
 
@@ -441,7 +441,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
                     setDebugInfo('');
                     setError(null);
                   }}
-                  className="text-xs text-[#8E8E93] underline hover:text-ink mt-1"
+                  className="text-xs text-[#9DA0A6] underline hover:text-ink mt-1"
                 >
                   Re-record
                 </button>
@@ -465,8 +465,8 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
                   onClick={isRecording ? stopRecording : startRecording}
                   className="w-20 h-20 rounded-full flex items-center justify-center transition-all"
                   style={{
-                    background: isRecording ? 'rgba(239,68,68,0.1)' : '#F0EDE9',
-                    border: isRecording ? '2px solid rgba(239,68,68,0.4)' : '1px solid #E8E6E1',
+                    background: isRecording ? 'rgba(239,68,68,0.1)' : '#1C1C1E',
+                    border: isRecording ? '2px solid rgba(239,68,68,0.4)' : '1px solid #2A2A2A',
                   }}
                 >
                   <Mic className={`w-8 h-8 ${isRecording ? 'text-red-500 animate-pulse' : 'text-gold'}`} />
@@ -474,7 +474,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
                 {isRecording && <p className="text-red-500 text-xs font-medium animate-pulse">{recordedDuration}s / 30s</p>}
               </div>
             )}
-            <p className="text-xs text-[#8E8E93] font-thin">
+            <p className="text-xs text-[#9DA0A6] font-thin">
               {isRecording ? 'Tap to stop' : recordedBlob ? 'Ready to submit' : 'Tap to start recording'}
             </p>
           </div>

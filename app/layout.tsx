@@ -38,8 +38,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`} style={{ colorScheme: 'light' }}>
-      <body className="min-h-screen bg-[#FAF9F7] text-[#1A1A1A] font-sans">
+    <html lang="en" className={`${inter.variable} ${playfair.variable}`} style={{ colorScheme: 'dark' }}>
+      <body className="min-h-screen bg-[#000000] text-[#FFFFFF] font-sans">
         <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
         <ErrorBoundary>
           <Providers>{children}</Providers>

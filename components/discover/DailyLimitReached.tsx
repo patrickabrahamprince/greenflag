@@ -38,12 +38,12 @@ export function DailyLimitReached() {
       <h2 className="text-xl font-bold text-[#EDEADE] mb-2">
         Come back tomorrow
       </h2>
-      <p className="text-sm text-[#8E8E93] mb-6 max-w-xs">
+      <p className="text-sm text-[#9DA0A6] mb-6 max-w-xs">
         New women daily. You&apos;ve seen them all for today.
       </p>
       <div className="bg-[#1C1C1E] rounded-xl px-6 py-3">
-        <p className="text-xs text-[#8E8E93] mb-1">Resets in</p>
-        <p className="text-lg font-mono font-bold text-[#C9A961]">{countdown}</p>
+        <p className="text-xs text-[#9DA0A6] mb-1">Resets in</p>
+        <p className="text-lg font-mono font-bold text-[#D4AF37]">{countdown}</p>
       </div>
     </div>
   );

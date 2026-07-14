@@ -57,9 +57,9 @@ function MatchRow({ match, onClick }: { match: MatchListItem; onClick: () => voi
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center gap-3 p-4 bg-white rounded-2xl shadow-sm"
+      className="w-full flex items-center gap-3 p-4 bg-[#111111] rounded-2xl shadow-sm"
     >
-      <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-[#F0EDE9]">
+      <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-[#1C1C1E]">
         {match.otherPhoto ? (
           <img src={match.otherPhoto} alt="" className="w-full h-full object-cover" />
         ) : (
@@ -71,7 +71,7 @@ function MatchRow({ match, onClick }: { match: MatchListItem; onClick: () => voi
         <p className="text-xs text-ink/50">{statusLabel(match)}</p>
       </div>
       {isLocked && (
-        <span className="text-xs font-medium text-[#C9A961] tabular-nums flex-shrink-0">
+        <span className="text-xs font-medium text-[#D4AF37] tabular-nums flex-shrink-0">
           {formatCountdown(remainingMs!)}
         </span>
       )}
@@ -104,20 +104,20 @@ export default function MyConnectionsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAF9F7]">
-        <Loader2 className="w-8 h-8 animate-spin text-[#C9A961]" />
+      <div className="min-h-screen flex items-center justify-center bg-[#000000]">
+        <Loader2 className="w-8 h-8 animate-spin text-[#D4AF37]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF9F7] px-6 pt-8 pb-24 max-w-app mx-auto">
+    <div className="min-h-screen bg-[#000000] px-6 pt-8 pb-24 max-w-app mx-auto">
       <h1 className="font-['Playfair_Display'] text-3xl text-ink mb-6">My Connections</h1>
 
       {matches.length === 0 ? (
         <div className="flex flex-col items-center justify-center text-center px-6 mt-20">
-          <div className="w-14 h-14 rounded-full bg-[#C9A961]/10 flex items-center justify-center mb-5">
-            <Heart className="w-6 h-6 text-[#C9A961]" />
+          <div className="w-14 h-14 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mb-5">
+            <Heart className="w-6 h-6 text-[#D4AF37]" />
           </div>
           <h2 className="font-['Playfair_Display'] text-xl text-ink mb-2">No connections yet</h2>
           <p className="text-ink/50 text-sm">Unlock a profile in Discover to start a connection.</p>

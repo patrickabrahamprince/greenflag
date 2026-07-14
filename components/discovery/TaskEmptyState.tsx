@@ -16,7 +16,7 @@ const configs: Record<EmptyStateType, {
   showRefund?: boolean;
 }> = {
   'no-connection': {
-    icon: <AlertCircle className="w-12 h-12 text-[#8E8E93]" />,
+    icon: <AlertCircle className="w-12 h-12 text-[#9DA0A6]" />,
     title: 'No active connection',
     description: '',
   },
@@ -41,8 +41,8 @@ const configs: Record<EmptyStateType, {
   },
   submitted: {
     icon: (
-      <div className="w-14 h-14 rounded-full bg-[#C9A961]/10 flex items-center justify-center mx-auto mb-3">
-        <Send className="w-6 h-6 text-[#C9A961]" />
+      <div className="w-14 h-14 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mx-auto mb-3">
+        <Send className="w-6 h-6 text-[#D4AF37]" />
       </div>
     ),
     title: 'Submitted!',
@@ -58,19 +58,19 @@ export function TaskEmptyState({ type, hostName, onNavigate }: TaskEmptyStatePro
       className={cn(
         type === 'submitted'
           ? 'card text-center py-8'
-          : 'min-h-screen bg-[#FAF9F7] flex items-center justify-center px-6'
+          : 'min-h-screen bg-[#000000] flex items-center justify-center px-6'
       )}
     >
       <div className="text-center">
         {config.icon}
         <h2 className="font-['Playfair_Display'] text-lg text-ink mb-2">{config.title}</h2>
-        <p className="text-sm text-[#8E8E93] mb-2">
+        <p className="text-sm text-[#9DA0A6] mb-2">
           {type === 'no-connection'
             ? `You haven\u2019t applied to meet ${hostName} yet.`
             : config.description}
         </p>
         {config.showRefund && (
-          <div className="flex items-center justify-center gap-1 text-[#C9A961] text-sm mb-6">
+          <div className="flex items-center justify-center gap-1 text-[#D4AF37] text-sm mb-6">
             <Coins className="w-4 h-4" />+5 coins refunded
           </div>
         )}

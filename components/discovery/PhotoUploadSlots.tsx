@@ -29,7 +29,7 @@ export function PhotoUploadSlots({
   return (
     <div>
       <label className="block text-sm font-medium text-ink mb-1.5">
-        Photos <span className="text-[#8E8E93] font-normal">({maxPhotos} required)</span>
+        Photos <span className="text-[#9DA0A6] font-normal">({maxPhotos} required)</span>
       </label>
       <div className="grid grid-cols-3 gap-3">
         {Array.from({ length: maxPhotos }).map((_, i) => {
@@ -43,7 +43,7 @@ export function PhotoUploadSlots({
               className={`aspect-square rounded-xl border-2 border-dashed flex items-center justify-center relative overflow-hidden transition-all duration-300 ${
                 photo
                   ? 'border-transparent'
-                  : 'border-[#E8E6E1] hover:border-[#C9A961] cursor-pointer'
+                  : 'border-[#2A2A2A] hover:border-[#D4AF37] cursor-pointer'
               }`}
             >
               {photo ? (
@@ -61,7 +61,7 @@ export function PhotoUploadSlots({
                   </button>
                 </>
               ) : (
-                <Upload size={20} className="text-[#8E8E93]" />
+                <Upload size={20} className="text-[#9DA0A6]" />
               )}
             </div>
           );
@@ -76,7 +76,7 @@ export function PhotoUploadSlots({
         data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'photo-upload' : undefined}
         onChange={handleChange}
       />
-      <p className="text-xs text-[#8E8E93] mt-1.5">{photos.length}/{maxPhotos} uploaded</p>
+      <p className="text-xs text-[#9DA0A6] mt-1.5">{photos.length}/{maxPhotos} uploaded</p>
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
   );

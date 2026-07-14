@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#000000] flex items-center justify-center p-4">
       <div className="text-center max-w-md">
         <h1 className="font-['Playfair_Display'] text-6xl text-ink mb-4">GreenFlag</h1>
         <p className="text-ink/50 mb-8 text-lg">Set your standards. Meet your match.</p>

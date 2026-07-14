@@ -24,7 +24,7 @@ export function IntentionCard({ intention }: IntentionCardProps) {
         >
           <Icon className="w-4 h-4 text-gold" />
         </div>
-        <span className="text-xs text-[#8E8E93] uppercase tracking-widest-xl font-thin">
+        <span className="text-xs text-[#9DA0A6] uppercase tracking-widest-xl font-thin">
           {config.label} Intention
         </span>
       </div>

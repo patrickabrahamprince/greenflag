@@ -119,14 +119,14 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAF9F7]">
-        <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
+      <div className="min-h-screen flex items-center justify-center bg-[#000000]">
+        <Loader2 className="w-6 h-6 animate-spin text-[#D4AF37]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF9F7]">
+    <div className="min-h-screen flex flex-col bg-[#000000]">
       <div className="max-w-app mx-auto w-full flex-1 flex flex-col">
         <ChatHeader
           partnerName={partnerName}

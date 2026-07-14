@@ -14,7 +14,7 @@ export default function PendingApprovalPage() {
   };
 
   return (
-    <div className="w-full animate-fade-in min-h-screen flex flex-col justify-center items-center px-8 bg-[#FAF9F7] text-center">
+    <div className="w-full animate-fade-in min-h-screen flex flex-col justify-center items-center px-8 bg-[#000000] text-center">
       <div className="absolute top-4 right-4">
         <button
           onClick={handleSignOut}
@@ -25,8 +25,8 @@ export default function PendingApprovalPage() {
         </button>
       </div>
 
-      <div className="w-16 h-16 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/30 flex items-center justify-center mb-6">
-        <Hourglass className="w-8 h-8 text-[#C9A961]" />
+      <div className="w-16 h-16 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center mb-6">
+        <Hourglass className="w-8 h-8 text-[#D4AF37]" />
       </div>
 
       <h1 className="font-['Playfair_Display'] text-3xl text-ink mb-3">

@@ -38,7 +38,7 @@ export function CountdownTimer({ deadline, label = 'Submit in', onComplete }: Co
 
   return (
     <div data-testid="countdown-timer" className="text-center py-3">
-      <p className="text-[#8E8E93] text-xs font-thin mb-1">{label}</p>
+      <p className="text-[#9DA0A6] text-xs font-thin mb-1">{label}</p>
       <p className="text-gold font-display text-2xl tracking-wide">{formatTime(remaining)}</p>
     </div>
   );

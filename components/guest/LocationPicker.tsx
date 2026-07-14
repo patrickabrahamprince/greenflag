@@ -28,7 +28,7 @@ export function LocationPicker({ onLocation }: LocationPickerProps) {
 
   return (
     <div className="space-y-3">
-      <div className="card p-0 overflow-hidden h-48 flex items-center justify-center" style={{ background: '#F0EDE9' }}>
+      <div className="card p-0 overflow-hidden h-48 flex items-center justify-center" style={{ background: '#1C1C1E' }}>
         <div className="text-center">
           <MapPin className="w-8 h-8 text-muted/30 mx-auto mb-2" />
           <p className="text-xs text-muted font-thin">Map preview placeholder</p>
