@@ -1,5 +1,5 @@
 import './globals.css'
-import { Inter, Playfair_Display } from 'next/font/google'
+import { Inter, Sora } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import Script from 'next/script'
@@ -12,11 +12,11 @@ const inter = Inter({
   variable: '--font-inter',
 })
 
-const playfair = Playfair_Display({
+const sora = Sora({
   subsets: ['latin'],
-  weight: ['600', '700'],
+  weight: ['600', '700', '800'],
   display: 'swap',
-  variable: '--font-playfair',
+  variable: '--font-sora',
 })
 
 export const metadata: Metadata = {
@@ -38,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`} style={{ colorScheme: 'dark' }}>
+    <html lang="en" className={`${inter.variable} ${sora.variable}`} style={{ colorScheme: 'dark' }}>
       <body className="min-h-screen bg-[#000000] text-[#FFFFFF] font-sans">
         <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
         <ErrorBoundary>

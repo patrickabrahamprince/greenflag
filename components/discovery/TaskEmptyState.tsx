@@ -63,7 +63,7 @@ export function TaskEmptyState({ type, hostName, onNavigate }: TaskEmptyStatePro
     >
       <div className="text-center">
         {config.icon}
-        <h2 className="font-['Playfair_Display'] text-lg text-ink mb-2">{config.title}</h2>
+        <h2 className="font-['Sora'] text-lg text-ink mb-2">{config.title}</h2>
         <p className="text-sm text-[#9DA0A6] mb-2">
           {type === 'no-connection'
             ? `You haven\u2019t applied to meet ${hostName} yet.`

@@ -21,7 +21,7 @@ export function InterestTagGrid({
 }: InterestTagGridProps) {
   return (
     <div>
-      <h2 className="font-['Playfair_Display'] text-xl text-ink mb-1">{title}</h2>
+      <h2 className="font-['Sora'] text-xl text-ink mb-1">{title}</h2>
       <p className="text-sm text-muted mb-4">{description}</p>
       <div className="flex flex-wrap gap-2">
         {options.map((item) => {

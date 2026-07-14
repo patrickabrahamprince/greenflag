@@ -203,7 +203,7 @@ export default function DiscoverPage() {
                   {typeof p.match_percentage === 'number' && (
                     <div className="absolute top-12 left-3 z-10 flex items-center gap-1.5 bg-black/35 backdrop-blur-md rounded-full px-3 py-1.5">
                       <span className="text-[#D4AF37] text-xs">◆</span>
-                      <span className="font-['Playfair_Display'] italic text-white text-sm whitespace-nowrap">
+                      <span className="font-['Sora'] italic text-white text-sm whitespace-nowrap">
                         {p.match_percentage}% GreenFlag Match
                       </span>
                     </div>
@@ -256,7 +256,7 @@ export default function DiscoverPage() {
 
             <div className="flex-1 min-h-0 flex flex-col px-6 pt-6 pb-6">
               <div className="flex-1 min-h-0 overflow-y-auto">
-                <h1 className="font-['Playfair_Display'] text-4xl text-ink font-semibold tracking-tight">
+                <h1 className="font-['Sora'] text-4xl text-ink font-semibold tracking-tight">
                   {p.name}
                 </h1>
                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
@@ -343,7 +343,7 @@ export default function DiscoverPage() {
             <div className="w-14 h-14 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mb-5">
               <Heart className="w-6 h-6 text-[#D4AF37]" />
             </div>
-            <h2 className="font-['Playfair_Display'] text-2xl text-ink mb-2">You&apos;ve seen everyone</h2>
+            <h2 className="font-['Sora'] text-2xl text-ink mb-2">You&apos;ve seen everyone</h2>
             <p className="text-ink/50 text-sm max-w-xs">
               No new profiles match your standard right now. Check back soon, or revisit your existing connections.
             </p>
@@ -357,7 +357,7 @@ export default function DiscoverPage() {
             <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <Coins className="w-6 h-6 text-[#D4AF37]" />
             </div>
-            <h4 className="font-['Playfair_Display'] text-2xl text-ink mb-2">Unlock Standard?</h4>
+            <h4 className="font-['Sora'] text-2xl text-ink mb-2">Unlock Standard?</h4>
             <p className="text-ink/60 text-sm leading-relaxed mb-6">
               This action will deduct 100 coins from your wallet to begin a 3-day connection request.
             </p>

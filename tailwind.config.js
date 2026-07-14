@@ -22,7 +22,7 @@ module.exports = {
         muted: '#FFFFFF99',
       },
       fontFamily: {
-        display: ['Playfair Display', 'serif'],
+        display: ['Sora', 'system-ui', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       letterSpacing: {

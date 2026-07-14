@@ -14,7 +14,7 @@ interface TransactionHistoryProps {
 export function TransactionHistory({ transactions }: TransactionHistoryProps) {
   return (
     <div className="px-4 mt-8">
-      <h2 className="font-['Playfair_Display'] text-lg text-ink mb-3">Transaction History</h2>
+      <h2 className="font-['Sora'] text-lg text-ink mb-3">Transaction History</h2>
       {transactions.length === 0 ? (
         <p className="text-muted text-sm text-center py-8">No transactions yet</p>
       ) : (

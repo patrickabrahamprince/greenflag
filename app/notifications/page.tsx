@@ -93,7 +93,7 @@ export default function NotificationsPage() {
             <button onClick={() => router.back()} className="btn-ghost p-2">
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <h1 className="font-['Playfair_Display'] text-xl text-ink">Notifications</h1>
+            <h1 className="font-['Sora'] text-xl text-ink">Notifications</h1>
             {unreadCount > 0 && (
               <span className="text-xs bg-gold/20 text-gold px-2 py-0.5 rounded-full">
                 {unreadCount} new

@@ -20,7 +20,7 @@ export function ProfileHeader({ isHost, onBack }: ProfileHeaderProps) {
         <div className="w-6" />
       </div>
 
-      <h1 className="font-['Playfair_Display'] text-xl text-ink text-center mb-6">
+      <h1 className="font-['Sora'] text-xl text-ink text-center mb-6">
         {isHost ? 'Create Your Profile' : 'Tell Us About Yourself'}
       </h1>
     </>

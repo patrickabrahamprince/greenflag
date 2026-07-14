@@ -29,7 +29,7 @@ export default function PendingApprovalPage() {
         <Hourglass className="w-8 h-8 text-[#D4AF37]" />
       </div>
 
-      <h1 className="font-['Playfair_Display'] text-3xl text-ink mb-3">
+      <h1 className="font-['Sora'] text-3xl text-ink mb-3">
         Your application is under review
       </h1>
       <p className="text-ink/60 text-sm leading-relaxed max-w-sm mb-8">

@@ -125,7 +125,7 @@ export default function StandardBuilderPage() {
 
   return (
     <div className="min-h-screen bg-[#000000] px-6 pt-6 pb-24 max-w-app mx-auto">
-      <h1 className="font-['Playfair_Display'] text-2xl text-ink mb-2">Set Your Standard</h1>
+      <h1 className="font-['Sora'] text-2xl text-ink mb-2">Set Your Standard</h1>
       <p className="text-sm text-ink/50 mb-6">
         Write one prompt for each of the first 3 days. Men will complete these, one day at a time, before you review and unlock chat.
       </p>

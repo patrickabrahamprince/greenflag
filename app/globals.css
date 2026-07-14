@@ -16,6 +16,22 @@ html, body { background: #000000 !important; }
   ::selection {
     @apply bg-gold/20 text-ink;
   }
+
+  /* Display type defaults (Sora): tight leading + small consistent tracking,
+     matching the structural principles Bumble applies to their headline
+     scale -- line-height closes in as size grows, letter-spacing stays a
+     small positive value rather than 0 or negative. Per-element overrides
+     (leading-*, tracking-*) still win since these are base-layer defaults. */
+  .font-display,
+  [class*="font-['Sora']"] {
+    letter-spacing: 0.01em;
+    font-weight: 700;
+  }
+
+  h1.font-display, h1[class*="font-['Sora']"],
+  h2.font-display, h2[class*="font-['Sora']"] {
+    line-height: 1.05;
+  }
 }
 
 @layer components {

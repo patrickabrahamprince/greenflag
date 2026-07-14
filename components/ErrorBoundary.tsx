@@ -37,7 +37,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
               <AlertTriangle className="w-8 h-8 text-red-500" />
             </div>
-            <h2 className="font-['Playfair_Display'] text-lg text-ink mb-2">Something went wrong</h2>
+            <h2 className="font-['Sora'] text-lg text-ink mb-2">Something went wrong</h2>
             <p className="text-sm text-[#9DA0A6] mb-6">
               An unexpected error occurred. Please try again.
             </p>

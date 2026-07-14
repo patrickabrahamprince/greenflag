@@ -43,7 +43,7 @@ export const InterestGrid: React.FC<InterestGridProps> = ({
 
   return (
     <div className="interest-grid my-6">
-      {title && <h2 className="font-['Playfair_Display'] text-xl text-ink mb-2">{title}</h2>}
+      {title && <h2 className="font-['Sora'] text-xl text-ink mb-2">{title}</h2>}
       {description && <p className="text-sm text-[#9DA0A6] mb-4">{description}</p>}
       <div className="flex flex-wrap gap-2">
         {options.map((opt) => {

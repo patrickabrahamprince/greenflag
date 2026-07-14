@@ -21,11 +21,11 @@ export function ChatHeader({ partnerName, partnerPhoto, backRoute, isChatUnlocke
             {partnerPhoto ? (
               <img src={partnerPhoto} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
             ) : (
-              <span className="text-sm font-['Playfair_Display'] italic text-ink/40">{partnerName?.[0]}</span>
+              <span className="text-sm font-['Sora'] italic text-ink/40">{partnerName?.[0]}</span>
             )}
           </div>
           <div>
-            <h1 className="font-['Playfair_Display'] text-2xl text-ink">{partnerName}</h1>
+            <h1 className="font-['Sora'] text-2xl text-ink">{partnerName}</h1>
             {isChatUnlocked && (
               <span className="text-xs uppercase tracking-widest text-ink/40">Connected</span>
             )}

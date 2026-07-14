@@ -55,7 +55,7 @@ export function ProfileHeroSection({
       )}
 
       <div className="absolute bottom-8 left-8 z-10 pointer-events-none">
-        <h1 className="font-['Playfair_Display'] text-5xl text-white">{name}</h1>
+        <h1 className="font-['Sora'] text-5xl text-white">{name}</h1>
       </div>
     </div>
   );

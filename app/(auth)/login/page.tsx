@@ -56,13 +56,13 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-12">
           <img src="/logo.png" alt="GreenFlag" className="w-24 h-24 mx-auto mb-6 rounded-2xl" />
-          <h1 className="font-['Playfair_Display'] text-5xl text-ink mb-3" style={{ fontWeight: 600 }}>
+          <h1 className="font-['Sora'] text-5xl text-ink mb-3" style={{ fontWeight: 600 }}>
             GreenFlag
           </h1>
           <div className="hairline mx-auto mt-6 mb-2 w-16" />
           <p className="text-ink/50 text-sm tracking-wide mt-4">Set your standards. Meet your match.</p>
         </div>
-        <h2 className="font-['Playfair_Display'] text-ink text-center text-2xl mb-4">Welcome to GreenFlag</h2>
+        <h2 className="font-['Sora'] text-ink text-center text-2xl mb-4">Welcome to GreenFlag</h2>
         <form onSubmit={handleLogin} className="space-y-4">
           <input data-testid="email" type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required className="input w-full" />
           <input data-testid="password" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required className="input w-full" />

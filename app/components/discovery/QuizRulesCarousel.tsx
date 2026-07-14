@@ -17,7 +17,7 @@ export const QuizRulesCarousel: React.FC<QuizRulesCarouselProps> = ({ onClose })
   const { title, description } = RULE_SLIDES[idx];
   return (
     <div className="w-full max-w-md mx-auto bg-[#1C1C1E] rounded-xl p-6 text-center mb-6">
-      <h2 className="font-['Playfair_Display'] text-xl text-ink mb-3">{title}</h2>
+      <h2 className="font-['Sora'] text-xl text-ink mb-3">{title}</h2>
       <p className="text-ink/80 mb-4">{description}</p>
       <button onClick={next} className="btn-primary flex items-center justify-center gap-2 mx-auto">
         {isLast ? <><span>Got it</span> <CheckCircle2 size={16} /></> : <><span>Next</span> <ArrowRight size={16} /></>}

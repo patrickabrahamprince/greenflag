@@ -32,7 +32,7 @@ export default function OnboardPage() {
         </button>
       </div>
       <div className="text-center mb-10">
-        <h1 className="font-['Playfair_Display'] text-3xl text-ink mb-3">
+        <h1 className="font-['Sora'] text-3xl text-ink mb-3">
           Welcome to GreenFlag
         </h1>
         <p className="text-ink/50 text-sm">Choose your path</p>
@@ -48,7 +48,7 @@ export default function OnboardPage() {
             <div className="w-16 h-16 rounded-full bg-[#D4AF37]/15 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Crown className="w-8 h-8 text-[#D4AF37]" />
             </div>
-            <span className="font-['Playfair_Display'] text-2xl text-ink">
+            <span className="font-['Sora'] text-2xl text-ink">
               I set the Standard
             </span>
             <span className="text-sm text-ink/60 max-w-[260px] leading-relaxed">
@@ -66,7 +66,7 @@ export default function OnboardPage() {
             <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center group-hover:scale-110 transition-transform">
               <Compass className="w-8 h-8 text-black/70" />
             </div>
-            <span className="font-['Playfair_Display'] text-2xl text-ink">
+            <span className="font-['Sora'] text-2xl text-ink">
               I rise to it
             </span>
             <span className="text-sm text-ink/60 max-w-[260px] leading-relaxed">
