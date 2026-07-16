@@ -55,12 +55,12 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-6" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(212,175,55,0.08), transparent), #000000' }}>
       <div className="w-full max-w-sm">
         <div className="text-center mb-12">
-          <img src="/logo.png" alt="GreenFlag" className="w-24 h-24 mx-auto mb-6 rounded-2xl" />
-          <h1 className="font-display text-gradient text-5xl mb-3" style={{ fontWeight: 700 }}>
-            GreenFlag
-          </h1>
+          <img src="/logo.png" alt="GreenFlag" className="w-36 h-36 mx-auto mb-6 rounded-2xl shadow-2xl shadow-gold/10" />
+          <p className="font-display italic text-gradient text-3xl leading-tight" style={{ fontWeight: 600 }}>
+            Set your standards.
+          </p>
+          <p className="text-ink/40 text-xs uppercase tracking-widest-xl mt-3">Meet your match</p>
           <div className="hairline mx-auto mt-6 mb-2 w-16" />
-          <p className="text-ink/50 text-sm tracking-wide mt-4">Set your standards. Meet your match.</p>
         </div>
         <h2 className="font-display text-ink text-center text-2xl mb-4">Welcome to GreenFlag</h2>
         <form onSubmit={handleLogin} className="space-y-4">

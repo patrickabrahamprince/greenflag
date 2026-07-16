@@ -26,16 +26,15 @@ export async function GET(req: Request) {
   // Vercel Hobby plan only allows one cron per day, so all daily jobs run
   // from this single consolidated endpoint instead of separate crons.
   //
-  // NOTE: this used to also call an `expire-connections` edge function, a
-  // leftover from the pre-pivot host/builder/connections model. That
-  // function doesn't exist on disk anymore (connections was dropped in
-  // 20261206000012_drop_connections.sql) so the call silently 502'd every
-  // run. There is currently no equivalent expiry concept for the
-  // matches/task-flow model (see 20261211000000_match_next_day_timer.sql) —
-  // stale matches with no submissions just sit at their current day
-  // indefinitely. If match/task expiry is wanted, it needs to be designed
-  // and built fresh rather than resurrecting the old function name.
-  const autoApprove = await callEdgeFunction('auto-approve');
+  // This used to also call an `auto-approve` edge function, a leftover from
+  // the pre-pivot host/builder/connections model — it queried `connections`
+  // (guest_id/host_id), which was dropped in 20261206000012_drop_connections.sql,
+  // so it 502'd every run. Expiry/refund/reminders for the matches/task-flow
+  // model are handled independently by pg_cron directly in Postgres
+  // (sweep_expired_matches, send_review_reminders — see
+  // 20261213000003_review_deadline_sweep_cron.sql and
+  // 20261213000004_review_reminder_cron.sql), so no equivalent call belongs
+  // here.
 
   // monthly-bonus self-gates to only run on the 1st of the month in IST,
   // since this cron fires daily at 03:00 UTC (08:30 IST).
@@ -44,10 +43,8 @@ export async function GET(req: Request) {
     ? await callEdgeFunction('monthly-bonus')
     : { ok: true, skipped: true, reason: 'not_first_of_month_ist' };
 
-  const allOk = autoApprove.ok && monthlyBonus.ok;
-
   return NextResponse.json(
-    { ok: allOk, autoApprove, monthlyBonus },
-    { status: allOk ? 200 : 502 }
+    { ok: monthlyBonus.ok, monthlyBonus },
+    { status: monthlyBonus.ok ? 200 : 502 }
   );
 }
