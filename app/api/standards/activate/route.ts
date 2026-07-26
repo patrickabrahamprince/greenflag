@@ -3,9 +3,14 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 interface IntentionPayload {
   dayNumber: number;
-  type: string;
+  taskNumber: number;
   prompt: string;
 }
+
+// Fixed per-day composition: task 1 is always text, 2 always photo, 3
+// always voice. Type is derived from taskNumber server-side rather than
+// trusted from the client, so the composition can't drift.
+const TASK_TYPE: Record<number, string> = { 1: 'text', 2: 'photo', 3: 'voice' };
 
 export async function POST(req: Request) {
   try {
@@ -25,16 +30,19 @@ export async function POST(req: Request) {
 
     const { intentions } = (await req.json()) as { intentions: IntentionPayload[] };
 
-    if (!Array.isArray(intentions) || intentions.length !== 3) {
-      return NextResponse.json({ error: 'Exactly 3 intentions required' }, { status: 400 });
+    if (!Array.isArray(intentions) || intentions.length !== 9) {
+      return NextResponse.json({ error: 'Exactly 9 intentions required (3 days x text/photo/voice)' }, { status: 400 });
     }
 
     const validDays = [1, 2, 3];
-    const hasAllDays = validDays.every((day) =>
-      intentions.some((i) => i.dayNumber === day && i.prompt.trim().length >= 10)
+    const validTasks = [1, 2, 3];
+    const hasAllSlots = validDays.every((day) =>
+      validTasks.every((task) =>
+        intentions.some((i) => i.dayNumber === day && i.taskNumber === task && i.prompt.trim().length >= 10)
+      )
     );
-    if (!hasAllDays) {
-      return NextResponse.json({ error: 'Each day 1-3 must have a prompt of at least 10 characters' }, { status: 400 });
+    if (!hasAllSlots) {
+      return NextResponse.json({ error: 'Each day needs a text, photo, and voice prompt of at least 10 characters' }, { status: 400 });
     }
 
     const { data: existing } = await supabase
@@ -64,7 +72,8 @@ export async function POST(req: Request) {
     const intentionRows = intentions.map((i) => ({
       standard_id: standardId,
       day_number: i.dayNumber,
-      type: i.type,
+      task_number: i.taskNumber,
+      type: TASK_TYPE[i.taskNumber],
       prompt: i.prompt.trim(),
     }));
 

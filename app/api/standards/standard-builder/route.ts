@@ -32,7 +32,7 @@ export async function GET() {
 
     const { data: intentions } = await supabase
       .from('intentions')
-      .select('day_number, type, prompt')
+      .select('day_number, task_number, type, prompt')
       .eq('standard_id', standard.id)
       .order('day_number');
 

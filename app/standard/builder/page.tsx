@@ -6,22 +6,31 @@ import { Loader2, Mic, Camera, Type as TypeIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 
-type IntentionType = 'voice' | 'photo' | 'text';
+type IntentionType = 'text' | 'photo' | 'voice';
 
-interface DaySlot {
-  dayNumber: number;
+interface DayTask {
+  taskNumber: number;
   type: IntentionType;
   prompt: string;
 }
 
-const TYPE_OPTIONS: { value: IntentionType; label: string; icon: typeof Mic }[] = [
-  { value: 'voice', label: 'Voice', icon: Mic },
-  { value: 'photo', label: 'Photo', icon: Camera },
-  { value: 'text', label: 'Text', icon: TypeIcon },
+interface DaySlot {
+  dayNumber: number;
+  tasks: DayTask[];
+}
+
+// Fixed composition every day: one text, one photo, one voice task.
+const TASK_META: { taskNumber: number; type: IntentionType; label: string; icon: typeof Mic; placeholder: string }[] = [
+  { taskNumber: 1, type: 'text', label: 'Text', icon: TypeIcon, placeholder: 'What do you want him to write about?' },
+  { taskNumber: 2, type: 'photo', label: 'Photo', icon: Camera, placeholder: 'What photo should he share?' },
+  { taskNumber: 3, type: 'voice', label: 'Voice', icon: Mic, placeholder: 'What should he tell you in a voice note?' },
 ];
 
 function defaultSlots(): DaySlot[] {
-  return [1, 2, 3].map((dayNumber) => ({ dayNumber, type: 'text', prompt: '' }));
+  return [1, 2, 3].map((dayNumber) => ({
+    dayNumber,
+    tasks: TASK_META.map((m) => ({ taskNumber: m.taskNumber, type: m.type, prompt: '' })),
+  }));
 }
 
 export default function StandardBuilderPage() {
@@ -54,16 +63,18 @@ export default function StandardBuilderPage() {
         }
 
         if (Array.isArray(data.intentions) && data.intentions.length > 0) {
-          const byDay = new Map(data.intentions.map((i: { day_number: number; type: IntentionType; prompt: string }) => [i.day_number, i]));
+          type SavedIntention = { day_number: number; task_number: number; type: IntentionType; prompt: string };
+          const byDayTask = new Map(
+            (data.intentions as SavedIntention[]).map((i) => [`${i.day_number}-${i.task_number}`, i])
+          );
           setSlots(
-            [1, 2, 3].map((dayNumber) => {
-              const existing = byDay.get(dayNumber) as { type: IntentionType; prompt: string } | undefined;
-              return {
-                dayNumber,
-                type: existing?.type ?? 'text',
-                prompt: existing?.prompt ?? '',
-              };
-            })
+            [1, 2, 3].map((dayNumber) => ({
+              dayNumber,
+              tasks: TASK_META.map((m) => {
+                const existing = byDayTask.get(`${dayNumber}-${m.taskNumber}`);
+                return { taskNumber: m.taskNumber, type: m.type, prompt: existing?.prompt ?? '' };
+              }),
+            }))
           );
         }
       } catch {
@@ -76,17 +87,21 @@ export default function StandardBuilderPage() {
     load();
   }, [currentUser, router]);
 
-  const updateSlot = (dayNumber: number, field: 'type' | 'prompt', value: string) => {
+  const updateTaskPrompt = (dayNumber: number, taskNumber: number, value: string) => {
     setSlots((prev) =>
-      prev.map((s) => (s.dayNumber === dayNumber ? { ...s, [field]: value } : s))
+      prev.map((s) =>
+        s.dayNumber !== dayNumber
+          ? s
+          : { ...s, tasks: s.tasks.map((t) => (t.taskNumber === taskNumber ? { ...t, prompt: value } : t)) }
+      )
     );
   };
 
-  const allFilled = slots.every((s) => s.prompt.trim().length >= 10);
+  const allFilled = slots.every((s) => s.tasks.every((t) => t.prompt.trim().length >= 10));
 
   const handleSave = async () => {
     if (!allFilled) {
-      toast.error('Write at least 10 characters for each day before saving.');
+      toast.error('Write at least 10 characters for each task before saving.');
       return;
     }
 
@@ -96,7 +111,9 @@ export default function StandardBuilderPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          intentions: slots.map((s) => ({ dayNumber: s.dayNumber, type: s.type, prompt: s.prompt.trim() })),
+          intentions: slots.flatMap((s) =>
+            s.tasks.map((t) => ({ dayNumber: s.dayNumber, taskNumber: t.taskNumber, prompt: t.prompt.trim() }))
+          ),
         }),
       });
       const data = await res.json();
@@ -127,41 +144,36 @@ export default function StandardBuilderPage() {
     <div className="min-h-screen screen-gradient px-6 pt-8 pb-24 max-w-app mx-auto">
       <h1 className="font-display text-2xl text-ink mb-2">Set Your Standard</h1>
       <p className="text-sm text-ink/50 mb-6">
-        Write one prompt for each of the first 3 days. Men will complete these, one day at a time, before you review and unlock chat.
+        Each day has 3 tasks -- a text, a photo, and a voice note. Men complete all 3 for the day before you review and the next day unlocks.
       </p>
 
-      <div className="space-y-4 mb-8">
+      <div className="space-y-6 mb-8">
         {slots.map((slot) => (
           <div key={slot.dayNumber} className="bg-[#111111] rounded-2xl border border-[#2A2A2A] p-5 shadow-sm">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs text-ink/40 uppercase tracking-wide">Day {slot.dayNumber}</span>
-              <span className="text-xs text-ink/40">{slot.prompt.length}/140</span>
-            </div>
+            <span className="text-xs text-ink/40 uppercase tracking-wide">Day {slot.dayNumber}</span>
 
-            <textarea
-              value={slot.prompt}
-              onChange={(e) => updateSlot(slot.dayNumber, 'prompt', e.target.value)}
-              placeholder="What do you want him to do or share today?"
-              maxLength={140}
-              rows={3}
-              className="input w-full resize-none mb-3"
-            />
-
-            <div className="flex gap-2">
-              {TYPE_OPTIONS.map((opt) => {
-                const Icon = opt.icon;
-                const active = slot.type === opt.value;
+            <div className="space-y-4 mt-3">
+              {slot.tasks.map((task) => {
+                const meta = TASK_META.find((m) => m.taskNumber === task.taskNumber)!;
+                const Icon = meta.icon;
                 return (
-                  <button
-                    key={opt.value}
-                    onClick={() => updateSlot(slot.dayNumber, 'type', opt.value)}
-                    className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-full text-xs font-medium transition-all ${
-                      active ? 'bg-[#C026D3] text-white' : 'bg-[#1C1C1E] text-ink/50'
-                    }`}
-                  >
-                    <Icon className="w-3.5 h-3.5" />
-                    {opt.label}
-                  </button>
+                  <div key={task.taskNumber}>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="flex items-center gap-1.5 text-xs font-medium text-ink/70">
+                        <Icon className="w-3.5 h-3.5 text-[#C026D3]" />
+                        {meta.label}
+                      </span>
+                      <span className="text-xs text-ink/40">{task.prompt.length}/140</span>
+                    </div>
+                    <textarea
+                      value={task.prompt}
+                      onChange={(e) => updateTaskPrompt(slot.dayNumber, task.taskNumber, e.target.value)}
+                      placeholder={meta.placeholder}
+                      maxLength={140}
+                      rows={2}
+                      className="input w-full resize-none"
+                    />
+                  </div>
                 );
               })}
             </div>

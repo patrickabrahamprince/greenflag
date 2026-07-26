@@ -10,11 +10,12 @@ interface SubmitSheetProps {
   matchId: string;
   dayNumber: number;
   intention: IntentionRecord;
+  isLastTaskToday: boolean;
   onClose: () => void;
   onSubmit: (result?: { status?: string }) => void;
 }
 
-export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }: SubmitSheetProps) {
+export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, onClose, onSubmit }: SubmitSheetProps) {
   const supabase = createClient();
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
@@ -316,12 +317,14 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
           </div>
           <h4 className="font-display text-ink text-lg mb-2">Response Submitted!</h4>
           <p className="text-[#9DA0A6] text-xs mb-6 leading-relaxed">
-            {dayNumber >= 3
-              ? "You've completed all 3 days! She now has a 24-hour window to review your responses and decide whether to continue."
-              : 'Awaiting her review. Move on to the next task for today, or explore other profiles in the meantime.'}
+            {!isLastTaskToday
+              ? 'Awaiting her review. Move on to the next task for today, or explore other profiles in the meantime.'
+              : dayNumber >= 3
+                ? "You've completed all 3 days! She now has a 24-hour window to review your responses and decide whether to continue."
+                : "That's all 3 tasks for today. She has a 24-hour window to review before tomorrow's tasks unlock."}
           </p>
           <div className="flex gap-3">
-            {dayNumber < 3 && (
+            {!isLastTaskToday && (
               <button
                 onClick={() => {
                   onSubmit(submitResult);
@@ -336,7 +339,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
                 onSubmit(submitResult);
                 router.push('/discover');
               }}
-              className={dayNumber >= 3 ? 'btn-primary flex-1 py-2.5 text-xs font-semibold' : 'btn-secondary flex-1 py-2.5 text-xs font-medium'}
+              className={isLastTaskToday ? 'btn-primary flex-1 py-2.5 text-xs font-semibold' : 'btn-secondary flex-1 py-2.5 text-xs font-medium'}
             >
               Explore New
             </button>

@@ -329,6 +329,11 @@ export default function TaskPage() {
           matchId={matchId}
           dayNumber={currentDay}
           intention={activeIntention}
+          isLastTaskToday={
+            intentions.filter(
+              (i) => i.id !== activeIntention.id && !submissions.some((s) => s.task_number === i.task_number)
+            ).length === 0
+          }
           onClose={() => {
             setShowSheet(false);
             setActiveIntention(null);
