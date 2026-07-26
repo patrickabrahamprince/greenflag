@@ -318,8 +318,8 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
 
   if (showSuccessPopup) {
     return (
-      <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
-        <div className="w-full max-w-sm rounded-none p-6 text-center animate-scale-in bg-[#000000]">
+      <div className="fixed inset-0 z-[60] flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.6)' }}>
+        <div className="w-full max-w-sm rounded-2xl p-6 text-center animate-scale-in bg-[#000000]">
           <div className="w-12 h-12 bg-green-50 border border-green-200 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-xl text-green-600 font-bold">✓</span>
           </div>
@@ -338,9 +338,9 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
                 onClick={() => {
                   onSubmit(submitResult);
                 }}
-                className="btn-primary flex-1 py-2.5 text-xs font-semibold"
+                className="btn-primary flex-1 py-2.5 text-xs font-semibold whitespace-nowrap"
               >
-                Continue Her Standard
+                Next Task
               </button>
             )}
             <button
@@ -348,9 +348,9 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
                 onSubmit(submitResult);
                 router.push('/discover');
               }}
-              className={isLastTaskToday ? 'btn-primary flex-1 py-2.5 text-xs font-semibold' : 'btn-secondary flex-1 py-2.5 text-xs font-medium'}
+              className={`whitespace-nowrap ${isLastTaskToday ? 'btn-primary flex-1 py-2.5 text-xs font-semibold' : 'btn-secondary flex-1 py-2.5 text-xs font-medium'}`}
             >
-              Discover New Profiles
+              Explore More
             </button>
           </div>
         </div>

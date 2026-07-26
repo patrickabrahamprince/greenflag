@@ -72,7 +72,7 @@ export function BottomNav() {
   return (
     <>
     <PendingReviewBanner />
-    <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-app">
+    <nav className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-app">
       <div className="nav-glass rounded-full flex justify-around items-center h-16 px-2 shadow-[0_8px_32px_-4px_rgba(0,0,0,0.5)]">
         {tabs.map((tab) => {
           const active = pathname === tab.href;

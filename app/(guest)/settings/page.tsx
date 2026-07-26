@@ -189,7 +189,7 @@ export default function SettingsPage() {
       </div>
 
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
           <div className="card max-w-sm w-full p-6 text-center">
             <Trash2 className="w-12 h-12 text-red-500 mx-auto mb-4" />
             <h3 className="font-display text-lg text-ink mb-2">Delete Account?</h3>

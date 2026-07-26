@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 html, body { background: #0B0614 !important; }
+/* Without this, iOS Safari's rubber-band bounce at the top/bottom of a
+   normal document-scroll page visually drags `position: fixed` elements
+   (the bottom nav) along with the bounce, making it look like the nav
+   "moves" instead of staying pinned -- the fixed viewport itself briefly
+   shifts during the bounce animation. Doesn't affect Discover's own
+   pull-to-refresh, which is JS-driven off touch deltas on its own inner
+   scroll container, not native overscroll. */
+html, body { overscroll-behavior-y: none; }
 * { -webkit-tap-highlight-color: transparent; }
 
 @property --border-angle {

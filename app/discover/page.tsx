@@ -592,14 +592,14 @@ export default function DiscoverPage() {
             <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <Coins className="w-6 h-6 text-gold" />
             </div>
-            <h4 className="font-display text-2xl text-ink mb-2">Begin Her Standard?</h4>
+            <h4 className="font-display text-2xl text-ink mb-2">Make Your Move?</h4>
             <p className="text-ink/60 text-sm leading-relaxed mb-6">
-              This will invest 500 coins to begin your 3-day introduction.
+              500 coins begins your 3-day pursuit — worth it if she&apos;s the one.
             </p>
             <div className="flex gap-4">
               <button
                 onClick={() => setConfirmProfileId(null)}
-                className="btn-secondary flex-1"
+                className="btn-secondary flex-1 whitespace-nowrap"
               >
                 Not Now
               </button>
@@ -609,9 +609,9 @@ export default function DiscoverPage() {
                   setConfirmProfileId(null);
                   handleBegin(targetId);
                 }}
-                className="btn-primary flex-1"
+                className="btn-primary flex-1 whitespace-nowrap"
               >
-                Begin
+                I&apos;m In
               </button>
             </div>
           </div>
@@ -647,11 +647,11 @@ export default function DiscoverPage() {
               You've already nudged this profile. Nudging again will cost {nudgeConfirm.cost} coins.
             </p>
             <div className="flex gap-4">
-              <button onClick={() => setNudgeConfirm(null)} className="btn-secondary flex-1">
+              <button onClick={() => setNudgeConfirm(null)} className="btn-secondary flex-1 whitespace-nowrap">
                 Cancel
               </button>
-              <button onClick={handleConfirmNudge} className="btn-primary flex-1">
-                Yes, Nudge Again
+              <button onClick={handleConfirmNudge} className="btn-primary flex-1 whitespace-nowrap">
+                Nudge Again
               </button>
             </div>
           </div>

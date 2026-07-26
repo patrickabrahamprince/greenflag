@@ -269,7 +269,7 @@ export default function StandardBuilderPage() {
       </button>
 
       {showDayDialog && DAY_LOCK_DIALOGS[step] && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
           <div className="bg-[#111111] border border-white/[0.06] rounded-2xl p-6 max-w-sm w-full text-center">
             <div className="w-14 h-14 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-4">
               <Lock className="w-6 h-6 text-gold" />
