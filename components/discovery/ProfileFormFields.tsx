@@ -71,7 +71,15 @@ export function ProfileFormFields({
           placeholder={gpsDetecting ? 'Detecting location...' : 'Your city'}
           className={`input ${errors.city ? 'border-red-500' : ''}`}
         />
-        {gpsDenied && <p className="text-amber-400 text-xs mt-1">Enable location access in your browser settings, or type your city above</p>}
+        {gpsDenied && (
+          <p className="text-amber-400 text-xs mt-1">
+            Couldn&apos;t detect your location automatically — type your city above, or{' '}
+            <button type="button" onClick={onDetectLocation} className="underline underline-offset-2 hover:text-amber-300">
+              try again
+            </button>
+            .
+          </p>
+        )}
         {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
       </div>
 

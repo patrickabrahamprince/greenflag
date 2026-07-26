@@ -60,7 +60,6 @@ export default function RulesPage() {
   const supabase = createClient();
   const [loading, setLoading] = useState(true);
   const [persona, setPersona] = useState<'man' | 'woman' | null>(null);
-  const [approvalStatus, setApprovalStatus] = useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Fetch persona on mount.
@@ -74,11 +73,10 @@ export default function RulesPage() {
       }
       const { data: profile } = await supabase
         .from('profiles')
-        .select('persona, approval_status')
+        .select('persona')
         .eq('id', user.id)
         .single();
       setPersona(profile?.persona as 'man' | 'woman' | null);
-      setApprovalStatus((profile as any)?.approval_status ?? null);
       setLoading(false);
     };
     fetchProfile();
@@ -96,19 +94,9 @@ export default function RulesPage() {
     if (currentSlide < slides.length - 1) {
       setCurrentSlide((prev) => prev + 1);
     } else {
-      // Finished all slides. Pending women wait for admin review on a
-      // dedicated screen; pending men go straight into Discover, where a
-      // banner (not a full-screen blocker) tells them review is in progress
-      // -- browsing while pending is allowed for men.
-      if (approvalStatus === 'pending' && persona !== 'man') {
-        router.push('/onboard/pending');
-        return;
-      }
-      if (persona === 'woman') {
-        router.push('/standard/builder');
-      } else {
-        router.push('/discover');
-      }
+      // Persona/approval routing now happens after the how-it-works screen
+      // -- see app/(auth)/onboard/how-it-works/page.tsx.
+      router.push('/onboard/how-it-works');
     }
   };
 
@@ -137,7 +125,9 @@ export default function RulesPage() {
           <span className="text-xs font-semibold text-[#9DA0A6]">
             Rule {currentSlide + 1} of {slides.length}
           </span>
-          <div className="w-6" /> {/* spacer */}
+          <div className="invisible p-1 -mr-1" aria-hidden="true">
+            <ArrowLeft size={24} />
+          </div>
         </div>
 
         {/* Progress bar */}

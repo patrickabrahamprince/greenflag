@@ -52,8 +52,12 @@ export function BottomNav() {
   // moved into onboarding) -- reuses the same endpoint the onboarding
   // step itself uses, no new backend needed. Mounted on every page that
   // shows this nav, so it catches her regardless of where she lands.
+  // Skips /onboard/pending -- that screen runs its own 90s review timer
+  // before routing her to /standard/builder itself; this effect firing
+  // immediately on mount would short-circuit the review screen.
   useEffect(() => {
     if (user?.persona !== 'woman') return;
+    if (pathname === '/onboard/pending') return;
     fetch('/api/standards/standard-builder')
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {

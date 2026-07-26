@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Save, Loader2, X, Camera } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, X, Camera, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
@@ -16,7 +16,6 @@ const CITIES = [
 export default function EditProfilePage() {
   const router = useRouter();
   const user = useUserStore((s) => s.user);
-  const setUser = useUserStore((s) => s.setUser);
   const supabase = createClient();
 
   const [name, setName] = useState(user?.name ?? '');
@@ -26,7 +25,16 @@ export default function EditProfilePage() {
   const [photos, setPhotos] = useState<string[]>(user?.photos ?? []);
   const [saving, setSaving] = useState(false);
   const [uploadingIdx, setUploadingIdx] = useState<number | null>(null);
+  const [pendingRequest, setPendingRequest] = useState<{ created_at: string } | null>(null);
+  const [checkingPending, setCheckingPending] = useState(true);
   const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  useEffect(() => {
+    fetch('/api/profile/edit-request')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setPendingRequest(data?.pendingRequest || null))
+      .finally(() => setCheckingPending(false));
+  }, []);
 
   const handlePhotoSelect = async (idx: number, file: File | null) => {
     if (!file) return;
@@ -77,34 +85,23 @@ export default function EditProfilePage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          name,
-          age,
-          city,
-          bio,
-          photos: photos.filter(Boolean),
-        })
-        .eq('id', user!.id);
+      const res = await fetch('/api/profile/edit-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, age, city, bio, photos: photos.filter(Boolean) }),
+      });
+      const data = await res.json();
 
-      if (error) {
-        toast.error('Failed to save: ' + error.message);
+      if (!res.ok) {
+        toast.error(data.error || 'Failed to submit changes');
+        if (res.status === 409) setPendingRequest({ created_at: new Date().toISOString() });
         return;
       }
 
-      setUser({
-        ...user!,
-        name,
-        age,
-        city,
-        bio,
-        photos: photos.filter(Boolean),
-      });
-      toast.success('Profile updated');
+      toast.success('Changes submitted for approval');
       router.push('/profile');
     } catch {
-      toast.error('Failed to save');
+      toast.error('Failed to submit changes');
     } finally {
       setSaving(false);
     }
@@ -119,7 +116,16 @@ export default function EditProfilePage() {
         <h1 className="text-xl font-display flex-1">Edit Profile</h1>
       </div>
 
-      <div className="space-y-5 px-4">
+      {pendingRequest && (
+        <div className="mx-4 mb-2 flex items-start gap-3 rounded-xl border border-gold/30 bg-gold/10 p-3">
+          <Clock className="w-4 h-4 text-gold shrink-0 mt-0.5" />
+          <p className="text-xs text-ink/80 leading-relaxed">
+            You have a change request awaiting approval. You can submit a new one once it's reviewed.
+          </p>
+        </div>
+      )}
+
+      <fieldset disabled={!!pendingRequest || checkingPending} className="space-y-5 px-4 disabled:opacity-50">
         <div>
           <label className="text-sm text-muted mb-1.5 block">Photos (up to 3)</label>
           <div className="grid grid-cols-3 gap-2">
@@ -216,12 +222,12 @@ export default function EditProfilePage() {
           className="btn-primary w-full flex items-center justify-center gap-2"
         >
           {saving ? (
-            <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>
+            <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>
           ) : (
-            <><Save className="w-4 h-4" /> Save Changes</>
+            <><Save className="w-4 h-4" /> Submit for Approval</>
           )}
         </button>
-      </div>
+      </fieldset>
     </div>
   );
 }

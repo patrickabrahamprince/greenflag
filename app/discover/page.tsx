@@ -448,7 +448,7 @@ export default function DiscoverPage() {
             </div>
             <h4 className="font-display text-2xl text-ink mb-2">Unlock Standard?</h4>
             <p className="text-ink/60 text-sm leading-relaxed mb-6">
-              This action will deduct 100 coins from your wallet to begin a 3-day connection request.
+              This action will deduct 500 coins from your wallet to begin a 3-day connection request.
             </p>
             <div className="flex gap-4">
               <button

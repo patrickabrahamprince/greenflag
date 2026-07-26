@@ -1541,6 +1541,36 @@ export type Database = {
         }
         Relationships: []
       }
+      profile_edit_requests: {
+        Row: {
+          id: string
+          user_id: string
+          requested_changes: Json
+          status: string
+          created_at: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          requested_changes: Json
+          status?: string
+          created_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          requested_changes?: Json
+          status?: string
+          created_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       admin_match_stats: {

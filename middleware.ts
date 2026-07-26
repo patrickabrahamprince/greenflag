@@ -108,23 +108,10 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(destination);
   }
 
-  // Onboarded but still awaiting admin review — keep them on the waiting
-  // screen, except /discover (pending users can browse read-only while
-  // they wait), the rest of /onboard (mid-sequence steps like quiz/
-  // interests/rules run with onboarding_completed already true, since
-  // that flag flips early at the profile step -- this same gate would
-  // otherwise bounce her back to /onboard/pending mid-onboarding), and
-  // /standard/builder (the mandatory first-Standard step for women,
-  // which lives outside /onboard/ as a top-level route).
-  const PENDING_ALLOWED_PATHS = ['/onboard', '/discover', '/standard/builder'];
-  if (
-    profile?.onboarding_completed &&
-    profile?.approval_status === 'pending' &&
-    !PENDING_ALLOWED_PATHS.some((p) => pathname.startsWith(p))
-  ) {
-    const destination = new URL('/onboard/pending', req.url);
-    return NextResponse.redirect(destination);
-  }
+  // Onboarded but still awaiting admin review — the /onboard/pending screen
+  // itself now runs a 90s auto-approve timer and explicitly lets users
+  // navigate anywhere while it counts down, so there's no longer a hard
+  // gate here forcing pending users back to that screen.
 
   return supabaseResponse;
 }

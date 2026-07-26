@@ -91,10 +91,14 @@ export default function ProfilePage() {
         setLng(position.coords.longitude);
         try {
           const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&format=json`
+            `/api/geocode/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}`
           );
           const data = await res.json();
           const address = data.address;
+          if (!address) {
+            setGpsDenied(true);
+            return;
+          }
           const parts = [
             address.city || address.town || address.county,
             address.state,
