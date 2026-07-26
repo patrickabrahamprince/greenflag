@@ -10,6 +10,7 @@ import { UserManagementTable } from '@/components/admin/UserManagementTable';
 import { UserPagination } from '@/components/admin/UserPagination';
 import { BanUserModal } from '@/components/admin/BanUserModal';
 import { RejectUserModal } from '@/components/admin/RejectUserModal';
+import { DeleteUserModal } from '@/components/admin/DeleteUserModal';
 
 const PAGE_SIZE = 20;
 
@@ -27,6 +28,9 @@ export default function AdminUsers() {
   const [rejectTarget, setRejectTarget] = useState<AdminUser | null>(null);
   const [rejectReason, setRejectReason] = useState('');
   const [rejecting, setRejecting] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<AdminUser | null>(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [deleting, setDeleting] = useState(false);
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -113,6 +117,34 @@ export default function AdminUsers() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      const res = await fetch('/api/admin/users/purge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: deleteTarget.id,
+          confirm_admin_purge: !!deleteTarget.is_admin,
+        }),
+      });
+      const d = await res.json();
+      if (d.success) {
+        toast.success('User deleted');
+        setDeleteTarget(null);
+        setDeleteConfirmText('');
+        fetchUsers();
+      } else {
+        toast.error(d.message || d.error || 'Failed to delete');
+      }
+    } catch {
+      toast.error('Network error');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const handleSetAdmin = async (userId: string, grant: boolean) => {
     try {
       const res = await fetch(`/api/admin/users/${userId}/set-admin`, {
@@ -158,6 +190,7 @@ export default function AdminUsers() {
             onBanClick={setBanTarget}
             onApproveClick={(u) => handleApprove(u.id)}
             onRejectClick={setRejectTarget}
+            onDeleteClick={setDeleteTarget}
           />
 
           {users.length === 0 && (
@@ -184,6 +217,14 @@ export default function AdminUsers() {
           user={rejectTarget} reason={rejectReason} rejecting={rejecting}
           onReasonChange={setRejectReason} onConfirm={handleReject}
           onClose={() => { setRejectTarget(null); setRejectReason(''); }}
+        />
+      )}
+
+      {deleteTarget && (
+        <DeleteUserModal
+          user={deleteTarget} confirmText={deleteConfirmText} deleting={deleting}
+          onConfirmTextChange={setDeleteConfirmText} onConfirm={handleDelete}
+          onClose={() => { setDeleteTarget(null); setDeleteConfirmText(''); }}
         />
       )}
     </div>

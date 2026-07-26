@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Eye, LayoutDashboard, Ban, Shield, ShieldOff, Check, UserX } from 'lucide-react';
+import { Eye, LayoutDashboard, Ban, Shield, ShieldOff, Check, UserX, Trash2 } from 'lucide-react';
 import type { AdminUser } from './types';
 
 export interface UserManagementTableProps {
@@ -10,9 +10,10 @@ export interface UserManagementTableProps {
   onBanClick: (user: AdminUser) => void;
   onApproveClick: (user: AdminUser) => void;
   onRejectClick: (user: AdminUser) => void;
+  onDeleteClick: (user: AdminUser) => void;
 }
 
-export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveClick, onRejectClick }: UserManagementTableProps) {
+export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveClick, onRejectClick, onDeleteClick }: UserManagementTableProps) {
   const router = useRouter();
 
   return (
@@ -142,6 +143,13 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
                       <Ban className="w-3.5 h-3.5" />
                     </button>
                   )}
+                  <button
+                    onClick={() => onDeleteClick(u)}
+                    className="btn-ghost text-xs p-1.5 text-red-500"
+                    title="Delete User"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </td>
             </tr>

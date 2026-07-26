@@ -78,7 +78,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
       </button>
 
       <UserProfileHeader user={user} />
-      <UserActions userId={user.id} isBanned={!!user.is_banned} approvalStatus={user.approval_status} onRefresh={fetchUser} />
+      <UserActions userId={user.id} userName={user.name} isBanned={!!user.is_banned} isAdmin={user.is_admin} approvalStatus={user.approval_status} onRefresh={fetchUser} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
         <div className="bg-[#111111] border border-white/[0.06] rounded-2xl p-5">
