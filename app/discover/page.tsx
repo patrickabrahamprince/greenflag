@@ -337,7 +337,7 @@ export default function DiscoverPage() {
                   }}
                   disabled={likingId === p.id}
                   aria-label="Like"
-                  className="btn-primary flex-1 h-14 flex items-center justify-center gap-2"
+                  className="btn-primary shine-border flex-1 h-14 flex items-center justify-center gap-2"
                 >
                   {likingId === p.id ? (
                     <Loader2 className="w-5 h-5 animate-spin text-white" />
