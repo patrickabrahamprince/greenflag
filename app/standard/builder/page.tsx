@@ -176,6 +176,15 @@ export default function StandardBuilderPage() {
       >
         {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Save & Go Live'}
       </button>
+
+      {allFilled && (
+        <button
+          onClick={() => router.push('/discover')}
+          className="btn-secondary w-full py-3.5 mt-3"
+        >
+          Explore New
+        </button>
+      )}
     </div>
   );
 }
