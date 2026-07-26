@@ -82,11 +82,11 @@ export default function StandardBuilderPage() {
     );
   };
 
-  const allFilled = slots.every((s) => s.prompt.trim().length > 0);
+  const allFilled = slots.every((s) => s.prompt.trim().length >= 10);
 
   const handleSave = async () => {
     if (!allFilled) {
-      toast.error('Write a prompt for all 3 days before saving.');
+      toast.error('Write at least 10 characters for each day before saving.');
       return;
     }
 

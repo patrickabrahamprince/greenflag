@@ -31,10 +31,10 @@ export async function POST(req: Request) {
 
     const validDays = [1, 2, 3];
     const hasAllDays = validDays.every((day) =>
-      intentions.some((i) => i.dayNumber === day && i.prompt.trim().length > 0)
+      intentions.some((i) => i.dayNumber === day && i.prompt.trim().length >= 10)
     );
     if (!hasAllDays) {
-      return NextResponse.json({ error: 'Each day 1-3 must have a prompt' }, { status: 400 });
+      return NextResponse.json({ error: 'Each day 1-3 must have a prompt of at least 10 characters' }, { status: 400 });
     }
 
     const { data: existing } = await supabase
