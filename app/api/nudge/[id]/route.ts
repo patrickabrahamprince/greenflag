@@ -13,9 +13,11 @@ function getAdmin() {
 }
 
 // First nudge on a given profile is free. Nudging the same profile again
-// costs coins -- the one exception to "women never pay" on this app.
+// costs coins -- the one exception to "women never pay" on this app --
+// but that charge is never silent: a repeat nudge without `confirm: true`
+// returns needsConfirm instead of charging, so the client can ask first.
 export async function POST(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
@@ -29,6 +31,9 @@ export async function POST(
     return NextResponse.json({ error: 'Cannot nudge yourself' }, { status: 400 });
   }
 
+  const body = await req.json().catch(() => ({}));
+  const confirmed = body?.confirm === true;
+
   const admin = getAdmin();
 
   const { count: priorNudges } = await admin
@@ -38,6 +43,10 @@ export async function POST(
     .eq('to_user_id', id);
 
   const isRepeat = (priorNudges || 0) > 0;
+
+  if (isRepeat && !confirmed) {
+    return NextResponse.json({ needsConfirm: true, cost: REPEAT_NUDGE_COST });
+  }
 
   if (isRepeat) {
     const deductResult = await admin.rpc('deduct_coins', {

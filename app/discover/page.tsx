@@ -6,6 +6,7 @@ import { ArrowLeft, Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler,
 import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
 import { createClient } from '@/lib/supabase/client'
+import { useCoinStore } from '@/lib/store'
 
 interface DiscoverProfile {
   id: string
@@ -42,6 +43,8 @@ export default function DiscoverPage() {
   const [expandedBios, setExpandedBios] = useState<Set<string>>(new Set())
   const [nudgingId, setNudgingId] = useState<string | null>(null)
   const [nudgeDialog, setNudgeDialog] = useState<{ visible: boolean; charged: boolean; cost: number } | null>(null)
+  const [nudgeConfirm, setNudgeConfirm] = useState<{ profileId: string; cost: number } | null>(null)
+  const coinBalance = useCoinStore((s) => s.balance)
   const router = useRouter()
   const supabase = createClient()
 
@@ -127,17 +130,43 @@ export default function DiscoverPage() {
     setTimeout(() => setNudgeDialog(null), 1900)
   }
 
+  async function sendNudge(profileId: string, confirm: boolean) {
+    const res = await fetch(`/api/nudge/${profileId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ confirm }),
+    })
+    const data = await res.json()
+    if (!res.ok) {
+      toast.error(data.error || 'Failed to send nudge')
+      return
+    }
+    if (data.needsConfirm) {
+      setNudgeConfirm({ profileId, cost: data.cost })
+      return
+    }
+    showNudgeSentDialog(!!data.charged, data.cost || 0)
+  }
+
   async function handleNudge(profileId: string) {
     if (nudgingId) return
     setNudgingId(profileId)
     try {
-      const res = await fetch(`/api/nudge/${profileId}`, { method: 'POST' })
-      const data = await res.json()
-      if (!res.ok) {
-        toast.error(data.error || 'Failed to send nudge')
-        return
-      }
-      showNudgeSentDialog(!!data.charged, data.cost || 0)
+      await sendNudge(profileId, false)
+    } catch {
+      toast.error('Failed to send nudge')
+    } finally {
+      setNudgingId(null)
+    }
+  }
+
+  async function handleConfirmNudge() {
+    if (!nudgeConfirm) return
+    const { profileId } = nudgeConfirm
+    setNudgeConfirm(null)
+    setNudgingId(profileId)
+    try {
+      await sendNudge(profileId, true)
     } catch {
       toast.error('Failed to send nudge')
     } finally {
@@ -286,7 +315,14 @@ export default function DiscoverPage() {
             <ArrowLeft className="w-5 h-5 text-white" />
           </button>
           <div className="pointer-events-auto">
-            <CoinBadge />
+            {persona === 'woman' ? (
+              <div className="glass-surface flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-display font-semibold text-ink/70">
+                <span className="text-gold text-[10px]">◆</span>
+                {coinBalance}
+              </div>
+            ) : (
+              <CoinBadge />
+            )}
           </div>
         </div>
       </div>
@@ -579,16 +615,40 @@ export default function DiscoverPage() {
 
       {nudgeDialog && (
         <div
-          className={`fixed inset-0 z-[60] flex items-center justify-center pointer-events-none transition-opacity duration-500 ${nudgeDialog.visible ? 'opacity-100' : 'opacity-0'}`}
+          className={`fixed inset-x-0 top-24 z-[60] flex justify-center pointer-events-none transition-opacity duration-500 ${nudgeDialog.visible ? 'opacity-100' : 'opacity-0'}`}
         >
-          <div className="glass-surface rounded-3xl px-10 py-8 flex flex-col items-center gap-3 shadow-2xl">
-            <div className="w-14 h-14 rounded-full bg-green-500/15 flex items-center justify-center">
-              <Bell className="w-7 h-7 text-green-400" />
+          <div className="glass-surface rounded-2xl px-5 py-3.5 flex items-center gap-3 shadow-2xl border border-white/10">
+            <div className="w-9 h-9 rounded-full bg-green-500/15 flex items-center justify-center shrink-0">
+              <Bell className="w-4 h-4 text-green-400" />
             </div>
-            <p className="text-white font-display text-lg font-semibold">Nudge Sent!</p>
-            {nudgeDialog.charged && (
-              <p className="text-ink/50 text-xs">{nudgeDialog.cost} coins used</p>
-            )}
+            <div>
+              <p className="text-white font-display text-sm font-semibold leading-tight">Nudge Sent!</p>
+              {nudgeDialog.charged && (
+                <p className="text-ink/50 text-[11px] leading-tight mt-0.5">{nudgeDialog.cost} coins used</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {nudgeConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
+          <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
+            <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Coins className="w-6 h-6 text-gold" />
+            </div>
+            <h4 className="font-display text-2xl text-ink mb-2">Nudge again?</h4>
+            <p className="text-ink/60 text-sm leading-relaxed mb-6">
+              You've already nudged this profile. Sending another nudge will cost {nudgeConfirm.cost} coins.
+            </p>
+            <div className="flex gap-4">
+              <button onClick={() => setNudgeConfirm(null)} className="btn-secondary flex-1">
+                Cancel
+              </button>
+              <button onClick={handleConfirmNudge} className="btn-primary flex-1">
+                Spend {nudgeConfirm.cost}
+              </button>
+            </div>
           </div>
         </div>
       )}
