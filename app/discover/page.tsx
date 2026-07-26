@@ -189,137 +189,137 @@ export default function DiscoverPage() {
             key={p.id}
             ref={i === profiles.length - 1 ? lastProfileRef : null}
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
-            className="snap-start snap-always h-[calc(100dvh-5rem)] w-full flex flex-col animate-fade-in"
+            className="snap-start snap-always h-[calc(100dvh-5rem)] w-full relative overflow-hidden animate-fade-in"
           >
-            <div className="w-full flex-shrink-0 px-6 pt-5">
-              <div className="relative w-full aspect-[4/5] overflow-hidden rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] grid grid-cols-3 gap-1 bg-black">
-                <div className="col-span-2 relative">
-                  <img
-                    src={p.photos?.[0]}
-                    alt=""
-                    className="w-full h-full object-cover"
-                    onError={e => { e.currentTarget.src = '/placeholder-avatar.svg' }}
-                  />
-                  {typeof p.match_percentage === 'number' && (
-                    <div className="glass-surface absolute top-12 left-3 z-10 flex items-center gap-1.5 rounded-full px-3 py-1.5">
-                      <span className="text-[#C026D3] text-xs">◆</span>
-                      <span className="font-display font-bold text-white text-sm whitespace-nowrap">
-                        {p.match_percentage}% GreenFlag Match
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <div className="relative col-span-1 overflow-hidden">
-                  {(() => {
-                    const extraPhotos = [p.photos?.[1], p.photos?.[2]].filter(Boolean) as string[]
-                    if (extraPhotos.length === 0) {
-                      return (
-                        <img
-                          src={p.photos?.[0]}
-                          alt=""
-                          className="w-full h-full object-cover blur-md scale-110"
-                          onError={e => { e.currentTarget.style.display = 'none' }}
-                        />
-                      )
-                    }
+            <div className="absolute inset-0 grid grid-cols-3 gap-px bg-black">
+              <div className="col-span-2 relative">
+                <img
+                  src={p.photos?.[0]}
+                  alt=""
+                  className="w-full h-full object-cover"
+                  onError={e => { e.currentTarget.src = '/placeholder-avatar.svg' }}
+                />
+                {typeof p.match_percentage === 'number' && (
+                  <div className="glass-surface absolute top-12 left-3 z-10 flex items-center gap-1.5 rounded-full px-3 py-1.5">
+                    <span className="text-[#C026D3] text-xs">◆</span>
+                    <span className="font-display font-bold text-white text-sm whitespace-nowrap">
+                      {p.match_percentage}% GreenFlag Match
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div className="relative col-span-1 overflow-hidden">
+                {(() => {
+                  const extraPhotos = [p.photos?.[1], p.photos?.[2]].filter(Boolean) as string[]
+                  if (extraPhotos.length === 0) {
                     return (
-                      <div
-                        className="grid gap-1 h-full"
-                        style={{ gridTemplateRows: `repeat(${extraPhotos.length}, 1fr)` }}
-                      >
-                        {extraPhotos.map((src, idx) => (
-                          <div key={idx} className="relative overflow-hidden">
-                            <img
-                              src={src}
-                              alt=""
-                              className="w-full h-full object-cover blur-md scale-110"
-                              onError={e => { e.currentTarget.style.display = 'none' }}
-                            />
-                          </div>
-                        ))}
-                      </div>
+                      <img
+                        src={p.photos?.[0]}
+                        alt=""
+                        className="w-full h-full object-cover blur-md scale-110"
+                        onError={e => { e.currentTarget.style.display = 'none' }}
+                      />
                     )
-                  })()}
-                  {persona !== 'woman' && (
-                    <button
-                      onClick={() => setConfirmProfileId(p.id)}
-                      className="glass-surface absolute inset-0 m-auto z-20 flex items-center justify-center gap-2 h-12 w-fit px-4 rounded-full active:scale-95 transition-all shadow-lg"
+                  }
+                  return (
+                    <div
+                      className="grid gap-px h-full"
+                      style={{ gridTemplateRows: `repeat(${extraPhotos.length}, 1fr)` }}
                     >
-                      <Lock className="w-4 h-4 text-white shrink-0" />
-                      <span className="text-white text-sm uppercase tracking-wide font-display font-bold whitespace-nowrap">Unlock</span>
-                    </button>
-                  )}
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10 pointer-events-none" />
+                      {extraPhotos.map((src, idx) => (
+                        <div key={idx} className="relative overflow-hidden">
+                          <img
+                            src={src}
+                            alt=""
+                            className="w-full h-full object-cover blur-md scale-110"
+                            onError={e => { e.currentTarget.style.display = 'none' }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )
+                })()}
+                {persona !== 'woman' && (
+                  <button
+                    onClick={() => setConfirmProfileId(p.id)}
+                    className="glass-surface absolute inset-0 m-auto z-20 flex items-center justify-center gap-2 h-12 w-fit px-4 rounded-full active:scale-95 transition-all shadow-lg"
+                  >
+                    <Lock className="w-4 h-4 text-white shrink-0" />
+                    <span className="text-white text-sm uppercase tracking-wide font-display font-bold whitespace-nowrap">Unlock</span>
+                  </button>
+                )}
               </div>
             </div>
 
-            <div className="flex-1 flex flex-col justify-between px-6 pt-5 pb-5 min-h-0">
-              <div className="flex flex-col gap-3">
-                <div>
-                  <h1 className="font-serif text-4xl text-ink font-semibold leading-none">
-                    {p.name}
-                  </h1>
-                  <div className="flex items-center gap-2 mt-2 flex-wrap">
-                    <p className="font-['Inter'] text-sm text-ink/60 tracking-wide uppercase leading-none">
-                      {p.age ? `${p.age}` : ''}{p.age && p.city_auto ? ' · ' : ''}{p.city_auto}
-                    </p>
-                    {p.instagram_url && (
-                      <a
-                        href={p.instagram_url.startsWith('http') ? p.instagram_url : `https://instagram.com/${p.instagram_url}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="flex items-center gap-1 text-xs text-[#C026D3] font-medium leading-none"
-                      >
-                        <Instagram className="w-3.5 h-3.5" />
-                        {p.instagram_url.replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '') || 'Instagram'}
-                      </a>
-                    )}
-                  </div>
-                </div>
-                {(p.job || p.height) && (
-                  <div className="flex items-center gap-4 flex-wrap">
-                    {p.job && (
-                      <span className="flex items-center gap-1.5 text-sm text-ink/70 font-medium leading-none">
-                        <Briefcase className="w-3.5 h-3.5 text-ink/40 shrink-0" />
-                        {p.job}
-                      </span>
-                    )}
-                    {p.height && (
-                      <span className="flex items-center gap-1.5 text-sm text-ink/70 font-medium leading-none">
-                        <Ruler className="w-3.5 h-3.5 text-ink/40 shrink-0" />
-                        {p.height}
-                      </span>
-                    )}
-                  </div>
-                )}
-                <div className="flex flex-wrap gap-2">
-                  {(p.interests_have?.length ? p.interests_have : p.interests ?? []).slice(0, 5).map((interest: string) => {
-                    const isMatched = Array.isArray(p.match_reasons) && p.match_reasons.includes(interest);
-                    return (
-                      <span
-                        key={interest}
-                        className={
-                          isMatched
-                            ? 'px-4 py-2 rounded-full bg-[#C026D3] text-white text-sm font-medium shadow-[0_2px_10px_rgba(192, 38, 211,0.35)] leading-none'
-                            : 'px-4 py-2 rounded-full bg-[#1C1C1E] text-ink text-sm font-medium shadow-[0_2px_10px_rgba(0,0,0,0.08)] leading-none'
-                        }
-                      >
-                        {interest}
-                      </span>
-                    );
-                  })}
-                </div>
-                {p.bio && (
-                  <div>
-                    <p className="text-[#C026D3] text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">About</p>
-                    <p className="text-ink/80 text-base leading-relaxed max-w-md font-light line-clamp-2">{p.bio}</p>
-                  </div>
-                )}
-              </div>
+            {/* Bottom scrim: photo is full-bleed behind this, so the info
+                block needs a gradient underlay for the white text to stay
+                legible against whatever's in the shot. */}
+            <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black via-black/75 to-transparent pointer-events-none" />
 
-              <div className="flex items-center gap-4 pt-4 shrink-0">
+            <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 px-6 pb-6 pt-10">
+              <div>
+                <h1 className="font-serif text-4xl text-ink font-semibold leading-none">
+                  {p.name}
+                </h1>
+                <div className="flex items-center gap-2 mt-2 flex-wrap">
+                  <p className="font-['Inter'] text-sm text-ink/60 tracking-wide uppercase leading-none">
+                    {p.age ? `${p.age}` : ''}{p.age && p.city_auto ? ' · ' : ''}{p.city_auto}
+                  </p>
+                  {p.instagram_url && (
+                    <a
+                      href={p.instagram_url.startsWith('http') ? p.instagram_url : `https://instagram.com/${p.instagram_url}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex items-center gap-1 text-xs text-[#C026D3] font-medium leading-none"
+                    >
+                      <Instagram className="w-3.5 h-3.5" />
+                      {p.instagram_url.replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '') || 'Instagram'}
+                    </a>
+                  )}
+                </div>
+              </div>
+              {(p.job || p.height) && (
+                <div className="flex items-center gap-4 flex-wrap">
+                  {p.job && (
+                    <span className="flex items-center gap-1.5 text-sm text-ink/70 font-medium leading-none">
+                      <Briefcase className="w-3.5 h-3.5 text-ink/40 shrink-0" />
+                      {p.job}
+                    </span>
+                  )}
+                  {p.height && (
+                    <span className="flex items-center gap-1.5 text-sm text-ink/70 font-medium leading-none">
+                      <Ruler className="w-3.5 h-3.5 text-ink/40 shrink-0" />
+                      {p.height}
+                    </span>
+                  )}
+                </div>
+              )}
+              <div className="flex flex-wrap gap-2">
+                {(p.interests_have?.length ? p.interests_have : p.interests ?? []).slice(0, 5).map((interest: string) => {
+                  const isMatched = Array.isArray(p.match_reasons) && p.match_reasons.includes(interest);
+                  return (
+                    <span
+                      key={interest}
+                      className={
+                        isMatched
+                          ? 'glass-surface px-4 py-2 rounded-full bg-[#C026D3] text-white text-sm font-medium shadow-[0_2px_10px_rgba(192,38,211,0.5)] leading-none'
+                          : 'glass-surface px-4 py-2 rounded-full text-ink text-sm font-medium leading-none'
+                      }
+                    >
+                      {interest}
+                    </span>
+                  );
+                })}
+              </div>
+              {p.bio && (
+                <div>
+                  <p className="text-[#C026D3] text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">About</p>
+                  <p className="text-ink/80 text-base leading-relaxed max-w-md font-light line-clamp-2">{p.bio}</p>
+                </div>
+              )}
+
+              <div className="flex items-center gap-4 pt-2 shrink-0">
                 <button
                   onClick={() => scrollToNext(i)}
                   aria-label="Pass"
