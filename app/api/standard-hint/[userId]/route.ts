@@ -47,13 +47,25 @@ export async function POST(
 
   const { data: fromProfile } = await admin.from('profiles').select('name').eq('id', user.id).single();
 
+  // Whether he's ever submitted anything for this match decides whether the
+  // nudge reads as "start" (nothing submitted yet) or "continue" (already
+  // mid-way) -- a woman nudging day-1-silent guy shouldn't hear "continue".
+  const { count: submissionCount } = await admin
+    .from('submissions')
+    .select('*', { count: 'exact', head: true })
+    .eq('match_id', match.id);
+
+  const hasStarted = (submissionCount || 0) > 0;
+
   await sendNotification({
     supabase: admin,
     user_id: userId,
     title: 'A Nudge',
-    body: `${fromProfile?.name || 'She'} wants you to continue her Standard.`,
+    body: hasStarted
+      ? `${fromProfile?.name || 'She'} wants you to continue her Standard.`
+      : `${fromProfile?.name || 'She'} wants you to start her Standard.`,
     data: { type: 'standard_hint', from_user_id: user.id, matchId: match.id },
   });
 
-  return NextResponse.json({ success: true });
+  return NextResponse.json({ success: true, started: hasStarted });
 }

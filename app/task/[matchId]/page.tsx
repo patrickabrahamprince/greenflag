@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, Loader2, MessageCircle, Hourglass } from 'lucide-react';
+import { ArrowLeft, Loader2, MessageCircle, Hourglass, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 import { ConnectedScreen } from '@/components/ConnectedScreen';
@@ -207,6 +207,12 @@ export default function TaskPage() {
 
       {isLocked && match.next_day_unlocks_at ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
+          {!isWoman && (
+            <div className="flex items-center gap-1.5 mb-4 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/30">
+              <CheckCircle2 className="w-3.5 h-3.5 text-green-400" />
+              <span className="text-green-400 text-xs font-medium uppercase tracking-wide">Day {currentDay - 1} Approved</span>
+            </div>
+          )}
           <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5">
             <Hourglass className="w-6 h-6 text-gold" />
           </div>
@@ -214,7 +220,11 @@ export default function TaskPage() {
           <p className="font-display text-4xl text-gold tracking-wider mb-3">
             <LiveCountdown target={match.next_day_unlocks_at} />
           </p>
-          <p className="text-ink/50 text-sm">Come back then to continue with {otherProfile.name}.</p>
+          <p className="text-ink/50 text-sm">
+            {isWoman
+              ? `Come back to review ${otherProfile.name}'s answers and see if he meets your Standard.`
+              : `Come back then to continue your Standard with ${otherProfile.name}.`}
+          </p>
         </div>
       ) : (
         <>

@@ -129,6 +129,7 @@ export async function notifyWomanOfStandardBegin(
 export async function notifyManOfDayApproval(
   supabase: AnySupabaseClient,
   manId: string,
+  womanName: string,
   dayNumber: number,
   connectionId: string
 ): Promise<void> {
@@ -136,7 +137,7 @@ export async function notifyManOfDayApproval(
     supabase,
     user_id: manId,
     title: 'Day Approved',
-    body: `Day ${dayNumber} approved. Day ${dayNumber + 1} is unlocked — submit within 24 hours.`,
+    body: `${womanName} approved Day ${dayNumber}. Day ${dayNumber + 1} awaits — submit within 24 hours.`,
     data: { connectionId, dayNumber, type: 'day_approved' },
   });
 }

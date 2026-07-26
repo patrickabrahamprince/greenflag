@@ -54,6 +54,8 @@ export default function ViewProfilePage() {
         city_auto={profile.city_auto}
         instagram_url={profile.instagram_url}
         interests={profile.interests}
+        lookingForInterests={profile.looking_for_interests}
+        quizAnswers={profile.quiz_answers}
         matchPercent={match?.percent}
         matchOverlapping={match?.overlapping}
       />

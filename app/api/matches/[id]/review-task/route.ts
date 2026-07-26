@@ -80,7 +80,10 @@ export async function POST(
       if (chatUnlocked) {
         await notifyBothOfCompletion(admin, match.user1_id, match.user2_id, id);
       } else if (dayAdvanced) {
-        await notifyManOfDayApproval(admin, match.user1_id, (match.current_day ?? 1) + 1, id);
+        const { data: womanProfile } = await admin.from('profiles').select('name').eq('id', match.user2_id).single();
+        // match.current_day here is still the pre-recompute value -- the day
+        // that was just approved -- since we never re-fetched the row.
+        await notifyManOfDayApproval(admin, match.user1_id, womanProfile?.name || 'She', match.current_day ?? 1, id);
       }
     } catch {
       // Safe catch for notification failure

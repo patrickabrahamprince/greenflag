@@ -115,7 +115,7 @@ function InProgressMatches({ userId, supabase }: { userId: string; supabase: Ret
         return;
       }
       setHintedIds((prev) => new Set(prev).add(partnerId));
-      toast.success('Nudge sent — he\'s been notified to begin your Standard');
+      toast.success(data.started ? "Nudge sent — he's been notified to continue your Standard" : "Nudge sent — he's been notified to begin your Standard");
     } catch {
       toast.error('Failed to send hint');
     } finally {

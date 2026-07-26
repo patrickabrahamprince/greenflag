@@ -10,6 +10,7 @@ export interface ProfileData {
   instagram_url?: string;
   interests: string[];
   looking_for_interests: string[];
+  quiz_answers?: Record<string, string> | null;
   persona: string;
   gender: string;
 }
