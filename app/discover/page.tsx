@@ -201,9 +201,9 @@ export default function DiscoverPage() {
                     onError={e => { e.currentTarget.src = '/placeholder-avatar.svg' }}
                   />
                   {typeof p.match_percentage === 'number' && (
-                    <div className="absolute top-12 left-3 z-10 flex items-center gap-1.5 bg-black/35 backdrop-blur-md rounded-full px-3 py-1.5">
+                    <div className="glass-surface absolute top-12 left-3 z-10 flex items-center gap-1.5 rounded-full px-3 py-1.5">
                       <span className="text-[#C026D3] text-xs">◆</span>
-                      <span className="font-display italic text-white text-sm whitespace-nowrap">
+                      <span className="font-display font-bold text-white text-sm whitespace-nowrap">
                         {p.match_percentage}% GreenFlag Match
                       </span>
                     </div>
@@ -243,10 +243,10 @@ export default function DiscoverPage() {
                   {persona !== 'woman' && (
                     <button
                       onClick={() => setConfirmProfileId(p.id)}
-                      className="absolute inset-0 m-auto z-20 flex items-center justify-center gap-2 h-12 w-fit px-4 bg-black/60 backdrop-blur-md rounded-full active:scale-95 transition-all shadow-lg"
+                      className="glass-surface absolute inset-0 m-auto z-20 flex items-center justify-center gap-2 h-12 w-fit px-4 rounded-full active:scale-95 transition-all shadow-lg"
                     >
                       <Lock className="w-4 h-4 text-white shrink-0" />
-                      <span className="text-white text-sm uppercase tracking-wide font-semibold whitespace-nowrap">Unlock</span>
+                      <span className="text-white text-sm uppercase tracking-wide font-display font-bold whitespace-nowrap">Unlock</span>
                     </button>
                   )}
                 </div>
@@ -323,7 +323,7 @@ export default function DiscoverPage() {
                 <button
                   onClick={() => scrollToNext(i)}
                   aria-label="Pass"
-                  className="size-14 rounded-full bg-[#1C1C1E] shadow-[0_2px_10px_rgba(0,0,0,0.06)] flex items-center justify-center active:scale-95 transition-all shrink-0"
+                  className="glass-surface size-14 rounded-full flex items-center justify-center active:scale-95 transition-all shrink-0"
                 >
                   <X className="w-6 h-6 text-ink/60" />
                 </button>
@@ -337,14 +337,14 @@ export default function DiscoverPage() {
                   }}
                   disabled={likingId === p.id}
                   aria-label="Like"
-                  className="flex-1 h-14 rounded-full bg-[#C026D3] shadow-[0_4px_16px_rgba(192, 38, 211,0.35)] flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
+                  className="btn-primary flex-1 h-14 flex items-center justify-center gap-2"
                 >
                   {likingId === p.id ? (
                     <Loader2 className="w-5 h-5 animate-spin text-white" />
                   ) : (
                     <>
                       <Heart className="w-5 h-5 text-white" />
-                      <span className="text-white text-xs uppercase tracking-wide font-medium">
+                      <span className="text-white text-xs uppercase tracking-wide font-display font-bold">
                         {persona === 'woman' ? 'View Profile' : 'Meet Her Standard'}
                       </span>
                     </>

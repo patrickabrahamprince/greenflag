@@ -34,7 +34,7 @@ html, body { background: #0B0614 !important; }
 
 @layer components {
   .btn-primary {
-    @apply text-black font-medium rounded-xl px-8 py-3.5
+    @apply relative overflow-hidden text-white font-display font-bold rounded-full px-8 py-3.5
            text-xs uppercase tracking-wide
            transition-all duration-300 ease-out
            active:scale-[0.98]
@@ -43,14 +43,21 @@ html, body { background: #0B0614 !important; }
     box-shadow: 0 4px 20px -4px rgba(192, 38, 211, 0.45);
   }
 
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent 60%);
+    pointer-events: none;
+  }
+
   .btn-primary:hover {
     background: linear-gradient(135deg, #F0ABFC 0%, #C026D3 45%, #86198F 100%);
   }
 
   .btn-secondary {
-    @apply text-ink font-medium rounded-xl px-8 py-3
+    @apply glass-surface text-ink font-display font-bold rounded-full px-8 py-3
            text-xs uppercase tracking-wide
-           border border-border bg-transparent
            transition-all duration-300 ease-out
            hover:border-gold active:scale-[0.98];
   }
@@ -156,8 +163,17 @@ html, body { background: #0B0614 !important; }
   }
 
   .nav-glass {
-    @apply backdrop-blur-xl border-t border-border;
-    background: rgba(0, 0, 0, 0.8);
+    @apply backdrop-blur-2xl border border-white/10;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02)),
+      rgba(20, 8, 28, 0.55);
+  }
+
+  .glass-surface {
+    @apply backdrop-blur-xl border border-white/10;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03)),
+      rgba(20, 8, 28, 0.45);
   }
 
   .gold-border-left {
