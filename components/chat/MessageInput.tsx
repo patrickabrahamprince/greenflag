@@ -22,7 +22,7 @@ export function MessageInput({ input, onInputChange, onSend, sending }: MessageI
         <button
           onClick={onSend}
           disabled={!input.trim() || sending}
-          className="text-[#D4AF37] font-semibold uppercase text-xs tracking-wide disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+          className="text-[#C026D3] font-semibold uppercase text-xs tracking-wide disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
         >
           {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Send'}
         </button>

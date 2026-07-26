@@ -118,7 +118,7 @@ export default function StandardBuilderPage() {
   if (!currentUser || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center screen-gradient">
-        <Loader2 className="w-8 h-8 animate-spin text-[#D4AF37]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#C026D3]" />
       </div>
     );
   }
@@ -156,7 +156,7 @@ export default function StandardBuilderPage() {
                     key={opt.value}
                     onClick={() => updateSlot(slot.dayNumber, 'type', opt.value)}
                     className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-full text-xs font-medium transition-all ${
-                      active ? 'bg-[#D4AF37] text-white' : 'bg-[#1C1C1E] text-ink/50'
+                      active ? 'bg-[#C026D3] text-white' : 'bg-[#1C1C1E] text-ink/50'
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5" />

@@ -117,7 +117,7 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="w-5 h-5 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: '#D4AF37', borderTopColor: 'transparent' }} />
+        <div className="w-5 h-5 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: '#C026D3', borderTopColor: 'transparent' }} />
       </div>
     );
   }

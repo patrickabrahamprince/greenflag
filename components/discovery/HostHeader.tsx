@@ -30,11 +30,11 @@ export function HostHeader({ host, timeLeft, onBack }: HostHeaderProps) {
       </div>
 
       <div className="flex items-center gap-2 mb-4">
-        <Clock className="w-4 h-4 text-[#D4AF37]" />
+        <Clock className="w-4 h-4 text-[#C026D3]" />
         <span
           className={cn(
             'text-sm',
-            timeLeft === 'Expired' ? 'text-red-400' : 'text-[#D4AF37]'
+            timeLeft === 'Expired' ? 'text-red-400' : 'text-[#C026D3]'
           )}
         >
           {timeLeft || 'Loading...'}

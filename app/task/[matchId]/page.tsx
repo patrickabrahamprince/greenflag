@@ -53,14 +53,14 @@ function DayCompleteModal({ unlocksAt, onClose, onExplore }: { unlocksAt: string
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.6)' }}>
       <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
-        <div className="w-14 h-14 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mx-auto mb-5">
-          <Hourglass className="w-6 h-6 text-[#D4AF37]" />
+        <div className="w-14 h-14 rounded-full bg-[#C026D3]/10 flex items-center justify-center mx-auto mb-5">
+          <Hourglass className="w-6 h-6 text-[#C026D3]" />
         </div>
         <h3 className="font-display text-2xl text-ink mb-2">Day Complete</h3>
         <p className="text-ink/60 text-sm leading-relaxed mb-6">
           Tomorrow&apos;s tasks unlock at the same time tomorrow.
         </p>
-        <p className="font-display text-4xl text-[#D4AF37] tracking-wider mb-6">
+        <p className="font-display text-4xl text-[#C026D3] tracking-wider mb-6">
           {remainingMs !== null ? formatCountdown(remainingMs) : '--:--:--'}
         </p>
         <div className="flex gap-3">
@@ -131,7 +131,7 @@ export default function TaskPage() {
   if (loading || !currentUser) {
     return (
       <div className="min-h-screen flex items-center justify-center screen-gradient">
-        <Loader2 className="w-8 h-8 animate-spin text-[#D4AF37]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#C026D3]" />
       </div>
     );
   }
@@ -215,9 +215,9 @@ export default function TaskPage() {
       <p className="text-center text-sm text-ink/50 mb-3">Day {currentDay} of 3</p>
 
       {match.chat_unlocked && (
-        <div className="rounded-2xl mb-5 p-4 flex items-center gap-4 bg-[#D4AF37]/[0.06] border border-[#D4AF37]/20">
+        <div className="rounded-2xl mb-5 p-4 flex items-center gap-4 bg-[#C026D3]/[0.06] border border-[#C026D3]/20">
           <div className="flex-1">
-            <p className="text-[#D4AF37] text-sm font-medium">You&apos;ve earned access</p>
+            <p className="text-[#C026D3] text-sm font-medium">You&apos;ve earned access</p>
             <p className="text-ink/50 text-xs mt-0.5">Message her anytime</p>
           </div>
           <button
@@ -232,11 +232,11 @@ export default function TaskPage() {
 
       {isLocked && match.next_day_unlocks_at ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
-          <div className="w-14 h-14 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mb-5">
-            <Hourglass className="w-6 h-6 text-[#D4AF37]" />
+          <div className="w-14 h-14 rounded-full bg-[#C026D3]/10 flex items-center justify-center mb-5">
+            <Hourglass className="w-6 h-6 text-[#C026D3]" />
           </div>
           <h2 className="font-display text-2xl text-ink mb-2">Day {currentDay} unlocks in</h2>
-          <p className="font-display text-4xl text-[#D4AF37] tracking-wider mb-3">
+          <p className="font-display text-4xl text-[#C026D3] tracking-wider mb-3">
             <LiveCountdown target={match.next_day_unlocks_at} />
           </p>
           <p className="text-ink/50 text-sm">Come back then to continue with {otherProfile.name}.</p>
@@ -264,7 +264,7 @@ export default function TaskPage() {
                   Task {intentionItem.task_number} ({intentionItem.type})
                 </span>
                 {isTaskApproved && <span className="text-xs text-green-600 font-medium">Done ✓</span>}
-                {isTaskPendingReview && <span className="text-xs text-[#D4AF37] font-medium">Pending Review ✓</span>}
+                {isTaskPendingReview && <span className="text-xs text-[#C026D3] font-medium">Pending Review ✓</span>}
                 {isTaskPendingSubmission && <span className="text-xs text-ink/40">Pending</span>}
               </div>
               <p className={`text-sm mb-4 ${hasSubmittedContent ? 'line-through text-ink/40 font-light' : 'text-ink font-normal'}`}>

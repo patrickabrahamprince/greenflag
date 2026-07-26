@@ -52,17 +52,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(212,175,55,0.08), transparent), #000000' }}>
+    <div className="min-h-screen flex items-center justify-center p-6" style={{ background: 'radial-gradient(ellipse 140% 90% at 50% -25%, rgba(192, 38, 211, 0.45) 0%, rgba(124, 58, 237, 0.22) 35%, rgba(11, 6, 20, 0) 70%), radial-gradient(ellipse 100% 70% at 100% 100%, rgba(124, 58, 237, 0.18) 0%, transparent 60%), #0B0614' }}>
       <div className="w-full max-w-sm">
         <div className="text-center mb-12">
           <img src="/logo.png" alt="GreenFlag" className="w-36 h-36 mx-auto mb-6 rounded-2xl shadow-2xl shadow-gold/10" />
-          <p className="font-display italic text-gradient text-3xl leading-tight" style={{ fontWeight: 600 }}>
-            Set your standards.
-          </p>
-          <p className="text-ink/40 text-xs uppercase tracking-widest-xl mt-3">Meet your match</p>
           <div className="hairline mx-auto mt-6 mb-2 w-16" />
         </div>
-        <h2 className="font-display text-ink text-center text-2xl mb-4">Welcome to GreenFlag</h2>
         <form onSubmit={handleLogin} className="space-y-4">
           <input data-testid="email" type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required className="input w-full" />
           <input data-testid="password" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required className="input w-full" />
@@ -81,7 +76,7 @@ export default function LoginPage() {
 
         <p className="text-ink/50 text-sm mt-8 text-center">
           New here? Your journey starts at{' '}
-          <Link href="/signup" className="text-[#D4AF37] underline underline-offset-4 decoration-[#D4AF37]/40 hover:decoration-[#D4AF37] transition-colors">
+          <Link href="/signup" className="text-[#C026D3] underline underline-offset-4 decoration-[#C026D3]/40 hover:decoration-[#C026D3] transition-colors">
             onboarding
           </Link>
         </p>

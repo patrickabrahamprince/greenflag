@@ -14,11 +14,11 @@ export function ConnectedScreen({ womanPhoto, womanName, connectionId }: Connect
   const router = useRouter();
 
   useEffect(() => {
-    confetti({ particleCount: 150, spread: 80, colors: ['#C9A84C', '#fff', '#8B6914'] });
+    confetti({ particleCount: 150, spread: 80, colors: ['#D946EF', '#fff', '#6B21A8'] });
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gradient-to-b from-[#C9A84C] to-[#8B6914]">
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gradient-to-b from-[#D946EF] to-[#6B21A8]">
       <p className="text-4xl font-serif text-white mb-4">✦ 8 / 8 ✦</p>
       <h1 className="text-5xl font-display text-white mb-8">Connected</h1>
       <img
@@ -33,7 +33,7 @@ export function ConnectedScreen({ womanPhoto, womanName, connectionId }: Connect
       </p>
       <button
         onClick={() => router.push(`/messages/${connectionId}`)}
-        className="bg-[#D4AF37] text-black font-display text-lg px-8 py-3 rounded-full font-medium hover:bg-[#B8941F] transition-colors"
+        className="bg-[#C026D3] text-black font-display text-lg px-8 py-3 rounded-full font-medium hover:bg-[#86198F] transition-colors"
       >
         Open Chat →
       </button>

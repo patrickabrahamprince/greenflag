@@ -8,14 +8,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        cream: '#000000',
+        cream: '#0B0614',
         ink: '#FFFFFF',
         black: '#1A1A1A',
         'black-deep': '#0A0A0A',
-        gold: '#D4AF37',
-        'gold-light': '#E0C158',
-        'gold-dark': '#B8941F',
-        blush: '#D4AF37',
+        gold: '#C026D3',
+        'gold-light': '#E879F9',
+        'gold-dark': '#86198F',
+        blush: '#C026D3',
+        violet: '#7C3AED',
         surface: '#111111',
         'surface-light': '#1C1C1E',
         border: '#2A2A2A',

@@ -25,8 +25,8 @@ export default function PendingApprovalPage() {
         </button>
       </div>
 
-      <div className="w-16 h-16 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center mb-6">
-        <Hourglass className="w-8 h-8 text-[#D4AF37]" />
+      <div className="w-16 h-16 rounded-full bg-[#C026D3]/10 border border-[#C026D3]/30 flex items-center justify-center mb-6">
+        <Hourglass className="w-8 h-8 text-[#C026D3]" />
       </div>
 
       <h1 className="font-display text-3xl text-ink mb-3">

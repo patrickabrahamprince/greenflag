@@ -182,7 +182,7 @@ export default function DiscoverPage() {
           className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
           style={{ height: pullDistance }}
         >
-          <Loader2 className={`w-5 h-5 text-[#D4AF37] ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
+          <Loader2 className={`w-5 h-5 text-[#C026D3] ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
         </div>
         {profiles.map((p, i) => (
           <div
@@ -202,7 +202,7 @@ export default function DiscoverPage() {
                   />
                   {typeof p.match_percentage === 'number' && (
                     <div className="absolute top-12 left-3 z-10 flex items-center gap-1.5 bg-black/35 backdrop-blur-md rounded-full px-3 py-1.5">
-                      <span className="text-[#D4AF37] text-xs">◆</span>
+                      <span className="text-[#C026D3] text-xs">◆</span>
                       <span className="font-display italic text-white text-sm whitespace-nowrap">
                         {p.match_percentage}% GreenFlag Match
                       </span>
@@ -270,7 +270,7 @@ export default function DiscoverPage() {
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className="flex items-center gap-1 text-xs text-[#D4AF37] font-medium leading-none"
+                        className="flex items-center gap-1 text-xs text-[#C026D3] font-medium leading-none"
                       >
                         <Instagram className="w-3.5 h-3.5" />
                         {p.instagram_url.replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '') || 'Instagram'}
@@ -302,7 +302,7 @@ export default function DiscoverPage() {
                         key={interest}
                         className={
                           isMatched
-                            ? 'px-4 py-2 rounded-full bg-[#D4AF37] text-white text-sm font-medium shadow-[0_2px_10px_rgba(201,169,97,0.35)] leading-none'
+                            ? 'px-4 py-2 rounded-full bg-[#C026D3] text-white text-sm font-medium shadow-[0_2px_10px_rgba(192, 38, 211,0.35)] leading-none'
                             : 'px-4 py-2 rounded-full bg-[#1C1C1E] text-ink text-sm font-medium shadow-[0_2px_10px_rgba(0,0,0,0.08)] leading-none'
                         }
                       >
@@ -313,7 +313,7 @@ export default function DiscoverPage() {
                 </div>
                 {p.bio && (
                   <div>
-                    <p className="text-[#D4AF37] text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">About</p>
+                    <p className="text-[#C026D3] text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">About</p>
                     <p className="text-ink/80 text-base leading-relaxed max-w-md font-light line-clamp-2">{p.bio}</p>
                   </div>
                 )}
@@ -337,7 +337,7 @@ export default function DiscoverPage() {
                   }}
                   disabled={likingId === p.id}
                   aria-label="Like"
-                  className="flex-1 h-14 rounded-full bg-[#D4AF37] shadow-[0_4px_16px_rgba(201,169,97,0.35)] flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
+                  className="flex-1 h-14 rounded-full bg-[#C026D3] shadow-[0_4px_16px_rgba(192, 38, 211,0.35)] flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
                 >
                   {likingId === p.id ? (
                     <Loader2 className="w-5 h-5 animate-spin text-white" />
@@ -356,13 +356,13 @@ export default function DiscoverPage() {
         ))}
         {pageLoading && (
           <div className="snap-start min-h-[100dvh] flex items-center justify-center">
-            <Loader2 className="animate-spin text-[#D4AF37]" size={32} />
+            <Loader2 className="animate-spin text-[#C026D3]" size={32} />
           </div>
         )}
         {!pageLoading && profiles.length === 0 && (
           <div className="snap-start min-h-[calc(100dvh-5rem)] flex flex-col items-center justify-center px-8 text-center animate-fade-in">
-            <div className="w-14 h-14 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mb-5">
-              <Heart className="w-6 h-6 text-[#D4AF37]" />
+            <div className="w-14 h-14 rounded-full bg-[#C026D3]/10 flex items-center justify-center mb-5">
+              <Heart className="w-6 h-6 text-[#C026D3]" />
             </div>
             <h2 className="font-display text-2xl text-ink mb-2">You&apos;ve seen everyone</h2>
             <p className="text-ink/50 text-sm max-w-xs">
@@ -376,7 +376,7 @@ export default function DiscoverPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
           <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
             <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Coins className="w-6 h-6 text-[#D4AF37]" />
+              <Coins className="w-6 h-6 text-[#C026D3]" />
             </div>
             <h4 className="font-display text-2xl text-ink mb-2">Unlock Standard?</h4>
             <p className="text-ink/60 text-sm leading-relaxed mb-6">

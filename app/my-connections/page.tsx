@@ -71,7 +71,7 @@ function MatchRow({ match, onClick }: { match: MatchListItem; onClick: () => voi
         <p className="text-xs text-ink/50">{statusLabel(match)}</p>
       </div>
       {isLocked && (
-        <span className="text-xs font-medium text-[#D4AF37] tabular-nums flex-shrink-0">
+        <span className="text-xs font-medium text-[#C026D3] tabular-nums flex-shrink-0">
           {formatCountdown(remainingMs!)}
         </span>
       )}
@@ -105,7 +105,7 @@ export default function MyConnectionsPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center screen-gradient">
-        <Loader2 className="w-8 h-8 animate-spin text-[#D4AF37]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#C026D3]" />
       </div>
     );
   }
@@ -116,8 +116,8 @@ export default function MyConnectionsPage() {
 
       {matches.length === 0 ? (
         <div className="flex flex-col items-center justify-center text-center px-6 mt-20">
-          <div className="w-14 h-14 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mb-5">
-            <Heart className="w-6 h-6 text-[#D4AF37]" />
+          <div className="w-14 h-14 rounded-full bg-[#C026D3]/10 flex items-center justify-center mb-5">
+            <Heart className="w-6 h-6 text-[#C026D3]" />
           </div>
           <h2 className="font-display text-xl text-ink mb-2">No connections yet</h2>
           <p className="text-ink/50 text-sm">Unlock a profile in Discover to start a connection.</p>

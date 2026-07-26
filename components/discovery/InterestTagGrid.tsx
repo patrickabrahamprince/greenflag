@@ -36,7 +36,7 @@ export function InterestTagGrid({
               className={cn(
                 'px-4 py-2 rounded-full text-sm transition-all duration-300 active:scale-95',
                 isSelected
-                  ? 'border border-[#D4AF37] bg-[#D4AF37]/10 text-ink'
+                  ? 'border border-[#C026D3] bg-[#C026D3]/10 text-ink'
                   : locked
                   ? 'border border-[#2A2A2A] bg-transparent text-muted/30 cursor-not-allowed'
                   : 'border border-[#2A2A2A] bg-transparent text-muted hover:text-ink'

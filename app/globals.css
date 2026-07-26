@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-html, body { background: #000000 !important; }
+html, body { background: #0B0614 !important; }
 * { -webkit-tap-highlight-color: transparent; }
 
 @layer base {
@@ -39,12 +39,12 @@ html, body { background: #000000 !important; }
            transition-all duration-300 ease-out
            active:scale-[0.98]
            disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
-    background: linear-gradient(135deg, #E0C158 0%, #D4AF37 45%, #B8941F 100%);
-    box-shadow: 0 4px 20px -4px rgba(212, 175, 55, 0.45);
+    background: linear-gradient(135deg, #E879F9 0%, #C026D3 45%, #86198F 100%);
+    box-shadow: 0 4px 20px -4px rgba(192, 38, 211, 0.45);
   }
 
   .btn-primary:hover {
-    background: linear-gradient(135deg, #E8CC70 0%, #D4AF37 45%, #A8850F 100%);
+    background: linear-gradient(135deg, #F0ABFC 0%, #C026D3 45%, #86198F 100%);
   }
 
   .btn-secondary {
@@ -91,7 +91,7 @@ html, body { background: #000000 !important; }
   }
 
   .text-gradient {
-    background: linear-gradient(135deg, #E0C158 0%, #D4AF37 50%, #B8941F 100%);
+    background: linear-gradient(135deg, #E879F9 0%, #C026D3 50%, #86198F 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -109,21 +109,24 @@ html, body { background: #000000 !important; }
   .page-container {
     @apply min-h-screen max-w-app mx-auto px-8 pt-8 pb-24;
     background:
-      radial-gradient(ellipse 90% 55% at 50% -12%, rgba(212, 175, 55, 0.28), transparent 65%),
-      radial-gradient(ellipse 70% 45% at 100% 105%, rgba(212, 175, 55, 0.12), transparent 70%),
-      #000000;
+      radial-gradient(ellipse 140% 90% at 50% -25%, rgba(192, 38, 211, 0.45) 0%, rgba(124, 58, 237, 0.22) 35%, rgba(11, 6, 20, 0) 70%),
+      radial-gradient(ellipse 100% 70% at 100% 100%, rgba(124, 58, 237, 0.18) 0%, transparent 60%),
+      #0B0614;
   }
 
-  /* Shared immersive backdrop for full-screen views: a clearly visible gold
-     glow anchored top-center plus a faint accent glow at the bottom-right,
-     so every screen reads as one continuous, lit surface instead of flat
-     black panels stitched together. First attempt at 0.08 opacity was
-     imperceptible against pure black -- pushed well past "subtle". */
+  /* Shared immersive backdrop for full-screen views: a saturated
+     magenta-to-violet glow anchored top-center with a smooth 3-stop
+     falloff (no hard edge), plus a faint violet glow bottom-right for
+     depth, over a purple-tinted near-black base instead of pure #000 --
+     so every screen reads as one continuous, lit surface. Earlier
+     attempts used raw gold at low opacity, which darkens toward a muddy
+     brown instead of holding its hue; magenta/violet don't have that
+     problem. */
   .screen-gradient {
     background:
-      radial-gradient(ellipse 90% 55% at 50% -12%, rgba(212, 175, 55, 0.28), transparent 65%),
-      radial-gradient(ellipse 70% 45% at 100% 105%, rgba(212, 175, 55, 0.12), transparent 70%),
-      #000000;
+      radial-gradient(ellipse 140% 90% at 50% -25%, rgba(192, 38, 211, 0.45) 0%, rgba(124, 58, 237, 0.22) 35%, rgba(11, 6, 20, 0) 70%),
+      radial-gradient(ellipse 100% 70% at 100% 100%, rgba(124, 58, 237, 0.18) 0%, transparent 60%),
+      #0B0614;
   }
 
   .page-header {
@@ -158,7 +161,7 @@ html, body { background: #000000 !important; }
   }
 
   .gold-border-left {
-    border-left: 2px solid #D4AF37;
+    border-left: 2px solid #C026D3;
   }
 
   .match-arc {
@@ -179,7 +182,7 @@ html, body { background: #000000 !important; }
 
   .match-arc-fill {
     fill: none;
-    stroke: #D4AF37;
+    stroke: #C026D3;
     stroke-width: 2;
     stroke-linecap: round;
     transition: stroke-dashoffset 1s ease-out;

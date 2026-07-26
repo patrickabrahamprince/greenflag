@@ -73,7 +73,7 @@ export function BottomNav() {
           return (
             <Link key={tab.name} href={tab.href} className="flex items-center justify-center relative w-12 h-12">
               <div className="relative">
-                <tab.icon className={cn('transition-all duration-200', active ? 'text-[#D4AF37] w-6 h-6' : 'text-ink/40 w-5 h-5')} strokeWidth={active ? 2.5 : 1.5} />
+                <tab.icon className={cn('transition-all duration-200', active ? 'text-[#C026D3] w-6 h-6' : 'text-ink/40 w-5 h-5')} strokeWidth={active ? 2.5 : 1.5} />
                 {isNotifications && unreadCount > 0 && (
                   <span className="absolute -top-1 -right-2 min-w-[16px] h-4 px-1 bg-red-500 rounded-full flex items-center justify-center">
                     <span className="text-[9px] font-bold text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>

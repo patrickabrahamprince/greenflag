@@ -17,7 +17,7 @@ export function TaskProgressBar({
     <div className={cn('mb-6', className)}>
       <div className="flex justify-between text-sm mb-1">
         <span className="text-[#9DA0A6]">Progress</span>
-        <span className="text-[#D4AF37]">{completedCount}/{totalTasks}</span>
+        <span className="text-[#C026D3]">{completedCount}/{totalTasks}</span>
       </div>
       <div className="flex gap-0.5">
         {Array.from({ length: totalTasks }).map((_, i) => (
@@ -26,9 +26,9 @@ export function TaskProgressBar({
             className={cn(
               'h-1.5 flex-1 rounded-full transition-all',
               i < completedCount
-                ? 'bg-[#D4AF37]'
+                ? 'bg-[#C026D3]'
                 : isSubmitted
-                  ? 'bg-[#D4AF37]/30'
+                  ? 'bg-[#C026D3]/30'
                   : 'bg-white/10'
             )}
           />

@@ -34,7 +34,7 @@ export function ProfileActionBar({
       ) : hasConnection ? (
         <button
           onClick={onContinue}
-          className="w-full h-14 rounded-full bg-[#D4AF37] text-white font-medium active:scale-95 transition-all duration-200"
+          className="w-full h-14 rounded-full bg-[#C026D3] text-white font-medium active:scale-95 transition-all duration-200"
         >
           Continue to Tasks
         </button>
@@ -42,7 +42,7 @@ export function ProfileActionBar({
         <button
           onClick={onMeet}
           disabled={connecting}
-          className="w-full h-14 rounded-full bg-[#D4AF37] text-white font-medium active:scale-95 transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full h-14 rounded-full bg-[#C026D3] text-white font-medium active:scale-95 transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
         >
           {connecting ? (
             <>
