@@ -354,7 +354,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
             <textarea
               value={textContent}
               onChange={(e) => setTextContent(e.target.value)}
-              placeholder="Write your response (50–500 characters)..."
+              placeholder="Write your response (10–500 characters)..."
               rows={5}
               className="input resize-none"
             />
