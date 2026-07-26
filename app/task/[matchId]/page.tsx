@@ -310,7 +310,7 @@ export default function TaskPage() {
                   {matchingSub.content && <p className="text-xs text-ink/80 italic">&quot;{matchingSub.content}&quot;</p>}
                   {matchingSub.media_url && (
                     matchingSub.media_type === 'photo' ? (
-                      <img src={matchingSub.media_url} alt="" className="mt-2 rounded-lg max-h-40 object-cover" />
+                      <img src={matchingSub.media_url} alt="" className="mt-2 rounded-lg w-full max-h-64 object-cover" />
                     ) : (
                       <audio controls src={matchingSub.media_url} className="mt-2 w-full h-8" />
                     )

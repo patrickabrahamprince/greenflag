@@ -42,7 +42,13 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
   const animationFrameRef = useRef<number | null>(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
+  const [playbackTime, setPlaybackTime] = useState(0);
   const audioElRef = useRef<HTMLAudioElement | null>(null);
+
+  const formatTime = (seconds: number) => {
+    const s = Math.max(0, Math.floor(seconds));
+    return `0:${String(s % 60).padStart(2, '0')}`;
+  };
 
   // Keep audioUrlRef in sync
   useEffect(() => {
@@ -64,7 +70,9 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
       setIsPlaying(false);
     } else {
       setError(null);
-      el.currentTime = 0;
+      if (el.currentTime >= el.duration || playbackTime >= recordedDuration) {
+        el.currentTime = 0;
+      }
       el.play()
         .then(() => setIsPlaying(true))
         .catch((e) => {
@@ -399,36 +407,57 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
                   <p className="text-[10px] text-yellow-500 font-mono break-all px-2">{debugInfo}</p>
                 )}
 
-                {/* Native browser audio player hidden, controlled by the gold button */}
+                {/* Native browser audio player hidden, controlled by the scrubber below */}
                 {audioUrl && (
                   <audio
                     ref={audioElRef}
                     src={audioUrl}
-                    onEnded={() => setIsPlaying(false)}
+                    onEnded={() => { setIsPlaying(false); setPlaybackTime(0); }}
+                    onTimeUpdate={(e) => setPlaybackTime(e.currentTarget.currentTime)}
                     preload="auto"
                     className="hidden"
                   />
                 )}
 
-                <button
-                  onClick={() => { setError(null); togglePlay(); }}
-                  className="w-14 h-14 rounded-full flex items-center justify-center text-black active:scale-95 transition-all mx-auto"
-                  style={{ background: '#C026D3' }}
-                >
-                  {isPlaying ? (
-                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                      <rect x="5" y="4" width="4" height="16" />
-                      <rect x="15" y="4" width="4" height="16" />
-                    </svg>
-                  ) : (
-                    <svg className="w-5 h-5 fill-current ml-0.5" viewBox="0 0 24 24">
-                      <polygon points="6,4 20,12 6,20" />
-                    </svg>
-                  )}
-                </button>
-                <p className="text-xs text-[#9DA0A6] font-thin">
-                  {isPlaying ? 'Playing recording...' : 'Tap to listen'}
-                </p>
+                <div className="flex items-center gap-3 w-full max-w-xs">
+                  <button
+                    onClick={() => { setError(null); togglePlay(); }}
+                    className="w-11 h-11 rounded-full flex items-center justify-center text-black active:scale-95 transition-all shrink-0"
+                    style={{ background: '#C026D3' }}
+                    aria-label={isPlaying ? 'Pause' : 'Play'}
+                  >
+                    {isPlaying ? (
+                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                        <rect x="5" y="4" width="4" height="16" />
+                        <rect x="15" y="4" width="4" height="16" />
+                      </svg>
+                    ) : (
+                      <svg className="w-4 h-4 fill-current ml-0.5" viewBox="0 0 24 24">
+                        <polygon points="6,4 20,12 6,20" />
+                      </svg>
+                    )}
+                  </button>
+                  <input
+                    type="range"
+                    min={0}
+                    max={recordedDuration || 1}
+                    step={0.1}
+                    value={Math.min(playbackTime, recordedDuration || 1)}
+                    onChange={(e) => {
+                      const value = Number(e.target.value);
+                      setPlaybackTime(value);
+                      if (audioElRef.current) audioElRef.current.currentTime = value;
+                    }}
+                    className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer accent-[#C026D3]"
+                    style={{
+                      background: `linear-gradient(to right, #C026D3 ${(playbackTime / (recordedDuration || 1)) * 100}%, #2A2A2A ${(playbackTime / (recordedDuration || 1)) * 100}%)`,
+                    }}
+                    aria-label="Playback position"
+                  />
+                  <span className="text-xs text-[#9DA0A6] font-mono tabular-nums shrink-0">
+                    {formatTime(playbackTime)}/{formatTime(recordedDuration)}
+                  </span>
+                </div>
 
                 <button
                   onClick={() => {
