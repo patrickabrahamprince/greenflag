@@ -37,14 +37,14 @@ export default function BannedPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#000000] flex items-center justify-center">
+      <div className="min-h-screen screen-gradient flex items-center justify-center">
         <Loader2 className="w-6 h-6 animate-spin text-[#D4AF37]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#000000] flex items-center justify-center p-6">
+    <div className="min-h-screen screen-gradient flex items-center justify-center p-6">
       <div className="text-center max-w-md">
         <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-6">
           <Ban className="w-10 h-10 text-red-500" />

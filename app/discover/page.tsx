@@ -160,7 +160,7 @@ export default function DiscoverPage() {
   }
 
   return (
-    <div className="relative bg-[#000000] min-h-dvh max-w-app mx-auto">
+    <div className="relative screen-gradient min-h-dvh max-w-app mx-auto">
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex items-center justify-between px-5 py-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent pointer-events-none">
         <button onClick={() => router.push('/messages')} className="pointer-events-auto w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center">
           <ArrowLeft className="w-5 h-5 text-white" />

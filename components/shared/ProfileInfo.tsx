@@ -25,7 +25,7 @@ export function ProfileInfo({
   matchOverlapping = [],
 }: ProfileInfoProps) {
   return (
-    <div className="bg-[#000000] px-8 pt-8">
+    <div className="px-8 pt-8">
       <div className="flex items-center gap-x-4 gap-y-1 flex-wrap text-sm text-ink/60 border-b border-[#2A2A2A] py-6">
         <span className="text-ink/80">{age}</span>
         {city_auto && (

@@ -79,15 +79,15 @@ export default function NotificationsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#000000] flex items-center justify-center">
+      <div className="min-h-screen screen-gradient flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-gold" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#000000]">
-      <div className="max-w-app mx-auto px-4 py-4">
+    <div className="min-h-screen screen-gradient">
+      <div className="max-w-app mx-auto px-6 pt-8 pb-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <button onClick={() => router.back()} className="btn-ghost p-2">

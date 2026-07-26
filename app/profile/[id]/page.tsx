@@ -22,7 +22,7 @@ export default function ViewProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#000000] flex items-center justify-center">
+      <div className="min-h-screen screen-gradient flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-[#D4AF37]" />
       </div>
     );
@@ -34,7 +34,7 @@ export default function ViewProfilePage() {
   const photo = photos[photoIdx] || '';
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-24">
+    <div className="min-h-screen screen-gradient pb-24">
       <ProfileHeroSection
         photo={photo}
         name={profile.name}

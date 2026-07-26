@@ -130,7 +130,7 @@ export default function TaskPage() {
 
   if (loading || !currentUser) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#000000]">
+      <div className="min-h-screen flex items-center justify-center screen-gradient">
         <Loader2 className="w-8 h-8 animate-spin text-[#D4AF37]" />
       </div>
     );
@@ -138,7 +138,7 @@ export default function TaskPage() {
 
   if (error || !match || !otherProfile) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#000000] px-8 text-center">
+      <div className="min-h-screen flex flex-col items-center justify-center screen-gradient px-8 text-center">
         <p className="text-ink/60 text-sm mb-6">{error || 'Match not found'}</p>
         <button onClick={() => router.push('/discover')} className="btn-primary">
           Back to Discover
@@ -201,7 +201,7 @@ export default function TaskPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] px-6 pt-6 pb-10 max-w-app mx-auto flex flex-col">
+    <div className="min-h-screen screen-gradient px-6 pt-8 pb-10 max-w-app mx-auto flex flex-col">
       <div className="flex items-center justify-between mb-6">
         <button onClick={() => router.push('/discover')} className="p-1 -ml-1 text-ink/40 hover:text-ink transition-colors">
           <ArrowLeft className="w-5 h-5" />

@@ -165,9 +165,9 @@ export default function MessagesListPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#000000]">
+    <div className="min-h-screen flex flex-col screen-gradient">
       <div className="max-w-app mx-auto w-full flex-1 flex flex-col">
-        <div className="px-4 pt-4 pb-0">
+        <div className="px-6 pt-6 pb-0">
           <div className="page-header">
             <button onClick={() => router.back()} className="btn-ghost p-2 -ml-2">
               <ArrowLeft className="w-5 h-5" />

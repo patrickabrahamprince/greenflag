@@ -117,14 +117,14 @@ export default function StandardBuilderPage() {
 
   if (!currentUser || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#000000]">
+      <div className="min-h-screen flex items-center justify-center screen-gradient">
         <Loader2 className="w-8 h-8 animate-spin text-[#D4AF37]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#000000] px-6 pt-6 pb-24 max-w-app mx-auto">
+    <div className="min-h-screen screen-gradient px-6 pt-8 pb-24 max-w-app mx-auto">
       <h1 className="font-display text-2xl text-ink mb-2">Set Your Standard</h1>
       <p className="text-sm text-ink/50 mb-6">
         Write one prompt for each of the first 3 days. Men will complete these, one day at a time, before you review and unlock chat.

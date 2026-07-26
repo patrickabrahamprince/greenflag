@@ -107,8 +107,15 @@ html, body { background: #000000 !important; }
   }
 
   .page-container {
-    @apply min-h-screen max-w-app mx-auto px-8 pb-24;
-    background: #000000;
+    @apply min-h-screen max-w-app mx-auto px-8 pt-8 pb-24;
+    background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(212, 175, 55, 0.08), transparent), #000000;
+  }
+
+  /* Shared immersive backdrop for full-screen views: same radial gold glow
+     as the login page, so every screen feels like one continuous surface
+     instead of flat black panels stitched together. */
+  .screen-gradient {
+    background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(212, 175, 55, 0.08), transparent), #000000;
   }
 
   .page-header {

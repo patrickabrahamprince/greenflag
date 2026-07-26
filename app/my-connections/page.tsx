@@ -104,14 +104,14 @@ export default function MyConnectionsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#000000]">
+      <div className="min-h-screen flex items-center justify-center screen-gradient">
         <Loader2 className="w-8 h-8 animate-spin text-[#D4AF37]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#000000] px-6 pt-8 pb-24 max-w-app mx-auto">
+    <div className="min-h-screen screen-gradient px-6 pt-8 pb-24 max-w-app mx-auto">
       <h1 className="font-display text-3xl text-ink mb-6">My Connections</h1>
 
       {matches.length === 0 ? (
