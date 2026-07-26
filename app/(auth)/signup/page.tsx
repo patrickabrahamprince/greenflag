@@ -7,6 +7,7 @@ import { EmailSignupForm } from '@/components/discovery/EmailSignupForm'
 import { PhoneOtpForm } from '@/components/discovery/PhoneOtpForm'
 import { OtpVerificationForm } from '@/components/discovery/OtpVerificationForm'
 import { SignupFooter } from '@/components/discovery/SignupFooter'
+import { GoogleButton } from '@/components/ui/GoogleButton'
 
 type AuthMode = 'email' | 'phone'
 type PhoneStep = 'number' | 'otp'
@@ -22,7 +23,20 @@ export default function SignupPage() {
   const [otp, setOtp] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
   const supabase = createClient()
+
+  const handleGoogleSignup = async () => {
+    setGoogleLoading(true)
+    try {
+      await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: `${window.location.origin}/auth/callback` },
+      })
+    } catch {
+      setGoogleLoading(false)
+    }
+  }
 
   const handleModeChange = (newMode: AuthMode) => {
     setMode(newMode)
@@ -137,6 +151,13 @@ export default function SignupPage() {
             onResendOtp={handleSendOtp}
           />
         )}
+
+        <div className="flex items-center gap-3 my-6">
+          <div className="flex-1 h-px bg-[#2A2A2A]" />
+          <span className="text-ink/40 text-xs uppercase tracking-wide">or</span>
+          <div className="flex-1 h-px bg-[#2A2A2A]" />
+        </div>
+        <GoogleButton onClick={handleGoogleSignup} loading={googleLoading} />
 
         <SignupFooter />
       </div>
