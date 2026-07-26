@@ -76,7 +76,7 @@ export function BottomNav() {
                 <div
                   className={cn(
                     'flex items-center justify-center rounded-full transition-all duration-200',
-                    active ? 'w-11 h-11 bg-[#C026D3] shadow-[0_4px_16px_rgba(192,38,211,0.5)]' : 'w-10 h-10'
+                    active ? 'w-11 h-11 bg-gold shadow-[0_4px_16px_rgba(192,38,211,0.5)]' : 'w-10 h-10'
                   )}
                 >
                   <tab.icon className={cn('transition-all duration-200', active ? 'text-white w-5 h-5' : 'text-ink/40 w-5 h-5')} strokeWidth={active ? 2.5 : 1.5} />

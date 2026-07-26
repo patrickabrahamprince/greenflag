@@ -1,12 +1,12 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Eye, LayoutDashboard, Ban, Shield, Check, UserX } from 'lucide-react';
+import { Eye, LayoutDashboard, Ban, Shield, ShieldOff, Check, UserX } from 'lucide-react';
 import type { AdminUser } from './types';
 
 export interface UserManagementTableProps {
   users: AdminUser[];
-  onSetAdmin: (userId: string) => void;
+  onSetAdmin: (userId: string, grant: boolean) => void;
   onBanClick: (user: AdminUser) => void;
   onApproveClick: (user: AdminUser) => void;
   onRejectClick: (user: AdminUser) => void;
@@ -108,13 +108,29 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
                       <LayoutDashboard className="w-3.5 h-3.5" />
                     </button>
                   )}
-                  {!u.is_admin && (
+                  {!u.is_admin ? (
                     <button
-                      onClick={() => onSetAdmin(u.id)}
+                      onClick={() => {
+                        if (window.confirm(`Grant admin access to ${u.name || u.id}?`)) {
+                          onSetAdmin(u.id, true);
+                        }
+                      }}
                       className="btn-ghost text-xs p-1.5 text-blue-400"
                       title="Make Admin"
                     >
                       <Shield className="w-3.5 h-3.5" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        if (window.confirm(`Revoke admin access from ${u.name || u.id}?`)) {
+                          onSetAdmin(u.id, false);
+                        }
+                      }}
+                      className="btn-ghost text-xs p-1.5 text-orange-400"
+                      title="Revoke Admin"
+                    >
+                      <ShieldOff className="w-3.5 h-3.5" />
                     </button>
                   )}
                   {!u.is_banned && (

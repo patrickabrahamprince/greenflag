@@ -43,7 +43,7 @@ export function DailyLimitReached() {
       </p>
       <div className="bg-[#1C1C1E] rounded-xl px-6 py-3">
         <p className="text-xs text-[#9DA0A6] mb-1">Resets in</p>
-        <p className="text-lg font-mono font-bold text-[#C026D3]">{countdown}</p>
+        <p className="text-lg font-mono font-bold text-gold">{countdown}</p>
       </div>
     </div>
   );

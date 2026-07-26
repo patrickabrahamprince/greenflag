@@ -2,8 +2,10 @@ import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { createClient } from '@supabase/supabase-js';
 import { notifyWomanOfMediaReady } from '@/lib/notifications';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 
 const TERMINAL_STATUSES = ['completed', 'rejected', 'expired_no_submission', 'refunded'];
+const VALID_MEDIA_TYPES = ['text', 'photo', 'voice'];
 
 function getAdmin() {
   return createClient(
@@ -23,10 +25,26 @@ export async function POST(
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+    const rl = checkRateLimit(user.id, 'task_submit', RATE_LIMITS.taskSubmit);
+    if (!rl.allowed) {
+      return NextResponse.json({ error: 'Rate limit exceeded' }, {
+        status: 429,
+        headers: { 'Retry-After': String(rl.retryAfter) },
+      });
+    }
+
     const { task_number, text, media_url, media_type } = await req.json();
+
+    if (!VALID_MEDIA_TYPES.includes(media_type)) {
+      return NextResponse.json({ error: 'Invalid media_type' }, { status: 400 });
+    }
 
     if (!text && !media_url) {
       return NextResponse.json({ error: 'text or media_url required' }, { status: 400 });
+    }
+
+    if (media_type === 'text' && (typeof text !== 'string' || text.trim().length < 10 || text.length > 500)) {
+      return NextResponse.json({ error: 'Text must be 10-500 characters' }, { status: 400 });
     }
 
     const SUBMIT_COST = 10;
@@ -67,6 +85,27 @@ export async function POST(
 
     const day_number = match.current_day;
 
+    const { data: standard } = await admin
+      .from('standards')
+      .select('id')
+      .eq('woman_id', match.user2_id)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    const { data: intention } = standard
+      ? await admin
+          .from('intentions')
+          .select('type')
+          .eq('standard_id', standard.id)
+          .eq('day_number', day_number ?? 1)
+          .eq('task_number', task_number ?? 1)
+          .maybeSingle()
+      : { data: null };
+
+    if (!intention || intention.type !== media_type) {
+      return NextResponse.json({ error: 'This task does not match what she asked for' }, { status: 400 });
+    }
+
     const { data: existingSub } = await admin
       .from('submissions')
       .select('id, approved')
@@ -80,6 +119,25 @@ export async function POST(
     }
     if (existingSub && existingSub.approved !== true) {
       return NextResponse.json({ error: 'Already submitted — awaiting her review' }, { status: 400 });
+    }
+
+    // Deduct payment BEFORE creating the submission, not after: deduct_coins
+    // takes a row lock (FOR UPDATE) so this is the atomic point that decides
+    // who actually pays. Doing it first means a failed/duplicate deduction
+    // simply never creates a submission, instead of creating one and then
+    // having to notice and unwind a payment that silently didn't happen.
+    const { data: deductResult } = await admin.rpc('deduct_coins', {
+      p_user_id: user.id,
+      p_amount: SUBMIT_COST,
+      p_description: 'Task submission',
+      p_metadata: { match_id: id, day_number, task_number },
+    });
+
+    if (!deductResult?.success) {
+      return NextResponse.json(
+        { error: 'INSUFFICIENT_COINS', coins_needed: SUBMIT_COST },
+        { status: 402 }
+      );
     }
 
     const basePayload: Record<string, unknown> = {
@@ -97,19 +155,20 @@ export async function POST(
 
     const { error: insertErr } = await admin.from('submissions').insert(basePayload);
     if (insertErr) {
+      // Payment already went through above -- refund it, since no
+      // submission was actually created.
+      await admin.rpc('add_coins', {
+        p_user_id: user.id,
+        p_amount: SUBMIT_COST,
+        p_description: 'Refund: task submission failed to save',
+        p_metadata: { match_id: id, day_number, task_number },
+      });
       return NextResponse.json({ error: insertErr.message }, { status: 400 });
     }
 
     await admin.from('funnel_events').insert({ match_id: id, event_type: 'submitted' });
 
     const { data: gateResult } = await admin.rpc('recompute_match_gate', { p_match_id: id });
-
-    await admin.rpc('deduct_coins', {
-      p_user_id: user.id,
-      p_amount: SUBMIT_COST,
-      p_description: 'Task submission',
-      p_metadata: { match_id: id, day_number, task_number },
-    });
 
     try {
       const { data: manProfile } = await admin.from('profiles').select('name').eq('id', user.id).single();

@@ -83,7 +83,7 @@ export function PushPermission() {
     <button
       onClick={handleEnable}
       disabled={loading || subscribed}
-      className="flex items-center gap-2 rounded-full bg-[#C026D3] px-4 py-2 text-sm font-medium text-black disabled:opacity-50"
+      className="flex items-center gap-2 rounded-full bg-gold px-4 py-2 text-sm font-medium text-black disabled:opacity-50"
     >
       {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Bell className="h-4 w-4" />}
       {subscribed ? 'Notifications enabled' : 'Enable reminders'}

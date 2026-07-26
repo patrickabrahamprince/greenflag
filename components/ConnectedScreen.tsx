@@ -33,7 +33,7 @@ export function ConnectedScreen({ womanPhoto, womanName, connectionId }: Connect
       </p>
       <button
         onClick={() => router.push(`/messages/${connectionId}`)}
-        className="bg-[#C026D3] text-black font-display text-lg px-8 py-3 rounded-full font-medium hover:bg-[#86198F] transition-colors"
+        className="bg-gold text-black font-display text-lg px-8 py-3 rounded-full font-medium hover:bg-[#86198F] transition-colors"
       >
         Open Chat →
       </button>

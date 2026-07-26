@@ -113,12 +113,16 @@ export default function AdminUsers() {
     }
   };
 
-  const handleSetAdmin = async (userId: string) => {
+  const handleSetAdmin = async (userId: string, grant: boolean) => {
     try {
-      const res = await fetch(`/api/admin/users/${userId}/set-admin`, { method: 'POST' });
+      const res = await fetch(`/api/admin/users/${userId}/set-admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ grant }),
+      });
       const d = await res.json();
       if (d.success) {
-        toast.success('Admin role granted');
+        toast.success(grant ? 'Admin role granted' : 'Admin role revoked');
         fetchUsers();
       } else {
         toast.error(d.error || 'Failed');

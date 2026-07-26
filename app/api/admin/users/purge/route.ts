@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     if (!auth.ok) return auth.response;
     const { supabase, adminEmail } = auth.data;
 
-    const { user_id } = await req.json();
+    const { user_id, confirm_admin_purge } = await req.json();
     if (!user_id) {
       return NextResponse.json({ error: 'user_id is required' }, { status: 400 });
     }
@@ -23,6 +23,19 @@ export async function POST(req: Request) {
     const adminSupabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
       auth: { persistSession: false },
     });
+
+    const { data: target } = await adminSupabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user_id)
+      .maybeSingle();
+
+    if (target?.is_admin && !confirm_admin_purge) {
+      return NextResponse.json(
+        { error: 'ADMIN_TARGET', message: 'This account is an admin. Resend with confirm_admin_purge: true to proceed.' },
+        { status: 400 }
+      );
+    }
 
     const deleted_tables: string[] = [];
 
@@ -49,12 +62,6 @@ export async function POST(req: Request) {
       .delete()
       .or(`user1_id.eq.${user_id},user2_id.eq.${user_id}`);
     if (!matchesErr) deleted_tables.push('matches');
-
-    const { error: convErr } = await adminSupabase
-      .from('conversations' as any)
-      .delete()
-      .or(`user1_id.eq.${user_id},user2_id.eq.${user_id}`);
-    if (!convErr) deleted_tables.push('conversations');
 
     const { error: msgsErr } = await adminSupabase
       .from('messages')

@@ -56,26 +56,6 @@ export interface Report {
 
 export type Tab = 'pending' | 'reviewed' | 'actioned' | 'dismissed';
 
-export interface RawConnection {
-  id: string;
-  status: string;
-  current_day: number | null;
-  expires_at: string | null;
-  created_at: string | null;
-  guest?: { name?: string; age?: number | null; city?: string | null } | null;
-}
-
-export interface MappedConnection {
-  id: string;
-  status: string;
-  current_day: number | null;
-  expires_at: string | null;
-  created_at: string | null;
-  guest_name?: string;
-  guest_age?: number | null;
-  guest_city?: string | null;
-}
-
 export interface QueueItem {
   id: string;
   name: string;
@@ -85,17 +65,6 @@ export interface QueueItem {
   img: string;
   submitted_at: string;
   media_type: string | null;
-}
-
-export interface ConnectionRow {
-  id: string;
-  guest: string;
-  host: string;
-  currentDay: number;
-  tasks: string;
-  startedAt: string;
-  expires: string;
-  status: string;
 }
 
 export interface AuditLogEntry {

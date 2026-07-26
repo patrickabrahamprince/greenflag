@@ -41,8 +41,8 @@ const configs: Record<EmptyStateType, {
   },
   submitted: {
     icon: (
-      <div className="w-14 h-14 rounded-full bg-[#C026D3]/10 flex items-center justify-center mx-auto mb-3">
-        <Send className="w-6 h-6 text-[#C026D3]" />
+      <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-3">
+        <Send className="w-6 h-6 text-gold" />
       </div>
     ),
     title: 'Submitted!',
@@ -70,7 +70,7 @@ export function TaskEmptyState({ type, hostName, onNavigate }: TaskEmptyStatePro
             : config.description}
         </p>
         {config.showRefund && (
-          <div className="flex items-center justify-center gap-1 text-[#C026D3] text-sm mb-6">
+          <div className="flex items-center justify-center gap-1 text-gold text-sm mb-6">
             <Coins className="w-4 h-4" />+5 coins refunded
           </div>
         )}

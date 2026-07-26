@@ -1,13 +1,12 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Users, Flag, Link2, BarChart3, ScrollText, Shield } from 'lucide-react';
+import { Users, Flag, BarChart3, ScrollText, Shield } from 'lucide-react';
 
 const LINKS = [
   { label: 'Users', href: '/admin/users', icon: Users },
   { label: 'Queue', href: '/admin/queue', icon: Shield },
   { label: 'Reports', href: '/admin/reports', icon: Flag },
-  { label: 'Connections', href: '/admin/connections', icon: Link2 },
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { label: 'Audit Log', href: '/admin/audit', icon: ScrollText },
 ];

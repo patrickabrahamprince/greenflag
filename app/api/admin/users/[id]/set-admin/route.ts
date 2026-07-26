@@ -1,28 +1,26 @@
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/admin/auth';
 
 export async function POST(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
-    const supabase = await createServerSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const auth = await requireAdmin();
+    if (!auth.ok) return auth.response;
+    const { supabase, adminId } = auth.data;
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
+    const body = await req.json().catch(() => ({}));
+    const grant = body?.grant !== false;
 
-    if (!profile?.is_admin) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    if (!grant && id === adminId) {
+      return NextResponse.json({ error: 'Cannot revoke your own admin access' }, { status: 400 });
     }
 
     const { error } = await supabase.rpc('admin_set_admin', {
       p_user_id: id,
+      p_grant: grant,
     });
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });

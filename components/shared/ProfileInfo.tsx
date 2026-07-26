@@ -47,7 +47,7 @@ export function ProfileInfo({
           </div>
         )}
         {matchPercent !== undefined && (
-          <span className="text-[#C026D3] text-xs uppercase tracking-wide">{matchPercent}% match</span>
+          <span className="text-gold text-xs uppercase tracking-wide">{matchPercent}% match</span>
         )}
       </div>
 
@@ -58,7 +58,7 @@ export function ProfileInfo({
             {matchOverlapping.map((interest) => (
               <span
                 key={interest}
-                className="px-3 py-1 text-xs uppercase tracking-wide border border-[#C026D3] text-[#C026D3]"
+                className="px-3 py-1 text-xs uppercase tracking-wide border border-gold text-gold"
               >
                 {interest}
               </span>
@@ -77,7 +77,7 @@ export function ProfileInfo({
                 key={interest}
                 className={`px-3 py-1 text-xs uppercase tracking-wide border ${
                   isMatch
-                    ? 'border-[#C026D3] text-[#C026D3]'
+                    ? 'border-gold text-gold'
                     : 'border-[#2A2A2A] text-ink/60'
                 }`}
               >
@@ -101,7 +101,7 @@ export function ProfileInfo({
           }
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 py-6 text-ink/50 hover:text-[#C026D3] transition-colors"
+          className="flex items-center gap-2 py-6 text-ink/50 hover:text-gold transition-colors"
         >
           <Instagram className="w-4 h-4" />
           <span className="text-sm">{instagram_url}</span>

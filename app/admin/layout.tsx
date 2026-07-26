@@ -9,7 +9,6 @@ import {
   BarChart3,
   ScrollText,
   LogOut,
-  Link2,
   Shield,
   Loader2,
 } from 'lucide-react';
@@ -20,7 +19,6 @@ const NAV_ITEMS = [
   { label: 'Users', href: '/admin/users', icon: Users },
   { label: 'Queue', href: '/admin/queue', icon: Shield },
   { label: 'Reports', href: '/admin/reports', icon: Flag },
-  { label: 'Connections', href: '/admin/connections', icon: Link2 },
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { label: 'Audit', href: '/admin/audit', icon: ScrollText },
 ];

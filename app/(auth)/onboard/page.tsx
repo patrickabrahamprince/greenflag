@@ -40,11 +40,11 @@ export default function OnboardPage() {
         <button
           onClick={() => handleSelect('woman')}
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'persona-woman' : undefined}
-          className="w-full h-56 rounded-xl bg-gradient-to-br from-[#C026D3]/10 to-[#C026D3]/5 border border-[#C026D3]/30 hover:border-[#C026D3] transition-all duration-300 relative overflow-hidden group active:scale-[0.98]"
+          className="w-full h-56 rounded-xl bg-gradient-to-br from-gold/10 to-gold/5 border border-gold/30 hover:border-gold transition-all duration-300 relative overflow-hidden group active:scale-[0.98]"
         >
           <div className="relative z-10 h-full flex flex-col items-center justify-center gap-3">
-            <div className="w-16 h-16 rounded-full bg-[#C026D3]/15 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Crown className="w-8 h-8 text-[#C026D3]" />
+            <div className="w-16 h-16 rounded-full bg-gold/15 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Crown className="w-8 h-8 text-gold" />
             </div>
             <span className="font-display text-2xl text-ink">
               I set the Standard

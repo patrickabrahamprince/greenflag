@@ -28,7 +28,6 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
   const [recordedDuration, setRecordedDuration] = useState(0);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [submitResult, setSubmitResult] = useState<{ status?: string }>({});
-  const [debugInfo, setDebugInfo] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -242,10 +241,6 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
       };
 
       recorder.onstop = () => {
-        const recorderMime = recorder.mimeType;
-        const numChunks = chunksRef.current.length;
-        const totalSize = chunksRef.current.reduce((sum, c) => sum + c.size, 0);
-        
         // Use base MIME type without codec params (e.g. 'audio/webm' not 'audio/webm;codecs=opus')
         const baseMime = (recorder.mimeType || 'audio/webm').split(';')[0];
         const blob = new Blob(chunksRef.current, { type: baseMime });
@@ -256,7 +251,6 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
         }
         const url = URL.createObjectURL(blob);
 
-        setDebugInfo(`Chunks: ${numChunks}, Size: ${totalSize} bytes, RecorderMIME: ${recorderMime}, BlobType: ${blob.type}, BlobSize: ${blob.size}`);
         setRecordedBlob(blob);
         setAudioUrl(url);
 
@@ -285,7 +279,16 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
       recorder.start();
       setIsRecording(true);
       setRecordedDuration(0);
-      timerRef.current = setInterval(() => setRecordedDuration((p) => p + 1), 1000);
+      timerRef.current = setInterval(() => {
+        setRecordedDuration((p) => {
+          const next = p + 1;
+          // Displayed as "Xs / 30s" but nothing actually stopped the
+          // recorder at 30 before -- it just kept counting past the
+          // limit shown to the user.
+          if (next >= 30) stopRecording();
+          return next;
+        });
+      }, 1000);
     } catch (e: any) {
       console.error('Recording start error:', e);
       setIsRecording(false);
@@ -408,11 +411,6 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
             {recordedBlob ? (
               <div className="text-center flex flex-col items-center gap-4 py-2">
                 <p className="text-gold text-sm font-medium">Voice recorded ({recordedDuration}s)</p>
-                
-                {/* Debug info */}
-                {debugInfo && (
-                  <p className="text-[10px] text-yellow-500 font-mono break-all px-2">{debugInfo}</p>
-                )}
 
                 {/* Native browser audio player hidden, controlled by the scrubber below */}
                 {audioUrl && (
@@ -455,7 +453,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
                       setPlaybackTime(value);
                       if (audioElRef.current) audioElRef.current.currentTime = value;
                     }}
-                    className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer accent-[#C026D3]"
+                    className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer accent-gold"
                     style={{
                       background: `linear-gradient(to right, #C026D3 ${(playbackTime / (recordedDuration || 1)) * 100}%, #2A2A2A ${(playbackTime / (recordedDuration || 1)) * 100}%)`,
                     }}
@@ -474,7 +472,6 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
                     setAudioUrl(null);
                     setRecordedDuration(0);
                     setIsPlaying(false);
-                    setDebugInfo('');
                     setError(null);
                   }}
                   className="text-xs text-[#9DA0A6] underline hover:text-ink mt-1"

@@ -80,7 +80,7 @@ export default function LoginPage() {
 
         <p className="text-ink/50 text-sm mt-8 text-center">
           New here? Your journey starts at{' '}
-          <Link href="/signup" className="text-[#C026D3] underline underline-offset-4 decoration-[#C026D3]/40 hover:decoration-[#C026D3] transition-colors">
+          <Link href="/signup" className="text-gold underline underline-offset-4 decoration-gold/40 hover:decoration-gold transition-colors">
             onboarding
           </Link>
         </p>

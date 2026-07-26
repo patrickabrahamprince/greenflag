@@ -1,5 +1,13 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+
+function getAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 export async function POST(req: Request) {
   try {
@@ -15,7 +23,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'amount is required' }, { status: 400 });
     }
 
-    const { data: result, error: deductErr } = await supabase.rpc('deduct_coins', {
+    // deduct_coins() is only callable via the service-role client now --
+    // authenticated/anon execute was revoked after it turned out any
+    // logged-in user could call it against an arbitrary p_user_id, not
+    // just their own.
+    const { data: result, error: deductErr } = await getAdmin().rpc('deduct_coins', {
       p_user_id: user.id,
       p_amount: amount,
       p_description: description || '',

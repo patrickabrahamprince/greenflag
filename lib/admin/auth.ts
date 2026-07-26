@@ -39,7 +39,9 @@ export async function logAuditAction(
   action: string,
   targetId: string
 ): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
   await supabase.from('audit_logs').insert({
+    admin_id: user?.id,
     action,
     target_id: targetId,
   });

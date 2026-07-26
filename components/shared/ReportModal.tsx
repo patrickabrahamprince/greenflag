@@ -42,14 +42,14 @@ export function ReportModal({
               {['Fake profile', 'Inappropriate content', 'Harassment', 'Other'].map((r) => (
                 <label
                   key={r}
-                  className="flex items-center gap-3 p-3 rounded-lg border border-[#2A2A2A] cursor-pointer transition-colors hover:border-[#C026D3]/40"
+                  className="flex items-center gap-3 p-3 rounded-lg border border-[#2A2A2A] cursor-pointer transition-colors hover:border-gold/40"
                 >
                   <span
                     className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
-                      reason === r ? 'border-[#C026D3]' : 'border-[#9DA0A6]'
+                      reason === r ? 'border-gold' : 'border-[#9DA0A6]'
                     }`}
                   >
-                    {reason === r && <span className="w-2 h-2 rounded-full bg-[#C026D3]" />}
+                    {reason === r && <span className="w-2 h-2 rounded-full bg-gold" />}
                   </span>
                   <span className="text-sm text-ink">{r}</span>
                   <input

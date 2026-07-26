@@ -11,10 +11,7 @@ export async function POST(
     if (!auth.ok) return auth.response;
     const { supabase, adminEmail } = auth.data;
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({ is_banned: false, banned_reason: null, ban_reason: null })
-      .eq('id', id);
+    const { error } = await supabase.rpc('admin_unban_user', { p_user_id: id });
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 

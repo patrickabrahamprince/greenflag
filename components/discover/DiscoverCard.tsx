@@ -51,15 +51,15 @@ export function DiscoverCard({ profile, onSwipe }: DiscoverCardProps) {
           <p className="text-sm text-[#9DA0A6] mb-3">{profile.city}</p>
         )}
         {profile.common_interests > 0 && (
-          <div className="inline-flex items-center gap-1.5 bg-[#C026D3]/20 border border-[#C026D3]/40 rounded-full px-3 py-1 mb-4">
-            <span className="text-xs font-medium text-[#C026D3]">
+          <div className="inline-flex items-center gap-1.5 bg-gold/20 border border-gold/40 rounded-full px-3 py-1 mb-4">
+            <span className="text-xs font-medium text-gold">
               {profile.common_interests} interest{profile.common_interests !== 1 ? 's' : ''} in common
             </span>
           </div>
         )}
         <button
           onClick={handleView}
-          className="w-full h-12 rounded-xl bg-[#C026D3] text-black text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
+          className="w-full h-12 rounded-xl bg-gold text-black text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
         >
           View Standard
           <ArrowRight className="w-4 h-4" />

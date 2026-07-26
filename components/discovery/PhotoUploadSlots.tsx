@@ -43,7 +43,7 @@ export function PhotoUploadSlots({
               className={`aspect-square rounded-xl border-2 border-dashed flex items-center justify-center relative overflow-hidden transition-all duration-300 ${
                 photo
                   ? 'border-transparent'
-                  : 'border-[#2A2A2A] hover:border-[#C026D3] cursor-pointer'
+                  : 'border-[#2A2A2A] hover:border-gold cursor-pointer'
               }`}
             >
               {photo ? (

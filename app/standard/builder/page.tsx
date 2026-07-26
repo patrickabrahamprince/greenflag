@@ -135,7 +135,7 @@ export default function StandardBuilderPage() {
   if (!currentUser || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center screen-gradient">
-        <Loader2 className="w-8 h-8 animate-spin text-[#C026D3]" />
+        <Loader2 className="w-8 h-8 animate-spin text-gold" />
       </div>
     );
   }
@@ -149,7 +149,7 @@ export default function StandardBuilderPage() {
 
       <div className="space-y-6 mb-8">
         {slots.map((slot) => (
-          <div key={slot.dayNumber} className="bg-[#111111] rounded-2xl border border-[#2A2A2A] p-5 shadow-sm">
+          <div key={slot.dayNumber} className="card p-5">
             <span className="text-xs text-ink/40 uppercase tracking-wide">Day {slot.dayNumber}</span>
 
             <div className="space-y-4 mt-3">
@@ -160,7 +160,7 @@ export default function StandardBuilderPage() {
                   <div key={task.taskNumber}>
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="flex items-center gap-1.5 text-xs font-medium text-ink/70">
-                        <Icon className="w-3.5 h-3.5 text-[#C026D3]" />
+                        <Icon className="w-3.5 h-3.5 text-gold" />
                         {meta.label}
                       </span>
                       <span className="text-xs text-ink/40">{task.prompt.length}/140</span>
