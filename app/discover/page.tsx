@@ -262,7 +262,7 @@ export default function DiscoverPage() {
                   {p.name}
                 </h1>
                 <div className="flex items-center gap-2 mt-2 flex-wrap">
-                  <p className="font-['Inter'] text-sm text-ink/60 tracking-wide uppercase leading-none">
+                  <p className="font-sans text-sm text-ink/60 tracking-wide uppercase leading-none">
                     {p.age ? `${p.age}` : ''}{p.age && p.city_auto ? ' · ' : ''}{p.city_auto}
                   </p>
                   {p.instagram_url && (
