@@ -421,17 +421,17 @@ export default function DiscoverPage() {
                   )}
                 </div>
               )}
-              <div className={persona === 'woman' ? 'flex flex-nowrap gap-2 overflow-x-auto' : 'flex flex-wrap gap-2'}>
+              <div className={persona === 'woman' ? 'flex flex-wrap gap-1.5' : 'flex flex-wrap gap-2'}>
                 {(p.interests_have?.length ? p.interests_have : p.interests ?? []).slice(0, 5).map((interest: string) => {
                   const isMatched = Array.isArray(p.match_reasons) && p.match_reasons.includes(interest);
+                  const sizeClass = persona === 'woman' ? 'px-2.5 py-1 text-xs' : 'px-4 py-2 text-sm';
                   return (
                     <span
                       key={interest}
                       className={
                         (isMatched
-                          ? 'glass-surface px-4 py-2 rounded-full bg-gold text-white text-sm font-medium shadow-[0_2px_10px_rgba(192,38,211,0.5)] leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-[0_4px_16px_rgba(192,38,211,0.8)] active:scale-95'
-                          : 'glass-surface px-4 py-2 rounded-full text-ink text-sm font-medium leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:bg-white/10 active:scale-95') +
-                        (persona === 'woman' ? ' shrink-0' : '')
+                          ? `glass-surface ${sizeClass} rounded-full bg-gold text-white font-medium shadow-[0_2px_10px_rgba(192,38,211,0.5)] leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-[0_4px_16px_rgba(192,38,211,0.8)] active:scale-95`
+                          : `glass-surface ${sizeClass} rounded-full text-ink font-medium leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:bg-white/10 active:scale-95`)
                       }
                     >
                       {interest}
