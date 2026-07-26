@@ -192,7 +192,7 @@ export default function DiscoverPage() {
             className="snap-start snap-always h-[calc(100dvh-5rem)] w-full flex flex-col animate-fade-in"
           >
             <div className="w-full flex-shrink-0 px-6 pt-5">
-              <div className="relative w-full aspect-[4/3] overflow-hidden rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] grid grid-cols-3 gap-1 bg-black">
+              <div className="relative w-full aspect-[4/5] overflow-hidden rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] grid grid-cols-3 gap-1 bg-black">
                 <div className="col-span-2 relative">
                   <img
                     src={p.photos?.[0]}
@@ -254,45 +254,47 @@ export default function DiscoverPage() {
               </div>
             </div>
 
-            <div className="flex-1 flex flex-col justify-between px-6 pt-6 pb-6">
-              <div>
-                <h1 className="font-display text-4xl text-ink font-semibold tracking-tight">
-                  {p.name}
-                </h1>
-                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                  <p className="font-['Inter'] text-sm text-ink/60 tracking-wide uppercase">
-                    {p.age ? `${p.age}` : ''}{p.age && p.city_auto ? ' · ' : ''}{p.city_auto}
-                  </p>
-                  {p.instagram_url && (
-                    <a
-                      href={p.instagram_url.startsWith('http') ? p.instagram_url : `https://instagram.com/${p.instagram_url}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="flex items-center gap-1 text-xs text-[#D4AF37] font-medium"
-                    >
-                      <Instagram className="w-3.5 h-3.5" />
-                      {p.instagram_url.replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '') || 'Instagram'}
-                    </a>
-                  )}
+            <div className="flex-1 flex flex-col justify-between px-6 pt-5 pb-5 min-h-0">
+              <div className="flex flex-col gap-3">
+                <div>
+                  <h1 className="font-display text-4xl text-ink font-semibold tracking-tight leading-none">
+                    {p.name}
+                  </h1>
+                  <div className="flex items-center gap-2 mt-2 flex-wrap">
+                    <p className="font-['Inter'] text-sm text-ink/60 tracking-wide uppercase leading-none">
+                      {p.age ? `${p.age}` : ''}{p.age && p.city_auto ? ' · ' : ''}{p.city_auto}
+                    </p>
+                    {p.instagram_url && (
+                      <a
+                        href={p.instagram_url.startsWith('http') ? p.instagram_url : `https://instagram.com/${p.instagram_url}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex items-center gap-1 text-xs text-[#D4AF37] font-medium leading-none"
+                      >
+                        <Instagram className="w-3.5 h-3.5" />
+                        {p.instagram_url.replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '') || 'Instagram'}
+                      </a>
+                    )}
+                  </div>
                 </div>
                 {(p.job || p.height) && (
-                  <div className="flex items-center gap-4 mt-3 flex-wrap">
+                  <div className="flex items-center gap-4 flex-wrap">
                     {p.job && (
-                      <span className="flex items-center gap-1.5 text-sm text-ink/70 font-medium">
-                        <Briefcase className="w-3.5 h-3.5 text-ink/40" />
+                      <span className="flex items-center gap-1.5 text-sm text-ink/70 font-medium leading-none">
+                        <Briefcase className="w-3.5 h-3.5 text-ink/40 shrink-0" />
                         {p.job}
                       </span>
                     )}
                     {p.height && (
-                      <span className="flex items-center gap-1.5 text-sm text-ink/70 font-medium">
-                        <Ruler className="w-3.5 h-3.5 text-ink/40" />
+                      <span className="flex items-center gap-1.5 text-sm text-ink/70 font-medium leading-none">
+                        <Ruler className="w-3.5 h-3.5 text-ink/40 shrink-0" />
                         {p.height}
                       </span>
                     )}
                   </div>
                 )}
-                <div className="flex flex-wrap gap-2 mt-4">
+                <div className="flex flex-wrap gap-2">
                   {(p.interests_have?.length ? p.interests_have : p.interests ?? []).slice(0, 5).map((interest: string) => {
                     const isMatched = Array.isArray(p.match_reasons) && p.match_reasons.includes(interest);
                     return (
@@ -300,8 +302,8 @@ export default function DiscoverPage() {
                         key={interest}
                         className={
                           isMatched
-                            ? 'px-4 py-2 rounded-full bg-[#D4AF37] text-white text-sm font-medium shadow-[0_2px_10px_rgba(201,169,97,0.35)]'
-                            : 'px-4 py-2 rounded-full bg-[#1C1C1E] text-ink text-sm font-medium shadow-[0_2px_10px_rgba(0,0,0,0.08)]'
+                            ? 'px-4 py-2 rounded-full bg-[#D4AF37] text-white text-sm font-medium shadow-[0_2px_10px_rgba(201,169,97,0.35)] leading-none'
+                            : 'px-4 py-2 rounded-full bg-[#1C1C1E] text-ink text-sm font-medium shadow-[0_2px_10px_rgba(0,0,0,0.08)] leading-none'
                         }
                       >
                         {interest}
@@ -310,9 +312,9 @@ export default function DiscoverPage() {
                   })}
                 </div>
                 {p.bio && (
-                  <div className="mt-5">
-                    <p className="text-[#D4AF37] text-xs font-semibold uppercase tracking-wide mb-1.5">About</p>
-                    <p className="text-ink/80 text-base leading-relaxed max-w-md font-light line-clamp-3">{p.bio}</p>
+                  <div>
+                    <p className="text-[#D4AF37] text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">About</p>
+                    <p className="text-ink/80 text-base leading-relaxed max-w-md font-light line-clamp-2">{p.bio}</p>
                   </div>
                 )}
               </div>
