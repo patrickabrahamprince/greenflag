@@ -213,6 +213,20 @@ export async function notifyUserOfBan(
   });
 }
 
+export async function notifyUserOfApplicationRejection(
+  supabase: AnySupabaseClient,
+  userId: string,
+  reason: string
+): Promise<void> {
+  await sendNotification({
+    supabase,
+    user_id: userId,
+    title: "Your application wasn't approved",
+    body: reason,
+    data: { type: 'application_rejected' },
+  });
+}
+
 export async function notifyBothOfMediaRejection(
   supabase: AnySupabaseClient,
   manId: string,

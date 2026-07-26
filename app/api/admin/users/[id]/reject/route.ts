@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin, logAuditAction } from '@/lib/admin/auth';
+import { notifyUserOfApplicationRejection } from '@/lib/notifications';
 
 export async function POST(
   req: Request,
@@ -22,6 +23,7 @@ export async function POST(
     });
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
+    await notifyUserOfApplicationRejection(supabase, id, reason.trim());
     await logAuditAction(supabase, adminEmail, 'reject_user', id);
 
     return NextResponse.json({ success: true });

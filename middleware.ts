@@ -113,6 +113,15 @@ export async function middleware(req: NextRequest) {
   // navigate anywhere while it counts down, so there's no longer a hard
   // gate here forcing pending users back to that screen.
 
+  // Rejected applications ARE hard-gated, unlike pending -- there's
+  // nothing to browse until they either restart onboarding (which wipes
+  // approval_status back to unset by deleting the profile row) or an
+  // admin reverses the decision, so lock them to the rejected screen.
+  if (profile?.approval_status === 'rejected' && pathname !== '/onboard/rejected') {
+    const destination = new URL('/onboard/rejected', req.url);
+    return NextResponse.redirect(destination);
+  }
+
   return supabaseResponse;
 }
 
