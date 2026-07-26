@@ -20,8 +20,16 @@ export interface AdminUser {
   banned_reason?: string;
   ban_reason?: string;
   interests?: string[];
+  interests_have?: string[];
+  interests_looking_for?: string[];
+  quiz_answers?: Record<string, string> | null;
+  dob?: string | null;
+  phone?: string | null;
+  phone_verified?: boolean;
+  instagram_url?: string | null;
   role?: string;
   approval_status?: 'pending' | 'approved' | 'rejected';
+  approval_reason?: string | null;
 }
 
 export interface AdminReport {

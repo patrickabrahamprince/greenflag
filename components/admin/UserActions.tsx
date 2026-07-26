@@ -1,20 +1,50 @@
 'use client';
 
 import { useState } from 'react';
-import { Ban, CheckCircle, Coins } from 'lucide-react';
+import { Ban, CheckCircle, Coins, Check, UserX } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export interface UserActionsProps {
   userId: string;
   isBanned: boolean;
+  approvalStatus?: 'pending' | 'approved' | 'rejected';
   onRefresh: () => void;
 }
 
-export function UserActions({ userId, isBanned, onRefresh }: UserActionsProps) {
+export function UserActions({ userId, isBanned, approvalStatus, onRefresh }: UserActionsProps) {
   const [showCreditModal, setShowCreditModal] = useState(false);
   const [creditAmount, setCreditAmount] = useState('');
   const [creditDesc, setCreditDesc] = useState('');
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const handleApprove = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/admin/users/${userId}/approve`, { method: 'POST' });
+      const d = await res.json();
+      if (d.success) { toast.success('Application approved'); onRefresh(); }
+      else toast.error(d.error || 'Failed');
+    } catch { toast.error('Network error'); }
+    finally { setLoading(false); }
+  };
+
+  const handleReject = async () => {
+    if (!rejectReason.trim()) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/admin/users/${userId}/reject`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: rejectReason.trim() }),
+      });
+      const d = await res.json();
+      if (d.success) { toast.success('Application rejected'); setShowRejectModal(false); setRejectReason(''); onRefresh(); }
+      else toast.error(d.error || 'Failed');
+    } catch { toast.error('Network error'); }
+    finally { setLoading(false); }
+  };
 
   const handleBan = async () => {
     const reason = prompt('Ban reason:');
@@ -64,6 +94,16 @@ export function UserActions({ userId, isBanned, onRefresh }: UserActionsProps) {
   return (
     <>
       <div className="flex flex-wrap gap-2">
+        {approvalStatus === 'pending' && (
+          <>
+            <button onClick={handleApprove} disabled={loading} className="flex items-center gap-1.5 px-3 py-2 bg-green-500/10 text-green-400 rounded-xl text-xs font-medium hover:bg-green-500/20 transition-colors disabled:opacity-50">
+              <Check className="w-3.5 h-3.5" /> Approve Application
+            </button>
+            <button onClick={() => setShowRejectModal(true)} disabled={loading} className="flex items-center gap-1.5 px-3 py-2 bg-red-500/10 text-red-400 rounded-xl text-xs font-medium hover:bg-red-500/20 transition-colors disabled:opacity-50">
+              <UserX className="w-3.5 h-3.5" /> Reject Application
+            </button>
+          </>
+        )}
         {isBanned ? (
           <button onClick={handleUnban} disabled={loading} className="flex items-center gap-1.5 px-3 py-2 bg-green-500/10 text-green-400 rounded-xl text-xs font-medium hover:bg-green-500/20 transition-colors disabled:opacity-50">
             <CheckCircle className="w-3.5 h-3.5" /> Unban
@@ -95,6 +135,27 @@ export function UserActions({ userId, isBanned, onRefresh }: UserActionsProps) {
             <div className="flex gap-3">
               <button onClick={() => setShowCreditModal(false)} className="btn-secondary flex-1 text-sm">Cancel</button>
               <button onClick={handleCredit} disabled={!creditAmount || loading} className="btn-primary flex-1 text-sm disabled:opacity-50">Credit</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showRejectModal && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-[#111111] border border-white/[0.06] rounded-2xl p-6 max-w-md w-full">
+            <h3 className="text-lg font-display text-[#EDEADE] mb-4">Reject Application</h3>
+            <div className="mb-4">
+              <label className="block text-xs text-[#8E8E93] mb-1">Reason *</label>
+              <textarea
+                className="input min-h-[80px] resize-none w-full"
+                placeholder="e.g. Instagram doesn't match photos, incomplete profile..."
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => { setShowRejectModal(false); setRejectReason(''); }} className="btn-secondary flex-1 text-sm">Cancel</button>
+              <button onClick={handleReject} disabled={!rejectReason.trim() || loading} className="btn-danger flex-1 text-sm disabled:opacity-50">Reject</button>
             </div>
           </div>
         </div>

@@ -27,7 +27,9 @@ export async function GET(req: Request) {
       .select('id, name, age, city_auto, created_at, last_active, is_banned, is_admin, photos, persona, approval_status', { count: 'exact' });
 
     if (search) {
-      query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%`);
+      // profiles has no email column (email only lives on auth.users), so
+      // searching by it here would error out the whole query -- name only.
+      query = query.ilike('name', `%${search}%`);
     }
     if (persona) {
       query = query.eq('persona', persona as 'man' | 'woman');

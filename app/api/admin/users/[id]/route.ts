@@ -1,5 +1,13 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import { requireAdmin } from '@/lib/admin/auth';
+
+function getAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 export async function GET(
   _req: Request,
@@ -20,6 +28,11 @@ export async function GET(
     if (userErr || !user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
+
+    // profiles has no email column -- it only lives on auth.users, so this
+    // has to go through the service-role admin API rather than a table query.
+    const { data: authUser } = await getAdmin().auth.admin.getUserById(id);
+    (user as Record<string, unknown>).email = authUser?.user?.email ?? null;
 
     // wallets/coin_transactions are the real source of truth for coin
     // balance and history -- profiles.coins is never written to by the live
