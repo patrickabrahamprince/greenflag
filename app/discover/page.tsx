@@ -520,7 +520,7 @@ export default function DiscoverPage() {
                     <button
                       onClick={() => handleNudge(p.id)}
                       disabled={nudgingId === p.id}
-                      aria-label="Invite"
+                      aria-label="Nudge"
                       className="glass-surface flex-1 h-14 rounded-full flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
                     >
                       {nudgingId === p.id ? (
@@ -528,7 +528,7 @@ export default function DiscoverPage() {
                       ) : (
                         <>
                           <Bell className="w-5 h-5 text-white" />
-                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">Invite</span>
+                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">Nudge</span>
                         </>
                       )}
                     </button>
@@ -622,7 +622,7 @@ export default function DiscoverPage() {
               <Bell className="w-4 h-4 text-green-400" />
             </div>
             <div>
-              <p className="text-white font-display text-sm font-semibold leading-tight">Invitation Sent</p>
+              <p className="text-white font-display text-sm font-semibold leading-tight">Nudge Sent</p>
               {nudgeDialog.charged && (
                 <p className="text-ink/50 text-[11px] leading-tight mt-0.5">{nudgeDialog.cost} coins invested</p>
               )}
@@ -637,16 +637,16 @@ export default function DiscoverPage() {
             <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <Coins className="w-6 h-6 text-gold" />
             </div>
-            <h4 className="font-display text-2xl text-ink mb-2">Invite Again?</h4>
+            <h4 className="font-display text-2xl text-ink mb-2">Nudge Again?</h4>
             <p className="text-ink/60 text-sm leading-relaxed mb-6">
-              You've already invited this profile. Another invitation will invest {nudgeConfirm.cost} coins.
+              You've already nudged this profile. Nudging again will cost {nudgeConfirm.cost} coins.
             </p>
             <div className="flex gap-4">
               <button onClick={() => setNudgeConfirm(null)} className="btn-secondary flex-1">
                 Cancel
               </button>
               <button onClick={handleConfirmNudge} className="btn-primary flex-1">
-                Yes, Invite Again
+                Yes, Nudge Again
               </button>
             </div>
           </div>

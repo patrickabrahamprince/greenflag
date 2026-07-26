@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, Heart, Compass } from 'lucide-react';
+import { ProgressSegmentBar } from '@/components/connection/ProgressSegmentBar';
+
+const TERMINAL_STATUSES = ['completed', 'rejected', 'expired_no_submission', 'refunded'];
 
 interface MatchListItem {
   id: string;
@@ -68,7 +71,10 @@ function MatchRow({ match, onClick }: { match: MatchListItem; onClick: () => voi
       </div>
       <div className="flex-1 text-left min-w-0">
         <p className="font-display text-base text-ink truncate">{match.otherName}</p>
-        <p className="text-xs text-ink/50">{statusLabel(match)}</p>
+        <p className="text-xs text-ink/50 mb-1.5">{statusLabel(match)}</p>
+        {!TERMINAL_STATUSES.includes(match.status) && (
+          <ProgressSegmentBar currentDay={match.current_day} total={3} className="max-w-[120px]" />
+        )}
       </div>
       {isLocked && (
         <span className="text-xs font-medium text-gold tabular-nums flex-shrink-0">

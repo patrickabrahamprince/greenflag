@@ -25,11 +25,16 @@ export async function GET(
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
     }
 
+    const viewerInterests = viewer?.interests_have?.length ? viewer.interests_have : viewer?.interests;
+    const viewerLookingFor = viewer?.interests_looking_for?.length ? viewer.interests_looking_for : viewer?.looking_for_interests;
+    const targetInterests = target.interests_have?.length ? target.interests_have : target.interests;
+    const targetLookingFor = target.interests_looking_for?.length ? target.interests_looking_for : target.looking_for_interests;
+
     let matchData: { percent: number; overlapping: string[]; viewerIsHost: boolean } | null = null;
     if (viewer && viewer.persona !== target.persona) {
       const viewerIsHost = viewer.persona === 'woman';
-      const standards = viewerIsHost ? viewer.looking_for_interests : target.looking_for_interests;
-      const interests = viewerIsHost ? target.interests : viewer.interests;
+      const standards = viewerIsHost ? viewerLookingFor : targetLookingFor;
+      const interests = viewerIsHost ? targetInterests : viewerInterests;
       const overlap = (interests || []).filter((i: string) => (standards || []).includes(i));
       matchData = {
         percent: Math.round((overlap.length / 5) * 100),
@@ -45,7 +50,7 @@ export async function GET(
       .maybeSingle();
 
     return NextResponse.json({
-      profile: target,
+      profile: { ...target, interests: targetInterests || [], looking_for_interests: targetLookingFor || [] },
       match: matchData,
       connection: match ? { id: match.id, status: 'completed' } : null,
       isOwnProfile: user.id === id,
