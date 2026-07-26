@@ -7,6 +7,6 @@
 -- being visible. Anchoring to a timestamp set right when onboarding
 -- actually finishes (not when the account was first created) fixes that
 -- for both personas.
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS review_started_at TIMESTAMPTZ;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS review_started_at TIMESTAMPTZ;
 
 NOTIFY pgrst, 'reload schema';
