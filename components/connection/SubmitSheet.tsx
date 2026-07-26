@@ -292,7 +292,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
   };
 
   const canSubmit =
-    (intention.type === 'text' && textContent.length >= 50 && textContent.length <= 500) ||
+    (intention.type === 'text' && textContent.length >= 10 && textContent.length <= 500) ||
     (intention.type === 'photo' && photoFile) ||
     (intention.type === 'voice' && recordedBlob);
 

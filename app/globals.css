@@ -44,6 +44,7 @@ html, body { background: #0B0614 !important; }
 
 @layer components {
   .btn-primary {
+    --border-angle: 0deg;
     @apply relative text-white font-display font-bold rounded-full px-8 py-3.5
            text-xs uppercase tracking-wide
            transition-all duration-300 ease-out
@@ -67,15 +68,21 @@ html, body { background: #0B0614 !important; }
     background: linear-gradient(135deg, #F0ABFC 0%, #C026D3 45%, #86198F 100%);
   }
 
-  /* Traveling light around the border: an animated conic-gradient ring
-     masked down to just the border thickness (mask-composite: exclude
-     cuts out the content-box, leaving only the ring visible). Distinct
-     from btn-primary's ::before sheen -- this is the ::after layer. */
-  .shine-border {
+  .btn-secondary {
     --border-angle: 0deg;
+    @apply glass-surface relative text-ink font-display font-bold rounded-full px-8 py-3
+           text-xs uppercase tracking-wide
+           transition-all duration-300 ease-out
+           hover:border-gold active:scale-[0.98];
   }
 
-  .shine-border::after {
+  /* Traveling light around the border: an animated conic-gradient ring
+     masked down to just the border thickness (mask-composite: exclude
+     cuts out the content-box, leaving only the ring visible). Applied to
+     every primary/secondary button app-wide via the ::after layer --
+     distinct from btn-primary's ::before sheen. */
+  .btn-primary::after,
+  .btn-secondary::after {
     content: '';
     position: absolute;
     inset: -2px;
@@ -94,13 +101,6 @@ html, body { background: #0B0614 !important; }
     mask-composite: exclude;
     animation: border-spin 2.5s linear infinite;
     pointer-events: none;
-  }
-
-  .btn-secondary {
-    @apply glass-surface text-ink font-display font-bold rounded-full px-8 py-3
-           text-xs uppercase tracking-wide
-           transition-all duration-300 ease-out
-           hover:border-gold active:scale-[0.98];
   }
 
   .btn-ghost {
