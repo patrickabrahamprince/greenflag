@@ -1,21 +1,22 @@
 import './globals.css'
-import { Poppins } from 'next/font/google'
+import { Bricolage_Grotesque } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import Script from 'next/script'
 import type { Metadata, Viewport } from 'next'
 
-// Single unified typeface across the whole app -- Poppins is explicitly
-// recommended for double duty (body text AND headlines), which lets one
-// family cover what used to be three (Inter/Sora/Fraunces), using weight
-// for hierarchy instead of mixing typefaces. See:
-// https://www.justinmind.com/ui-design/best-font-mobile-app
-const poppins = Poppins({
+// Single unified typeface across the whole app. Poppins (tried first per
+// justinmind.com's mobile app font guide) reads as generic/templated --
+// it's one of the most overused fonts in low-effort app UIs. Bricolage
+// Grotesque is a variable grotesque with distinctive, slightly asymmetric
+// letterforms that avoids that "default Bootstrap-y" look while still
+// being a clean UI sans. No true italic cut -- drop faux-italic styling
+// on any element that used it, lean on weight/tracking instead.
+const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
-  style: ['normal', 'italic'],
+  weight: 'variable',
   display: 'swap',
-  variable: '--font-poppins',
+  variable: '--font-bricolage',
 })
 
 export const metadata: Metadata = {
@@ -37,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={poppins.variable} style={{ colorScheme: 'dark' }}>
+    <html lang="en" className={bricolage.variable} style={{ colorScheme: 'dark' }}>
       <body className="min-h-screen bg-[#000000] text-[#FFFFFF] font-sans">
         <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
         <ErrorBoundary>

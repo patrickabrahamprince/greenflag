@@ -23,13 +23,14 @@ module.exports = {
         muted: '#FFFFFF99',
       },
       fontFamily: {
-        // Consolidated to a single family (Poppins) app-wide -- these three
-        // keys stay separate only because dozens of existing files already
-        // use font-sans/font-display/font-serif classes; repointing all
-        // three here changes the whole app without touching each file.
-        display: ['var(--font-poppins)', 'system-ui', 'sans-serif'],
-        sans: ['var(--font-poppins)', 'system-ui', 'sans-serif'],
-        serif: ['var(--font-poppins)', 'system-ui', 'sans-serif'],
+        // Consolidated to a single family (Bricolage Grotesque) app-wide --
+        // these three keys stay separate only because dozens of existing
+        // files already use font-sans/font-display/font-serif classes;
+        // repointing all three here changes the whole app without touching
+        // each file.
+        display: ['var(--font-bricolage)', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-bricolage)', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-bricolage)', 'system-ui', 'sans-serif'],
       },
       letterSpacing: {
         'widest-xl': '0.25em',

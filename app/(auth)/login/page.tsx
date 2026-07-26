@@ -55,8 +55,8 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-6" style={{ background: 'radial-gradient(ellipse 140% 90% at 50% -25%, rgba(192, 38, 211, 0.45) 0%, rgba(124, 58, 237, 0.22) 35%, rgba(11, 6, 20, 0) 70%), radial-gradient(ellipse 100% 70% at 100% 100%, rgba(124, 58, 237, 0.18) 0%, transparent 60%), #0B0614' }}>
       <div className="w-full max-w-sm">
         <div className="text-center mb-12">
-          <img src="/logo.png" alt="GreenFlag" className="w-36 h-36 mx-auto mb-6 rounded-2xl shadow-2xl shadow-gold/10" />
-          <p className="font-display italic text-gradient text-3xl leading-tight" style={{ fontWeight: 600 }}>
+          <img src="/logo.png" alt="GreenFlag" className="w-36 h-36 mx-auto mb-6" />
+          <p className="font-display text-gradient text-3xl leading-tight tracking-tight" style={{ fontWeight: 700 }}>
             Set your standards.
           </p>
           <p className="text-ink/40 text-xs uppercase tracking-widest-xl mt-3">Meet your match</p>
