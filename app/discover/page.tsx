@@ -46,15 +46,11 @@ export default function DiscoverPage() {
         if (data?.persona) setPersona(data.persona)
         if (data?.persona !== 'man') return
 
-        const wasPendingKey = `gf_was_pending:${user.id}`
-        const seenApprovedKey = `gf_seen_approved:${user.id}`
         if (data?.approval_status === 'pending') {
-          localStorage.setItem(wasPendingKey, '1')
           setApprovalBanner('pending')
         } else if (
           data?.approval_status === 'approved' &&
-          localStorage.getItem(wasPendingKey) === '1' &&
-          localStorage.getItem(seenApprovedKey) !== '1'
+          localStorage.getItem(`gf_seen_approved:${user.id}`) !== '1'
         ) {
           setApprovalBanner('approved')
         }
