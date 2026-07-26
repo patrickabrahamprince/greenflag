@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ChevronRight, Clock } from 'lucide-react';
+import { ChevronRight, Clock, Mic, Type as TypeIcon, Camera } from 'lucide-react';
 import type { QueueItem } from './types';
 
 export interface QueueItemCardProps {
@@ -36,21 +36,23 @@ function SlaTimer({ submittedAt }: { submittedAt: string }) {
 }
 
 export function QueueItemCard({ item, isSelected, onSelect }: QueueItemCardProps) {
+  const TypeBadgeIcon = item.media_type === 'voice' ? Mic : item.media_type === 'text' ? TypeIcon : Camera;
+
   return (
     <button
       onClick={() => onSelect(item)}
       className={`w-full card text-left flex items-center gap-3 ${isSelected ? 'border-[#C9A961]/50' : ''}`}
     >
       <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center overflow-hidden shrink-0">
-        {item.img ? (
+        {item.media_type === 'photo' && item.img ? (
           <img src={item.img} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
         ) : (
-          <span className="text-[#5A5A5D] text-xs">No img</span>
+          <TypeBadgeIcon className="w-5 h-5 text-[#C9A961]" />
         )}
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm text-[#EDEADE] font-medium truncate">{item.name}</p>
-        <p className="text-xs text-[#8E8E93] truncate">Day {item.day} &middot; {item.task}</p>
+        <p className="text-xs text-[#8E8E93] truncate">Day {item.day} &middot; {item.task || 'Untitled task'}</p>
       </div>
       <div className="flex flex-col items-end gap-1 shrink-0">
         <ChevronRight className="w-4 h-4 text-[#5A5A5D]" />

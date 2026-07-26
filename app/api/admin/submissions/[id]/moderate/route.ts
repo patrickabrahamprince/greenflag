@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin, logAuditAction } from '@/lib/admin/auth';
+import { notifyBothOfMediaRejection } from '@/lib/notifications';
 
 function getAdmin() {
   return createClient(
@@ -25,18 +26,43 @@ export async function POST(
     }
 
     const admin = getAdmin();
-    const { error } = await admin
+    // No rejection_reason column exists on submissions -- the reason an
+    // admin types is preserved in the audit log's metadata instead (see
+    // logAuditAction below), not on the row itself.
+    const { data: submission, error } = await admin
       .from('submissions')
       .update({
         moderation_status: action === 'approve' ? 'approved' : 'rejected',
-        rejection_reason: action === 'reject' ? (reason ?? null) : null,
         reviewed_at: new Date().toISOString(),
       })
-      .eq('id', id);
+      .eq('id', id)
+      .select('match_id')
+      .single();
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-    await logAuditAction(supabase, adminEmail, `${action}_submission`, id);
+    await logAuditAction(
+      supabase,
+      adminEmail,
+      `${action}_submission`,
+      id,
+      action === 'reject' ? { reason: reason ?? null } : undefined
+    );
+
+    if (action === 'reject' && submission?.match_id) {
+      try {
+        const { data: match } = await admin
+          .from('matches')
+          .select('user1_id, user2_id')
+          .eq('id', submission.match_id)
+          .single();
+        if (match) {
+          await notifyBothOfMediaRejection(admin, match.user1_id, match.user2_id, submission.match_id);
+        }
+      } catch {
+        // Safe catch for notification failure
+      }
+    }
 
     return NextResponse.json({ success: true });
   } catch {

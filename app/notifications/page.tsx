@@ -15,6 +15,44 @@ interface Notification {
   created_at: string;
 }
 
+// Where a notification should take you depends on what actually happened,
+// not just whether it carries a connectionId -- a "day approved" notif
+// during the 3-day flow needs the task page (chat isn't unlocked yet), a
+// "chat unlocked" notif needs Messages, an account-level notif has no
+// connection at all.
+function getNotificationRoute(data: Record<string, unknown> | null): string | null {
+  if (!data) return null;
+  const type = data.type as string | undefined;
+  const connectionId = data.connectionId as string | undefined;
+  const matchId = data.matchId as string | undefined;
+  const fromUserId = data.from_user_id as string | undefined;
+
+  switch (type) {
+    case 'new_message':
+    case 'chat_unlocked':
+    case 'completed':
+      return connectionId ? `/messages/${connectionId}` : null;
+    case 'submission':
+    case 'day_approved':
+    case 'day5_approved':
+    case 'media_approved':
+    case 'media_rejected':
+    case 'rejected':
+    case 'standard_begin':
+      return connectionId ? `/task/${connectionId}` : null;
+    case 'standard_hint':
+      return matchId ? `/task/${matchId}` : null;
+    case 'nudge':
+      return fromUserId ? `/profile/${fromUserId}` : null;
+    case 'account_banned':
+      return '/banned';
+    case 'application_rejected':
+      return '/onboard/rejected';
+    default:
+      return connectionId ? `/messages/${connectionId}` : null;
+  }
+}
+
 export default function NotificationsPage() {
   const router = useRouter();
   const supabase = createClient();
@@ -69,9 +107,9 @@ export default function NotificationsPage() {
     }
 
     // Navigate based on notification type
-    const data = notif.data as Record<string, unknown> | null;
-    if (data?.connectionId) {
-      router.push(`/messages/${data.connectionId}`);
+    const route = getNotificationRoute(notif.data as Record<string, unknown> | null);
+    if (route) {
+      router.push(route);
     }
   };
 

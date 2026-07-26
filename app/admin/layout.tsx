@@ -12,17 +12,21 @@ import {
   Shield,
   Loader2,
   UserCog,
+  Heart,
+  RotateCcw,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { label: 'Users', href: '/admin/users', icon: Users },
+  { label: 'Matches', href: '/admin/matches', icon: Heart },
   { label: 'Queue', href: '/admin/queue', icon: Shield },
   { label: 'Profile Requests', href: '/admin/profile-requests', icon: UserCog },
   { label: 'Reports', href: '/admin/reports', icon: Flag },
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { label: 'Audit', href: '/admin/audit', icon: ScrollText },
+  { label: 'Master Reset', href: '/admin/reset', icon: RotateCcw },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

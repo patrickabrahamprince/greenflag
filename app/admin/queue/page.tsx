@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClient } from '@/lib/supabase/client';
 import type { QueueItem } from '@/components/admin/types';
 import { QueueHeader, QueueEmptyState } from '@/components/admin/QueueHeader';
 import { QueueItemCard } from '@/components/admin/QueueItemCard';
@@ -13,41 +12,14 @@ export default function AdminQueue() {
   const [loading, setLoading] = useState(true);
 
   const fetchQueue = useCallback(async () => {
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from('submissions')
-      .select(`
-        id,
-        media_url,
-        media_type,
-        moderation_status,
-        submitted_at,
-        day_number,
-        match_id,
-        matches(user1:user1_id(name), user2:user2_id(name))
-      `)
-      .eq('moderation_status', 'pending')
-      .order('submitted_at', { ascending: false });
-
-    if (!error && data) {
-      const queueItems: QueueItem[] = data.map((s: Record<string, unknown>) => {
-        const match = s.matches as { user1?: { name?: string }; user2?: { name?: string } } | null;
-        return {
-          id: String(s.id),
-          name: match?.user1?.name || match?.user2?.name || 'Unknown',
-          day: Number(s.day_number) || 0,
-          task: '',
-          status: '',
-          img: String(s.media_url || ''),
-          submitted_at: String(s.submitted_at || ''),
-          media_type: s.media_type as string | null,
-        };
-      });
+    const res = await fetch('/api/admin/queue');
+    if (res.ok) {
+      const { items: queueItems } = await res.json();
       setItems(queueItems);
-      if (queueItems.length > 0 && !selected) setSelected(queueItems[0]);
+      setSelected((prev) => prev ?? queueItems[0] ?? null);
     }
     setLoading(false);
-  }, [selected]);
+  }, []);
 
   useEffect(() => { fetchQueue(); }, []);
 

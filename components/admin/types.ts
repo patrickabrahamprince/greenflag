@@ -68,7 +68,9 @@ export interface QueueItem {
   id: string;
   name: string;
   day: number;
+  taskNumber: number;
   task: string;
+  content: string | null;
   status: string;
   img: string;
   submitted_at: string;

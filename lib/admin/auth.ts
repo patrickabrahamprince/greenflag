@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { TypedSupabaseClient } from '@/lib/supabase/server';
+import type { Json } from '@/types/supabase';
 
 export interface AdminAuthResult {
   supabase: TypedSupabaseClient;
@@ -37,12 +38,14 @@ export async function logAuditAction(
   supabase: TypedSupabaseClient,
   _adminEmail: string,
   action: string,
-  targetId: string
+  targetId: string,
+  metadata?: Record<string, Json>
 ): Promise<void> {
   const { data: { user } } = await supabase.auth.getUser();
   await supabase.from('audit_logs').insert({
     admin_id: user?.id,
     action,
     target_id: targetId,
+    metadata: (metadata ?? {}) as Json,
   });
 }

@@ -10,9 +10,13 @@ export interface QueueItemDetailProps {
 export function QueueItemDetail({ item, onApprove, onReject }: QueueItemDetailProps) {
   return (
     <div className="card">
-      <div className="aspect-video bg-surface-light rounded-xl flex items-center justify-center mb-4">
+      <div className="min-h-[160px] bg-surface-light rounded-xl flex items-center justify-center mb-4 p-4">
         {item.media_type === 'voice' ? (
-          <audio controls src={item.img} className="w-full px-4" />
+          <audio controls src={item.img} className="w-full" />
+        ) : item.media_type === 'text' ? (
+          <p className="text-white text-base leading-relaxed italic text-center">
+            {item.content ? `"${item.content}"` : 'No text submitted'}
+          </p>
         ) : item.img ? (
           <img src={item.img} alt="" className="w-full h-full object-cover rounded-xl" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
         ) : (
@@ -30,8 +34,8 @@ export function QueueItemDetail({ item, onApprove, onReject }: QueueItemDetailPr
           <p className="text-white font-medium">Day {item.day}</p>
         </div>
         <div>
-          <span className="text-xs text-muted">Task</span>
-          <p className="text-white text-sm">{item.task}</p>
+          <span className="text-xs text-muted">Prompt</span>
+          <p className="text-white text-sm">{item.task || 'Not available'}</p>
         </div>
         <div>
           <span className="text-xs text-muted">Previous Reviews</span>
