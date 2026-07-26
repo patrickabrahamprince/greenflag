@@ -257,7 +257,7 @@ export default function DiscoverPage() {
             <div className="flex-1 flex flex-col justify-between px-6 pt-5 pb-5 min-h-0">
               <div className="flex flex-col gap-3">
                 <div>
-                  <h1 className="font-display text-4xl text-ink font-semibold tracking-tight leading-none">
+                  <h1 className="font-display text-4xl text-ink font-bold leading-none">
                     {p.name}
                   </h1>
                   <div className="flex items-center gap-2 mt-2 flex-wrap">
