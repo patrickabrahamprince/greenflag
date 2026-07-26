@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Settings, LogOut, Edit3, Coins } from 'lucide-react';
 import { ProfileImageCarousel } from '@/components/shared/ProfileImageCarousel';
+import { MyStandardsSection } from '@/components/profile/MyStandardsSection';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useCoinStore } from '@/lib/store';
 
@@ -65,6 +66,8 @@ export default function ProfilePage() {
           Settings
         </button>
       </div>
+
+      {user.persona === 'woman' && <MyStandardsSection userId={user.id} />}
 
       <div className="px-4 mt-6">
         <div className="card">

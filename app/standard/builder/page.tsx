@@ -40,6 +40,22 @@ const PRESETS: Record<string, string[]> = {
   '3-3': ["Tell me why we'd be a good match", "What's a promise you'd make to a partner?", 'Say something that shows your personality'],
 };
 
+// Copy for the "locked" dialog shown after finishing a day, keyed by the
+// step index just completed (0 = Day 1, 1 = Day 2). The last day has no
+// dialog -- it activates the Standard and redirects straight to Discover.
+const DAY_LOCK_DIALOGS: Record<number, { title: string; desc: string; button: string }> = {
+  0: {
+    title: 'Day 1 locked 🔒',
+    desc: "Love that clarity. Most people don't know what they want on Day 1. You do. Let's set Day 2?",
+    button: 'Continue to Day 2',
+  },
+  1: {
+    title: 'Day 2 locked 🔒',
+    desc: "Two down, one to go. You're building a Standard that actually filters for the right person -- finish Day 3 and it goes live.",
+    button: 'Continue to Day 3',
+  },
+};
+
 function defaultSlots(): DaySlot[] {
   return [1, 2, 3].map((dayNumber) => ({
     dayNumber,
@@ -54,7 +70,7 @@ export default function StandardBuilderPage() {
   const [slots, setSlots] = useState<DaySlot[]>(defaultSlots());
   const [saving, setSaving] = useState(false);
   const [step, setStep] = useState(0); // 0 = Day 1, 1 = Day 2, 2 = Day 3
-  const [showDay1Dialog, setShowDay1Dialog] = useState(false);
+  const [showDayDialog, setShowDayDialog] = useState(false);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -150,12 +166,12 @@ export default function StandardBuilderPage() {
       toast.error('Fill in all 3 tasks for this day before continuing.');
       return;
     }
-    if (step === 0) {
-      setShowDay1Dialog(true);
-      return;
-    }
     if (isLastDay) {
       activateStandard();
+      return;
+    }
+    if (DAY_LOCK_DIALOGS[step]) {
+      setShowDayDialog(true);
       return;
     }
     setStep((s) => s + 1);
@@ -236,7 +252,7 @@ export default function StandardBuilderPage() {
                   value={customValue}
                   onChange={(e) => updateTaskPrompt(currentSlot.dayNumber, task.taskNumber, e.target.value)}
                   placeholder={`Or type your own... (${meta.placeholder})`}
-                  className="input w-full"
+                  className="input w-full text-sm placeholder:text-xs"
                 />
               </div>
             );
@@ -252,21 +268,21 @@ export default function StandardBuilderPage() {
         {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : isLastDay ? 'Save & Go Live' : `Continue to Day ${step + 2}`}
       </button>
 
-      {showDay1Dialog && (
+      {showDayDialog && DAY_LOCK_DIALOGS[step] && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
           <div className="bg-[#111111] border border-white/[0.06] rounded-2xl p-6 max-w-sm w-full text-center">
             <div className="w-14 h-14 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-4">
               <Lock className="w-6 h-6 text-gold" />
             </div>
-            <h3 className="text-xl font-display text-ink mb-2">Day 1 locked 🔒</h3>
+            <h3 className="text-xl font-display text-ink mb-2">{DAY_LOCK_DIALOGS[step].title}</h3>
             <p className="text-sm text-ink/60 leading-relaxed mb-6">
-              Love that clarity. Most people don't know what they want on Day 1. You do. Let's set Day 2?
+              {DAY_LOCK_DIALOGS[step].desc}
             </p>
             <button
-              onClick={() => { setShowDay1Dialog(false); setStep(1); }}
+              onClick={() => { setShowDayDialog(false); setStep((s) => s + 1); }}
               className="btn-primary w-full py-3"
             >
-              Continue to Day 2
+              {DAY_LOCK_DIALOGS[step].button}
             </button>
           </div>
         </div>
