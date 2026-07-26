@@ -115,7 +115,7 @@ function InProgressMatches({ userId, supabase }: { userId: string; supabase: Ret
         return;
       }
       setHintedIds((prev) => new Set(prev).add(partnerId));
-      toast.success('Intention shown — he\'s been notified to begin your Standard');
+      toast.success('Nudge sent — he\'s been notified to begin your Standard');
     } catch {
       toast.error('Failed to send hint');
     } finally {
@@ -149,7 +149,7 @@ function InProgressMatches({ userId, supabase }: { userId: string; supabase: Ret
               ) : (
                 <Heart className="w-3.5 h-3.5" />
               )}
-              {hintedIds.has(p.matchUserId) ? 'Intention Shown' : 'Show Intention'}
+              {hintedIds.has(p.matchUserId) ? 'Nudged' : 'Nudge'}
             </button>
           </div>
         ))}
