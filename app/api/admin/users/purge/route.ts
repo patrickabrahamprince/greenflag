@@ -1,24 +1,23 @@
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { createClient } from '@supabase/supabase-js';
+import { requireAdmin, logAuditAction } from '@/lib/admin/auth';
 
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '').split(',').map((e) => e.trim().toLowerCase());
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 export async function POST(req: Request) {
   try {
-    const supabase = await createServerSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    const userEmail = user?.email?.toLowerCase();
-
-    if (!user || !userEmail || !ADMIN_EMAILS.includes(userEmail)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
+    const auth = await requireAdmin();
+    if (!auth.ok) return auth.response;
+    const { supabase, adminEmail } = auth.data;
 
     const { user_id } = await req.json();
     if (!user_id) {
       return NextResponse.json({ error: 'user_id is required' }, { status: 400 });
+    }
+
+    if (user_id === auth.data.adminId) {
+      return NextResponse.json({ error: 'Cannot purge yourself' }, { status: 400 });
     }
 
     const adminSupabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
@@ -95,6 +94,8 @@ export async function POST(req: Request) {
 
     const { error: authErr } = await adminSupabase.auth.admin.deleteUser(user_id);
     if (!authErr) deleted_tables.push('auth.users');
+
+    await logAuditAction(supabase, adminEmail, 'purge_user', user_id);
 
     return NextResponse.json({
       success: true,
