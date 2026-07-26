@@ -316,25 +316,29 @@ export function SubmitSheet({ matchId, dayNumber, intention, onClose, onSubmit }
           </div>
           <h4 className="font-display text-ink text-lg mb-2">Response Submitted!</h4>
           <p className="text-[#9DA0A6] text-xs mb-6 leading-relaxed">
-            Awaiting her review. Move on to the next task for today, or explore other profiles in the meantime.
+            {dayNumber >= 3
+              ? "You've completed all 3 days! She now has a 24-hour window to review your responses and decide whether to continue."
+              : 'Awaiting her review. Move on to the next task for today, or explore other profiles in the meantime.'}
           </p>
           <div className="flex gap-3">
-            <button
-              onClick={() => {
-                onSubmit(submitResult);
-              }}
-              className="btn-primary flex-1 py-2.5 text-xs font-semibold"
-            >
-              Next Task
-            </button>
+            {dayNumber < 3 && (
+              <button
+                onClick={() => {
+                  onSubmit(submitResult);
+                }}
+                className="btn-primary flex-1 py-2.5 text-xs font-semibold"
+              >
+                Next Task
+              </button>
+            )}
             <button
               onClick={() => {
                 onSubmit(submitResult);
                 router.push('/discover');
               }}
-              className="btn-secondary flex-1 py-2.5 text-xs font-medium"
+              className={dayNumber >= 3 ? 'btn-primary flex-1 py-2.5 text-xs font-semibold' : 'btn-secondary flex-1 py-2.5 text-xs font-medium'}
             >
-              Explore Feed
+              Explore New
             </button>
           </div>
         </div>
