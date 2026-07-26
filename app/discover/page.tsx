@@ -124,7 +124,10 @@ export default function DiscoverPage() {
   function scrollToNext(index: number) {
     const container = scrollRef.current
     if (!container) return
-    const next = container.children[index + 1] as HTMLElement | undefined
+    // children[0] is the pull-to-refresh loader div, so profile cards
+    // start at children[1] -- index i's card lives at children[i + 1],
+    // making the *next* card children[i + 2].
+    const next = container.children[index + 2] as HTMLElement | undefined
     next?.scrollIntoView({ behavior: 'smooth' })
   }
 
@@ -303,8 +306,8 @@ export default function DiscoverPage() {
                       key={interest}
                       className={
                         isMatched
-                          ? 'glass-surface px-4 py-2 rounded-full bg-[#C026D3] text-white text-sm font-medium shadow-[0_2px_10px_rgba(192,38,211,0.5)] leading-none'
-                          : 'glass-surface px-4 py-2 rounded-full text-ink text-sm font-medium leading-none'
+                          ? 'glass-surface px-4 py-2 rounded-full bg-[#C026D3] text-white text-sm font-medium shadow-[0_2px_10px_rgba(192,38,211,0.5)] leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-[0_4px_16px_rgba(192,38,211,0.8)] active:scale-95'
+                          : 'glass-surface px-4 py-2 rounded-full text-ink text-sm font-medium leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:bg-white/10 active:scale-95'
                       }
                     >
                       {interest}
