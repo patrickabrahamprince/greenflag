@@ -1,6 +1,6 @@
 'use client';
 
-import { useCoinStore } from '@/lib/store';
+import { useCoinStore, useUserStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
 
 interface CoinBadgeProps {
@@ -10,6 +10,12 @@ interface CoinBadgeProps {
 
 export function CoinBadge({ onClick, className }: CoinBadgeProps) {
   const balance = useCoinStore((s) => s.balance);
+  const persona = useUserStore((s) => s.user?.persona);
+
+  // Women never pay on the app -- surfacing a coin balance she can't
+  // (mostly) spend is just confusing. Hiding it here, in the one shared
+  // component, covers every screen that renders a CoinBadge.
+  if (persona === 'woman') return null;
 
   return (
     <button

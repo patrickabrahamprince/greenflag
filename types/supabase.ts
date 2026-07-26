@@ -1571,6 +1571,30 @@ export type Database = {
         }
         Relationships: []
       }
+      nudges: {
+        Row: {
+          id: string
+          from_user_id: string
+          to_user_id: string
+          charged: boolean
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          from_user_id: string
+          to_user_id: string
+          charged?: boolean
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          from_user_id?: string
+          to_user_id?: string
+          charged?: boolean
+          created_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       admin_match_stats: {

@@ -40,8 +40,8 @@ export default function DiscoverPage() {
   const [refreshing, setRefreshing] = useState(false)
   const [interestCounts, setInterestCounts] = useState<Record<string, number>>({})
   const [expandedBios, setExpandedBios] = useState<Set<string>>(new Set())
-  const [nudgedIds, setNudgedIds] = useState<Set<string>>(new Set())
   const [nudgingId, setNudgingId] = useState<string | null>(null)
+  const [nudgeDialog, setNudgeDialog] = useState<{ visible: boolean; charged: boolean; cost: number } | null>(null)
   const router = useRouter()
   const supabase = createClient()
 
@@ -121,6 +121,12 @@ export default function DiscoverPage() {
     })
   }
 
+  function showNudgeSentDialog(charged: boolean, cost: number) {
+    setNudgeDialog({ visible: true, charged, cost })
+    setTimeout(() => setNudgeDialog(prev => prev ? { ...prev, visible: false } : null), 1400)
+    setTimeout(() => setNudgeDialog(null), 1900)
+  }
+
   async function handleNudge(profileId: string) {
     if (nudgingId) return
     setNudgingId(profileId)
@@ -131,8 +137,7 @@ export default function DiscoverPage() {
         toast.error(data.error || 'Failed to send nudge')
         return
       }
-      setNudgedIds(prev => new Set(prev).add(profileId))
-      toast.success('Nudge sent!')
+      showNudgeSentDialog(!!data.charged, data.cost || 0)
     } catch {
       toast.error('Failed to send nudge')
     } finally {
@@ -478,7 +483,7 @@ export default function DiscoverPage() {
                     </button>
                     <button
                       onClick={() => handleNudge(p.id)}
-                      disabled={nudgingId === p.id || nudgedIds.has(p.id)}
+                      disabled={nudgingId === p.id}
                       aria-label="Nudge"
                       className="glass-surface flex-1 h-14 rounded-full flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
                     >
@@ -487,9 +492,7 @@ export default function DiscoverPage() {
                       ) : (
                         <>
                           <Bell className="w-5 h-5 text-white" />
-                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">
-                            {nudgedIds.has(p.id) ? 'Nudged' : 'Nudge'}
-                          </span>
+                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">Nudge</span>
                         </>
                       )}
                     </button>
@@ -570,6 +573,22 @@ export default function DiscoverPage() {
                 Confirm
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {nudgeDialog && (
+        <div
+          className={`fixed inset-0 z-[60] flex items-center justify-center pointer-events-none transition-opacity duration-500 ${nudgeDialog.visible ? 'opacity-100' : 'opacity-0'}`}
+        >
+          <div className="glass-surface rounded-3xl px-10 py-8 flex flex-col items-center gap-3 shadow-2xl">
+            <div className="w-14 h-14 rounded-full bg-green-500/15 flex items-center justify-center">
+              <Bell className="w-7 h-7 text-green-400" />
+            </div>
+            <p className="text-white font-display text-lg font-semibold">Nudge Sent!</p>
+            {nudgeDialog.charged && (
+              <p className="text-ink/50 text-xs">{nudgeDialog.cost} coins used</p>
+            )}
           </div>
         </div>
       )}

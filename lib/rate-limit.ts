@@ -66,6 +66,5 @@ export const RATE_LIMITS = {
   taskSubmit: { maxRequests: 3, windowSeconds: 3600 } as RateLimitConfig,
   coinPurchase: { maxRequests: 5, windowSeconds: 60 } as RateLimitConfig,
   pushSubscribe: { maxRequests: 10, windowSeconds: 3600 } as RateLimitConfig,
-  nudge: { maxRequests: 1, windowSeconds: 3600 } as RateLimitConfig,
   standardHint: { maxRequests: 1, windowSeconds: 3600 } as RateLimitConfig,
 } satisfies Record<string, RateLimitConfig>;

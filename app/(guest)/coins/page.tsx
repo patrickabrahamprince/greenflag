@@ -44,6 +44,12 @@ export default function CoinsPage() {
         return;
       }
 
+      const { data: profile } = await supabase.from('profiles').select('persona').eq('id', user.id).single();
+      if (profile?.persona === 'woman') {
+        router.replace('/profile');
+        return;
+      }
+
       const { data: wallet } = await supabase
         .from('wallets')
         .select('balance')
