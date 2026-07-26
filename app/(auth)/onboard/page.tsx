@@ -32,9 +32,7 @@ export default function OnboardPage() {
         </button>
       </div>
       <div className="text-center mb-10">
-        <h1 className="font-display text-3xl text-ink mb-3">
-          Welcome to GreenFlag
-        </h1>
+        <img src="/logo.png" alt="GreenFlag" className="w-32 h-32 mx-auto mb-3" />
         <p className="text-ink/50 text-sm">Choose your path</p>
       </div>
 
