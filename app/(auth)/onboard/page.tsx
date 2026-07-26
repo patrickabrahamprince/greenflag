@@ -50,7 +50,7 @@ export default function OnboardPage() {
               I set the Standard
             </span>
             <span className="text-sm text-ink/60 max-w-[260px] leading-relaxed">
-              Build your 8-day Standard. Men earn their way to you.
+              Build your 3-day Standard. Men earn their way to you.
             </span>
           </div>
         </button>
