@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
-import { useOnboardingStore } from '@/lib/store';
+import { useOnboardingStore, useUserStore } from '@/lib/store';
 import { PhotoUploadSlots } from '@/components/discovery/PhotoUploadSlots';
 import { ProfileFormFields } from '@/components/discovery/ProfileFormFields';
 import toast from 'react-hot-toast';
@@ -18,6 +18,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const supabase = createClient();
   const persona = useOnboardingStore((s) => s.persona);
+  const setGlobalUser = useUserStore((s) => s.setUser);
 
   const [name, setName] = useState('');
   const [dob, setDob] = useState('');
@@ -187,6 +188,18 @@ export default function ProfilePage() {
     });
     setLoading(false);
     if (error) { toast.error(error.message); return; }
+
+    // The global user store only loads once, right after login -- if that
+    // happened before this upsert corrected persona away from the
+    // handle_new_user() trigger's 'man' default, the store would keep
+    // showing the wrong persona for the rest of the session. That broke
+    // downstream persona checks (e.g. BottomNav's "she has no active
+    // Standard yet" redirect never firing for a woman it still thought
+    // was a man). Refetch and sync the store now that onboarding has
+    // actually set the real values.
+    const { data: freshProfile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+    if (freshProfile) setGlobalUser(freshProfile as any);
+
     router.push('/onboard/quiz');
   };
 
