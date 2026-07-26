@@ -138,7 +138,7 @@ export default function ProfilePage() {
     if (!city.trim()) e.city = 'City is required';
     if (photos.length < 1) e.photos = 'Upload at least 1 photo';
     if (bio.length > 200) e.bio = 'Max 200 characters';
-    if (!instagramHandle.trim()) e.instagram = 'Instagram handle is required';
+    if (persona !== 'woman' && !instagramHandle.trim()) e.instagram = 'Instagram handle is required';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -206,7 +206,7 @@ export default function ProfilePage() {
       <div className="space-y-5 flex-1 max-w-md mx-auto w-full">
         <ProfileFormFields
           name={name} dob={dob} city={city} bio={bio}
-          instagramHandle={instagramHandle}
+          instagramHandle={instagramHandle} instagramRequired={persona !== 'woman'}
           gpsDetecting={gpsDetecting} gpsDenied={gpsDenied}
           errors={errors}
           onNameChange={(v) => { setName(v); clearError('name'); }}

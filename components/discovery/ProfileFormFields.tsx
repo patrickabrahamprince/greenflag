@@ -16,6 +16,7 @@ interface ProfileFormFieldsProps {
   city: string;
   bio: string;
   instagramHandle: string;
+  instagramRequired?: boolean;
   gpsDetecting: boolean;
   gpsDenied: boolean;
   errors: Record<string, string>;
@@ -28,7 +29,7 @@ interface ProfileFormFieldsProps {
 }
 
 export function ProfileFormFields({
-  name, dob, city, bio, instagramHandle,
+  name, dob, city, bio, instagramHandle, instagramRequired = true,
   gpsDetecting, gpsDenied, errors,
   onNameChange, onDobChange, onCityChange, onBioChange,
   onInstagramChange, onDetectLocation,
@@ -111,7 +112,12 @@ export function ProfileFormFields({
 
       <div>
         <label className="block text-sm font-medium text-ink mb-1.5">
-          Instagram Handle <span className="text-red-400">*</span>
+          Instagram Handle{' '}
+          {instagramRequired ? (
+            <span className="text-red-400">*</span>
+          ) : (
+            <span className="text-[#9DA0A6] font-normal">(optional)</span>
+          )}
         </label>
         <div className="relative">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">@</span>

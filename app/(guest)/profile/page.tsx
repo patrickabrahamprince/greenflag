@@ -43,7 +43,15 @@ export default function ProfilePage() {
       <div className="flex flex-col items-center pb-6">
         <h2 className="text-2xl font-display text-white">{user.name}</h2>
         <p className="text-muted text-sm mt-1">{user.age} &middot; {user.city}</p>
-        {user.bio && <p className="text-muted text-sm mt-3 text-center max-w-xs">{user.bio}</p>}
+        {user.bio && (
+          <p className={
+            user.persona === 'woman'
+              ? 'italic text-gray-600 leading-relaxed mt-3 text-center max-w-xs'
+              : 'text-muted text-sm mt-3 text-center max-w-xs'
+          }>
+            {user.bio}
+          </p>
+        )}
       </div>
 
       <div className="space-y-3 px-4">

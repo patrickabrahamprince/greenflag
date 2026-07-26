@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler } from 'lucide-react'
+import { ArrowLeft, Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
 import { createClient } from '@/lib/supabase/client'
@@ -38,6 +38,10 @@ export default function DiscoverPage() {
   const [confirmProfileId, setConfirmProfileId] = useState<string | null>(null)
   const [pullDistance, setPullDistance] = useState(0)
   const [refreshing, setRefreshing] = useState(false)
+  const [interestCounts, setInterestCounts] = useState<Record<string, number>>({})
+  const [expandedBios, setExpandedBios] = useState<Set<string>>(new Set())
+  const [nudgedIds, setNudgedIds] = useState<Set<string>>(new Set())
+  const [nudgingId, setNudgingId] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
 
@@ -91,6 +95,50 @@ export default function DiscoverPage() {
       fetchProfiles()
     }
   }, [page])
+
+  // Interest-count line only renders on the woman's view of a man's card,
+  // so only fetch it there -- one lightweight call per newly-seen profile.
+  useEffect(() => {
+    if (persona !== 'woman') return
+    const missing = profiles.filter(p => !(p.id in interestCounts))
+    if (missing.length === 0) return
+    missing.forEach(p => {
+      fetch(`/api/user/${p.id}/interest-count`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data) setInterestCounts(prev => ({ ...prev, [p.id]: data.count }))
+        })
+        .catch(() => {})
+    })
+  }, [persona, profiles, interestCounts])
+
+  function toggleBioExpanded(id: string) {
+    setExpandedBios(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  async function handleNudge(profileId: string) {
+    if (nudgingId) return
+    setNudgingId(profileId)
+    try {
+      const res = await fetch(`/api/nudge/${profileId}`, { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) {
+        toast.error(data.error || 'Failed to send nudge')
+        return
+      }
+      setNudgedIds(prev => new Set(prev).add(profileId))
+      toast.success('Nudge sent!')
+    } catch {
+      toast.error('Failed to send nudge')
+    } finally {
+      setNudgingId(null)
+    }
+  }
 
   async function fetchProfiles() {
     setPageLoading(true)
@@ -268,23 +316,33 @@ export default function DiscoverPage() {
                   onError={e => { e.currentTarget.src = '/placeholder-avatar.svg' }}
                 />
                 {typeof p.match_percentage === 'number' && (
-                  <div className="glass-surface absolute top-12 left-3 z-10 flex items-center gap-1.5 rounded-full px-3 py-1.5">
-                    <span className="text-gold text-xs">◆</span>
-                    <span className="font-display font-bold text-white text-sm whitespace-nowrap">
-                      {p.match_percentage}% GreenFlag Match
-                    </span>
+                  <div className="absolute top-12 left-3 z-10 flex flex-col items-start gap-1">
+                    <div className="glass-surface flex items-center gap-1.5 rounded-full px-3 py-1.5">
+                      <span className="text-gold text-xs">◆</span>
+                      <span className="font-display font-bold text-white text-sm whitespace-nowrap">
+                        {p.match_percentage}% GreenFlag Match
+                      </span>
+                    </div>
+                    {persona === 'woman' && interestCounts[p.id] !== undefined && (
+                      <span className="glass-surface rounded-full px-3 py-1 text-white/80 text-[11px] whitespace-nowrap">
+                        {interestCounts[p.id]} {interestCounts[p.id] === 1 ? 'person has' : 'people have'} shown interest on this profile
+                      </span>
+                    )}
                   </div>
                 )}
               </div>
               <div className="relative col-span-1 overflow-hidden">
                 {(() => {
                   const extraPhotos = [p.photos?.[1], p.photos?.[2]].filter(Boolean) as string[]
+                  // Blur is a paywall cue for men unlocking a woman's card --
+                  // a woman browsing men should always see clear photos.
+                  const photoClass = `w-full h-full object-cover ${persona === 'woman' ? '' : 'blur-md scale-110'}`
                   if (extraPhotos.length === 0) {
                     return (
                       <img
                         src={p.photos?.[0]}
                         alt=""
-                        className="w-full h-full object-cover blur-md scale-110"
+                        className={photoClass}
                         onError={e => { e.currentTarget.style.display = 'none' }}
                       />
                     )
@@ -299,7 +357,7 @@ export default function DiscoverPage() {
                           <img
                             src={src}
                             alt=""
-                            className="w-full h-full object-cover blur-md scale-110"
+                            className={photoClass}
                             onError={e => { e.currentTarget.style.display = 'none' }}
                           />
                         </div>
@@ -363,16 +421,17 @@ export default function DiscoverPage() {
                   )}
                 </div>
               )}
-              <div className="flex flex-wrap gap-2">
+              <div className={persona === 'woman' ? 'flex flex-nowrap gap-2 overflow-x-auto' : 'flex flex-wrap gap-2'}>
                 {(p.interests_have?.length ? p.interests_have : p.interests ?? []).slice(0, 5).map((interest: string) => {
                   const isMatched = Array.isArray(p.match_reasons) && p.match_reasons.includes(interest);
                   return (
                     <span
                       key={interest}
                       className={
-                        isMatched
+                        (isMatched
                           ? 'glass-surface px-4 py-2 rounded-full bg-gold text-white text-sm font-medium shadow-[0_2px_10px_rgba(192,38,211,0.5)] leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-[0_4px_16px_rgba(192,38,211,0.8)] active:scale-95'
-                          : 'glass-surface px-4 py-2 rounded-full text-ink text-sm font-medium leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:bg-white/10 active:scale-95'
+                          : 'glass-surface px-4 py-2 rounded-full text-ink text-sm font-medium leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:bg-white/10 active:scale-95') +
+                        (persona === 'woman' ? ' shrink-0' : '')
                       }
                     >
                       {interest}
@@ -383,41 +442,84 @@ export default function DiscoverPage() {
               {p.bio && (
                 <div>
                   <p className="text-gold text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">About</p>
-                  <p className="text-ink/80 text-base leading-relaxed max-w-md font-light line-clamp-2">{p.bio}</p>
+                  <p
+                    className={`text-ink/80 text-base leading-relaxed max-w-md font-light whitespace-pre-line ${expandedBios.has(p.id) ? '' : 'line-clamp-3'}`}
+                  >
+                    {p.bio}
+                  </p>
+                  {p.bio.length > 120 && (
+                    <button
+                      onClick={() => toggleBioExpanded(p.id)}
+                      className="text-gold text-xs font-medium mt-1"
+                    >
+                      {expandedBios.has(p.id) ? 'Show less' : 'and more...'}
+                    </button>
+                  )}
                 </div>
               )}
 
               <div className="flex items-center gap-4 pt-2 shrink-0">
-                <button
-                  onClick={() => scrollToNext(i)}
-                  aria-label="Pass"
-                  className="glass-surface size-14 rounded-full flex items-center justify-center active:scale-95 transition-all shrink-0"
-                >
-                  <X className="w-6 h-6 text-ink/60" />
-                </button>
-                <button
-                  onClick={() => {
-                    if (persona === 'woman') {
-                      handleBegin(p.id);
-                    } else {
-                      setConfirmProfileId(p.id);
-                    }
-                  }}
-                  disabled={likingId === p.id}
-                  aria-label="Like"
-                  className="btn-primary flex-1 h-14 flex items-center justify-center gap-2"
-                >
-                  {likingId === p.id ? (
-                    <Loader2 className="w-5 h-5 animate-spin text-white" />
-                  ) : (
-                    <>
-                      <Heart className="w-5 h-5 text-white" />
-                      <span className="text-white text-xs uppercase tracking-wide font-display font-bold">
-                        {persona === 'woman' ? 'View Profile' : 'Meet Her Standard'}
-                      </span>
-                    </>
-                  )}
-                </button>
+                {persona === 'woman' ? (
+                  <>
+                    <button
+                      onClick={() => handleBegin(p.id)}
+                      disabled={likingId === p.id}
+                      aria-label="View Profile"
+                      className="btn-primary flex-1 h-14 flex items-center justify-center gap-2"
+                    >
+                      {likingId === p.id ? (
+                        <Loader2 className="w-5 h-5 animate-spin text-white" />
+                      ) : (
+                        <>
+                          <Heart className="w-5 h-5 text-white" />
+                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">View Profile</span>
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => handleNudge(p.id)}
+                      disabled={nudgingId === p.id || nudgedIds.has(p.id)}
+                      aria-label="Nudge"
+                      className="glass-surface flex-1 h-14 rounded-full flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
+                    >
+                      {nudgingId === p.id ? (
+                        <Loader2 className="w-5 h-5 animate-spin text-white" />
+                      ) : (
+                        <>
+                          <Bell className="w-5 h-5 text-white" />
+                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">
+                            {nudgedIds.has(p.id) ? 'Nudged' : 'Nudge'}
+                          </span>
+                        </>
+                      )}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => scrollToNext(i)}
+                      aria-label="Pass"
+                      className="glass-surface size-14 rounded-full flex items-center justify-center active:scale-95 transition-all shrink-0"
+                    >
+                      <X className="w-6 h-6 text-ink/60" />
+                    </button>
+                    <button
+                      onClick={() => setConfirmProfileId(p.id)}
+                      disabled={likingId === p.id}
+                      aria-label="Like"
+                      className="btn-primary flex-1 h-14 flex items-center justify-center gap-2"
+                    >
+                      {likingId === p.id ? (
+                        <Loader2 className="w-5 h-5 animate-spin text-white" />
+                      ) : (
+                        <>
+                          <Heart className="w-5 h-5 text-white" />
+                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">Meet Her Standard</span>
+                        </>
+                      )}
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Heart } from 'lucide-react';
+import { Loader2, Heart, Compass } from 'lucide-react';
 
 interface MatchListItem {
   id: string;
@@ -112,7 +112,16 @@ export default function MyConnectionsPage() {
 
   return (
     <div className="min-h-screen screen-gradient px-6 pt-8 pb-24 max-w-app mx-auto">
-      <h1 className="font-display text-3xl text-ink mb-6">My Connections</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="font-display text-3xl text-ink">My Connections</h1>
+        <button
+          onClick={() => router.push('/discover')}
+          className="btn-secondary text-xs px-3 py-2 flex items-center gap-1.5 shrink-0"
+        >
+          <Compass className="w-3.5 h-3.5" />
+          Explore new
+        </button>
+      </div>
 
       {matches.length === 0 ? (
         <div className="flex flex-col items-center justify-center text-center px-6 mt-20">

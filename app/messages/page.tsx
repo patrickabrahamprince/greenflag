@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Heart, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
 import type { Database } from '@/types/supabase';
@@ -69,6 +70,94 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
   );
 }
 
+interface InProgressPartner {
+  matchUserId: string;
+  name: string;
+  photo: string | null;
+}
+
+function InProgressMatches({ userId, supabase }: { userId: string; supabase: ReturnType<typeof createClient> }) {
+  const [partners, setPartners] = useState<InProgressPartner[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [hintedIds, setHintedIds] = useState<Set<string>>(new Set());
+  const [sendingId, setSendingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      const { data } = await supabase
+        .from('matches')
+        .select('*')
+        .eq('chat_unlocked', false)
+        .or(`user1_id.eq.${userId},user2_id.eq.${userId}`);
+
+      if (!data) { setLoading(false); return; }
+
+      const enriched = await Promise.all(
+        data.map(async (m: any) => {
+          const partnerId = m.user1_id === userId ? m.user2_id : m.user1_id;
+          const { data: partner } = await supabase.from('profiles').select('id, name, photos').eq('id', partnerId).single();
+          return { matchUserId: partnerId, name: partner?.name || 'Him', photo: partner?.photos?.[0] || null };
+        })
+      );
+      setPartners(enriched);
+      setLoading(false);
+    };
+    load();
+  }, [userId, supabase]);
+
+  const handleLike = async (partnerId: string) => {
+    setSendingId(partnerId);
+    try {
+      const res = await fetch(`/api/standard-hint/${partnerId}`, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || 'Failed to send hint');
+        return;
+      }
+      setHintedIds((prev) => new Set(prev).add(partnerId));
+      toast.success('Hint sent - nudged him to start your Standard');
+    } catch {
+      toast.error('Failed to send hint');
+    } finally {
+      setSendingId(null);
+    }
+  };
+
+  if (loading || partners.length === 0) return null;
+
+  return (
+    <div className="w-full px-6 mt-8">
+      <p className="text-xs uppercase tracking-wide text-ink/40 mb-3">Waiting on your Standard</p>
+      <div className="space-y-2">
+        {partners.map((p) => (
+          <div key={p.matchUserId} className="flex items-center gap-3 p-3 bg-[#111111] rounded-2xl">
+            <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-[#1C1C1E]">
+              {p.photo ? (
+                <img src={p.photo} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-ink/30 text-xs">?</div>
+              )}
+            </div>
+            <span className="flex-1 text-sm text-ink truncate">{p.name}</span>
+            <button
+              onClick={() => handleLike(p.matchUserId)}
+              disabled={sendingId === p.matchUserId || hintedIds.has(p.matchUserId)}
+              className="btn-secondary text-xs px-3 py-2 flex items-center gap-1.5 shrink-0 disabled:opacity-50"
+            >
+              {sendingId === p.matchUserId ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Heart className="w-3.5 h-3.5" />
+              )}
+              {hintedIds.has(p.matchUserId) ? 'Sent' : 'Like'}
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ChatList({ userId, supabase, persona }: ChatListPageProps) {
   const [conversations, setConversations] = useState<ChatConversation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -124,12 +213,13 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
 
   if (conversations.length === 0) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center px-6">
-        <p className="text-sm font-thin" style={{ color: '#9DA0A6' }}>
+      <div className="flex-1 flex flex-col items-center pt-20 px-6">
+        <p className="text-sm font-thin text-center" style={{ color: '#9DA0A6' }}>
           {persona === 'woman'
             ? 'No chats yet — matches unlock once he completes your Standard.'
             : 'No chats yet. Swipe in Discover to find matches!'}
         </p>
+        {persona === 'woman' && <InProgressMatches userId={userId} supabase={supabase} />}
       </div>
     );
   }
