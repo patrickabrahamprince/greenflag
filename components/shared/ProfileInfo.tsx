@@ -51,42 +51,28 @@ export function ProfileInfo({
         )}
       </div>
 
-      {matchOverlapping.length > 0 && (
+      {interests.length > 0 && (
         <div className="border-b border-[#2A2A2A] py-6">
-          <p className="text-xs text-ink/40 uppercase tracking-widest mb-3">Shared Interests</p>
+          <p className="text-xs text-ink/40 uppercase tracking-widest mb-3">Interests</p>
           <div className="flex flex-wrap gap-2">
-            {matchOverlapping.map((interest) => (
-              <span
-                key={interest}
-                className="px-3 py-1 text-xs uppercase tracking-wide border border-gold text-gold"
-              >
-                {interest}
-              </span>
-            ))}
+            {interests.map((interest) => {
+              const isMatch = matchOverlapping.includes(interest);
+              return (
+                <span
+                  key={interest}
+                  className={`px-3 py-1 text-xs uppercase tracking-wide border ${
+                    isMatch
+                      ? 'border-gold text-gold'
+                      : 'border-[#2A2A2A] text-ink/60'
+                  }`}
+                >
+                  {interest}
+                </span>
+              );
+            })}
           </div>
         </div>
       )}
-
-      <div className="border-b border-[#2A2A2A] py-6">
-        <p className="text-xs text-ink/40 uppercase tracking-widest mb-3">Interests</p>
-        <div className="flex flex-wrap gap-2">
-          {interests.map((interest) => {
-            const isMatch = matchOverlapping.includes(interest);
-            return (
-              <span
-                key={interest}
-                className={`px-3 py-1 text-xs uppercase tracking-wide border ${
-                  isMatch
-                    ? 'border-gold text-gold'
-                    : 'border-[#2A2A2A] text-ink/60'
-                }`}
-              >
-                {interest}
-              </span>
-            );
-          })}
-        </div>
-      </div>
 
       {bio && (
         <p className="text-ink/80 text-base leading-relaxed border-b border-[#2A2A2A] py-6">{bio}</p>

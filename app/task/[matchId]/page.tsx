@@ -10,6 +10,7 @@ import { EndedScreen } from '@/components/connection/EndedScreen';
 import { ProgressSegmentBar } from '@/components/connection/ProgressSegmentBar';
 import { SubmitSheet } from '@/components/connection/SubmitSheet';
 import type { IntentionRecord, SubmissionRecord } from '@/components/connection/types';
+import { useCountdown, formatCountdown } from '@/lib/hooks/useCountdown';
 
 const TERMINAL_STATUSES = ['rejected', 'expired_no_submission', 'refunded'];
 
@@ -21,33 +22,7 @@ interface MatchData {
   next_day_unlocks_at: string | null;
 }
 
-function useCountdown(target: string | null) {
-  const [remainingMs, setRemainingMs] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (!target) {
-      setRemainingMs(null);
-      return;
-    }
-    const targetMs = new Date(target).getTime();
-    const tick = () => setRemainingMs(Math.max(0, targetMs - Date.now()));
-    tick();
-    const interval = setInterval(tick, 1000);
-    return () => clearInterval(interval);
-  }, [target]);
-
-  return remainingMs;
-}
-
-function formatCountdown(ms: number) {
-  const totalSeconds = Math.floor(ms / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-}
-
-function DayCompleteModal({ unlocksAt, onClose, onExplore }: { unlocksAt: string; onClose: () => void; onExplore: () => void }) {
+function DayCompleteModal({ unlocksAt, onContinue, onExplore }: { unlocksAt: string; onContinue: () => void; onExplore: () => void }) {
   const remainingMs = useCountdown(unlocksAt);
 
   return (
@@ -64,8 +39,8 @@ function DayCompleteModal({ unlocksAt, onClose, onExplore }: { unlocksAt: string
           {remainingMs !== null ? formatCountdown(remainingMs) : '--:--:--'}
         </p>
         <div className="flex gap-3">
-          <button onClick={onClose} className="btn-secondary flex-1">
-            Understood
+          <button onClick={onContinue} className="btn-secondary flex-1">
+            Onward
           </button>
           <button onClick={onExplore} className="btn-primary flex-1">
             Discover Profiles
@@ -350,7 +325,7 @@ export default function TaskPage() {
       {dayCompleteUnlockAt && (
         <DayCompleteModal
           unlocksAt={dayCompleteUnlockAt}
-          onClose={() => setDayCompleteUnlockAt(null)}
+          onContinue={() => router.push('/my-connections')}
           onExplore={() => router.push('/discover')}
         />
       )}

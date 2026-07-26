@@ -170,6 +170,12 @@ export async function POST(
 
     const { data: gateResult } = await admin.rpc('recompute_match_gate', { p_match_id: id });
 
+    const { data: updatedMatch } = await admin
+      .from('matches')
+      .select('review_deadline')
+      .eq('id', id)
+      .maybeSingle();
+
     try {
       const { data: manProfile } = await admin.from('profiles').select('name').eq('id', user.id).single();
       await notifyWomanOfMediaReady(admin, match.user2_id, manProfile?.name || 'Your match', day_number ?? 1, id);
@@ -177,7 +183,11 @@ export async function POST(
       // Safe catch for notification failure
     }
 
-    return NextResponse.json({ success: true, status: gateResult?.status ?? 'pending_review' });
+    return NextResponse.json({
+      success: true,
+      status: gateResult?.status ?? 'pending_review',
+      review_deadline: updatedMatch?.review_deadline ?? null,
+    });
   } catch (e) {
     console.error('submit-task error:', e);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

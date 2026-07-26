@@ -2,9 +2,15 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, Camera, Mic, Type, Upload } from 'lucide-react';
+import { X, Camera, Mic, Type, Upload, Hourglass } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { useCountdown, formatCountdown } from '@/lib/hooks/useCountdown';
 import type { IntentionRecord } from './types';
+
+interface SubmitResult {
+  status?: string;
+  review_deadline?: string | null;
+}
 
 interface SubmitSheetProps {
   matchId: string;
@@ -12,7 +18,12 @@ interface SubmitSheetProps {
   intention: IntentionRecord;
   isLastTaskToday: boolean;
   onClose: () => void;
-  onSubmit: (result?: { status?: string }) => void;
+  onSubmit: (result?: SubmitResult) => void;
+}
+
+function ReviewCountdown({ target }: { target: string }) {
+  const remainingMs = useCountdown(target);
+  return <>{remainingMs !== null ? formatCountdown(remainingMs) : '--:--:--'}</>;
 }
 
 export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, onClose, onSubmit }: SubmitSheetProps) {
@@ -27,7 +38,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
   const [recordedDuration, setRecordedDuration] = useState(0);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-  const [submitResult, setSubmitResult] = useState<{ status?: string }>({});
+  const [submitResult, setSubmitResult] = useState<SubmitResult>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -323,9 +334,22 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
             {!isLastTaskToday
               ? 'Awaiting her review. Continue to the next intention for today, or discover other profiles in the meantime.'
               : dayNumber >= 3
-                ? "You've completed all three days. She now has a 24-hour window to review your Standard and decide whether to continue."
-                : "That's all three intentions for today. She has a 24-hour window to review before tomorrow unlocks."}
+                ? "You've completed all three days. She's reviewing your Standard and will decide whether to continue."
+                : "That's all three intentions for today. She's reviewing — tomorrow unlocks once she's done."}
           </p>
+
+          {isLastTaskToday && submitResult.review_deadline && (
+            <div className="mb-6">
+              <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-3">
+                <Hourglass className="w-4 h-4 text-gold" />
+              </div>
+              <p className="font-display text-3xl text-gold tracking-wider tabular-nums">
+                <ReviewCountdown target={submitResult.review_deadline} />
+              </p>
+              <p className="text-[10px] text-[#9DA0A6] uppercase tracking-wide mt-1">Time left for her review</p>
+            </div>
+          )}
+
           <div className="flex gap-3">
             {!isLastTaskToday && (
               <button
@@ -334,7 +358,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
                 }}
                 className="btn-primary flex-1 py-2.5 text-xs font-semibold"
               >
-                Next Intention
+                Continue Her Standard
               </button>
             )}
             <button
