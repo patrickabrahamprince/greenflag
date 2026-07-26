@@ -348,7 +348,7 @@ export default function DiscoverPage() {
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
             className="snap-start snap-always h-[calc(100dvh-5rem)] w-full relative overflow-hidden animate-fade-in"
           >
-            <div className="absolute inset-0 grid grid-cols-3 gap-px bg-black">
+            <div className="absolute inset-0 grid grid-cols-3 gap-0 bg-black">
               <div className="col-span-2 relative">
                 <img
                   src={p.photos?.[0]}
@@ -372,20 +372,33 @@ export default function DiscoverPage() {
                   </div>
                 )}
               </div>
-              <div className="relative col-span-1 overflow-hidden">
+              <div className="relative col-span-1 overflow-hidden -ml-3">
                 {(() => {
                   const extraPhotos = [p.photos?.[1], p.photos?.[2]].filter(Boolean) as string[]
                   // Blur is a paywall cue for men unlocking a woman's card --
                   // a woman browsing men should always see clear photos.
-                  const photoClass = `w-full h-full object-cover ${persona === 'woman' ? '' : 'blur-md scale-110'}`
+                  const photoClass = `w-full h-full object-cover ${persona === 'woman' ? '' : 'blur scale-110'}`
+                  const unlockButton = persona !== 'woman' && (
+                    <button
+                      onClick={() => setConfirmProfileId(p.id)}
+                      aria-label="Unlock"
+                      className="glass-surface absolute inset-0 m-auto z-20 flex items-center justify-center gap-1.5 h-8 w-fit px-3 rounded-full active:scale-95 transition-all shadow-lg"
+                    >
+                      <Lock className="w-3 h-3 text-white shrink-0" />
+                      <span className="text-white text-xs uppercase tracking-wide font-display font-bold whitespace-nowrap">Unlock</span>
+                    </button>
+                  )
                   if (extraPhotos.length === 0) {
                     return (
-                      <img
-                        src={p.photos?.[0]}
-                        alt=""
-                        className={photoClass}
-                        onError={e => { e.currentTarget.style.display = 'none' }}
-                      />
+                      <div className="relative w-full h-full">
+                        <img
+                          src={p.photos?.[0]}
+                          alt=""
+                          className={photoClass}
+                          onError={e => { e.currentTarget.style.display = 'none' }}
+                        />
+                        {unlockButton}
+                      </div>
                     )
                   }
                   return (
@@ -401,20 +414,12 @@ export default function DiscoverPage() {
                             className={photoClass}
                             onError={e => { e.currentTarget.style.display = 'none' }}
                           />
+                          {unlockButton}
                         </div>
                       ))}
                     </div>
                   )
                 })()}
-                {persona !== 'woman' && (
-                  <button
-                    onClick={() => setConfirmProfileId(p.id)}
-                    className="glass-surface absolute inset-0 m-auto z-20 flex items-center justify-center gap-2 h-12 w-fit px-4 rounded-full active:scale-95 transition-all shadow-lg"
-                  >
-                    <Lock className="w-4 h-4 text-white shrink-0" />
-                    <span className="text-white text-sm uppercase tracking-wide font-display font-bold whitespace-nowrap">Meet Her Standard</span>
-                  </button>
-                )}
               </div>
             </div>
 

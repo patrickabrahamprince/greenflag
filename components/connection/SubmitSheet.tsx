@@ -2,9 +2,8 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, Camera, Mic, Type, Upload, Hourglass } from 'lucide-react';
+import { X, Camera, Mic, Type, Upload } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
-import { useCountdown, formatCountdown } from '@/lib/hooks/useCountdown';
 import type { IntentionRecord } from './types';
 
 interface SubmitResult {
@@ -19,11 +18,6 @@ interface SubmitSheetProps {
   isLastTaskToday: boolean;
   onClose: () => void;
   onSubmit: (result?: SubmitResult) => void;
-}
-
-function ReviewCountdown({ target }: { target: string }) {
-  const remainingMs = useCountdown(target);
-  return <>{remainingMs !== null ? formatCountdown(remainingMs) : '--:--:--'}</>;
 }
 
 export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, onClose, onSubmit }: SubmitSheetProps) {
@@ -337,18 +331,6 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
                 ? "You've completed all three days. She's reviewing your Standard and will decide whether to continue."
                 : "That's all three intentions for today. She's reviewing — tomorrow unlocks once she's done."}
           </p>
-
-          {isLastTaskToday && submitResult.review_deadline && (
-            <div className="mb-6">
-              <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-3">
-                <Hourglass className="w-4 h-4 text-gold" />
-              </div>
-              <p className="font-display text-3xl text-gold tracking-wider tabular-nums">
-                <ReviewCountdown target={submitResult.review_deadline} />
-              </p>
-              <p className="text-[10px] text-[#9DA0A6] uppercase tracking-wide mt-1">Time left for her review</p>
-            </div>
-          )}
 
           <div className="flex gap-3">
             {!isLastTaskToday && (

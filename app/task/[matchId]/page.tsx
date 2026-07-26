@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, Loader2, MessageCircle, Hourglass, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Loader2, MessageCircle, Hourglass, CheckCircle2, AlertTriangle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 import { ConnectedScreen } from '@/components/ConnectedScreen';
@@ -20,6 +20,7 @@ interface MatchData {
   status: string;
   chat_unlocked: boolean;
   next_day_unlocks_at: string | null;
+  review_deadline: string | null;
 }
 
 function DayCompleteModal({ unlocksAt, onContinue, onExplore }: { unlocksAt: string; onContinue: () => void; onExplore: () => void }) {
@@ -51,6 +52,31 @@ function DayCompleteModal({ unlocksAt, onContinue, onExplore }: { unlocksAt: str
   );
 }
 
+function LeaveWarningModal({ onStay, onLeave }: { onStay: () => void; onLeave: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.6)' }}>
+      <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
+        <div className="w-14 h-14 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-5">
+          <AlertTriangle className="w-6 h-6 text-red-400" />
+        </div>
+        <h3 className="font-display text-2xl text-ink mb-2">Finish Today First</h3>
+        <p className="text-ink/60 text-sm leading-relaxed mb-6">
+          You&apos;ve only completed part of today&apos;s intentions. Leave now and you risk losing your coins on
+          this profile and never meeting her Standard.
+        </p>
+        <div className="flex gap-3">
+          <button onClick={onLeave} className="btn-secondary flex-1">
+            Leave Anyway
+          </button>
+          <button onClick={onStay} className="btn-primary flex-1">
+            Finish Today
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface OtherProfile {
   id: string;
   name: string;
@@ -75,6 +101,7 @@ export default function TaskPage() {
   const [activeIntention, setActiveIntention] = useState<IntentionRecord | null>(null);
   const [dayCompleteUnlockAt, setDayCompleteUnlockAt] = useState<string | null>(null);
   const [reviewingTaskNumber, setReviewingTaskNumber] = useState<number | null>(null);
+  const [showLeaveWarning, setShowLeaveWarning] = useState(false);
 
   const fetchMatch = useCallback(async () => {
     try {
@@ -144,6 +171,18 @@ export default function TaskPage() {
 
   const currentDay = match.current_day;
   const isLocked = !!match.next_day_unlocks_at && new Date(match.next_day_unlocks_at) > new Date();
+  // Only meaningful mid-day: he's submitted something but not everything --
+  // nothing submitted yet means nothing to lose, and a fully-submitted day
+  // already routes him through SubmitSheet's own success screen.
+  const hasPartialProgress = !isWoman && !isLocked && submissions.length > 0 && submissions.length < intentions.length;
+
+  const handleBack = () => {
+    if (hasPartialProgress) {
+      setShowLeaveWarning(true);
+    } else {
+      router.push('/discover');
+    }
+  };
 
   const handleReview = async (intentionItem: IntentionRecord, decision: 'approve' | 'reject') => {
     setReviewingTaskNumber(intentionItem.task_number ?? 1);
@@ -178,7 +217,7 @@ export default function TaskPage() {
   return (
     <div className="min-h-screen screen-gradient px-6 pt-8 pb-10 max-w-app mx-auto flex flex-col">
       <div className="flex items-center justify-between mb-6">
-        <button onClick={() => router.push('/discover')} className="p-1 -ml-1 text-ink/40 hover:text-ink transition-colors">
+        <button onClick={handleBack} className="p-1 -ml-1 text-ink/40 hover:text-ink transition-colors">
           <ArrowLeft className="w-5 h-5" />
         </button>
         <h1 className="font-display text-lg text-ink truncate">{otherProfile.name}</h1>
@@ -202,6 +241,18 @@ export default function TaskPage() {
             <MessageCircle className="w-3.5 h-3.5" />
             Open Chat
           </button>
+        </div>
+      )}
+
+      {!isWoman && match.status === 'pending_review' && match.review_deadline && (
+        <div className="rounded-2xl mb-5 p-4 flex items-center gap-4 bg-gold/[0.06] border border-gold/20">
+          <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
+            <Hourglass className="w-4 h-4 text-gold" />
+          </div>
+          <div className="flex-1">
+            <p className="text-gold text-sm font-medium">{otherProfile.name} Is Reviewing</p>
+            <p className="text-ink/50 text-xs mt-0.5">Day {currentDay} &middot; <LiveCountdown target={match.review_deadline} /> left</p>
+          </div>
         </div>
       )}
 
@@ -337,6 +388,13 @@ export default function TaskPage() {
           unlocksAt={dayCompleteUnlockAt}
           onContinue={() => router.push('/my-connections')}
           onExplore={() => router.push('/discover')}
+        />
+      )}
+
+      {showLeaveWarning && (
+        <LeaveWarningModal
+          onStay={() => setShowLeaveWarning(false)}
+          onLeave={() => router.push('/discover')}
         />
       )}
     </div>
