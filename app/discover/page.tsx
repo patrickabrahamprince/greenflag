@@ -183,24 +183,15 @@ export default function DiscoverPage() {
   return (
     <div className="relative screen-gradient min-h-dvh max-w-app mx-auto">
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex flex-col pointer-events-none">
-        <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent">
-          <button onClick={() => router.push('/messages')} className="pointer-events-auto w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center">
-            <ArrowLeft className="w-5 h-5 text-white" />
-          </button>
-          <div className="pointer-events-auto">
-            <CoinBadge />
-          </div>
-        </div>
-
         {approvalBanner && (
           <button
             onClick={() => {
               if (approvalBanner === 'approved') dismissApprovedBanner()
               router.push('/profile')
             }}
-            className="pointer-events-auto glass-surface mx-4 mb-3 px-4 py-3 rounded-xl flex items-center justify-between gap-3 text-left"
+            className="pointer-events-auto glass-surface mx-3 mt-2 px-3 py-1.5 rounded-lg flex items-center justify-between gap-2 text-left"
           >
-            <span className="text-sm text-white font-medium">
+            <span className="text-xs text-white font-medium truncate">
               {approvalBanner === 'pending'
                 ? 'Your account will be verified shortly'
                 : "You're approved! Tap to view your profile"}
@@ -211,11 +202,20 @@ export default function DiscoverPage() {
                 onClick={(e) => { e.stopPropagation(); dismissApprovedBanner() }}
                 className="text-white/50 hover:text-white shrink-0"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3.5 h-3.5" />
               </span>
             )}
           </button>
         )}
+
+        <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent">
+          <button onClick={() => router.push('/messages')} className="pointer-events-auto w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center">
+            <ArrowLeft className="w-5 h-5 text-white" />
+          </button>
+          <div className="pointer-events-auto">
+            <CoinBadge />
+          </div>
+        </div>
       </div>
 
       <div
@@ -223,7 +223,7 @@ export default function DiscoverPage() {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className={`snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth ${approvalBanner ? 'h-[calc(100dvh-8rem)]' : 'h-[calc(100dvh-5rem)]'}`}
+        className={`snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth ${approvalBanner ? 'h-[calc(100dvh-7rem)]' : 'h-[calc(100dvh-5rem)]'}`}
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         <div
