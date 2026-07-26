@@ -5,9 +5,15 @@ import { useUserStore } from '@/lib/store';
 
 const REVIEW_SECONDS = 90;
 
-// Anchored to profiles.created_at (not a per-mount timer) so the countdown
-// reads the same real elapsed time no matter which page renders it or how
-// many times the component remounts as the user navigates around.
+// Anchored to profiles.review_started_at (not a per-mount timer, and not
+// created_at) so the countdown reads the same real elapsed time no matter
+// which page renders it or how many times the component remounts as the
+// user navigates around. review_started_at is set once, right when the
+// how-it-works screen hands off to pending/discover -- created_at was the
+// original anchor, but a real onboarding run (phone OTP, profile+photos,
+// 8 quiz questions, interests, 6 rule slides) routinely takes several
+// minutes, so by the time anyone reached a screen showing this countdown
+// it had almost always already elapsed and self-approved invisibly.
 export function usePendingReviewCountdown(): number | null {
   const user = useUserStore((s) => s.user);
   const setUser = useUserStore((s) => s.setUser);
@@ -15,11 +21,12 @@ export function usePendingReviewCountdown(): number | null {
   const approvedRef = useRef(false);
 
   useEffect(() => {
-    if (!user || user.approval_status !== 'pending' || !user.created_at) {
+    const anchor = user?.review_started_at || user?.created_at;
+    if (!user || user.approval_status !== 'pending' || !anchor) {
       setSecondsLeft(null);
       return;
     }
-    const target = new Date(user.created_at).getTime() + REVIEW_SECONDS * 1000;
+    const target = new Date(anchor).getTime() + REVIEW_SECONDS * 1000;
 
     const tick = () => {
       const remaining = Math.max(0, Math.round((target - Date.now()) / 1000));

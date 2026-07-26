@@ -1,5 +1,13 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+
+function getAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 export async function GET(req: Request) {
   try {
@@ -48,7 +56,16 @@ export async function GET(req: Request) {
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-    return NextResponse.json({ users: users || [], total: count || 0 });
+    // profiles has no email column (it only lives on auth.users) --
+    // bulk-fetch via the admin API and merge in, rather than one lookup
+    // per row. Fine at this project's current scale; would need real
+    // pagination through listUsers() if the user base grows well past
+    // perPage.
+    const { data: authUsers } = await getAdmin().auth.admin.listUsers({ perPage: 1000 });
+    const emailById = new Map((authUsers?.users || []).map((u) => [u.id, u.email]));
+    const usersWithEmail = (users || []).map((u) => ({ ...u, email: emailById.get(u.id) || null }));
+
+    return NextResponse.json({ users: usersWithEmail, total: count || 0 });
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

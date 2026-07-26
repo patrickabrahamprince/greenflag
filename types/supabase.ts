@@ -973,6 +973,7 @@ export type Database = {
           photos: string[] | null
           push_token: string | null
           quiz_answers: Json | null
+          review_started_at: string | null
           standards: Json | null
           tastes: string | null
           verification_status: string | null
@@ -1025,6 +1026,7 @@ export type Database = {
           photos?: string[] | null
           push_token?: string | null
           quiz_answers?: Json | null
+          review_started_at?: string | null
           standards?: Json | null
           tastes?: string | null
           verification_status?: string | null
@@ -1077,6 +1079,7 @@ export type Database = {
           photos?: string[] | null
           push_token?: string | null
           quiz_answers?: Json | null
+          review_started_at?: string | null
           standards?: Json | null
           tastes?: string | null
           verification_status?: string | null

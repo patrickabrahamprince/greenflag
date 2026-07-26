@@ -24,6 +24,7 @@ export interface Profile {
   is_banned?: boolean | null;
   ban_reason?: string | null;
   approval_status?: string | null;
+  review_started_at?: string | null;
   created_at: string | null;
 }
 

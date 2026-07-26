@@ -163,6 +163,10 @@ html, body { background: #0B0614 !important; }
     @apply bg-surface-light rounded-none animate-pulse;
   }
 
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   .blur-bg {
     @apply backdrop-blur-xl;
     background: rgba(0, 0, 0, 0.8);

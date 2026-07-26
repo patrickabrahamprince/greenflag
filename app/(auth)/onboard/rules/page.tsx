@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Loader2,
@@ -59,7 +59,8 @@ export default function RulesPage() {
   const router = useRouter();
   const supabase = createClient();
   const [loading, setLoading] = useState(true);
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   // Persona/approval routing now lives in the how-it-works screen this
   // leads to -- this just confirms there's still a live session.
@@ -76,22 +77,21 @@ export default function RulesPage() {
     checkSession();
   }, [supabase, router]);
 
-  const handleBackSlide = () => {
-    if (currentSlide > 0) {
-      setCurrentSlide((prev) => prev - 1);
-    } else {
-      router.back();
-    }
+  const handleScroll = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    const index = Math.round(track.scrollLeft / track.clientWidth);
+    setActiveSlide(Math.min(slides.length - 1, Math.max(0, index)));
   };
 
-  const handleNextSlide = () => {
-    if (currentSlide < slides.length - 1) {
-      setCurrentSlide((prev) => prev + 1);
-    } else {
-      // Persona/approval routing now happens after the how-it-works screen
-      // -- see app/(auth)/onboard/how-it-works/page.tsx.
-      router.push('/onboard/how-it-works');
-    }
+  const scrollToSlide = (index: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.scrollTo({ left: index * track.clientWidth, behavior: 'smooth' });
+  };
+
+  const handleContinue = () => {
+    router.push('/onboard/how-it-works');
   };
 
   if (loading) {
@@ -102,57 +102,70 @@ export default function RulesPage() {
     );
   }
 
-  const slide = slides[currentSlide];
-  const progressPercent = ((currentSlide + 1) / slides.length) * 100;
-
   return (
     <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6 bg-[#000000]">
-      <div className="max-w-md mx-auto w-full flex flex-col pb-8">
-        {/* Header with back button and slide count */}
+      <div className="max-w-md mx-auto w-full flex flex-col pb-8 flex-1">
+        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <button
-            onClick={handleBackSlide}
+            onClick={() => router.back()}
             className="text-ink/40 hover:text-ink transition-colors p-1 -ml-1"
           >
             <ArrowLeft size={24} />
           </button>
-          <span className="text-xs font-semibold text-[#9DA0A6]">
-            Rule {currentSlide + 1} of {slides.length}
-          </span>
+          <span className="text-xs font-semibold text-[#9DA0A6]">Community Guidelines</span>
           <div className="invisible p-1 -mr-1" aria-hidden="true">
             <ArrowLeft size={24} />
           </div>
         </div>
 
-        {/* Progress bar */}
-        <div className="w-full bg-[#1C1C1E] h-1 rounded-full mb-8 overflow-hidden">
-          <div
-            className="bg-gold h-full transition-all duration-300 ease-out"
-            style={{ width: `${progressPercent}%` }}
-          />
+        {/* Swipeable carousel */}
+        <div
+          ref={trackRef}
+          onScroll={handleScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar -mx-4 px-4"
+          style={{ scrollbarWidth: 'none' }}
+        >
+          {slides.map((slide) => (
+            <div key={slide.id} className="w-full shrink-0 snap-center px-1">
+              <div className="flex flex-col items-center text-center px-4 py-8 bg-[#1C1C1E] border border-[#2A2A2A] rounded-3xl min-h-[320px] justify-center">
+                <div className="w-20 h-20 rounded-full bg-gold/10 flex items-center justify-center mb-6">
+                  {slide.icon}
+                </div>
+                <h2 className="text-2xl font-display font-semibold text-ink mb-4">
+                  {slide.title}
+                </h2>
+                <p className="text-[#9DA0A6] text-sm leading-relaxed max-w-[280px] font-light">
+                  {slide.desc}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Slide content */}
-        <div className="flex flex-col items-center text-center px-4 py-8 bg-[#1C1C1E] border border-[#2A2A2A] rounded-3xl min-h-[320px] justify-center transition-all duration-300">
-          <div className="w-20 h-20 rounded-full bg-gold/10 flex items-center justify-center mb-6">
-            {slide.icon}
-          </div>
-          <h2 className="text-2xl font-display font-semibold text-ink mb-4">
-            {slide.title}
-          </h2>
-          <p className="text-[#9DA0A6] text-sm leading-relaxed max-w-[280px] font-light">
-            {slide.desc}
-          </p>
+        {/* Dot pagination -- tap a dot to jump, or swipe the carousel */}
+        <div className="flex items-center justify-center gap-2 mt-5 mb-2">
+          {slides.map((slide, i) => (
+            <button
+              key={slide.id}
+              onClick={() => scrollToSlide(i)}
+              aria-label={`Go to rule ${i + 1}`}
+              className={`rounded-full transition-all duration-300 ${
+                i === activeSlide ? 'w-6 h-1.5 bg-gold' : 'w-1.5 h-1.5 bg-[#3C3C3E]'
+              }`}
+            />
+          ))}
         </div>
 
-        {/* Next rule button -- always advances (to the next rule, or into
-            the how-it-works screen after the last one), so it always reads
-            "Next Rule" rather than implying this is the final step. */}
+        <div className="flex-1" />
+
+        {/* Single button -- swipe through as many or as few rules as you
+            like, one tap moves on regardless of which slide you're on. */}
         <button
-          onClick={handleNextSlide}
+          onClick={handleContinue}
           className="btn-primary w-full py-4 mt-6 font-semibold text-sm active:scale-95 transition-transform"
         >
-          Next Rule
+          I Agree, Continue
         </button>
       </div>
     </div>

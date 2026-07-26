@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CalendarDays, ShieldCheck, Clock, Sparkles, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { useUserStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 
 const POINTS = [
@@ -36,6 +37,7 @@ export default function HowItWorksPage() {
   const [continuing, setContinuing] = useState(false);
   const [persona, setPersona] = useState<'man' | 'woman' | null>(null);
   const [approvalStatus, setApprovalStatus] = useState<string | null>(null);
+  const setGlobalUser = useUserStore((s) => s.setUser);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -57,8 +59,24 @@ export default function HowItWorksPage() {
     fetchProfile();
   }, [supabase, router]);
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     setContinuing(true);
+
+    // The 90s review countdown (shown on /onboard/pending for women, and
+    // as a top banner via BottomNav for men browsing Discover while
+    // pending) needs its own start time -- anchoring it to account
+    // creation meant it was already expired for anyone who took more than
+    // 90s to get through the rest of onboarding (phone OTP, profile,
+    // quiz, interests, rules), which is most real users.
+    if (approvalStatus === 'pending') {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from('profiles').update({ review_started_at: new Date().toISOString() }).eq('id', user.id);
+        const { data: freshProfile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+        if (freshProfile) setGlobalUser(freshProfile as any);
+      }
+    }
+
     // Pending women wait for admin review on a dedicated screen; pending men
     // go straight into Discover, where browsing while pending is allowed.
     if (approvalStatus === 'pending' && persona !== 'man') {
