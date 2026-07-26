@@ -52,7 +52,7 @@ export async function GET(req: Request) {
 
       const { data: fullProfiles } = await admin
         .from('profiles')
-        .select('id, name, age, city, city_auto, bio, photos, interests, looking_for_interests, interests_have, interests_looking_for, blur_key, instagram_url')
+        .select('id, name, age, city, city_auto, bio, job, height, photos, interests, looking_for_interests, interests_have, interests_looking_for, blur_key, instagram_url')
         .in('id', rankedIds);
 
       const idOrder = new Map<string, number>(rankedIds.map((id, i) => [id, i]));
@@ -105,7 +105,7 @@ export async function GET(req: Request) {
 
     const { data: fullProfiles } = await admin
       .from('profiles')
-      .select('id, name, age, city, city_auto, bio, photos, interests, looking_for_interests, interests_have, interests_looking_for, blur_key, instagram_url')
+      .select('id, name, age, city, city_auto, bio, job, height, photos, interests, looking_for_interests, interests_have, interests_looking_for, blur_key, instagram_url')
       .in('id', rankedIds);
 
     const idOrder = new Map<string, number>(rankedIds.map((id, i) => [id, i]));

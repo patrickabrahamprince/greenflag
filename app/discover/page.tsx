@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2, Coins, X, Heart, Lock, Instagram } from 'lucide-react'
+import { ArrowLeft, Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
 import { createClient } from '@/lib/supabase/client'
@@ -254,7 +254,7 @@ export default function DiscoverPage() {
               </div>
             </div>
 
-            <div className="flex flex-col px-6 pt-6 pb-6">
+            <div className="flex-1 flex flex-col justify-between px-6 pt-6 pb-6">
               <div>
                 <h1 className="font-display text-4xl text-ink font-semibold tracking-tight">
                   {p.name}
@@ -276,6 +276,22 @@ export default function DiscoverPage() {
                     </a>
                   )}
                 </div>
+                {(p.job || p.height) && (
+                  <div className="flex items-center gap-4 mt-3 flex-wrap">
+                    {p.job && (
+                      <span className="flex items-center gap-1.5 text-sm text-ink/70 font-medium">
+                        <Briefcase className="w-3.5 h-3.5 text-ink/40" />
+                        {p.job}
+                      </span>
+                    )}
+                    {p.height && (
+                      <span className="flex items-center gap-1.5 text-sm text-ink/70 font-medium">
+                        <Ruler className="w-3.5 h-3.5 text-ink/40" />
+                        {p.height}
+                      </span>
+                    )}
+                  </div>
+                )}
                 <div className="flex flex-wrap gap-2 mt-4">
                   {(p.interests_have?.length ? p.interests_have : p.interests ?? []).slice(0, 5).map((interest: string) => {
                     const isMatched = Array.isArray(p.match_reasons) && p.match_reasons.includes(interest);
@@ -294,7 +310,10 @@ export default function DiscoverPage() {
                   })}
                 </div>
                 {p.bio && (
-                  <p className="text-ink/80 text-base leading-relaxed max-w-md mt-5 font-light line-clamp-3">{p.bio}</p>
+                  <div className="mt-5">
+                    <p className="text-[#D4AF37] text-xs font-semibold uppercase tracking-wide mb-1.5">About</p>
+                    <p className="text-ink/80 text-base leading-relaxed max-w-md font-light line-clamp-3">{p.bio}</p>
+                  </div>
                 )}
               </div>
 
