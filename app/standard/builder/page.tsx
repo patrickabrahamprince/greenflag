@@ -20,10 +20,10 @@ interface DaySlot {
 }
 
 // Fixed composition every day: one text, one photo, one voice task.
-const TASK_META: { taskNumber: number; type: IntentionType; label: string; icon: typeof Mic; placeholder: string }[] = [
-  { taskNumber: 1, type: 'text', label: 'Text', icon: TypeIcon, placeholder: 'What do you want him to write about?' },
-  { taskNumber: 2, type: 'photo', label: 'Photo', icon: Camera, placeholder: 'What photo should he share?' },
-  { taskNumber: 3, type: 'voice', label: 'Voice', icon: Mic, placeholder: 'What should he tell you in a voice note?' },
+const TASK_META: { taskNumber: number; type: IntentionType; label: string; icon: typeof Mic }[] = [
+  { taskNumber: 1, type: 'text', label: 'Thought', icon: TypeIcon },
+  { taskNumber: 2, type: 'photo', label: 'Image', icon: Camera },
+  { taskNumber: 3, type: 'voice', label: 'Voice', icon: Mic },
 ];
 
 // Preset prompt suggestions per day/task, so she can tap a chip instead of
@@ -45,14 +45,14 @@ const PRESETS: Record<string, string[]> = {
 // dialog -- it activates the Standard and redirects straight to Discover.
 const DAY_LOCK_DIALOGS: Record<number, { title: string; desc: string; button: string }> = {
   0: {
-    title: 'Day 1 locked 🔒',
-    desc: "Love that clarity. Most people don't know what they want on Day 1. You do. Let's set Day 2?",
+    title: 'Day 1 — Defined.',
+    desc: "You know what you want. That's rare. Let's set Day 2.",
     button: 'Continue to Day 2',
   },
   1: {
-    title: 'Day 2 locked 🔒',
-    desc: "Two down, one to go. You're building a Standard that actually filters for the right person -- finish Day 3 and it goes live.",
-    button: 'Continue to Day 3',
+    title: 'Day 2 — Defined.',
+    desc: 'The bar is high. Finish Day 3 and your Standard goes live.',
+    button: 'Final Day',
   },
 };
 
@@ -163,7 +163,7 @@ export default function StandardBuilderPage() {
 
   const handleContinue = () => {
     if (!currentDayFilled) {
-      toast.error('Fill in all 3 tasks for this day before continuing.');
+      toast.error('Complete all 3 intentions for today to continue.');
       return;
     }
     if (isLastDay) {
@@ -206,7 +206,7 @@ export default function StandardBuilderPage() {
 
       <h1 className="font-display text-2xl text-ink mb-2">Set Your Standard</h1>
       <p className="text-sm text-ink/50 mb-6">
-        Each day has 3 tasks -- a text, a photo, and a voice note. Men complete all 3 for the day before you review and the next day unlocks.
+        Each day: one thought, one image, one voice. He completes all three before you review.
       </p>
 
       <div className="card p-5 mb-8">
@@ -251,7 +251,7 @@ export default function StandardBuilderPage() {
                   type="text"
                   value={customValue}
                   onChange={(e) => updateTaskPrompt(currentSlot.dayNumber, task.taskNumber, e.target.value)}
-                  placeholder={`Or type your own... (${meta.placeholder})`}
+                  placeholder="Or define your own..."
                   className="input w-full text-sm placeholder:text-xs"
                 />
               </div>

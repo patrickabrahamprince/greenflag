@@ -100,7 +100,7 @@ export function ProfileFormFields({
         />
         {gpsDenied && (
           <p className="text-amber-400 text-xs mt-1">
-            Couldn&apos;t detect your location automatically — type your city above, or{' '}
+            We couldn&apos;t detect your city — please enter it manually, or{' '}
             <button type="button" onClick={onDetectLocation} className="underline underline-offset-2 hover:text-amber-300">
               try again
             </button>
@@ -116,7 +116,7 @@ export function ProfileFormFields({
           {instagramRequired ? (
             <span className="text-red-400">*</span>
           ) : (
-            <span className="text-[#9DA0A6] font-normal">(optional)</span>
+            <span className="text-[#9DA0A6] font-normal">(Optional for Women)</span>
           )}
         </label>
         <div className="relative">
@@ -134,12 +134,12 @@ export function ProfileFormFields({
 
       <div>
         <label className="block text-sm font-medium text-ink mb-1.5">
-          Bio <span className="text-[#9DA0A6] font-normal">(optional)</span>
+          About You <span className="text-[#9DA0A6] font-normal">(optional)</span>
         </label>
         <textarea
           value={bio}
           onChange={(e) => onBioChange(e.target.value)}
-          placeholder="Tell us about yourself..."
+          placeholder="A few words that define you..."
           maxLength={200}
           rows={3}
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-bio' : undefined}

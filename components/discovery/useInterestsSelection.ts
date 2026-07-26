@@ -18,11 +18,11 @@ export function useInterestsSelection() {
 
   const validate = (isWoman: boolean): boolean => {
     if (interestsHave.length !== 5) {
-      toast.error('Pick exactly 5 things about you');
+      toast.error('Choose 5 that define you');
       return false;
     }
     if (lookingFor.length !== 5) {
-      toast.error("Pick exactly 5 things you're looking for");
+      toast.error('Choose 5 that you value');
       return false;
     }
     return true;

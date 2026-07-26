@@ -36,7 +36,7 @@ export default function PendingApprovalPage() {
           className="text-xs text-ink/40 hover:text-red-500 flex items-center gap-1 transition-colors"
         >
           <LogOut className="w-3 h-3" />
-          Sign out
+          Sign Out
         </button>
       </div>
 
@@ -45,25 +45,25 @@ export default function PendingApprovalPage() {
       </div>
 
       <h1 className="font-display text-3xl text-ink mb-3">
-        Your application is under review
+        Your Profile Is Being Reviewed
       </h1>
       <p className="text-ink/60 text-sm leading-relaxed max-w-sm mb-4">
-        GreenFlag is a curated community. We're reviewing your profile to make sure
-        it's the right fit — you'll be notified the moment you're approved.
+        Greenflag is curated. We review every profile to maintain the standard.
+        You'll be notified once you're approved.
       </p>
       <p className="text-gold text-sm font-mono mb-8">
         {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
       </p>
 
       <p className="text-ink/40 text-xs mb-4 max-w-xs">
-        Feel free to look around while you wait — nothing is locked.
+        You may explore while you wait.
       </p>
       <button
         onClick={() => router.push('/discover')}
         className="btn-primary flex items-center gap-2 px-6"
       >
         <Compass className="w-4 h-4" />
-        Start Discovering
+        Enter Discovery
       </button>
     </div>
   );

@@ -30,7 +30,7 @@ export default function ProfilePage() {
         <button onClick={() => router.back()} className="btn-ghost p-2">
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-xl font-display flex-1">Profile</h1>
+        <h1 className="text-xl font-display flex-1">Your Profile</h1>
         <button onClick={() => router.push('/settings')} className="btn-ghost p-2">
           <Settings className="w-5 h-5" />
         </button>
@@ -77,7 +77,7 @@ export default function ProfilePage() {
                 <Coins className="w-5 h-5 text-gold" />
                 <div>
                   <p className="text-white font-medium">Coins: {balance}</p>
-                  <p className="text-xs text-muted mt-0.5">Purchase coins to connect</p>
+                  <p className="text-xs text-muted mt-0.5">Pledge coins to connect</p>
                 </div>
               </div>
               <button onClick={() => router.push('/coins')} className="btn-primary text-sm py-2 px-4">
@@ -91,7 +91,7 @@ export default function ProfilePage() {
       <div className="px-4 mt-8">
         <button onClick={handleLogout} className="btn-danger w-full flex items-center justify-center gap-2">
           <LogOut className="w-4 h-4" />
-          Logout
+          Sign Out
         </button>
       </div>
     </div>

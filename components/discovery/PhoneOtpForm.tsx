@@ -25,15 +25,15 @@ export function PhoneOtpForm({
 }: PhoneOtpFormProps) {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
-      <input type="text" placeholder="Full name" value={name} onChange={e => onNameChange(e.target.value)} className="input" />
+      <input type="text" placeholder="Full Name" value={name} onChange={e => onNameChange(e.target.value)} className="input" />
       <PhoneInput
         value={displayDigits}
         onChange={onPhoneChange}
-        placeholder="98765 43210"
+        placeholder="Phone Number"
       />
       {error && <p className="text-red-400 text-sm">{error}</p>}
       <button type="submit" disabled={loading || !e164Phone} className="btn-primary w-full">
-        {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Send OTP'}
+        {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Send Code'}
       </button>
     </form>
   );

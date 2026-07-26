@@ -53,7 +53,7 @@ export default function PhonePage() {
       return;
     }
     setOtpSent(true);
-    toast.success('OTP sent');
+    toast.success('Code sent');
   };
 
   const handleVerifyOtp = async () => {
@@ -116,12 +116,12 @@ export default function PhonePage() {
 
       <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
         <h1 className="text-2xl font-display font-semibold text-ink mb-2">
-          {otpSent ? "Verify your number" : "What's your number?"}
+          {otpSent ? "Verify Your Number" : "Your Number"}
         </h1>
         <p className="text-[#9DA0A6] text-sm mb-8">
           {otpSent
-            ? `We sent a 6-digit code to ${phone}`
-            : "We'll send you a verification code"}
+            ? `A code was sent to ${phone}`
+            : "We'll send a discreet verification code"}
         </p>
 
         {!otpSent ? (
@@ -132,14 +132,14 @@ export default function PhonePage() {
               disabled={!phone || loading}
               className="btn-primary w-full active:scale-[0.98] flex items-center justify-center gap-2"
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Send OTP'}
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Send Code'}
             </button>
           </div>
         ) : (
           <div className="space-y-4">
             <div>
               <label className="block text-xs text-[#9DA0A6] font-thin mb-1.5 tracking-wide">
-                6-digit code
+                Verification Code
               </label>
               <input
                 type="text"
@@ -169,7 +169,7 @@ export default function PhonePage() {
               disabled={loading}
               className="w-full text-center text-sm text-ink/40 hover:text-ink transition-colors"
             >
-              Resend OTP
+              Resend Code
             </button>
           </div>
         )}
@@ -179,12 +179,12 @@ export default function PhonePage() {
           disabled={skipping}
           className="mt-6 w-full text-sm text-[#9DA0A6] underline underline-offset-4 decoration-ink/20 hover:text-ink hover:decoration-ink/40 transition-colors disabled:opacity-50"
         >
-          Skip for now
+          Maybe Later
         </button>
 
         {userEmail && (
           <p className="text-xs text-gray-500 mt-2 text-center">
-            Logged in as {userEmail}. You can add a phone later in Settings.
+            Signed in as {userEmail}. You can add your number later in Settings.
           </p>
         )}
 

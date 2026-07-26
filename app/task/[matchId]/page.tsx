@@ -58,17 +58,17 @@ function DayCompleteModal({ unlocksAt, onClose, onExplore }: { unlocksAt: string
         </div>
         <h3 className="font-display text-2xl text-ink mb-2">Day Complete</h3>
         <p className="text-ink/60 text-sm leading-relaxed mb-6">
-          Tomorrow&apos;s tasks unlock at the same time tomorrow.
+          Tomorrow&apos;s intentions unlock at the same time tomorrow.
         </p>
         <p className="font-display text-4xl text-gold tracking-wider mb-6">
           {remainingMs !== null ? formatCountdown(remainingMs) : '--:--:--'}
         </p>
         <div className="flex gap-3">
           <button onClick={onClose} className="btn-secondary flex-1">
-            Got it
+            Understood
           </button>
           <button onClick={onExplore} className="btn-primary flex-1">
-            Explore Profiles
+            Discover Profiles
           </button>
         </div>
       </div>
@@ -186,7 +186,7 @@ export default function TaskPage() {
       if (decision === 'reject') {
         toast.success('Match ended.');
       } else if (data.chat_unlocked) {
-        toast.success('All 3 days complete — chat unlocked!');
+        toast.success('All three days complete — your conversation is unlocked!');
       } else if (data.day_advanced && data.next_day_unlocks_at) {
         setDayCompleteUnlockAt(data.next_day_unlocks_at);
       } else {
@@ -217,7 +217,7 @@ export default function TaskPage() {
       {match.chat_unlocked && (
         <div className="rounded-2xl mb-5 p-4 flex items-center gap-4 bg-gold/[0.06] border border-gold/20">
           <div className="flex-1">
-            <p className="text-gold text-sm font-medium">You&apos;ve earned access</p>
+            <p className="text-gold text-sm font-medium">You&apos;ve Earned Access</p>
             <p className="text-ink/50 text-xs mt-0.5">Message her anytime</p>
           </div>
           <button
@@ -245,7 +245,7 @@ export default function TaskPage() {
         <>
       {intentions.length === 0 && (
         <div className="text-center px-6 mb-6">
-          <p className="text-ink/50 text-sm">Waiting for her to set up tasks for this day.</p>
+          <p className="text-ink/50 text-sm">Waiting for her to define today&apos;s intentions.</p>
         </div>
       )}
 
@@ -283,7 +283,7 @@ export default function TaskPage() {
                 </button>
               )}
               {isTaskPendingSubmission && isWoman && (
-                <p className="text-xs text-ink/40 italic">Waiting for his submission…</p>
+                <p className="text-xs text-ink/40 italic">Awaiting his response…</p>
               )}
               {isTaskPendingReview && isWoman && (
                 <div className="flex gap-2 mt-1">

@@ -30,7 +30,7 @@ export async function POST(
 
   const rate = checkRateLimit(`${user.id}:${userId}`, 'standardHint', RATE_LIMITS.standardHint);
   if (!rate.allowed) {
-    return NextResponse.json({ error: 'You already sent a hint to him recently' }, { status: 429 });
+    return NextResponse.json({ error: "You've already shown him your intention recently" }, { status: 429 });
   }
 
   const admin = getAdmin();
@@ -50,8 +50,8 @@ export async function POST(
   await sendNotification({
     supabase: admin,
     user_id: userId,
-    title: 'A little nudge',
-    body: `${fromProfile?.name || 'She'} wants you to keep going on her Standard!`,
+    title: 'An Intention Shown',
+    body: `${fromProfile?.name || 'She'} wants you to continue her Standard.`,
     data: { type: 'standard_hint', from_user_id: user.id, matchId: match.id },
   });
 

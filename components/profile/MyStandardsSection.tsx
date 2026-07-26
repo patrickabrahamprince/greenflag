@@ -14,8 +14,8 @@ interface Intention {
 }
 
 const TYPE_META: Record<IntentionType, { label: string; icon: typeof Mic }> = {
-  text: { label: 'Text', icon: TypeIcon },
-  photo: { label: 'Photo', icon: Camera },
+  text: { label: 'Thought', icon: TypeIcon },
+  photo: { label: 'Image', icon: Camera },
   voice: { label: 'Voice', icon: Mic },
 };
 

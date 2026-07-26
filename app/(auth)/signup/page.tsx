@@ -58,7 +58,7 @@ export default function SignupPage() {
       }
       const { error: loginError } = await supabase.auth.signInWithPassword({ email, password })
       if (loginError) {
-        setError('Account created. Please login.')
+        setError('Welcome. Please sign in to continue.')
         setLoading(false)
         window.location.href = '/login'
         return
@@ -76,7 +76,7 @@ export default function SignupPage() {
     setError('')
     try {
       if (!e164Phone) {
-        setError('Please enter a valid phone number')
+        setError('Please enter a valid number')
         setLoading(false)
         return
       }

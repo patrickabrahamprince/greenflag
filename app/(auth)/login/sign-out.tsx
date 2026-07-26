@@ -14,7 +14,7 @@ export function SignOutStrip() {
       onClick={handleSignOut}
       className="text-xs text-gray-500 hover:text-red-400 underline underline-offset-2 mt-4"
     >
-      Sign out of existing session
+      Sign Out
     </button>
   )
 }

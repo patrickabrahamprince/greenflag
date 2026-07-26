@@ -57,17 +57,17 @@ export default function LoginPage() {
         <div className="text-center mb-12">
           <img src="/logo.png" alt="GreenFlag" className="w-36 h-36 mx-auto mb-6" />
           <p className="font-display text-gradient text-3xl leading-tight tracking-tight" style={{ fontWeight: 700 }}>
-            Set your standards.
+            Welcome Back.
           </p>
-          <p className="text-ink/40 text-xs uppercase tracking-widest-xl mt-3">Meet your match</p>
+          <p className="text-ink/40 text-xs uppercase tracking-widest-xl mt-3">The Circle Awaits</p>
           <div className="hairline mx-auto mt-6 mb-2 w-16" />
         </div>
         <form onSubmit={handleLogin} className="space-y-4">
-          <input data-testid="email" type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required className="input w-full" />
+          <input data-testid="email" type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} required className="input w-full" />
           <input data-testid="password" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required className="input w-full" />
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <button data-testid="login-btn" type="submit" disabled={loading} className="btn-primary w-full">
-            {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Log in'}
+            {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Sign In'}
           </button>
         </form>
 
@@ -79,9 +79,9 @@ export default function LoginPage() {
         <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />
 
         <p className="text-ink/50 text-sm mt-8 text-center">
-          New here? Your journey starts at{' '}
+          New to Greenflag?{' '}
           <Link href="/signup" className="text-gold underline underline-offset-4 decoration-gold/40 hover:decoration-gold transition-colors">
-            onboarding
+            Begin Your Journey
           </Link>
         </p>
         <SignOutStrip />

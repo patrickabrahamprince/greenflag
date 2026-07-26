@@ -75,8 +75,8 @@ export async function POST(
   await sendNotification({
     supabase: admin,
     user_id: id,
-    title: 'Someone nudged you',
-    body: `${fromProfile?.name || 'Someone'} is interested in you — check out their profile!`,
+    title: 'Someone Invited You',
+    body: `${fromProfile?.name || 'Someone'} sent you an invitation — take a look at their profile.`,
     data: { type: 'nudge', from_user_id: user.id },
   });
 

@@ -98,7 +98,7 @@ export default function EditProfilePage() {
         return;
       }
 
-      toast.success('Changes submitted for approval');
+      toast.success('Submitted for review');
       router.push('/profile');
     } catch {
       toast.error('Failed to submit changes');
@@ -120,7 +120,7 @@ export default function EditProfilePage() {
         <div className="mx-4 mb-2 flex items-start gap-3 rounded-xl border border-gold/30 bg-gold/10 p-3">
           <Clock className="w-4 h-4 text-gold shrink-0 mt-0.5" />
           <p className="text-xs text-ink/80 leading-relaxed">
-            You have a change request awaiting approval. You can submit a new one once it's reviewed.
+            You have a change request awaiting review. You can submit a new one once it's been reviewed.
           </p>
         </div>
       )}
@@ -206,13 +206,13 @@ export default function EditProfilePage() {
 
         <div>
           <label className="text-sm text-muted mb-1.5 block">
-            Bio <span className="text-muted/60">({bio.length}/120)</span>
+            About You <span className="text-muted/60">({bio.length}/120)</span>
           </label>
           <textarea
             className="input min-h-[100px] resize-none"
             value={bio}
             onChange={(e) => setBio(e.target.value.slice(0, 120))}
-            placeholder="Tell us about yourself..."
+            placeholder="A few words that define you..."
           />
         </div>
 
@@ -224,7 +224,7 @@ export default function EditProfilePage() {
           {saving ? (
             <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>
           ) : (
-            <><Save className="w-4 h-4" /> Submit for Approval</>
+            <><Save className="w-4 h-4" /> Submit for Review</>
           )}
         </button>
       </fieldset>

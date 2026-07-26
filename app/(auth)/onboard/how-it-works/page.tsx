@@ -10,23 +10,23 @@ import toast from 'react-hot-toast';
 const POINTS = [
   {
     icon: <CalendarDays className="w-6 h-6 text-gold" />,
-    title: '3 Days, 3 Tasks a Day',
-    desc: 'Every day for 3 days, you get 3 tasks — one text, one photo, one voice note. Quick, honest, real.',
+    title: '3 Days, 3 Intentions',
+    desc: 'Each day: one thought, one image, one voice. Simple. Honest.',
   },
   {
     icon: <ShieldCheck className="w-6 h-6 text-gold" />,
-    title: 'Be Honest to Earn It',
-    desc: 'Real answers build real connection. Half-effort or dishonest submissions get noticed — and rejected.',
+    title: 'Sincerity Is Currency',
+    desc: 'Real answers open doors. Effort is seen.',
   },
   {
     icon: <Clock className="w-6 h-6 text-gold" />,
-    title: 'She Reviews, You Wait',
-    desc: "After each day's tasks, she has a 24-hour window to review before tomorrow's tasks unlock.",
+    title: 'She Sets The Pace',
+    desc: 'After each day, she reviews. The next day unlocks after.',
   },
   {
     icon: <Sparkles className="w-6 h-6 text-gold" />,
-    title: 'Earn the Match',
-    desc: 'Finish all 3 days with sincerity, and you unlock a real conversation with her.',
+    title: 'Earn The Conversation',
+    desc: 'Complete all three days with intention, and the conversation begins.',
   },
 ];
 
@@ -43,7 +43,7 @@ export default function HowItWorksPage() {
     const fetchProfile = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        toast.error('Session expired');
+        toast.error('Session expired. Please sign in again.');
         router.replace('/login');
         return;
       }
@@ -102,8 +102,8 @@ export default function HowItWorksPage() {
     <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6 bg-[#000000]">
       <div className="max-w-md mx-auto w-full flex flex-col pb-8">
         <div className="text-center mb-8">
-          <h1 className="font-display text-2xl font-semibold text-ink mb-2">How GreenFlag Works</h1>
-          <p className="text-[#9DA0A6] text-sm">The 3-day path to a real connection</p>
+          <h1 className="font-display text-2xl font-semibold text-ink mb-2">How Greenflag Works</h1>
+          <p className="text-[#9DA0A6] text-sm">Three days. One real connection.</p>
         </div>
 
         <div className="space-y-4">
@@ -125,7 +125,7 @@ export default function HowItWorksPage() {
           disabled={continuing}
           className="btn-primary w-full py-4 mt-6 font-semibold text-sm active:scale-95 transition-transform flex items-center justify-center gap-2"
         >
-          {continuing ? <Loader2 className="w-4 h-4 animate-spin" /> : "Got it — let's go"}
+          {continuing ? <Loader2 className="w-4 h-4 animate-spin" /> : "Understood — Begin"}
         </button>
       </div>
     </div>

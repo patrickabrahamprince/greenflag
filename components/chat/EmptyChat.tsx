@@ -1,7 +1,7 @@
 const SUGGESTED_OPENERS = [
-  'Hey! Loved your standards',
-  'That was such a fun challenge!',
-  "Can't believe we matched, hi!",
+  'I loved your Standard',
+  'That was a wonderful challenge',
+  "Can't believe we're here, hi!",
 ];
 
 interface EmptyChatProps {
@@ -15,7 +15,7 @@ export function EmptyChat({ partnerName, onSend }: EmptyChatProps) {
       <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4 bg-gold/10 border border-gold/20">
         <span className="font-display text-3xl text-gold">GF</span>
       </div>
-      <h3 className="font-display text-2xl text-ink mb-1">You&apos;re connected!</h3>
+      <h3 className="font-display text-2xl text-ink mb-1">You&apos;re Connected</h3>
       <p className="text-sm text-ink/50 text-center mb-6">
         Say hello to {partnerName}
       </p>

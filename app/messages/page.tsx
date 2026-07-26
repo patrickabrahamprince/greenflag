@@ -115,7 +115,7 @@ function InProgressMatches({ userId, supabase }: { userId: string; supabase: Ret
         return;
       }
       setHintedIds((prev) => new Set(prev).add(partnerId));
-      toast.success('Hint sent - nudged him to start your Standard');
+      toast.success('Intention shown — he\'s been notified to begin your Standard');
     } catch {
       toast.error('Failed to send hint');
     } finally {
@@ -149,7 +149,7 @@ function InProgressMatches({ userId, supabase }: { userId: string; supabase: Ret
               ) : (
                 <Heart className="w-3.5 h-3.5" />
               )}
-              {hintedIds.has(p.matchUserId) ? 'Sent' : 'Like'}
+              {hintedIds.has(p.matchUserId) ? 'Intention Shown' : 'Show Intention'}
             </button>
           </div>
         ))}
@@ -216,8 +216,8 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
       <div className="flex-1 flex flex-col items-center pt-20 px-6">
         <p className="text-sm font-thin text-center" style={{ color: '#9DA0A6' }}>
           {persona === 'woman'
-            ? 'No chats yet — matches unlock once he completes your Standard.'
-            : 'No chats yet. Swipe in Discover to find matches!'}
+            ? 'Your conversations begin once he completes your Standard.'
+            : 'No conversations yet. Discover a profile to begin.'}
         </p>
         {persona === 'woman' && <InProgressMatches userId={userId} supabase={supabase} />}
       </div>
@@ -262,7 +262,7 @@ export default function MessagesListPage() {
             <button onClick={() => router.back()} className="btn-ghost p-2 -ml-2">
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <h1 className="font-display text-lg text-ink italic">Messages</h1>
+            <h1 className="font-display text-lg text-ink italic">Conversations</h1>
             <div className="w-9" />
           </div>
           <div className="hairline" />

@@ -184,7 +184,7 @@ export default function SettingsPage() {
 
         <button onClick={handleLogout} className="btn-secondary w-full flex items-center justify-center gap-2">
           <LogOut className="w-4 h-4" />
-          Logout
+          Sign Out
         </button>
       </div>
 

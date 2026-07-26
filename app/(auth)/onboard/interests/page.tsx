@@ -11,10 +11,10 @@ import { useInterestsSelection } from '@/components/discovery/useInterestsSelect
 import toast from 'react-hot-toast';
 
 const INTEREST_TAGS = [
-  'Books', 'Music', 'Travel', 'Fitness', 'Cooking', 'Art', 'Gaming',
-  'Cinema', 'Philosophy', 'Spirituality', 'Entrepreneurship', 'Tech',
-  'Fashion', 'Nature', 'Coffee', 'Nightlife', 'Yoga', 'Writing',
-  'Photography', 'Dance',
+  'Books', 'Music', 'Travel', 'Fitness', 'Gastronomy', 'Art',
+  'Cinema', 'Philosophy', 'Spirituality', 'Business', 'Technology',
+  'Fashion', 'Nature', 'Coffee Culture', 'Nightlife', 'Yoga', 'Writing',
+  'Photography', 'Dance', 'Wellness',
 ];
 
 export default function InterestsPage() {
@@ -32,7 +32,7 @@ export default function InterestsPage() {
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      toast.error('Session expired');
+      toast.error('Session expired. Please sign in again.');
       router.replace('/onboard/phone');
       setLoading(false);
       return;
@@ -44,7 +44,7 @@ export default function InterestsPage() {
       interests_have: interestsHave,
       interests_looking_for: lookingFor,
     });
-    
+
     if (error) {
       toast.error(error.message);
       setLoading(false);
@@ -52,7 +52,7 @@ export default function InterestsPage() {
     }
 
     setLoading(false);
-    toast.success('Profile completed!');
+    toast.success('Profile curated');
     router.replace('/onboard/rules');
   };
 
@@ -63,18 +63,18 @@ export default function InterestsPage() {
       </button>
 
       <div className="flex-1 max-w-md mx-auto w-full space-y-8 pb-8">
-        <InterestGrid title="5 things about you" description="Pick exactly 5"
+        <InterestGrid title="What Defines You" description="Choose 5"
           options={INTEREST_TAGS} selected={interestsHave} max={5} onToggle={(_, val) => toggle('have', val)}
           dataTestIdPrefix={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'interest-have' : undefined} />
 
-        <InterestGrid title={isWoman ? "5 things you're looking for in him" : "5 things you're looking for in her"} description="Pick exactly 5"
+        <InterestGrid title={isWoman ? "What You Value In Him" : "What You Value In Her"} description="Choose 5"
           options={INTEREST_TAGS} selected={lookingFor} max={5} onToggle={(_, val) => toggle('looking', val)}
           dataTestIdPrefix={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'interest-looking' : undefined} />
 
         <button onClick={handleContinue} disabled={loading}
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'submit-onboarding' : undefined}
           className="btn-primary w-full active:scale-[0.98] flex items-center justify-center gap-2">
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Complete'}
+          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Complete Profile'}
         </button>
       </div>
     </div>

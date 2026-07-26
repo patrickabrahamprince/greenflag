@@ -30,7 +30,7 @@ export function DeleteUserModal({
             <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
               <Trash2 className="w-5 h-5 text-red-500" />
             </div>
-            <h3 className="text-lg font-display text-[#EDEADE]">Delete User</h3>
+            <h3 className="text-lg font-display text-[#EDEADE]">Remove Profile</h3>
           </div>
           <button onClick={onClose} className="btn-ghost p-1">
             <X className="w-5 h-5 text-[#8E8E93]" />
@@ -70,7 +70,7 @@ export function DeleteUserModal({
             disabled={!canDelete || deleting}
             className="btn-danger flex-1 text-sm disabled:opacity-50"
           >
-            {deleting ? 'Deleting...' : 'Delete Permanently'}
+            {deleting ? 'Removing...' : 'Remove Permanently'}
           </button>
         </div>
       </div>

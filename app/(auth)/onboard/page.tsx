@@ -28,12 +28,12 @@ export default function OnboardPage() {
           className="text-xs text-ink/40 hover:text-red-500 flex items-center gap-1 transition-colors"
         >
           <LogOut className="w-3 h-3" />
-          Sign out
+          Sign Out
         </button>
       </div>
       <div className="text-center mb-10">
         <img src="/logo.png" alt="GreenFlag" className="w-32 h-32 mx-auto mb-3" />
-        <p className="text-ink/50 text-sm">Choose your path</p>
+        <p className="text-ink/50 text-sm">Choose Your Path</p>
       </div>
 
       <div className="space-y-4">
@@ -47,10 +47,10 @@ export default function OnboardPage() {
               <Crown className="w-8 h-8 text-gold" />
             </div>
             <span className="font-display text-2xl text-ink">
-              I set the Standard
+              I Set The Standard
             </span>
             <span className="text-sm text-ink/60 max-w-[260px] leading-relaxed">
-              Build your 3-day Standard. Men earn their way to you.
+              Define your 3-day Standard. He earns his way to you.
             </span>
           </div>
         </button>
@@ -65,10 +65,10 @@ export default function OnboardPage() {
               <Compass className="w-8 h-8 text-black/70" />
             </div>
             <span className="font-display text-2xl text-ink">
-              I rise to it
+              I Rise To It
             </span>
             <span className="text-sm text-ink/60 max-w-[260px] leading-relaxed">
-              Discover women. Prove your worth. Earn the chat.
+              Discover curated profiles. Show intention. Earn the conversation.
             </span>
           </div>
         </button>

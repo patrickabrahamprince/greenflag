@@ -318,13 +318,13 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
           <div className="w-12 h-12 bg-green-50 border border-green-200 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-xl text-green-600 font-bold">✓</span>
           </div>
-          <h4 className="font-display text-ink text-lg mb-2">Response Submitted!</h4>
+          <h4 className="font-display text-ink text-lg mb-2">Response Submitted</h4>
           <p className="text-[#9DA0A6] text-xs mb-6 leading-relaxed">
             {!isLastTaskToday
-              ? 'Awaiting her review. Move on to the next task for today, or explore other profiles in the meantime.'
+              ? 'Awaiting her review. Continue to the next intention for today, or discover other profiles in the meantime.'
               : dayNumber >= 3
-                ? "You've completed all 3 days! She now has a 24-hour window to review your responses and decide whether to continue."
-                : "That's all 3 tasks for today. She has a 24-hour window to review before tomorrow's tasks unlock."}
+                ? "You've completed all three days. She now has a 24-hour window to review your Standard and decide whether to continue."
+                : "That's all three intentions for today. She has a 24-hour window to review before tomorrow unlocks."}
           </p>
           <div className="flex gap-3">
             {!isLastTaskToday && (
@@ -334,7 +334,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
                 }}
                 className="btn-primary flex-1 py-2.5 text-xs font-semibold"
               >
-                Next Task
+                Next Intention
               </button>
             )}
             <button
@@ -344,7 +344,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
               }}
               className={isLastTaskToday ? 'btn-primary flex-1 py-2.5 text-xs font-semibold' : 'btn-secondary flex-1 py-2.5 text-xs font-medium'}
             >
-              Explore New
+              Discover New Profiles
             </button>
           </div>
         </div>

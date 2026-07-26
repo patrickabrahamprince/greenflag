@@ -115,9 +115,9 @@ export default function NotificationsPage() {
             <div className="w-16 h-16 rounded-full bg-surface flex items-center justify-center mb-4">
               <Bell className="w-7 h-7 text-muted" />
             </div>
-            <h3 className="text-lg font-medium text-ink mb-1">No notifications</h3>
+            <h3 className="text-lg font-medium text-ink mb-1">Nothing Yet</h3>
             <p className="text-sm text-muted text-center">
-              You&apos;ll be notified when there&apos;s activity on your connections.
+              You&apos;ll be notified when there&apos;s activity in your Circle.
             </p>
           </div>
         ) : (

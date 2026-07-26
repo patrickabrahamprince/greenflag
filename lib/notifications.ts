@@ -59,8 +59,8 @@ export async function notifyHostOfSubmission(
   await sendNotification({
     supabase,
     user_id: hostId,
-    title: 'New submission',
-    body: `${guestName} submitted task ${taskNumber}/8`,
+    title: 'New Submission',
+    body: `${guestName} submitted intention ${taskNumber} of 8`,
     data: { connectionId, taskNumber, type: 'submission' },
   });
 }
@@ -74,8 +74,8 @@ export async function notifyGuestOfApproval(
   await sendNotification({
     supabase,
     user_id: guestId,
-    title: 'Chat unlocked!',
-    body: `${hostName} approved your application. You can now chat!`,
+    title: 'Conversation Unlocked',
+    body: `${hostName} approved your application. Your conversation is now open.`,
     data: { connectionId, type: 'chat_unlocked' },
   });
 }
@@ -89,7 +89,7 @@ export async function notifyGuestOfRejection(
   await sendNotification({
     supabase,
     user_id: guestId,
-    title: 'Application rejected',
+    title: 'Application Declined',
     body: `${hostName} passed. Your 5 coins have been refunded.`,
     data: { connectionId, type: 'rejected' },
   });
@@ -120,7 +120,7 @@ export async function notifyWomanOfStandardBegin(
   await sendNotification({
     supabase,
     user_id: womanId,
-    title: 'New connection',
+    title: 'New Connection',
     body: `${manName} pledged 500 coins to begin your Standard`,
     data: { connectionId, type: 'standard_begin' },
   });
@@ -135,8 +135,8 @@ export async function notifyManOfDayApproval(
   await sendNotification({
     supabase,
     user_id: manId,
-    title: 'Day approved',
-    body: `Day ${dayNumber} approved. Day ${dayNumber + 1} unlocked. Submit in 24h.`,
+    title: 'Day Approved',
+    body: `Day ${dayNumber} approved. Day ${dayNumber + 1} is unlocked — submit within 24 hours.`,
     data: { connectionId, dayNumber, type: 'day_approved' },
   });
 }
@@ -149,8 +149,8 @@ export async function notifyManOfDay5(
   await sendNotification({
     supabase,
     user_id: manId,
-    title: 'Access earned!',
-    body: "Day 5 approved. You've earned access. Message her.",
+    title: 'Access Earned',
+    body: "Day 5 approved. You've earned access — message her.",
     data: { connectionId, type: 'day5_approved' },
   });
 }
@@ -163,7 +163,7 @@ export async function notifyBothOfCompletion(
 ): Promise<void> {
   const payload = {
     title: "You're Connected!",
-    body: "8/8 Complete. You're Connected.",
+    body: "All eight intentions complete. You're Connected.",
     data: { connectionId, type: 'completed' },
   };
   await sendNotification({ supabase, user_id: manId, ...payload });
@@ -178,7 +178,7 @@ export async function notifyManOfRejection(
   await sendNotification({
     supabase,
     user_id: manId,
-    title: 'Connection ended',
+    title: 'Connection Ended',
     body: 'Connection ended. She chose not to continue.',
     data: { connectionId, type: 'rejected' },
   });
@@ -194,7 +194,7 @@ export async function notifyWomanOfMediaReady(
   await sendNotification({
     supabase,
     user_id: womanId,
-    title: 'Submission ready',
+    title: 'Submission Ready',
     body: `${manName}'s Day ${dayNumber} submission is ready to review`,
     data: { connectionId, dayNumber, type: 'media_approved' },
   });
@@ -207,7 +207,7 @@ export async function notifyUserOfBan(
   await sendNotification({
     supabase,
     user_id: userId,
-    title: 'Account suspended',
+    title: 'Account Suspended',
     body: 'Your account has been suspended.',
     data: { type: 'account_banned' },
   });
@@ -221,7 +221,7 @@ export async function notifyUserOfApplicationRejection(
   await sendNotification({
     supabase,
     user_id: userId,
-    title: "Your application wasn't approved",
+    title: 'Not Approved This Time',
     body: reason,
     data: { type: 'application_rejected' },
   });
@@ -234,7 +234,7 @@ export async function notifyBothOfMediaRejection(
   connectionId: string
 ): Promise<void> {
   const payload = {
-    title: 'Submission rejected',
+    title: 'Submission Rejected',
     body: 'Submission rejected by moderation.',
     data: { connectionId, type: 'media_rejected' },
   };

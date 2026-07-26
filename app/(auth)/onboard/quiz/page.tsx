@@ -15,43 +15,43 @@ interface Question {
 const QUIZ_QUESTIONS: Question[] = [
   {
     id: 'relationship_goal',
-    question: 'What are you looking for on GreenFlag?',
-    options: ['Long-term relationship', 'Marriage-minded dating', 'Casual but open', 'Figuring it out'],
+    question: 'What brings you to Greenflag?',
+    options: ['A long-term partnership', 'Marriage-minded', 'Intentional, but open', 'Exploring with intention'],
   },
   {
     id: 'weekend_vibe',
-    question: 'What does your ideal Sunday look like?',
-    options: ['Cozy coffee & reading', 'Hiking/Outdoor adventure', 'Brunching with friends', 'Sleeping in & gaming'],
+    question: 'Your ideal Sunday?',
+    options: ['Slow coffee & pages', 'Outdoors & movement', 'Brunch with your circle', 'Slow morning, no plans'],
   },
   {
     id: 'love_language',
-    question: 'Your primary love language is...',
-    options: ['Quality Time', 'Words of Affirmation', 'Acts of Service', 'Physical Touch'],
+    question: 'How do you feel most loved?',
+    options: ['Quality time together', 'Thoughtful words', 'Considerate actions', 'Physical presence'],
   },
   {
     id: 'first_date',
-    question: 'Where would your ideal first date take place?',
-    options: ['A casual coffee walkthrough', 'A quiet drinks spot', 'An active event/class', 'A nice cozy dinner'],
+    question: 'Your ideal first encounter?',
+    options: ['A quiet coffee walk', 'Cocktails, low light', 'A class or experience together', 'An intimate dinner'],
   },
   {
     id: 'communication',
-    question: 'How do you like to stay in touch?',
-    options: ['Texting back and forth', 'Spontaneous phone calls', 'Video chat dates', 'Mainly exchanging memes'],
+    question: 'How do you stay connected?',
+    options: ['Thoughtful messages', 'Unplanned calls', 'Face to face', 'A shared sense of humor'],
   },
   {
     id: 'humor_style',
-    question: 'Your sense of humor is best described as...',
-    options: ['Dry & Sarcastic', 'Cheesy puns & dad jokes', 'Witty banter', 'Dark & observational'],
+    question: 'Your humor?',
+    options: ['Dry & understated', 'Playful & witty', 'Sharp & clever', 'Dark & dry'],
   },
   {
     id: 'ideal_trip',
-    question: 'Your dream travel destination is...',
-    options: ['Relaxing beach resort', 'Historic European city', 'Backpacking in mountains', 'Exploring food markets'],
+    question: 'Where would you escape to?',
+    options: ['Private beach', 'Old European city', 'Mountains, off-grid', 'Culinary capital'],
   },
   {
     id: 'pets',
-    question: 'Are you a pet person?',
-    options: ['Dog lover', 'Cat lover', 'Love all animals', 'Not ready for pets'],
+    question: 'Pets?',
+    options: ['Dog person', 'Cat person', 'Animal lover', 'Not just yet'],
   },
 ];
 
@@ -67,7 +67,7 @@ export default function QuizPage() {
     const fetchSession = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        toast.error('Session expired');
+        toast.error('Session expired. Please sign in again.');
         router.replace('/login');
         return;
       }
@@ -117,7 +117,7 @@ export default function QuizPage() {
 
       if (error) throw error;
 
-      toast.success('Answers saved!');
+      toast.success('Saved');
       router.push('/onboard/interests');
     } catch (err: any) {
       toast.error(err.message || 'Failed to save quiz');
@@ -151,7 +151,7 @@ export default function QuizPage() {
               <ArrowLeft size={24} />
             </button>
             <span className="text-xs font-semibold text-[#9DA0A6]">
-              Question {currentIdx + 1} of {QUIZ_QUESTIONS.length}
+              {currentIdx + 1} of {QUIZ_QUESTIONS.length}
             </span>
             <div className="w-6" /> {/* spacer */}
           </div>
@@ -169,7 +169,7 @@ export default function QuizPage() {
             <h2 className="text-xl font-display font-medium text-ink mb-2 leading-snug">
               {currentQuestion.question}
             </h2>
-            <p className="text-[#9DA0A6] text-xs">Pick one answer that fits you best</p>
+            <p className="text-[#9DA0A6] text-xs">Choose what feels most like you</p>
           </div>
 
           {/* Options Grid */}
@@ -204,7 +204,7 @@ export default function QuizPage() {
             <Loader2 className="w-4 h-4 animate-spin text-black" />
           ) : currentIdx === QUIZ_QUESTIONS.length - 1 ? (
             <>
-              Finish Quiz <CheckCircle2 size={16} />
+              Complete <CheckCircle2 size={16} />
             </>
           ) : (
             <>

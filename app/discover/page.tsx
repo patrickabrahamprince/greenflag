@@ -295,8 +295,8 @@ export default function DiscoverPage() {
           >
             <span className="text-xs text-white font-medium truncate">
               {approvalBanner === 'pending'
-                ? 'Your account will be verified shortly'
-                : "You're approved! Tap to view your profile"}
+                ? 'Verification in progress'
+                : "You're verified. View your profile"}
             </span>
             {approvalBanner === 'approved' && (
               <span
@@ -361,12 +361,12 @@ export default function DiscoverPage() {
                     <div className="glass-surface flex items-center gap-1.5 rounded-full px-3 py-1.5">
                       <span className="text-gold text-xs">◆</span>
                       <span className="font-display font-bold text-white text-sm whitespace-nowrap">
-                        {p.match_percentage}% GreenFlag Match
+                        {p.match_percentage}% Greenflag Alignment
                       </span>
                     </div>
                     {persona === 'woman' && interestCounts[p.id] !== undefined && (
                       <span className="glass-surface rounded-full px-3 py-1 text-white/80 text-[11px] whitespace-nowrap">
-                        {interestCounts[p.id]} {interestCounts[p.id] === 1 ? 'person has' : 'people have'} shown interest on this profile
+                        Intention from {interestCounts[p.id]} {interestCounts[p.id] === 1 ? 'person' : 'people'}
                       </span>
                     )}
                   </div>
@@ -412,7 +412,7 @@ export default function DiscoverPage() {
                     className="glass-surface absolute inset-0 m-auto z-20 flex items-center justify-center gap-2 h-12 w-fit px-4 rounded-full active:scale-95 transition-all shadow-lg"
                   >
                     <Lock className="w-4 h-4 text-white shrink-0" />
-                    <span className="text-white text-sm uppercase tracking-wide font-display font-bold whitespace-nowrap">Unlock</span>
+                    <span className="text-white text-sm uppercase tracking-wide font-display font-bold whitespace-nowrap">Meet Her Standard</span>
                   </button>
                 )}
               </div>
@@ -482,7 +482,7 @@ export default function DiscoverPage() {
               </div>
               {p.bio && (
                 <div>
-                  <p className="text-gold text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">About</p>
+                  <p className="text-gold text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">The Standard</p>
                   <p
                     className={`text-ink/80 text-base leading-relaxed max-w-md font-light whitespace-pre-line ${expandedBios.has(p.id) ? '' : 'line-clamp-3'}`}
                   >
@@ -493,7 +493,7 @@ export default function DiscoverPage() {
                       onClick={() => toggleBioExpanded(p.id)}
                       className="text-gold text-xs font-medium mt-1"
                     >
-                      {expandedBios.has(p.id) ? 'Show less' : 'and more...'}
+                      {expandedBios.has(p.id) ? 'Show less' : '...more'}
                     </button>
                   )}
                 </div>
@@ -520,7 +520,7 @@ export default function DiscoverPage() {
                     <button
                       onClick={() => handleNudge(p.id)}
                       disabled={nudgingId === p.id}
-                      aria-label="Nudge"
+                      aria-label="Invite"
                       className="glass-surface flex-1 h-14 rounded-full flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
                     >
                       {nudgingId === p.id ? (
@@ -528,7 +528,7 @@ export default function DiscoverPage() {
                       ) : (
                         <>
                           <Bell className="w-5 h-5 text-white" />
-                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">Nudge</span>
+                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">Invite</span>
                         </>
                       )}
                     </button>
@@ -573,9 +573,9 @@ export default function DiscoverPage() {
             <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5">
               <Heart className="w-6 h-6 text-gold" />
             </div>
-            <h2 className="font-display text-2xl text-ink mb-2">You&apos;ve seen everyone</h2>
+            <h2 className="font-display text-2xl text-ink mb-2">Your Curated Circle Is Complete</h2>
             <p className="text-ink/50 text-sm max-w-xs">
-              No new profiles match your standard right now. Check back soon, or revisit your existing connections.
+              No new profiles align with your Standard right now. Your circle will refresh soon.
             </p>
           </div>
         )}
@@ -587,16 +587,16 @@ export default function DiscoverPage() {
             <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <Coins className="w-6 h-6 text-gold" />
             </div>
-            <h4 className="font-display text-2xl text-ink mb-2">Unlock Standard?</h4>
+            <h4 className="font-display text-2xl text-ink mb-2">Begin Her Standard?</h4>
             <p className="text-ink/60 text-sm leading-relaxed mb-6">
-              This action will deduct 500 coins from your wallet to begin a 3-day connection request.
+              This will invest 500 coins to begin your 3-day introduction.
             </p>
             <div className="flex gap-4">
               <button
                 onClick={() => setConfirmProfileId(null)}
                 className="btn-secondary flex-1"
               >
-                Cancel
+                Not Now
               </button>
               <button
                 onClick={() => {
@@ -606,7 +606,7 @@ export default function DiscoverPage() {
                 }}
                 className="btn-primary flex-1"
               >
-                Confirm
+                Begin
               </button>
             </div>
           </div>
@@ -622,9 +622,9 @@ export default function DiscoverPage() {
               <Bell className="w-4 h-4 text-green-400" />
             </div>
             <div>
-              <p className="text-white font-display text-sm font-semibold leading-tight">Nudge Sent!</p>
+              <p className="text-white font-display text-sm font-semibold leading-tight">Invitation Sent</p>
               {nudgeDialog.charged && (
-                <p className="text-ink/50 text-[11px] leading-tight mt-0.5">{nudgeDialog.cost} coins used</p>
+                <p className="text-ink/50 text-[11px] leading-tight mt-0.5">{nudgeDialog.cost} coins invested</p>
               )}
             </div>
           </div>
@@ -637,16 +637,16 @@ export default function DiscoverPage() {
             <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <Coins className="w-6 h-6 text-gold" />
             </div>
-            <h4 className="font-display text-2xl text-ink mb-2">Nudge again?</h4>
+            <h4 className="font-display text-2xl text-ink mb-2">Invite Again?</h4>
             <p className="text-ink/60 text-sm leading-relaxed mb-6">
-              You've already nudged this profile. Sending another nudge will cost {nudgeConfirm.cost} coins.
+              You've already invited this profile. Another invitation will invest {nudgeConfirm.cost} coins.
             </p>
             <div className="flex gap-4">
               <button onClick={() => setNudgeConfirm(null)} className="btn-secondary flex-1">
                 Cancel
               </button>
               <button onClick={handleConfirmNudge} className="btn-primary flex-1">
-                Yes, Nudge Again
+                Yes, Invite Again
               </button>
             </div>
           </div>

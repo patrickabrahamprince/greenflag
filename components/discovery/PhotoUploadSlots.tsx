@@ -86,7 +86,7 @@ export function PhotoUploadSlots({
         data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'photo-upload' : undefined}
         onChange={handleChange}
       />
-      <p className="text-xs text-[#9DA0A6] mt-1.5">{photos.length}/{maxPhotos} uploaded</p>
+      <p className="text-xs text-[#9DA0A6] mt-1.5">{photos.length}/{maxPhotos} added</p>
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
   );

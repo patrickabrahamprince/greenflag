@@ -69,7 +69,7 @@ export default function RejectedApplicationPage() {
           className="text-xs text-ink/40 hover:text-red-500 flex items-center gap-1 transition-colors"
         >
           <LogOut className="w-3 h-3" />
-          Sign out
+          Sign Out
         </button>
       </div>
 
@@ -78,19 +78,18 @@ export default function RejectedApplicationPage() {
       </div>
 
       <h1 className="font-display text-3xl text-ink mb-3">
-        Your application wasn't approved
+        Not Approved This Time
       </h1>
 
       {reason && (
         <div className="bg-[#1C1C1E] border border-[#2A2A2A] rounded-2xl p-4 max-w-sm mb-6 text-left">
-          <p className="text-ink/40 text-xs uppercase tracking-wide mb-1">Reason</p>
+          <p className="text-ink/40 text-xs uppercase tracking-wide mb-1">Feedback</p>
           <p className="text-ink/80 text-sm leading-relaxed">{reason}</p>
         </div>
       )}
 
       <p className="text-ink/60 text-sm leading-relaxed max-w-sm mb-8">
-        Fix what's above and resubmit — this clears your previous profile
-        so you can fill everything in again from scratch.
+        Refine your profile and resubmit. This will reset your previous submission.
       </p>
 
       <button
@@ -99,7 +98,7 @@ export default function RejectedApplicationPage() {
         className="btn-primary flex items-center gap-2 px-6"
       >
         {restarting ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
-        Redo Onboarding
+        Update & Resubmit
       </button>
     </div>
   );

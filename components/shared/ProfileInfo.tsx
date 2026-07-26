@@ -47,7 +47,7 @@ export function ProfileInfo({
           </div>
         )}
         {matchPercent !== undefined && (
-          <span className="text-gold text-xs uppercase tracking-wide">{matchPercent}% match</span>
+          <span className="text-gold text-xs uppercase tracking-wide">{matchPercent}% Alignment</span>
         )}
       </div>
 

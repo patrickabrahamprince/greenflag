@@ -19,38 +19,38 @@ import toast from 'react-hot-toast';
 const slides = [
   {
     id: 0,
-    title: 'Be Respectful',
-    desc: 'Treat every member with kindness and respect. Harassment or hateful language is not allowed.',
+    title: 'Respect Is Standard',
+    desc: 'Every profile is treated with regard. No exceptions.',
     icon: <ShieldCheck className="w-8 h-8 text-gold" />,
   },
   {
     id: 1,
-    title: 'No Spam',
-    desc: 'Avoid sending unsolicited messages or repetitive content. Keep conversations meaningful.',
+    title: 'No Noise',
+    desc: 'Keep it intentional. No spam, no mass messages.',
     icon: <Flame className="w-8 h-8 text-gold" />,
   },
   {
     id: 2,
-    title: 'Stay Safe',
-    desc: 'Never share personal information like phone numbers or addresses until you trust the other party.',
+    title: 'Discretion First',
+    desc: 'Share personal details only when you feel safe to.',
     icon: <MessageCircle className="w-8 h-8 text-gold" />,
   },
   {
     id: 3,
-    title: 'Earn Coins',
-    desc: 'Engage with the community to earn coins. Use them for boosts, profile upgrades, and more.',
+    title: 'Intention Has Value',
+    desc: 'Show up genuinely. Effort is seen and valued.',
     icon: <Coins className="w-8 h-8 text-gold" />,
   },
   {
     id: 4,
-    title: 'Customize Settings',
-    desc: 'Visit the Settings page to adjust privacy, notifications, and discover preferences.',
+    title: 'Your Circle, Your Rules',
+    desc: 'Manage privacy and preferences in Settings.',
     icon: <Settings className="w-8 h-8 text-gold" />,
   },
   {
     id: 5,
-    title: 'Verified Users',
-    desc: 'Verified profiles get a special badge and higher visibility in matches.',
+    title: 'Verified Profiles',
+    desc: 'Verified profiles are prioritized and distinguished.',
     icon: <UserCheck className="w-8 h-8 text-gold" />,
   },
 ];
@@ -68,7 +68,7 @@ export default function RulesPage() {
     const checkSession = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        toast.error('Session expired');
+        toast.error('Session expired. Please sign in again.');
         router.replace('/login');
         return;
       }
@@ -113,7 +113,7 @@ export default function RulesPage() {
           >
             <ArrowLeft size={24} />
           </button>
-          <span className="text-xs font-semibold text-[#9DA0A6]">Community Guidelines</span>
+          <span className="text-xs font-semibold text-[#9DA0A6]">House Rules</span>
           <div className="invisible p-1 -mr-1" aria-hidden="true">
             <ArrowLeft size={24} />
           </div>
@@ -165,7 +165,7 @@ export default function RulesPage() {
           onClick={handleContinue}
           className="btn-primary w-full py-4 mt-6 font-semibold text-sm active:scale-95 transition-transform"
         >
-          I Agree, Continue
+          Agree & Continue
         </button>
       </div>
     </div>

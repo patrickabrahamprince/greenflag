@@ -111,7 +111,7 @@ export default function ProfilePage() {
             );
             const display = match || detected;
             setCity(display);
-            toast.success(`Location detected: ${display}`);
+            toast.success(`Location found: ${display}`);
           } else {
             setGpsDenied(true);
           }
@@ -134,12 +134,12 @@ export default function ProfilePage() {
     if (!name.trim() || name.trim().length < 2) e.name = 'Name is required';
     const ageNum = computeAge(dob);
     if (!dob || ageNum === null) e.dob = 'Date of birth is required';
-    else if (ageNum < 18) e.dob = 'You must be 18 or older to use GreenFlag';
+    else if (ageNum < 18) e.dob = 'You must be 18+';
     else if (ageNum > 100) e.dob = 'Please enter a valid date of birth';
     if (!city.trim()) e.city = 'City is required';
-    if (photos.length < 1) e.photos = 'Upload at least 1 photo';
-    if (bio.length > 200) e.bio = 'Max 200 characters';
-    if (persona !== 'woman' && !instagramHandle.trim()) e.instagram = 'Instagram handle is required';
+    if (photos.length < 1) e.photos = 'Please add at least 1 photo';
+    if (bio.length > 200) e.bio = 'Keep it under 200 characters';
+    if (persona !== 'woman' && !instagramHandle.trim()) e.instagram = 'Instagram is required to verify';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -150,7 +150,7 @@ export default function ProfilePage() {
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      toast.error('Session expired');
+      toast.error('Session expired. Please sign in again.');
       router.replace('/onboard/phone');
       setLoading(false);
       return;
@@ -213,7 +213,7 @@ export default function ProfilePage() {
       </button>
 
       <h1 className="text-xl font-display font-semibold text-ink text-center mb-6">
-        {persona === 'woman' ? 'Set Your Standards' : 'Tell Us About Yourself'}
+        {persona === 'woman' ? 'Define Your Presence' : 'Introduce Yourself'}
       </h1>
 
       <div className="space-y-5 flex-1 max-w-md mx-auto w-full">

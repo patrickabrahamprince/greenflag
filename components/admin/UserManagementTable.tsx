@@ -75,11 +75,11 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
               <td className="py-3 px-2 text-[#8E8E93] text-xs hidden md:table-cell">{u.coins ?? 0}</td>
               <td className="py-3 px-2">
                 {u.is_banned ? (
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400">Banned</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400">Paused</span>
                 ) : u.approval_status === 'pending' ? (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400">Pending</span>
                 ) : u.approval_status === 'rejected' ? (
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400">Rejected</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400">Declined</span>
                 ) : u.is_admin ? (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-[#C9A961]/10 text-[#C9A961]">Admin</span>
                 ) : (
@@ -107,7 +107,7 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
                       <button
                         onClick={() => onRejectClick(u)}
                         className="btn-ghost text-xs p-1.5 text-red-400"
-                        title="Reject Application"
+                        title="Decline Application"
                       >
                         <UserX className="w-3.5 h-3.5" />
                       </button>
@@ -151,7 +151,7 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
                     <button
                       onClick={() => onBanClick(u)}
                       className="btn-ghost text-xs p-1.5 text-red-400"
-                      title="Ban User"
+                      title="Pause Profile"
                     >
                       <Ban className="w-3.5 h-3.5" />
                     </button>
@@ -159,7 +159,7 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
                   <button
                     onClick={() => onDeleteClick(u)}
                     className="btn-ghost text-xs p-1.5 text-red-500"
-                    title="Delete User"
+                    title="Remove Profile"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>

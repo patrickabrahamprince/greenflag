@@ -42,10 +42,10 @@ function formatCountdown(ms: number) {
 
 function statusLabel(m: MatchListItem) {
   switch (m.status) {
-    case 'completed': return 'Chat unlocked';
+    case 'completed': return 'Conversation Unlocked';
     case 'rejected': return 'She passed';
-    case 'expired_no_submission': return 'Expired — no response';
-    case 'refunded': return 'Refunded — not reviewed in time';
+    case 'expired_no_submission': return 'Expired';
+    case 'refunded': return 'Refunded';
     default: return `Day ${m.current_day} of 3`;
   }
 }
@@ -113,13 +113,13 @@ export default function MyConnectionsPage() {
   return (
     <div className="min-h-screen screen-gradient px-6 pt-8 pb-24 max-w-app mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-3xl text-ink">My Connections</h1>
+        <h1 className="font-display text-3xl text-ink">Your Circle</h1>
         <button
           onClick={() => router.push('/discover')}
           className="btn-secondary text-xs px-3 py-2 flex items-center gap-1.5 shrink-0"
         >
           <Compass className="w-3.5 h-3.5" />
-          Explore new
+          Discover New Profiles
         </button>
       </div>
 
@@ -128,8 +128,8 @@ export default function MyConnectionsPage() {
           <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5">
             <Heart className="w-6 h-6 text-gold" />
           </div>
-          <h2 className="font-display text-xl text-ink mb-2">No connections yet</h2>
-          <p className="text-ink/50 text-sm">Unlock a profile in Discover to start a connection.</p>
+          <h2 className="font-display text-xl text-ink mb-2">Your Circle Is Empty</h2>
+          <p className="text-ink/50 text-sm">Discover someone to begin an introduction.</p>
         </div>
       ) : (
         <div className="space-y-3">
