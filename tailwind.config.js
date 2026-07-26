@@ -24,6 +24,7 @@ module.exports = {
       fontFamily: {
         display: ['var(--font-sora)', 'system-ui', 'sans-serif'],
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-fraunces)', 'Georgia', 'serif'],
       },
       letterSpacing: {
         'widest-xl': '0.25em',

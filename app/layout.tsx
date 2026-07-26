@@ -1,5 +1,5 @@
 import './globals.css'
-import { Inter, Sora } from 'next/font/google'
+import { Inter, Sora, Fraunces } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import Script from 'next/script'
@@ -17,6 +17,14 @@ const sora = Sora({
   weight: ['600', '700', '800'],
   display: 'swap',
   variable: '--font-sora',
+})
+
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+  style: ['normal', 'italic'],
+  display: 'swap',
+  variable: '--font-fraunces',
 })
 
 export const metadata: Metadata = {
@@ -38,7 +46,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${sora.variable}`} style={{ colorScheme: 'dark' }}>
+    <html lang="en" className={`${inter.variable} ${sora.variable} ${fraunces.variable}`} style={{ colorScheme: 'dark' }}>
       <body className="min-h-screen bg-[#000000] text-[#FFFFFF] font-sans">
         <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
         <ErrorBoundary>
