@@ -14,6 +14,7 @@ export default function DiscoverPage() {
   const [page, setPage] = useState(0)
   const [hasMore, setHasMore] = useState(true)
   const [persona, setPersona] = useState<string | null>(null)
+  const [approvalBanner, setApprovalBanner] = useState<'pending' | 'approved' | null>(null)
   const [confirmProfileId, setConfirmProfileId] = useState<string | null>(null)
   const [pullDistance, setPullDistance] = useState(0)
   const [refreshing, setRefreshing] = useState(false)
@@ -41,11 +42,32 @@ export default function DiscoverPage() {
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) return
-      supabase.from('profiles').select('persona').eq('id', user.id).single().then(({ data }) => {
+      supabase.from('profiles').select('persona, approval_status').eq('id', user.id).single().then(({ data }) => {
         if (data?.persona) setPersona(data.persona)
+        if (data?.persona !== 'man') return
+
+        const wasPendingKey = `gf_was_pending:${user.id}`
+        const seenApprovedKey = `gf_seen_approved:${user.id}`
+        if (data?.approval_status === 'pending') {
+          localStorage.setItem(wasPendingKey, '1')
+          setApprovalBanner('pending')
+        } else if (
+          data?.approval_status === 'approved' &&
+          localStorage.getItem(wasPendingKey) === '1' &&
+          localStorage.getItem(seenApprovedKey) !== '1'
+        ) {
+          setApprovalBanner('approved')
+        }
       })
     })
   }, [])
+
+  const dismissApprovedBanner = () => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) localStorage.setItem(`gf_seen_approved:${user.id}`, '1')
+    })
+    setApprovalBanner(null)
+  }
 
   useEffect(() => {
     if (!fetchedForPage.current.has(page)) {
@@ -164,13 +186,40 @@ export default function DiscoverPage() {
 
   return (
     <div className="relative screen-gradient min-h-dvh max-w-app mx-auto">
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex items-center justify-between px-5 py-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent pointer-events-none">
-        <button onClick={() => router.push('/messages')} className="pointer-events-auto w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center">
-          <ArrowLeft className="w-5 h-5 text-white" />
-        </button>
-        <div className="pointer-events-auto">
-          <CoinBadge />
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex flex-col pointer-events-none">
+        <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent">
+          <button onClick={() => router.push('/messages')} className="pointer-events-auto w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center">
+            <ArrowLeft className="w-5 h-5 text-white" />
+          </button>
+          <div className="pointer-events-auto">
+            <CoinBadge />
+          </div>
         </div>
+
+        {approvalBanner && (
+          <button
+            onClick={() => {
+              if (approvalBanner === 'approved') dismissApprovedBanner()
+              router.push('/profile')
+            }}
+            className="pointer-events-auto glass-surface mx-4 mb-3 px-4 py-3 rounded-xl flex items-center justify-between gap-3 text-left"
+          >
+            <span className="text-sm text-white font-medium">
+              {approvalBanner === 'pending'
+                ? 'Your account will be verified shortly'
+                : "You're approved! Tap to view your profile"}
+            </span>
+            {approvalBanner === 'approved' && (
+              <span
+                role="button"
+                onClick={(e) => { e.stopPropagation(); dismissApprovedBanner() }}
+                className="text-white/50 hover:text-white shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </span>
+            )}
+          </button>
+        )}
       </div>
 
       <div
@@ -178,7 +227,7 @@ export default function DiscoverPage() {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className="snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth h-[calc(100dvh-5rem)]"
+        className={`snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth ${approvalBanner ? 'h-[calc(100dvh-8rem)]' : 'h-[calc(100dvh-5rem)]'}`}
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         <div

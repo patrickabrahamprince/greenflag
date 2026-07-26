@@ -96,8 +96,11 @@ export default function RulesPage() {
     if (currentSlide < slides.length - 1) {
       setCurrentSlide((prev) => prev + 1);
     } else {
-      // Finished all slides – pending applicants wait for admin review.
-      if (approvalStatus === 'pending') {
+      // Finished all slides. Pending women wait for admin review on a
+      // dedicated screen; pending men go straight into Discover, where a
+      // banner (not a full-screen blocker) tells them review is in progress
+      // -- browsing while pending is allowed for men.
+      if (approvalStatus === 'pending' && persona !== 'man') {
         router.push('/onboard/pending');
         return;
       }
