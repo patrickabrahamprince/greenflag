@@ -59,27 +59,21 @@ export default function RulesPage() {
   const router = useRouter();
   const supabase = createClient();
   const [loading, setLoading] = useState(true);
-  const [persona, setPersona] = useState<'man' | 'woman' | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Fetch persona on mount.
+  // Persona/approval routing now lives in the how-it-works screen this
+  // leads to -- this just confirms there's still a live session.
   useEffect(() => {
-    const fetchProfile = async () => {
+    const checkSession = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         toast.error('Session expired');
         router.replace('/login');
         return;
       }
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('persona')
-        .eq('id', user.id)
-        .single();
-      setPersona(profile?.persona as 'man' | 'woman' | null);
       setLoading(false);
     };
-    fetchProfile();
+    checkSession();
   }, [supabase, router]);
 
   const handleBackSlide = () => {
@@ -113,7 +107,7 @@ export default function RulesPage() {
 
   return (
     <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6 bg-[#000000]">
-      <div className="max-w-md mx-auto w-full flex flex-col justify-between flex-1 pb-8">
+      <div className="max-w-md mx-auto w-full flex flex-col pb-8">
         {/* Header with back button and slide count */}
         <div className="flex items-center justify-between mb-6">
           <button
@@ -151,16 +145,14 @@ export default function RulesPage() {
           </p>
         </div>
 
-        {/* Next/Start button */}
+        {/* Next rule button -- always advances (to the next rule, or into
+            the how-it-works screen after the last one), so it always reads
+            "Next Rule" rather than implying this is the final step. */}
         <button
           onClick={handleNextSlide}
-          className="btn-primary w-full py-4 mt-8 font-semibold text-sm active:scale-95 transition-transform"
+          className="btn-primary w-full py-4 mt-6 font-semibold text-sm active:scale-95 transition-transform"
         >
-          {currentSlide === slides.length - 1 ? (
-            persona === 'woman' ? 'View Connections' : 'Start Exploring'
-          ) : (
-            'Next Rule'
-          )}
+          Next Rule
         </button>
       </div>
     </div>

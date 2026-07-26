@@ -140,7 +140,7 @@ export default function QuizPage() {
 
   return (
     <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6 bg-[#000000]">
-      <div className="max-w-md mx-auto w-full flex flex-col justify-between flex-1 pb-8">
+      <div className="max-w-md mx-auto w-full flex flex-col pb-8">
         <div>
           {/* Header */}
           <div className="flex items-center justify-between mb-6">

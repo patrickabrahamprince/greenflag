@@ -82,13 +82,13 @@ export default function HowItWorksPage() {
 
   return (
     <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6 bg-[#000000]">
-      <div className="max-w-md mx-auto w-full flex flex-col flex-1 pb-8">
+      <div className="max-w-md mx-auto w-full flex flex-col pb-8">
         <div className="text-center mb-8">
           <h1 className="font-display text-2xl font-semibold text-ink mb-2">How GreenFlag Works</h1>
           <p className="text-[#9DA0A6] text-sm">The 3-day path to a real connection</p>
         </div>
 
-        <div className="space-y-4 flex-1">
+        <div className="space-y-4">
           {POINTS.map((point) => (
             <div key={point.title} className="flex gap-4 bg-[#1C1C1E] border border-[#2A2A2A] rounded-2xl p-4">
               <div className="w-11 h-11 shrink-0 rounded-full bg-gold/10 flex items-center justify-center">
@@ -105,7 +105,7 @@ export default function HowItWorksPage() {
         <button
           onClick={handleContinue}
           disabled={continuing}
-          className="btn-primary w-full py-4 mt-8 font-semibold text-sm active:scale-95 transition-transform flex items-center justify-center gap-2"
+          className="btn-primary w-full py-4 mt-6 font-semibold text-sm active:scale-95 transition-transform flex items-center justify-center gap-2"
         >
           {continuing ? <Loader2 className="w-4 h-4 animate-spin" /> : "Got it — let's go"}
         </button>

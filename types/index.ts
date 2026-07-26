@@ -23,6 +23,7 @@ export interface Profile {
   phone_verified?: boolean | null;
   is_banned?: boolean | null;
   ban_reason?: string | null;
+  approval_status?: string | null;
   created_at: string | null;
 }
 

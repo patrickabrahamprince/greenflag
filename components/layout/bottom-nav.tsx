@@ -7,6 +7,7 @@ import { Compass, Heart, User, MessageSquare, Coins, Bell } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
+import { PendingReviewBanner } from '@/components/PendingReviewBanner';
 
 const manTabs = [
   { name: 'Discover', href: '/discover', icon: Compass },
@@ -69,6 +70,8 @@ export function BottomNav() {
   }, [user?.persona, pathname, router]);
 
   return (
+    <>
+    <PendingReviewBanner />
     <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-app">
       <div className="nav-glass rounded-full flex justify-around items-center h-16 px-2 shadow-[0_8px_32px_-4px_rgba(0,0,0,0.5)]">
         {tabs.map((tab) => {
@@ -96,5 +99,6 @@ export function BottomNav() {
         })}
       </div>
     </nav>
+    </>
   );
 }

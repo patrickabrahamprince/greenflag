@@ -26,47 +26,57 @@ export function PhotoUploadSlots({
     if (inputRef.current) inputRef.current.value = '';
   };
 
+  const renderSlot = (i: number, className: string) => {
+    const photo = photos[i];
+    return (
+      <div
+        key={i}
+        onClick={() => {
+          if (!photo && photos.length < maxPhotos) inputRef.current?.click();
+        }}
+        className={`rounded-xl border-2 border-dashed flex items-center justify-center relative overflow-hidden transition-all duration-300 ${className} ${
+          photo
+            ? 'border-transparent'
+            : 'border-[#2A2A2A] hover:border-gold cursor-pointer'
+        }`}
+      >
+        {photo ? (
+          <>
+            <img
+              src={photo}
+              alt={`Photo ${i + 1}`}
+              className="w-full h-full object-cover"
+            />
+            <button
+              onClick={(e) => { e.stopPropagation(); onRemove(i); }}
+              className="absolute top-1.5 right-1.5 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80 transition-colors"
+            >
+              <X size={12} className="text-white" />
+            </button>
+          </>
+        ) : (
+          <Upload size={20} className="text-[#9DA0A6]" />
+        )}
+      </div>
+    );
+  };
+
   return (
     <div>
       <label className="block text-sm font-medium text-ink mb-1.5">
         Photos <span className="text-[#9DA0A6] font-normal">({maxPhotos} required)</span>
       </label>
-      <div className="grid grid-cols-3 gap-3">
-        {Array.from({ length: maxPhotos }).map((_, i) => {
-          const photo = photos[i];
-          return (
-            <div
-              key={i}
-              onClick={() => {
-                if (!photo && photos.length < maxPhotos) inputRef.current?.click();
-              }}
-              className={`aspect-square rounded-xl border-2 border-dashed flex items-center justify-center relative overflow-hidden transition-all duration-300 ${
-                photo
-                  ? 'border-transparent'
-                  : 'border-[#2A2A2A] hover:border-gold cursor-pointer'
-              }`}
-            >
-              {photo ? (
-                <>
-                  <img
-                    src={photo}
-                    alt={`Photo ${i + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                  <button
-                    onClick={(e) => { e.stopPropagation(); onRemove(i); }}
-                    className="absolute top-1.5 right-1.5 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80 transition-colors"
-                  >
-                    <X size={12} className="text-white" />
-                  </button>
-                </>
-              ) : (
-                <Upload size={20} className="text-[#9DA0A6]" />
-              )}
-            </div>
-          );
-        })}
-      </div>
+      {maxPhotos === 3 ? (
+        <div className="grid grid-cols-2 grid-rows-2 gap-3 h-64">
+          {renderSlot(0, 'row-span-2')}
+          {renderSlot(1, '')}
+          {renderSlot(2, '')}
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-3">
+          {Array.from({ length: maxPhotos }).map((_, i) => renderSlot(i, 'aspect-square'))}
+        </div>
+      )}
       <input
         ref={inputRef}
         type="file"

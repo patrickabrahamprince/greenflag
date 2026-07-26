@@ -1,6 +1,7 @@
 'use client';
 
-import { Loader2 } from 'lucide-react';
+import { useRef } from 'react';
+import { Loader2, Calendar } from 'lucide-react';
 
 const INDIAN_CITIES = [
   'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai',
@@ -32,6 +33,20 @@ export function ProfileFormFields({
   onNameChange, onDobChange, onCityChange, onBioChange,
   onInstagramChange, onDetectLocation,
 }: ProfileFormFieldsProps) {
+  const dobInputRef = useRef<HTMLInputElement>(null);
+
+  const openDatePicker = () => {
+    const input = dobInputRef.current;
+    if (!input) return;
+    // showPicker() isn't supported in Safari -- fall back to focusing the
+    // input, which at least opens most mobile date pickers on tap.
+    if (typeof input.showPicker === 'function') {
+      input.showPicker();
+    } else {
+      input.focus();
+    }
+  };
+
   return (
     <>
       <div>
@@ -49,13 +64,24 @@ export function ProfileFormFields({
 
       <div>
         <label className="block text-sm font-medium text-ink mb-1.5">Date of birth</label>
-        <input
-          type="date"
-          value={dob}
-          onChange={(e) => onDobChange(e.target.value)}
-          data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-dob' : undefined}
-          className={`input ${errors.dob ? 'border-red-500' : ''}`}
-        />
+        <div className="relative">
+          <input
+            ref={dobInputRef}
+            type="date"
+            value={dob}
+            onChange={(e) => onDobChange(e.target.value)}
+            data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-dob' : undefined}
+            className={`input pr-8 [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:opacity-0 ${errors.dob ? 'border-red-500' : ''}`}
+          />
+          <button
+            type="button"
+            onClick={openDatePicker}
+            className="absolute right-0 top-1/2 -translate-y-1/2 text-ink/40 hover:text-gold transition-colors"
+            aria-label="Open date picker"
+          >
+            <Calendar size={18} />
+          </button>
+        </div>
         {errors.dob && <p className="text-red-500 text-xs mt-1">{errors.dob}</p>}
       </div>
 
