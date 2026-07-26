@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, Loader2, MessageCircle, Hourglass, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Loader2, MessageCircle, Hourglass, CheckCircle2, AlertTriangle, Lock, Coins, Sparkles, Type as TypeIcon, Camera, Mic } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 import { ConnectedScreen } from '@/components/ConnectedScreen';
@@ -13,6 +13,8 @@ import type { IntentionRecord, SubmissionRecord } from '@/components/connection/
 import { useCountdown, formatCountdown } from '@/lib/hooks/useCountdown';
 
 const TERMINAL_STATUSES = ['rejected', 'expired_no_submission', 'refunded'];
+const REVEAL_COST = 20;
+const SPECIAL_SEND_COST = 150;
 
 interface MatchData {
   id: string;
@@ -21,6 +23,18 @@ interface MatchData {
   chat_unlocked: boolean;
   next_day_unlocks_at: string | null;
   review_deadline: string | null;
+}
+
+interface SpecialSend {
+  id: string;
+  day_number: number;
+  type: 'text' | 'photo' | 'voice';
+  content: string | null;
+  media_url: string | null;
+  media_type: string | null;
+  created_at: string;
+  viewed_at: string | null;
+  alreadyViewed: boolean;
 }
 
 function DayCompleteModal({ unlocksAt, onContinue, onExplore }: { unlocksAt: string; onContinue: () => void; onExplore: () => void }) {
@@ -102,6 +116,13 @@ export default function TaskPage() {
   const [dayCompleteUnlockAt, setDayCompleteUnlockAt] = useState<string | null>(null);
   const [reviewingTaskNumber, setReviewingTaskNumber] = useState<number | null>(null);
   const [showLeaveWarning, setShowLeaveWarning] = useState(false);
+  const [revealedSubmissionIds, setRevealedSubmissionIds] = useState<Set<string>>(new Set());
+  const [revealingId, setRevealingId] = useState<string | null>(null);
+  const [specialSend, setSpecialSend] = useState<SpecialSend | null>(null);
+  const [showSpecialPicker, setShowSpecialPicker] = useState(false);
+  const [specialType, setSpecialType] = useState<'text' | 'photo' | 'voice' | null>(null);
+  const [specialRevealed, setSpecialRevealed] = useState(false);
+  const [revealingSpecial, setRevealingSpecial] = useState(false);
 
   const fetchMatch = useCallback(async () => {
     try {
@@ -119,6 +140,7 @@ export default function TaskPage() {
       setOtherProfile(data.otherProfile);
       setIntentions(data.intentions || []);
       setSubmissions(data.submissions || []);
+      setSpecialSend(data.specialSend || null);
     } catch {
       setError('Failed to load match');
     } finally {
@@ -175,6 +197,7 @@ export default function TaskPage() {
   // nothing submitted yet means nothing to lose, and a fully-submitted day
   // already routes him through SubmitSheet's own success screen.
   const hasPartialProgress = !isWoman && !isLocked && submissions.length > 0 && submissions.length < intentions.length;
+  const allTasksSubmittedToday = intentions.length > 0 && submissions.length === intentions.length;
 
   const handleBack = () => {
     if (hasPartialProgress) {
@@ -211,6 +234,44 @@ export default function TaskPage() {
       toast.error('Network error.');
     } finally {
       setReviewingTaskNumber(null);
+    }
+  };
+
+  const handleRevealSubmission = async (submissionId: string) => {
+    setRevealingId(submissionId);
+    try {
+      const res = await fetch(`/api/matches/${matchId}/reveal-submission`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ submissionId }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast.error(data?.error || 'Failed to reveal');
+        return;
+      }
+      setRevealedSubmissionIds((prev) => new Set(prev).add(submissionId));
+    } catch {
+      toast.error('Network error.');
+    } finally {
+      setRevealingId(null);
+    }
+  };
+
+  const handleRevealSpecial = async () => {
+    setRevealingSpecial(true);
+    try {
+      const res = await fetch(`/api/matches/${matchId}/special-send/reveal`, { method: 'POST' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast.error(data?.error || 'Failed to reveal');
+        return;
+      }
+      setSpecialRevealed(true);
+    } catch {
+      toast.error('Network error.');
+    } finally {
+      setRevealingSpecial(false);
     }
   };
 
@@ -342,14 +403,44 @@ export default function TaskPage() {
 
               {matchingSub && (matchingSub.content || matchingSub.media_url) && (
                 <div className="border-t border-[#2A2A2A] pt-3 mt-3">
-                  <p className="text-xs text-ink/40 mb-1">Your Submission:</p>
-                  {matchingSub.content && <p className="text-xs text-ink/80 italic">&quot;{matchingSub.content}&quot;</p>}
-                  {matchingSub.media_url && (
-                    matchingSub.media_type === 'photo' ? (
-                      <img src={matchingSub.media_url} alt="" className="mt-2 rounded-lg w-full max-h-64 object-cover" />
-                    ) : (
-                      <audio controls src={matchingSub.media_url} className="mt-2 w-full h-8" />
-                    )
+                  {!isWoman ? (
+                    // Once sent, it's out of his hands -- no re-reading his
+                    // own answer, no reveal option. Keeps him moving forward
+                    // instead of dwelling on/editing what he already sent.
+                    <div className="rounded-lg py-4 flex flex-col items-center gap-1.5 bg-[#1C1C1E]">
+                      <Lock className="w-4 h-4 text-ink/30" />
+                      <p className="text-xs text-ink/40">Sent — awaiting her decision</p>
+                    </div>
+                  ) : isTaskApproved && !revealedSubmissionIds.has(matchingSub.id) ? (
+                    <div className="relative rounded-lg overflow-hidden">
+                      <div className="py-6 text-center bg-[#1C1C1E] blur-sm select-none">
+                        <p className="text-xs text-ink/60">
+                          {matchingSub.content ? `"${matchingSub.content}"` : 'Content hidden after approval'}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => handleRevealSubmission(matchingSub.id)}
+                        disabled={revealingId === matchingSub.id}
+                        className="glass-surface absolute inset-0 m-auto h-8 w-fit px-3 rounded-full flex items-center gap-1.5 active:scale-95 transition-all disabled:opacity-50"
+                      >
+                        <Coins className="w-3 h-3 text-gold shrink-0" />
+                        <span className="text-white text-xs font-display font-bold whitespace-nowrap">
+                          Reveal — {REVEAL_COST}
+                        </span>
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-xs text-ink/40 mb-1">His Submission:</p>
+                      {matchingSub.content && <p className="text-xs text-ink/80 italic">&quot;{matchingSub.content}&quot;</p>}
+                      {matchingSub.media_url && (
+                        matchingSub.media_type === 'photo' ? (
+                          <img src={matchingSub.media_url} alt="" className="mt-2 rounded-lg w-full max-h-64 object-cover" />
+                        ) : (
+                          <audio controls src={matchingSub.media_url} className="mt-2 w-full h-8" />
+                        )
+                      )}
+                    </>
                   )}
                 </div>
               )}
@@ -357,6 +448,84 @@ export default function TaskPage() {
           );
         })}
       </div>
+
+      {allTasksSubmittedToday && !isWoman && (
+        specialSend ? (
+          <div className="rounded-2xl p-4 mb-4 flex items-center gap-3 bg-[#1C1C1E] border border-[#2A2A2A]">
+            <Lock className="w-4 h-4 text-ink/30 shrink-0" />
+            <p className="text-xs text-ink/40">Special note sent — your one-time move for today is used.</p>
+          </div>
+        ) : (
+          <div className="rounded-2xl p-4 mb-4 border border-gold/30 bg-gradient-to-r from-gold/[0.1] via-gold/[0.04] to-transparent">
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="w-4 h-4 text-gold" />
+              <p className="font-display text-sm text-gold">Send Something Special?</p>
+            </div>
+            <p className="text-xs text-ink/50 mb-3">
+              A one-time surprise note, photo, or voice — {SPECIAL_SEND_COST} coins. No prompt, just you.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => { setSpecialType('text'); setShowSpecialPicker(true); }}
+                className="flex-1 btn-secondary text-xs py-2 flex items-center justify-center gap-1.5"
+              >
+                <TypeIcon className="w-3.5 h-3.5" /> Note
+              </button>
+              <button
+                onClick={() => { setSpecialType('photo'); setShowSpecialPicker(true); }}
+                className="flex-1 btn-secondary text-xs py-2 flex items-center justify-center gap-1.5"
+              >
+                <Camera className="w-3.5 h-3.5" /> Photo
+              </button>
+              <button
+                onClick={() => { setSpecialType('voice'); setShowSpecialPicker(true); }}
+                className="flex-1 btn-secondary text-xs py-2 flex items-center justify-center gap-1.5"
+              >
+                <Mic className="w-3.5 h-3.5" /> Voice
+              </button>
+            </div>
+          </div>
+        )
+      )}
+
+      {specialSend && isWoman && (
+        <div className="rounded-2xl p-4 mb-4 border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-transparent shadow-[0_0_24px_-10px_rgba(192,38,211,0.6)]">
+          <div className="flex items-center gap-2 mb-2">
+            <Sparkles className="w-4 h-4 text-gold" />
+            <p className="font-display text-sm text-gold">A Special Note From {otherProfile.name}</p>
+          </div>
+          {!specialSend.alreadyViewed || specialRevealed ? (
+            <>
+              {specialSend.type === 'text' && (
+                <p className="text-sm text-ink/80 italic">&quot;{specialSend.content}&quot;</p>
+              )}
+              {specialSend.media_url && (
+                specialSend.type === 'photo' ? (
+                  <img src={specialSend.media_url} alt="" className="rounded-lg w-full max-h-64 object-cover" />
+                ) : (
+                  <audio controls src={specialSend.media_url} className="w-full h-8" />
+                )
+              )}
+            </>
+          ) : (
+            <div className="relative rounded-lg overflow-hidden">
+              <div className="py-6 text-center bg-[#1C1C1E] blur-sm select-none">
+                <p className="text-xs text-ink/60">A surprise, just for you.</p>
+              </div>
+              <button
+                onClick={handleRevealSpecial}
+                disabled={revealingSpecial}
+                className="glass-surface absolute inset-0 m-auto h-8 w-fit px-3 rounded-full flex items-center gap-1.5 active:scale-95 transition-all disabled:opacity-50"
+              >
+                <Coins className="w-3 h-3 text-gold shrink-0" />
+                <span className="text-white text-xs font-display font-bold whitespace-nowrap">
+                  Reveal — {REVEAL_COST}
+                </span>
+              </button>
+            </div>
+          )}
+        </div>
+      )}
         </>
       )}
 
@@ -378,6 +547,26 @@ export default function TaskPage() {
             setShowSheet(false);
             setActiveIntention(null);
             toast.success('Response submitted — awaiting her review');
+            fetchMatch();
+          }}
+        />
+      )}
+
+      {showSpecialPicker && specialType && (
+        <SubmitSheet
+          matchId={matchId}
+          dayNumber={currentDay}
+          mode="special"
+          intention={{ id: 'special', standard_id: null, day_number: currentDay, task_number: 0, type: specialType, prompt: 'Something special, just for her.' }}
+          isLastTaskToday={false}
+          onClose={() => {
+            setShowSpecialPicker(false);
+            setSpecialType(null);
+          }}
+          onSubmit={() => {
+            setShowSpecialPicker(false);
+            setSpecialType(null);
+            toast.success('Special note sent');
             fetchMatch();
           }}
         />

@@ -65,11 +65,28 @@ export async function GET(
       .eq('match_id', id)
       .eq('day_number', match.current_day);
 
+    const { data: specialSend } = await admin
+      .from('special_sends')
+      .select('id, day_number, type, content, media_url, media_type, created_at, viewed_at')
+      .eq('match_id', id)
+      .eq('day_number', match.current_day)
+      .maybeSingle();
+
+    // First time the woman fetches it, mark it viewed -- that one look is
+    // free (he already paid to send it); any fetch after this one is a
+    // stale flag until she pays to reveal it again client-side.
+    let alreadyViewed = !!specialSend?.viewed_at;
+    if (specialSend && user.id === womanId && !specialSend.viewed_at) {
+      await admin.from('special_sends').update({ viewed_at: new Date().toISOString() }).eq('id', specialSend.id);
+      alreadyViewed = false;
+    }
+
     return NextResponse.json({
       match,
       otherProfile,
       intentions: intentions || [],
       submissions: submissions || [],
+      specialSend: specialSend ? { ...specialSend, alreadyViewed } : null,
     });
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

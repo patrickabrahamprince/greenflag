@@ -161,9 +161,10 @@ export default function NotificationsPage() {
         ) : (
           <div className="space-y-1">
             {notifications.map((notif) => {
-              const isDayApproved = (notif.data as Record<string, unknown> | null)?.type === 'day_approved';
+              const notifType = (notif.data as Record<string, unknown> | null)?.type;
+              const isLuxury = notifType === 'day_approved' || notifType === 'media_approved';
 
-              if (isDayApproved) {
+              if (isLuxury) {
                 return (
                   <button
                     key={notif.id}

@@ -196,7 +196,7 @@ export async function notifyWomanOfMediaReady(
     supabase,
     user_id: womanId,
     title: 'Submission Ready',
-    body: `${manName}'s Day ${dayNumber} submission is ready to review`,
+    body: `${manName}'s Day ${dayNumber} submission is ready — review within 24 hours or the connection ends.`,
     data: { connectionId, dayNumber, type: 'media_approved' },
   });
 }

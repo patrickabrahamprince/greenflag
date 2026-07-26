@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation';
 import { Loader2, Heart, Compass } from 'lucide-react';
 import { ProgressSegmentBar } from '@/components/connection/ProgressSegmentBar';
 import { useCountdown, formatCountdown } from '@/lib/hooks/useCountdown';
+import { useUserStore } from '@/lib/store';
 
 const TERMINAL_STATUSES = ['completed', 'rejected', 'expired_no_submission', 'refunded'];
+const URGENT_THRESHOLD_MS = 12 * 60 * 60 * 1000;
 
 interface MatchListItem {
   id: string;
@@ -14,8 +16,22 @@ interface MatchListItem {
   status: string;
   chat_unlocked: boolean;
   next_day_unlocks_at: string | null;
+  submit_deadline: string | null;
   otherName: string;
   otherPhoto: string | null;
+}
+
+function SubmitUrgencyBadge({ deadline }: { deadline: string }) {
+  const remainingMs = useCountdown(deadline);
+  if (remainingMs === null) return null;
+  const isUrgent = remainingMs < URGENT_THRESHOLD_MS;
+  return (
+    <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full flex-shrink-0 whitespace-nowrap ${
+      isUrgent ? 'bg-red-500/15 text-red-400 animate-pulse' : 'bg-gold/10 text-gold'
+    }`}>
+      {isUrgent ? 'Hurry — ' : ''}{formatCountdown(remainingMs)} left
+    </span>
+  );
 }
 
 function statusLabel(m: MatchListItem) {
@@ -28,14 +44,17 @@ function statusLabel(m: MatchListItem) {
   }
 }
 
-function MatchRow({ match, onClick }: { match: MatchListItem; onClick: () => void }) {
+function MatchRow({ match, onClick, isMan }: { match: MatchListItem; onClick: () => void; isMan: boolean }) {
   const remainingMs = useCountdown(match.next_day_unlocks_at);
   const isLocked = remainingMs !== null && remainingMs > 0;
+  const needsHisSubmission = isMan && match.status === 'pending_submission' && !isLocked && !!match.submit_deadline;
 
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center gap-3 p-4 bg-[#111111] rounded-2xl shadow-sm"
+      className={`w-full flex items-center gap-3 p-4 rounded-2xl shadow-sm transition-colors ${
+        needsHisSubmission ? 'bg-red-500/[0.06] border border-red-500/20' : 'bg-[#111111]'
+      }`}
     >
       <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-[#1C1C1E]">
         {match.otherPhoto ? (
@@ -51,6 +70,7 @@ function MatchRow({ match, onClick }: { match: MatchListItem; onClick: () => voi
           <ProgressSegmentBar currentDay={match.current_day} total={3} className="max-w-[120px]" />
         )}
       </div>
+      {needsHisSubmission && <SubmitUrgencyBadge deadline={match.submit_deadline!} />}
       {isLocked && (
         <span className="text-xs font-medium text-gold tabular-nums flex-shrink-0">
           {formatCountdown(remainingMs!)}
@@ -65,6 +85,8 @@ function MatchRow({ match, onClick }: { match: MatchListItem; onClick: () => voi
 
 export default function MyConnectionsPage() {
   const router = useRouter();
+  const currentUser = useUserStore((s) => s.user);
+  const isMan = currentUser?.persona !== 'woman';
   const [matches, setMatches] = useState<MatchListItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -115,7 +137,7 @@ export default function MyConnectionsPage() {
       ) : (
         <div className="space-y-3">
           {matches.map((m) => (
-            <MatchRow key={m.id} match={m} onClick={() => router.push(`/task/${m.id}`)} />
+            <MatchRow key={m.id} match={m} isMan={isMan} onClick={() => router.push(`/task/${m.id}`)} />
           ))}
         </div>
       )}

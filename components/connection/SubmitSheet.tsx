@@ -16,11 +16,12 @@ interface SubmitSheetProps {
   dayNumber: number;
   intention: IntentionRecord;
   isLastTaskToday: boolean;
+  mode?: 'task' | 'special';
   onClose: () => void;
   onSubmit: (result?: SubmitResult) => void;
 }
 
-export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, onClose, onSubmit }: SubmitSheetProps) {
+export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, mode = 'task', onClose, onSubmit }: SubmitSheetProps) {
   const supabase = createClient();
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
@@ -139,15 +140,17 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
         return;
       }
 
-      const res = await fetch(`/api/matches/${matchId}/submit-task`, {
+      const endpoint = mode === 'special'
+        ? `/api/matches/${matchId}/special-send`
+        : `/api/matches/${matchId}/submit-task`;
+      const body = mode === 'special'
+        ? { type: intention.type, content: text, media_url: mediaUrl }
+        : { task_number: intention.task_number || 1, text, media_url: mediaUrl, media_type: mediaType };
+
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          task_number: intention.task_number || 1,
-          text,
-          media_url: mediaUrl,
-          media_type: mediaType,
-        }),
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) {
@@ -323,17 +326,21 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
           <div className="w-12 h-12 bg-green-50 border border-green-200 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-xl text-green-600 font-bold">✓</span>
           </div>
-          <h4 className="font-display text-ink text-lg mb-2">Response Submitted</h4>
+          <h4 className="font-display text-ink text-lg mb-2">
+            {mode === 'special' ? 'Special Note Sent' : 'Response Submitted'}
+          </h4>
           <p className="text-[#9DA0A6] text-xs mb-6 leading-relaxed">
-            {!isLastTaskToday
-              ? 'Awaiting her review. Continue to the next intention for today, or discover other profiles in the meantime.'
-              : dayNumber >= 3
-                ? "You've completed all three days. She's reviewing your Standard and will decide whether to continue."
-                : "That's all three intentions for today. She's reviewing — tomorrow unlocks once she's done."}
+            {mode === 'special'
+              ? "She'll see it as a surprise. That was your one-time move for today."
+              : !isLastTaskToday
+                ? 'Awaiting her review. Continue to the next intention for today, or discover other profiles in the meantime.'
+                : dayNumber >= 3
+                  ? "You've completed all three days. She's reviewing your Standard and will decide whether to continue."
+                  : "That's all three intentions for today. She's reviewing — tomorrow unlocks once she's done."}
           </p>
 
           <div className="flex gap-3">
-            {!isLastTaskToday && (
+            {mode !== 'special' && !isLastTaskToday && (
               <button
                 onClick={() => {
                   onSubmit(submitResult);
@@ -348,7 +355,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
                 onSubmit(submitResult);
                 router.push('/discover');
               }}
-              className={`whitespace-nowrap ${isLastTaskToday ? 'btn-primary flex-1 py-2.5 text-xs font-semibold' : 'btn-secondary flex-1 py-2.5 text-xs font-medium'}`}
+              className={`whitespace-nowrap ${mode === 'special' || isLastTaskToday ? 'btn-primary flex-1 py-2.5 text-xs font-semibold' : 'btn-secondary flex-1 py-2.5 text-xs font-medium'}`}
             >
               Explore More
             </button>
@@ -366,7 +373,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, on
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
             <Icon className="w-5 h-5 text-gold" />
-            <h3 className="font-display text-ink">Day {dayNumber}</h3>
+            <h3 className="font-display text-ink">{mode === 'special' ? 'Something Special' : `Day ${dayNumber}`}</h3>
           </div>
           <button onClick={onClose} className="p-1 text-[#9DA0A6] hover:text-ink">
             <X className="w-5 h-5" />

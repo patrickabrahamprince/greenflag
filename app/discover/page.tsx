@@ -26,6 +26,7 @@ interface DiscoverProfile {
   instagram_url?: string
   match_percentage?: number
   match_reasons?: string[]
+  photosUnlocked?: boolean
 }
 
 export default function DiscoverPage() {
@@ -37,6 +38,9 @@ export default function DiscoverPage() {
   const [persona, setPersona] = useState<string | null>(null)
   const [approvalBanner, setApprovalBanner] = useState<'pending' | 'approved' | null>(null)
   const [confirmProfileId, setConfirmProfileId] = useState<string | null>(null)
+  const [photoUnlockConfirm, setPhotoUnlockConfirm] = useState<string | null>(null)
+  const [unlockingPhotoId, setUnlockingPhotoId] = useState<string | null>(null)
+  const [unlockedPhotoIds, setUnlockedPhotoIds] = useState<Set<string>>(new Set())
   const [pullDistance, setPullDistance] = useState(0)
   const [refreshing, setRefreshing] = useState(false)
   const [interestCounts, setInterestCounts] = useState<Record<string, number>>({})
@@ -282,6 +286,23 @@ export default function DiscoverPage() {
     }
   }
 
+  async function handlePhotoUnlock(profileId: string) {
+    setUnlockingPhotoId(profileId)
+    try {
+      const res = await fetch(`/api/photo-unlock/${profileId}`, { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) {
+        toast.error(data.error || 'Failed to unlock photos')
+        return
+      }
+      setUnlockedPhotoIds(prev => new Set(prev).add(profileId))
+    } catch {
+      toast.error('Failed to unlock photos')
+    } finally {
+      setUnlockingPhotoId(null)
+    }
+  }
+
   return (
     <div className="relative screen-gradient min-h-dvh max-w-app mx-auto">
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex flex-col pointer-events-none">
@@ -377,10 +398,14 @@ export default function DiscoverPage() {
                   const extraPhotos = [p.photos?.[1], p.photos?.[2]].filter(Boolean) as string[]
                   // Blur is a paywall cue for men unlocking a woman's card --
                   // a woman browsing men should always see clear photos.
-                  const photoClass = `w-full h-full object-cover ${persona === 'woman' ? '' : 'blur scale-110'}`
-                  const unlockButton = persona !== 'woman' && (
+                  // Photo unlock (100 coins, /api/photo-unlock) is its own
+                  // purchase, separate from Meet Her Standard -- once paid,
+                  // photosUnlocked persists across visits.
+                  const isPhotosUnlocked = persona === 'woman' || !!p.photosUnlocked || unlockedPhotoIds.has(p.id)
+                  const photoClass = `w-full h-full object-cover ${isPhotosUnlocked ? '' : 'blur scale-110'}`
+                  const unlockButton = !isPhotosUnlocked && (
                     <button
-                      onClick={() => setConfirmProfileId(p.id)}
+                      onClick={() => setPhotoUnlockConfirm(p.id)}
                       aria-label="Unlock"
                       className="glass-surface absolute inset-0 m-auto z-20 flex items-center justify-center gap-1.5 h-8 w-fit px-3 rounded-full active:scale-95 transition-all shadow-lg"
                     >
@@ -612,6 +637,39 @@ export default function DiscoverPage() {
                 className="btn-primary flex-1 whitespace-nowrap"
               >
                 I&apos;m In
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {photoUnlockConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
+          <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
+            <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Lock className="w-6 h-6 text-gold" />
+            </div>
+            <h4 className="font-display text-2xl text-ink mb-2">Unlock Photos?</h4>
+            <p className="text-ink/60 text-sm leading-relaxed mb-6">
+              100 coins reveals her other photos — yours to keep.
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setPhotoUnlockConfirm(null)}
+                className="btn-secondary flex-1 whitespace-nowrap"
+              >
+                Not Now
+              </button>
+              <button
+                onClick={() => {
+                  const targetId = photoUnlockConfirm;
+                  setPhotoUnlockConfirm(null);
+                  handlePhotoUnlock(targetId);
+                }}
+                disabled={unlockingPhotoId === photoUnlockConfirm}
+                className="btn-primary flex-1 whitespace-nowrap disabled:opacity-50"
+              >
+                Unlock
               </button>
             </div>
           </div>

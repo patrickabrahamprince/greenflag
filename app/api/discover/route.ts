@@ -108,6 +108,17 @@ export async function GET(req: Request) {
       .select('id, name, age, city, city_auto, bio, job, height, photos, interests, looking_for_interests, interests_have, interests_looking_for, blur_key, instagram_url')
       .in('id', rankedIds);
 
+    // Photo unlocks are a standalone 100-coin purchase (see
+    // /api/photo-unlock/[userId]) unrelated to Meet Her Standard -- once
+    // paid, they persist, so a woman he's already unlocked shouldn't blur
+    // again on a later Discover visit.
+    const { data: unlocks } = await admin
+      .from('photo_unlocks')
+      .select('target_id')
+      .eq('viewer_id', user.id)
+      .in('target_id', rankedIds);
+    const unlockedIds = new Set((unlocks || []).map((u) => u.target_id));
+
     const idOrder = new Map<string, number>(rankedIds.map((id, i) => [id, i]));
     type ProfileWithOrder = Record<string, unknown> & { id: string };
     const raw: ProfileWithOrder[] = (fullProfiles ?? []) as ProfileWithOrder[];
@@ -115,8 +126,9 @@ export async function GET(req: Request) {
       .sort((a, b) => ((idOrder.get(a.id) as number) ?? 0) - ((idOrder.get(b.id) as number) ?? 0))
       .map((p) => {
         const match = matchByWomanId.get(p.id);
-        if (!match) return p;
-        return { ...p, match_percentage: match.match_percentage, match_reasons: match.match_reasons };
+        const withUnlock = { ...p, photosUnlocked: unlockedIds.has(p.id) };
+        if (!match) return withUnlock;
+        return { ...withUnlock, match_percentage: match.match_percentage, match_reasons: match.match_reasons };
       });
 
     return NextResponse.json({ profiles });
