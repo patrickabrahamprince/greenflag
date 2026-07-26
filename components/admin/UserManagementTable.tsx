@@ -13,6 +13,14 @@ export interface UserManagementTableProps {
   onDeleteClick: (user: AdminUser) => void;
 }
 
+// Consistent blue/pink persona color-coding, matching the Men/Women KPI
+// cards on the dashboard, so admins can tell personas apart at a glance.
+function personaColor(persona?: string) {
+  if (persona === 'woman') return { ring: 'ring-pink-400/70', dot: 'bg-pink-400', text: 'text-pink-400', bg: 'bg-pink-400/10' };
+  if (persona === 'man') return { ring: 'ring-blue-400/70', dot: 'bg-blue-400', text: 'text-blue-400', bg: 'bg-blue-400/10' };
+  return { ring: 'ring-white/10', dot: 'bg-[#8E8E93]', text: 'text-[#8E8E93]', bg: 'bg-white/5' };
+}
+
 export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveClick, onRejectClick, onDeleteClick }: UserManagementTableProps) {
   const router = useRouter();
 
@@ -40,12 +48,13 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
             >
               <td className="py-3 px-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden shrink-0">
+                  <div className={`relative w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden shrink-0 ring-2 ${personaColor(u.persona || u.gender).ring}`}>
                     {u.photos?.[0] ? (
                       <img src={u.photos[0]} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
                     ) : (
                       <span className="text-xs text-[#8E8E93]">{u.name?.[0]}</span>
                     )}
+                    <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-black ${personaColor(u.persona || u.gender).dot}`} />
                   </div>
                   <div className="min-w-0">
                     <p className="text-[#EDEADE] font-medium text-xs truncate">{u.name}</p>
@@ -53,7 +62,11 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
                   </div>
                 </div>
               </td>
-              <td className="py-3 px-2 text-[#8E8E93] text-xs capitalize hidden md:table-cell">{u.persona || u.gender}</td>
+              <td className="py-3 px-2 hidden md:table-cell">
+                <span className={`text-xs capitalize px-2 py-0.5 rounded-full ${personaColor(u.persona || u.gender).bg} ${personaColor(u.persona || u.gender).text}`}>
+                  {u.persona || u.gender || '-'}
+                </span>
+              </td>
               <td className="py-3 px-2 text-[#8E8E93] text-xs hidden lg:table-cell">{u.city_auto || u.city || '-'}</td>
               <td className="py-3 px-2 text-[#8E8E93] text-xs">
                 {new Date(u.created_at).toLocaleDateString()}
