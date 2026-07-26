@@ -646,7 +646,7 @@ export default function DiscoverPage() {
                 Cancel
               </button>
               <button onClick={handleConfirmNudge} className="btn-primary flex-1">
-                Spend {nudgeConfirm.cost}
+                Yes, Nudge Again
               </button>
             </div>
           </div>
