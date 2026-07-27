@@ -41,6 +41,7 @@ export default function DiscoverPage() {
   const [photoUnlockConfirm, setPhotoUnlockConfirm] = useState<string | null>(null)
   const [unlockingPhotoId, setUnlockingPhotoId] = useState<string | null>(null)
   const [unlockedPhotoIds, setUnlockedPhotoIds] = useState<Set<string>>(new Set())
+  const [redirectingToStandard, setRedirectingToStandard] = useState(false)
   const [pullDistance, setPullDistance] = useState(0)
   const [refreshing, setRefreshing] = useState(false)
   const [interestCounts, setInterestCounts] = useState<Record<string, number>>({})
@@ -75,6 +76,28 @@ export default function DiscoverPage() {
       if (!user) return
       supabase.from('profiles').select('persona, approval_status').eq('id', user.id).single().then(({ data }) => {
         if (data?.persona) setPersona(data.persona)
+
+        // A woman without an active Standard shouldn't be able to browse
+        // Discover at all -- BottomNav has its own safety net for this, but
+        // that's a sibling effect that resolves asynchronously, so Discover
+        // itself would render (including its "no new profiles" empty state)
+        // for a beat before the redirect landed. Checking here too means
+        // Discover never shows real content/empty-state to her in the
+        // meantime -- it shows a spinner and replaces itself immediately,
+        // so pressing back into Discover from Standard Builder can't flash
+        // a misleading "no new profiles" message.
+        if (data?.persona === 'woman') {
+          fetch('/api/standards/standard-builder')
+            .then(res => (res.ok ? res.json() : null))
+            .then(sData => {
+              if (sData && sData.redirect !== '/my-connections') {
+                setRedirectingToStandard(true)
+                router.replace('/standard/builder')
+              }
+            })
+            .catch(() => {})
+        }
+
         if (data?.persona !== 'man') return
 
         if (data?.approval_status === 'pending') {
@@ -301,6 +324,14 @@ export default function DiscoverPage() {
     } finally {
       setUnlockingPhotoId(null)
     }
+  }
+
+  if (redirectingToStandard) {
+    return (
+      <div className="min-h-dvh flex items-center justify-center screen-gradient">
+        <Loader2 className="w-8 h-8 animate-spin text-gold" />
+      </div>
+    )
   }
 
   return (
