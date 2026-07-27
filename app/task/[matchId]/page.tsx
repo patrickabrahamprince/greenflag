@@ -11,6 +11,7 @@ import { ProgressSegmentBar } from '@/components/connection/ProgressSegmentBar';
 import { SubmitSheet } from '@/components/connection/SubmitSheet';
 import type { IntentionRecord, SubmissionRecord } from '@/components/connection/types';
 import { useCountdown, formatCountdown } from '@/lib/hooks/useCountdown';
+import { useScreenshotTarget } from '@/lib/hooks/useScreenshotGuard';
 
 const TERMINAL_STATUSES = ['rejected', 'expired_no_submission', 'refunded'];
 const REVEAL_COST = 20;
@@ -123,6 +124,8 @@ export default function TaskPage() {
   const [specialType, setSpecialType] = useState<'text' | 'photo' | 'voice' | null>(null);
   const [specialRevealed, setSpecialRevealed] = useState(false);
   const [revealingSpecial, setRevealingSpecial] = useState(false);
+
+  useScreenshotTarget(otherProfile?.id, 'task');
 
   const fetchMatch = useCallback(async () => {
     try {

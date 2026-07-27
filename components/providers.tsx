@@ -5,11 +5,16 @@ import { useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useCoinStore } from '@/lib/store';
 import { PushNotificationRegistrar } from './push-notification-registrar';
+import { useScreenshotGuard } from '@/lib/hooks/useScreenshotGuard';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const setUser = useUserStore((s) => s.setUser);
   const clearUser = useUserStore((s) => s.clearUser);
   const setBalance = useCoinStore((s) => s.setBalance);
+
+  // No-ops on web (no browser API can detect a screenshot); reacts on the
+  // native iOS build. See lib/hooks/useScreenshotGuard.ts.
+  useScreenshotGuard();
 
   useEffect(() => {
     const supabase = createClient();

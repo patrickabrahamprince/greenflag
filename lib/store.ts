@@ -29,6 +29,24 @@ interface OnboardingState {
   clearOnboarding: () => void;
 }
 
+// Which screen is currently showing whose content, for the single
+// app-wide screenshot listener (see components/providers.tsx +
+// lib/hooks/useScreenshotGuard.ts) to read at the moment a screenshot
+// fires -- avoids mounting a separate native listener per page.
+interface ScreenshotContextState {
+  notifyUserId: string | null;
+  context: 'task' | 'messages' | 'profile' | null;
+  setScreenshotContext: (notifyUserId: string, context: 'task' | 'messages' | 'profile') => void;
+  clearScreenshotContext: () => void;
+}
+
+export const useScreenshotContextStore = create<ScreenshotContextState>((set) => ({
+  notifyUserId: null,
+  context: null,
+  setScreenshotContext: (notifyUserId, context) => set({ notifyUserId, context }),
+  clearScreenshotContext: () => set({ notifyUserId: null, context: null }),
+}));
+
 export const useOnboardingStore = create<OnboardingState>((set) => ({
   persona: null,
   setPersona: (persona) => set({ persona }),

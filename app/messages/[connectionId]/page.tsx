@@ -13,6 +13,7 @@ import { MessageList } from '@/components/chat/MessageList';
 import { MessageInput } from '@/components/chat/MessageInput';
 import { LockedOverlay } from '@/components/chat/LockedOverlay';
 import { EmptyChat } from '@/components/chat/EmptyChat';
+import { useScreenshotTarget } from '@/lib/hooks/useScreenshotGuard';
 
 export default function ChatPage({ params }: { params: { connectionId: string } }) {
   const { connectionId } = params;
@@ -35,6 +36,8 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
   // personas -- no reason for it to differ here.
   const backRoute = '/messages';
   const isLocked = connection ? !connection.chat_unlocked : true;
+
+  useScreenshotTarget(connection?.partner?.id, 'messages');
 
   useEffect(() => {
     const load = async () => {

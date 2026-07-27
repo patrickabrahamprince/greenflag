@@ -8,6 +8,7 @@ import { ProfileInfo } from '@/components/shared/ProfileInfo';
 import { ProfileActionBar } from '@/components/shared/ProfileActionBar';
 import { ReportModal } from '@/components/shared/ReportModal';
 import { BlockConfirmModal } from '@/components/shared/BlockConfirmModal';
+import { useScreenshotTarget } from '@/lib/hooks/useScreenshotGuard';
 
 export default function ViewProfilePage() {
   const params = useParams();
@@ -18,6 +19,8 @@ export default function ViewProfilePage() {
     submittingReport, showBlockConfirm, setShowBlockConfirm, blocking,
     handleMeet, handleReport, handleBlock, router,
   } = useProfilePage(params.id);
+
+  useScreenshotTarget(!isOwn ? profile?.id : undefined, 'profile');
 
   if (loading) {
     return (
