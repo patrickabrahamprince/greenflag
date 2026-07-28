@@ -25,6 +25,7 @@ export default function ProfilePage() {
   const [city, setCity] = useState('');
   const [bio, setBio] = useState('');
   const [instagramHandle, setInstagramHandle] = useState('');
+  const [instagramVerified, setInstagramVerified] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
@@ -139,7 +140,10 @@ export default function ProfilePage() {
     if (!city.trim()) e.city = 'City is required';
     if (photos.length < 1) e.photos = 'Please add at least 1 photo';
     if (bio.length > 200) e.bio = 'Keep it under 200 characters';
+    const bioWordCount = bio.trim() ? bio.trim().split(/\s+/).filter(Boolean).length : 0;
+    if (bio.trim() && bioWordCount < 15) e.bio = 'Write at least 15 words, or leave it blank';
     if (!instagramHandle.trim()) e.instagram = 'Instagram is required to verify you';
+    else if (!instagramVerified) e.instagram = 'Please verify your Instagram to continue';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -220,6 +224,7 @@ export default function ProfilePage() {
         <ProfileFormFields
           name={name} dob={dob} city={city} bio={bio}
           instagramHandle={instagramHandle}
+          instagramVerified={instagramVerified}
           gpsDetecting={gpsDetecting} gpsDenied={gpsDenied}
           errors={errors}
           onNameChange={(v) => { setName(v); clearError('name'); }}
@@ -227,6 +232,7 @@ export default function ProfilePage() {
           onCityChange={(v) => { setCity(v); clearError('city'); }}
           onBioChange={(v) => { setBio(v); clearError('bio'); }}
           onInstagramChange={(v) => { setInstagramHandle(v); clearError('instagram'); }}
+          onInstagramVerifiedChange={(v) => { setInstagramVerified(v); clearError('instagram'); }}
           onDetectLocation={detectLocation}
         />
 

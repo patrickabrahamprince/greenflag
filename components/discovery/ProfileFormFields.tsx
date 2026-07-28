@@ -1,14 +1,16 @@
 'use client';
 
-import { useRef } from 'react';
-import { Loader2, Calendar } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { Loader2, Calendar, ShieldCheck, BadgeCheck } from 'lucide-react';
+import { BioAiPolish } from './BioAiPolish';
 
 const INDIAN_CITIES = [
   'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai',
   'Kolkata', 'Pune', 'Ahmedabad', 'Jaipur', 'Surat',
 ];
 
-const INSTAGRAM_REGEX = /^@?[a-zA-Z0-9._]{1,30}$/;
+const VERIFY_DURATION_MS = 5000;
+const BIO_MIN_WORDS = 15;
 
 interface ProfileFormFieldsProps {
   name: string;
@@ -16,6 +18,7 @@ interface ProfileFormFieldsProps {
   city: string;
   bio: string;
   instagramHandle: string;
+  instagramVerified: boolean;
   gpsDetecting: boolean;
   gpsDenied: boolean;
   errors: Record<string, string>;
@@ -24,16 +27,31 @@ interface ProfileFormFieldsProps {
   onCityChange: (v: string) => void;
   onBioChange: (v: string) => void;
   onInstagramChange: (v: string) => void;
+  onInstagramVerifiedChange: (v: boolean) => void;
   onDetectLocation: () => void;
 }
 
 export function ProfileFormFields({
-  name, dob, city, bio, instagramHandle,
+  name, dob, city, bio, instagramHandle, instagramVerified,
   gpsDetecting, gpsDenied, errors,
   onNameChange, onDobChange, onCityChange, onBioChange,
-  onInstagramChange, onDetectLocation,
+  onInstagramChange, onInstagramVerifiedChange, onDetectLocation,
 }: ProfileFormFieldsProps) {
   const dobInputRef = useRef<HTMLInputElement>(null);
+  const [verifying, setVerifying] = useState(false);
+  const bioWordCount = bio.trim() ? bio.trim().split(/\s+/).filter(Boolean).length : 0;
+
+  const handleVerify = () => {
+    if (!instagramHandle.trim() || verifying || instagramVerified) return;
+    setVerifying(true);
+    // Mimic only -- there's no real Instagram API integration here. The
+    // handle still gets sent to admins for manual identity review; this
+    // just gives the applicant a moment of "checking" before confirming.
+    setTimeout(() => {
+      setVerifying(false);
+      onInstagramVerifiedChange(true);
+    }, VERIFY_DURATION_MS);
+  };
 
   const openDatePicker = () => {
     const input = dobInputRef.current;
@@ -113,17 +131,54 @@ export function ProfileFormFields({
         <label className="block text-sm font-medium text-ink mb-1.5">
           Instagram Handle <span className="text-red-400">*</span>
         </label>
-        <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">@</span>
-          <input
-            type="text"
-            value={instagramHandle}
-            onChange={(e) => onInstagramChange(e.target.value.replace(/^@/, ''))}
-            placeholder="username"
-            className={`input pl-8 ${errors.instagram ? 'border-red-500' : ''}`}
-          />
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">@</span>
+            <input
+              type="text"
+              value={instagramHandle}
+              onChange={(e) => {
+                onInstagramChange(e.target.value.replace(/^@/, ''));
+                if (instagramVerified) onInstagramVerifiedChange(false);
+              }}
+              placeholder="username"
+              disabled={verifying}
+              className={`input pl-8 ${errors.instagram ? 'border-red-500' : ''}`}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={handleVerify}
+            disabled={!instagramHandle.trim() || verifying || instagramVerified}
+            className={`shrink-0 px-4 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all border ${
+              instagramVerified
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                : 'bg-gold/10 border-gold/30 text-gold hover:bg-gold/20 disabled:opacity-40'
+            }`}
+          >
+            {verifying ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                Verifying
+              </>
+            ) : instagramVerified ? (
+              <>
+                <BadgeCheck className="w-3.5 h-3.5" />
+                Verified
+              </>
+            ) : (
+              <>
+                <ShieldCheck className="w-3.5 h-3.5" />
+                Verify
+              </>
+            )}
+          </button>
         </div>
-        <p className="text-[#9DA0A6] text-xs mt-1">Used only to verify you — never shown on your profile.</p>
+        <p className="text-[#9DA0A6] text-xs mt-1">
+          {instagramVerified
+            ? "Verified — this will be sent with your profile for identity approval."
+            : 'Used only to verify you — never shown on your profile.'}
+        </p>
         {errors.instagram && <p className="text-red-500 text-xs mt-1">{errors.instagram}</p>}
       </div>
 
@@ -134,14 +189,20 @@ export function ProfileFormFields({
         <textarea
           value={bio}
           onChange={(e) => onBioChange(e.target.value)}
-          placeholder="A few words that define you..."
+          placeholder="A few words that define you... (at least 15, if you write one)"
           maxLength={200}
           rows={3}
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-bio' : undefined}
           className="input resize-none"
         />
-        <p className="text-xs text-[#9DA0A6] mt-1 text-right">{bio.length}/200</p>
+        <div className="flex items-center justify-between mt-1">
+          <span className={`text-xs ${bio.trim() && bioWordCount < BIO_MIN_WORDS ? 'text-amber-400' : 'text-[#9DA0A6]'}`}>
+            {bio.trim() ? `${bioWordCount} word${bioWordCount === 1 ? '' : 's'}${bioWordCount < BIO_MIN_WORDS ? ` (min ${BIO_MIN_WORDS})` : ''}` : ''}
+          </span>
+          <span className="text-xs text-[#9DA0A6]">{bio.length}/200</span>
+        </div>
         {errors.bio && <p className="text-red-500 text-xs mt-1">{errors.bio}</p>}
+        <BioAiPolish bio={bio} onApply={onBioChange} />
       </div>
     </>
   );

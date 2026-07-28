@@ -4,7 +4,7 @@ import { Hourglass } from 'lucide-react';
 import { usePendingReviewCountdown } from '@/lib/hooks/usePendingReviewCountdown';
 
 export function PendingReviewBanner() {
-  const secondsLeft = usePendingReviewCountdown();
+  const { secondsLeft } = usePendingReviewCountdown();
   if (secondsLeft === null) return null;
 
   const minutes = Math.floor(secondsLeft / 60);

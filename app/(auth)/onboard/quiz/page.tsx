@@ -137,6 +137,16 @@ export default function QuizPage() {
   const currentQuestion = QUIZ_QUESTIONS[currentIdx];
   const progressPercent = ((currentIdx + 1) / QUIZ_QUESTIONS.length) * 100;
   const currentAnswer = answers[currentQuestion.id];
+  const isLastQuestion = currentIdx === QUIZ_QUESTIONS.length - 1;
+  const encouragement = isLastQuestion
+    ? 'Last one — make it count.'
+    : progressPercent >= 75
+    ? 'Almost there.'
+    : progressPercent >= 50
+    ? "You're more than halfway."
+    : progressPercent >= 25
+    ? 'This shapes who you meet.'
+    : "There's no wrong answer — just be honest.";
 
   return (
     <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6 bg-[#000000]">
@@ -180,10 +190,10 @@ export default function QuizPage() {
                 <button
                   key={option}
                   onClick={() => handleOptionSelect(option)}
-                  className={`w-full py-4 px-5 rounded-xl text-left text-sm transition-all flex items-center justify-between border ${
+                  className={`w-full py-4 px-5 rounded-xl text-left text-sm transition-all duration-200 flex items-center justify-between border ${
                     isSelected
-                      ? 'bg-gold/10 border-gold text-ink font-medium'
-                      : 'bg-[#1C1C1E] border-[#2A2A2A] text-ink/70 hover:border-ink/30'
+                      ? 'bg-gold/10 border-gold text-ink font-medium scale-[1.02] shadow-[0_0_20px_-6px_rgba(192,38,211,0.5)]'
+                      : 'bg-[#1C1C1E] border-[#2A2A2A] text-ink/70 hover:border-ink/30 active:scale-[0.98]'
                   }`}
                 >
                   <span>{option}</span>
@@ -212,6 +222,10 @@ export default function QuizPage() {
             </>
           )}
         </button>
+
+        <p className="text-center text-xs text-gold/70 font-medium mt-4 animate-fade-in" key={currentIdx}>
+          {encouragement}
+        </p>
       </div>
     </div>
   );

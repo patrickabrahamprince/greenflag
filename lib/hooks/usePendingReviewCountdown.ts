@@ -3,7 +3,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { useUserStore } from '@/lib/store';
 
-const REVIEW_SECONDS = 90;
+// Men browse Discover while pending, so a real (if short) window still
+// makes sense there. Women wait on a dedicated full-screen countdown with
+// nothing else to do -- 90s of staring at a timer felt punishing, so
+// theirs is compressed to 10s before the app hands them straight into a
+// welcome screen.
+const REVIEW_SECONDS_MAN = 90;
+const REVIEW_SECONDS_WOMAN = 10;
 
 // Anchored to profiles.review_started_at (not a per-mount timer, and not
 // created_at) so the countdown reads the same real elapsed time no matter
@@ -14,11 +20,17 @@ const REVIEW_SECONDS = 90;
 // 8 quiz questions, interests, 6 rule slides) routinely takes several
 // minutes, so by the time anyone reached a screen showing this countdown
 // it had almost always already elapsed and self-approved invisibly.
-export function usePendingReviewCountdown(): number | null {
+export interface PendingReviewCountdown {
+  secondsLeft: number | null;
+  totalSeconds: number;
+}
+
+export function usePendingReviewCountdown(): PendingReviewCountdown {
   const user = useUserStore((s) => s.user);
   const setUser = useUserStore((s) => s.setUser);
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
   const approvedRef = useRef(false);
+  const totalSeconds = user?.persona === 'woman' ? REVIEW_SECONDS_WOMAN : REVIEW_SECONDS_MAN;
 
   useEffect(() => {
     const anchor = user?.review_started_at || user?.created_at;
@@ -26,7 +38,8 @@ export function usePendingReviewCountdown(): number | null {
       setSecondsLeft(null);
       return;
     }
-    const target = new Date(anchor).getTime() + REVIEW_SECONDS * 1000;
+    const windowSeconds = user.persona === 'woman' ? REVIEW_SECONDS_WOMAN : REVIEW_SECONDS_MAN;
+    const target = new Date(anchor).getTime() + windowSeconds * 1000;
 
     const tick = () => {
       const remaining = Math.max(0, Math.round((target - Date.now()) / 1000));
@@ -43,5 +56,5 @@ export function usePendingReviewCountdown(): number | null {
     return () => clearInterval(interval);
   }, [user, setUser]);
 
-  return secondsLeft;
+  return { secondsLeft, totalSeconds };
 }

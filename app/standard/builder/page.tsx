@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Mic, Camera, Type as TypeIcon, ArrowLeft, Lock } from 'lucide-react';
+import { Loader2, Mic, Camera, Type as TypeIcon, ArrowLeft, Lock, ShieldCheck, Eye, MessageCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 
@@ -208,6 +208,33 @@ export default function StandardBuilderPage() {
       <p className="text-sm text-ink/50 mb-6">
         Each day: one thought, one image, one voice. He completes all three before you review.
       </p>
+
+      {step === 0 && (
+        <div className="bg-gold/5 border border-gold/20 rounded-2xl p-4 mb-6 space-y-3">
+          <p className="text-xs font-semibold text-gold uppercase tracking-wide">Why this works</p>
+          <div className="flex gap-3">
+            <ShieldCheck className="w-4 h-4 text-gold shrink-0 mt-0.5" />
+            <p className="text-xs text-ink/70 leading-relaxed">
+              He must complete all three intentions for a day before you see anything — no
+              shortcuts, no half-effort.
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <Eye className="w-4 h-4 text-gold shrink-0 mt-0.5" />
+            <p className="text-xs text-ink/70 leading-relaxed">
+              You review and decide daily. Reject at any point and the connection ends —
+              he never gets a second attempt on the same day.
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <MessageCircle className="w-4 h-4 text-gold shrink-0 mt-0.5" />
+            <p className="text-xs text-ink/70 leading-relaxed">
+              Complete all three days with your approval, and the conversation unlocks —
+              he's earned it by then.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="card p-5 mb-8">
         <span className="text-xs text-ink/40 uppercase tracking-wide">Day {currentSlot.dayNumber}</span>
