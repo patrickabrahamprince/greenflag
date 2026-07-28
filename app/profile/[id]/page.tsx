@@ -55,7 +55,6 @@ export default function ViewProfilePage() {
         job={profile.job}
         height={profile.height}
         city_auto={profile.city_auto}
-        instagram_url={profile.instagram_url}
         interests={profile.interests}
         lookingForInterests={profile.looking_for_interests}
         quizAnswers={profile.quiz_answers}

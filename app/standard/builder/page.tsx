@@ -275,7 +275,7 @@ export default function StandardBuilderPage() {
               <Lock className="w-6 h-6 text-gold" />
             </div>
             <h3 className="text-xl font-display text-ink mb-2">{DAY_LOCK_DIALOGS[step].title}</h3>
-            <p className="text-sm text-ink/60 leading-relaxed mb-6">
+            <p className="text-base text-ink/60 leading-relaxed mb-6 font-sans">
               {DAY_LOCK_DIALOGS[step].desc}
             </p>
             <button

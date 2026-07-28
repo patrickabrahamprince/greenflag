@@ -21,37 +21,37 @@ const slides = [
     id: 0,
     title: 'Respect Is Standard',
     desc: 'Every profile is treated with regard. No exceptions.',
-    icon: <ShieldCheck className="w-8 h-8 text-gold" />,
+    icon: <ShieldCheck className="w-10 h-10 text-gold" />,
   },
   {
     id: 1,
     title: 'No Noise',
     desc: 'Keep it intentional. No spam, no mass messages.',
-    icon: <Flame className="w-8 h-8 text-gold" />,
+    icon: <Flame className="w-10 h-10 text-gold" />,
   },
   {
     id: 2,
     title: 'Discretion First',
     desc: 'Share personal details only when you feel safe to.',
-    icon: <MessageCircle className="w-8 h-8 text-gold" />,
+    icon: <MessageCircle className="w-10 h-10 text-gold" />,
   },
   {
     id: 3,
     title: 'Intention Has Value',
     desc: 'Show up genuinely. Effort is seen and valued.',
-    icon: <Coins className="w-8 h-8 text-gold" />,
+    icon: <Coins className="w-10 h-10 text-gold" />,
   },
   {
     id: 4,
     title: 'Your Circle, Your Rules',
     desc: 'Manage privacy and preferences in Settings.',
-    icon: <Settings className="w-8 h-8 text-gold" />,
+    icon: <Settings className="w-10 h-10 text-gold" />,
   },
   {
     id: 5,
     title: 'Verified Profiles',
     desc: 'Verified profiles are prioritized and distinguished.',
-    icon: <UserCheck className="w-8 h-8 text-gold" />,
+    icon: <UserCheck className="w-10 h-10 text-gold" />,
   },
 ];
 
@@ -128,14 +128,17 @@ export default function RulesPage() {
         >
           {slides.map((slide) => (
             <div key={slide.id} className="w-full shrink-0 snap-center px-1">
-              <div className="flex flex-col items-center text-center px-4 py-8 bg-[#1C1C1E] border border-[#2A2A2A] rounded-3xl min-h-[320px] justify-center">
-                <div className="w-20 h-20 rounded-full bg-gold/10 flex items-center justify-center mb-6">
+              <div
+                className="flex flex-col items-center text-center px-6 py-10 border border-gold/20 rounded-[2rem] min-h-[380px] justify-center shadow-[0_0_40px_-16px_rgba(192,38,211,0.35)]"
+                style={{ background: 'linear-gradient(160deg, rgba(192,38,211,0.1) 0%, rgba(28,28,30,0.9) 55%)' }}
+              >
+                <div className="w-24 h-24 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-7 shadow-[0_0_24px_-6px_rgba(192,38,211,0.5)]">
                   {slide.icon}
                 </div>
-                <h2 className="text-2xl font-display font-semibold text-ink mb-4">
+                <h2 className="text-3xl font-display font-semibold text-ink mb-4">
                   {slide.title}
                 </h2>
-                <p className="text-[#9DA0A6] text-sm leading-relaxed max-w-[280px] font-light">
+                <p className="text-[#9DA0A6] text-base leading-relaxed max-w-[300px] font-light">
                   {slide.desc}
                 </p>
               </div>

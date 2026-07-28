@@ -63,7 +63,7 @@ export default function PendingApprovalPage() {
         className="btn-primary flex items-center gap-2 px-6"
       >
         <Compass className="w-4 h-4" />
-        Enter Discovery
+        Browse Meanwhile
       </button>
     </div>
   );

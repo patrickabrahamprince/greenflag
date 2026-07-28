@@ -1,4 +1,4 @@
-import { MapPin, Briefcase, Ruler, Instagram } from 'lucide-react';
+import { MapPin, Briefcase, Ruler } from 'lucide-react';
 import { QUIZ_QUESTION_ORDER, QUIZ_QUESTION_LABELS } from '@/lib/quizQuestions';
 
 interface ProfileInfoProps {
@@ -8,7 +8,6 @@ interface ProfileInfoProps {
   job?: string;
   height?: string;
   city_auto?: string;
-  instagram_url?: string;
   interests: string[];
   lookingForInterests?: string[];
   quizAnswers?: Record<string, string> | null;
@@ -37,7 +36,6 @@ export function ProfileInfo({
   job,
   height,
   city_auto,
-  instagram_url,
   interests,
   lookingForInterests = [],
   quizAnswers,
@@ -113,21 +111,6 @@ export function ProfileInfo({
         </div>
       )}
 
-      {instagram_url && (
-        <a
-          href={
-            instagram_url.startsWith('http')
-              ? instagram_url
-              : `https://instagram.com/${instagram_url.replace('@', '')}`
-          }
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 py-6 text-ink/50 hover:text-gold transition-colors"
-        >
-          <Instagram className="w-4 h-4" />
-          <span className="text-sm">{instagram_url}</span>
-        </a>
-      )}
     </div>
   );
 }

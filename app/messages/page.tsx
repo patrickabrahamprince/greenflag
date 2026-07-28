@@ -76,11 +76,22 @@ interface InProgressPartner {
   photo: string | null;
 }
 
+// Matches the standardHint rate limit window (lib/rate-limit.ts) -- once
+// this passes, the server allows another nudge, so the button needs to
+// re-enable itself instead of staying "Nudged" forever.
+const NUDGE_COOLDOWN_MS = 60 * 60 * 1000;
+
 function InProgressMatches({ userId, supabase }: { userId: string; supabase: ReturnType<typeof createClient> }) {
   const [partners, setPartners] = useState<InProgressPartner[]>([]);
   const [loading, setLoading] = useState(true);
-  const [hintedIds, setHintedIds] = useState<Set<string>>(new Set());
+  const [hintedUntil, setHintedUntil] = useState<Record<string, number>>({});
+  const [now, setNow] = useState(() => Date.now());
   const [sendingId, setSendingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 30_000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     const load = async () => {
@@ -114,7 +125,7 @@ function InProgressMatches({ userId, supabase }: { userId: string; supabase: Ret
         toast.error(data.error || 'Failed to send hint');
         return;
       }
-      setHintedIds((prev) => new Set(prev).add(partnerId));
+      setHintedUntil((prev) => ({ ...prev, [partnerId]: Date.now() + NUDGE_COOLDOWN_MS }));
       toast.success(data.started ? "Nudge sent — he's been notified to continue your Standard" : "Nudge sent — he's been notified to begin your Standard");
     } catch {
       toast.error('Failed to send hint');
@@ -141,7 +152,7 @@ function InProgressMatches({ userId, supabase }: { userId: string; supabase: Ret
             <span className="flex-1 text-sm text-ink truncate">{p.name}</span>
             <button
               onClick={() => handleLike(p.matchUserId)}
-              disabled={sendingId === p.matchUserId || hintedIds.has(p.matchUserId)}
+              disabled={sendingId === p.matchUserId || (hintedUntil[p.matchUserId] ?? 0) > now}
               className="btn-secondary text-xs px-3 py-2 flex items-center gap-1.5 shrink-0 disabled:opacity-50"
             >
               {sendingId === p.matchUserId ? (
@@ -149,7 +160,7 @@ function InProgressMatches({ userId, supabase }: { userId: string; supabase: Ret
               ) : (
                 <Heart className="w-3.5 h-3.5" />
               )}
-              {hintedIds.has(p.matchUserId) ? 'Nudged' : 'Nudge'}
+              {(hintedUntil[p.matchUserId] ?? 0) > now ? 'Nudged' : 'Nudge'}
             </button>
           </div>
         ))}

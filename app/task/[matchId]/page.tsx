@@ -56,7 +56,7 @@ function DayCompleteModal({ unlocksAt, onContinue, onExplore }: { unlocksAt: str
         </p>
         <div className="flex gap-3">
           <button onClick={onContinue} className="btn-secondary flex-1">
-            Onward
+            Got It
           </button>
           <button onClick={onExplore} className="btn-primary flex-1">
             Discover Profiles
@@ -335,11 +335,16 @@ export default function TaskPage() {
           <p className="font-display text-4xl text-gold tracking-wider mb-3">
             <LiveCountdown target={match.next_day_unlocks_at} />
           </p>
-          <p className="text-ink/50 text-sm">
+          <p className="text-ink/50 text-sm mb-6">
             {isWoman
               ? `Come back to review ${otherProfile.name}'s answers and see if he meets your Standard.`
               : `Come back then to continue your Standard with ${otherProfile.name}.`}
           </p>
+          {!isWoman && (
+            <button onClick={() => router.push('/discover')} className="btn-secondary text-sm px-6">
+              Discover New Profiles
+            </button>
+          )}
         </div>
       ) : (
         <>
