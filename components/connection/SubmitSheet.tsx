@@ -4,7 +4,14 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { X, Camera, Mic, Type, Upload } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { useCoinStore } from '@/lib/store';
 import type { IntentionRecord } from './types';
+
+// Mirrors the server-side costs in submit-task/route.ts (SUBMIT_COST) and
+// special-send/route.ts (SPECIAL_SEND_COST) -- neither response echoes the
+// amount charged, so the client-side coin display has to know it too.
+const TASK_SUBMIT_COST = 10;
+const SPECIAL_SEND_COST = 150;
 
 interface SubmitResult {
   status?: string;
@@ -16,14 +23,16 @@ interface SubmitSheetProps {
   dayNumber: number;
   intention: IntentionRecord;
   isLastTaskToday: boolean;
+  remainingTasksToday?: number;
   mode?: 'task' | 'special';
   onClose: () => void;
   onSubmit: (result?: SubmitResult) => void;
 }
 
-export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, mode = 'task', onClose, onSubmit }: SubmitSheetProps) {
+export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, remainingTasksToday = 0, mode = 'task', onClose, onSubmit }: SubmitSheetProps) {
   const supabase = createClient();
   const router = useRouter();
+  const deductCoins = useCoinStore((s) => s.deduct);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [textContent, setTextContent] = useState('');
@@ -165,6 +174,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, mo
       }
 
       const result = await res.json().catch(() => ({}));
+      deductCoins(mode === 'special' ? SPECIAL_SEND_COST : TASK_SUBMIT_COST);
       setSubmitResult(result);
       setShowSuccessPopup(true);
     } catch (e) {
@@ -347,7 +357,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, mo
                 }}
                 className="btn-primary flex-1 py-2.5 text-xs font-semibold whitespace-nowrap"
               >
-                Next Task
+                Next Task{remainingTasksToday > 0 ? ` (${remainingTasksToday} left)` : ''}
               </button>
             )}
             <button

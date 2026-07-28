@@ -77,7 +77,7 @@ export default function ProfilePage() {
                 <Coins className="w-5 h-5 text-gold" />
                 <div>
                   <p className="text-white font-medium">Coins: {balance}</p>
-                  <p className="text-xs text-muted mt-0.5">Pledge coins to connect</p>
+                  <p className="text-xs text-muted mt-0.5">Spend coins to connect</p>
                 </div>
               </div>
               <button onClick={() => router.push('/coins')} className="btn-primary text-sm py-2 px-4">

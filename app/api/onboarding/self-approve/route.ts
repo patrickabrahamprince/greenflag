@@ -9,11 +9,12 @@ function getAdmin() {
   );
 }
 
-// The "under review" screen runs a 90s cosmetic timer to keep the curated-
-// community feel, then calls this to flip the account live. It only ever
-// moves a user's own account from pending -> approved -- no other field or
-// account is touched, so there's no privilege-escalation surface here even
-// though it runs on the service-role client.
+// The "verifying your profile" banner (men) / review countdown (women)
+// runs a short cosmetic timer to keep the curated-community feel, then
+// calls this to flip the account live. It only ever moves a user's own
+// account from pending -> approved -- no other field or account is
+// touched, so there's no privilege-escalation surface here even though
+// it runs on the service-role client.
 export async function POST() {
   const supabase = await createServerSupabaseClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();

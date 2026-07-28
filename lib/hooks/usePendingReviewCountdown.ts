@@ -3,13 +3,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useUserStore } from '@/lib/store';
 
-// Men browse Discover while pending, so a real (if short) window still
-// makes sense there. Women wait on a dedicated full-screen countdown with
-// nothing else to do -- 90s of staring at a timer felt punishing, so
-// theirs is compressed to 10s before the app hands them straight into a
-// welcome screen.
-const REVIEW_SECONDS_MAN = 90;
-const REVIEW_SECONDS_WOMAN = 10;
+// Men see this as a "verifying your profile" moment while they browse
+// Discover; women wait on a dedicated full-screen countdown with nothing
+// else to do, so theirs is shorter before the app hands them straight
+// into a welcome screen.
+const REVIEW_SECONDS_MAN = 30;
+const REVIEW_SECONDS_WOMAN = 5;
 
 // Anchored to profiles.review_started_at (not a per-mount timer, and not
 // created_at) so the countdown reads the same real elapsed time no matter

@@ -50,6 +50,7 @@ export default function DiscoverPage() {
   const [nudgeDialog, setNudgeDialog] = useState<{ visible: boolean; charged: boolean; cost: number } | null>(null)
   const [nudgeConfirm, setNudgeConfirm] = useState<{ profileId: string; cost: number } | null>(null)
   const coinBalance = useCoinStore((s) => s.balance)
+  const deductCoins = useCoinStore((s) => s.deduct)
   const router = useRouter()
   const supabase = createClient()
 
@@ -171,6 +172,9 @@ export default function DiscoverPage() {
     if (data.needsConfirm) {
       setNudgeConfirm({ profileId, cost: data.cost })
       return
+    }
+    if (data.charged && data.cost) {
+      deductCoins(data.cost)
     }
     showNudgeSentDialog(!!data.charged, data.cost || 0)
   }
@@ -296,6 +300,7 @@ export default function DiscoverPage() {
         throw new Error(err.error || 'Failed to like profile')
       }
       const { matchId } = await res.json()
+      deductCoins(500)
       setProfiles(prev => prev.filter(p => p.id !== profileId))
       if (matchId) {
         router.push(`/task/${matchId}`)
@@ -317,6 +322,9 @@ export default function DiscoverPage() {
       if (!res.ok) {
         toast.error(data.error || 'Failed to unlock photos')
         return
+      }
+      if (!data.alreadyUnlocked && data.cost) {
+        deductCoins(data.cost)
       }
       setUnlockedPhotoIds(prev => new Set(prev).add(profileId))
     } catch {
@@ -636,7 +644,7 @@ export default function DiscoverPage() {
             </div>
             <h2 className="font-display text-2xl text-ink mb-2">You're All Caught Up</h2>
             <p className="text-ink/50 text-sm max-w-xs">
-              No new profiles align with your Standard right now. Your circle will refresh soon.
+              No new profiles align with your Standard right now. Check back again soon.
             </p>
           </div>
         )}

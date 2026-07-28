@@ -176,11 +176,18 @@ export async function POST(
       .eq('id', id)
       .maybeSingle();
 
-    try {
-      const { data: manProfile } = await admin.from('profiles').select('name').eq('id', user.id).single();
-      await notifyWomanOfMediaReady(admin, match.user2_id, manProfile?.name || 'Your match', day_number ?? 1, id);
-    } catch {
-      // Safe catch for notification failure
+    // Only notify once all three of today's intentions are actually in --
+    // this used to fire on every single task submission, so she got three
+    // separate "ready to review" pings for the same day even though the
+    // first two weren't reviewable yet (the gate doesn't flip to
+    // pending_review until all three are submitted).
+    if (gateResult?.status === 'pending_review') {
+      try {
+        const { data: manProfile } = await admin.from('profiles').select('name').eq('id', user.id).single();
+        await notifyWomanOfMediaReady(admin, match.user2_id, manProfile?.name || 'Your match', day_number ?? 1, id);
+      } catch {
+        // Safe catch for notification failure
+      }
     }
 
     return NextResponse.json({

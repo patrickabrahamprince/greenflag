@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Mic, Camera, Type as TypeIcon, ArrowLeft, Lock, ShieldCheck, Eye, MessageCircle } from 'lucide-react';
+import { Loader2, Mic, Camera, Type as TypeIcon, ArrowLeft, Lock, ShieldCheck, Eye, MessageCircle, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 
@@ -56,6 +56,61 @@ const DAY_LOCK_DIALOGS: Record<number, { title: string; desc: string; button: st
   },
 };
 
+const WHY_THIS_WORKS = [
+  {
+    icon: ShieldCheck,
+    title: 'No Shortcuts',
+    desc: 'He must complete all three intentions for a day before you see anything — no half-effort.',
+  },
+  {
+    icon: Eye,
+    title: 'You Decide, Daily',
+    desc: 'You review and decide each day. Reject at any point and the connection ends — no second attempt on the same day.',
+  },
+  {
+    icon: MessageCircle,
+    title: 'Earned, Not Given',
+    desc: "Complete all three days with your approval, and the conversation unlocks — he's earned it by then.",
+  },
+];
+
+function StandardIntroScreen({ onContinue }: { onContinue: () => void }) {
+  return (
+    <div className="w-full animate-fade-in min-h-screen screen-gradient px-6 pt-12 pb-10 max-w-app mx-auto flex flex-col">
+      <div className="flex-1">
+        <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-6 shadow-[0_0_30px_-8px_rgba(192,38,211,0.6)]">
+          <Sparkles className="w-7 h-7 text-gold" />
+        </div>
+        <h1 className="font-display text-3xl text-ink mb-3">Set Your Standard</h1>
+        <p className="text-ink/60 text-sm leading-relaxed mb-8">
+          Each day: one thought, one image, one voice. He completes all three before you review.
+        </p>
+
+        <div className="space-y-4">
+          {WHY_THIS_WORKS.map((point) => (
+            <div key={point.title} className="flex gap-4 bg-[#1C1C1E] border border-[#2A2A2A] rounded-2xl p-4">
+              <div className="w-11 h-11 shrink-0 rounded-full bg-gold/10 flex items-center justify-center">
+                <point.icon className="w-5 h-5 text-gold" />
+              </div>
+              <div>
+                <h3 className="text-ink font-semibold text-sm mb-1">{point.title}</h3>
+                <p className="text-[#9DA0A6] text-xs leading-relaxed font-light">{point.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <button
+        onClick={onContinue}
+        className="btn-primary w-full py-4 mt-6 font-semibold text-sm active:scale-95 transition-transform shadow-[0_0_30px_-10px_rgba(192,38,211,0.6)]"
+      >
+        Begin Day 1
+      </button>
+    </div>
+  );
+}
+
 function defaultSlots(): DaySlot[] {
   return [1, 2, 3].map((dayNumber) => ({
     dayNumber,
@@ -71,6 +126,7 @@ export default function StandardBuilderPage() {
   const [saving, setSaving] = useState(false);
   const [step, setStep] = useState(0); // 0 = Day 1, 1 = Day 2, 2 = Day 3
   const [showDayDialog, setShowDayDialog] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -185,6 +241,10 @@ export default function StandardBuilderPage() {
     );
   }
 
+  if (showIntro) {
+    return <StandardIntroScreen onContinue={() => setShowIntro(false)} />;
+  }
+
   const progressPercent = ((step + 1) / slots.length) * 100;
 
   return (
@@ -208,33 +268,6 @@ export default function StandardBuilderPage() {
       <p className="text-sm text-ink/50 mb-6">
         Each day: one thought, one image, one voice. He completes all three before you review.
       </p>
-
-      {step === 0 && (
-        <div className="bg-gold/5 border border-gold/20 rounded-2xl p-4 mb-6 space-y-3">
-          <p className="text-xs font-semibold text-gold uppercase tracking-wide">Why this works</p>
-          <div className="flex gap-3">
-            <ShieldCheck className="w-4 h-4 text-gold shrink-0 mt-0.5" />
-            <p className="text-xs text-ink/70 leading-relaxed">
-              He must complete all three intentions for a day before you see anything — no
-              shortcuts, no half-effort.
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <Eye className="w-4 h-4 text-gold shrink-0 mt-0.5" />
-            <p className="text-xs text-ink/70 leading-relaxed">
-              You review and decide daily. Reject at any point and the connection ends —
-              he never gets a second attempt on the same day.
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <MessageCircle className="w-4 h-4 text-gold shrink-0 mt-0.5" />
-            <p className="text-xs text-ink/70 leading-relaxed">
-              Complete all three days with your approval, and the conversation unlocks —
-              he's earned it by then.
-            </p>
-          </div>
-        </div>
-      )}
 
       <div className="card p-5 mb-8">
         <span className="text-xs text-ink/40 uppercase tracking-wide">Day {currentSlot.dayNumber}</span>
@@ -292,7 +325,7 @@ export default function StandardBuilderPage() {
         disabled={saving || !currentDayFilled}
         className="btn-primary w-full py-4 flex items-center justify-center gap-2 disabled:opacity-50"
       >
-        {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : isLastDay ? 'Save & Go Live' : `Continue to Day ${step + 2}`}
+        {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : isLastDay ? 'Activate My Standard' : `Continue to Day ${step + 2}`}
       </button>
 
       {showDayDialog && DAY_LOCK_DIALOGS[step] && (

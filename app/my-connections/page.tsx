@@ -116,7 +116,7 @@ export default function MyConnectionsPage() {
   return (
     <div className="min-h-screen screen-gradient px-6 pt-8 pb-24 max-w-app mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-3xl text-ink">Your Circle</h1>
+        <h1 className="font-display text-3xl text-ink">Your Connections</h1>
         <button
           onClick={() => router.push('/discover')}
           className="btn-secondary text-xs px-3 py-2 flex items-center gap-1.5 shrink-0"
@@ -131,7 +131,7 @@ export default function MyConnectionsPage() {
           <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5">
             <Heart className="w-6 h-6 text-gold" />
           </div>
-          <h2 className="font-display text-xl text-ink mb-2">Your Circle Is Empty</h2>
+          <h2 className="font-display text-xl text-ink mb-2">No Connections Yet</h2>
           <p className="text-ink/50 text-sm">Discover someone to begin an introduction.</p>
         </div>
       ) : (

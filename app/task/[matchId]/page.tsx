@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Loader2, MessageCircle, Hourglass, CheckCircle2, AlertTriangle, Lock, Coins, Sparkles, Type as TypeIcon, Camera, Mic } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useUserStore } from '@/lib/store';
+import { useUserStore, useCoinStore } from '@/lib/store';
 import { ConnectedScreen } from '@/components/ConnectedScreen';
 import { EndedScreen } from '@/components/connection/EndedScreen';
 import { ProgressSegmentBar } from '@/components/connection/ProgressSegmentBar';
@@ -38,7 +38,7 @@ interface SpecialSend {
   alreadyViewed: boolean;
 }
 
-function DayCompleteModal({ unlocksAt, onContinue, onExplore }: { unlocksAt: string; onContinue: () => void; onExplore: () => void }) {
+function DayCompleteModal({ unlocksAt, completedDay, onExplore }: { unlocksAt: string; completedDay: number; onExplore: () => void }) {
   const remainingMs = useCountdown(unlocksAt);
 
   return (
@@ -47,21 +47,17 @@ function DayCompleteModal({ unlocksAt, onContinue, onExplore }: { unlocksAt: str
         <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-5">
           <Hourglass className="w-6 h-6 text-gold" />
         </div>
-        <h3 className="font-display text-2xl text-ink mb-2">Day Complete</h3>
+        <h3 className="font-display text-2xl text-ink mb-2">Well Done — Day {completedDay} Complete</h3>
         <p className="text-ink/60 text-sm leading-relaxed mb-6">
-          Tomorrow&apos;s intentions unlock at the same time tomorrow.
+          Come back at the same time tomorrow to complete Day {completedDay + 1}. Check your
+          notifications to see if she's approved today's intentions.
         </p>
         <p className="font-display text-4xl text-gold tracking-wider mb-6">
           {remainingMs !== null ? formatCountdown(remainingMs) : '--:--:--'}
         </p>
-        <div className="flex gap-3">
-          <button onClick={onContinue} className="btn-secondary flex-1">
-            Got It
-          </button>
-          <button onClick={onExplore} className="btn-primary flex-1">
-            Discover Profiles
-          </button>
-        </div>
+        <button onClick={onExplore} className="btn-primary w-full">
+          Discover More
+        </button>
       </div>
     </div>
   );
@@ -104,6 +100,7 @@ export default function TaskPage() {
   const params = useParams<{ matchId: string }>();
   const matchId = params.matchId;
   const currentUser = useUserStore((s) => s.user);
+  const deductCoins = useCoinStore((s) => s.deduct);
   const isWoman = currentUser?.persona === 'woman';
 
   const [match, setMatch] = useState<MatchData | null>(null);
@@ -253,6 +250,7 @@ export default function TaskPage() {
         toast.error(data?.error || 'Failed to reveal');
         return;
       }
+      deductCoins(REVEAL_COST);
       setRevealedSubmissionIds((prev) => new Set(prev).add(submissionId));
     } catch {
       toast.error('Network error.');
@@ -270,6 +268,7 @@ export default function TaskPage() {
         toast.error(data?.error || 'Failed to reveal');
         return;
       }
+      deductCoins(REVEAL_COST);
       setSpecialRevealed(true);
     } catch {
       toast.error('Network error.');
@@ -547,6 +546,11 @@ export default function TaskPage() {
               (i) => i.id !== activeIntention.id && !submissions.some((s) => s.task_number === i.task_number)
             ).length === 0
           }
+          remainingTasksToday={
+            intentions.filter(
+              (i) => i.id !== activeIntention.id && !submissions.some((s) => s.task_number === i.task_number)
+            ).length
+          }
           onClose={() => {
             setShowSheet(false);
             setActiveIntention(null);
@@ -583,7 +587,7 @@ export default function TaskPage() {
       {dayCompleteUnlockAt && (
         <DayCompleteModal
           unlocksAt={dayCompleteUnlockAt}
-          onContinue={() => router.push('/my-connections')}
+          completedDay={Math.max(1, currentDay - 1)}
           onExplore={() => router.push('/discover')}
         />
       )}

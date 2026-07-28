@@ -155,7 +155,7 @@ export default function NotificationsPage() {
             </div>
             <h3 className="text-lg font-medium text-ink mb-1">Nothing Yet</h3>
             <p className="text-sm text-muted text-center">
-              You&apos;ll be notified when there&apos;s activity in your Circle.
+              You&apos;ll be notified when there&apos;s activity in your connections.
             </p>
           </div>
         ) : (
