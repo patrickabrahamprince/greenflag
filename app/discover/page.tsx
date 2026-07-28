@@ -634,7 +634,7 @@ export default function DiscoverPage() {
             <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5">
               <Heart className="w-6 h-6 text-gold" />
             </div>
-            <h2 className="font-display text-2xl text-ink mb-2">Your Curated Circle Is Complete</h2>
+            <h2 className="font-display text-2xl text-ink mb-2">You're All Caught Up</h2>
             <p className="text-ink/50 text-sm max-w-xs">
               No new profiles align with your Standard right now. Your circle will refresh soon.
             </p>

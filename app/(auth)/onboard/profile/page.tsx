@@ -140,8 +140,8 @@ export default function ProfilePage() {
     if (!city.trim()) e.city = 'City is required';
     if (photos.length < 1) e.photos = 'Please add at least 1 photo';
     if (bio.length > 200) e.bio = 'Keep it under 200 characters';
-    const bioWordCount = bio.trim() ? bio.trim().split(/\s+/).filter(Boolean).length : 0;
-    if (bio.trim() && bioWordCount < 15) e.bio = 'Write at least 15 words, or leave it blank';
+    if (!bio.trim()) e.bio = 'About you is required';
+    else if (bio.trim().length < 15) e.bio = 'Write at least 15 characters';
     if (!instagramHandle.trim()) e.instagram = 'Instagram is required to verify you';
     else if (!instagramVerified) e.instagram = 'Please verify your Instagram to continue';
     setErrors(e);
@@ -217,7 +217,7 @@ export default function ProfilePage() {
       </button>
 
       <h1 className="text-xl font-display font-semibold text-ink text-center mb-6">
-        {persona === 'woman' ? 'Define Your Presence' : 'Introduce Yourself'}
+        {persona === 'woman' ? 'Make Your Entrance' : 'Introduce Yourself'}
       </h1>
 
       <div className="space-y-5 flex-1 max-w-md mx-auto w-full">

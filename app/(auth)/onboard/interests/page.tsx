@@ -38,12 +38,21 @@ export default function InterestsPage() {
       return;
     }
 
-    const { error } = await supabase.from('profiles').upsert({
-      id: user.id,
-      persona: persona ?? undefined,
-      interests_have: interestsHave,
-      interests_looking_for: lookingFor,
-    });
+    // A partial update, not an upsert -- the row already exists by this
+    // point in onboarding (created at signup, populated by the profile
+    // step). Upsert was silently dangerous here: profiles.persona has a
+    // stale 'guest' column DEFAULT (pre-dating the persona/man/woman
+    // rename), so any upsert omitting persona -- which this one did
+    // whenever the in-memory onboarding store hadn't survived a refresh --
+    // got the row filled with that invalid default and rejected by
+    // persona_check. update() only touches the columns given here.
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        interests_have: interestsHave,
+        interests_looking_for: lookingFor,
+      })
+      .eq('id', user.id);
 
     if (error) {
       toast.error(error.message);

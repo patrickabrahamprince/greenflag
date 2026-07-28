@@ -9,8 +9,8 @@ const INDIAN_CITIES = [
   'Kolkata', 'Pune', 'Ahmedabad', 'Jaipur', 'Surat',
 ];
 
-const VERIFY_DURATION_MS = 5000;
-const BIO_MIN_WORDS = 15;
+const VERIFY_DURATION_MS = 3000;
+const BIO_MIN_CHARS = 15;
 
 interface ProfileFormFieldsProps {
   name: string;
@@ -39,7 +39,6 @@ export function ProfileFormFields({
 }: ProfileFormFieldsProps) {
   const dobInputRef = useRef<HTMLInputElement>(null);
   const [verifying, setVerifying] = useState(false);
-  const bioWordCount = bio.trim() ? bio.trim().split(/\s+/).filter(Boolean).length : 0;
 
   const handleVerify = () => {
     if (!instagramHandle.trim() || verifying || instagramVerified) return;
@@ -184,20 +183,20 @@ export function ProfileFormFields({
 
       <div>
         <label className="block text-sm font-medium text-ink mb-1.5">
-          About You <span className="text-[#9DA0A6] font-normal">(optional)</span>
+          About You <span className="text-red-400">*</span>
         </label>
         <textarea
           value={bio}
           onChange={(e) => onBioChange(e.target.value)}
-          placeholder="A few words that define you... (at least 15, if you write one)"
+          placeholder={`A few words that define you... (at least ${BIO_MIN_CHARS} characters)`}
           maxLength={200}
           rows={3}
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-bio' : undefined}
-          className="input resize-none"
+          className={`input resize-none ${errors.bio ? 'border-red-500' : ''}`}
         />
         <div className="flex items-center justify-between mt-1">
-          <span className={`text-xs ${bio.trim() && bioWordCount < BIO_MIN_WORDS ? 'text-amber-400' : 'text-[#9DA0A6]'}`}>
-            {bio.trim() ? `${bioWordCount} word${bioWordCount === 1 ? '' : 's'}${bioWordCount < BIO_MIN_WORDS ? ` (min ${BIO_MIN_WORDS})` : ''}` : ''}
+          <span className={`text-xs ${bio.length < BIO_MIN_CHARS ? 'text-amber-400' : 'text-[#9DA0A6]'}`}>
+            {bio.length < BIO_MIN_CHARS ? `Min ${BIO_MIN_CHARS} characters` : ''}
           </span>
           <span className="text-xs text-[#9DA0A6]">{bio.length}/200</span>
         </div>

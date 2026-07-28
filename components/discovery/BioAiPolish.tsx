@@ -4,7 +4,15 @@ import { useState } from 'react';
 import { Sparkles, Loader2, Check } from 'lucide-react';
 
 const ANALYZE_DURATION_MS = 1600;
-const MIN_WORDS = 15;
+const MIN_CHARS = 15;
+
+// Deterministic (picked from the text itself, not Math.random) so the same
+// bio always gets the same closer rather than flip-flopping on re-analyze.
+const CLOSERS = [
+  'Always up for a good conversation.',
+  "Let's see where this goes.",
+  'Ask me about it sometime.',
+];
 
 interface BioAiPolishProps {
   bio: string;
@@ -12,19 +20,30 @@ interface BioAiPolishProps {
 }
 
 function polishText(raw: string): string {
-  const trimmed = raw.trim().replace(/\s+/g, ' ');
-  if (!trimmed) return trimmed;
-  const withCapitals = trimmed.replace(/(^\s*\w|[.!?]\s+\w)/g, (m) => m.toUpperCase());
-  return /[.!?]$/.test(withCapitals) ? withCapitals : `${withCapitals}.`;
+  const original = raw.trim();
+  if (!original) return original;
+
+  let out = original.replace(/\s+/g, ' ');
+  out = out.replace(/\bi\b/g, 'I');
+  out = out.replace(/(^\s*\w|[.!?]\s+\w)/g, (m) => m.toUpperCase());
+  if (!/[.!?]$/.test(out)) out = `${out}.`;
+
+  // The mimic must always produce a visible change -- if formatting alone
+  // didn't move the needle (already clean, capitalized, punctuated), add a
+  // closing line so "Improve with AI" never looks like it did nothing.
+  if (out === original) {
+    out = `${out} ${CLOSERS[original.length % CLOSERS.length]}`;
+  }
+
+  return out;
 }
 
 function buildTips(raw: string): string[] {
   const trimmed = raw.trim();
-  const wordCount = trimmed ? trimmed.split(/\s+/).filter(Boolean).length : 0;
   const tips: string[] = [];
 
-  if (wordCount < MIN_WORDS) {
-    tips.push(`Add a bit more — aim for at least ${MIN_WORDS} words so she gets a real sense of you.`);
+  if (trimmed.length < MIN_CHARS) {
+    tips.push(`Add a bit more — aim for at least ${MIN_CHARS} characters so she gets a real sense of you.`);
   }
   if (!/[.!?]$/.test(trimmed)) {
     tips.push('End with punctuation for a more finished feel.');
@@ -44,13 +63,15 @@ export function BioAiPolish({ bio, onApply }: BioAiPolishProps) {
 
   const handleAnalyze = () => {
     if (!bio.trim() || analyzing) return;
+    const snapshot = bio;
     setAnalyzing(true);
     setResult(null);
     // Mimic only -- no LLM call. A short, deterministic pass (capitalization
-    // + punctuation cleanup) plus a few rule-based tips, wrapped in a fake
-    // "thinking" delay so it reads as an AI pass rather than instant regex.
+    // + punctuation cleanup, with a guaranteed fallback rewrite) plus a few
+    // rule-based tips, wrapped in a fake "thinking" delay so it reads as an
+    // AI pass rather than instant regex.
     setTimeout(() => {
-      setResult({ tips: buildTips(bio), polished: polishText(bio) });
+      setResult({ tips: buildTips(snapshot), polished: polishText(snapshot) });
       setAnalyzing(false);
     }, ANALYZE_DURATION_MS);
   };
@@ -86,16 +107,17 @@ export function BioAiPolish({ bio, onApply }: BioAiPolishProps) {
               </li>
             ))}
           </ul>
-          {result.polished !== bio.trim() && (
-            <button
-              type="button"
-              onClick={() => { onApply(result.polished); setResult(null); }}
-              className="flex items-center gap-1.5 text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
-            >
-              <Check className="w-3.5 h-3.5" />
-              Use polished version
-            </button>
-          )}
+          <div className="bg-black/20 border border-white/10 rounded-lg p-2.5">
+            <p className="text-xs text-ink/80 leading-relaxed italic">{result.polished}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => { onApply(result.polished); setResult(null); }}
+            className="flex items-center gap-1.5 text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
+          >
+            <Check className="w-3.5 h-3.5" />
+            Use this version
+          </button>
         </div>
       )}
     </div>
