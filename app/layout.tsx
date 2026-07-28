@@ -40,7 +40,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={bricolage.variable} style={{ colorScheme: 'dark' }}>
       <body className="min-h-screen bg-[#000000] text-[#FFFFFF] font-sans">
-        <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
+        {/* afterInteractive (not lazyOnload) -- lazyOnload only loads
+            during browser idle time, which can be several seconds after
+            the Coins page is already interactive. Someone tapping Buy
+            quickly would hit `new window.Razorpay(...)` before the SDK
+            exists, throwing instead of opening checkout. */}
+        <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
         <ErrorBoundary>
           <Providers>{children}</Providers>
         </ErrorBoundary>
