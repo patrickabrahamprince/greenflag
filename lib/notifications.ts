@@ -49,52 +49,6 @@ export async function sendNotification(payload: NotificationPayload): Promise<vo
   }
 }
 
-export async function notifyHostOfSubmission(
-  supabase: AnySupabaseClient,
-  hostId: string,
-  guestName: string,
-  taskNumber: number,
-  connectionId: string
-): Promise<void> {
-  await sendNotification({
-    supabase,
-    user_id: hostId,
-    title: 'New Submission',
-    body: `${guestName} submitted intention ${taskNumber} of 8`,
-    data: { connectionId, taskNumber, type: 'submission' },
-  });
-}
-
-export async function notifyGuestOfApproval(
-  supabase: AnySupabaseClient,
-  guestId: string,
-  hostName: string,
-  connectionId: string
-): Promise<void> {
-  await sendNotification({
-    supabase,
-    user_id: guestId,
-    title: 'Conversation Unlocked',
-    body: `${hostName} approved your application. Your conversation is now open.`,
-    data: { connectionId, type: 'chat_unlocked' },
-  });
-}
-
-export async function notifyGuestOfRejection(
-  supabase: AnySupabaseClient,
-  guestId: string,
-  hostName: string,
-  connectionId: string
-): Promise<void> {
-  await sendNotification({
-    supabase,
-    user_id: guestId,
-    title: 'Application Declined',
-    body: `${hostName} passed. Your 5 coins have been refunded.`,
-    data: { connectionId, type: 'rejected' },
-  });
-}
-
 export async function notifyNewMessage(
   supabase: AnySupabaseClient,
   recipientId: string,
@@ -137,22 +91,8 @@ export async function notifyManOfDayApproval(
     supabase,
     user_id: manId,
     title: 'Day Approved',
-    body: `${womanName} approved Day ${dayNumber}. Day ${dayNumber + 1} awaits — submit within 24 hours.`,
+    body: `${womanName} approved Day ${dayNumber}. Day ${dayNumber + 1} unlocks in 24 hours — you'll have 48 hours to submit once it does.`,
     data: { connectionId, dayNumber, type: 'day_approved' },
-  });
-}
-
-export async function notifyManOfDay5(
-  supabase: AnySupabaseClient,
-  manId: string,
-  connectionId: string
-): Promise<void> {
-  await sendNotification({
-    supabase,
-    user_id: manId,
-    title: 'Access Earned',
-    body: "Day 5 approved. You've earned access — message her.",
-    data: { connectionId, type: 'day5_approved' },
   });
 }
 
@@ -164,7 +104,7 @@ export async function notifyBothOfCompletion(
 ): Promise<void> {
   const payload = {
     title: "You're Connected!",
-    body: "All eight intentions complete. You're Connected.",
+    body: 'All three days complete. Your conversation is now open.',
     data: { connectionId, type: 'completed' },
   };
   await sendNotification({ supabase, user_id: manId, ...payload });

@@ -1,9 +1,38 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { requireAdmin, logAuditAction } from '@/lib/admin/auth';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const STORAGE_BUCKETS = ['avatars', 'profile-photos', 'submissions'];
+const MAX_STORAGE_RECURSION_DEPTH = 4;
+
+function getAdmin() {
+  return createClient(SUPABASE_URL, SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+}
+
+// Storage `list()` only returns one level -- avatars/profile-photos are
+// flat (`{userId}/file.jpg`) but submissions nests a day folder
+// (`{userId}/day{N}/file`), so this has to recurse. A "folder" entry from
+// the Supabase JS client always comes back with `id: null`.
+async function deleteUserFolder(admin: SupabaseClient, bucket: string, prefix: string, depth = 0): Promise<void> {
+  if (depth > MAX_STORAGE_RECURSION_DEPTH) return;
+  const { data: entries } = await admin.storage.from(bucket).list(prefix, { limit: 1000 });
+  if (!entries || entries.length === 0) return;
+
+  const files: string[] = [];
+  for (const entry of entries) {
+    const fullPath = `${prefix}/${entry.name}`;
+    if (entry.id === null) {
+      await deleteUserFolder(admin, bucket, fullPath, depth + 1);
+    } else {
+      files.push(fullPath);
+    }
+  }
+  if (files.length > 0) {
+    await admin.storage.from(bucket).remove(files);
+  }
+}
 
 export async function POST(req: Request) {
   try {
@@ -20,11 +49,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Cannot purge yourself' }, { status: 400 });
     }
 
-    const adminSupabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
-      auth: { persistSession: false },
-    });
+    const admin = getAdmin();
 
-    const { data: target } = await adminSupabase
+    const { data: target } = await admin
       .from('profiles')
       .select('is_admin')
       .eq('id', user_id)
@@ -37,77 +64,61 @@ export async function POST(req: Request) {
       );
     }
 
-    const deleted_tables: string[] = [];
+    const pairFilter = (col1: string, col2: string) => `${col1}.eq.${user_id},${col2}.eq.${user_id}`;
 
-    const { error: storageErr } = await adminSupabase
-      .from('storage.objects')
-      .delete()
-      .eq('owner', user_id);
-    if (!storageErr) deleted_tables.push('storage.objects');
-
-    const { error: photosErr } = await adminSupabase
-      .from('photos' as any)
-      .delete()
-      .eq('user_id', user_id);
-    if (!photosErr) deleted_tables.push('photos');
-
-    const { error: likesErr } = await adminSupabase
-      .from('likes' as any)
-      .delete()
-      .or(`from_user_id.eq.${user_id},to_user_id.eq.${user_id}`);
-    if (!likesErr) deleted_tables.push('likes');
-
-    const { error: matchesErr } = await adminSupabase
+    const { data: matchRows } = await admin
       .from('matches' as any)
-      .delete()
-      .or(`user1_id.eq.${user_id},user2_id.eq.${user_id}`);
-    if (!matchesErr) deleted_tables.push('matches');
+      .select('id')
+      .or(pairFilter('user1_id', 'user2_id'));
+    const matchIds = (matchRows || []).map((m: { id: string }) => m.id);
 
-    const { error: msgsErr } = await adminSupabase
-      .from('messages')
-      .delete()
-      .eq('sender_id', user_id);
-    if (!msgsErr) deleted_tables.push('messages');
+    const { data: standardRows } = await admin
+      .from('standards')
+      .select('id')
+      .eq('woman_id', user_id);
+    const standardIds = (standardRows || []).map((s: { id: string }) => s.id);
 
-    const { error: modErr } = await adminSupabase
-      .from('mod_queue')
-      .delete()
-      .eq('reviewed_by', user_id);
-    if (!modErr) deleted_tables.push('mod_queue');
+    if (matchIds.length > 0) {
+      await admin.from('submissions').delete().in('match_id', matchIds);
+      await admin.from('special_sends').delete().in('match_id', matchIds);
+      await admin.from('funnel_events').delete().in('match_id', matchIds);
+      await admin.from('messages').delete().in('match_id', matchIds);
+    }
+    await admin.from('matches' as any).delete().or(pairFilter('user1_id', 'user2_id'));
 
-    const { error: txErr } = await adminSupabase
-      .from('transactions')
-      .delete()
-      .eq('user_id', user_id);
-    if (!txErr) deleted_tables.push('transactions');
+    if (standardIds.length > 0) {
+      await admin.from('intentions').delete().in('standard_id', standardIds);
+    }
+    await admin.from('standards').delete().eq('woman_id', user_id);
 
-    const { error: walletErr } = await adminSupabase
-      .from('wallets')
-      .delete()
-      .eq('user_id', user_id);
-    if (!walletErr) deleted_tables.push('wallets');
+    await admin.from('likes' as any).delete().or(pairFilter('from_user_id', 'to_user_id'));
+    await admin.from('nudges').delete().or(pairFilter('from_user_id', 'to_user_id'));
+    await admin.from('notifications').delete().eq('user_id', user_id);
+    await admin.from('reports').delete().or(pairFilter('reporter_id', 'reported_id'));
+    await admin.from('blocked_pairs').delete().or(pairFilter('host_id', 'guest_id'));
+    await admin.from('push_subscriptions').delete().eq('user_id', user_id);
+    await admin.from('profile_edit_requests').delete().eq('user_id', user_id);
+    await admin.from('photo_unlocks').delete().or(pairFilter('viewer_id', 'target_id'));
+    await admin.from('coin_transactions').delete().eq('user_id', user_id);
+    await admin.from('wallets').delete().eq('user_id', user_id);
 
-    const { error: testsErr } = await adminSupabase
-      .from('tests')
-      .delete()
-      .eq('host_id', user_id);
-    if (!testsErr) deleted_tables.push('tests');
+    for (const bucket of STORAGE_BUCKETS) {
+      await deleteUserFolder(admin, bucket, user_id);
+    }
 
-    const { error: profileErr } = await adminSupabase
-      .from('profiles')
-      .delete()
-      .eq('id', user_id);
-    if (!profileErr) deleted_tables.push('profiles');
+    const { error: profileErr } = await admin.from('profiles').delete().eq('id', user_id);
+    const { error: authErr } = await admin.auth.admin.deleteUser(user_id);
 
-    const { error: authErr } = await adminSupabase.auth.admin.deleteUser(user_id);
-    if (!authErr) deleted_tables.push('auth.users');
+    if (profileErr || authErr) {
+      return NextResponse.json(
+        { error: 'Purge partially failed', detail: profileErr?.message || authErr?.message },
+        { status: 500 }
+      );
+    }
 
     await logAuditAction(supabase, adminEmail, 'purge_user', user_id);
 
-    return NextResponse.json({
-      success: true,
-      deleted_tables,
-    });
+    return NextResponse.json({ success: true });
   } catch (err) {
     return NextResponse.json({ error: 'Purge failed', detail: String(err) }, { status: 500 });
   }
