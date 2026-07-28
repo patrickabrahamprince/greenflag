@@ -11,7 +11,9 @@ import { PackageCard } from '@/components/guest/PackageCard';
 import { TransactionHistory } from '@/components/guest/TransactionHistory';
 
 const PACKAGES = [
-  { coins: 500, price: 399, popular: true },
+  // TEMPORARY: 399 -> 2 for a real end-to-end payment test. Revert once
+  // a real ₹2 purchase is confirmed to land in coin_transactions.
+  { coins: 500, price: 2, popular: true },
   { coins: 1200, price: 799, best: true },
   { coins: 2500, price: 1499 },
 ];
