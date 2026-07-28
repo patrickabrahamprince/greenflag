@@ -3,24 +3,29 @@
 import { useEffect, useState } from 'react';
 import { ShieldCheck, BadgeCheck } from 'lucide-react';
 import { usePendingReviewCountdown } from '@/lib/hooks/usePendingReviewCountdown';
+import { useUserStore } from '@/lib/store';
 
 export function PendingReviewBanner() {
+  const user = useUserStore((s) => s.user);
   const { secondsLeft } = usePendingReviewCountdown();
-  const [wasPending, setWasPending] = useState(false);
   const [showVerified, setShowVerified] = useState(false);
 
+  // Persisted via localStorage, not just latched component state -- this
+  // component gets re-mounted fresh on every route change (BottomNav is
+  // rendered from each route segment's own layout.tsx, not one shared
+  // persistent layout), so a purely in-memory "did the countdown just
+  // finish" check would miss the moment entirely for anyone who navigates
+  // during the 30s window, since a brand-new mount elsewhere never
+  // observes the pending -> approved transition happening. Checking
+  // "is he approved and have I not shown this yet" on every mount instead
+  // is what survives that.
   useEffect(() => {
-    if (secondsLeft !== null) setWasPending(true);
-  }, [secondsLeft]);
-
-  // secondsLeft resets to null the instant approval_status flips away
-  // from 'pending' (the countdown hook's own guard treats "not pending"
-  // as "nothing to show"). Catching that pending -> null transition here
-  // is what surfaces the one-time "You're Verified" window instead of the
-  // banner just silently vanishing.
-  useEffect(() => {
-    if (wasPending && secondsLeft === null) setShowVerified(true);
-  }, [wasPending, secondsLeft]);
+    if (!user || user.persona !== 'man' || user.approval_status !== 'approved') return;
+    const key = `gf_verified_seen:${user.id}`;
+    if (localStorage.getItem(key) === '1') return;
+    localStorage.setItem(key, '1');
+    setShowVerified(true);
+  }, [user]);
 
   if (showVerified) {
     return (

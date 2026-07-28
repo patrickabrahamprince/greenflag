@@ -346,7 +346,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
                 ? 'Awaiting her review. Continue to the next intention for today, or discover other profiles in the meantime.'
                 : dayNumber >= 3
                   ? "You've completed all three days. She's reviewing your Standard and will decide whether to continue."
-                  : "That's all three intentions for today. She's reviewing — tomorrow unlocks once she's done."}
+                  : `Well done — that's all three intentions for Day ${dayNumber}. Come back at the same time tomorrow for Day ${dayNumber + 1}, and check your notifications to see if she's approved.`}
           </p>
 
           <div className="flex gap-3">

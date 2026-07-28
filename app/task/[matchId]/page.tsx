@@ -47,10 +47,10 @@ function DayCompleteModal({ unlocksAt, completedDay, onExplore }: { unlocksAt: s
         <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-5">
           <Hourglass className="w-6 h-6 text-gold" />
         </div>
-        <h3 className="font-display text-2xl text-ink mb-2">Well Done — Day {completedDay} Complete</h3>
+        <h3 className="font-display text-2xl text-ink mb-2">Day {completedDay} Approved</h3>
         <p className="text-ink/60 text-sm leading-relaxed mb-6">
-          Come back at the same time tomorrow to complete Day {completedDay + 1}. Check your
-          notifications to see if she's approved today's intentions.
+          His Day {completedDay + 1} intentions unlock for him tomorrow. Check My Connections
+          to see if he stays consistent.
         </p>
         <p className="font-display text-4xl text-gold tracking-wider mb-6">
           {remainingMs !== null ? formatCountdown(remainingMs) : '--:--:--'}
