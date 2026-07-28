@@ -36,7 +36,6 @@ export default function DiscoverPage() {
   const [page, setPage] = useState(0)
   const [hasMore, setHasMore] = useState(true)
   const [persona, setPersona] = useState<string | null>(null)
-  const [approvalBanner, setApprovalBanner] = useState<'pending' | 'approved' | null>(null)
   const [confirmProfileId, setConfirmProfileId] = useState<string | null>(null)
   const [photoUnlockConfirm, setPhotoUnlockConfirm] = useState<string | null>(null)
   const [unlockingPhotoId, setUnlockingPhotoId] = useState<string | null>(null)
@@ -75,7 +74,7 @@ export default function DiscoverPage() {
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) return
-      supabase.from('profiles').select('persona, approval_status').eq('id', user.id).single().then(({ data }) => {
+      supabase.from('profiles').select('persona').eq('id', user.id).single().then(({ data }) => {
         if (data?.persona) setPersona(data.persona)
 
         // A woman without an active Standard shouldn't be able to browse
@@ -98,27 +97,9 @@ export default function DiscoverPage() {
             })
             .catch(() => {})
         }
-
-        if (data?.persona !== 'man') return
-
-        if (data?.approval_status === 'pending') {
-          setApprovalBanner('pending')
-        } else if (
-          data?.approval_status === 'approved' &&
-          localStorage.getItem(`gf_seen_approved:${user.id}`) !== '1'
-        ) {
-          setApprovalBanner('approved')
-        }
       })
     })
   }, [])
-
-  const dismissApprovedBanner = () => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) localStorage.setItem(`gf_seen_approved:${user.id}`, '1')
-    })
-    setApprovalBanner(null)
-  }
 
   useEffect(() => {
     if (!fetchedForPage.current.has(page)) {
@@ -345,31 +326,6 @@ export default function DiscoverPage() {
   return (
     <div className="relative screen-gradient min-h-dvh max-w-app mx-auto">
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex flex-col pointer-events-none">
-        {approvalBanner && (
-          <button
-            onClick={() => {
-              if (approvalBanner === 'approved') dismissApprovedBanner()
-              router.push('/profile')
-            }}
-            className="pointer-events-auto glass-surface mx-3 mt-2 px-3 py-1.5 rounded-lg flex items-center justify-between gap-2 text-left"
-          >
-            <span className="text-xs text-white font-medium truncate">
-              {approvalBanner === 'pending'
-                ? 'Verification in progress'
-                : "You're verified. View your profile"}
-            </span>
-            {approvalBanner === 'approved' && (
-              <span
-                role="button"
-                onClick={(e) => { e.stopPropagation(); dismissApprovedBanner() }}
-                className="text-white/50 hover:text-white shrink-0"
-              >
-                <X className="w-3.5 h-3.5" />
-              </span>
-            )}
-          </button>
-        )}
-
         <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent">
           <button onClick={() => router.push('/messages')} className="pointer-events-auto w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center">
             <ArrowLeft className="w-5 h-5 text-white" />
@@ -392,7 +348,7 @@ export default function DiscoverPage() {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className={`snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth ${approvalBanner ? 'h-[calc(100dvh-7rem)]' : 'h-[calc(100dvh-5rem)]'}`}
+        className="snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth h-[calc(100dvh-5rem)]"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         <div
