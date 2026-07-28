@@ -1,4 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import http2 from 'http2';
+import { SignJWT, importPKCS8 } from 'jose';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnySupabaseClient = SupabaseClient<any, any, any, any, any>;
@@ -30,6 +32,94 @@ async function triggerWebPush(userId: string, title: string, body: string, url?:
   }
 }
 
+// Cached across invocations within the same warm serverless instance --
+// signing a fresh ES256 JWT per notification is wasted work since Apple
+// accepts the same token for up to an hour.
+let cachedApnsJwt: { token: string; expiresAt: number } | null = null;
+
+async function getApnsJwt(keyId: string, teamId: string, privateKeyPem: string): Promise<string> {
+  const now = Math.floor(Date.now() / 1000);
+  if (cachedApnsJwt && cachedApnsJwt.expiresAt > now + 60) {
+    return cachedApnsJwt.token;
+  }
+  const key = await importPKCS8(privateKeyPem, 'ES256');
+  const token = await new SignJWT({})
+    .setProtectedHeader({ alg: 'ES256', kid: keyId })
+    .setIssuer(teamId)
+    .setIssuedAt(now)
+    .sign(key);
+  cachedApnsJwt = { token, expiresAt: now + 60 * 50 };
+  return token;
+}
+
+// No-ops entirely until APNS_KEY_ID/APNS_TEAM_ID/APNS_PRIVATE_KEY/
+// APNS_BUNDLE_ID are set (all four only exist once there's an Apple
+// Developer account to generate the .p8 auth key from) -- device tokens
+// are still captured and stored via useNativePush + /api/push/register-
+// device in the meantime, so nothing needs to be recaptured once this
+// activates. Uses Apple's modern token-based provider API over HTTP/2
+// (required -- APNs doesn't support HTTP/1.1) rather than the older
+// certificate-based approach, so there's no cert to renew yearly.
+async function triggerApplePush(
+  supabase: AnySupabaseClient,
+  userId: string,
+  title: string,
+  body: string,
+  data?: Record<string, unknown>
+): Promise<void> {
+  const keyId = process.env.APNS_KEY_ID;
+  const teamId = process.env.APNS_TEAM_ID;
+  const privateKeyPem = process.env.APNS_PRIVATE_KEY;
+  const bundleId = process.env.APNS_BUNDLE_ID || 'com.greenflag.app';
+  if (!keyId || !teamId || !privateKeyPem) return;
+
+  const { data: tokens } = await supabase
+    .from('device_tokens')
+    .select('token')
+    .eq('user_id', userId)
+    .eq('platform', 'ios');
+  if (!tokens || tokens.length === 0) return;
+
+  const jwt = await getApnsJwt(keyId, teamId, privateKeyPem.replace(/\\n/g, '\n'));
+  const host = process.env.APNS_ENVIRONMENT === 'sandbox'
+    ? 'api.sandbox.push.apple.com'
+    : 'api.push.apple.com';
+
+  await Promise.all(
+    (tokens as { token: string }[]).map(({ token: deviceToken }) => new Promise<void>((resolve) => {
+      const client = http2.connect(`https://${host}`);
+      client.on('error', (err) => {
+        console.error('APNs connection error:', err);
+        resolve();
+      });
+
+      const payload = JSON.stringify({
+        aps: { alert: { title, body }, sound: 'default' },
+        ...data,
+      });
+
+      const req = client.request({
+        ':method': 'POST',
+        ':path': `/3/device/${deviceToken}`,
+        authorization: `bearer ${jwt}`,
+        'apns-topic': bundleId,
+        'apns-push-type': 'alert',
+      });
+      req.setEncoding('utf8');
+      let responseBody = '';
+      req.on('data', (chunk) => { responseBody += chunk; });
+      req.on('response', (headers) => {
+        const status = headers[':status'];
+        if (status !== 200) console.error('APNs push failed:', status, responseBody);
+      });
+      req.on('end', () => { client.close(); resolve(); });
+      req.on('error', (err) => { console.error('APNs request error:', err); client.close(); resolve(); });
+      req.write(payload);
+      req.end();
+    }))
+  );
+}
+
 export async function sendNotification(payload: NotificationPayload): Promise<void> {
   try {
     const { error } = await payload.supabase.from('notifications').insert({
@@ -43,7 +133,10 @@ export async function sendNotification(payload: NotificationPayload): Promise<vo
     const url = (payload.data?.connectionId as string)
       ? `/messages/${payload.data?.connectionId}`
       : undefined;
-    await triggerWebPush(payload.user_id, payload.title, payload.body, url);
+    await Promise.all([
+      triggerWebPush(payload.user_id, payload.title, payload.body, url),
+      triggerApplePush(payload.supabase, payload.user_id, payload.title, payload.body, payload.data),
+    ]);
   } catch (error) {
     console.error('Failed to send notification:', error);
   }

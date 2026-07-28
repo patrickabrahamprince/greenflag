@@ -6,8 +6,10 @@ import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useCoinStore } from '@/lib/store';
 import { PushNotificationRegistrar } from './push-notification-registrar';
 import { useScreenshotGuard } from '@/lib/hooks/useScreenshotGuard';
+import { useNativePush } from '@/lib/hooks/useNativePush';
 
 export function Providers({ children }: { children: React.ReactNode }) {
+  const user = useUserStore((s) => s.user);
   const setUser = useUserStore((s) => s.setUser);
   const clearUser = useUserStore((s) => s.clearUser);
   const setBalance = useCoinStore((s) => s.setBalance);
@@ -15,6 +17,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
   // No-ops on web (no browser API can detect a screenshot); reacts on the
   // native iOS build. See lib/hooks/useScreenshotGuard.ts.
   useScreenshotGuard();
+
+  // PushNotificationRegistrar below is Web Push (VAPID) -- it already
+  // no-ops harmlessly inside the iOS WKWebView (no Notification/
+  // serviceWorker/pushManager support there). This is the native-only
+  // complement, registering for real APNs push instead.
+  useNativePush(user?.id);
 
   useEffect(() => {
     const supabase = createClient();

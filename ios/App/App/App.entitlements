@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- "development" here matches Xcode's own default for a Debug/
+	     Simulator build with automatic signing. Distribution builds
+	     (TestFlight/App Store) need this switched to "production" --
+	     Xcode does this automatically when archiving with a distribution
+	     provisioning profile if using Automatic signing, but verify it in
+	     the archive's entitlements if push ever silently doesn't arrive
+	     on a released build. -->
+	<key>aps-environment</key>
+	<string>development</string>
+</dict>
+</plist>
