@@ -125,7 +125,7 @@ export default function HowItWorksPage() {
           disabled={continuing}
           className="btn-primary w-full py-4 mt-6 font-semibold text-sm active:scale-95 transition-transform flex items-center justify-center gap-2"
         >
-          {continuing ? <Loader2 className="w-4 h-4 animate-spin" /> : "Understood — Begin"}
+          {continuing ? <Loader2 className="w-4 h-4 animate-spin" /> : "Let's Begin"}
         </button>
       </div>
     </div>

@@ -2,7 +2,6 @@
 
 import { useRef, useState } from 'react';
 import { Loader2, Calendar, ShieldCheck, BadgeCheck } from 'lucide-react';
-import { BioAiPolish } from './BioAiPolish';
 
 const INDIAN_CITIES = [
   'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai',
@@ -201,7 +200,6 @@ export function ProfileFormFields({
           <span className="text-xs text-[#9DA0A6]">{bio.length}/200</span>
         </div>
         {errors.bio && <p className="text-red-500 text-xs mt-1">{errors.bio}</p>}
-        <BioAiPolish bio={bio} onApply={onBioChange} />
       </div>
     </>
   );

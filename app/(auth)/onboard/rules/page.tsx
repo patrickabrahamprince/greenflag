@@ -160,15 +160,13 @@ export default function RulesPage() {
           ))}
         </div>
 
-        <div className="flex-1 flex items-center justify-center min-h-[64px]">
-          <div className="w-40 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent animate-pulse" />
-        </div>
+        <div className="flex-1" />
 
         {/* Single button -- swipe through as many or as few rules as you
             like, one tap moves on regardless of which slide you're on. */}
         <button
           onClick={handleContinue}
-          className="btn-primary w-full py-4 font-semibold text-sm active:scale-95 transition-transform shadow-[0_0_30px_-10px_rgba(192,38,211,0.6)]"
+          className="btn-primary w-full py-4 mt-4 font-semibold text-sm active:scale-95 transition-transform shadow-[0_0_30px_-10px_rgba(192,38,211,0.6)]"
         >
           Agree & Continue
         </button>

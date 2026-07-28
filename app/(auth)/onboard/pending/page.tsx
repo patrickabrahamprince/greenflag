@@ -1,29 +1,44 @@
 'use client';
 
-import { useState } from 'react';
-import { LogOut, Sparkles, ArrowRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { LogOut, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { usePendingReviewCountdown } from '@/lib/hooks/usePendingReviewCountdown';
 import { ReviewTimerRing } from '@/components/onboarding/ReviewTimerRing';
 
+const WELCOME_DISPLAY_MS = 1800;
+
 export default function PendingApprovalPage() {
   const router = useRouter();
   const supabase = createClient();
   const { secondsLeft, totalSeconds } = usePendingReviewCountdown();
-  const [entering, setEntering] = useState(false);
+  const [arrived, setArrived] = useState(false);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     window.location.href = '/login';
   };
 
-  const handleContinue = () => {
-    setEntering(true);
-    router.push('/standard/builder');
-  };
+  // Latched, not derived fresh every render -- the countdown hook resets
+  // secondsLeft back to null the instant approval_status flips away from
+  // 'pending' (its own guard treats "not pending" as "nothing to show"
+  // and clears the countdown). Deriving `arrived` straight from
+  // secondsLeft === 0 meant that reset flipped this back to false right
+  // after self-approve succeeded, dumping the screen back onto a
+  // freshly-reset 10s ring -- looked exactly like it was stuck.
+  useEffect(() => {
+    if (secondsLeft === 0) setArrived(true);
+  }, [secondsLeft]);
 
-  const arrived = secondsLeft === 0;
+  // Fully automatic -- no button to tap. A woman always needs her
+  // Standard set before Discover means anything for her, so that's where
+  // this lands once the review moment has played out.
+  useEffect(() => {
+    if (!arrived) return;
+    const timer = setTimeout(() => router.push('/standard/builder'), WELCOME_DISPLAY_MS);
+    return () => clearTimeout(timer);
+  }, [arrived, router]);
 
   return (
     <div className="w-full animate-fade-in min-h-screen flex flex-col justify-center items-center px-8 text-center bg-[#000000]">
@@ -56,19 +71,9 @@ export default function PendingApprovalPage() {
           </div>
 
           <h1 className="font-display text-3xl text-ink mb-3">You're In.</h1>
-          <p className="text-ink/60 text-sm leading-relaxed max-w-sm mb-8">
-            Your profile is approved. Now set your Standard — the three days he'll need to
-            earn a conversation with you.
+          <p className="text-ink/60 text-sm leading-relaxed max-w-sm">
+            Your profile is approved. Taking you to set your Standard...
           </p>
-
-          <button
-            onClick={handleContinue}
-            disabled={entering}
-            className="btn-primary flex items-center gap-2 px-8 py-4 font-semibold active:scale-95 transition-transform disabled:opacity-60"
-          >
-            Get Started
-            <ArrowRight className="w-4 h-4" />
-          </button>
         </div>
       )}
     </div>
