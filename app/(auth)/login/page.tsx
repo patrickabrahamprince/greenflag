@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { Loader2 } from 'lucide-react'
 import { GoogleButton } from '@/components/ui/GoogleButton'
+import { AppleButton } from '@/components/ui/AppleButton'
 import { SignOutStrip } from './sign-out'
 
 export default function LoginPage() {
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
+  const [appleLoading, setAppleLoading] = useState(false)
   const supabase = createClient()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -51,6 +53,24 @@ export default function LoginPage() {
     }
   }
 
+  // Required alongside Google -- Apple guideline 4.8 requires offering
+  // Sign in with Apple wherever another third-party social login is
+  // offered. Won't actually work until Sign In with Apple is enabled in
+  // the Apple Developer Portal and configured as an OAuth provider in
+  // Supabase; the button is wired up ahead of that so it's ready the
+  // moment that configuration lands.
+  const handleAppleLogin = async () => {
+    setAppleLoading(true)
+    try {
+      await supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: { redirectTo: `${window.location.origin}/auth/callback` },
+      })
+    } catch {
+      setAppleLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center p-6" style={{ background: 'radial-gradient(ellipse 140% 90% at 50% -25%, rgba(192, 38, 211, 0.45) 0%, rgba(124, 58, 237, 0.22) 35%, rgba(11, 6, 20, 0) 70%), radial-gradient(ellipse 100% 70% at 100% 100%, rgba(124, 58, 237, 0.18) 0%, transparent 60%), #0B0614' }}>
       <div className="w-full max-w-sm">
@@ -76,7 +96,10 @@ export default function LoginPage() {
           <span className="text-ink/40 text-xs uppercase tracking-wide">or</span>
           <div className="flex-1 h-px bg-[#2A2A2A]" />
         </div>
-        <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />
+        <div className="space-y-3">
+          <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />
+          <AppleButton onClick={handleAppleLogin} loading={appleLoading} />
+        </div>
 
         <p className="text-ink/50 text-sm mt-8 text-center">
           New to Greenflag?{' '}

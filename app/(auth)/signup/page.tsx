@@ -8,6 +8,7 @@ import { PhoneOtpForm } from '@/components/discovery/PhoneOtpForm'
 import { OtpVerificationForm } from '@/components/discovery/OtpVerificationForm'
 import { SignupFooter } from '@/components/discovery/SignupFooter'
 import { GoogleButton } from '@/components/ui/GoogleButton'
+import { AppleButton } from '@/components/ui/AppleButton'
 
 type AuthMode = 'email' | 'phone'
 type PhoneStep = 'number' | 'otp'
@@ -24,6 +25,7 @@ export default function SignupPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
+  const [appleLoading, setAppleLoading] = useState(false)
   const supabase = createClient()
 
   const handleGoogleSignup = async () => {
@@ -35,6 +37,21 @@ export default function SignupPage() {
       })
     } catch {
       setGoogleLoading(false)
+    }
+  }
+
+  // Required alongside Google -- Apple guideline 4.8. See handleAppleLogin
+  // in app/(auth)/login/page.tsx for why this won't work until Sign In
+  // with Apple is configured in the Developer Portal + Supabase.
+  const handleAppleSignup = async () => {
+    setAppleLoading(true)
+    try {
+      await supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: { redirectTo: `${window.location.origin}/auth/callback` },
+      })
+    } catch {
+      setAppleLoading(false)
     }
   }
 
@@ -157,7 +174,10 @@ export default function SignupPage() {
           <span className="text-ink/40 text-xs uppercase tracking-wide">or</span>
           <div className="flex-1 h-px bg-[#2A2A2A]" />
         </div>
-        <GoogleButton onClick={handleGoogleSignup} loading={googleLoading} />
+        <div className="space-y-3">
+          <GoogleButton onClick={handleGoogleSignup} loading={googleLoading} />
+          <AppleButton onClick={handleAppleSignup} loading={appleLoading} />
+        </div>
 
         <SignupFooter />
       </div>

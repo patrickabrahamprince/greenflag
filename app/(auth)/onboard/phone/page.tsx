@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { GoogleButton } from '@/components/ui/GoogleButton';
+import { AppleButton } from '@/components/ui/AppleButton';
 import { createClient } from '@/lib/supabase/client';
 import toast from 'react-hot-toast';
 
@@ -17,6 +18,7 @@ export default function PhonePage() {
   const [loading, setLoading] = useState(false);
   const [skipping, setSkipping] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [appleLoading, setAppleLoading] = useState(false);
   const [error, setError] = useState('');
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
@@ -94,6 +96,21 @@ export default function PhonePage() {
       });
     } catch {
       setGoogleLoading(false);
+    }
+  };
+
+  // Required alongside Google -- Apple guideline 4.8. See handleAppleLogin
+  // in app/(auth)/login/page.tsx for why this won't work until Sign In
+  // with Apple is configured in the Developer Portal + Supabase.
+  const handleAppleLogin = async () => {
+    setAppleLoading(true);
+    try {
+      await supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: { redirectTo: `${window.location.origin}/auth/callback` },
+      });
+    } catch {
+      setAppleLoading(false);
     }
   };
 
@@ -194,7 +211,10 @@ export default function PhonePage() {
           <div className="flex-1 h-px bg-[#2A2A2A]" />
         </div>
 
-        <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />
+        <div className="space-y-3">
+          <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />
+          <AppleButton onClick={handleAppleLogin} loading={appleLoading} />
+        </div>
       </div>
     </div>
   );

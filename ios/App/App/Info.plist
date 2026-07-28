@@ -47,15 +47,35 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
-	<!-- Local-dev only: allows plain-HTTP fetch/XHR to the localhost dev
-	     server. server.url's cleartext:true in capacitor.config.ts only
-	     covers Android; iOS needs this ATS exception separately. Remove
-	     or scope down before any real device / TestFlight / App Store
-	     build, which should point at the real HTTPS production URL. -->
+	<!-- Scoped to localhost only, for local dev against a plain-HTTP dev
+	     server (server.url's cleartext:true in capacitor.config.ts only
+	     covers Android; iOS needs this ATS exception separately). The
+	     shipped App Store build points at the real HTTPS production URL
+	     and never touches this exception -- a blanket
+	     NSAllowsArbitraryLoads would both weaken security for no reason
+	     and draw extra App Review scrutiny. -->
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
 	</dict>
+	<!-- Task submissions capture a photo or voice note (photo: file input
+	     with capture="environment" in PhotoUploadSlots.tsx; voice:
+	     getUserMedia({ audio: true }) in SubmitSheet.tsx) -- iOS shows
+	     these system prompts even from inside a WKWebView, and silently
+	     denies access (rather than prompting) if the matching usage
+	     string is missing. -->
+	<key>NSCameraUsageDescription</key>
+	<string>GreenFlag needs camera access so you can capture photos for your profile and daily intentions.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>GreenFlag needs microphone access to record your voice intentions as part of your daily tasks.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>GreenFlag needs photo library access so you can choose photos for your profile and submissions.</string>
 </dict>
 </plist>
