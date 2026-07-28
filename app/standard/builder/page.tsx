@@ -76,7 +76,7 @@ const WHY_THIS_WORKS = [
 
 function StandardIntroScreen({ onContinue }: { onContinue: () => void }) {
   return (
-    <div className="w-full animate-fade-in min-h-screen screen-gradient px-6 pt-12 pb-10 max-w-app mx-auto flex flex-col">
+    <div className="w-full animate-fade-in min-h-[calc(100vh-5rem)] screen-gradient px-6 pt-12 pb-10 max-w-app mx-auto flex flex-col">
       <div className="flex-1">
         <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-6 shadow-[0_0_30px_-8px_rgba(192,38,211,0.6)]">
           <Sparkles className="w-7 h-7 text-gold" />

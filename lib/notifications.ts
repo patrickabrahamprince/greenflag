@@ -121,7 +121,7 @@ export async function notifyWomanOfStandardBegin(
     supabase,
     user_id: womanId,
     title: 'New Connection',
-    body: `${manName} invested 500 coins to begin your Standard`,
+    body: `${manName} spent 500 coins to begin your Standard`,
     data: { connectionId, type: 'standard_begin' },
   });
 }
