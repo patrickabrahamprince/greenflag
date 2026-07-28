@@ -7,6 +7,17 @@ const withPWA = require('next-pwa')({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    // Vercel's file tracing only bundles what a serverless function
+    // statically references; certs/apple-root-ca/*.cer is read at runtime
+    // via a dynamically-built path (readFileSync(path.join(...))) in
+    // app/api/payments/apple/verify, which tracing can miss. Without this,
+    // Apple purchase verification would 500 in production (file not
+    // found) despite working fine locally where the whole repo is present.
+    outputFileTracingIncludes: {
+      '/api/payments/apple/verify': ['./certs/apple-root-ca/**'],
+    },
+  },
   async redirects() {
     return [
       { source: '/your-standards', destination: '/standard/builder', permanent: true },

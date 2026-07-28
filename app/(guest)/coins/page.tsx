@@ -6,16 +6,21 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import { useCoinStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
 import { useCoinPurchase } from '@/lib/useCoinPurchase';
+import { useAppleIAP } from '@/lib/hooks/useAppleIAP';
+import { InAppPurchase, type IAPProduct } from '@/lib/native/inAppPurchase';
+import { APPLE_COIN_PRODUCT_IDS } from '@/lib/iap-products';
 import { CoinBalance } from '@/components/guest/CoinBalance';
 import { PackageCard } from '@/components/guest/PackageCard';
 import { TransactionHistory } from '@/components/guest/TransactionHistory';
 
 const PACKAGES = [
-  // TEMPORARY: 399 -> 2 for a real end-to-end payment test. Revert once
-  // a real ₹2 purchase is confirmed to land in coin_transactions.
-  { coins: 500, price: 2, popular: true },
-  { coins: 1200, price: 799, best: true },
-  { coins: 2500, price: 1499 },
+  // TEMPORARY: 399 -> 2 for a real end-to-end Razorpay payment test
+  // (web only -- iOS always goes through Apple IAP regardless of this
+  // value). Revert once a real ₹2 purchase is confirmed to land in
+  // coin_transactions.
+  { coins: 500, price: 2, appleProductId: 'com.greenflag.app.coins500', popular: true },
+  { coins: 1200, price: 799, appleProductId: 'com.greenflag.app.coins1200', best: true },
+  { coins: 2500, price: 1499, appleProductId: 'com.greenflag.app.coins2500' },
 ];
 
 interface Transaction {
@@ -31,12 +36,26 @@ export default function CoinsPage() {
   const setBalance = useCoinStore((s) => s.setBalance);
   const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [appleProducts, setAppleProducts] = useState<Record<string, IAPProduct>>({});
   const supabase = createClient();
 
-  const { purchasing, handleBuy } = useCoinPurchase({
+  const { purchasing: razorpayPurchasing, handleBuy: handleRazorpayBuy } = useCoinPurchase({
     onBalanceUpdate: setBalance,
     onTransactionsUpdate: setTransactions,
   });
+  const { isNative, purchase: handleApplePurchase, purchasingProductId } = useAppleIAP();
+
+  // Real StoreKit pricing (App Store Connect owns the actual price tier,
+  // not the Razorpay INR figures above) -- fetched once so the card shows
+  // what Apple will actually charge instead of a guessed number.
+  useEffect(() => {
+    if (!isNative) return;
+    InAppPurchase.getProducts({ productIds: APPLE_COIN_PRODUCT_IDS })
+      .then(({ products }) => {
+        setAppleProducts(Object.fromEntries(products.map((p) => [p.productId, p])));
+      })
+      .catch((err) => console.error('Failed to load Apple products:', err));
+  }, [isNative]);
 
   useEffect(() => {
     const load = async () => {
@@ -102,8 +121,10 @@ export default function CoinsPage() {
           <PackageCard
             key={pkg.coins}
             pkg={pkg}
-            purchasing={purchasing}
-            onBuy={handleBuy}
+            displayPrice={appleProducts[pkg.appleProductId]?.displayPrice}
+            purchasing={isNative ? purchasingProductId !== null : razorpayPurchasing !== null}
+            isPurchasingThis={isNative ? purchasingProductId === pkg.appleProductId : razorpayPurchasing === pkg.price}
+            onBuy={() => (isNative ? handleApplePurchase(pkg.appleProductId) : handleRazorpayBuy(pkg))}
           />
         ))}
       </div>

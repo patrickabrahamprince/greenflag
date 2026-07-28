@@ -15,6 +15,7 @@
     "test:matchflow": "npm run test:matchflow:backend && npm run test:matchflow:e2e"
   },
   "dependencies": {
+    "@apple/app-store-server-library": "^3.1.0",
     "@capacitor/cli": "^8.4.1",
     "@capacitor/core": "^8.4.1",
     "@capacitor/ios": "^8.4.1",

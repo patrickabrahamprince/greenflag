@@ -9,11 +9,16 @@ interface Package {
 
 interface PackageCardProps {
   pkg: Package;
-  purchasing: number | null;
-  onBuy: (pkg: Package) => void;
+  // Real StoreKit price string (e.g. "₹399.00") when running native and
+  // App Store Connect pricing has loaded -- falls back to the Razorpay
+  // INR figure on web, or while Apple's price hasn't loaded yet.
+  displayPrice?: string;
+  purchasing: boolean;
+  isPurchasingThis: boolean;
+  onBuy: () => void;
 }
 
-export function PackageCard({ pkg, purchasing, onBuy }: PackageCardProps) {
+export function PackageCard({ pkg, displayPrice, purchasing, isPurchasingThis, onBuy }: PackageCardProps) {
   return (
     <div className="card relative overflow-hidden">
       {pkg.popular && (
@@ -35,20 +40,20 @@ export function PackageCard({ pkg, purchasing, onBuy }: PackageCardProps) {
           )}
           <div>
             <p className="text-ink font-medium">{pkg.coins} Coins</p>
-            <p className="text-xs text-muted">₹{pkg.price}</p>
+            <p className="text-xs text-muted">{displayPrice || `₹${pkg.price}`}</p>
           </div>
         </div>
         <button
-          onClick={() => onBuy(pkg)}
-          disabled={purchasing !== null}
+          onClick={onBuy}
+          disabled={purchasing}
           className="btn-primary text-sm py-2 px-4 flex items-center gap-1.5 disabled:opacity-50"
         >
-          {purchasing === pkg.price ? (
+          {isPurchasingThis ? (
             <Loader2 className="w-3.5 h-3.5 animate-spin" />
           ) : (
             <ShoppingCart className="w-3.5 h-3.5" />
           )}
-          {purchasing === pkg.price ? 'Processing...' : 'Buy'}
+          {isPurchasingThis ? 'Processing...' : 'Buy'}
         </button>
       </div>
     </div>
