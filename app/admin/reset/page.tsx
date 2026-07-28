@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { RotateCcw, AlertTriangle, Loader2 } from 'lucide-react';
+import { RotateCcw, AlertTriangle, Loader2, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface ProfileOption {
@@ -10,6 +10,8 @@ interface ProfileOption {
   persona: string;
 }
 
+const NUKE_CONFIRM_PHRASE = 'DELETE ALL USERS';
+
 export default function AdminResetTool() {
   const [profiles, setProfiles] = useState<ProfileOption[]>([]);
   const [loading, setLoading] = useState(true);
@@ -17,6 +19,9 @@ export default function AdminResetTool() {
   const [userIdB, setUserIdB] = useState('');
   const [confirming, setConfirming] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [showNukePanel, setShowNukePanel] = useState(false);
+  const [nukeConfirmText, setNukeConfirmText] = useState('');
+  const [nuking, setNuking] = useState(false);
 
   useEffect(() => {
     fetch('/api/admin/users?page=0')
@@ -26,6 +31,29 @@ export default function AdminResetTool() {
   }, []);
 
   const nameFor = (id: string) => profiles.find((p) => p.id === id)?.name || 'Unknown';
+
+  const handleNukeAll = async () => {
+    setNuking(true);
+    try {
+      const res = await fetch('/api/admin/nuke-all-users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirm: nukeConfirmText.trim() }),
+      });
+      const d = await res.json();
+      if (d.success) {
+        toast.success(`Wiped ${d.deletedUsers} account(s). Admin accounts were left untouched.`);
+        setShowNukePanel(false);
+        setNukeConfirmText('');
+      } else {
+        toast.error(d.error || 'Failed to wipe data');
+      }
+    } catch {
+      toast.error('Network error');
+    } finally {
+      setNuking(false);
+    }
+  };
 
   const handleReset = async () => {
     setResetting(true);
@@ -127,6 +155,64 @@ export default function AdminResetTool() {
           )}
         </div>
       )}
+
+      <div className="mt-10 pt-6 border-t border-red-500/20">
+        <h2 className="text-lg font-display text-red-400 mb-1 flex items-center gap-2">
+          <Trash2 className="w-4 h-4" />
+          Danger Zone
+        </h2>
+        <p className="text-sm text-[#8E8E93] mb-4">
+          Permanently wipes every non-admin account on the platform: profiles, preferences,
+          photos, videos, matches, messages, wallets, and every other trace of their activity.
+          Admin accounts are left untouched. There is no undo.
+        </p>
+
+        {!showNukePanel ? (
+          <button
+            onClick={() => setShowNukePanel(true)}
+            className="btn-danger w-full flex items-center justify-center gap-2"
+          >
+            <Trash2 className="w-4 h-4" />
+            Delete All User Data
+          </button>
+        ) : (
+          <div className="border border-red-500/40 bg-red-500/10 rounded-xl p-4">
+            <div className="flex items-start gap-2 mb-3">
+              <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+              <p className="text-sm text-red-400">
+                This deletes every non-admin user's profile, photos, videos, standards, matches,
+                messages, coins, and connections platform-wide, and removes their login entirely.
+                This cannot be undone.
+              </p>
+            </div>
+            <label className="block text-sm text-[#8E8E93] mb-2">
+              Type <span className="text-[#EDEADE] font-medium">{NUKE_CONFIRM_PHRASE}</span> to confirm
+            </label>
+            <input
+              className="input w-full mb-3"
+              value={nukeConfirmText}
+              onChange={(e) => setNukeConfirmText(e.target.value)}
+              placeholder={NUKE_CONFIRM_PHRASE}
+              autoComplete="off"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={() => { setShowNukePanel(false); setNukeConfirmText(''); }}
+                className="btn-secondary flex-1 text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleNukeAll}
+                disabled={nukeConfirmText.trim() !== NUKE_CONFIRM_PHRASE || nuking}
+                className="btn-danger flex-1 text-sm disabled:opacity-50"
+              >
+                {nuking ? 'Wiping...' : 'Permanently Wipe All Users'}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
