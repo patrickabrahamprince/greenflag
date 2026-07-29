@@ -43,18 +43,30 @@ test.describe('Onboarding', () => {
     await expect(page).toHaveURL(/\/onboard/)
 
     await page.click('[data-testid="persona-woman"]')
-    await page.waitForURL(/\/onboard\//, { timeout: 10000 })
+    await page.waitForURL(/\/onboard\/name/, { timeout: 10000 })
 
-    // Navigate client-side: go directly to profile and restore Zustand store
-    await page.goto('/onboard/profile')
-    await page.waitForSelector('[data-testid="profile-name"]', { timeout: 10000 })
-    await expect(page).toHaveURL(/\/onboard\/profile/)
-    await page.evaluate(() => (window as any).__e2e?.onboardingStore?.setState({ persona: 'woman' }))
+    // Onboarding is now a chain of single-purpose screens (name -> profile
+    // basics -> Instagram -> bio -> photos) instead of one long form --
+    // each step persists into the in-memory onboarding store and routes to
+    // the next, all client-side so the store survives.
+    await page.fill('[data-testid="onboard-name-input"]', 'Sarah E2E')
+    await page.click('[data-testid="onboard-name-continue"]')
+    await page.waitForURL(/\/onboard\/profile$/, { timeout: 10000 })
 
-    await page.fill('[data-testid="profile-name"]', 'Sarah E2E')
     await page.fill('[data-testid="profile-dob"]', '1998-03-10')
     await page.fill('[data-testid="profile-city"]', 'Bangalore')
+    await page.click('[data-testid="profile-basics-continue"]')
+    await page.waitForURL(/\/onboard\/profile\/instagram/, { timeout: 10000 })
+
+    await page.fill('[data-testid="profile-instagram"]', 'sarah_e2e')
+    await page.click('[data-testid="profile-instagram-verify"]')
+    await page.waitForSelector('[data-testid="profile-instagram-continue"]:not([disabled])', { timeout: 10000 })
+    await page.click('[data-testid="profile-instagram-continue"]')
+    await page.waitForURL(/\/onboard\/profile\/bio/, { timeout: 10000 })
+
     await page.fill('[data-testid="profile-bio"]', 'E2E test bio')
+    await page.click('[data-testid="profile-bio-continue"]')
+    await page.waitForURL(/\/onboard\/profile\/photos/, { timeout: 10000 })
 
     const fixture = 'tests/fixtures/test-photo.jpg'
     await page.setInputFiles('[data-testid="photo-upload"]', [fixture, fixture, fixture])
@@ -71,8 +83,20 @@ test.describe('Onboarding', () => {
     })
 
     await page.click('[data-testid="submit-profile"]')
-    await page.waitForURL(/\/onboard\/interests/, { timeout: 30000 })
-    await expect(page).toHaveURL(/\/onboard\/interests/)
+    await page.waitForURL(/\/onboard\/quiz/, { timeout: 30000 })
+
+    profile = await getProfile(id)
+    expect(profile.onboarding_completed).toBe(true)
+
+    // Compatibility quiz -- pick the first option on all 8 questions, then
+    // dismiss the personalized "archetype reveal" that follows it.
+    for (let i = 0; i < 8; i++) {
+      await page.click('[data-testid="quiz-option-0"]')
+      await page.click('[data-testid="quiz-next"]')
+    }
+    await page.waitForSelector('[data-testid="quiz-reveal-continue"]', { timeout: 10000 })
+    await page.click('[data-testid="quiz-reveal-continue"]')
+    await page.waitForURL(/\/onboard\/interests/, { timeout: 10000 })
 
     const haveInterests = ['Travel', 'Cooking', 'Yoga', 'Books', 'Music']
     for (const interest of haveInterests) {
@@ -85,11 +109,11 @@ test.describe('Onboarding', () => {
     }
 
     await page.click('[data-testid="submit-onboarding"]')
-    await page.waitForURL(/\/discover/, { timeout: 30000 })
-    await expect(page).toHaveURL(/\/discover/)
+    await page.waitForURL(/\/onboard\/rules/, { timeout: 30000 })
+    await expect(page).toHaveURL(/\/onboard\/rules/)
 
     profile = await getProfile(id)
-    expect(profile.onboarding_completed).toBe(true)
+    expect(profile.interests_have).toContain('Travel')
   })
 
   test('admin views newly onboarded user', async ({ page }) => {

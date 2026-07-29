@@ -90,24 +90,40 @@ test('Demo: Signup and onboarding flow', async ({ page }) => {
 
   // ──────────────────────────────────────────────
   // 7.  Bypass phone OTP (can't automate SMS in E2E)
-  //     Go directly to /onboard/profile and restore
+  //     Go directly to /onboard/name and restore
   //     the chosen persona in the Zustand store
   // ──────────────────────────────────────────────
-  await page.goto('http://localhost:3000/onboard/profile')
-  await page.waitForSelector('[data-testid="profile-name"]', { timeout: 10000 })
+  await page.goto('http://localhost:3000/onboard/name')
+  await page.waitForSelector('[data-testid="onboard-name-input"]', { timeout: 10000 })
   await page.waitForTimeout(500)
   await page.evaluate(() =>
     (window as any).__e2e?.onboardingStore?.setState({ persona: 'man' })
   )
 
   // ──────────────────────────────────────────────
-  // 8.  Fill profile details
+  // 8.  Name is its own screen; profile details are
+  //     now a chain of single-purpose screens (basics
+  //     -> Instagram -> bio -> photos) instead of one
+  //     long form.
   // ──────────────────────────────────────────────
-  await page.fill('[data-testid="profile-name"]', 'Demo User')
+  await page.fill('[data-testid="onboard-name-input"]', 'Demo User')
+  await page.click('[data-testid="onboard-name-continue"]')
+  await page.waitForURL(/\/onboard\/profile$/, { timeout: 10000 })
+
   await page.fill('[data-testid="profile-dob"]', '1995-06-15')
   await page.getByPlaceholder('Your city').fill('Bangalore')
+  await page.click('[data-testid="profile-basics-continue"]')
+  await page.waitForURL(/\/onboard\/profile\/instagram/, { timeout: 10000 })
+
   await page.getByPlaceholder('username').fill('demo_user')
+  await page.click('[data-testid="profile-instagram-verify"]')
+  await page.waitForSelector('[data-testid="profile-instagram-continue"]:not([disabled])', { timeout: 10000 })
+  await page.click('[data-testid="profile-instagram-continue"]')
+  await page.waitForURL(/\/onboard\/profile\/bio/, { timeout: 10000 })
+
   await page.fill('[data-testid="profile-bio"]', 'Watching Playwright')
+  await page.click('[data-testid="profile-bio-continue"]')
+  await page.waitForURL(/\/onboard\/profile\/photos/, { timeout: 10000 })
   await page.waitForTimeout(1000)
 
   // ──────────────────────────────────────────────

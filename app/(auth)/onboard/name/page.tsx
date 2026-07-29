@@ -49,6 +49,7 @@ export default function OnboardNamePage() {
           onKeyDown={(e) => { if (e.key === 'Enter') handleContinue(); }}
           placeholder="Your first name"
           autoFocus
+          data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'onboard-name-input' : undefined}
           className={`input w-full text-lg ${error ? 'border-red-500' : ''}`}
         />
         {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
@@ -56,6 +57,7 @@ export default function OnboardNamePage() {
 
       <button
         onClick={handleContinue}
+        data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'onboard-name-continue' : undefined}
         className="btn-primary w-full py-4 mb-6 max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
       >
         Continue

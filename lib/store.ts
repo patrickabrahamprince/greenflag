@@ -26,8 +26,18 @@ interface ConnectionState {
 interface OnboardingState {
   persona: 'woman' | 'man' | null;
   name: string;
+  dob: string;
+  city: string;
+  lat: number | null;
+  lng: number | null;
+  instagramHandle: string;
+  instagramVerified: boolean;
+  bio: string;
   setPersona: (p: 'woman' | 'man') => void;
   setName: (name: string) => void;
+  setBasics: (dob: string, city: string, lat: number | null, lng: number | null) => void;
+  setInstagram: (handle: string, verified: boolean) => void;
+  setBio: (bio: string) => void;
   clearOnboarding: () => void;
 }
 
@@ -52,9 +62,30 @@ export const useScreenshotContextStore = create<ScreenshotContextState>((set) =>
 export const useOnboardingStore = create<OnboardingState>((set) => ({
   persona: null,
   name: '',
+  dob: '',
+  city: '',
+  lat: null,
+  lng: null,
+  instagramHandle: '',
+  instagramVerified: false,
+  bio: '',
   setPersona: (persona) => set({ persona }),
   setName: (name) => set({ name }),
-  clearOnboarding: () => set({ persona: null, name: '' }),
+  setBasics: (dob, city, lat, lng) => set({ dob, city, lat, lng }),
+  setInstagram: (instagramHandle, instagramVerified) => set({ instagramHandle, instagramVerified }),
+  setBio: (bio) => set({ bio }),
+  clearOnboarding: () =>
+    set({
+      persona: null,
+      name: '',
+      dob: '',
+      city: '',
+      lat: null,
+      lng: null,
+      instagramHandle: '',
+      instagramVerified: false,
+      bio: '',
+    }),
 }));
 
 if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_E2E_TESTING === 'true') {

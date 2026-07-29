@@ -236,6 +236,7 @@ export default function QuizPage() {
           <p className="text-ink/60 text-sm leading-relaxed mb-10">{reveal.description}</p>
           <button
             onClick={() => router.push('/onboard/interests')}
+            data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'quiz-reveal-continue' : undefined}
             className="btn-primary w-full py-4 font-semibold text-sm active:scale-95 transition-transform"
           >
             Continue
@@ -295,12 +296,13 @@ export default function QuizPage() {
 
           {/* Options Grid */}
           <div className="space-y-3">
-            {currentQuestion.options.map((option) => {
+            {currentQuestion.options.map((option, optionIdx) => {
               const isSelected = currentAnswer === option;
               return (
                 <button
                   key={option}
                   onClick={() => handleOptionSelect(option)}
+                  data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? `quiz-option-${optionIdx}` : undefined}
                   className={`w-full py-4 px-5 rounded-xl text-left text-sm transition-all duration-200 flex items-center justify-between border ${
                     isSelected
                       ? 'bg-gold/10 border-gold text-ink font-medium scale-[1.02] shadow-[0_0_20px_-6px_rgba(192,38,211,0.5)]'
@@ -319,6 +321,7 @@ export default function QuizPage() {
         <button
           onClick={handleNext}
           disabled={saving || !currentAnswer}
+          data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'quiz-next' : undefined}
           className="btn-primary w-full py-3.5 mt-8 font-semibold text-sm active:scale-95 transition-transform flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:scale-100"
         >
           {saving ? (
