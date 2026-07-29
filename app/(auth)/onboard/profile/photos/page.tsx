@@ -16,7 +16,7 @@ export default function ProfilePhotosPage() {
   const supabase = createClient();
   const persona = useOnboardingStore((s) => s.persona);
   const name = useOnboardingStore((s) => s.name);
-  const dob = useOnboardingStore((s) => s.dob);
+  const age = useOnboardingStore((s) => s.age);
   const city = useOnboardingStore((s) => s.city);
   const lat = useOnboardingStore((s) => s.lat);
   const lng = useOnboardingStore((s) => s.lng);
@@ -31,7 +31,7 @@ export default function ProfilePhotosPage() {
 
   useEffect(() => {
     if (!name) { router.replace('/onboard/name'); return; }
-    if (!dob || !city) { router.replace('/onboard/profile'); return; }
+    if (!age || !city) { router.replace('/onboard/profile'); return; }
     if (!bio) { router.replace('/onboard/profile/bio'); }
   }, []);
 
@@ -48,18 +48,6 @@ export default function ProfilePhotosPage() {
     URL.revokeObjectURL(photos[idx]);
     setPhotos((prev) => prev.filter((_, i) => i !== idx));
     setPhotoFiles((prev) => prev.filter((_, i) => i !== idx));
-  };
-
-  // Real age from a birthdate, not a self-typed number.
-  const computeAge = (dobStr: string): number | null => {
-    if (!dobStr) return null;
-    const birth = new Date(dobStr);
-    if (isNaN(birth.getTime())) return null;
-    const today = new Date();
-    let years = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) years--;
-    return years;
   };
 
   const handleContinue = async () => {
@@ -93,8 +81,7 @@ export default function ProfilePhotosPage() {
     const { error: upsertError } = await supabase.from('profiles').upsert({
       id: user.id,
       name,
-      dob,
-      age: computeAge(dob),
+      age,
       city: city.trim(),
       bio: bio.trim() || null,
       photos: uploadedUrls,

@@ -13,7 +13,7 @@ const VERIFY_DURATION_MS = 3000;
 export default function ProfileInstagramPage() {
   const router = useRouter();
   const name = useOnboardingStore((s) => s.name);
-  const dob = useOnboardingStore((s) => s.dob);
+  const age = useOnboardingStore((s) => s.age);
   const city = useOnboardingStore((s) => s.city);
   const instagramHandle = useOnboardingStore((s) => s.instagramHandle);
   const instagramVerified = useOnboardingStore((s) => s.instagramVerified);
@@ -26,7 +26,7 @@ export default function ProfileInstagramPage() {
 
   useEffect(() => {
     if (!name) { router.replace('/onboard/name'); return; }
-    if (!dob || !city) { router.replace('/onboard/profile'); }
+    if (!age || !city) { router.replace('/onboard/profile'); }
   }, []);
 
   const handleVerify = () => {

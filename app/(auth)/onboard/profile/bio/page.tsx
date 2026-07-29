@@ -13,7 +13,7 @@ const BIO_MIN_CHARS = 15;
 export default function ProfileBioPage() {
   const router = useRouter();
   const name = useOnboardingStore((s) => s.name);
-  const dob = useOnboardingStore((s) => s.dob);
+  const age = useOnboardingStore((s) => s.age);
   const city = useOnboardingStore((s) => s.city);
   const instagramVerified = useOnboardingStore((s) => s.instagramVerified);
   const bio = useOnboardingStore((s) => s.bio);
@@ -24,7 +24,7 @@ export default function ProfileBioPage() {
 
   useEffect(() => {
     if (!name) { router.replace('/onboard/name'); return; }
-    if (!dob || !city) { router.replace('/onboard/profile'); return; }
+    if (!age || !city) { router.replace('/onboard/profile'); return; }
     if (!instagramVerified) { router.replace('/onboard/profile/instagram'); }
   }, []);
 

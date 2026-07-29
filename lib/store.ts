@@ -26,7 +26,7 @@ interface ConnectionState {
 interface OnboardingState {
   persona: 'woman' | 'man' | null;
   name: string;
-  dob: string;
+  age: number | null;
   city: string;
   lat: number | null;
   lng: number | null;
@@ -35,7 +35,7 @@ interface OnboardingState {
   bio: string;
   setPersona: (p: 'woman' | 'man') => void;
   setName: (name: string) => void;
-  setBasics: (dob: string, city: string, lat: number | null, lng: number | null) => void;
+  setBasics: (age: number, city: string, lat: number | null, lng: number | null) => void;
   setInstagram: (handle: string, verified: boolean) => void;
   setBio: (bio: string) => void;
   clearOnboarding: () => void;
@@ -62,7 +62,7 @@ export const useScreenshotContextStore = create<ScreenshotContextState>((set) =>
 export const useOnboardingStore = create<OnboardingState>((set) => ({
   persona: null,
   name: '',
-  dob: '',
+  age: null,
   city: '',
   lat: null,
   lng: null,
@@ -71,14 +71,14 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
   bio: '',
   setPersona: (persona) => set({ persona }),
   setName: (name) => set({ name }),
-  setBasics: (dob, city, lat, lng) => set({ dob, city, lat, lng }),
+  setBasics: (age, city, lat, lng) => set({ age, city, lat, lng }),
   setInstagram: (instagramHandle, instagramVerified) => set({ instagramHandle, instagramVerified }),
   setBio: (bio) => set({ bio }),
   clearOnboarding: () =>
     set({
       persona: null,
       name: '',
-      dob: '',
+      age: null,
       city: '',
       lat: null,
       lng: null,

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowRight, Calendar } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
 import { StepDots } from '@/components/shared/StepDots';
 import toast from 'react-hot-toast';
@@ -12,19 +12,28 @@ const INDIAN_CITIES = [
   'Kolkata', 'Pune', 'Ahmedabad', 'Jaipur', 'Surat',
 ];
 
-// Step 1 of the profile wizard -- date of birth + location only. Splitting
-// what used to be one long form (DOB, location, Instagram, bio, photos)
-// into one-thing-per-screen steps is a well-documented completion lever;
-// each field group now lives on its own route under /onboard/profile/*.
+const MIN_AGE = 18;
+// Matches the live DB check constraint on profiles.age (age >= 18 AND
+// age <= 60) -- validating a wider range client-side would just let
+// someone hit a raw constraint-violation error on submit instead of a
+// friendly inline message.
+const MAX_AGE = 60;
+
+// Step 1 of the profile wizard -- age + location only. Splitting what
+// used to be one long form (DOB, location, Instagram, bio, photos) into
+// one-thing-per-screen steps is a well-documented completion lever; each
+// field group now lives on its own route under /onboard/profile/*.
+// Asking age directly instead of a full date-of-birth picker is one less
+// piece of friction -- identity is verified separately via Instagram.
 export default function ProfileBasicsPage() {
   const router = useRouter();
   const persona = useOnboardingStore((s) => s.persona);
   const name = useOnboardingStore((s) => s.name);
-  const dob = useOnboardingStore((s) => s.dob);
+  const age = useOnboardingStore((s) => s.age);
   const city = useOnboardingStore((s) => s.city);
   const setBasics = useOnboardingStore((s) => s.setBasics);
 
-  const [dobValue, setDobValue] = useState(dob);
+  const [ageValue, setAgeValue] = useState(age ? String(age) : '');
   const [cityValue, setCityValue] = useState(city);
   const [lat, setLat] = useState<number | null>(null);
   const [lng, setLng] = useState<number | null>(null);
@@ -73,30 +82,17 @@ export default function ProfileBasicsPage() {
     if (!city) detectLocation();
   }, []);
 
-  // Real age from a birthdate, not a self-typed number -- checks
-  // month/day too so a boundary birthday doesn't wrongly admit/reject.
-  const computeAge = (dobStr: string): number | null => {
-    if (!dobStr) return null;
-    const birth = new Date(dobStr);
-    if (isNaN(birth.getTime())) return null;
-    const today = new Date();
-    let years = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) years--;
-    return years;
-  };
-
   const handleContinue = () => {
     const e: Record<string, string> = {};
-    const ageNum = computeAge(dobValue);
-    if (!dobValue || ageNum === null) e.dob = 'Date of birth is required';
-    else if (ageNum < 18) e.dob = 'You must be 18+';
-    else if (ageNum > 100) e.dob = 'Please enter a valid date of birth';
+    const ageNum = Number(ageValue);
+    if (!ageValue.trim() || !Number.isInteger(ageNum)) e.age = 'How old are you?';
+    else if (ageNum < MIN_AGE) e.age = 'You must be 18+';
+    else if (ageNum > MAX_AGE) e.age = 'Please enter a valid age';
     if (!cityValue.trim()) e.city = 'City is required';
     setErrors(e);
     if (Object.keys(e).length > 0) return;
 
-    setBasics(dobValue, cityValue.trim(), lat, lng);
+    setBasics(ageNum, cityValue.trim(), lat, lng);
     router.push('/onboard/profile/instagram');
   };
 
@@ -118,18 +114,19 @@ export default function ProfileBasicsPage() {
 
         <div className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-ink mb-1.5">Date of birth</label>
-            <div className="relative">
-              <input
-                type="date"
-                value={dobValue}
-                onChange={(e) => { setDobValue(e.target.value); setErrors((p) => ({ ...p, dob: '' })); }}
-                data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-dob' : undefined}
-                className={`input pr-8 [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:opacity-0 ${errors.dob ? 'border-red-500' : ''}`}
-              />
-              <Calendar size={18} className="absolute right-0 top-1/2 -translate-y-1/2 text-ink/40 pointer-events-none" />
-            </div>
-            {errors.dob && <p className="text-red-500 text-xs mt-1">{errors.dob}</p>}
+            <label className="block text-sm font-medium text-ink mb-1.5">How old are you?</label>
+            <input
+              type="number"
+              inputMode="numeric"
+              min={MIN_AGE}
+              max={MAX_AGE}
+              value={ageValue}
+              onChange={(e) => { setAgeValue(e.target.value); setErrors((p) => ({ ...p, age: '' })); }}
+              placeholder="Your age"
+              data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-age' : undefined}
+              className={`input ${errors.age ? 'border-red-500' : ''}`}
+            />
+            {errors.age && <p className="text-red-500 text-xs mt-1">{errors.age}</p>}
           </div>
 
           <div>
