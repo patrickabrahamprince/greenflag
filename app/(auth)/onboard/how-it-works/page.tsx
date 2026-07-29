@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { CalendarDays, ShieldCheck, Clock, Sparkles, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore } from '@/lib/store';
+import { SocialProofLine } from '@/components/shared/SocialProofLine';
 import toast from 'react-hot-toast';
 
 const POINTS = [
@@ -120,10 +121,12 @@ export default function HowItWorksPage() {
           ))}
         </div>
 
+        <SocialProofLine className="text-center text-xs text-gold/70 font-medium mt-6" />
+
         <button
           onClick={handleContinue}
           disabled={continuing}
-          className="btn-primary w-full py-4 mt-6 font-semibold text-sm active:scale-95 transition-transform flex items-center justify-center gap-2"
+          className="btn-primary w-full py-4 mt-3 font-semibold text-sm active:scale-95 transition-transform flex items-center justify-center gap-2"
         >
           {continuing ? <Loader2 className="w-4 h-4 animate-spin" /> : "Let's Begin"}
         </button>

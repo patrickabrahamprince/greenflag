@@ -18,9 +18,9 @@ export default function ProfilePage() {
   const router = useRouter();
   const supabase = createClient();
   const persona = useOnboardingStore((s) => s.persona);
+  const name = useOnboardingStore((s) => s.name);
   const setGlobalUser = useUserStore((s) => s.setUser);
 
-  const [name, setName] = useState('');
   const [dob, setDob] = useState('');
   const [city, setCity] = useState('');
   const [bio, setBio] = useState('');
@@ -30,20 +30,20 @@ export default function ProfilePage() {
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isGoogleUser, setIsGoogleUser] = useState(false);
   const [gpsDetecting, setGpsDetecting] = useState(false);
   const [gpsDenied, setGpsDenied] = useState(false);
   const [lat, setLat] = useState<number | null>(null);
   const [lng, setLng] = useState<number | null>(null);
 
   useEffect(() => {
-    const init = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user?.app_metadata?.provider === 'google') {
-        setIsGoogleUser(true);
-      }
-    };
-    init();
+    // Name is collected on its own screen just before this one
+    // (/onboard/name) -- if it's missing, the store didn't survive
+    // (e.g. a hard refresh), so send them back rather than letting this
+    // page silently submit a blank name.
+    if (!name) {
+      router.replace('/onboard/name');
+      return;
+    }
     detectLocation();
   }, []);
 
@@ -132,7 +132,6 @@ export default function ProfilePage() {
 
   const validate = (): boolean => {
     const e: Record<string, string> = {};
-    if (!name.trim() || name.trim().length < 2) e.name = 'Name is required';
     const ageNum = computeAge(dob);
     if (!dob || ageNum === null) e.dob = 'Date of birth is required';
     else if (ageNum < 18) e.dob = 'You must be 18+';
@@ -178,7 +177,7 @@ export default function ProfilePage() {
 
     const { error } = await supabase.from('profiles').upsert({
       id: user.id,
-      name: name.trim(),
+      name,
       dob,
       age: computeAge(dob),
       city: city.trim(),
@@ -210,24 +209,23 @@ export default function ProfilePage() {
   return (
     <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6">
       <button
-        onClick={() => router.push(isGoogleUser ? '/onboard' : '/onboard/phone')}
+        onClick={() => router.push('/onboard/name')}
         className="text-ink/40 hover:text-ink transition-colors mb-6 w-fit"
       >
         <ArrowLeft size={24} />
       </button>
 
       <h1 className="text-xl font-display font-semibold text-ink text-center mb-6">
-        {persona === 'woman' ? 'Make Your Entrance' : 'Introduce Yourself'}
+        {persona === 'woman' ? `Make Your Entrance, ${name}` : `Nice To Meet You, ${name}`}
       </h1>
 
       <div className="space-y-5 flex-1 max-w-md mx-auto w-full">
         <ProfileFormFields
-          name={name} dob={dob} city={city} bio={bio}
+          dob={dob} city={city} bio={bio}
           instagramHandle={instagramHandle}
           instagramVerified={instagramVerified}
           gpsDetecting={gpsDetecting} gpsDenied={gpsDenied}
           errors={errors}
-          onNameChange={(v) => { setName(v); clearError('name'); }}
           onDobChange={(v) => { setDob(v); clearError('dob'); }}
           onCityChange={(v) => { setCity(v); clearError('city'); }}
           onBioChange={(v) => { setBio(v); clearError('bio'); }}

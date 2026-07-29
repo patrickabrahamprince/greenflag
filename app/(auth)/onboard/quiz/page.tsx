@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Loader2, ArrowLeft, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { useOnboardingStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 
 interface Question {
@@ -55,13 +56,101 @@ const QUIZ_QUESTIONS: Question[] = [
   },
 ];
 
+// Deterministic, not real psychology -- a lightweight "aha" reveal after
+// the quiz instead of the answers just disappearing into storage with no
+// payoff. Each option maps to one of four traits; whichever trait shows
+// up most across the 8 answers picks the archetype shown back.
+type Trait = 'Grounded' | 'Romantic' | 'Adventurous' | 'Playful';
+
+const TRAIT_MAP: Record<string, Record<string, Trait>> = {
+  relationship_goal: {
+    'A long-term partnership': 'Grounded',
+    'Marriage-minded': 'Grounded',
+    'Intentional, but open': 'Romantic',
+    'Exploring with intention': 'Adventurous',
+  },
+  weekend_vibe: {
+    'Slow coffee & pages': 'Grounded',
+    'Outdoors & movement': 'Adventurous',
+    'Brunch with your circle': 'Playful',
+    'Slow morning, no plans': 'Romantic',
+  },
+  love_language: {
+    'Quality time together': 'Romantic',
+    'Thoughtful words': 'Romantic',
+    'Considerate actions': 'Grounded',
+    'Physical presence': 'Adventurous',
+  },
+  first_date: {
+    'A quiet coffee walk': 'Grounded',
+    'Cocktails, low light': 'Playful',
+    'A class or experience together': 'Adventurous',
+    'An intimate dinner': 'Romantic',
+  },
+  communication: {
+    'Thoughtful messages': 'Romantic',
+    'Unplanned calls': 'Playful',
+    'Face to face': 'Grounded',
+    'A shared sense of humor': 'Playful',
+  },
+  humor_style: {
+    'Dry & understated': 'Grounded',
+    'Playful & witty': 'Playful',
+    'Sharp & clever': 'Adventurous',
+    'Dark & dry': 'Romantic',
+  },
+  ideal_trip: {
+    'Private beach': 'Romantic',
+    'Old European city': 'Romantic',
+    'Mountains, off-grid': 'Adventurous',
+    'Culinary capital': 'Playful',
+  },
+  pets: {
+    'Dog person': 'Playful',
+    'Cat person': 'Grounded',
+    'Animal lover': 'Romantic',
+    'Not just yet': 'Adventurous',
+  },
+};
+
+const ARCHETYPES: Record<Trait, { title: string; description: string }> = {
+  Grounded: {
+    title: 'The Steady One',
+    description: "You know what you want, and you're not in a rush to fake it. Stability reads as strength on you.",
+  },
+  Romantic: {
+    title: 'The Old Soul',
+    description: 'You lead with feeling. Sincerity is your love language, and you notice when someone else means it too.',
+  },
+  Adventurous: {
+    title: 'The Explorer',
+    description: "You want a partner in motion, not just in comfort — someone who says yes to the unplanned.",
+  },
+  Playful: {
+    title: 'The Spark',
+    description: 'Lightness is your currency. You connect through humor first, and depth follows once it feels safe.',
+  },
+};
+
+function computeArchetype(answers: Record<string, string>): { title: string; description: string } {
+  const counts: Record<Trait, number> = { Grounded: 0, Romantic: 0, Adventurous: 0, Playful: 0 };
+  for (const [questionId, option] of Object.entries(answers)) {
+    const trait = TRAIT_MAP[questionId]?.[option];
+    if (trait) counts[trait] += 1;
+  }
+  const [topTrait] = (Object.entries(counts) as [Trait, number][]).sort((a, b) => b[1] - a[1])[0];
+  return ARCHETYPES[topTrait];
+}
+
 export default function QuizPage() {
   const router = useRouter();
   const supabase = createClient();
+  const name = useOnboardingStore((s) => s.name);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [reveal, setReveal] = useState<{ title: string; description: string } | null>(null);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -117,8 +206,7 @@ export default function QuizPage() {
 
       if (error) throw error;
 
-      toast.success('Saved');
-      router.push('/onboard/interests');
+      setReveal(computeArchetype(answers));
     } catch (err: any) {
       toast.error(err.message || 'Failed to save quiz');
     } finally {
@@ -130,6 +218,29 @@ export default function QuizPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#000000]">
         <Loader2 className="w-8 h-8 animate-spin text-gold" />
+      </div>
+    );
+  }
+
+  if (reveal) {
+    return (
+      <div className="w-full animate-fade-in min-h-screen flex flex-col justify-center px-6 bg-[#000000] text-center">
+        <div className="max-w-sm mx-auto w-full">
+          <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_-8px_rgba(192,38,211,0.6)]">
+            <Sparkles className="w-7 h-7 text-gold" />
+          </div>
+          <p className="text-ink/50 text-xs uppercase tracking-widest mb-3">
+            {name ? `${name}, based on your answers` : 'Based on your answers'}
+          </p>
+          <h1 className="font-display text-3xl text-ink mb-4">{reveal.title}</h1>
+          <p className="text-ink/60 text-sm leading-relaxed mb-10">{reveal.description}</p>
+          <button
+            onClick={() => router.push('/onboard/interests')}
+            className="btn-primary w-full py-4 font-semibold text-sm active:scale-95 transition-transform"
+          >
+            Continue
+          </button>
+        </div>
       </div>
     );
   }

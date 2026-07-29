@@ -12,7 +12,6 @@ const VERIFY_DURATION_MS = 3000;
 const BIO_MIN_CHARS = 15;
 
 interface ProfileFormFieldsProps {
-  name: string;
   dob: string;
   city: string;
   bio: string;
@@ -21,7 +20,6 @@ interface ProfileFormFieldsProps {
   gpsDetecting: boolean;
   gpsDenied: boolean;
   errors: Record<string, string>;
-  onNameChange: (v: string) => void;
   onDobChange: (v: string) => void;
   onCityChange: (v: string) => void;
   onBioChange: (v: string) => void;
@@ -31,9 +29,9 @@ interface ProfileFormFieldsProps {
 }
 
 export function ProfileFormFields({
-  name, dob, city, bio, instagramHandle, instagramVerified,
+  dob, city, bio, instagramHandle, instagramVerified,
   gpsDetecting, gpsDenied, errors,
-  onNameChange, onDobChange, onCityChange, onBioChange,
+  onDobChange, onCityChange, onBioChange,
   onInstagramChange, onInstagramVerifiedChange, onDetectLocation,
 }: ProfileFormFieldsProps) {
   const dobInputRef = useRef<HTMLInputElement>(null);
@@ -65,19 +63,6 @@ export function ProfileFormFields({
 
   return (
     <>
-      <div>
-        <label className="block text-sm font-medium text-ink mb-1.5">Name</label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => onNameChange(e.target.value)}
-          placeholder="Your full name"
-          data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-name' : undefined}
-          className={`input ${errors.name ? 'border-red-500' : ''}`}
-        />
-        {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
-      </div>
-
       <div>
         <label className="block text-sm font-medium text-ink mb-1.5">Date of birth</label>
         <div className="relative">

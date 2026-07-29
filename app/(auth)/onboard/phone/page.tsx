@@ -125,7 +125,7 @@ export default function PhonePage() {
   return (
     <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6">
       <button
-        onClick={() => router.push('/onboard')}
+        onClick={() => router.push('/onboard/name')}
         className="text-ink/40 hover:text-ink transition-colors mb-8 w-fit"
       >
         <ArrowLeft size={24} />

@@ -25,7 +25,9 @@ interface ConnectionState {
 
 interface OnboardingState {
   persona: 'woman' | 'man' | null;
+  name: string;
   setPersona: (p: 'woman' | 'man') => void;
+  setName: (name: string) => void;
   clearOnboarding: () => void;
 }
 
@@ -49,8 +51,10 @@ export const useScreenshotContextStore = create<ScreenshotContextState>((set) =>
 
 export const useOnboardingStore = create<OnboardingState>((set) => ({
   persona: null,
+  name: '',
   setPersona: (persona) => set({ persona }),
-  clearOnboarding: () => set({ persona: null }),
+  setName: (name) => set({ name }),
+  clearOnboarding: () => set({ persona: null, name: '' }),
 }));
 
 if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_E2E_TESTING === 'true') {

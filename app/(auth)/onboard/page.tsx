@@ -12,7 +12,7 @@ export default function OnboardPage() {
 
   const handleSelect = (persona: 'woman' | 'man') => {
     setPersona(persona);
-    router.push(persona === 'woman' ? '/onboard/profile' : '/onboard/phone');
+    router.push('/onboard/name');
   };
 
   const handleSignOut = async () => {
