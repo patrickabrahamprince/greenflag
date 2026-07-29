@@ -63,11 +63,20 @@ export default function SettingsPage() {
 
   const handleDeleteAccount = async () => {
     setUpdating(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    toast.success('Account deleted');
-    setUpdating(false);
-    setShowDeleteConfirm(false);
-    handleLogout();
+    try {
+      const res = await fetch('/api/user/delete', { method: 'POST' });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to delete account');
+      }
+      toast.success('Account deleted');
+      setShowDeleteConfirm(false);
+      await handleLogout();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to delete account');
+    } finally {
+      setUpdating(false);
+    }
   };
 
   return (
