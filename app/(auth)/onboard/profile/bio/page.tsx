@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Quote } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
 import { StepDots } from '@/components/shared/StepDots';
 
@@ -21,6 +21,7 @@ export default function ProfileBioPage() {
 
   const [value, setValue] = useState(bio);
   const [error, setError] = useState('');
+  const [showIntro, setShowIntro] = useState(true);
 
   useEffect(() => {
     if (!name) { router.replace('/onboard/name'); return; }
@@ -38,10 +39,45 @@ export default function ProfileBioPage() {
     router.push('/onboard/profile/photos');
   };
 
+  if (showIntro) {
+    return (
+      <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+        <button
+          onClick={() => router.push('/onboard/profile/instagram')}
+          className="text-ink/40 hover:text-ink transition-colors mb-6 w-fit"
+        >
+          <ArrowLeft size={24} />
+        </button>
+
+        <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
+          <StepDots current={4} total={5} />
+          <div
+            className="w-full aspect-[4/3] rounded-3xl flex items-center justify-center mb-8"
+            style={{ background: 'radial-gradient(ellipse 120% 100% at 30% 20%, rgba(192, 38, 211, 0.5) 0%, transparent 60%), radial-gradient(ellipse 100% 100% at 80% 90%, rgba(124, 58, 237, 0.45) 0%, transparent 65%), #17091F' }}
+          >
+            <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center">
+              <Quote size={26} className="text-ink" />
+            </div>
+          </div>
+          <h1 className="font-display text-3xl text-ink mb-3">Personality goes a long way</h1>
+          <p className="text-ink/50 text-sm leading-relaxed">It&apos;s your time to shine.</p>
+        </div>
+
+        <button
+          onClick={() => setShowIntro(false)}
+          className="btn-primary w-full py-4 mb-safe-bottom max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+        >
+          Stand out
+          <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
       <button
-        onClick={() => router.push('/onboard/profile/instagram')}
+        onClick={() => setShowIntro(true)}
         className="text-ink/40 hover:text-ink transition-colors mb-6 w-fit"
       >
         <ArrowLeft size={24} />

@@ -1,7 +1,13 @@
 'use client';
 
-import { useRef } from 'react';
-import { Upload, X } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { Upload, X, Lightbulb } from 'lucide-react';
+
+const PHOTO_TIPS = [
+  'Lead with a clear, recent photo of your face -- no group shots or sunglasses up front.',
+  'Show your life: hobbies, travel, friends -- not just posed close-ups.',
+  'Skip heavy filters. Natural light photos get more attention.',
+];
 
 interface PhotoUploadSlotsProps {
   photos: string[];
@@ -19,6 +25,7 @@ export function PhotoUploadSlots({
   error,
 }: PhotoUploadSlotsProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [showTips, setShowTips] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -88,6 +95,21 @@ export function PhotoUploadSlots({
       />
       <p className="text-xs text-[#9DA0A6] mt-1.5">{photos.length}/{maxPhotos} added</p>
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+      <button
+        type="button"
+        onClick={() => setShowTips((v) => !v)}
+        className="flex items-center gap-1.5 text-xs font-medium text-gold mt-3"
+      >
+        <Lightbulb size={14} />
+        How to choose the perfect picture
+      </button>
+      {showTips && (
+        <ul className="mt-2 space-y-1.5 list-disc list-inside">
+          {PHOTO_TIPS.map((tip) => (
+            <li key={tip} className="text-xs text-[#9DA0A6] leading-relaxed">{tip}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

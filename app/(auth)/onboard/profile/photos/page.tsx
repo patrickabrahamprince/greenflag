@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2, Camera } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useOnboardingStore, useUserStore } from '@/lib/store';
 import { PhotoUploadSlots } from '@/components/discovery/PhotoUploadSlots';
 import { StepDots } from '@/components/shared/StepDots';
+import { BottomSheet } from '@/components/shared/BottomSheet';
 import { compressImage } from '@/lib/compressImage';
 import toast from 'react-hot-toast';
 
@@ -30,12 +31,14 @@ export default function ProfilePhotosPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [compressing, setCompressing] = useState(false);
+  const [showFaceNudge, setShowFaceNudge] = useState(false);
 
   useEffect(() => {
     if (!name) { router.replace('/onboard/name'); return; }
     if (!age) { router.replace('/onboard/profile'); return; }
     if (!city) { router.replace('/onboard/profile/location'); return; }
-    if (!bio) { router.replace('/onboard/profile/bio'); }
+    if (!bio) { router.replace('/onboard/profile/bio'); return; }
+    setShowFaceNudge(true);
   }, []);
 
   const handlePhotoAdd = async (files: File[]) => {
@@ -159,6 +162,21 @@ export default function ProfilePhotosPage() {
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Continue'}
         </button>
       </div>
+
+      <BottomSheet open={showFaceNudge} onClose={() => setShowFaceNudge(false)}>
+        <div className="text-center pb-6">
+          <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-5">
+            <Camera size={26} className="text-ink" />
+          </div>
+          <h2 className="font-display text-xl text-ink mb-2">We want to see your face</h2>
+          <p className="text-ink/60 text-sm leading-relaxed mb-6">
+            Add at least one clear photo of your face to help with approval. It would be a shame to hide it!
+          </p>
+          <button onClick={() => setShowFaceNudge(false)} className="btn-primary w-full py-4">
+            Got it
+          </button>
+        </div>
+      </BottomSheet>
     </div>
   );
 }
