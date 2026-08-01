@@ -4,9 +4,9 @@ import { useRouter } from 'next/navigation'
 import { Capacitor } from '@capacitor/core'
 import { createClient } from '@/lib/supabase/client'
 import { signInWithGoogleNative, signInWithAppleNative } from '@/lib/native/socialLogin'
+import { Loader2 } from 'lucide-react'
 import { GoogleButton } from '@/components/ui/GoogleButton'
 import { AppleButton } from '@/components/ui/AppleButton'
-import { SignOutStrip } from './sign-out'
 import { TermsGateModal } from '@/components/auth/TermsGateModal'
 import { hasAcceptedTerms, markTermsAccepted } from '@/lib/termsGate'
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground'
@@ -14,9 +14,17 @@ import { OnboardingBackground } from '@/components/onboarding/OnboardingBackgrou
 export default function LoginPage() {
   const router = useRouter()
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
   const [appleLoading, setAppleLoading] = useState(false)
   const supabase = createClient()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  // Google/Apple are the front door now; email/password stays as a
+  // fallback for existing password accounts (and for automated tests,
+  // which can't drive a real OAuth picker) behind a "Having trouble?"
+  // reveal instead of showing by default.
+  const [showEmailLogin, setShowEmailLogin] = useState(false)
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null)
 
   // First sign-in/sign-up action on this device shows a one-time terms
@@ -51,6 +59,21 @@ export default function LoginPage() {
     if (profile?.is_admin) window.location.href = '/admin'
     else if (!profile?.onboarding_completed) window.location.href = '/onboard'
     else window.location.href = '/discover'
+  }
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) throw error
+      await redirectAfterAuth()
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Login failed')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleGoogleLogin = () => withTermsGate(handleGoogleLoginInner)
@@ -129,7 +152,22 @@ export default function LoginPage() {
           <AppleButton onClick={handleAppleLogin} loading={appleLoading} />
         </div>
 
-        <SignOutStrip />
+        {!showEmailLogin ? (
+          <button
+            onClick={() => setShowEmailLogin(true)}
+            className="block mx-auto mt-8 text-xs text-ink/40 hover:text-ink underline underline-offset-4 decoration-ink/20 hover:decoration-ink/40 transition-colors"
+          >
+            Having trouble?
+          </button>
+        ) : (
+          <form onSubmit={handleLogin} className="space-y-4 mt-8">
+            <input data-testid="email" type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} required className="input w-full" />
+            <input data-testid="password" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required className="input w-full" />
+            <button data-testid="login-btn" type="submit" disabled={loading} className="btn-primary w-full">
+              {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Sign In'}
+            </button>
+          </form>
+        )}
       </div>
       <TermsGateModal
         open={pendingAction !== null}
