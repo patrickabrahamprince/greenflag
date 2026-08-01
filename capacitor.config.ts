@@ -58,12 +58,28 @@ const config: CapacitorConfig = {
     // Next.js's `interactiveWidget: 'resizes-content'` rely on) is a
     // Chromium-only feature -- WebKit/WKWebView has never implemented it,
     // so on iOS none of that CSS-only keyboard handling actually does
-    // anything. 'body' mode makes Capacitor's native layer resize the
-    // WebView's own body height when the keyboard shows, which is what
-    // actually makes 100dvh (and therefore every bottom-pinned Continue
-    // button) shrink to sit above the keyboard instead of under it.
+    // anything. 'body' mode (tried first) turned out to be the wrong
+    // choice too: reading the plugin's actual native source
+    // (Keyboard.m's resizeElement:), 'body' only sets a pixel
+    // `document.body.style.height` via injected JS -- it never touches
+    // the WKWebView's own frame. `dvh` units are computed straight from
+    // the viewport/webview bounds and completely ignore body's height, so
+    // 'body' mode had zero effect on anything using min-h-dvh, which is
+    // this entire app. 'native' mode instead resizes the WKWebView's
+    // actual frame when the keyboard shows, which is what dvh really
+    // measures against.
     Keyboard: {
-      resize: 'body',
+      resize: 'native',
+    },
+    // Without this plugin, iOS dismisses the launch screen the instant
+    // the app finishes its native init step -- often well under a
+    // second, before there's been any real chance to register the brand
+    // moment. launchAutoHide + launchShowDuration keeps it on screen for
+    // a fixed, deliberate beat instead.
+    SplashScreen: {
+      launchShowDuration: 1800,
+      launchAutoHide: true,
+      backgroundColor: '#0B0614',
     },
   },
 };
