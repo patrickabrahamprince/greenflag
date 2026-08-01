@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Bell, Shield, Trash2, LogOut, Phone, Mail, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Bell, Shield, Trash2, LogOut, Phone, Mail, CheckCircle, PauseCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { createClient } from '@/lib/supabase/client';
@@ -21,6 +21,7 @@ export default function SettingsPage() {
   const router = useRouter();
   const user = useUserStore((s) => s.user);
   const clearUser = useUserStore((s) => s.clearUser);
+  const coinBalance = useCoinStore((s) => s.balance);
   const setBalance = useCoinStore((s) => s.setBalance);
 
   const [phone, setPhone] = useState<string | undefined>(undefined);
@@ -29,7 +30,9 @@ export default function SettingsPage() {
   const [smsNotif, setSmsNotif] = useState(false);
   const [emailNotif, setEmailNotif] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showPauseConfirm, setShowPauseConfirm] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [pausing, setPausing] = useState(false);
 
   useEffect(() => {
     const fetchPhone = async () => {
@@ -59,6 +62,24 @@ export default function SettingsPage() {
 
   const handleChangePassword = async () => {
     toast.success('Password reset link sent to your email');
+  };
+
+  const handlePauseAccount = async () => {
+    setPausing(true);
+    try {
+      const res = await fetch('/api/user/pause', { method: 'POST' });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to pause account');
+      }
+      setShowPauseConfirm(false);
+      toast.success('Paused. Log back in anytime to pick up right where you left off.');
+      await handleLogout();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to pause account');
+    } finally {
+      setPausing(false);
+    }
   };
 
   const handleDeleteAccount = async () => {
@@ -173,6 +194,28 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        <div className="card">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-full bg-surface-light flex items-center justify-center">
+              <PauseCircle className="w-5 h-5 text-gold" />
+            </div>
+            <div>
+              <p className="text-sm text-ink font-medium">Need a break?</p>
+              <p className="text-xs text-muted">Go invisible without losing anything</p>
+            </div>
+          </div>
+          <p className="text-xs text-muted mb-3 leading-relaxed">
+            Pausing signs you out and hides your profile from everyone else. Your matches,
+            messages, and coin balance are all still here — just log back in whenever you're ready.
+          </p>
+          <button
+            onClick={() => setShowPauseConfirm(true)}
+            className="btn-secondary w-full text-sm"
+          >
+            Pause My Account
+          </button>
+        </div>
+
         <div className="card border-red-500/20">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
@@ -197,13 +240,50 @@ export default function SettingsPage() {
         </button>
       </div>
 
+      {showPauseConfirm && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
+          <div className="card max-w-sm w-full p-6 text-center">
+            <PauseCircle className="w-12 h-12 text-gold mx-auto mb-4" />
+            <h3 className="font-display text-lg text-ink mb-2">Pause your account?</h3>
+            <p className="text-sm text-muted mb-6">
+              You&apos;ll be signed out and invisible to everyone until you log back in.
+              Nothing is deleted — resume anytime.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowPauseConfirm(false)}
+                className="btn-secondary flex-1 text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handlePauseAccount}
+                disabled={pausing}
+                className="btn-primary flex-1 text-sm"
+              >
+                {pausing ? 'Pausing...' : 'Pause'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
           <div className="card max-w-sm w-full p-6 text-center">
             <Trash2 className="w-12 h-12 text-red-500 mx-auto mb-4" />
             <h3 className="font-display text-lg text-ink mb-2">Delete Account?</h3>
-            <p className="text-sm text-muted mb-6">
-              This action cannot be undone. All your data will be permanently deleted.
+            <p className="text-sm text-muted mb-2">
+              This action cannot be undone. Your profile, matches, messages, and Standards
+              will be permanently erased.
+            </p>
+            {coinBalance > 0 && (
+              <p className="text-sm text-red-400 mb-2">
+                Your {coinBalance} coin{coinBalance === 1 ? '' : 's'} will be lost and cannot be refunded.
+              </p>
+            )}
+            <p className="text-xs text-muted mb-6">
+              Just need space? Consider pausing instead — it&apos;s reversible.
             </p>
             <div className="flex gap-3">
               <button

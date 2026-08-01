@@ -80,11 +80,20 @@ export async function middleware(req: NextRequest) {
   // Fetch profile for authz checks
   const { data: profile } = await supabase
     .from('profiles')
-    .select('is_admin, onboarding_completed, approval_status')
+    .select('is_admin, onboarding_completed, approval_status, is_active')
     .eq('id', user.id)
     .single();
 
   console.log('MIDDLEWARE PROFILE:', profile?.is_admin ? 'admin' : profile?.onboarding_completed ? 'onboarded' : 'no profile');
+
+  // Pausing (Settings -> "Pause my account") sets is_active false and signs
+  // the user out -- this is the "resume" side of that: reaching any
+  // authenticated page at all means they successfully logged back in, auth
+  // method agnostic (password, Google, Apple, phone OTP), so this is the
+  // one place that needs to flip it back regardless of how they got here.
+  if (profile && profile.is_active === false) {
+    await supabase.from('profiles').update({ is_active: true }).eq('id', user.id);
+  }
 
   // Admin users: redirect to /admin unless already there
   if (profile?.is_admin) {
