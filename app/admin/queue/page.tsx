@@ -10,6 +10,7 @@ export default function AdminQueue() {
   const [items, setItems] = useState<QueueItem[]>([]);
   const [selected, setSelected] = useState<QueueItem | null>(null);
   const [loading, setLoading] = useState(true);
+  const [moderatingId, setModeratingId] = useState<string | null>(null);
 
   const fetchQueue = useCallback(async () => {
     const res = await fetch('/api/admin/queue');
@@ -24,34 +25,44 @@ export default function AdminQueue() {
   useEffect(() => { fetchQueue(); }, []);
 
   const handleApprove = useCallback(async (id: string) => {
-    const res = await fetch(`/api/admin/submissions/${id}/moderate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'approve' }),
-    });
-    if (res.ok) {
-      setItems((prev) => {
-        const next = prev.filter((i) => i.id !== id);
-        setSelected((s) => (s?.id === id ? next[0] || null : s));
-        return next;
+    setModeratingId(id);
+    try {
+      const res = await fetch(`/api/admin/submissions/${id}/moderate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'approve' }),
       });
+      if (res.ok) {
+        setItems((prev) => {
+          const next = prev.filter((i) => i.id !== id);
+          setSelected((s) => (s?.id === id ? next[0] || null : s));
+          return next;
+        });
+      }
+    } finally {
+      setModeratingId(null);
     }
   }, []);
 
   const handleReject = useCallback(async (id: string) => {
     const reason = prompt('Rejection reason:');
     if (reason === null) return;
-    const res = await fetch(`/api/admin/submissions/${id}/moderate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'reject', reason }),
-    });
-    if (res.ok) {
-      setItems((prev) => {
-        const next = prev.filter((i) => i.id !== id);
-        setSelected((s) => (s?.id === id ? next[0] || null : s));
-        return next;
+    setModeratingId(id);
+    try {
+      const res = await fetch(`/api/admin/submissions/${id}/moderate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reject', reason }),
       });
+      if (res.ok) {
+        setItems((prev) => {
+          const next = prev.filter((i) => i.id !== id);
+          setSelected((s) => (s?.id === id ? next[0] || null : s));
+          return next;
+        });
+      }
+    } finally {
+      setModeratingId(null);
     }
   }, []);
 
@@ -86,7 +97,7 @@ export default function AdminQueue() {
             ))}
           </div>
           {selected && (
-            <QueueItemDetail item={selected} onApprove={handleApprove} onReject={handleReject} />
+            <QueueItemDetail item={selected} onApprove={handleApprove} onReject={handleReject} moderating={moderatingId === selected.id} />
           )}
         </div>
       )}

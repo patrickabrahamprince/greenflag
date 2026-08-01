@@ -34,8 +34,9 @@ interface SubmissionDetail {
 
 const TERMINAL_STATUSES = ['completed', 'rejected', 'expired_no_submission', 'refunded'];
 
-function SubmissionCard({ sub, onModerate }: { sub: SubmissionDetail; onModerate: (id: string, action: 'approve' | 'reject') => void }) {
+function SubmissionCard({ sub, onModerate, moderatingId }: { sub: SubmissionDetail; onModerate: (id: string, action: 'approve' | 'reject') => void; moderatingId: string | null }) {
   const Icon = sub.media_type === 'voice' ? Mic : sub.media_type === 'text' ? TypeIcon : Camera;
+  const isModerating = moderatingId === sub.id;
 
   return (
     <div className="card">
@@ -71,17 +72,17 @@ function SubmissionCard({ sub, onModerate }: { sub: SubmissionDetail; onModerate
         <div className="flex gap-2">
           <button
             onClick={() => onModerate(sub.id, 'approve')}
-            disabled={sub.moderation_status === 'approved'}
+            disabled={sub.moderation_status === 'approved' || isModerating}
             className="flex-1 bg-green-500/10 text-green-500 rounded-xl py-2 text-xs font-medium flex items-center justify-center gap-1.5 hover:bg-green-500/20 transition-colors disabled:opacity-40"
           >
-            <Check className="w-3.5 h-3.5" /> Approve
+            {isModerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />} Approve
           </button>
           <button
             onClick={() => onModerate(sub.id, 'reject')}
-            disabled={sub.moderation_status === 'rejected'}
+            disabled={sub.moderation_status === 'rejected' || isModerating}
             className="flex-1 bg-red-500/10 text-red-500 rounded-xl py-2 text-xs font-medium flex items-center justify-center gap-1.5 hover:bg-red-500/20 transition-colors disabled:opacity-40"
           >
-            <X className="w-3.5 h-3.5" /> Reject
+            {isModerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />} Reject
           </button>
         </div>
       ) : null}
@@ -96,6 +97,7 @@ export default function AdminMatchDetail() {
   const [submissions, setSubmissions] = useState<SubmissionDetail[]>([]);
   const [loading, setLoading] = useState(true);
   const [ending, setEnding] = useState(false);
+  const [moderatingId, setModeratingId] = useState<string | null>(null);
 
   const fetchDetail = useCallback(async () => {
     const res = await fetch(`/api/admin/matches/${params.id}`);
@@ -117,16 +119,21 @@ export default function AdminMatchDetail() {
       reason = prompt('Rejection reason:');
       if (reason === null) return;
     }
-    const res = await fetch(`/api/admin/submissions/${id}/moderate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action, reason }),
-    });
-    if (res.ok) {
-      toast.success(action === 'approve' ? 'Submission approved' : 'Submission rejected');
-      fetchDetail();
-    } else {
-      toast.error('Failed to moderate submission');
+    setModeratingId(id);
+    try {
+      const res = await fetch(`/api/admin/submissions/${id}/moderate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, reason }),
+      });
+      if (res.ok) {
+        toast.success(action === 'approve' ? 'Submission approved' : 'Submission rejected');
+        await fetchDetail();
+      } else {
+        toast.error('Failed to moderate submission');
+      }
+    } finally {
+      setModeratingId(null);
     }
   };
 
@@ -215,7 +222,7 @@ export default function AdminMatchDetail() {
             <p className="text-xs text-[#8E8E93] uppercase tracking-widest mb-3">Day {day}</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {tasks.map((sub) => (
-                <SubmissionCard key={sub.id} sub={sub} onModerate={handleModerate} />
+                <SubmissionCard key={sub.id} sub={sub} onModerate={handleModerate} moderatingId={moderatingId} />
               ))}
             </div>
           </div>

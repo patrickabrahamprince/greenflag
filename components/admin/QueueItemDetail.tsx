@@ -1,13 +1,14 @@
-import { Check, X, Ban } from 'lucide-react';
+import { Check, X, Ban, Loader2 } from 'lucide-react';
 import type { QueueItem } from './types';
 
 export interface QueueItemDetailProps {
   item: QueueItem;
   onApprove: (id: string) => void;
   onReject: (id: string) => void;
+  moderating: boolean;
 }
 
-export function QueueItemDetail({ item, onApprove, onReject }: QueueItemDetailProps) {
+export function QueueItemDetail({ item, onApprove, onReject, moderating }: QueueItemDetailProps) {
   return (
     <div className="card">
       <div className="min-h-[160px] bg-surface-light rounded-xl flex items-center justify-center mb-4 p-4">
@@ -46,15 +47,17 @@ export function QueueItemDetail({ item, onApprove, onReject }: QueueItemDetailPr
       <div className="flex gap-2">
         <button
           onClick={() => onApprove(item.id)}
-          className="flex-1 bg-green-500/10 text-green-500 rounded-xl py-2.5 text-sm font-medium flex items-center justify-center gap-1.5 hover:bg-green-500/20 transition-colors"
+          disabled={moderating}
+          className="flex-1 bg-green-500/10 text-green-500 rounded-xl py-2.5 text-sm font-medium flex items-center justify-center gap-1.5 hover:bg-green-500/20 transition-colors disabled:opacity-40"
         >
-          <Check className="w-4 h-4" /> Approve
+          {moderating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />} Approve
         </button>
         <button
           onClick={() => onReject(item.id)}
-          className="flex-1 bg-red-500/10 text-red-500 rounded-xl py-2.5 text-sm font-medium flex items-center justify-center gap-1.5 hover:bg-red-500/20 transition-colors"
+          disabled={moderating}
+          className="flex-1 bg-red-500/10 text-red-500 rounded-xl py-2.5 text-sm font-medium flex items-center justify-center gap-1.5 hover:bg-red-500/20 transition-colors disabled:opacity-40"
         >
-          <X className="w-4 h-4" /> Reject
+          {moderating ? <Loader2 className="w-4 h-4 animate-spin" /> : <X className="w-4 h-4" />} Reject
         </button>
         <button className="btn-danger text-sm py-2.5 px-3">
           <Ban className="w-4 h-4" />

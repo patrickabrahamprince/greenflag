@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation';
-import { Flag, CheckCircle, Ban, Eye } from 'lucide-react';
+import { Flag, CheckCircle, Ban, Eye, Loader2 } from 'lucide-react';
 import type { Report } from './types';
 
 export interface ReportCardProps {
@@ -7,9 +7,10 @@ export interface ReportCardProps {
   showActions: boolean;
   onStatusChange: (id: number, status: string) => void;
   onBanUser: (userId: string) => void;
+  acting: boolean;
 }
 
-export function ReportCard({ report: r, showActions, onStatusChange, onBanUser }: ReportCardProps) {
+export function ReportCard({ report: r, showActions, onStatusChange, onBanUser, acting }: ReportCardProps) {
   const router = useRouter();
 
   return (
@@ -48,21 +49,24 @@ export function ReportCard({ report: r, showActions, onStatusChange, onBanUser }
           </button>
           <button
             onClick={() => onStatusChange(r.id, 'dismissed')}
-            className="btn-ghost text-xs flex items-center gap-1 text-green-400"
+            disabled={acting}
+            className="btn-ghost text-xs flex items-center gap-1 text-green-400 disabled:opacity-40"
           >
-            <CheckCircle className="w-3 h-3" /> Dismiss
+            {acting ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />} Dismiss
           </button>
           <button
             onClick={() => onBanUser(r.reported_id)}
-            className="btn-ghost text-xs flex items-center gap-1 text-red-400"
+            disabled={acting}
+            className="btn-ghost text-xs flex items-center gap-1 text-red-400 disabled:opacity-40"
           >
-            <Ban className="w-3 h-3" /> Ban User
+            {acting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Ban className="w-3 h-3" />} Ban User
           </button>
           <button
             onClick={() => onStatusChange(r.id, 'actioned')}
-            className="btn-ghost text-xs flex items-center gap-1 text-[#C9A961]"
+            disabled={acting}
+            className="btn-ghost text-xs flex items-center gap-1 text-[#C9A961] disabled:opacity-40"
           >
-            <Flag className="w-3 h-3" /> Mark Actioned
+            {acting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Flag className="w-3 h-3" />} Mark Actioned
           </button>
         </div>
       )}

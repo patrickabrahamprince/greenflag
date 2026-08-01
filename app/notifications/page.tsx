@@ -58,6 +58,7 @@ export default function NotificationsPage() {
   const supabase = createClient();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
+  const [markingRead, setMarkingRead] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -82,8 +83,9 @@ export default function NotificationsPage() {
   }, [supabase, router]);
 
   const handleMarkAllRead = async () => {
+    setMarkingRead(true);
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) { setMarkingRead(false); return; }
 
     await supabase.rpc('mark_notifications_read', { p_user_id: user.id });
 
@@ -91,6 +93,7 @@ export default function NotificationsPage() {
       prev.map((n) => ({ ...n, read_at: n.read_at || new Date().toISOString() }))
     );
     toast.success('All marked as read');
+    setMarkingRead(false);
   };
 
   const handleNotificationClick = async (notif: Notification) => {
@@ -133,8 +136,10 @@ export default function NotificationsPage() {
             </span>
             <button
               onClick={handleMarkAllRead}
-              className="text-xs text-gold hover:text-gold-light active:scale-90 transition-all"
+              disabled={markingRead}
+              className="text-xs text-gold hover:text-gold-light active:scale-90 transition-all flex items-center gap-1.5 disabled:opacity-50"
             >
+              {markingRead && <Loader2 className="w-3 h-3 animate-spin" />}
               Mark all read
             </button>
           </div>

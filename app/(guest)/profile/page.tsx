@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Settings, LogOut, Edit3, Coins, Loader2, BadgeCheck } from 'lucide-react';
 import { ProfileImageCarousel } from '@/components/shared/ProfileImageCarousel';
@@ -14,9 +15,11 @@ export default function ProfilePage() {
   const balance = useCoinStore((s) => s.balance);
   const clearUser = useUserStore((s) => s.clearUser);
   const setBalance = useCoinStore((s) => s.setBalance);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   const handleLogout = async () => {
     hapticTap();
+    setLoggingOut(true);
     const supabase = createClient();
     await supabase.auth.signOut();
     clearUser();
@@ -115,8 +118,8 @@ export default function ProfilePage() {
       )}
 
       <div className="px-4 mt-8">
-        <button onClick={handleLogout} className="btn-danger w-full flex items-center justify-center gap-2">
-          <LogOut className="w-4 h-4" />
+        <button onClick={handleLogout} disabled={loggingOut} className="btn-danger w-full flex items-center justify-center gap-2">
+          {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
           Sign Out
         </button>
       </div>

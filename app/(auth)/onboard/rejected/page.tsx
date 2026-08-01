@@ -12,6 +12,7 @@ export default function RejectedApplicationPage() {
   const [reason, setReason] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [restarting, setRestarting] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -32,6 +33,7 @@ export default function RejectedApplicationPage() {
   }, [supabase, router]);
 
   const handleSignOut = async () => {
+    setSigningOut(true);
     await supabase.auth.signOut();
     window.location.href = '/login';
   };
@@ -66,9 +68,10 @@ export default function RejectedApplicationPage() {
       <div className="absolute top-safe-top right-4">
         <button
           onClick={handleSignOut}
-          className="text-xs text-ink/40 hover:text-red-500 flex items-center gap-1 transition-colors"
+          disabled={signingOut}
+          className="text-xs text-ink/40 hover:text-red-500 flex items-center gap-1 transition-colors disabled:opacity-50"
         >
-          <LogOut className="w-3 h-3" />
+          {signingOut ? <Loader2 className="w-3 h-3 animate-spin" /> : <LogOut className="w-3 h-3" />}
           Sign Out
         </button>
       </div>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
 import { hapticTap } from '@/lib/haptics';
 import { createClient } from '@/lib/supabase/client';
@@ -18,6 +18,7 @@ export default function OnboardNamePage() {
   const setName = useOnboardingStore((s) => s.setName);
   const [value, setValue] = useState('');
   const [error, setError] = useState('');
+  const [continuing, setContinuing] = useState(false);
 
   const handleContinue = async () => {
     hapticTap();
@@ -32,6 +33,8 @@ export default function OnboardNamePage() {
       router.push('/onboard/profile');
       return;
     }
+
+    setContinuing(true);
 
     // Google/Apple sign-in gives an email but never a phone number --
     // routing those users to /onboard/phone anyway meant that screen's
@@ -79,11 +82,16 @@ export default function OnboardNamePage() {
 
       <button
         onClick={handleContinue}
+        disabled={continuing}
         data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'onboard-name-continue' : undefined}
         className="btn-primary w-full py-4 mb-safe-bottom max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
       >
-        Continue
-        <ArrowRight className="w-4 h-4" />
+        {continuing ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+          <>
+            Continue
+            <ArrowRight className="w-4 h-4" />
+          </>
+        )}
       </button>
     </div>
   );

@@ -10,6 +10,7 @@ export default function BannedPage() {
   const supabase = createClient();
   const [reason, setReason] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
@@ -31,6 +32,7 @@ export default function BannedPage() {
   }, []);
 
   const handleLogout = async () => {
+    setLoggingOut(true);
     await supabase.auth.signOut();
     router.push('/login');
   };
@@ -55,8 +57,10 @@ export default function BannedPage() {
         </p>
         <button
           onClick={handleLogout}
-          className="w-full max-w-xs mx-auto h-12 rounded-xl border border-[#2A2A2A] text-ink font-medium active:scale-95 transition-all duration-200"
+          disabled={loggingOut}
+          className="w-full max-w-xs mx-auto h-12 rounded-xl border border-[#2A2A2A] text-ink font-medium active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
         >
+          {loggingOut && <Loader2 className="w-4 h-4 animate-spin" />}
           Sign Out
         </button>
       </div>

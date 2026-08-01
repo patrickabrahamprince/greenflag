@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Eye, LayoutDashboard, Ban, Shield, ShieldOff, Check, UserX, Trash2 } from 'lucide-react';
+import { Eye, LayoutDashboard, Ban, Shield, ShieldOff, Check, UserX, Trash2, Loader2 } from 'lucide-react';
 import type { AdminUser } from './types';
 
 export interface UserManagementTableProps {
@@ -11,6 +11,8 @@ export interface UserManagementTableProps {
   onApproveClick: (user: AdminUser) => void;
   onRejectClick: (user: AdminUser) => void;
   onDeleteClick: (user: AdminUser) => void;
+  approvingId: string | null;
+  settingAdminId: string | null;
 }
 
 // Consistent blue/pink persona color-coding, matching the Men/Women KPI
@@ -21,7 +23,7 @@ function personaColor(persona?: string) {
   return { ring: 'ring-white/10', dot: 'bg-[#8E8E93]', text: 'text-[#8E8E93]', bg: 'bg-white/5' };
 }
 
-export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveClick, onRejectClick, onDeleteClick }: UserManagementTableProps) {
+export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveClick, onRejectClick, onDeleteClick, approvingId, settingAdminId }: UserManagementTableProps) {
   const router = useRouter();
 
   return (
@@ -99,10 +101,11 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
                     <>
                       <button
                         onClick={() => onApproveClick(u)}
-                        className="btn-ghost text-xs p-1.5 text-green-400"
+                        disabled={approvingId === u.id}
+                        className="btn-ghost text-xs p-1.5 text-green-400 disabled:opacity-40"
                         title="Approve Application"
                       >
-                        <Check className="w-3.5 h-3.5" />
+                        {approvingId === u.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                       </button>
                       <button
                         onClick={() => onRejectClick(u)}
@@ -129,10 +132,11 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
                           onSetAdmin(u.id, true);
                         }
                       }}
-                      className="btn-ghost text-xs p-1.5 text-blue-400"
+                      disabled={settingAdminId === u.id}
+                      className="btn-ghost text-xs p-1.5 text-blue-400 disabled:opacity-40"
                       title="Make Admin"
                     >
-                      <Shield className="w-3.5 h-3.5" />
+                      {settingAdminId === u.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Shield className="w-3.5 h-3.5" />}
                     </button>
                   ) : (
                     <button
@@ -141,10 +145,11 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
                           onSetAdmin(u.id, false);
                         }
                       }}
-                      className="btn-ghost text-xs p-1.5 text-orange-400"
+                      disabled={settingAdminId === u.id}
+                      className="btn-ghost text-xs p-1.5 text-orange-400 disabled:opacity-40"
                       title="Revoke Admin"
                     >
-                      <ShieldOff className="w-3.5 h-3.5" />
+                      {settingAdminId === u.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShieldOff className="w-3.5 h-3.5" />}
                     </button>
                   )}
                   {!u.is_banned && (

@@ -178,7 +178,6 @@ export default function DiscoverPage() {
   async function handleConfirmNudge() {
     if (!nudgeConfirm) return
     const { profileId } = nudgeConfirm
-    setNudgeConfirm(null)
     setNudgingId(profileId)
     try {
       await sendNudge(profileId, true)
@@ -186,6 +185,7 @@ export default function DiscoverPage() {
       toast.error('Failed to send nudge')
     } finally {
       setNudgingId(null)
+      setNudgeConfirm(null)
     }
   }
 
@@ -631,15 +631,16 @@ export default function DiscoverPage() {
                 Not Now
               </button>
               <button
-                onClick={() => {
+                onClick={async () => {
                   const targetId = confirmProfileId;
-                  setConfirmProfileId(null);
                   hapticDecision();
-                  handleBegin(targetId);
+                  await handleBegin(targetId);
+                  setConfirmProfileId(null);
                 }}
-                className="btn-primary flex-1 whitespace-nowrap"
+                disabled={likingId === confirmProfileId}
+                className="btn-primary flex-1 whitespace-nowrap flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                I&apos;m In
+                {likingId === confirmProfileId ? <Loader2 className="w-4 h-4 animate-spin" /> : "I'm In"}
               </button>
             </div>
           </div>
@@ -709,11 +710,15 @@ export default function DiscoverPage() {
               You've already nudged this profile. Nudging again will cost {nudgeConfirm.cost} coins.
             </p>
             <div className="flex gap-4">
-              <button onClick={() => setNudgeConfirm(null)} className="btn-secondary flex-1 whitespace-nowrap">
+              <button onClick={() => setNudgeConfirm(null)} disabled={nudgingId === nudgeConfirm.profileId} className="btn-secondary flex-1 whitespace-nowrap disabled:opacity-50">
                 Cancel
               </button>
-              <button onClick={handleConfirmNudge} className="btn-primary flex-1 whitespace-nowrap">
-                Nudge Again
+              <button
+                onClick={handleConfirmNudge}
+                disabled={nudgingId === nudgeConfirm.profileId}
+                className="btn-primary flex-1 whitespace-nowrap flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {nudgingId === nudgeConfirm.profileId ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Nudge Again'}
               </button>
             </div>
           </div>

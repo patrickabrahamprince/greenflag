@@ -14,6 +14,7 @@ export default function AdminReports() {
   const [tab, setTab] = useState<Tab>('pending');
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
+  const [actingId, setActingId] = useState<number | null>(null);
 
   const fetchReports = useCallback(async () => {
     setLoading(true);
@@ -31,6 +32,7 @@ export default function AdminReports() {
   useEffect(() => { fetchReports(); }, [fetchReports]);
 
   const handleStatus = async (id: number, status: string) => {
+    setActingId(id);
     try {
       const res = await fetch(`/api/admin/reports/${id}`, {
         method: 'PATCH',
@@ -40,18 +42,21 @@ export default function AdminReports() {
       const d = await res.json();
       if (d.success) {
         toast.success(`Report ${status}`);
-        fetchReports();
+        await fetchReports();
       } else {
         toast.error(d.error || 'Failed');
       }
     } catch {
       toast.error('Network error');
+    } finally {
+      setActingId(null);
     }
   };
 
-  const handleBanFromReport = async (userId: string) => {
+  const handleBanFromReport = async (reportId: number, userId: string) => {
     const reason = prompt('Ban reason:');
     if (!reason) return;
+    setActingId(reportId);
     try {
       const res = await fetch(`/api/admin/users/${userId}/ban`, {
         method: 'POST',
@@ -66,6 +71,8 @@ export default function AdminReports() {
       }
     } catch {
       toast.error('Network error');
+    } finally {
+      setActingId(null);
     }
   };
 
@@ -88,7 +95,8 @@ export default function AdminReports() {
               report={r}
               showActions={tab === 'pending'}
               onStatusChange={handleStatus}
-              onBanUser={handleBanFromReport}
+              onBanUser={(userId) => handleBanFromReport(r.id, userId)}
+              acting={actingId === r.id}
             />
           ))}
         </div>

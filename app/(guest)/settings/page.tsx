@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Bell, Shield, Trash2, LogOut, Phone, Mail, CheckCircle, PauseCircle, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Bell, Shield, Trash2, LogOut, Phone, Mail, CheckCircle, PauseCircle, ChevronRight, Loader2 } from 'lucide-react';
 import { DeleteReasonScreen } from '@/components/guest/DeleteReasonScreen';
 import toast from 'react-hot-toast';
 import { parsePhoneNumber } from 'libphonenumber-js';
@@ -33,6 +33,7 @@ export default function SettingsPage() {
   const [showPauseConfirm, setShowPauseConfirm] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [pausing, setPausing] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const [deleteReasons, setDeleteReasons] = useState<string[]>([]);
   const [deleteFeedback, setDeleteFeedback] = useState('');
 
@@ -48,6 +49,7 @@ export default function SettingsPage() {
   }, []);
 
   const handleLogout = async () => {
+    setLoggingOut(true);
     const supabase = createClient();
     await supabase.auth.signOut();
     clearUser();
@@ -224,8 +226,8 @@ export default function SettingsPage() {
           </button>
         </div>
 
-        <button onClick={handleLogout} className="btn-secondary w-full flex items-center justify-center gap-2">
-          <LogOut className="w-4 h-4" />
+        <button onClick={handleLogout} disabled={loggingOut} className="btn-secondary w-full flex items-center justify-center gap-2">
+          {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
           Sign Out
         </button>
       </div>

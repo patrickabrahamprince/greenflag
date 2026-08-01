@@ -31,6 +31,8 @@ export default function AdminUsers() {
   const [deleteTarget, setDeleteTarget] = useState<AdminUser | null>(null);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [deleting, setDeleting] = useState(false);
+  const [approvingId, setApprovingId] = useState<string | null>(null);
+  const [settingAdminId, setSettingAdminId] = useState<string | null>(null);
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -78,17 +80,20 @@ export default function AdminUsers() {
   };
 
   const handleApprove = async (userId: string) => {
+    setApprovingId(userId);
     try {
       const res = await fetch(`/api/admin/users/${userId}/approve`, { method: 'POST' });
       const d = await res.json();
       if (d.success) {
         toast.success('Application approved');
-        fetchUsers();
+        await fetchUsers();
       } else {
         toast.error(d.error || 'Failed to approve');
       }
     } catch {
       toast.error('Network error');
+    } finally {
+      setApprovingId(null);
     }
   };
 
@@ -146,6 +151,7 @@ export default function AdminUsers() {
   };
 
   const handleSetAdmin = async (userId: string, grant: boolean) => {
+    setSettingAdminId(userId);
     try {
       const res = await fetch(`/api/admin/users/${userId}/set-admin`, {
         method: 'POST',
@@ -155,12 +161,14 @@ export default function AdminUsers() {
       const d = await res.json();
       if (d.success) {
         toast.success(grant ? 'Admin role granted' : 'Admin role revoked');
-        fetchUsers();
+        await fetchUsers();
       } else {
         toast.error(d.error || 'Failed');
       }
     } catch {
       toast.error('Network error');
+    } finally {
+      setSettingAdminId(null);
     }
   };
 
@@ -191,6 +199,8 @@ export default function AdminUsers() {
             onApproveClick={(u) => handleApprove(u.id)}
             onRejectClick={setRejectTarget}
             onDeleteClick={setDeleteTarget}
+            approvingId={approvingId}
+            settingAdminId={settingAdminId}
           />
 
           {users.length === 0 && (

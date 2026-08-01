@@ -34,6 +34,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const supabase = createClient();
   const [checking, setChecking] = useState(true);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
@@ -55,6 +56,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, []);
 
   const handleLogout = async () => {
+    setLoggingOut(true);
     await supabase.auth.signOut();
     router.push('/login');
   };
@@ -99,9 +101,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-400 hover:bg-red-500/10 transition-all mt-auto"
+          disabled={loggingOut}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-400 hover:bg-red-500/10 transition-all mt-auto disabled:opacity-50"
         >
-          <LogOut className="w-4 h-4" />
+          {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
           Logout
         </button>
       </aside>
@@ -109,7 +112,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex-1 min-h-dvh">
         <header className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-white/10">
           <span className="text-[#EDEADE] font-display">Admin</span>
-          <button onClick={handleLogout} className="text-red-400 text-sm">Logout</button>
+          <button onClick={handleLogout} disabled={loggingOut} className="text-red-400 text-sm flex items-center gap-1.5 disabled:opacity-50">
+            {loggingOut && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+            Logout
+          </button>
         </header>
 
         <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#0A0A0A] border-t border-white/10 z-50">
