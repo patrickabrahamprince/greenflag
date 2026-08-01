@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Bell, Shield, Trash2, LogOut, Phone, Mail, CheckCircle, PauseCircle } from 'lucide-react';
+import { ArrowLeft, Bell, Shield, Trash2, LogOut, Phone, Mail, CheckCircle, PauseCircle, ChevronRight } from 'lucide-react';
+import { DeleteReasonScreen } from '@/components/guest/DeleteReasonScreen';
 import toast from 'react-hot-toast';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { createClient } from '@/lib/supabase/client';
@@ -26,13 +27,13 @@ export default function SettingsPage() {
 
   const [phone, setPhone] = useState<string | undefined>(undefined);
   const [email, setEmail] = useState('');
-  const [pushNotif, setPushNotif] = useState(true);
-  const [smsNotif, setSmsNotif] = useState(false);
-  const [emailNotif, setEmailNotif] = useState(true);
+  const [showDeleteReason, setShowDeleteReason] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showPauseConfirm, setShowPauseConfirm] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [pausing, setPausing] = useState(false);
+  const [deleteReasons, setDeleteReasons] = useState<string[]>([]);
+  const [deleteFeedback, setDeleteFeedback] = useState('');
 
   useEffect(() => {
     const fetchPhone = async () => {
@@ -85,7 +86,11 @@ export default function SettingsPage() {
   const handleDeleteAccount = async () => {
     setUpdating(true);
     try {
-      const res = await fetch('/api/user/delete', { method: 'POST' });
+      const res = await fetch('/api/user/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reasons: deleteReasons, feedback: deleteFeedback }),
+      });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || 'Failed to delete account');
@@ -164,35 +169,18 @@ export default function SettingsPage() {
           </button>
         </div>
 
-        <div className="card">
-          <div className="flex items-center gap-3 mb-4">
+        <button
+          onClick={() => router.push('/settings/notifications')}
+          className="card w-full flex items-center justify-between text-left"
+        >
+          <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-surface-light flex items-center justify-center">
               <Bell className="w-5 h-5 text-gold" />
             </div>
-            <p className="text-sm text-muted">Notifications</p>
+            <p className="text-sm text-ink font-medium">Notifications</p>
           </div>
-          <div className="space-y-4">
-            {[
-              { label: 'Push Notifications', value: pushNotif, set: setPushNotif },
-              { label: 'SMS Notifications', value: smsNotif, set: setSmsNotif },
-              { label: 'Email Notifications', value: emailNotif, set: setEmailNotif },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center justify-between">
-                <span className="text-sm text-ink">{item.label}</span>
-                <button
-                  onClick={() => item.set(!item.value)}
-                  className={`w-11 h-6 rounded-full transition-colors ${
-                    item.value ? 'bg-gold' : 'bg-surface-light'
-                  }`}
-                >
-                  <div className={`w-4 h-4 rounded-full bg-white transition-transform ${
-                    item.value ? 'translate-x-6' : 'translate-x-1'
-                  }`} />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
+          <ChevronRight className="w-4 h-4 text-ink/40" />
+        </button>
 
         <div className="card">
           <div className="flex items-center gap-3 mb-3">
@@ -227,7 +215,7 @@ export default function SettingsPage() {
             </div>
           </div>
           <button
-            onClick={() => setShowDeleteConfirm(true)}
+            onClick={() => setShowDeleteReason(true)}
             className="btn-danger w-full text-sm"
           >
             Delete Account
@@ -239,6 +227,18 @@ export default function SettingsPage() {
           Sign Out
         </button>
       </div>
+
+      {showDeleteReason && (
+        <DeleteReasonScreen
+          onBack={() => setShowDeleteReason(false)}
+          onContinue={(reasons, feedback) => {
+            setDeleteReasons(reasons);
+            setDeleteFeedback(feedback);
+            setShowDeleteReason(false);
+            setShowDeleteConfirm(true);
+          }}
+        />
+      )}
 
       {showPauseConfirm && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
