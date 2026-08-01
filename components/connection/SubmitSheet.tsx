@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { X, Camera, Mic, Type, Upload } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useCoinStore } from '@/lib/store';
+import { PermissionPrimer } from '@/components/shared/PermissionPrimer';
 import type { IntentionRecord } from './types';
 
 // Mirrors the server-side costs in submit-task/route.ts (SUBMIT_COST) and
@@ -12,6 +13,11 @@ import type { IntentionRecord } from './types';
 // amount charged, so the client-side coin display has to know it too.
 const TASK_SUBMIT_COST = 10;
 const SPECIAL_SEND_COST = 150;
+
+// Only show the mic priming screen once ever, not on every voice-note
+// task -- if they've already granted (or explicitly worked through) the
+// native prompt once, asking again each time is just friction.
+const MIC_PRIMED_KEY = 'gf_mic_primed';
 
 interface SubmitResult {
   status?: string;
@@ -43,6 +49,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
   const [recordedDuration, setRecordedDuration] = useState(0);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [submitResult, setSubmitResult] = useState<SubmitResult>({});
+  const [showMicPrimer, setShowMicPrimer] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -189,6 +196,15 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
     if (!file) return;
     setPhotoFile(file);
     setPhotoPreview(URL.createObjectURL(file));
+  };
+
+  const handleRecordTap = () => {
+    if (isRecording) { stopRecording(); return; }
+    if (typeof window !== 'undefined' && localStorage.getItem(MIC_PRIMED_KEY)) {
+      startRecording();
+    } else {
+      setShowMicPrimer(true);
+    }
   };
 
   const startRecording = async () => {
@@ -518,7 +534,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
                   </div>
                 )}
                 <button
-                  onClick={isRecording ? stopRecording : startRecording}
+                  onClick={handleRecordTap}
                   className="w-20 h-20 rounded-full flex items-center justify-center transition-all"
                   style={{
                     background: isRecording ? 'rgba(239,68,68,0.1)' : '#1C1C1E',
@@ -549,6 +565,21 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
           {submitting ? 'Submitting...' : 'Submit'}
         </button>
       </div>
+
+      <PermissionPrimer
+        open={showMicPrimer}
+        icon={<Mic className="w-6 h-6 text-gold" />}
+        title="Record your voice intention"
+        description="We'll ask for microphone access to record this. It's only used for the recording itself — nothing is captured until you tap record."
+        confirmLabel="Allow Microphone"
+        skipLabel="Not now"
+        onConfirm={() => {
+          if (typeof window !== 'undefined') localStorage.setItem(MIC_PRIMED_KEY, '1');
+          setShowMicPrimer(false);
+          startRecording();
+        }}
+        onSkip={() => setShowMicPrimer(false)}
+      />
     </div>
   );
 }

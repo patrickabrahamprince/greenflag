@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, MapPin } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
 import { StepDots } from '@/components/shared/StepDots';
+import { PermissionPrimer } from '@/components/shared/PermissionPrimer';
 import toast from 'react-hot-toast';
 
 const INDIAN_CITIES = [
@@ -40,6 +41,7 @@ export default function ProfileBasicsPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [gpsDetecting, setGpsDetecting] = useState(false);
   const [gpsDenied, setGpsDenied] = useState(false);
+  const [showLocationPrimer, setShowLocationPrimer] = useState(false);
 
   const detectLocation = useCallback(() => {
     if (!navigator.geolocation) return;
@@ -79,7 +81,10 @@ export default function ProfileBasicsPage() {
 
   useEffect(() => {
     if (!name) { router.replace('/onboard/name'); return; }
-    if (!city) detectLocation();
+    // Firing the native location prompt cold (no explanation) tends to get
+    // reflexively denied -- show the benefit first and let detectLocation()
+    // run only once they've actively opted in.
+    if (!city) setShowLocationPrimer(true);
   }, []);
 
   const handleContinue = () => {
@@ -163,6 +168,17 @@ export default function ProfileBasicsPage() {
         Continue
         <ArrowRight className="w-4 h-4" />
       </button>
+
+      <PermissionPrimer
+        open={showLocationPrimer}
+        icon={<MapPin className="w-6 h-6 text-gold" />}
+        title="Find your city automatically?"
+        description="We'll suggest your city so you don't have to type it. We never share your exact location — just the city name."
+        confirmLabel="Enable Location"
+        skipLabel="I'll type it"
+        onConfirm={() => { setShowLocationPrimer(false); detectLocation(); }}
+        onSkip={() => setShowLocationPrimer(false)}
+      />
     </div>
   );
 }

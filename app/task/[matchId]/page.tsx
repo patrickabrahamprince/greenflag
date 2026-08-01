@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, Loader2, MessageCircle, Hourglass, CheckCircle2, AlertTriangle, Lock, Coins, Sparkles, Type as TypeIcon, Camera, Mic } from 'lucide-react';
+import { ArrowLeft, Loader2, MessageCircle, Hourglass, CheckCircle2, AlertTriangle, Lock, Coins, Sparkles, Type as TypeIcon, Camera, Mic, Quote } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useUserStore, useCoinStore } from '@/lib/store';
 import { ConnectedScreen } from '@/components/ConnectedScreen';
@@ -437,17 +437,28 @@ export default function TaskPage() {
                       </button>
                     </div>
                   ) : (
-                    <>
-                      <p className="text-xs text-ink/40 mb-1">His Submission:</p>
-                      {matchingSub.content && <p className="text-xs text-ink/80 italic">&quot;{matchingSub.content}&quot;</p>}
+                    <div className="rounded-xl bg-[#1C1C1E] border border-[#2A2A2A] p-4">
+                      {matchingSub.content && (
+                        <div className="flex gap-2.5">
+                          <Quote className="w-4 h-4 text-gold/60 shrink-0 mt-0.5" />
+                          <p className="text-sm text-ink font-medium leading-relaxed">{matchingSub.content}</p>
+                        </div>
+                      )}
                       {matchingSub.media_url && (
                         matchingSub.media_type === 'photo' ? (
-                          <img src={matchingSub.media_url} alt="" className="mt-2 rounded-lg w-full max-h-64 object-cover" />
+                          <img
+                            src={matchingSub.media_url}
+                            alt=""
+                            className={`rounded-lg w-full max-h-64 object-cover ${matchingSub.content ? 'mt-3' : ''}`}
+                          />
                         ) : (
-                          <audio controls src={matchingSub.media_url} className="mt-2 w-full h-8" />
+                          <div className={`flex items-center gap-2.5 ${matchingSub.content ? 'mt-3' : ''}`}>
+                            <Mic className="w-4 h-4 text-gold/60 shrink-0" />
+                            <audio controls src={matchingSub.media_url} className="w-full h-8" />
+                          </div>
                         )
                       )}
-                    </>
+                    </div>
                   )}
                 </div>
               )}
