@@ -35,6 +35,19 @@ const config: CapacitorConfig = {
       'appleid.apple.com',
     ],
   },
+  plugins: {
+    // Only Google and Apple sign-in are used -- disabling Facebook/Twitter
+    // keeps their SDKs out of the binary entirely rather than shipping
+    // unused dependencies.
+    SocialLogin: {
+      providers: {
+        google: true,
+        apple: true,
+        facebook: false,
+        twitter: false,
+      },
+    },
+  },
 };
 
 export default config;

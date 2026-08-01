@@ -1,6 +1,8 @@
 'use client'
 import { useState } from 'react'
+import { Capacitor } from '@capacitor/core'
 import { createClient } from '@/lib/supabase/client'
+import { signInWithGoogleNative, signInWithAppleNative } from '@/lib/native/socialLogin'
 import { SignupHeader } from '@/components/discovery/SignupHeader'
 import { AuthModeToggle } from '@/components/discovery/AuthModeToggle'
 import { EmailSignupForm } from '@/components/discovery/EmailSignupForm'
@@ -31,11 +33,24 @@ export default function SignupPage() {
   const handleGoogleSignup = async () => {
     setGoogleLoading(true)
     try {
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
-      })
-    } catch {
+      // Native gets the real iOS account picker; web keeps the existing
+      // hosted-redirect flow. See handleGoogleLogin in
+      // app/(auth)/login/page.tsx for why these need to differ.
+      if (Capacitor.isNativePlatform()) {
+        await signInWithGoogleNative()
+        window.location.href = '/'
+      } else {
+        await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: `${window.location.origin}/auth/callback` },
+        })
+      }
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code
+      if (code !== 'USER_CANCELLED') {
+        setError(err instanceof Error ? err.message : 'Google sign-in failed')
+      }
+    } finally {
       setGoogleLoading(false)
     }
   }
@@ -46,11 +61,21 @@ export default function SignupPage() {
   const handleAppleSignup = async () => {
     setAppleLoading(true)
     try {
-      await supabase.auth.signInWithOAuth({
-        provider: 'apple',
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
-      })
-    } catch {
+      if (Capacitor.isNativePlatform()) {
+        await signInWithAppleNative()
+        window.location.href = '/'
+      } else {
+        await supabase.auth.signInWithOAuth({
+          provider: 'apple',
+          options: { redirectTo: `${window.location.origin}/auth/callback` },
+        })
+      }
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code
+      if (code !== 'USER_CANCELLED') {
+        setError(err instanceof Error ? err.message : 'Apple sign-in failed')
+      }
+    } finally {
       setAppleLoading(false)
     }
   }

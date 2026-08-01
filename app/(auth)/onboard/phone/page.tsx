@@ -3,10 +3,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, ArrowLeft } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { GoogleButton } from '@/components/ui/GoogleButton';
 import { AppleButton } from '@/components/ui/AppleButton';
 import { createClient } from '@/lib/supabase/client';
+import { signInWithGoogleNative, signInWithAppleNative } from '@/lib/native/socialLogin';
 import toast from 'react-hot-toast';
 
 export default function PhonePage() {
@@ -90,11 +92,24 @@ export default function PhonePage() {
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     try {
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
-      });
-    } catch {
+      // Native gets the real iOS account picker; web keeps the existing
+      // hosted-redirect flow. See handleGoogleLogin in
+      // app/(auth)/login/page.tsx for why these need to differ.
+      if (Capacitor.isNativePlatform()) {
+        await signInWithGoogleNative();
+        router.push('/onboard/profile');
+      } else {
+        await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: `${window.location.origin}/auth/callback` },
+        });
+      }
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code;
+      if (code !== 'USER_CANCELLED') {
+        setError(err instanceof Error ? err.message : 'Google sign-in failed');
+      }
+    } finally {
       setGoogleLoading(false);
     }
   };
@@ -105,11 +120,21 @@ export default function PhonePage() {
   const handleAppleLogin = async () => {
     setAppleLoading(true);
     try {
-      await supabase.auth.signInWithOAuth({
-        provider: 'apple',
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
-      });
-    } catch {
+      if (Capacitor.isNativePlatform()) {
+        await signInWithAppleNative();
+        router.push('/onboard/profile');
+      } else {
+        await supabase.auth.signInWithOAuth({
+          provider: 'apple',
+          options: { redirectTo: `${window.location.origin}/auth/callback` },
+        });
+      }
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code;
+      if (code !== 'USER_CANCELLED') {
+        setError(err instanceof Error ? err.message : 'Apple sign-in failed');
+      }
+    } finally {
       setAppleLoading(false);
     }
   };

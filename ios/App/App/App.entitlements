@@ -11,5 +11,14 @@
 	     on a released build. -->
 	<key>aps-environment</key>
 	<string>development</string>
+	<!-- Required for native Sign in with Apple (ASAuthorizationAppleIDProvider,
+	     used via @capgo/capacitor-social-login). Won't actually take effect
+	     until "Sign In with Apple" is also enabled on the App ID in the
+	     Apple Developer Portal -- same account-gated capability referenced
+	     in the earlier iOS audit, not yet done. -->
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<string>Default</string>
+	</array>
 </dict>
 </plist>

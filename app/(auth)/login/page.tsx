@@ -1,7 +1,9 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Capacitor } from '@capacitor/core'
 import { createClient } from '@/lib/supabase/client'
+import { signInWithGoogleNative, signInWithAppleNative } from '@/lib/native/socialLogin'
 import Link from 'next/link'
 import { Loader2 } from 'lucide-react'
 import { GoogleButton } from '@/components/ui/GoogleButton'
@@ -18,6 +20,23 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
+  // Shared by password login and both native social flows -- signInWithOAuth
+  // (web) redirects through /auth/callback and handles this itself, but
+  // signInWithPassword and signInWithIdToken both resolve with a session
+  // already established in this same page load, so they need their own
+  // post-auth redirect.
+  const redirectAfterAuth = async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      router.push('/')
+      return
+    }
+    const { data: profile } = await supabase.from('profiles').select('is_admin, onboarding_completed').eq('id', user.id).single()
+    if (profile?.is_admin) window.location.href = '/admin'
+    else if (!profile?.onboarding_completed) window.location.href = '/onboard'
+    else window.location.href = '/discover'
+  }
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -25,15 +44,7 @@ export default function LoginPage() {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) throw error
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/')
-        return
-      }
-      const { data: profile } = await supabase.from('profiles').select('is_admin, onboarding_completed').eq('id', user.id).single()
-      if (profile?.is_admin) window.location.href = '/admin'
-      else if (!profile?.onboarding_completed) window.location.href = '/onboard'
-      else window.location.href = '/discover'
+      await redirectAfterAuth()
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Login failed')
     } finally {
@@ -44,29 +55,53 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setGoogleLoading(true)
     try {
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
-      })
-    } catch {
+      // Native gets the real iOS account picker via Google's SDK; web keeps
+      // the existing hosted-redirect flow (in-app native, in-browser web --
+      // a WKWebView redirect has no access to the device's signed-in
+      // Google accounts the way the native SDK does).
+      if (Capacitor.isNativePlatform()) {
+        await signInWithGoogleNative()
+        await redirectAfterAuth()
+      } else {
+        await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: `${window.location.origin}/auth/callback` },
+        })
+      }
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code
+      if (code !== 'USER_CANCELLED') {
+        setError(err instanceof Error ? err.message : 'Google sign-in failed')
+      }
+    } finally {
       setGoogleLoading(false)
     }
   }
 
   // Required alongside Google -- Apple guideline 4.8 requires offering
   // Sign in with Apple wherever another third-party social login is
-  // offered. Won't actually work until Sign In with Apple is enabled in
-  // the Apple Developer Portal and configured as an OAuth provider in
-  // Supabase; the button is wired up ahead of that so it's ready the
-  // moment that configuration lands.
+  // offered. The native path additionally needs the Sign In with Apple
+  // capability enabled on the App ID in the Apple Developer Portal; the
+  // web path needs Apple configured as an OAuth provider in Supabase.
+  // Neither is done yet, so both branches are wired up ahead of that.
   const handleAppleLogin = async () => {
     setAppleLoading(true)
     try {
-      await supabase.auth.signInWithOAuth({
-        provider: 'apple',
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
-      })
-    } catch {
+      if (Capacitor.isNativePlatform()) {
+        await signInWithAppleNative()
+        await redirectAfterAuth()
+      } else {
+        await supabase.auth.signInWithOAuth({
+          provider: 'apple',
+          options: { redirectTo: `${window.location.origin}/auth/callback` },
+        })
+      }
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code
+      if (code !== 'USER_CANCELLED') {
+        setError(err instanceof Error ? err.message : 'Apple sign-in failed')
+      }
+    } finally {
       setAppleLoading(false)
     }
   }
