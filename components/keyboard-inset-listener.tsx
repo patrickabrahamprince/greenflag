@@ -10,22 +10,31 @@ import { Keyboard } from '@capacitor/keyboard';
 // this wasn't reliable). One override rule on .min-h-dvh in globals.css
 // picks this up everywhere, so there's nothing to wire up per-page.
 //
-// The hide side is debounced on purpose: tapping Continue between two
-// onboarding questions blurs the old input (firing keyboardWillHide)
-// right before the next screen's input autofocuses (firing
-// keyboardWillShow again). 500ms is generous enough to bridge a real
-// Next.js route transition (mount + autofocus).
+// Two things had to be true at once to actually stop the CTA from
+// bobbing while someone was mid-keystroke, and an earlier version of
+// this file only had the first one:
 //
-// The show side ignores repeat events while the keyboard is already up.
-// iOS re-fires keyboardWillShow with a slightly different keyboardHeight
-// whenever the QuickType predictive-text bar appears/disappears above the
-// keys -- which happens continuously while actively typing, as
-// suggestions come and go on every keystroke. Reacting to every one of
-// those made the CTA visibly bob up and down while the user was mid-word,
-// not just on screen transitions. The fix is to only trust the height
-// from the first show event after a hide, and ignore every subsequent
-// show event until the keyboard actually closes.
+// 1. Ignore repeat keyboardWillShow events while the keyboard is already
+//    up (iOS re-fires it with a slightly different keyboardHeight
+//    whenever the QuickType suggestion bar changes, which happens on
+//    basically every keystroke).
+// 2. That guard is worthless if keyboardWillHide clears it immediately --
+//    a stray hide (same QuickType-bar churn can also produce a brief
+//    hide/show pair, not just a show with a new height) reset the "am I
+//    already shown" flag straight away, so the very next show slipped
+//    past the guard and re-applied the inset anyway. The flag now only
+//    flips back to false once the debounced close actually commits.
+//
+// As a second line of defense, the debounced close also checks
+// document.activeElement right before committing: if a text field is
+// still focused at that point, the hide that started the timer wasn't a
+// real dismissal (focus never moves during typing), so the close is
+// skipped entirely and nothing is touched.
 const HIDE_DEBOUNCE_MS = 500;
+
+function isTextField(el: Element | null): boolean {
+  return !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || (el as HTMLElement).isContentEditable);
+}
 
 export function KeyboardInsetListener() {
   useEffect(() => {
@@ -48,11 +57,12 @@ export function KeyboardInsetListener() {
       setInset(info.keyboardHeight);
     });
     const hideHandle = Keyboard.addListener('keyboardWillHide', () => {
-      isShown = false;
       if (hideTimer) clearTimeout(hideTimer);
       hideTimer = setTimeout(() => {
-        setInset(0);
         hideTimer = null;
+        if (isTextField(document.activeElement)) return;
+        isShown = false;
+        setInset(0);
       }, HIDE_DEBOUNCE_MS);
     });
 
