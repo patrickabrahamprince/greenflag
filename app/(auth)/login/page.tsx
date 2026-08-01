@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation'
 import { Capacitor } from '@capacitor/core'
 import { createClient } from '@/lib/supabase/client'
 import { signInWithGoogleNative, signInWithAppleNative } from '@/lib/native/socialLogin'
-import { Loader2 } from 'lucide-react'
 import { GoogleButton } from '@/components/ui/GoogleButton'
 import { AppleButton } from '@/components/ui/AppleButton'
 import { SignOutStrip } from './sign-out'
@@ -15,12 +14,9 @@ import { OnboardingBackground } from '@/components/onboarding/OnboardingBackgrou
 export default function LoginPage() {
   const router = useRouter()
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
   const [appleLoading, setAppleLoading] = useState(false)
   const supabase = createClient()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null)
 
   // First sign-in/sign-up action on this device shows a one-time terms
@@ -41,11 +37,10 @@ export default function LoginPage() {
     action?.()
   }
 
-  // Shared by password login and both native social flows -- signInWithOAuth
-  // (web) redirects through /auth/callback and handles this itself, but
-  // signInWithPassword and signInWithIdToken both resolve with a session
-  // already established in this same page load, so they need their own
-  // post-auth redirect.
+  // Shared by both native social flows -- signInWithOAuth (web) redirects
+  // through /auth/callback and handles this itself, but signInWithIdToken
+  // resolves with a session already established in this same page load,
+  // so the native path needs its own post-auth redirect.
   const redirectAfterAuth = async () => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
@@ -56,21 +51,6 @@ export default function LoginPage() {
     if (profile?.is_admin) window.location.href = '/admin'
     else if (!profile?.onboarding_completed) window.location.href = '/onboard'
     else window.location.href = '/discover'
-  }
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-    try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) throw error
-      await redirectAfterAuth()
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Login failed')
-    } finally {
-      setLoading(false)
-    }
   }
 
   const handleGoogleLogin = () => withTermsGate(handleGoogleLoginInner)
@@ -138,21 +118,13 @@ export default function LoginPage() {
         <div className="text-center mb-12">
           <img src="/logo.png" alt="GreenFlag" className="w-36 h-36 mx-auto animate-logo-in" />
         </div>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input data-testid="email" type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} required className="input w-full" />
-          <input data-testid="password" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required className="input w-full" />
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-          <button data-testid="login-btn" type="submit" disabled={loading} className="btn-primary w-full">
-            {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Sign In'}
-          </button>
-        </form>
 
-        <div className="flex items-center gap-3 my-6">
-          <div className="flex-1 h-px bg-[#2A2A2A]" />
-          <span className="text-ink/40 text-xs uppercase tracking-wide">or</span>
-          <div className="flex-1 h-px bg-[#2A2A2A]" />
-        </div>
-        <div className="space-y-3">
+        {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
+
+        {/* Pushed down from the logo instead of sitting right beneath it --
+            with no email/password form above it anymore, butting the
+            buttons straight up against the logo felt cramped. */}
+        <div className="space-y-3 mt-16">
           <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />
           <AppleButton onClick={handleAppleLogin} loading={appleLoading} />
         </div>
