@@ -10,6 +10,7 @@ import { AppleButton } from '@/components/ui/AppleButton';
 import { createClient } from '@/lib/supabase/client';
 import { signInWithGoogleNative, signInWithAppleNative } from '@/lib/native/socialLogin';
 import toast from 'react-hot-toast';
+import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 
 export default function PhonePage() {
   const router = useRouter();
@@ -148,7 +149,8 @@ export default function PhonePage() {
   }
 
   return (
-    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+      <OnboardingBackground image="/onboarding/phone.jpg" />
       <button
         onClick={() => router.push('/onboard/name')}
         className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-8 w-fit"
