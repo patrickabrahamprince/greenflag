@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowRight, Quote } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
 import { StepDots } from '@/components/shared/StepDots';
 import { hapticTap } from '@/lib/haptics';
@@ -10,13 +10,15 @@ import { OnboardingBackground } from '@/components/onboarding/OnboardingBackgrou
 
 const BIO_MIN_CHARS = 15;
 
+// Each example pairs a quote with a photo so the intro reads as a mini
+// carousel instead of a static quote card -- both cycle together.
 const BIO_EXAMPLES = [
-  '"Coffee snob, terrible dancer, great listener."',
-  '"Will debate you on the best biryani in town."',
-  '"Currently training for a marathon I\'m dreading."',
-  '"Ask me about the time I got lost in Ladakh."',
-  '"Overly competitive at board games. No regrets."',
-  '"Homemade pasta on weekends, chaos on weekdays."',
+  { quote: '"Coffee snob, terrible dancer, great listener."', image: '/onboarding/name.jpg' },
+  { quote: '"Will debate you on the best biryani in town."', image: '/onboarding/interests.jpg' },
+  { quote: '"Currently training for a marathon I\'m dreading."', image: '/onboarding/age.jpg' },
+  { quote: '"Ask me about the time I got lost in Ladakh."', image: '/onboarding/instagram.jpg' },
+  { quote: '"Overly competitive at board games. No regrets."', image: '/onboarding/rules.jpg' },
+  { quote: '"Homemade pasta on weekends, chaos on weekdays."', image: '/onboarding/quiz.jpg' },
 ];
 
 // Step 3 of the profile wizard -- About You bio, split out of the old
@@ -79,11 +81,11 @@ export default function ProfileBioPage() {
             className="w-full aspect-[3/4] rounded-3xl flex flex-col items-center justify-center mb-8 px-8 text-center overflow-hidden"
             style={{ background: 'radial-gradient(ellipse 120% 100% at 30% 20%, rgba(192, 38, 211, 0.5) 0%, transparent 60%), radial-gradient(ellipse 100% 100% at 80% 90%, rgba(124, 58, 237, 0.45) 0%, transparent 65%), #17091F' }}
           >
-            <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center mb-5">
-              <Quote size={22} className="text-ink" />
+            <div key={exampleIdx} className="w-14 h-14 rounded-full overflow-hidden mb-5 border border-white/20 animate-slide-up">
+              <img src={BIO_EXAMPLES[exampleIdx].image} alt="" className="w-full h-full object-cover" />
             </div>
-            <p key={exampleIdx} className="font-display text-sm text-ink/90 leading-snug animate-slide-up">
-              {BIO_EXAMPLES[exampleIdx]}
+            <p key={`${exampleIdx}-quote`} className="font-display text-sm text-ink/90 leading-snug animate-slide-up">
+              {BIO_EXAMPLES[exampleIdx].quote}
             </p>
             <p className="text-ink/40 text-xs uppercase tracking-widest mt-4">Like this, but you</p>
           </div>

@@ -10,6 +10,7 @@ import { AppleButton } from '@/components/ui/AppleButton'
 import { SignOutStrip } from './sign-out'
 import { TermsGateModal } from '@/components/auth/TermsGateModal'
 import { hasAcceptedTerms, markTermsAccepted } from '@/lib/termsGate'
+import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -131,7 +132,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-dvh flex items-center justify-center p-6 pt-safe-top pb-safe-bottom" style={{ background: 'radial-gradient(ellipse 140% 90% at 50% -25%, rgba(192, 38, 211, 0.45) 0%, rgba(124, 58, 237, 0.22) 35%, rgba(11, 6, 20, 0) 70%), radial-gradient(ellipse 100% 70% at 100% 100%, rgba(124, 58, 237, 0.18) 0%, transparent 60%), #0B0614' }}>
+    <div className="relative isolate min-h-dvh flex items-center justify-center p-6 pt-safe-top pb-safe-bottom bg-[#0B0614]">
+      <OnboardingBackground image="/onboarding/hero.jpg" />
       <div className="w-full max-w-sm">
         <div className="text-center mb-12">
           <img src="/logo.png" alt="GreenFlag" className="w-36 h-36 mx-auto animate-logo-in" />

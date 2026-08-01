@@ -104,14 +104,24 @@ const ARCHETYPES: Record<Trait, { title: string; description: string }> = {
   },
 };
 
-function computeArchetype(answers: Record<string, string>): { title: string; description: string } {
+// One distinct photo per archetype instead of reusing the same quiz.jpg
+// for every reveal -- the reveal is meant to feel personal to the result,
+// not generic.
+const ARCHETYPE_IMAGES: Record<Trait, string> = {
+  Grounded: '/onboarding/quiz-grounded.jpg',
+  Romantic: '/onboarding/quiz-romantic.jpg',
+  Adventurous: '/onboarding/quiz-adventurous.jpg',
+  Playful: '/onboarding/quiz-playful.jpg',
+};
+
+function computeArchetype(answers: Record<string, string>): { title: string; description: string; image: string } {
   const counts: Record<Trait, number> = { Grounded: 0, Romantic: 0, Adventurous: 0, Playful: 0 };
   for (const [questionId, option] of Object.entries(answers)) {
     const trait = TRAIT_MAP[questionId]?.[option];
     if (trait) counts[trait] += 1;
   }
   const [topTrait] = (Object.entries(counts) as [Trait, number][]).sort((a, b) => b[1] - a[1])[0];
-  return ARCHETYPES[topTrait];
+  return { ...ARCHETYPES[topTrait], image: ARCHETYPE_IMAGES[topTrait] };
 }
 
 export default function QuizPage() {
@@ -122,7 +132,7 @@ export default function QuizPage() {
   const [saving, setSaving] = useState(false);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [reveal, setReveal] = useState<{ title: string; description: string } | null>(null);
+  const [reveal, setReveal] = useState<{ title: string; description: string; image: string } | null>(null);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -198,7 +208,7 @@ export default function QuizPage() {
   if (reveal) {
     return (
       <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center px-6 bg-[#000000] text-center">
-        <OnboardingBackground image="/onboarding/quiz.jpg" />
+        <OnboardingBackground image={reveal.image} />
         <div className="max-w-sm mx-auto w-full">
           <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_-8px_rgba(192,38,211,0.6)]">
             <Sparkles className="w-7 h-7 text-gold" />

@@ -16,7 +16,7 @@ export function OnboardingBackground({ image }: OnboardingBackgroundProps) {
         className="absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 120% 50% at 50% 0%, rgba(192,38,211,0.22) 0%, transparent 55%), linear-gradient(180deg, rgba(11,6,20,0.5) 0%, rgba(11,6,20,0.82) 55%, #0B0614 100%)',
+            'radial-gradient(ellipse 120% 50% at 50% 0%, rgba(192,38,211,0.18) 0%, transparent 55%), linear-gradient(180deg, rgba(11,6,20,0.32) 0%, rgba(11,6,20,0.6) 55%, rgba(11,6,20,0.9) 100%)',
         }}
       />
     </div>
