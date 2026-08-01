@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
 import { hapticTap } from '@/lib/haptics';
 import { createClient } from '@/lib/supabase/client';
+import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 
 // Its own screen, not folded into the big profile form -- a standalone
 // name-collection step is a well-documented conversion lever on its own
@@ -53,7 +54,8 @@ export default function OnboardNamePage() {
   };
 
   return (
-    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+    <div className="relative w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+      <OnboardingBackground image="/onboarding/name.jpg" />
       <button
         onClick={() => router.push('/onboard')}
         className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit"

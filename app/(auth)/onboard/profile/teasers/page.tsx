@@ -7,6 +7,7 @@ import { useOnboardingStore } from '@/lib/store';
 import { StepDots } from '@/components/shared/StepDots';
 import { BottomSheet } from '@/components/shared/BottomSheet';
 import { hapticTap } from '@/lib/haptics';
+import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 
 const TEASER_PROMPTS = [
   'The way to my heart is',
@@ -49,7 +50,8 @@ export default function ProfileTeasersPage() {
   };
 
   return (
-    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+    <div className="relative w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+      <OnboardingBackground image="/onboarding/teasers.jpg" />
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => router.push('/onboard/profile/bio')}

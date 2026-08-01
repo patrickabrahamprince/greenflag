@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { usePendingReviewCountdown } from '@/lib/hooks/usePendingReviewCountdown';
 import { ReviewTimerRing } from '@/components/onboarding/ReviewTimerRing';
+import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 
 const WELCOME_DISPLAY_MS = 1800;
 
@@ -43,7 +44,8 @@ export default function PendingApprovalPage() {
   }, [arrived, router]);
 
   return (
-    <div className="w-full animate-fade-in min-h-dvh flex flex-col justify-center items-center px-8 text-center bg-[#000000]">
+    <div className="relative w-full animate-fade-in min-h-dvh flex flex-col justify-center items-center px-8 text-center bg-[#000000]">
+      <OnboardingBackground image="/onboarding/pending.jpg" />
       <div className="absolute top-safe-top right-4">
         <button
           onClick={handleSignOut}

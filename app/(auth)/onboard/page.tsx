@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Crown, Compass } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
 import { hapticTap } from '@/lib/haptics';
+import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 
 export default function OnboardPage() {
   const router = useRouter();
@@ -16,7 +17,8 @@ export default function OnboardPage() {
   };
 
   return (
-    <div className="w-full animate-fade-in min-h-dvh flex flex-col justify-center px-4 bg-[#000000]">
+    <div className="relative w-full animate-fade-in min-h-dvh flex flex-col justify-center px-4 bg-[#000000]">
+      <OnboardingBackground image="/onboarding/hero.jpg" />
       <div className="text-center mb-10">
         <img src="/logo.png" alt="GreenFlag" className="w-32 h-32 mx-auto mb-3" />
         <p className="text-ink/50 text-sm">Choose Your Path</p>

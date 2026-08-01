@@ -15,6 +15,7 @@ import {
 import { createClient } from '@/lib/supabase/client';
 import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
+import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 
 // Define each slide with an icon, title, and description.
 const slides = [
@@ -153,7 +154,8 @@ export default function RulesPage() {
   }
 
   return (
-    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+    <div className="relative w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+      <OnboardingBackground image="/onboarding/rules.jpg" />
       <div className="max-w-md mx-auto w-full flex flex-col pb-safe-bottom flex-1">
         {/* Header */}
         <div className="mb-6">

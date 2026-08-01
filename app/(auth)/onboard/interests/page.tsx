@@ -10,6 +10,7 @@ import { WhyMePrompts } from '@/components/discovery/WhyMePrompts';
 import { useInterestsSelection } from '@/components/discovery/useInterestsSelection';
 import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
+import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 
 const INTEREST_TAGS = [
   'Books', 'Music', 'Travel', 'Fitness', 'Gastronomy', 'Art',
@@ -68,7 +69,8 @@ export default function InterestsPage() {
   };
 
   return (
-    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top">
+    <div className="relative w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+      <OnboardingBackground image="/onboarding/interests.jpg" />
       <button onClick={() => router.push('/onboard/quiz')} className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit">
         <ArrowLeft size={24} />
       </button>

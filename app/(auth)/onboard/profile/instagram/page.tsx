@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
 import { StepDots } from '@/components/shared/StepDots';
 import { hapticTap } from '@/lib/haptics';
+import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 
 // Step 2 of the profile wizard -- Instagram handle, split out of the old
 // single-page form (see /onboard/profile for the wizard's intent).
@@ -41,7 +42,8 @@ export default function ProfileInstagramPage() {
   };
 
   return (
-    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+    <div className="relative w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+      <OnboardingBackground image="/onboarding/instagram.jpg" />
       <button
         onClick={() => router.push('/onboard/profile/location')}
         className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit"

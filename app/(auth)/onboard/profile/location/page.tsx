@@ -10,6 +10,7 @@ import { StepDots } from '@/components/shared/StepDots';
 import { PermissionPrimer } from '@/components/shared/PermissionPrimer';
 import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
+import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 
 const INDIAN_CITIES = [
   'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai',
@@ -100,7 +101,8 @@ export default function ProfileLocationPage() {
   };
 
   return (
-    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+    <div className="relative w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+      <OnboardingBackground image="/onboarding/location.jpg" />
       <button
         onClick={() => router.push('/onboard/profile')}
         className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit"

@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, Quote } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
 import { StepDots } from '@/components/shared/StepDots';
 import { hapticTap } from '@/lib/haptics';
+import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 
 const BIO_MIN_CHARS = 15;
 
@@ -63,7 +64,8 @@ export default function ProfileBioPage() {
 
   if (showIntro) {
     return (
-      <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+      <div className="relative w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+      <OnboardingBackground image="/onboarding/bio.jpg" />
         <button
           onClick={() => router.push('/onboard/profile/instagram')}
           className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit"
@@ -101,7 +103,8 @@ export default function ProfileBioPage() {
   }
 
   return (
-    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+    <div className="relative w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+      <OnboardingBackground image="/onboarding/bio.jpg" />
       <button
         onClick={() => setShowIntro(true)}
         className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit"

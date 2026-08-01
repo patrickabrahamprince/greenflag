@@ -8,6 +8,7 @@ import { useUserStore } from '@/lib/store';
 import { SocialProofLine } from '@/components/shared/SocialProofLine';
 import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
+import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 
 const POINTS = [
   {
@@ -147,7 +148,8 @@ export default function HowItWorksPage() {
   }
 
   return (
-    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+    <div className="relative w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+      <OnboardingBackground image="/onboarding/how-it-works.jpg" />
       <div className="max-w-md mx-auto w-full flex-1 flex flex-col justify-center pb-safe-bottom">
         <div className="text-center mb-8">
           <h1 className="font-display text-2xl font-semibold text-ink mb-2">How Greenflag Works</h1>
