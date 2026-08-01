@@ -6,6 +6,7 @@ import { CalendarDays, ShieldCheck, Clock, Sparkles, Loader2 } from 'lucide-reac
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore } from '@/lib/store';
 import { SocialProofLine } from '@/components/shared/SocialProofLine';
+import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 
 const POINTS = [
@@ -61,6 +62,7 @@ export default function HowItWorksPage() {
   }, [supabase, router]);
 
   const handleContinue = async () => {
+    hapticTap();
     setContinuing(true);
 
     // The 90s review countdown (shown on /onboard/pending for women, and

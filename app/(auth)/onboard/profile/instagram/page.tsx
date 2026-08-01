@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
 import { StepDots } from '@/components/shared/StepDots';
+import { hapticTap } from '@/lib/haptics';
 
 // Step 2 of the profile wizard -- Instagram handle, split out of the old
 // single-page form (see /onboard/profile for the wizard's intent).
@@ -33,6 +34,7 @@ export default function ProfileInstagramPage() {
   }, []);
 
   const handleContinue = () => {
+    hapticTap();
     if (!handle.trim()) { setError('Instagram handle is required'); return; }
     setInstagram(handle.trim(), false);
     router.push('/onboard/profile/bio');

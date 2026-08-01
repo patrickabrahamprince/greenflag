@@ -42,7 +42,7 @@ export default function PendingApprovalPage() {
 
   return (
     <div className="w-full animate-fade-in min-h-dvh flex flex-col justify-center items-center px-8 text-center bg-[#000000]">
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-safe-top right-4">
         <button
           onClick={handleSignOut}
           className="text-xs text-ink/40 hover:text-red-500 flex items-center gap-1 transition-colors"

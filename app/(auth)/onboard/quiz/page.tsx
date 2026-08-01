@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Loader2, ArrowLeft, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useOnboardingStore } from '@/lib/store';
+import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 
 interface Question {
@@ -189,6 +190,7 @@ export default function QuizPage() {
   };
 
   const handleNext = () => {
+    hapticTap();
     const currentQuestion = QUIZ_QUESTIONS[currentIdx];
     if (!answers[currentQuestion.id]) {
       toast.error('Please select an option to continue');

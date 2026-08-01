@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, Quote, Plus } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
 import { StepDots } from '@/components/shared/StepDots';
 import { BottomSheet } from '@/components/shared/BottomSheet';
+import { hapticTap } from '@/lib/haptics';
 
 const TEASER_PROMPTS = [
   'The way to my heart is',
@@ -42,6 +43,7 @@ export default function ProfileTeasersPage() {
   }, []);
 
   const handleContinue = () => {
+    hapticTap();
     setTeaser(prompt.trim(), answer.trim());
     router.push('/onboard/profile/photos');
   };

@@ -12,6 +12,25 @@ html, body { background: #0B0614 !important; }
 html, body { overscroll-behavior-y: none; }
 * { -webkit-tap-highlight-color: transparent; }
 
+:root {
+  --kb-inset: 0px;
+}
+
+/* Set by components/keyboard-inset-listener.tsx from the native
+   keyboardWillShow/keyboardWillHide height (Keyboard resize mode is
+   'none' -- see capacitor.config.ts for why). `dvh` on WebKit does not
+   respond to the on-screen keyboard at all, only to the toolbar
+   collapsing, so every one of this app's min-h-dvh screens would
+   otherwise stay full-height and let the keyboard cover a bottom-pinned
+   Continue button. Deliberately NOT inside @layer utilities: unlayered
+   rules always win over Tailwind's own layered utilities regardless of
+   source order, so this one rule overrides every existing min-h-dvh
+   usage across the app without touching any of those files. */
+.min-h-dvh {
+  min-height: calc(100dvh - var(--kb-inset)) !important;
+  transition: min-height 220ms ease-out;
+}
+
 @property --border-angle {
   syntax: '<angle>';
   inherits: false;

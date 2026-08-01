@@ -1,4 +1,5 @@
 import type { CapacitorConfig } from '@capacitor/cli';
+import { KeyboardResize } from '@capacitor/keyboard';
 
 // This app cannot be statically exported (real API routes, cookie-based
 // SSR auth via middleware.ts, a Vercel cron job) -- webDir is unused at
@@ -54,22 +55,20 @@ const config: CapacitorConfig = {
         twitter: false,
       },
     },
-    // The viewport-meta `interactive-widget` property (what min-h-dvh +
-    // Next.js's `interactiveWidget: 'resizes-content'` rely on) is a
-    // Chromium-only feature -- WebKit/WKWebView has never implemented it,
-    // so on iOS none of that CSS-only keyboard handling actually does
-    // anything. 'body' mode (tried first) turned out to be the wrong
-    // choice too: reading the plugin's actual native source
-    // (Keyboard.m's resizeElement:), 'body' only sets a pixel
-    // `document.body.style.height` via injected JS -- it never touches
-    // the WKWebView's own frame. `dvh` units are computed straight from
-    // the viewport/webview bounds and completely ignore body's height, so
-    // 'body' mode had zero effect on anything using min-h-dvh, which is
-    // this entire app. 'native' mode instead resizes the WKWebView's
-    // actual frame when the keyboard shows, which is what dvh really
-    // measures against.
+    // Two native resize modes were tried and dropped: 'body' only sets
+    // document.body.style.height via injected JS, which `dvh` units
+    // (used everywhere in this app) completely ignore since they're
+    // computed from the viewport, not body's height. 'native' resizes the
+    // WKWebView's actual frame, which dvh does respond to, but its exact
+    // timing/animation relative to the keyboard's own slide-up varied
+    // enough in testing to still look broken on some screens. 'none'
+    // hands this over entirely to KeyboardInsetListener
+    // (components/keyboard-inset-listener.tsx), which reads the real
+    // keyboardWillShow/keyboardWillHide height and drives a single CSS
+    // variable -- explicit, debuggable, and not dependent on how any
+    // given native resize mode happens to interact with dvh.
     Keyboard: {
-      resize: 'native',
+      resize: KeyboardResize.None,
     },
     // Without this plugin, iOS dismisses the launch screen the instant
     // the app finishes its native init step -- often well under a

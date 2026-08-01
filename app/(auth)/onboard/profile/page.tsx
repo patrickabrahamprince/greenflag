@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
 import { StepDots } from '@/components/shared/StepDots';
+import { hapticTap } from '@/lib/haptics';
 
 const MIN_AGE = 18;
 // Matches the live DB check constraint on profiles.age (age >= 18 AND
@@ -29,6 +30,7 @@ export default function ProfileAgePage() {
   }, []);
 
   const handleContinue = () => {
+    hapticTap();
     const ageNum = Number(value);
     if (!value.trim() || !Number.isInteger(ageNum)) { setError('How old are you?'); return; }
     if (ageNum < MIN_AGE) { setError('You must be 18+'); return; }

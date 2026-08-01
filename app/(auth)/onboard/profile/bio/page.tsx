@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, ArrowRight, Quote } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
 import { StepDots } from '@/components/shared/StepDots';
+import { hapticTap } from '@/lib/haptics';
 
 const BIO_MIN_CHARS = 15;
 
@@ -31,6 +32,7 @@ export default function ProfileBioPage() {
   }, []);
 
   const handleContinue = () => {
+    hapticTap();
     const trimmed = value.trim();
     if (!trimmed) { setError('About you is required'); return; }
     if (trimmed.length < BIO_MIN_CHARS) { setError(`Write at least ${BIO_MIN_CHARS} characters`); return; }

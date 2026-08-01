@@ -9,7 +9,7 @@ export default function Terms() {
 
         <section className="space-y-2">
           <h2 className="font-display text-xl text-ink">1. Eligibility</h2>
-          <p>
+          <p className="text-sm leading-relaxed">
             You must be at least 18 years old to create an account or use GreenFlag. By using the
             app, you represent and warrant that you meet this age requirement and that all
             information you provide is accurate. New profiles are reviewed before approval, and we
@@ -19,7 +19,7 @@ export default function Terms() {
 
         <section className="space-y-2">
           <h2 className="font-display text-xl text-ink">2. User Content</h2>
-          <p>
+          <p className="text-sm leading-relaxed">
             You are responsible for the content you post, including photos, bios, and the thoughts,
             photos, and voice recordings you submit as part of a Standard. You retain ownership of
             your content but grant us a license to display and distribute it within the app as
@@ -29,7 +29,7 @@ export default function Terms() {
 
         <section className="space-y-2">
           <h2 className="font-display text-xl text-ink">3. Conduct, Reporting, and Blocking</h2>
-          <p>
+          <p className="text-sm leading-relaxed">
             You agree not to harass, threaten, impersonate, or harm other users; not to post
             unlawful, abusive, or sexually explicit content; and not to use the app for commercial
             solicitation or fraudulent purposes. Every profile can be reported or blocked directly
@@ -39,7 +39,7 @@ export default function Terms() {
 
         <section className="space-y-2">
           <h2 className="font-display text-xl text-ink">4. Coins and Purchases</h2>
-          <p>
+          <p className="text-sm leading-relaxed">
             Coins are a virtual currency used within GreenFlag to unlock conversations and other
             features. On iOS, coins are purchased through Apple&apos;s In-App Purchase system and are
             subject to Apple&apos;s own terms and refund policies in addition to these Terms. Coins
@@ -51,7 +51,7 @@ export default function Terms() {
 
         <section className="space-y-2">
           <h2 className="font-display text-xl text-ink">5. Your Account</h2>
-          <p>
+          <p className="text-sm leading-relaxed">
             You can pause your account at any time to temporarily hide your profile without losing
             any data, or permanently delete it — both from Settings, without needing to contact
             support. We may also suspend or terminate your account at any time, with or without
@@ -62,7 +62,7 @@ export default function Terms() {
 
         <section className="space-y-2">
           <h2 className="font-display text-xl text-ink">6. Limitation of Liability</h2>
-          <p>
+          <p className="text-sm leading-relaxed">
             GreenFlag is provided &quot;as is&quot; without warranties of any kind. We are not liable
             for any indirect, incidental, or consequential damages arising from your use of the app or
             your interactions with other users. We do not perform criminal background checks on users
@@ -72,7 +72,7 @@ export default function Terms() {
 
         <section className="space-y-2">
           <h2 className="font-display text-xl text-ink">7. Changes to These Terms</h2>
-          <p>
+          <p className="text-sm leading-relaxed">
             We may update these Terms from time to time. If we make material changes, we&apos;ll
             notify you in the app or by other reasonable means before they take effect. Continuing to
             use GreenFlag after a change means you accept the updated Terms.
@@ -81,14 +81,14 @@ export default function Terms() {
 
         <section className="space-y-2">
           <h2 className="font-display text-xl text-ink">8. Governing Law</h2>
-          <p>
+          <p className="text-sm leading-relaxed">
             These Terms are governed by the laws of [Your Jurisdiction], without regard to conflict of
             law principles.
           </p>
         </section>
 
         <p>
-          <Link href="/" className="text-gold-dark hover:underline">Back to GreenFlag</Link>
+          <Link href="/" className="text-sm text-gold-dark hover:underline">Back to GreenFlag</Link>
         </p>
       </div>
     </div>

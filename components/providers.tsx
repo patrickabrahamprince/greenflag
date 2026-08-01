@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useCoinStore } from '@/lib/store';
 import { PushNotificationRegistrar } from './push-notification-registrar';
 import { PwaRegistrar } from './pwa-registrar';
+import { KeyboardInsetListener } from './keyboard-inset-listener';
 import { useScreenshotGuard } from '@/lib/hooks/useScreenshotGuard';
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -67,9 +68,18 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <>
       <PwaRegistrar />
       <PushNotificationRegistrar />
+      <KeyboardInsetListener />
       {children}
       <Toaster
         position="top-center"
+        containerStyle={{
+          // react-hot-toast's own default is a fixed 20px from the true
+          // top edge -- with viewportFit: cover extending content under
+          // the notch/dynamic island, that put every toast right at or
+          // under it instead of below it like the rest of the app's
+          // safe-area-aware headers.
+          top: 'max(20px, env(safe-area-inset-top))',
+        }}
         toastOptions={{
           duration: 3200,
           style: {

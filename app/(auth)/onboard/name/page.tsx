@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
+import { hapticTap } from '@/lib/haptics';
 
 // Its own screen, not folded into the big profile form -- a standalone
 // name-collection step is a well-documented conversion lever on its own
@@ -18,6 +19,7 @@ export default function OnboardNamePage() {
   const [error, setError] = useState('');
 
   const handleContinue = () => {
+    hapticTap();
     const trimmed = value.trim();
     if (trimmed.length < 2) {
       setError('Please enter your name');

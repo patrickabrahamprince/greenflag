@@ -8,6 +8,7 @@ import { useOnboardingStore } from '@/lib/store';
 import { InterestGrid } from '../../../components/discovery/InterestGrid';
 import { WhyMePrompts } from '@/components/discovery/WhyMePrompts';
 import { useInterestsSelection } from '@/components/discovery/useInterestsSelection';
+import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 
 const INTEREST_TAGS = [
@@ -27,6 +28,7 @@ export default function InterestsPage() {
   const [loading, setLoading] = useState(false);
 
   const handleContinue = async () => {
+    hapticTap();
     if (!validate(isWoman)) return;
     setLoading(true);
 

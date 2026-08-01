@@ -13,6 +13,7 @@ import {
   UserCheck,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 
 // Define each slide with an icon, title, and description.
@@ -91,6 +92,7 @@ export default function RulesPage() {
   };
 
   const handleContinue = () => {
+    hapticTap();
     router.push('/onboard/how-it-works');
   };
 

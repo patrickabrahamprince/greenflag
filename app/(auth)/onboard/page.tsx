@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Crown, Compass, LogOut } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
+import { hapticTap } from '@/lib/haptics';
 
 export default function OnboardPage() {
   const router = useRouter();
@@ -11,6 +12,7 @@ export default function OnboardPage() {
   const supabase = createClient();
 
   const handleSelect = (persona: 'woman' | 'man') => {
+    hapticTap();
     setPersona(persona);
     router.push('/onboard/name');
   };
@@ -22,10 +24,10 @@ export default function OnboardPage() {
 
   return (
     <div className="w-full animate-fade-in min-h-dvh flex flex-col justify-center px-4 bg-[#000000]">
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-safe-top right-4">
         <button
           onClick={handleSignOut}
-          className="text-xs text-ink/40 hover:text-red-500 flex items-center gap-1 transition-colors"
+          className="text-xs text-ink/40 hover:text-red-500 active:scale-90 flex items-center gap-1 transition-all"
         >
           <LogOut className="w-3 h-3" />
           Sign Out

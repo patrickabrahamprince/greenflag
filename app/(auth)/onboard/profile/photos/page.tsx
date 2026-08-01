@@ -10,6 +10,7 @@ import { StepDots } from '@/components/shared/StepDots';
 import { BottomSheet } from '@/components/shared/BottomSheet';
 import { compressImage } from '@/lib/compressImage';
 import { checkPhotosForFace } from '@/lib/faceDetection';
+import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 
 // Step 4 (final) of the profile wizard -- photos, then the actual upload +
@@ -70,6 +71,7 @@ export default function ProfilePhotosPage() {
   };
 
   const handleContinue = async () => {
+    hapticTap();
     if (photos.length < 1) { setError('Please add at least 1 photo'); return; }
 
     setCheckingFace(true);

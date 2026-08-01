@@ -8,6 +8,7 @@ import { Geolocation } from '@capacitor/geolocation';
 import { useOnboardingStore } from '@/lib/store';
 import { StepDots } from '@/components/shared/StepDots';
 import { PermissionPrimer } from '@/components/shared/PermissionPrimer';
+import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 
 const INDIAN_CITIES = [
@@ -92,6 +93,7 @@ export default function ProfileLocationPage() {
   }, []);
 
   const handleContinue = () => {
+    hapticTap();
     if (!cityValue.trim()) { setError('City is required'); return; }
     setLocation(cityValue.trim(), lat, lng);
     router.push('/onboard/profile/instagram');
