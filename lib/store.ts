@@ -35,7 +35,8 @@ interface OnboardingState {
   bio: string;
   setPersona: (p: 'woman' | 'man') => void;
   setName: (name: string) => void;
-  setBasics: (age: number, city: string, lat: number | null, lng: number | null) => void;
+  setAge: (age: number) => void;
+  setLocation: (city: string, lat: number | null, lng: number | null) => void;
   setInstagram: (handle: string, verified: boolean) => void;
   setBio: (bio: string) => void;
   clearOnboarding: () => void;
@@ -71,7 +72,8 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
   bio: '',
   setPersona: (persona) => set({ persona }),
   setName: (name) => set({ name }),
-  setBasics: (age, city, lat, lng) => set({ age, city, lat, lng }),
+  setAge: (age) => set({ age }),
+  setLocation: (city, lat, lng) => set({ city, lat, lng }),
   setInstagram: (instagramHandle, instagramVerified) => set({ instagramHandle, instagramVerified }),
   setBio: (bio) => set({ bio }),
   clearOnboarding: () =>

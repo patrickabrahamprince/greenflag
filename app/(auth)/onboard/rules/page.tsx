@@ -96,15 +96,15 @@ export default function RulesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#000000]">
+      <div className="min-h-dvh flex items-center justify-center bg-[#000000]">
         <Loader2 className="w-8 h-8 animate-spin text-gold" />
       </div>
     );
   }
 
   return (
-    <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6 bg-[#000000]">
-      <div className="max-w-md mx-auto w-full flex flex-col pb-8 flex-1">
+    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+      <div className="max-w-md mx-auto w-full flex flex-col pb-safe-bottom flex-1">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <button

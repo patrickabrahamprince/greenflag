@@ -141,14 +141,14 @@ export default function PhonePage() {
 
   if (skipping) {
     return (
-      <div className="w-full animate-fade-in min-h-screen flex items-center justify-center">
+      <div className="w-full animate-fade-in min-h-dvh flex items-center justify-center">
         <Loader2 className="w-6 h-6 animate-spin text-[#9DA0A6]" />
       </div>
     );
   }
 
   return (
-    <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6">
+    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top">
       <button
         onClick={() => router.push('/onboard/name')}
         className="text-ink/40 hover:text-ink transition-colors mb-8 w-fit"

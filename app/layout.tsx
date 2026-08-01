@@ -30,12 +30,15 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   // 'cover' extends content edge-to-edge under the notch/status bar/home
-  // indicator, which needs matching env(safe-area-inset-*) padding on
-  // every screen to compensate -- only bottom-nav.tsx had that, so every
-  // other header/button/modal was rendering under the notch or home
-  // indicator. 'auto' lets WebKit keep content within the safe area
-  // automatically, no per-screen CSS needed.
-  viewportFit: 'auto',
+  // indicator -- required for this app's full-bleed gradient backgrounds
+  // (login, onboarding) to actually reach the true screen edges instead
+  // of rendering as an inset rectangle. Switching this to 'auto' was
+  // tried and reverted: it fixed headers colliding with the notch but
+  // broke every full-bleed background in the process. The correct fix
+  // is env(safe-area-inset-*) padding on the specific header/button
+  // elements that need it, not a global toggle that also clips
+  // backgrounds that were supposed to bleed.
+  viewportFit: 'cover',
   // Without this, WKWebView doesn't shrink the layout viewport when the
   // on-screen keyboard opens -- a bottom-pinned button inside a
   // min-h-screen container stays positioned at the bottom of the

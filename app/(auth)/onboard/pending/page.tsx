@@ -41,7 +41,7 @@ export default function PendingApprovalPage() {
   }, [arrived, router]);
 
   return (
-    <div className="w-full animate-fade-in min-h-screen flex flex-col justify-center items-center px-8 text-center bg-[#000000]">
+    <div className="w-full animate-fade-in min-h-dvh flex flex-col justify-center items-center px-8 text-center bg-[#000000]">
       <div className="absolute top-4 right-4">
         <button
           onClick={handleSignOut}

@@ -33,7 +33,8 @@ export default function ProfilePhotosPage() {
 
   useEffect(() => {
     if (!name) { router.replace('/onboard/name'); return; }
-    if (!age || !city) { router.replace('/onboard/profile'); return; }
+    if (!age) { router.replace('/onboard/profile'); return; }
+    if (!city) { router.replace('/onboard/profile/location'); return; }
     if (!bio) { router.replace('/onboard/profile/bio'); }
   }, []);
 
@@ -120,7 +121,7 @@ export default function ProfilePhotosPage() {
   };
 
   return (
-    <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6">
+    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top">
       <button
         onClick={() => router.push('/onboard/profile/bio')}
         className="text-ink/40 hover:text-ink transition-colors mb-6 w-fit"
@@ -128,8 +129,8 @@ export default function ProfilePhotosPage() {
         <ArrowLeft size={24} />
       </button>
 
-      <div className="max-w-md mx-auto w-full flex-1 flex flex-col">
-        <StepDots current={4} total={4} />
+      <div className="max-w-md mx-auto w-full flex-1 flex flex-col pb-safe-bottom">
+        <StepDots current={5} total={5} />
 
         <h1 className="font-display text-2xl text-ink mb-2">Show your best self</h1>
         <p className="text-ink/50 text-sm leading-relaxed mb-8">

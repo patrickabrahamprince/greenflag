@@ -66,12 +66,12 @@ export default function InterestsPage() {
   };
 
   return (
-    <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6">
+    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top">
       <button onClick={() => router.push('/onboard/quiz')} className="text-ink/40 hover:text-ink transition-colors mb-6 w-fit">
         <ArrowLeft size={24} />
       </button>
 
-      <div className="flex-1 max-w-md mx-auto w-full space-y-8 pb-8">
+      <div className="flex-1 max-w-md mx-auto w-full space-y-8 pb-safe-bottom">
         <InterestGrid title="What Defines You" description="Choose 5"
           options={INTEREST_TAGS} selected={interestsHave} max={5} onToggle={(_, val) => toggle('have', val)}
           dataTestIdPrefix={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'interest-have' : undefined} />

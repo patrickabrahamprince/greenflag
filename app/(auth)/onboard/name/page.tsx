@@ -28,7 +28,7 @@ export default function OnboardNamePage() {
   };
 
   return (
-    <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6 bg-[#000000]">
+    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
       <button
         onClick={() => router.push('/onboard')}
         className="text-ink/40 hover:text-ink transition-colors mb-6 w-fit"
@@ -58,7 +58,7 @@ export default function OnboardNamePage() {
       <button
         onClick={handleContinue}
         data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'onboard-name-continue' : undefined}
-        className="btn-primary w-full py-4 mb-6 max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+        className="btn-primary w-full py-4 mb-safe-bottom max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
       >
         Continue
         <ArrowRight className="w-4 h-4" />

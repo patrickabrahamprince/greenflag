@@ -40,11 +40,16 @@ module.exports = {
         'slide-up': 'slideUp 400ms ease-out',
         'slide-down': 'slideDown 400ms ease-out',
         'shimmer': 'shimmer 2s infinite linear',
+        'logo-in': 'logoIn 600ms cubic-bezier(0.16, 1, 0.3, 1)',
       },
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        logoIn: {
+          '0%': { opacity: '0', transform: 'scale(0.82)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
         },
         slideUp: {
           '0%': { opacity: '0', transform: 'translateY(20px)' },
@@ -61,6 +66,17 @@ module.exports = {
       },
       maxWidth: {
         'app': '480px',
+      },
+      spacing: {
+        // viewport-fit=cover (app/layout.tsx) extends content edge-to-edge
+        // under the notch/status bar/home indicator so full-bleed
+        // backgrounds actually reach the true screen edges -- these give
+        // headers and bottom-pinned buttons a way to inset themselves from
+        // that same edge without clipping the background around them.
+        // max() keeps a sane minimum gap on notch-less devices, where
+        // env(safe-area-inset-*) resolves to 0.
+        'safe-top': 'max(1.5rem, env(safe-area-inset-top))',
+        'safe-bottom': 'max(1.5rem, env(safe-area-inset-bottom))',
       },
     },
   },

@@ -28,7 +28,8 @@ export default function ProfileInstagramPage() {
 
   useEffect(() => {
     if (!name) { router.replace('/onboard/name'); return; }
-    if (!age || !city) { router.replace('/onboard/profile'); }
+    if (!age) { router.replace('/onboard/profile'); return; }
+    if (!city) { router.replace('/onboard/profile/location'); }
   }, []);
 
   const handleContinue = () => {
@@ -38,16 +39,16 @@ export default function ProfileInstagramPage() {
   };
 
   return (
-    <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6 bg-[#000000]">
+    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
       <button
-        onClick={() => router.push('/onboard/profile')}
+        onClick={() => router.push('/onboard/profile/location')}
         className="text-ink/40 hover:text-ink transition-colors mb-6 w-fit"
       >
         <ArrowLeft size={24} />
       </button>
 
       <div className="flex-1 flex flex-col max-w-md mx-auto w-full">
-        <StepDots current={2} total={4} />
+        <StepDots current={3} total={5} />
 
         <h1 className="font-display text-2xl text-ink mb-2">What&apos;s your Instagram?</h1>
         <p className="text-ink/50 text-sm leading-relaxed mb-8">
@@ -77,7 +78,7 @@ export default function ProfileInstagramPage() {
       <button
         onClick={handleContinue}
         data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-instagram-continue' : undefined}
-        className="btn-primary w-full py-4 mb-6 max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+        className="btn-primary w-full py-4 mb-safe-bottom max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
       >
         Continue
         <ArrowRight className="w-4 h-4" />

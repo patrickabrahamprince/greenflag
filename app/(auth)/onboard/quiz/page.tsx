@@ -216,7 +216,7 @@ export default function QuizPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#000000]">
+      <div className="min-h-dvh flex items-center justify-center bg-[#000000]">
         <Loader2 className="w-8 h-8 animate-spin text-gold" />
       </div>
     );
@@ -224,7 +224,7 @@ export default function QuizPage() {
 
   if (reveal) {
     return (
-      <div className="w-full animate-fade-in min-h-screen flex flex-col justify-center px-6 bg-[#000000] text-center">
+      <div className="w-full animate-fade-in min-h-dvh flex flex-col justify-center px-6 bg-[#000000] text-center">
         <div className="max-w-sm mx-auto w-full">
           <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_-8px_rgba(192,38,211,0.6)]">
             <Sparkles className="w-7 h-7 text-gold" />
@@ -261,8 +261,8 @@ export default function QuizPage() {
     : "There's no wrong answer — just be honest.";
 
   return (
-    <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6 bg-[#000000]">
-      <div className="max-w-md mx-auto w-full flex flex-col pb-8">
+    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+      <div className="max-w-md mx-auto w-full flex flex-col pb-safe-bottom">
         <div>
           {/* Header */}
           <div className="flex items-center justify-between mb-6">

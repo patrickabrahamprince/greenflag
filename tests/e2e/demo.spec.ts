@@ -111,8 +111,11 @@ test('Demo: Signup and onboarding flow', async ({ page }) => {
   await page.waitForURL(/\/onboard\/profile$/, { timeout: 10000 })
 
   await page.fill('[data-testid="profile-age"]', '28')
+  await page.click('[data-testid="profile-age-continue"]')
+  await page.waitForURL(/\/onboard\/profile\/location/, { timeout: 10000 })
+
   await page.getByPlaceholder('Your city').fill('Bangalore')
-  await page.click('[data-testid="profile-basics-continue"]')
+  await page.click('[data-testid="profile-location-continue"]')
   await page.waitForURL(/\/onboard\/profile\/instagram/, { timeout: 10000 })
 
   await page.getByPlaceholder('username').fill('demo_user')

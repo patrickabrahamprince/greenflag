@@ -54,8 +54,11 @@ test.describe('Onboarding', () => {
     await page.waitForURL(/\/onboard\/profile$/, { timeout: 10000 })
 
     await page.fill('[data-testid="profile-age"]', '27')
+    await page.click('[data-testid="profile-age-continue"]')
+    await page.waitForURL(/\/onboard\/profile\/location/, { timeout: 10000 })
+
     await page.fill('[data-testid="profile-city"]', 'Bangalore')
-    await page.click('[data-testid="profile-basics-continue"]')
+    await page.click('[data-testid="profile-location-continue"]')
     await page.waitForURL(/\/onboard\/profile\/instagram/, { timeout: 10000 })
 
     await page.fill('[data-testid="profile-instagram"]', 'sarah_e2e')

@@ -24,7 +24,8 @@ export default function ProfileBioPage() {
 
   useEffect(() => {
     if (!name) { router.replace('/onboard/name'); return; }
-    if (!age || !city) { router.replace('/onboard/profile'); return; }
+    if (!age) { router.replace('/onboard/profile'); return; }
+    if (!city) { router.replace('/onboard/profile/location'); return; }
     if (!instagramHandle) { router.replace('/onboard/profile/instagram'); }
   }, []);
 
@@ -38,7 +39,7 @@ export default function ProfileBioPage() {
   };
 
   return (
-    <div className="w-full animate-fade-in min-h-screen flex flex-col px-4 pt-6 bg-[#000000]">
+    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
       <button
         onClick={() => router.push('/onboard/profile/instagram')}
         className="text-ink/40 hover:text-ink transition-colors mb-6 w-fit"
@@ -47,7 +48,7 @@ export default function ProfileBioPage() {
       </button>
 
       <div className="flex-1 flex flex-col max-w-md mx-auto w-full">
-        <StepDots current={3} total={4} />
+        <StepDots current={4} total={5} />
 
         <h1 className="font-display text-2xl text-ink mb-2">A few words about you</h1>
         <p className="text-ink/50 text-sm leading-relaxed mb-8">
@@ -79,7 +80,7 @@ export default function ProfileBioPage() {
       <button
         onClick={handleContinue}
         data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-bio-continue' : undefined}
-        className="btn-primary w-full py-4 mb-6 max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+        className="btn-primary w-full py-4 mb-safe-bottom max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
       >
         Continue
         <ArrowRight className="w-4 h-4" />
