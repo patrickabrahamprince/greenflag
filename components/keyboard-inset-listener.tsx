@@ -36,6 +36,14 @@ function isTextField(el: Element | null): boolean {
   return !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || (el as HTMLElement).isContentEditable);
 }
 
+// TEMPORARY: broadcasts every raw native event and every actual DOM write
+// so KbDebugOverlay can show ground truth on-device, instead of guessing
+// again at what iOS is actually reporting while someone types. Remove
+// this + the overlay once the real cause is confirmed.
+function debugLog(line: string) {
+  window.dispatchEvent(new CustomEvent('kb-debug', { detail: line }));
+}
+
 export function KeyboardInsetListener() {
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
@@ -48,6 +56,7 @@ export function KeyboardInsetListener() {
     };
 
     const showHandle = Keyboard.addListener('keyboardWillShow', (info) => {
+      debugLog(`RAW show ${info.keyboardHeight}px (isShown=${isShown})`);
       if (hideTimer) {
         clearTimeout(hideTimer);
         hideTimer = null;
@@ -55,14 +64,20 @@ export function KeyboardInsetListener() {
       if (isShown) return;
       isShown = true;
       setInset(info.keyboardHeight);
+      debugLog(`APPLIED ${info.keyboardHeight}px`);
     });
     const hideHandle = Keyboard.addListener('keyboardWillHide', () => {
+      debugLog(`RAW hide (activeElement=${document.activeElement?.tagName})`);
       if (hideTimer) clearTimeout(hideTimer);
       hideTimer = setTimeout(() => {
         hideTimer = null;
-        if (isTextField(document.activeElement)) return;
+        if (isTextField(document.activeElement)) {
+          debugLog('hide SKIPPED (field still focused)');
+          return;
+        }
         isShown = false;
         setInset(0);
+        debugLog('APPLIED 0px (committed close)');
       }, HIDE_DEBOUNCE_MS);
     });
 
