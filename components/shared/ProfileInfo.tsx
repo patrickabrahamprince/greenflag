@@ -1,5 +1,6 @@
 import { MapPin, Briefcase, Ruler } from 'lucide-react';
 import { QUIZ_QUESTION_ORDER, QUIZ_QUESTION_LABELS } from '@/lib/quizQuestions';
+import { PromptCard } from '@/components/shared/PromptCard';
 
 interface ProfileInfoProps {
   name: string;
@@ -13,6 +14,8 @@ interface ProfileInfoProps {
   quizAnswers?: Record<string, string> | null;
   matchPercent?: number;
   matchOverlapping?: string[];
+  teaserPrompt?: string | null;
+  teaserAnswer?: string | null;
 }
 
 function InterestPill({ label, matched }: { label: string; matched?: boolean }) {
@@ -41,6 +44,8 @@ export function ProfileInfo({
   quizAnswers,
   matchPercent,
   matchOverlapping = [],
+  teaserPrompt,
+  teaserAnswer,
 }: ProfileInfoProps) {
   const answeredQuestions = QUIZ_QUESTION_ORDER.filter((id) => quizAnswers?.[id]);
 
@@ -73,6 +78,12 @@ export function ProfileInfo({
 
       {bio && (
         <p className="text-ink/80 text-base leading-relaxed border-b border-[#2A2A2A] py-6">{bio}</p>
+      )}
+
+      {teaserPrompt && teaserAnswer && (
+        <div className="border-b border-[#2A2A2A] py-6">
+          <PromptCard caption={teaserPrompt} answer={teaserAnswer} />
+        </div>
       )}
 
       {interests.length > 0 && (

@@ -60,6 +60,8 @@ export default function ViewProfilePage() {
         quizAnswers={profile.quiz_answers}
         matchPercent={match?.percent}
         matchOverlapping={match?.overlapping}
+        teaserPrompt={profile.teaser_prompt}
+        teaserAnswer={profile.teaser_answer}
       />
       <div className="px-8 pb-6">
         <ProfileActionBar

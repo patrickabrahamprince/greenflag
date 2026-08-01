@@ -13,6 +13,8 @@ export interface ProfileData {
   quiz_answers?: Record<string, string> | null;
   persona: string;
   gender: string;
+  teaser_prompt?: string | null;
+  teaser_answer?: string | null;
 }
 
 export interface MatchInfo {

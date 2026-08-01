@@ -94,7 +94,7 @@ test.describe('Onboarding', () => {
 
     // Compatibility quiz -- pick the first option on all 8 questions, then
     // dismiss the personalized "archetype reveal" that follows it.
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 11; i++) {
       await page.click('[data-testid="quiz-option-0"]')
       await page.click('[data-testid="quiz-next"]')
     }

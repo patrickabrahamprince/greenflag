@@ -54,6 +54,21 @@ const QUIZ_QUESTIONS: Question[] = [
     question: 'Pets?',
     options: ['Dog person', 'Cat person', 'Animal lover', 'Not just yet'],
   },
+  {
+    id: 'education',
+    question: 'Education level?',
+    options: ['High School', "Bachelor's Degree", "Master's Degree", 'Doctorate'],
+  },
+  {
+    id: 'smoking',
+    question: 'Smoking?',
+    options: ['Never', 'Socially', 'Regularly', "Trying to quit"],
+  },
+  {
+    id: 'kids',
+    question: 'Kids?',
+    options: ['Have kids', "Don't want kids", 'Want kids someday', 'Open either way'],
+  },
 ];
 
 // Deterministic, not real psychology -- a lightweight "aha" reveal after
