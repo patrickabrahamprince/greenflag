@@ -34,7 +34,7 @@ export function DeleteReasonScreen({ onBack, onContinue }: DeleteReasonScreenPro
 
   return (
     <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
-      <button onClick={onBack} className="text-ink/40 hover:text-ink transition-colors mb-6 w-fit">
+      <button onClick={onBack} className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit">
         <ArrowLeft size={24} />
       </button>
 
@@ -50,7 +50,7 @@ export function DeleteReasonScreen({ onBack, onContinue }: DeleteReasonScreenPro
                 key={reason}
                 type="button"
                 onClick={() => toggleReason(reason)}
-                className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
+                className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all active:scale-90 ${
                   selected ? 'bg-gold text-white' : 'bg-[#1C1C1E] border border-[#2A2A2A] text-ink/70'
                 }`}
               >

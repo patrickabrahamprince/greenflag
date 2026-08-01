@@ -36,12 +36,17 @@ module.exports = {
         'widest-xl': '0.25em',
       },
       animation: {
-        'fade-in': 'fadeIn 400ms ease-out',
-        'slide-up': 'slideUp 400ms ease-out',
-        'slide-down': 'slideDown 400ms ease-out',
+        // Kept inside the 150-300ms window on purpose -- these fire on
+        // every screen/card transition, so anything slower reads as
+        // sluggish rather than smooth. logo-in is the one deliberate
+        // exception: a single branded moment on the login screen, not a
+        // repeated UI response, so it's allowed to take its time.
+        'fade-in': 'fadeIn 220ms ease-out',
+        'slide-up': 'slideUp 240ms ease-out',
+        'slide-down': 'slideDown 200ms ease-out',
         'shimmer': 'shimmer 2s infinite linear',
         'logo-in': 'logoIn 600ms cubic-bezier(0.16, 1, 0.3, 1)',
-        'sheet-up': 'sheetUp 320ms cubic-bezier(0.16, 1, 0.3, 1)',
+        'sheet-up': 'sheetUp 280ms cubic-bezier(0.16, 1, 0.3, 1)',
       },
       keyframes: {
         sheetUp: {

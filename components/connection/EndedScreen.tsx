@@ -16,7 +16,7 @@ export function EndedScreen({ reason, otherName, onBack }: EndedScreenProps) {
   const message = COPY[reason] || 'This match has ended.';
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 screen-gradient text-center">
+    <div className="min-h-dvh flex flex-col items-center justify-center px-6 screen-gradient text-center">
       <p className="text-2xl font-display text-ink mb-4">{otherName}</p>
       <div className="w-16 h-px bg-ink/20 mb-6" />
       <p className="text-ink/60 text-sm font-light max-w-xs mb-8">{message}</p>

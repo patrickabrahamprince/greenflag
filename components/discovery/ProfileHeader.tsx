@@ -9,7 +9,7 @@ export function ProfileHeader({ isHost, onBack }: ProfileHeaderProps) {
   return (
     <>
       <div className="flex items-center mb-6">
-        <button onClick={onBack} className="text-muted hover:text-ink transition-colors">
+        <button onClick={onBack} className="text-muted hover:text-ink active:scale-90 transition-all">
           <ArrowLeft size={24} />
         </button>
         <div className="flex-1 text-center">

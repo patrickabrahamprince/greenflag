@@ -18,7 +18,7 @@ export function ConnectedScreen({ womanPhoto, womanName, connectionId }: Connect
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gradient-to-b from-[#D946EF] to-[#6B21A8]">
+    <div className="min-h-dvh flex flex-col items-center justify-center px-6 bg-gradient-to-b from-[#D946EF] to-[#6B21A8]">
       <p className="text-4xl font-serif text-white mb-4">✦ 8 / 8 ✦</p>
       <h1 className="text-5xl font-display text-white mb-8">Connected</h1>
       <img

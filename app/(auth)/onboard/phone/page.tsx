@@ -151,7 +151,7 @@ export default function PhonePage() {
     <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top">
       <button
         onClick={() => router.push('/onboard/name')}
-        className="text-ink/40 hover:text-ink transition-colors mb-8 w-fit"
+        className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-8 w-fit"
       >
         <ArrowLeft size={24} />
       </button>
@@ -209,7 +209,7 @@ export default function PhonePage() {
             <button
               onClick={handleSendOtp}
               disabled={loading}
-              className="w-full text-center text-sm text-ink/40 hover:text-ink transition-colors"
+              className="w-full text-center text-sm text-ink/40 hover:text-ink active:scale-90 transition-all"
             >
               Resend Code
             </button>

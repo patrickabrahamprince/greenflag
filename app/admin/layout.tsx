@@ -61,14 +61,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (checking) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-dvh bg-black flex items-center justify-center">
         <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black flex">
+    <div className="min-h-dvh bg-black flex">
       <aside className="hidden lg:flex w-64 flex-col bg-[#0A0A0A] border-r border-white/10 p-4">
         <div className="flex items-center gap-3 px-3 py-4">
           <div className="w-8 h-8 rounded-lg bg-[#C9A961] flex items-center justify-center">
@@ -106,7 +106,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </button>
       </aside>
 
-      <div className="flex-1 min-h-screen">
+      <div className="flex-1 min-h-dvh">
         <header className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-white/10">
           <span className="text-[#EDEADE] font-display">Admin</span>
           <button onClick={handleLogout} className="text-red-400 text-sm">Logout</button>

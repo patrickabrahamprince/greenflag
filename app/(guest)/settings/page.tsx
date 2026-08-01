@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useCoinStore } from '@/lib/store';
+import { hapticWarning } from '@/lib/haptics';
 
 function formatPhoneDisplay(phone: string | undefined): string {
   if (!phone) return 'Not available';
@@ -84,6 +85,7 @@ export default function SettingsPage() {
   };
 
   const handleDeleteAccount = async () => {
+    hapticWarning();
     setUpdating(true);
     try {
       const res = await fetch('/api/user/delete', {

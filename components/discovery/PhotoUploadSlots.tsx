@@ -44,7 +44,7 @@ export function PhotoUploadSlots({
         className={`rounded-xl border-2 border-dashed flex items-center justify-center relative overflow-hidden transition-all duration-300 ${className} ${
           photo
             ? 'border-transparent'
-            : 'border-[#2A2A2A] hover:border-gold cursor-pointer'
+            : 'border-[#2A2A2A] hover:border-gold active:scale-95 cursor-pointer'
         }`}
       >
         {photo ? (
@@ -56,7 +56,7 @@ export function PhotoUploadSlots({
             />
             <button
               onClick={(e) => { e.stopPropagation(); onRemove(i); }}
-              className="absolute top-1.5 right-1.5 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80 transition-colors"
+              className="absolute top-1.5 right-1.5 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80 active:scale-90 transition-all"
             >
               <X size={12} className="text-white" />
             </button>
@@ -98,7 +98,7 @@ export function PhotoUploadSlots({
       <button
         type="button"
         onClick={() => setShowTips((v) => !v)}
-        className="flex items-center gap-1.5 text-xs font-medium text-gold mt-3"
+        className="flex items-center gap-1.5 text-xs font-medium text-gold mt-3 active:scale-95 transition-transform"
       >
         <Lightbulb size={14} />
         How to choose the perfect picture

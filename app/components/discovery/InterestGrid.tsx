@@ -52,7 +52,7 @@ export const InterestGrid: React.FC<InterestGridProps> = ({
         {options.map((opt) => {
           const isSelected = selected.includes(opt);
           const baseClasses =
-            'px-4 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer select-none';
+            'px-4 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer select-none active:scale-90';
           const selectedClasses = 'bg-gold text-white';
           const unselectedClasses =
             'bg-[#1C1C1E] border border-[#2A2A2A] text-ink/70 hover:border-ink/30';

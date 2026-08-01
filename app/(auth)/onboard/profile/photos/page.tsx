@@ -143,7 +143,7 @@ export default function ProfilePhotosPage() {
     <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top">
       <button
         onClick={() => router.push('/onboard/profile/teasers')}
-        className="text-ink/40 hover:text-ink transition-colors mb-6 w-fit"
+        className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit"
       >
         <ArrowLeft size={24} />
       </button>

@@ -279,7 +279,7 @@ export default function MessagesListPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen flex flex-col screen-gradient">
+    <div className="min-h-dvh flex flex-col screen-gradient">
       <div className="max-w-app mx-auto w-full flex-1 flex flex-col">
         <div className="px-6 pt-6 pb-0">
           <div className="page-header">

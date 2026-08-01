@@ -99,7 +99,7 @@ export default function CoinsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen screen-gradient flex items-center justify-center">
+      <div className="min-h-dvh screen-gradient flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-gold" />
       </div>
     );

@@ -109,7 +109,7 @@ export default function RulesPage() {
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={() => router.back()}
-            className="text-ink/40 hover:text-ink transition-colors p-1 -ml-1"
+            className="text-ink/40 hover:text-ink active:scale-90 transition-all p-1 -ml-1"
           >
             <ArrowLeft size={24} />
           </button>

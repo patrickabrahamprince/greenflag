@@ -10,7 +10,7 @@ export function InterestsPageHeader({ title, onBack }: InterestsPageHeaderProps)
     <div className="flex items-center mb-6">
       <button
         onClick={onBack}
-        className="text-muted hover:text-ink transition-colors"
+        className="text-muted hover:text-ink active:scale-90 transition-all"
       >
         <ArrowLeft size={24} />
       </button>

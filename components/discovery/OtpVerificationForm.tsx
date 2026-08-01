@@ -24,7 +24,7 @@ export function OtpVerificationForm({
 }: OtpVerificationFormProps) {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
-      <button type="button" onClick={onChangeNumber} className="flex items-center gap-1.5 text-muted text-sm hover:text-ink transition-colors mb-2">
+      <button type="button" onClick={onChangeNumber} className="flex items-center gap-1.5 text-muted text-sm hover:text-ink active:scale-90 transition-all mb-2">
         <ArrowLeft className="w-4 h-4" /> Change Number
       </button>
       <p className="text-sm text-muted font-thin">Code sent to <span className="text-ink">{e164Phone}</span></p>
@@ -33,7 +33,7 @@ export function OtpVerificationForm({
       <button type="submit" disabled={loading || otp.length < 6} className="btn-primary w-full">
         {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Verify & Join'}
       </button>
-      <button type="button" onClick={onResendOtp} disabled={loading} className="text-xs text-muted hover:text-ink transition-colors w-full text-center font-thin">
+      <button type="button" onClick={onResendOtp} disabled={loading} className="text-xs text-muted hover:text-ink active:scale-90 transition-all w-full text-center font-thin">
         Resend Code
       </button>
     </form>

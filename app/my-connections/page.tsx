@@ -107,14 +107,14 @@ export default function MyConnectionsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center screen-gradient">
+      <div className="min-h-dvh flex items-center justify-center screen-gradient">
         <Loader2 className="w-8 h-8 animate-spin text-gold" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen screen-gradient px-6 pt-8 pb-24 max-w-app mx-auto">
+    <div className="min-h-dvh screen-gradient px-6 pt-8 pb-24 max-w-app mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-display text-3xl text-ink">Your Connections</h1>
         <button

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
+import { ChatSkeleton } from '@/components/chat/ChatSkeleton';
 import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
 import type { RealtimeChannel } from '@supabase/supabase-js';
@@ -121,15 +121,11 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center screen-gradient">
-        <Loader2 className="w-6 h-6 animate-spin text-gold" />
-      </div>
-    );
+    return <ChatSkeleton />;
   }
 
   return (
-    <div className="min-h-screen flex flex-col screen-gradient">
+    <div className="min-h-dvh flex flex-col screen-gradient">
       <div className="max-w-app mx-auto w-full flex-1 flex flex-col">
         <ChatHeader
           partnerName={partnerName}

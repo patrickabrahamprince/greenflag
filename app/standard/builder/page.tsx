@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Loader2, Mic, Camera, Type as TypeIcon, ArrowLeft, Lock, ShieldCheck, Eye, MessageCircle, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
+import { hapticSuccess } from '@/lib/haptics';
 
 type IntentionType = 'text' | 'photo' | 'voice';
 
@@ -208,6 +209,7 @@ export default function StandardBuilderPage() {
         return;
       }
 
+      hapticSuccess();
       toast.success('Your Standard is live!');
       router.push('/discover');
     } catch {
@@ -235,7 +237,7 @@ export default function StandardBuilderPage() {
 
   if (!currentUser || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center screen-gradient">
+      <div className="min-h-dvh flex items-center justify-center screen-gradient">
         <Loader2 className="w-8 h-8 animate-spin text-gold" />
       </div>
     );
@@ -248,11 +250,11 @@ export default function StandardBuilderPage() {
   const progressPercent = ((step + 1) / slots.length) * 100;
 
   return (
-    <div className="min-h-screen screen-gradient px-6 pt-8 pb-24 max-w-app mx-auto">
+    <div className="min-h-dvh screen-gradient px-6 pt-8 pb-24 max-w-app mx-auto">
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => setStep((s) => Math.max(0, s - 1))}
-          className={`text-ink/40 hover:text-ink transition-colors p-1 -ml-1 ${step === 0 ? 'invisible' : ''}`}
+          className={`text-ink/40 hover:text-ink active:scale-90 transition-all p-1 -ml-1 ${step === 0 ? 'invisible' : ''}`}
         >
           <ArrowLeft size={22} />
         </button>
@@ -295,7 +297,7 @@ export default function StandardBuilderPage() {
                         key={preset}
                         type="button"
                         onClick={() => updateTaskPrompt(currentSlot.dayNumber, task.taskNumber, preset)}
-                        className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
+                        className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all active:scale-90 ${
                           selected ? 'bg-gold text-white' : 'bg-[#1C1C1E] border border-[#2A2A2A] text-ink/70 hover:border-ink/30'
                         }`}
                       >

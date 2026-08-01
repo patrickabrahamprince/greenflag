@@ -41,9 +41,9 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
   // Without this, WKWebView doesn't shrink the layout viewport when the
   // on-screen keyboard opens -- a bottom-pinned button inside a
-  // min-h-screen container stays positioned at the bottom of the
+  // min-h-dvh container stays positioned at the bottom of the
   // now-hidden-behind-the-keyboard viewport instead of reflowing above
-  // it. 'resizes-content' makes 100vh/min-h-screen actually shrink to
+  // it. 'resizes-content' makes 100vh/min-h-dvh actually shrink to
   // the visible area when the keyboard is up.
   interactiveWidget: 'resizes-content',
 }
@@ -55,7 +55,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={bricolage.variable} style={{ colorScheme: 'dark' }}>
-      <body className="min-h-screen bg-[#000000] text-[#FFFFFF] font-sans">
+      <body className="min-h-dvh bg-[#000000] text-[#FFFFFF] font-sans">
         {/* afterInteractive (not lazyOnload) -- lazyOnload only loads
             during browser idle time, which can be several seconds after
             the Coins page is already interactive. Someone tapping Buy

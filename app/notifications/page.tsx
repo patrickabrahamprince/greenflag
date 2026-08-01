@@ -117,14 +117,14 @@ export default function NotificationsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen screen-gradient flex items-center justify-center">
+      <div className="min-h-dvh screen-gradient flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-gold" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen screen-gradient">
+    <div className="min-h-dvh screen-gradient">
       <div className="max-w-app mx-auto px-6 pt-8 pb-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -141,7 +141,7 @@ export default function NotificationsPage() {
           {unreadCount > 0 && (
             <button
               onClick={handleMarkAllRead}
-              className="text-xs text-gold hover:text-gold-light transition-colors"
+              className="text-xs text-gold hover:text-gold-light active:scale-90 transition-all"
             >
               Mark all read
             </button>
@@ -169,7 +169,7 @@ export default function NotificationsPage() {
                   <button
                     key={notif.id}
                     onClick={() => handleNotificationClick(notif)}
-                    className="w-full text-left p-4 rounded-xl transition-all border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-transparent shadow-[0_0_24px_-10px_rgba(192,38,211,0.6)] hover:border-gold/50"
+                    className="w-full text-left p-4 rounded-xl transition-all border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-transparent shadow-[0_0_24px_-10px_rgba(192,38,211,0.6)] hover:border-gold/50 active:scale-[0.98]"
                   >
                     <div className="flex items-start gap-3">
                       <div className="w-8 h-8 rounded-full bg-gold/15 border border-gold/40 flex items-center justify-center shrink-0">
@@ -203,7 +203,7 @@ export default function NotificationsPage() {
                 <button
                   key={notif.id}
                   onClick={() => handleNotificationClick(notif)}
-                  className={`w-full text-left p-4 rounded-xl transition-all ${
+                  className={`w-full text-left p-4 rounded-xl transition-all active:scale-[0.98] ${
                     notif.read_at
                       ? 'bg-transparent hover:bg-surface/50'
                       : 'bg-surface/80 hover:bg-surface'

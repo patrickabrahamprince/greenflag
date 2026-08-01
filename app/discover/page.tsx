@@ -8,6 +8,8 @@ import { CoinBadge } from '@/components/shared/coin-badge'
 import { SocialProofLine } from '@/components/shared/SocialProofLine'
 import { createClient } from '@/lib/supabase/client'
 import { useCoinStore } from '@/lib/store'
+import { hapticDecision, hapticSuccess } from '@/lib/haptics'
+import { DiscoverySkeleton } from '@/components/discovery/DiscoverySkeleton'
 
 interface DiscoverProfile {
   id: string
@@ -284,6 +286,7 @@ export default function DiscoverPage() {
       const { matchId } = await res.json()
       deductCoins(500)
       setProfiles(prev => prev.filter(p => p.id !== profileId))
+      hapticSuccess()
       if (matchId) {
         router.push(`/task/${matchId}`)
       } else {
@@ -322,6 +325,13 @@ export default function DiscoverPage() {
         <Loader2 className="w-8 h-8 animate-spin text-gold" />
       </div>
     )
+  }
+
+  // First-ever fetch (nothing on screen yet) gets the real skeleton --
+  // subsequent infinite-scroll pages keep the small inline spinner further
+  // down, since by then there's already content to anchor against.
+  if (page === 0 && pageLoading && profiles.length === 0) {
+    return <DiscoverySkeleton />
   }
 
   return (
@@ -629,6 +639,7 @@ export default function DiscoverPage() {
                 onClick={() => {
                   const targetId = confirmProfileId;
                   setConfirmProfileId(null);
+                  hapticDecision();
                   handleBegin(targetId);
                 }}
                 className="btn-primary flex-1 whitespace-nowrap"
@@ -661,6 +672,7 @@ export default function DiscoverPage() {
                 onClick={() => {
                   const targetId = photoUnlockConfirm;
                   setPhotoUnlockConfirm(null);
+                  hapticDecision();
                   handlePhotoUnlock(targetId);
                 }}
                 disabled={unlockingPhotoId === photoUnlockConfirm}

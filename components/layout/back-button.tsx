@@ -15,7 +15,7 @@ export function BackButton({ className }: BackButtonProps) {
     <button
       onClick={() => router.back()}
       className={cn(
-        'absolute top-4 left-4 z-10 text-ink/50 hover:text-ink transition-colors',
+        'absolute top-4 left-4 z-10 text-ink/50 hover:text-ink active:scale-90 transition-all',
         className
       )}
     >

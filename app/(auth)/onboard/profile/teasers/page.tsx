@@ -50,7 +50,7 @@ export default function ProfileTeasersPage() {
     <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
       <button
         onClick={() => router.push('/onboard/profile/bio')}
-        className="text-ink/40 hover:text-ink transition-colors mb-6 w-fit"
+        className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit"
       >
         <ArrowLeft size={24} />
       </button>
@@ -66,7 +66,7 @@ export default function ProfileTeasersPage() {
         <button
           type="button"
           onClick={() => setPickerOpen(true)}
-          className="w-full flex items-center justify-between bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-left"
+          className="w-full flex items-center justify-between bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-left active:scale-[0.98] transition-transform"
         >
           <span className="text-ink font-medium">{prompt || 'Select a prompt'}</span>
           <Plus size={18} className="text-ink/50" />
@@ -101,7 +101,7 @@ export default function ProfileTeasersPage() {
             <button
               key={p}
               onClick={() => { setPrompt(p); setPickerOpen(false); }}
-              className="w-full flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-left text-ink/90 text-sm hover:border-gold/50 transition-colors"
+              className="w-full flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-left text-ink/90 text-sm hover:border-gold/50 active:scale-[0.98] transition-all"
             >
               <Quote size={14} className="text-gold shrink-0" />
               {p}
