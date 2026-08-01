@@ -5,6 +5,7 @@ import { checkRateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 const PUBLIC_PATHS = [
   '/login', '/signup',
   '/auth/callback', '/auth/error',
+  '/terms', '/privacy',
   '/_next', '/favicon', '/sw.js', '/manifest',
 ];
 
