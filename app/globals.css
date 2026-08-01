@@ -34,17 +34,35 @@ body::-webkit-scrollbar,
 }
 
 /* Set by components/keyboard-inset-listener.tsx from the native
-   keyboardWillShow/keyboardWillHide height (Keyboard resize mode is
-   'none' -- see capacitor.config.ts for why). `dvh` on WebKit does not
-   respond to the on-screen keyboard at all, only to the toolbar
-   collapsing, so every one of this app's min-h-dvh screens would
-   otherwise stay full-height and let the keyboard cover a bottom-pinned
-   Continue button. Deliberately NOT inside @layer utilities: unlayered
+   keyboardWillShow height (Keyboard resize mode is 'none' -- see
+   capacitor.config.ts for why). `dvh` on WebKit does not respond to the
+   on-screen keyboard at all, only to the toolbar collapsing, so every one
+   of this app's min-h-dvh screens would otherwise stay full-height and
+   let the keyboard cover a bottom-pinned Continue button.
+
+   This used to shrink min-height by --kb-inset directly, which raised
+   the button correctly but also shrank the container shorter than the
+   real viewport -- exposing whatever's behind it (html/body's #0B0614,
+   picked for splash-screen matching) instead of the page's own black
+   background, which showed up as a mismatched dark patch where the
+   keyboard used to be. Instead, the container now always stays exactly
+   full-height, and a flex-item spacer (::after) absorbs --kb-inset at
+   the end of the flex column -- same effect on the button's position
+   (every one of these screens is `flex flex-col`, so a fixed-height
+   trailing sibling displaces the CTA upward by the same amount), but the
+   container itself never shrinks, so its own background always covers
+   the full screen. Deliberately NOT inside @layer utilities: unlayered
    rules always win over Tailwind's own layered utilities regardless of
-   source order, so this one rule overrides every existing min-h-dvh
-   usage across the app without touching any of those files. */
+   source order, so this overrides every existing min-h-dvh usage across
+   the app without touching any of those files. */
 .min-h-dvh {
-  min-height: calc(100dvh - var(--kb-inset)) !important;
+  min-height: 100dvh !important;
+}
+.min-h-dvh::after {
+  content: '';
+  display: block;
+  flex-shrink: 0;
+  height: var(--kb-inset, 0px);
 }
 
 @property --border-angle {
