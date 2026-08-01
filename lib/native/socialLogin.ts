@@ -24,11 +24,19 @@ function randomNonce(): string {
   return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-// Neither GoogleProvider.swift nor AppleProvider.swift in this plugin hash
-// the nonce before handing it to the native SDK -- whatever string is
-// passed here is exactly what ends up in the resulting ID token's `nonce`
-// claim, so the same raw value goes to both the login() call and
-// signInWithIdToken() below. No separate raw/hashed nonce pair needed.
+async function sha256Hex(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Confirmed by testing (Supabase rejected the first attempt with "nonces
+// mismatched"): Supabase's signInWithIdToken hashes whatever nonce you
+// give it and compares that against the token's `nonce` claim -- it
+// doesn't compare the raw value directly. Both Apple and (per this same
+// error) Google's native sign-in embed the *hashed* value in the ID
+// token's nonce claim, so the hashed nonce has to go to the native
+// login() call and the raw, unhashed nonce has to go to Supabase, which
+// then hashes it itself to find a match.
 async function ensureInitialized() {
   if (initialized) return;
   await SocialLogin.initialize({
@@ -50,10 +58,11 @@ export async function signInWithGoogleNative(): Promise<void> {
   if (!Capacitor.isNativePlatform()) throw new Error('Native Google sign-in is iOS/Android only');
   await ensureInitialized();
 
-  const nonce = randomNonce();
+  const rawNonce = randomNonce();
+  const hashedNonce = await sha256Hex(rawNonce);
   const { result } = await SocialLogin.login({
     provider: 'google',
-    options: { nonce, scopes: ['email', 'profile'] },
+    options: { nonce: hashedNonce, scopes: ['email', 'profile'] },
   });
 
   if (result.responseType !== 'online' || !result.idToken) {
@@ -64,7 +73,7 @@ export async function signInWithGoogleNative(): Promise<void> {
   const { error } = await supabase.auth.signInWithIdToken({
     provider: 'google',
     token: result.idToken,
-    nonce,
+    nonce: rawNonce,
   });
   if (error) throw error;
 }
@@ -73,10 +82,11 @@ export async function signInWithAppleNative(): Promise<void> {
   if (!Capacitor.isNativePlatform()) throw new Error('Native Apple sign-in is iOS only');
   await ensureInitialized();
 
-  const nonce = randomNonce();
+  const rawNonce = randomNonce();
+  const hashedNonce = await sha256Hex(rawNonce);
   const { result } = await SocialLogin.login({
     provider: 'apple',
-    options: { nonce },
+    options: { nonce: hashedNonce },
   });
 
   if (!result.idToken) {
@@ -87,7 +97,7 @@ export async function signInWithAppleNative(): Promise<void> {
   const { error } = await supabase.auth.signInWithIdToken({
     provider: 'apple',
     token: result.idToken,
-    nonce,
+    nonce: rawNonce,
   });
   if (error) throw error;
 }
