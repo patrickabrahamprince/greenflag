@@ -3,9 +3,13 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="min-h-dvh bg-[#000000] flex items-center justify-center max-w-app mx-auto px-4">
-      {children}
-    </div>
-  );
+  // Every screen in this route group already renders its own full-bleed
+  // background (solid black, or login/signup's violet gradient) and
+  // constrains its own content width internally (max-w-sm/max-w-md).
+  // Wrapping that in a second layer of max-w-app + px-4 here squeezed
+  // every one of those backgrounds away from the true screen edges,
+  // leaving a black gutter down both sides -- most visible on login,
+  // where the gutter's flat black cut directly into the violet gradient
+  // that's supposed to bleed edge-to-edge.
+  return <>{children}</>;
 }

@@ -471,8 +471,6 @@ export default function DiscoverPage() {
                   {p.instagram_url && (
                     <a
                       href={p.instagram_url.startsWith('http') ? p.instagram_url : `https://instagram.com/${p.instagram_url}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
                       className="flex items-center gap-1 text-xs text-gold font-medium leading-none"
                     >

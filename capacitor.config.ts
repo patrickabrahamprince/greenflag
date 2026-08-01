@@ -17,6 +17,13 @@ const config: CapacitorConfig = {
   appId: 'com.greenflagapp.app',
   appName: 'GreenFlag',
   webDir: 'public',
+  // Without this, the WKWebView's own background defaults to
+  // UIColor.systemBackground (white in light mode) for the brief gap
+  // between the native launch screen dismissing and the remote page
+  // actually painting -- that gap is the "white screen before sign-in"
+  // flash. Matching it to the app's real background color closes the gap
+  // with dark instead of white regardless of system appearance.
+  backgroundColor: '#0B0614',
   server: {
     url: serverUrl,
     cleartext: serverUrl.startsWith('http://'),

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { BottomSheet } from '@/components/shared/BottomSheet';
+import { hapticDecision } from '@/lib/haptics';
 
 interface TermsGateModalProps {
   open: boolean;
@@ -27,11 +28,11 @@ export function TermsGateModal({ open, onAccept, onClose }: TermsGateModalProps)
       </ul>
       <p className="text-ink/50 text-xs leading-relaxed mb-6">
         Read the full{' '}
-        <Link href="/terms" target="_blank" className="text-gold underline underline-offset-2">Terms of Service</Link>
+        <Link href="/terms" className="text-gold underline underline-offset-2">Terms of Service</Link>
         {' '}and{' '}
-        <Link href="/privacy" target="_blank" className="text-gold underline underline-offset-2">Privacy Policy</Link>.
+        <Link href="/privacy" className="text-gold underline underline-offset-2">Privacy Policy</Link>.
       </p>
-      <button onClick={onAccept} className="btn-primary w-full py-4 mb-4">
+      <button onClick={() => { hapticDecision(); onAccept(); }} className="btn-primary w-full py-4 mb-4">
         Accept Terms
       </button>
     </BottomSheet>
