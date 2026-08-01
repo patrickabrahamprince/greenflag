@@ -77,5 +77,11 @@
 	<string>GreenFlag needs microphone access to record your voice intentions as part of your daily tasks.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>GreenFlag needs photo library access so you can choose photos for your profile and submissions.</string>
+	<!-- app/(auth)/onboard/profile/page.tsx calls navigator.geolocation to
+	     auto-detect city during onboarding -- without this key iOS denies
+	     the request outright (no prompt), so detection silently never
+	     resolves and the field just sits on "Detecting location...". -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>GreenFlag uses your location to suggest your city during profile setup.</string>
 </dict>
 </plist>

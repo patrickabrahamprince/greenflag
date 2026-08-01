@@ -15,7 +15,7 @@ export default function ProfileBioPage() {
   const name = useOnboardingStore((s) => s.name);
   const age = useOnboardingStore((s) => s.age);
   const city = useOnboardingStore((s) => s.city);
-  const instagramVerified = useOnboardingStore((s) => s.instagramVerified);
+  const instagramHandle = useOnboardingStore((s) => s.instagramHandle);
   const bio = useOnboardingStore((s) => s.bio);
   const setBio = useOnboardingStore((s) => s.setBio);
 
@@ -25,7 +25,7 @@ export default function ProfileBioPage() {
   useEffect(() => {
     if (!name) { router.replace('/onboard/name'); return; }
     if (!age || !city) { router.replace('/onboard/profile'); return; }
-    if (!instagramVerified) { router.replace('/onboard/profile/instagram'); }
+    if (!instagramHandle) { router.replace('/onboard/profile/instagram'); }
   }, []);
 
   const handleContinue = () => {

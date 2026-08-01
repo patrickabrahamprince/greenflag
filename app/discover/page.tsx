@@ -37,7 +37,6 @@ export default function DiscoverPage() {
   const [page, setPage] = useState(0)
   const [hasMore, setHasMore] = useState(true)
   const [persona, setPersona] = useState<string | null>(null)
-  const [commitmentStatement, setCommitmentStatement] = useState<string | null>(null)
   const [confirmProfileId, setConfirmProfileId] = useState<string | null>(null)
   const [photoUnlockConfirm, setPhotoUnlockConfirm] = useState<string | null>(null)
   const [unlockingPhotoId, setUnlockingPhotoId] = useState<string | null>(null)
@@ -76,12 +75,8 @@ export default function DiscoverPage() {
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) return
-      // commitment_statement is real (20261227000000_commitment_statement.sql)
-      // but not yet in the generated Supabase types -- cast to sidestep the
-      // stale-schema mismatch rather than waiting on a type regeneration.
-      (supabase.from('profiles').select('persona, commitment_statement').eq('id', user.id).single() as any).then(({ data }: { data: { persona: string; commitment_statement: string | null } | null }) => {
+      supabase.from('profiles').select('persona').eq('id', user.id).single().then(({ data }) => {
         if (data?.persona) setPersona(data.persona)
-        if (data?.commitment_statement) setCommitmentStatement(data.commitment_statement)
 
         // A woman without an active Standard shouldn't be able to browse
         // Discover at all -- BottomNav has its own safety net for this, but
@@ -622,11 +617,6 @@ export default function DiscoverPage() {
             <p className="text-ink/60 text-sm leading-relaxed mb-3">
               500 coins begins your 3-day pursuit — worth it if she&apos;s the one.
             </p>
-            {commitmentStatement && (
-              <p className="text-gold/80 text-xs leading-relaxed mb-4 italic">
-                You said: &ldquo;{commitmentStatement}&rdquo;
-              </p>
-            )}
             <SocialProofLine className="text-[11px] text-ink/40 mb-6" />
             <div className="flex gap-4">
               <button

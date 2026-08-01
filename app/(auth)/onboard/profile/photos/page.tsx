@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useOnboardingStore, useUserStore } from '@/lib/store';
 import { PhotoUploadSlots } from '@/components/discovery/PhotoUploadSlots';
 import { StepDots } from '@/components/shared/StepDots';
+import { compressImage } from '@/lib/compressImage';
 import toast from 'react-hot-toast';
 
 // Step 4 (final) of the profile wizard -- photos, then the actual upload +
@@ -28,6 +29,7 @@ export default function ProfilePhotosPage() {
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [compressing, setCompressing] = useState(false);
 
   useEffect(() => {
     if (!name) { router.replace('/onboard/name'); return; }
@@ -35,13 +37,22 @@ export default function ProfilePhotosPage() {
     if (!bio) { router.replace('/onboard/profile/bio'); }
   }, []);
 
-  const handlePhotoAdd = (files: File[]) => {
+  const handlePhotoAdd = async (files: File[]) => {
     const remaining = 3 - photos.length;
-    const newFiles = files.slice(0, remaining);
-    const previews = newFiles.map((f) => URL.createObjectURL(f));
-    setPhotos((prev) => [...prev, ...previews]);
-    setPhotoFiles((prev) => [...prev, ...newFiles]);
-    setError('');
+    const rawFiles = files.slice(0, remaining);
+    setCompressing(true);
+    try {
+      // Uncompressed phone-camera photos (often 3-10MB each) are why
+      // uploading used to feel like it hung -- downscale before it ever
+      // touches the network.
+      const newFiles = await Promise.all(rawFiles.map(compressImage));
+      const previews = newFiles.map((f) => URL.createObjectURL(f));
+      setPhotos((prev) => [...prev, ...previews]);
+      setPhotoFiles((prev) => [...prev, ...newFiles]);
+      setError('');
+    } finally {
+      setCompressing(false);
+    }
   };
 
   const handlePhotoRemove = (idx: number) => {
@@ -132,10 +143,15 @@ export default function ProfilePhotosPage() {
           onRemove={handlePhotoRemove}
           error={error}
         />
+        {compressing && (
+          <p className="text-xs text-ink/40 mt-2 flex items-center gap-1.5">
+            <Loader2 className="w-3 h-3 animate-spin" /> Optimizing photo...
+          </p>
+        )}
 
         <button
           onClick={handleContinue}
-          disabled={loading}
+          disabled={loading || compressing}
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'submit-profile' : undefined}
           className="btn-primary w-full mt-6 active:scale-[0.98] flex items-center justify-center gap-2"
         >

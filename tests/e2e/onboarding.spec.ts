@@ -59,8 +59,6 @@ test.describe('Onboarding', () => {
     await page.waitForURL(/\/onboard\/profile\/instagram/, { timeout: 10000 })
 
     await page.fill('[data-testid="profile-instagram"]', 'sarah_e2e')
-    await page.click('[data-testid="profile-instagram-verify"]')
-    await page.waitForSelector('[data-testid="profile-instagram-continue"]:not([disabled])', { timeout: 10000 })
     await page.click('[data-testid="profile-instagram-continue"]')
     await page.waitForURL(/\/onboard\/profile\/bio/, { timeout: 10000 })
 

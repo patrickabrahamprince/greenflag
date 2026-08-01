@@ -29,7 +29,20 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  viewportFit: 'cover',
+  // 'cover' extends content edge-to-edge under the notch/status bar/home
+  // indicator, which needs matching env(safe-area-inset-*) padding on
+  // every screen to compensate -- only bottom-nav.tsx had that, so every
+  // other header/button/modal was rendering under the notch or home
+  // indicator. 'auto' lets WebKit keep content within the safe area
+  // automatically, no per-screen CSS needed.
+  viewportFit: 'auto',
+  // Without this, WKWebView doesn't shrink the layout viewport when the
+  // on-screen keyboard opens -- a bottom-pinned button inside a
+  // min-h-screen container stays positioned at the bottom of the
+  // now-hidden-behind-the-keyboard viewport instead of reflowing above
+  // it. 'resizes-content' makes 100vh/min-h-screen actually shrink to
+  // the visible area when the keyboard is up.
+  interactiveWidget: 'resizes-content',
 }
 
 export default function RootLayout({

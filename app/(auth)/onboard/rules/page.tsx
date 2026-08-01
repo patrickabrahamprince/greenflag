@@ -13,7 +13,6 @@ import {
   UserCheck,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
-import { useOnboardingStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 
 // Define each slide with an icon, title, and description.
@@ -59,7 +58,6 @@ const slides = [
 export default function RulesPage() {
   const router = useRouter();
   const supabase = createClient();
-  const persona = useOnboardingStore((s) => s.persona);
   const [loading, setLoading] = useState(true);
   const [activeSlide, setActiveSlide] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -93,13 +91,7 @@ export default function RulesPage() {
   };
 
   const handleContinue = () => {
-    // Men get two extra beats before How It Works: a commitment statement
-    // (raises follow-through per Cialdini's commitment principle -- useful
-    // right before coins ever get spent) and a hands-on preview of the
-    // actual task mechanic. Women already get real hands-on experience a
-    // few screens later in the Standard builder, so they go straight
-    // through.
-    router.push(persona === 'man' ? '/onboard/commitment' : '/onboard/how-it-works');
+    router.push('/onboard/how-it-works');
   };
 
   if (loading) {

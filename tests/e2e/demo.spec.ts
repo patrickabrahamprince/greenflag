@@ -116,8 +116,6 @@ test('Demo: Signup and onboarding flow', async ({ page }) => {
   await page.waitForURL(/\/onboard\/profile\/instagram/, { timeout: 10000 })
 
   await page.getByPlaceholder('username').fill('demo_user')
-  await page.click('[data-testid="profile-instagram-verify"]')
-  await page.waitForSelector('[data-testid="profile-instagram-continue"]:not([disabled])', { timeout: 10000 })
   await page.click('[data-testid="profile-instagram-continue"]')
   await page.waitForURL(/\/onboard\/profile\/bio/, { timeout: 10000 })
 

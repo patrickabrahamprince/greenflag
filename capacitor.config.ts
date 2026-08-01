@@ -20,6 +20,20 @@ const config: CapacitorConfig = {
   server: {
     url: serverUrl,
     cleartext: serverUrl.startsWith('http://'),
+    // Capacitor's WKWebView only navigates in-app within the configured
+    // server.url's origin by default -- any other top-level navigation
+    // (Google's OAuth consent screen, Supabase's own /auth/v1/authorize
+    // redirect hop, Sign in with Apple) gets cancelled and handed to the
+    // system browser instead, which is why OAuth logins were finishing
+    // in Safari rather than back inside the app. Allowlisting the actual
+    // domains involved in the OAuth round trip keeps the whole flow
+    // in-app.
+    allowNavigation: [
+      '*.supabase.co',
+      'accounts.google.com',
+      '*.google.com',
+      'appleid.apple.com',
+    ],
   },
 };
 
