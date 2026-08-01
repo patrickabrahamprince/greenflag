@@ -70,7 +70,7 @@ async function triggerApplePush(
   const keyId = process.env.APNS_KEY_ID;
   const teamId = process.env.APNS_TEAM_ID;
   const privateKeyPem = process.env.APNS_PRIVATE_KEY;
-  const bundleId = process.env.APNS_BUNDLE_ID || 'com.greenflag.app';
+  const bundleId = process.env.APNS_BUNDLE_ID || 'com.greenflagapp.app';
   if (!keyId || !teamId || !privateKeyPem) return;
 
   const { data: tokens } = await supabase

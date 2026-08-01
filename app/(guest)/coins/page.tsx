@@ -18,9 +18,9 @@ const PACKAGES = [
   // (web only -- iOS always goes through Apple IAP regardless of this
   // value). Revert once a real ₹2 purchase is confirmed to land in
   // coin_transactions.
-  { coins: 500, price: 2, appleProductId: 'com.greenflag.app.coins500', popular: true },
-  { coins: 1200, price: 799, appleProductId: 'com.greenflag.app.coins1200', best: true },
-  { coins: 2500, price: 1499, appleProductId: 'com.greenflag.app.coins2500' },
+  { coins: 500, price: 2, appleProductId: 'com.greenflagapp.app.coins500', popular: true },
+  { coins: 1200, price: 799, appleProductId: 'com.greenflagapp.app.coins1200', best: true },
+  { coins: 2500, price: 1499, appleProductId: 'com.greenflagapp.app.coins2500' },
 ];
 
 interface Transaction {

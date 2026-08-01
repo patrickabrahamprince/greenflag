@@ -14,7 +14,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const serverUrl = process.env.CAPACITOR_SERVER_URL || 'https://greenflag-dusky.vercel.app';
 
 const config: CapacitorConfig = {
-  appId: 'com.greenflag.app',
+  appId: 'com.greenflagapp.app',
   appName: 'GreenFlag',
   webDir: 'public',
   server: {

@@ -6,7 +6,7 @@ import { SignedDataVerifier, Environment } from '@apple/app-store-server-library
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { APPLE_COIN_PRODUCTS } from '@/lib/iap-products';
 
-const BUNDLE_ID = 'com.greenflag.app';
+const BUNDLE_ID = 'com.greenflagapp.app';
 
 function getAdmin() {
   return createClient(
