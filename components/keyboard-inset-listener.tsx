@@ -10,27 +10,25 @@ import { Keyboard } from '@capacitor/keyboard';
 // this wasn't reliable). One override rule on .min-h-dvh in globals.css
 // picks this up everywhere, so there's nothing to wire up per-page.
 //
-// Two things had to be true at once to actually stop the CTA from
-// bobbing while someone was mid-keystroke, and an earlier version of
-// this file only had the first one:
+// An on-device debug overlay (components/kb-debug-overlay.tsx) proved the
+// CTA was never actually moving while someone was typing -- it only ever
+// dropped after tapping away from a field to dismiss the keyboard. The
+// real bug was the fixed 500ms wait before committing that close: it was
+// sized to survive a real Next.js route transition (blur old field ->
+// mount new screen -> autofocus new field), but it made the far more
+// common case -- just tapping away on the same screen -- feel like the
+// button drops on its own, half a second after you've already moved on,
+// disconnected from the keyboard's own ~250-300ms close animation.
 //
-// 1. Ignore repeat keyboardWillShow events while the keyboard is already
-//    up (iOS re-fires it with a slightly different keyboardHeight
-//    whenever the QuickType suggestion bar changes, which happens on
-//    basically every keystroke).
-// 2. That guard is worthless if keyboardWillHide clears it immediately --
-//    a stray hide (same QuickType-bar churn can also produce a brief
-//    hide/show pair, not just a show with a new height) reset the "am I
-//    already shown" flag straight away, so the very next show slipped
-//    past the guard and re-applied the inset anyway. The flag now only
-//    flips back to false once the debounced close actually commits.
-//
-// As a second line of defense, the debounced close also checks
-// document.activeElement right before committing: if a text field is
-// still focused at that point, the hide that started the timer wasn't a
-// real dismissal (focus never moves during typing), so the close is
-// skipped entirely and nothing is touched.
-const HIDE_DEBOUNCE_MS = 500;
+// Fix: poll document.activeElement every 50ms instead of waiting a flat
+// 500ms. A real dismiss (nothing refocuses) commits after two clear
+// checks in a row (~100ms) -- fast enough to track the keyboard's own
+// animation. A route transition still gets up to 500ms of retries before
+// giving up, so it's protected exactly like before; it just no longer
+// makes every ordinary tap-away feel delayed.
+const HIDE_POLL_MS = 50;
+const HIDE_CONFIRM_MS = 100;
+const HIDE_MAX_WAIT_MS = 500;
 
 function isTextField(el: Element | null): boolean {
   return !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || (el as HTMLElement).isContentEditable);
@@ -69,16 +67,32 @@ export function KeyboardInsetListener() {
     const hideHandle = Keyboard.addListener('keyboardWillHide', () => {
       debugLog(`RAW hide (activeElement=${document.activeElement?.tagName})`);
       if (hideTimer) clearTimeout(hideTimer);
-      hideTimer = setTimeout(() => {
-        hideTimer = null;
+
+      const startedAt = Date.now();
+      let clearSince: number | null = null;
+
+      const poll = () => {
+        const now = Date.now();
         if (isTextField(document.activeElement)) {
-          debugLog('hide SKIPPED (field still focused)');
+          clearSince = null;
+        } else if (clearSince === null) {
+          clearSince = now;
+        }
+
+        const confirmedClear = clearSince !== null && now - clearSince >= HIDE_CONFIRM_MS;
+        const timedOut = now - startedAt >= HIDE_MAX_WAIT_MS;
+
+        if (confirmedClear || timedOut) {
+          hideTimer = null;
+          isShown = false;
+          setInset(0);
+          debugLog(`APPLIED 0px (${confirmedClear ? 'confirmed clear' : 'max wait'})`);
           return;
         }
-        isShown = false;
-        setInset(0);
-        debugLog('APPLIED 0px (committed close)');
-      }, HIDE_DEBOUNCE_MS);
+        hideTimer = setTimeout(poll, HIDE_POLL_MS);
+      };
+
+      hideTimer = setTimeout(poll, HIDE_POLL_MS);
     });
 
     return () => {
