@@ -13,20 +13,28 @@ import { Keyboard } from '@capacitor/keyboard';
 // The hide side is debounced on purpose: tapping Continue between two
 // onboarding questions blurs the old input (firing keyboardWillHide)
 // right before the next screen's input autofocuses (firing
-// keyboardWillShow again) -- without the delay, the Continue button
-// visibly dropped to the bottom edge and snapped back up on literally
-// every question transition. Waiting a beat to see whether a new
-// keyboardWillShow cancels the pending hide turns that into nothing
-// happening at all, which is what it should look like.
-const HIDE_DEBOUNCE_MS = 120;
+// keyboardWillShow again). A first attempt at this used a 120ms debounce
+// with a CSS transition, and it was still visibly glitching -- 120ms
+// wasn't long enough to bridge a real Next.js route transition (mount +
+// autofocus routinely takes longer than that), so the button was
+// dropping to full height and animating back on nearly every screen.
+// Two changes here: a much more generous 500ms window, and no CSS
+// transition at all -- if some edge case still causes a reset, an
+// instant snap is far less noticeable than a 220ms animated slide, and
+// removing the animation means there's nothing left to visibly "jiggle"
+// even if the underlying height value gets reported more than once.
+const HIDE_DEBOUNCE_MS = 500;
 
 export function KeyboardInsetListener() {
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
 
     let hideTimer: ReturnType<typeof setTimeout> | null = null;
+    let lastHeight = 0;
 
     const setInset = (px: number) => {
+      if (px === lastHeight) return;
+      lastHeight = px;
       document.documentElement.style.setProperty('--kb-inset', `${px}px`);
     };
 
