@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation'
 import { Capacitor } from '@capacitor/core'
 import { createClient } from '@/lib/supabase/client'
 import { signInWithGoogleNative, signInWithAppleNative } from '@/lib/native/socialLogin'
-import Link from 'next/link'
 import { Loader2 } from 'lucide-react'
 import { GoogleButton } from '@/components/ui/GoogleButton'
 import { AppleButton } from '@/components/ui/AppleButton'
@@ -156,12 +155,6 @@ export default function LoginPage() {
           <AppleButton onClick={handleAppleLogin} loading={appleLoading} />
         </div>
 
-        <p className="text-ink/50 text-sm mt-8 text-center">
-          New to Greenflag?{' '}
-          <Link href="/signup" className="text-gold underline underline-offset-4 decoration-gold/40 hover:decoration-gold transition-colors">
-            Begin Your Journey
-          </Link>
-        </p>
         <SignOutStrip />
       </div>
       <TermsGateModal

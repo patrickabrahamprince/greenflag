@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell } from 'lucide-react'
+import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
 import { SocialProofLine } from '@/components/shared/SocialProofLine'
@@ -337,10 +337,7 @@ export default function DiscoverPage() {
   return (
     <div className="relative screen-gradient min-h-dvh max-w-app mx-auto">
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex flex-col pointer-events-none">
-        <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent">
-          <button onClick={() => router.push('/messages')} className="pointer-events-auto w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center">
-            <ArrowLeft className="w-5 h-5 text-white" />
-          </button>
+        <div className="flex items-center justify-end px-5 pt-safe-top pb-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent">
           <div className="pointer-events-auto">
             {persona === 'woman' ? (
               <div className="glass-surface flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-display font-semibold text-ink/70">

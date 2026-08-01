@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useCoinStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
 import { useCoinPurchase } from '@/lib/useCoinPurchase';
@@ -107,13 +107,6 @@ export default function CoinsPage() {
 
   return (
     <div className="page-container animate-fade-in">
-      <div className="page-header">
-        <button onClick={() => router.back()} className="btn-ghost p-2">
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <h1 className="text-xl font-display flex-1">Coins</h1>
-      </div>
-
       <CoinBalance balance={balance} />
 
       <div className="px-4 space-y-3">

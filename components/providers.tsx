@@ -71,14 +71,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <KeyboardInsetListener />
       {children}
       <Toaster
-        position="top-center"
+        position="bottom-center"
         containerStyle={{
-          // react-hot-toast's own default is a fixed 20px from the true
-          // top edge -- with viewportFit: cover extending content under
-          // the notch/dynamic island, that put every toast right at or
-          // under it instead of below it like the rest of the app's
-          // safe-area-aware headers.
-          top: 'max(20px, env(safe-area-inset-top))',
+          // Moved off the top edge entirely -- no amount of safe-area
+          // offsetting there fully avoided the notch/dynamic-island
+          // area across every device and orientation. Bottom is a
+          // simpler, more robust anchor: clear of the bottom nav pill
+          // (which is itself anchored to safe-area-inset-bottom + 1rem
+          // at ~4.5rem tall) and it also folds in --kb-inset, so a toast
+          // fired while a keyboard is open moves with it instead of
+          // ending up underneath it.
+          bottom: 'calc(max(1rem, env(safe-area-inset-bottom)) + 5.5rem + var(--kb-inset, 0px))',
         }}
         toastOptions={{
           duration: 3200,
@@ -91,6 +94,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             padding: '12px 16px',
             fontSize: '13.5px',
             fontWeight: 500,
+            maxWidth: '340px',
             boxShadow: '0 12px 32px -8px rgba(0,0,0,0.55)',
           },
           success: {

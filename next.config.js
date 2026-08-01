@@ -32,6 +32,7 @@ const nextConfig = {
       { source: '/your-standards', destination: '/standard/builder', permanent: true },
       { source: '/interested', destination: '/connections', permanent: true },
       { source: '/discover-men', destination: '/discover', permanent: true },
+      { source: '/signup', destination: '/login', permanent: true },
     ];
   },
   images: {

@@ -109,6 +109,28 @@ export default function ProfilePhotosPage() {
       uploadedUrls.push(urlData.publicUrl);
     }
 
+    // Authoritative check, not the earlier client-side one -- that runs
+    // entirely in the browser and a modified client could skip it. This
+    // is the real gate: it runs against the photos that actually made it
+    // to storage, server-side, where nothing the client sends can bypass
+    // it.
+    try {
+      const verifyRes = await fetch('/api/photos/verify-face', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photoUrls: uploadedUrls }),
+      });
+      const verifyData = await verifyRes.json();
+      if (verifyData.reason === 'no-face-found') {
+        setLoading(false);
+        setError('We couldn’t find a face in your photos -- add a clear photo of your face to continue');
+        setShowFaceNudge(true);
+        return;
+      }
+    } catch (err) {
+      console.error('Face verification request failed:', err);
+    }
+
     const { error: upsertError } = await supabase.from('profiles').upsert({
       id: user.id,
       name,

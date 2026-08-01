@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Settings, LogOut, Edit3, Coins } from 'lucide-react';
+import { Settings, LogOut, Edit3, Coins } from 'lucide-react';
 import { ProfileImageCarousel } from '@/components/shared/ProfileImageCarousel';
 import { MyStandardsSection } from '@/components/profile/MyStandardsSection';
 import { createClient } from '@/lib/supabase/client';
@@ -26,11 +26,7 @@ export default function ProfilePage() {
 
   return (
     <div className="page-container animate-fade-in">
-      <div className="page-header">
-        <button onClick={() => router.back()} className="btn-ghost p-2">
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <h1 className="text-xl font-display flex-1">Your Profile</h1>
+      <div className="flex items-center justify-end mb-2">
         <button onClick={() => router.push('/settings')} className="btn-ghost p-2">
           <Settings className="w-5 h-5" />
         </button>

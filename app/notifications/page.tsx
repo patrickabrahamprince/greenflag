@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Bell, Check, Loader2, Sparkles } from 'lucide-react';
+import { Bell, Check, Loader2, Sparkles } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import toast from 'react-hot-toast';
 
@@ -126,27 +126,19 @@ export default function NotificationsPage() {
   return (
     <div className="min-h-dvh screen-gradient">
       <div className="max-w-app mx-auto px-6 pt-safe-top pb-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <button onClick={() => router.back()} className="btn-ghost p-2">
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <h1 className="font-display text-xl text-ink">Notifications</h1>
-            {unreadCount > 0 && (
-              <span className="text-xs bg-gold/20 text-gold px-2 py-0.5 rounded-full">
-                {unreadCount} new
-              </span>
-            )}
-          </div>
-          {unreadCount > 0 && (
+        {unreadCount > 0 && (
+          <div className="flex items-center justify-between mb-6">
+            <span className="text-xs bg-gold/20 text-gold px-2 py-0.5 rounded-full">
+              {unreadCount} new
+            </span>
             <button
               onClick={handleMarkAllRead}
               className="text-xs text-gold hover:text-gold-light active:scale-90 transition-all"
             >
               Mark all read
             </button>
-          )}
-        </div>
+          </div>
+        )}
 
         {notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20">

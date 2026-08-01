@@ -1,15 +1,13 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Crown, Compass, LogOut } from 'lucide-react';
+import { Crown, Compass } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
-import { createClient } from '@/lib/supabase/client';
 import { hapticTap } from '@/lib/haptics';
 
 export default function OnboardPage() {
   const router = useRouter();
   const setPersona = useOnboardingStore((s) => s.setPersona);
-  const supabase = createClient();
 
   const handleSelect = (persona: 'woman' | 'man') => {
     hapticTap();
@@ -17,22 +15,8 @@ export default function OnboardPage() {
     router.push('/onboard/name');
   };
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    window.location.href = '/login';
-  };
-
   return (
     <div className="w-full animate-fade-in min-h-dvh flex flex-col justify-center px-4 bg-[#000000]">
-      <div className="absolute top-safe-top right-4">
-        <button
-          onClick={handleSignOut}
-          className="text-xs text-ink/40 hover:text-red-500 active:scale-90 flex items-center gap-1 transition-all"
-        >
-          <LogOut className="w-3 h-3" />
-          Sign Out
-        </button>
-      </div>
       <div className="text-center mb-10">
         <img src="/logo.png" alt="GreenFlag" className="w-32 h-32 mx-auto mb-3" />
         <p className="text-ink/50 text-sm">Choose Your Path</p>

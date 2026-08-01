@@ -12,6 +12,23 @@ html, body { background: #0B0614 !important; }
 html, body { overscroll-behavior-y: none; }
 * { -webkit-tap-highlight-color: transparent; }
 
+/* Belt-and-suspenders: individual scrollable containers (Discover,
+   chat lists, BottomSheet) already got scrollbar-hide, but any page that
+   overflows without its own inner scroll container relies on the
+   document itself scrolling -- html/body were never covered by those
+   per-component fixes, and that's the scrollbar that kept showing up. */
+html, body, * {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 :root {
   --kb-inset: 0px;
 }

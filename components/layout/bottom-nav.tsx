@@ -11,9 +11,9 @@ import { PendingReviewBanner } from '@/components/PendingReviewBanner';
 
 const manTabs = [
   { name: 'Discover', href: '/discover', icon: Compass },
-  { name: 'My Connections', href: '/my-connections', icon: Heart },
+  { name: 'Connections', href: '/my-connections', icon: Heart },
   { name: 'Chat', href: '/messages', icon: MessageSquare },
-  { name: 'Notifications', href: '/notifications', icon: Bell },
+  { name: 'Alerts', href: '/notifications', icon: Bell },
   { name: 'Profile', href: '/profile', icon: User },
   { name: 'Coins', href: '/coins', icon: Coins },
 ];
@@ -22,7 +22,7 @@ const womanTabs = [
   { name: 'Discover', href: '/discover', icon: Compass },
   { name: 'Connections', href: '/my-connections', icon: Heart },
   { name: 'Chat', href: '/messages', icon: MessageSquare },
-  { name: 'Notifications', href: '/notifications', icon: Bell },
+  { name: 'Alerts', href: '/notifications', icon: Bell },
   { name: 'Profile', href: '/profile', icon: User },
 ];
 
@@ -73,20 +73,20 @@ export function BottomNav() {
     <>
     <PendingReviewBanner />
     <nav className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-app">
-      <div className="nav-glass rounded-full flex justify-around items-center h-16 px-2 shadow-[0_8px_32px_-4px_rgba(0,0,0,0.5)]">
+      <div className="nav-glass rounded-[1.75rem] flex justify-around items-center py-2 px-1 shadow-[0_8px_32px_-4px_rgba(0,0,0,0.5)]">
         {tabs.map((tab) => {
           const active = pathname === tab.href;
-          const isNotifications = tab.name === 'Notifications';
+          const isNotifications = tab.href === '/notifications';
           return (
-            <Link key={tab.name} href={tab.href} className="flex items-center justify-center relative w-12 h-12">
+            <Link key={tab.name} href={tab.href} className="flex flex-col items-center justify-center gap-0.5 relative w-14 py-1">
               <div className="relative">
                 <div
                   className={cn(
                     'flex items-center justify-center rounded-full transition-all duration-200',
-                    active ? 'w-11 h-11 bg-gold shadow-[0_4px_16px_rgba(192,38,211,0.5)]' : 'w-10 h-10'
+                    active ? 'w-9 h-9 bg-gold shadow-[0_4px_16px_rgba(192,38,211,0.5)]' : 'w-8 h-8'
                   )}
                 >
-                  <tab.icon className={cn('transition-all duration-200', active ? 'text-white w-5 h-5' : 'text-ink/40 w-5 h-5')} strokeWidth={active ? 2.5 : 1.5} />
+                  <tab.icon className={cn('transition-all duration-200', active ? 'text-white w-4 h-4' : 'text-ink/40 w-4 h-4')} strokeWidth={active ? 2.5 : 1.5} />
                 </div>
                 {isNotifications && unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 bg-red-500 rounded-full flex items-center justify-center">
@@ -94,6 +94,9 @@ export function BottomNav() {
                   </span>
                 )}
               </div>
+              <span className={cn('text-[9.5px] leading-none font-medium whitespace-nowrap', active ? 'text-gold' : 'text-ink/40')}>
+                {tab.name}
+              </span>
             </Link>
           );
         })}

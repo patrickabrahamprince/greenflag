@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Heart, Loader2, MessageCircle } from 'lucide-react';
+import { Heart, Loader2, MessageCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
@@ -280,17 +280,7 @@ export default function MessagesListPage() {
 
   return (
     <div className="min-h-dvh flex flex-col screen-gradient">
-      <div className="max-w-app mx-auto w-full flex-1 flex flex-col">
-        <div className="px-6 pt-safe-top pb-0">
-          <div className="page-header">
-            <button onClick={() => router.back()} className="btn-ghost p-2 -ml-2">
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <h1 className="font-display text-xl text-ink">Conversations</h1>
-            <div className="w-9" />
-          </div>
-          <div className="hairline" />
-        </div>
+      <div className="max-w-app mx-auto w-full flex-1 flex flex-col pt-safe-top">
         <ChatList userId={user.id} supabase={supabase} persona={user.persona} />
       </div>
     </div>
