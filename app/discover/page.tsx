@@ -359,7 +359,7 @@ export default function DiscoverPage() {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className="snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth h-[calc(100dvh-5rem)]"
+        className="snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth h-[calc(100dvh-5rem)] scrollbar-hide"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         <div

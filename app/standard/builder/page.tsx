@@ -77,7 +77,7 @@ const WHY_THIS_WORKS = [
 
 function StandardIntroScreen({ onContinue }: { onContinue: () => void }) {
   return (
-    <div className="w-full animate-fade-in min-h-[calc(100vh-5rem)] screen-gradient px-6 pt-12 pb-10 max-w-app mx-auto flex flex-col">
+    <div className="w-full animate-fade-in min-h-[calc(100dvh-5rem)] screen-gradient px-6 pt-safe-top pb-10 max-w-app mx-auto flex flex-col">
       <div className="flex-1">
         <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-6 shadow-[0_0_30px_-8px_rgba(192,38,211,0.6)]">
           <Sparkles className="w-7 h-7 text-gold" />
@@ -186,6 +186,14 @@ export default function StandardBuilderPage() {
     );
   };
 
+  // Advancing to the next day is a state change, not a route change, so
+  // the browser has no reason to reset scroll on its own -- without this,
+  // finishing Day 1 while scrolled down to Task 3 dropped you into Day 2
+  // already scrolled past its own Task 1.
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [step]);
+
   const currentSlot = slots[step];
   const currentDayFilled = currentSlot.tasks.every((t) => t.prompt.trim().length > 0);
   const isLastDay = step === slots.length - 1;
@@ -250,7 +258,7 @@ export default function StandardBuilderPage() {
   const progressPercent = ((step + 1) / slots.length) * 100;
 
   return (
-    <div className="min-h-dvh screen-gradient px-6 pt-8 pb-24 max-w-app mx-auto">
+    <div className="min-h-dvh screen-gradient px-6 pt-safe-top pb-24 max-w-app mx-auto">
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => setStep((s) => Math.max(0, s - 1))}

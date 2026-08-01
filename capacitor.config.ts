@@ -47,6 +47,17 @@ const config: CapacitorConfig = {
         twitter: false,
       },
     },
+    // The viewport-meta `interactive-widget` property (what min-h-dvh +
+    // Next.js's `interactiveWidget: 'resizes-content'` rely on) is a
+    // Chromium-only feature -- WebKit/WKWebView has never implemented it,
+    // so on iOS none of that CSS-only keyboard handling actually does
+    // anything. 'body' mode makes Capacitor's native layer resize the
+    // WebView's own body height when the keyboard shows, which is what
+    // actually makes 100dvh (and therefore every bottom-pinned Continue
+    // button) shrink to sit above the keyboard instead of under it.
+    Keyboard: {
+      resize: 'body',
+    },
   },
 };
 

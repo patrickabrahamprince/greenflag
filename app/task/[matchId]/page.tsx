@@ -278,7 +278,7 @@ export default function TaskPage() {
   };
 
   return (
-    <div className="min-h-dvh screen-gradient px-6 pt-8 pb-10 max-w-app mx-auto flex flex-col">
+    <div className="min-h-dvh screen-gradient px-6 pt-safe-top pb-10 max-w-app mx-auto flex flex-col">
       <div className="flex items-center justify-between mb-6">
         <button onClick={handleBack} className="p-1 -ml-1 text-ink/40 hover:text-ink active:scale-90 transition-all">
           <ArrowLeft className="w-5 h-5" />
@@ -353,7 +353,7 @@ export default function TaskPage() {
         </div>
       )}
 
-      <div className="space-y-4 mb-6 flex-1 overflow-y-auto">
+      <div className="space-y-4 mb-6 flex-1 overflow-y-auto scrollbar-hide">
         {intentions.map((intentionItem) => {
           const matchingSub = submissions.find((s) => s.task_number === intentionItem.task_number);
           const hasSubmittedContent = !!(matchingSub?.content || matchingSub?.media_url);

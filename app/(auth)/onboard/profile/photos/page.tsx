@@ -9,6 +9,7 @@ import { PhotoUploadSlots } from '@/components/discovery/PhotoUploadSlots';
 import { StepDots } from '@/components/shared/StepDots';
 import { BottomSheet } from '@/components/shared/BottomSheet';
 import { compressImage } from '@/lib/compressImage';
+import { checkPhotosForFace } from '@/lib/faceDetection';
 import toast from 'react-hot-toast';
 
 // Step 4 (final) of the profile wizard -- photos, then the actual upload +
@@ -34,6 +35,7 @@ export default function ProfilePhotosPage() {
   const [loading, setLoading] = useState(false);
   const [compressing, setCompressing] = useState(false);
   const [showFaceNudge, setShowFaceNudge] = useState(false);
+  const [checkingFace, setCheckingFace] = useState(false);
 
   useEffect(() => {
     if (!name) { router.replace('/onboard/name'); return; }
@@ -69,6 +71,16 @@ export default function ProfilePhotosPage() {
 
   const handleContinue = async () => {
     if (photos.length < 1) { setError('Please add at least 1 photo'); return; }
+
+    setCheckingFace(true);
+    const faceResult = await checkPhotosForFace(photoFiles);
+    setCheckingFace(false);
+    if (faceResult === 'no-face-found') {
+      setError('Add at least one clear photo of your face to continue');
+      setShowFaceNudge(true);
+      return;
+    }
+
     setLoading(true);
 
     const { data: { user } } = await supabase.auth.getUser();
@@ -171,11 +183,11 @@ export default function ProfilePhotosPage() {
 
         <button
           onClick={handleContinue}
-          disabled={loading || compressing}
+          disabled={loading || compressing || checkingFace}
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'submit-profile' : undefined}
           className="btn-primary w-full mt-6 active:scale-[0.98] flex items-center justify-center gap-2"
         >
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Continue'}
+          {loading || checkingFace ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Continue'}
         </button>
       </div>
 

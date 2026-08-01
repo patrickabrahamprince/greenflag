@@ -134,7 +134,7 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
           isChatUnlocked={!!connection?.chat_unlocked}
         />
         {connection?.connected && <ConnectedBanner />}
-        <div className="flex-1 relative">
+        <div className="flex-1 min-h-0 relative">
           {isLocked && <LockedOverlay backRoute={backRoute} currentDay={connection?.current_day ?? 0} />}
           {messages.length === 0 && !isLocked ? (
             <EmptyChat partnerName={partnerName || ''} onSend={handleSend} />

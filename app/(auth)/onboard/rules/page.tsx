@@ -119,57 +119,58 @@ export default function RulesPage() {
           </div>
         </div>
 
-        {/* Swipeable carousel */}
-        <div
-          ref={trackRef}
-          onScroll={handleScroll}
-          className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar -mx-4 px-4"
-          style={{ scrollbarWidth: 'none' }}
-        >
-          {slides.map((slide) => (
-            <div key={slide.id} className="w-full shrink-0 snap-center px-1">
-              <div
-                className="flex flex-col items-center text-center px-6 py-10 border border-gold/20 rounded-[2rem] min-h-[380px] justify-center shadow-[0_0_40px_-16px_rgba(192,38,211,0.35)]"
-                style={{ background: 'linear-gradient(160deg, rgba(192,38,211,0.1) 0%, rgba(28,28,30,0.9) 55%)' }}
-              >
-                <div className="w-24 h-24 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-7 shadow-[0_0_24px_-6px_rgba(192,38,211,0.5)]">
-                  {slide.icon}
+        {/* Carousel + dots + CTA center as one group instead of the
+            button being pinned flush to the bottom edge. */}
+        <div className="flex-1 flex flex-col justify-center">
+          <div
+            ref={trackRef}
+            onScroll={handleScroll}
+            className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar -mx-4 px-4"
+            style={{ scrollbarWidth: 'none' }}
+          >
+            {slides.map((slide) => (
+              <div key={slide.id} className="w-full shrink-0 snap-center px-1">
+                <div
+                  className="flex flex-col items-center text-center px-6 py-10 border border-gold/20 rounded-[2rem] min-h-[380px] justify-center shadow-[0_0_40px_-16px_rgba(192,38,211,0.35)]"
+                  style={{ background: 'linear-gradient(160deg, rgba(192,38,211,0.1) 0%, rgba(28,28,30,0.9) 55%)' }}
+                >
+                  <div className="w-24 h-24 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-7 shadow-[0_0_24px_-6px_rgba(192,38,211,0.5)]">
+                    {slide.icon}
+                  </div>
+                  <h2 className="text-3xl font-display font-semibold text-ink mb-4">
+                    {slide.title}
+                  </h2>
+                  <p className="text-[#9DA0A6] text-base leading-relaxed max-w-[300px] font-light">
+                    {slide.desc}
+                  </p>
                 </div>
-                <h2 className="text-3xl font-display font-semibold text-ink mb-4">
-                  {slide.title}
-                </h2>
-                <p className="text-[#9DA0A6] text-base leading-relaxed max-w-[300px] font-light">
-                  {slide.desc}
-                </p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Dot pagination -- tap a dot to jump, or swipe the carousel */}
+          <div className="flex items-center justify-center gap-2 mt-5 mb-8">
+            {slides.map((slide, i) => (
+              <button
+                key={slide.id}
+                onClick={() => scrollToSlide(i)}
+                aria-label={`Go to rule ${i + 1}`}
+                className={`rounded-full transition-all duration-300 ${
+                  i === activeSlide ? 'w-6 h-1.5 bg-gold shadow-[0_0_10px_-1px_rgba(192,38,211,0.8)]' : 'w-1.5 h-1.5 bg-[#3C3C3E]'
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Single button -- swipe through as many or as few rules as you
+              like, one tap moves on regardless of which slide you're on. */}
+          <button
+            onClick={handleContinue}
+            className="btn-primary w-full py-4 font-semibold text-sm active:scale-95 transition-transform shadow-[0_0_30px_-10px_rgba(192,38,211,0.6)]"
+          >
+            Agree & Continue
+          </button>
         </div>
-
-        {/* Dot pagination -- tap a dot to jump, or swipe the carousel */}
-        <div className="flex items-center justify-center gap-2 mt-5 mb-2">
-          {slides.map((slide, i) => (
-            <button
-              key={slide.id}
-              onClick={() => scrollToSlide(i)}
-              aria-label={`Go to rule ${i + 1}`}
-              className={`rounded-full transition-all duration-300 ${
-                i === activeSlide ? 'w-6 h-1.5 bg-gold shadow-[0_0_10px_-1px_rgba(192,38,211,0.8)]' : 'w-1.5 h-1.5 bg-[#3C3C3E]'
-              }`}
-            />
-          ))}
-        </div>
-
-        <div className="flex-1" />
-
-        {/* Single button -- swipe through as many or as few rules as you
-            like, one tap moves on regardless of which slide you're on. */}
-        <button
-          onClick={handleContinue}
-          className="btn-primary w-full py-4 mt-4 font-semibold text-sm active:scale-95 transition-transform shadow-[0_0_30px_-10px_rgba(192,38,211,0.6)]"
-        >
-          Agree & Continue
-        </button>
       </div>
     </div>
   );

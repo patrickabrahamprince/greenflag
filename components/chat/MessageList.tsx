@@ -38,7 +38,7 @@ export function MessageList({ messages, userId, bottomRef }: MessageListProps) {
   const groupedMessages = groupMessagesByDate(messages);
 
   return (
-    <div className="px-4 pb-4 space-y-3 overflow-y-auto max-h-[calc(100vh-200px)] scrollbar-hide">
+    <div className="px-4 pb-4 space-y-3 h-full overflow-y-auto scrollbar-hide">
       {groupedMessages.map((group) => (
         <div key={group.date}>
           <div className="flex items-center gap-3 py-3">

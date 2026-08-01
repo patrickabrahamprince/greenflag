@@ -34,10 +34,10 @@ export function PermissionPrimer({
         <h3 className="font-display text-lg text-ink mb-2">{title}</h3>
         <p className="text-sm text-muted mb-6 leading-relaxed">{description}</p>
         <div className="flex gap-3">
-          <button onClick={onSkip} className="btn-secondary flex-1 text-sm">
+          <button onClick={onSkip} className="btn-secondary flex-1 !px-3 !text-[11px] normal-case tracking-normal whitespace-nowrap">
             {skipLabel}
           </button>
-          <button onClick={onConfirm} className="btn-primary flex-1 text-sm">
+          <button onClick={onConfirm} className="btn-primary flex-1 !px-3 !text-[11px] normal-case tracking-normal whitespace-nowrap">
             {confirmLabel}
           </button>
         </div>

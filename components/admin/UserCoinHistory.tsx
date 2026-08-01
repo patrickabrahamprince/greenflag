@@ -27,7 +27,7 @@ export function UserCoinHistory({ transactions, currentBalance }: UserCoinHistor
       {transactions.length === 0 ? (
         <p className="text-[#5A5A5D] text-xs text-center py-4">No transactions</p>
       ) : (
-        <div className="space-y-2 max-h-64 overflow-y-auto">
+        <div className="space-y-2 max-h-64 overflow-y-auto scrollbar-hide">
           {transactions.map((tx) => (
             <div key={tx.id} className="flex items-center justify-between py-2 border-b border-white/[0.04] last:border-0">
               <div className="min-w-0">

@@ -2,11 +2,13 @@
 
 import { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
+import { Bell } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useCoinStore } from '@/lib/store';
 import { PushNotificationRegistrar } from './push-notification-registrar';
 import { useScreenshotGuard } from '@/lib/hooks/useScreenshotGuard';
 import { useNativePush } from '@/lib/hooks/useNativePush';
+import { PermissionPrimer } from '@/components/shared/PermissionPrimer';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const user = useUserStore((s) => s.user);
@@ -21,8 +23,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
   // PushNotificationRegistrar below is Web Push (VAPID) -- it already
   // no-ops harmlessly inside the iOS WKWebView (no Notification/
   // serviceWorker/pushManager support there). This is the native-only
-  // complement, registering for real APNs push instead.
-  useNativePush(user?.id);
+  // complement, registering for real APNs push instead. The actual OS
+  // prompt is gated behind the primer below rather than firing the moment
+  // this hook mounts.
+  const { needsPrimer, requestPermission, dismissPrimer } = useNativePush(user?.id);
 
   useEffect(() => {
     const supabase = createClient();
@@ -73,6 +77,16 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <>
       <PushNotificationRegistrar />
       {children}
+      <PermissionPrimer
+        open={needsPrimer}
+        icon={<Bell className="w-6 h-6 text-gold" />}
+        title="Stay in the loop?"
+        description="Turn on notifications for new matches, messages, and Standard updates. You can change this anytime in Settings."
+        confirmLabel="Enable"
+        skipLabel="Not Now"
+        onConfirm={requestPermission}
+        onSkip={dismissPrimer}
+      />
       <Toaster
         position="top-center"
         toastOptions={{

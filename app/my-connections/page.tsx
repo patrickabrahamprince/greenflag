@@ -114,9 +114,9 @@ export default function MyConnectionsPage() {
   }
 
   return (
-    <div className="min-h-dvh screen-gradient px-6 pt-8 pb-24 max-w-app mx-auto">
+    <div className="min-h-dvh screen-gradient px-6 pt-safe-top pb-24 max-w-app mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-3xl text-ink">Your Connections</h1>
+        <h1 className="font-display text-xl text-ink">Your Connections</h1>
         <button
           onClick={() => router.push('/discover')}
           className="btn-secondary text-xs px-3 py-2 flex items-center gap-1.5 shrink-0"

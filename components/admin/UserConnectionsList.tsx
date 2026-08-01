@@ -37,7 +37,7 @@ export function UserConnectionsList({ connections, userId }: UserConnectionsList
       {connections.length === 0 ? (
         <p className="text-[#5A5A5D] text-xs text-center py-4">No connections</p>
       ) : (
-        <div className="space-y-2 max-h-64 overflow-y-auto">
+        <div className="space-y-2 max-h-64 overflow-y-auto scrollbar-hide">
           {connections.map((c) => {
             const otherName = c.guest_name || c.host_name || 'Unknown';
             return (

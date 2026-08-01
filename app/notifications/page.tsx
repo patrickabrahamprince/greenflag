@@ -125,7 +125,7 @@ export default function NotificationsPage() {
 
   return (
     <div className="min-h-dvh screen-gradient">
-      <div className="max-w-app mx-auto px-6 pt-8 pb-6">
+      <div className="max-w-app mx-auto px-6 pt-safe-top pb-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <button onClick={() => router.back()} className="btn-ghost p-2">

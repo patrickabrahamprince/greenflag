@@ -39,12 +39,13 @@ export const viewport: Viewport = {
   // elements that need it, not a global toggle that also clips
   // backgrounds that were supposed to bleed.
   viewportFit: 'cover',
-  // Without this, WKWebView doesn't shrink the layout viewport when the
-  // on-screen keyboard opens -- a bottom-pinned button inside a
-  // min-h-dvh container stays positioned at the bottom of the
-  // now-hidden-behind-the-keyboard viewport instead of reflowing above
-  // it. 'resizes-content' makes 100vh/min-h-dvh actually shrink to
-  // the visible area when the keyboard is up.
+  // Kept for a hypothetical Android build (Chromium respects this), but
+  // it does nothing on iOS -- WebKit has never implemented the
+  // interactive-widget viewport property, so this alone can't make
+  // min-h-dvh respond to the keyboard in the WKWebView this app actually
+  // ships in. The real fix for that is the Keyboard plugin's
+  // `resize: 'body'` config in capacitor.config.ts, which resizes the
+  // native WebView body itself when the keyboard shows.
   interactiveWidget: 'resizes-content',
 }
 

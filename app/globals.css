@@ -181,7 +181,7 @@ html, body { overscroll-behavior-y: none; }
   }
 
   .page-container {
-    @apply min-h-screen max-w-app mx-auto px-8 pt-8 pb-24;
+    @apply min-h-dvh max-w-app mx-auto px-8 pt-safe-top pb-24;
     background:
       radial-gradient(ellipse 140% 90% at 50% -25%, rgba(192, 38, 211, 0.45) 0%, rgba(124, 58, 237, 0.22) 35%, rgba(11, 6, 20, 0) 70%),
       radial-gradient(ellipse 100% 70% at 100% 100%, rgba(124, 58, 237, 0.18) 0%, transparent 60%),

@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, ArrowRight, MapPin } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
+import { Geolocation } from '@capacitor/geolocation';
 import { useOnboardingStore } from '@/lib/store';
 import { StepDots } from '@/components/shared/StepDots';
 import { PermissionPrimer } from '@/components/shared/PermissionPrimer';
@@ -30,41 +32,55 @@ export default function ProfileLocationPage() {
   const [gpsDenied, setGpsDenied] = useState(false);
   const [showLocationPrimer, setShowLocationPrimer] = useState(false);
 
+  const resolveCity = useCallback(async (latitude: number, longitude: number) => {
+    setLat(latitude);
+    setLng(longitude);
+    try {
+      const res = await fetch(`/api/geocode/reverse?lat=${latitude}&lon=${longitude}`);
+      const data = await res.json();
+      const address = data.address;
+      if (!address) { setGpsDenied(true); return; }
+      const parts = [address.city || address.town || address.county, address.state].filter(Boolean);
+      const detected = parts.join(', ');
+      if (detected) {
+        const match = INDIAN_CITIES.find((c) => detected.toLowerCase().includes(c.toLowerCase()));
+        const display = match || detected;
+        setCityValue(display);
+        toast.success(`Location found: ${display}`);
+      } else {
+        setGpsDenied(true);
+      }
+    } catch {
+      setGpsDenied(true);
+    } finally {
+      setGpsDetecting(false);
+    }
+  }, []);
+
+  // Native uses @capacitor/geolocation (real CoreLocation) so the system
+  // permission dialog shows the app's actual name -- the plain
+  // navigator.geolocation web API triggers WKWebView's own prompt instead,
+  // which surfaces the underlying deployment URL (e.g. "greenflag-dusky
+  // .vercel.app wants to use your location"), confusing right after the
+  // in-app primer already asked the same question in GreenFlag's own voice.
   const detectLocation = useCallback(() => {
-    if (!navigator.geolocation) return;
     setGpsDetecting(true);
     setGpsDenied(false);
+
+    if (Capacitor.isNativePlatform()) {
+      Geolocation.getCurrentPosition({ timeout: 10000 })
+        .then((position) => resolveCity(position.coords.latitude, position.coords.longitude))
+        .catch(() => { setGpsDetecting(false); setGpsDenied(true); });
+      return;
+    }
+
+    if (!navigator.geolocation) { setGpsDetecting(false); return; }
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        setLat(position.coords.latitude);
-        setLng(position.coords.longitude);
-        try {
-          const res = await fetch(
-            `/api/geocode/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}`
-          );
-          const data = await res.json();
-          const address = data.address;
-          if (!address) { setGpsDenied(true); return; }
-          const parts = [address.city || address.town || address.county, address.state].filter(Boolean);
-          const detected = parts.join(', ');
-          if (detected) {
-            const match = INDIAN_CITIES.find((c) => detected.toLowerCase().includes(c.toLowerCase()));
-            const display = match || detected;
-            setCityValue(display);
-            toast.success(`Location found: ${display}`);
-          } else {
-            setGpsDenied(true);
-          }
-        } catch {
-          setGpsDenied(true);
-        } finally {
-          setGpsDetecting(false);
-        }
-      },
+      (position) => resolveCity(position.coords.latitude, position.coords.longitude),
       () => { setGpsDetecting(false); setGpsDenied(true); },
       { timeout: 10000 }
     );
-  }, []);
+  }, [resolveCity]);
 
   useEffect(() => {
     if (!name) { router.replace('/onboard/name'); return; }
@@ -136,7 +152,7 @@ export default function ProfileLocationPage() {
         title="Find your city automatically?"
         description="We'll suggest your city so you don't have to type it. We never share your exact location — just the city name."
         confirmLabel="Enable Location"
-        skipLabel="I'll type it"
+        skipLabel="Not Now"
         onConfirm={() => { setShowLocationPrimer(false); detectLocation(); }}
         onSkip={() => setShowLocationPrimer(false)}
       />
