@@ -36,7 +36,7 @@ export default function ProfileBioPage() {
     if (trimmed.length < BIO_MIN_CHARS) { setError(`Write at least ${BIO_MIN_CHARS} characters`); return; }
     if (value.length > 200) { setError('Keep it under 200 characters'); return; }
     setBio(trimmed);
-    router.push('/onboard/profile/photos');
+    router.push('/onboard/profile/teasers');
   };
 
   if (showIntro) {
@@ -50,7 +50,7 @@ export default function ProfileBioPage() {
         </button>
 
         <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
-          <StepDots current={4} total={5} />
+          <StepDots current={4} total={6} />
           <div
             className="w-full aspect-[4/3] rounded-3xl flex items-center justify-center mb-8"
             style={{ background: 'radial-gradient(ellipse 120% 100% at 30% 20%, rgba(192, 38, 211, 0.5) 0%, transparent 60%), radial-gradient(ellipse 100% 100% at 80% 90%, rgba(124, 58, 237, 0.45) 0%, transparent 65%), #17091F' }}
@@ -84,7 +84,7 @@ export default function ProfileBioPage() {
       </button>
 
       <div className="flex-1 flex flex-col max-w-md mx-auto w-full">
-        <StepDots current={4} total={5} />
+        <StepDots current={4} total={6} />
 
         <h1 className="font-display text-2xl text-ink mb-2">A few words about you</h1>
         <p className="text-ink/50 text-sm leading-relaxed mb-8">

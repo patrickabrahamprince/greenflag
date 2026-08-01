@@ -124,6 +124,9 @@ test('Demo: Signup and onboarding flow', async ({ page }) => {
 
   await page.fill('[data-testid="profile-bio"]', 'Watching Playwright')
   await page.click('[data-testid="profile-bio-continue"]')
+  await page.waitForURL(/\/onboard\/profile\/teasers/, { timeout: 10000 })
+
+  await page.click('[data-testid="profile-teasers-continue"]')
   await page.waitForURL(/\/onboard\/profile\/photos/, { timeout: 10000 })
   await page.waitForTimeout(1000)
 

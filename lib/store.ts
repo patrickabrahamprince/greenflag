@@ -33,12 +33,15 @@ interface OnboardingState {
   instagramHandle: string;
   instagramVerified: boolean;
   bio: string;
+  teaserPrompt: string;
+  teaserAnswer: string;
   setPersona: (p: 'woman' | 'man') => void;
   setName: (name: string) => void;
   setAge: (age: number) => void;
   setLocation: (city: string, lat: number | null, lng: number | null) => void;
   setInstagram: (handle: string, verified: boolean) => void;
   setBio: (bio: string) => void;
+  setTeaser: (prompt: string, answer: string) => void;
   clearOnboarding: () => void;
 }
 
@@ -70,12 +73,15 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
   instagramHandle: '',
   instagramVerified: false,
   bio: '',
+  teaserPrompt: '',
+  teaserAnswer: '',
   setPersona: (persona) => set({ persona }),
   setName: (name) => set({ name }),
   setAge: (age) => set({ age }),
   setLocation: (city, lat, lng) => set({ city, lat, lng }),
   setInstagram: (instagramHandle, instagramVerified) => set({ instagramHandle, instagramVerified }),
   setBio: (bio) => set({ bio }),
+  setTeaser: (teaserPrompt, teaserAnswer) => set({ teaserPrompt, teaserAnswer }),
   clearOnboarding: () =>
     set({
       persona: null,
@@ -87,6 +93,8 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
       instagramHandle: '',
       instagramVerified: false,
       bio: '',
+      teaserPrompt: '',
+      teaserAnswer: '',
     }),
 }));
 

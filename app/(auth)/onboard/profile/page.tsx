@@ -47,7 +47,7 @@ export default function ProfileAgePage() {
       </button>
 
       <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
-        <StepDots current={1} total={5} />
+        <StepDots current={1} total={6} />
 
         <h1 className="font-display text-3xl text-ink mb-3">How old are you?</h1>
         <p className="text-ink/50 text-sm leading-relaxed mb-8">

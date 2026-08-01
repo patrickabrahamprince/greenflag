@@ -67,6 +67,9 @@ test.describe('Onboarding', () => {
 
     await page.fill('[data-testid="profile-bio"]', 'E2E test bio')
     await page.click('[data-testid="profile-bio-continue"]')
+    await page.waitForURL(/\/onboard\/profile\/teasers/, { timeout: 10000 })
+
+    await page.click('[data-testid="profile-teasers-continue"]')
     await page.waitForURL(/\/onboard\/profile\/photos/, { timeout: 10000 })
 
     const fixture = 'tests/fixtures/test-photo.jpg'

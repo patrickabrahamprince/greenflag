@@ -976,6 +976,8 @@ export type Database = {
           review_started_at: string | null
           standards: Json | null
           tastes: string | null
+          teaser_answer: string | null
+          teaser_prompt: string | null
           verification_status: string | null
           why_me_prompts: string[] | null
         }
@@ -1029,6 +1031,8 @@ export type Database = {
           review_started_at?: string | null
           standards?: Json | null
           tastes?: string | null
+          teaser_answer?: string | null
+          teaser_prompt?: string | null
           verification_status?: string | null
           why_me_prompts?: string[] | null
         }
@@ -1082,6 +1086,8 @@ export type Database = {
           review_started_at?: string | null
           standards?: Json | null
           tastes?: string | null
+          teaser_answer?: string | null
+          teaser_prompt?: string | null
           verification_status?: string | null
           why_me_prompts?: string[] | null
         }

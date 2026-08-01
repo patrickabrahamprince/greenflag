@@ -24,6 +24,8 @@ export default function ProfilePhotosPage() {
   const lng = useOnboardingStore((s) => s.lng);
   const instagramHandle = useOnboardingStore((s) => s.instagramHandle);
   const bio = useOnboardingStore((s) => s.bio);
+  const teaserPrompt = useOnboardingStore((s) => s.teaserPrompt);
+  const teaserAnswer = useOnboardingStore((s) => s.teaserAnswer);
   const setGlobalUser = useUserStore((s) => s.setUser);
 
   const [photos, setPhotos] = useState<string[]>([]);
@@ -109,6 +111,20 @@ export default function ProfilePhotosPage() {
     setLoading(false);
     if (upsertError) { toast.error(upsertError.message); return; }
 
+    // Best-effort, separate from the upsert above on purpose: the
+    // teaser_prompt/teaser_answer columns ship in a migration that may not
+    // be applied to every environment yet, and a missing-column error here
+    // must never block onboarding completion the way a failure in the
+    // main upsert should.
+    if (teaserPrompt) {
+      supabase.from('profiles').update({
+        teaser_prompt: teaserPrompt,
+        teaser_answer: teaserAnswer.trim() || null,
+      }).eq('id', user.id).then(({ error: teaserError }) => {
+        if (teaserError) console.error('Teaser save failed:', teaserError.message);
+      });
+    }
+
     // The global user store only loads once, right after login -- if that
     // happened before this upsert corrected persona away from the
     // handle_new_user() trigger's 'man' default, the store would keep
@@ -126,14 +142,14 @@ export default function ProfilePhotosPage() {
   return (
     <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top">
       <button
-        onClick={() => router.push('/onboard/profile/bio')}
+        onClick={() => router.push('/onboard/profile/teasers')}
         className="text-ink/40 hover:text-ink transition-colors mb-6 w-fit"
       >
         <ArrowLeft size={24} />
       </button>
 
       <div className="max-w-md mx-auto w-full flex-1 flex flex-col pb-safe-bottom">
-        <StepDots current={5} total={5} />
+        <StepDots current={6} total={6} />
 
         <h1 className="font-display text-2xl text-ink mb-2">Show your best self</h1>
         <p className="text-ink/50 text-sm leading-relaxed mb-8">

@@ -48,7 +48,7 @@ export default function ProfileInstagramPage() {
       </button>
 
       <div className="flex-1 flex flex-col max-w-md mx-auto w-full">
-        <StepDots current={3} total={5} />
+        <StepDots current={3} total={6} />
 
         <h1 className="font-display text-2xl text-ink mb-2">What&apos;s your Instagram?</h1>
         <p className="text-ink/50 text-sm leading-relaxed mb-8">

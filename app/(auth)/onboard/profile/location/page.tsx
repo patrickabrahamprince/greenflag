@@ -91,7 +91,7 @@ export default function ProfileLocationPage() {
       </button>
 
       <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
-        <StepDots current={2} total={5} />
+        <StepDots current={2} total={6} />
 
         <h1 className="font-display text-3xl text-ink mb-3">
           Where are you{gpsDetecting ? ' (detecting...)' : ''}?
