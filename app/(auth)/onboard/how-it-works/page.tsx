@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CalendarDays, ShieldCheck, Clock, Sparkles, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -45,6 +45,46 @@ export default function HowItWorksPage() {
   const [approvalStatus, setApprovalStatus] = useState<string | null>(null);
   const [step, setStep] = useState(0);
   const setGlobalUser = useUserStore((s) => s.setUser);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const settleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Same infinite-swipe trick as the House Rules carousel: three copies of
+  // the point list back to back, starting centered in the middle copy, so
+  // swiping past either end always lands on real content instead of
+  // stopping dead.
+  const loopedPoints = [0, 1, 2].flatMap((loop) =>
+    POINTS.map((point, i) => ({ ...point, loopKey: `${loop}-${i}` }))
+  );
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.scrollLeft = POINTS.length * track.clientWidth;
+  }, []);
+
+  const handleScroll = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    const index = Math.round(track.scrollLeft / track.clientWidth);
+    setStep(((index % POINTS.length) + POINTS.length) % POINTS.length);
+
+    if (settleTimer.current) clearTimeout(settleTimer.current);
+    settleTimer.current = setTimeout(() => {
+      const settledIndex = Math.round(track.scrollLeft / track.clientWidth);
+      if (settledIndex < POINTS.length || settledIndex >= POINTS.length * 2) {
+        const mod = ((settledIndex % POINTS.length) + POINTS.length) % POINTS.length;
+        track.scrollTo({ left: (POINTS.length + mod) * track.clientWidth, behavior: 'auto' });
+      }
+    }, 150);
+  };
+
+  const scrollToStep = (index: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const current = Math.round(track.scrollLeft / track.clientWidth);
+    const base = current - (((current % POINTS.length) + POINTS.length) % POINTS.length);
+    track.scrollTo({ left: (base + index) * track.clientWidth, behavior: 'smooth' });
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -114,32 +154,36 @@ export default function HowItWorksPage() {
           <p className="text-[#9DA0A6] text-sm">Three days. One real connection.</p>
         </div>
 
-        {/* Tap through one point at a time instead of a static wall of
-            four cards -- same content, but it now asks for a tap before
-            revealing the next step. */}
-        <button
-          type="button"
-          onClick={() => { hapticTap(); setStep((s) => (s + 1) % POINTS.length); }}
-          className="w-full text-left bg-[#1C1C1E] border border-gold/20 rounded-3xl p-6 active:scale-[0.98] transition-transform"
+        {/* Swipeable carousel (matches the House Rules screen) instead of
+            a tap-only card -- swipes forever in either direction, same
+            underlying four points. */}
+        <div
+          ref={trackRef}
+          onScroll={handleScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar -mx-4 px-4"
+          style={{ scrollbarWidth: 'none' }}
         >
-          <div className="flex items-center justify-between mb-5">
-            <span className="text-[10px] font-semibold tracking-widest text-gold uppercase">{POINTS[step].step}</span>
-            <span className="text-[10px] text-ink/30">{step + 1} / {POINTS.length}</span>
-          </div>
-          <div key={step} className="animate-fade-in">
-            <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-4">
-              {POINTS[step].icon}
+          {loopedPoints.map((point) => (
+            <div key={point.loopKey} className="w-full shrink-0 snap-center px-1">
+              <div className="text-left bg-[#1C1C1E] border border-gold/20 rounded-3xl p-6 min-h-[340px] flex flex-col justify-center">
+                <div className="flex items-center justify-between mb-5">
+                  <span className="text-[10px] font-semibold tracking-widest text-gold uppercase">{point.step}</span>
+                </div>
+                <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-4">
+                  {point.icon}
+                </div>
+                <h3 className="text-ink font-display text-xl mb-2">{point.title}</h3>
+                <p className="text-[#9DA0A6] text-sm leading-relaxed font-light">{point.desc}</p>
+              </div>
             </div>
-            <h3 className="text-ink font-display text-xl mb-2">{POINTS[step].title}</h3>
-            <p className="text-[#9DA0A6] text-sm leading-relaxed font-light">{POINTS[step].desc}</p>
-          </div>
-        </button>
+          ))}
+        </div>
 
         <div className="flex items-center justify-center gap-2 mt-4">
           {POINTS.map((point, i) => (
             <button
               key={point.title}
-              onClick={() => { hapticTap(); setStep(i); }}
+              onClick={() => { hapticTap(); scrollToStep(i); }}
               aria-label={`Go to point ${i + 1}`}
               className={`rounded-full transition-all duration-300 ${
                 i === step ? 'w-6 h-1.5 bg-gold' : 'w-1.5 h-1.5 bg-[#3C3C3E]'
@@ -148,7 +192,7 @@ export default function HowItWorksPage() {
           ))}
         </div>
 
-        <SocialProofLine className="text-center text-xs text-gold/70 font-medium mt-6" />
+        <SocialProofLine className="text-center text-[11px] text-gold/70 font-medium mt-6" />
 
         <button
           onClick={handleContinue}

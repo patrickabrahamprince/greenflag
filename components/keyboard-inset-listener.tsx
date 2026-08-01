@@ -13,16 +13,18 @@ import { Keyboard } from '@capacitor/keyboard';
 // The hide side is debounced on purpose: tapping Continue between two
 // onboarding questions blurs the old input (firing keyboardWillHide)
 // right before the next screen's input autofocuses (firing
-// keyboardWillShow again). A first attempt at this used a 120ms debounce
-// with a CSS transition, and it was still visibly glitching -- 120ms
-// wasn't long enough to bridge a real Next.js route transition (mount +
-// autofocus routinely takes longer than that), so the button was
-// dropping to full height and animating back on nearly every screen.
-// Two changes here: a much more generous 500ms window, and no CSS
-// transition at all -- if some edge case still causes a reset, an
-// instant snap is far less noticeable than a 220ms animated slide, and
-// removing the animation means there's nothing left to visibly "jiggle"
-// even if the underlying height value gets reported more than once.
+// keyboardWillShow again). 500ms is generous enough to bridge a real
+// Next.js route transition (mount + autofocus).
+//
+// The show side ignores repeat events while the keyboard is already up.
+// iOS re-fires keyboardWillShow with a slightly different keyboardHeight
+// whenever the QuickType predictive-text bar appears/disappears above the
+// keys -- which happens continuously while actively typing, as
+// suggestions come and go on every keystroke. Reacting to every one of
+// those made the CTA visibly bob up and down while the user was mid-word,
+// not just on screen transitions. The fix is to only trust the height
+// from the first show event after a hide, and ignore every subsequent
+// show event until the keyboard actually closes.
 const HIDE_DEBOUNCE_MS = 500;
 
 export function KeyboardInsetListener() {
@@ -30,11 +32,9 @@ export function KeyboardInsetListener() {
     if (!Capacitor.isNativePlatform()) return;
 
     let hideTimer: ReturnType<typeof setTimeout> | null = null;
-    let lastHeight = 0;
+    let isShown = false;
 
     const setInset = (px: number) => {
-      if (px === lastHeight) return;
-      lastHeight = px;
       document.documentElement.style.setProperty('--kb-inset', `${px}px`);
     };
 
@@ -43,9 +43,12 @@ export function KeyboardInsetListener() {
         clearTimeout(hideTimer);
         hideTimer = null;
       }
+      if (isShown) return;
+      isShown = true;
       setInset(info.keyboardHeight);
     });
     const hideHandle = Keyboard.addListener('keyboardWillHide', () => {
+      isShown = false;
       if (hideTimer) clearTimeout(hideTimer);
       hideTimer = setTimeout(() => {
         setInset(0);

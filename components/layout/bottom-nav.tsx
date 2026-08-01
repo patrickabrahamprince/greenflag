@@ -77,7 +77,7 @@ export function BottomNav() {
           const active = pathname === tab.href;
           const isNotifications = tab.href === '/notifications';
           return (
-            <Link key={tab.name} href={tab.href} className="flex flex-col items-center justify-center gap-0.5 relative w-14 py-1">
+            <Link key={tab.name} href={tab.href} className="flex flex-col items-center justify-center gap-1 relative w-14 py-1">
               <div className="relative">
                 <div
                   className={cn(
@@ -93,7 +93,7 @@ export function BottomNav() {
                   </span>
                 )}
               </div>
-              <span className={cn('text-[9.5px] leading-none font-medium whitespace-nowrap', active ? 'text-gold' : 'text-ink/40')}>
+              <span className={cn('text-[9.5px] leading-none font-display font-medium tracking-wide text-center whitespace-nowrap transition-colors duration-200', active ? 'text-gold' : 'text-ink/40')}>
                 {tab.name}
               </span>
             </Link>

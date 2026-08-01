@@ -1,11 +1,12 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Settings, LogOut, Edit3, Coins, Loader2 } from 'lucide-react';
+import { Settings, LogOut, Edit3, Coins, Loader2, BadgeCheck } from 'lucide-react';
 import { ProfileImageCarousel } from '@/components/shared/ProfileImageCarousel';
 import { MyStandardsSection } from '@/components/profile/MyStandardsSection';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useCoinStore } from '@/lib/store';
+import { hapticTap } from '@/lib/haptics';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function ProfilePage() {
   const setBalance = useCoinStore((s) => s.setBalance);
 
   const handleLogout = async () => {
+    hapticTap();
     const supabase = createClient();
     await supabase.auth.signOut();
     clearUser();
@@ -33,7 +35,7 @@ export default function ProfilePage() {
   return (
     <div className="page-container animate-fade-in">
       <div className="flex items-center justify-end mb-2">
-        <button onClick={() => router.push('/settings')} className="btn-ghost p-2">
+        <button onClick={() => { hapticTap(); router.push('/settings'); }} className="btn-ghost p-2">
           <Settings className="w-5 h-5" />
         </button>
       </div>
@@ -41,6 +43,12 @@ export default function ProfilePage() {
       <div className="relative w-full aspect-[3/4] mb-4 rounded-3xl overflow-hidden">
         <ProfileImageCarousel images={user.photos ?? []} />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent pointer-events-none" />
+        {user.phone_verified && (
+          <div className="absolute top-3 left-3 flex items-center gap-1 bg-black/50 backdrop-blur-md rounded-full pl-1.5 pr-2.5 py-1 animate-fade-in">
+            <BadgeCheck className="w-3.5 h-3.5 text-gold" />
+            <span className="text-[10px] font-semibold text-white tracking-wide">Verified</span>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col items-center pb-6">
@@ -55,15 +63,28 @@ export default function ProfilePage() {
             {user.bio}
           </p>
         )}
+        {!!user.interests_have?.length && (
+          <div className="flex flex-wrap justify-center gap-1.5 mt-4 max-w-xs">
+            {user.interests_have.map((tag) => (
+              <button
+                key={tag}
+                onClick={hapticTap}
+                className="px-3 py-1 rounded-full text-[11px] font-medium text-gold bg-gold/10 border border-gold/20 active:scale-90 transition-transform"
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="space-y-3 px-4">
-        <button onClick={() => router.push('/profile/edit')} className="btn-primary w-full flex items-center justify-center gap-2">
+        <button onClick={() => { hapticTap(); router.push('/profile/edit'); }} className="btn-primary w-full flex items-center justify-center gap-2">
           <Edit3 className="w-4 h-4" />
           Edit Profile
         </button>
 
-        <button onClick={() => router.push('/settings')} className="btn-secondary w-full flex items-center justify-center gap-2">
+        <button onClick={() => { hapticTap(); router.push('/settings'); }} className="btn-secondary w-full flex items-center justify-center gap-2">
           <Settings className="w-4 h-4" />
           Settings
         </button>
@@ -86,7 +107,7 @@ export default function ProfilePage() {
                 <p className="text-xs text-muted mt-1">Coins &middot; spend to connect</p>
               </div>
             </div>
-            <button onClick={() => router.push('/coins')} className="btn-primary text-sm py-2.5 px-5 shrink-0">
+            <button onClick={() => { hapticTap(); router.push('/coins'); }} className="btn-primary text-sm py-2.5 px-5 shrink-0">
               Buy
             </button>
           </div>

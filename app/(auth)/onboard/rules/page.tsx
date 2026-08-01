@@ -62,6 +62,18 @@ export default function RulesPage() {
   const [loading, setLoading] = useState(true);
   const [activeSlide, setActiveSlide] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
+  const settleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Renders 3 copies of the slide list back to back and starts scrolled
+  // into the middle copy, so swiping either direction always has real
+  // content to land on instead of stopping dead at slide 0 or the last
+  // slide. Once a swipe settles, handleScroll snaps (instantly, no
+  // animation) back into the middle copy at the equivalent slide -- the
+  // user never sees the seam, and the buffer never runs out no matter how
+  // many times they keep swiping the same direction.
+  const loopedSlides = [0, 1, 2].flatMap((loop) =>
+    slides.map((slide) => ({ ...slide, loopKey: `${loop}-${slide.id}` }))
+  );
 
   // Persona/approval routing now lives in the how-it-works screen this
   // leads to -- this just confirms there's still a live session.
@@ -78,29 +90,51 @@ export default function RulesPage() {
     checkSession();
   }, [supabase, router]);
 
+  // Start centered in the middle copy so the first swipe in either
+  // direction already has a neighboring copy to land on.
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.scrollLeft = slides.length * track.clientWidth;
+  }, []);
+
   const handleScroll = () => {
     const track = trackRef.current;
     if (!track) return;
     const index = Math.round(track.scrollLeft / track.clientWidth);
-    setActiveSlide(Math.min(slides.length - 1, Math.max(0, index)));
+    setActiveSlide(((index % slides.length) + slides.length) % slides.length);
+
+    if (settleTimer.current) clearTimeout(settleTimer.current);
+    settleTimer.current = setTimeout(() => {
+      const settledIndex = Math.round(track.scrollLeft / track.clientWidth);
+      if (settledIndex < slides.length || settledIndex >= slides.length * 2) {
+        const mod = ((settledIndex % slides.length) + slides.length) % slides.length;
+        track.scrollTo({ left: (slides.length + mod) * track.clientWidth, behavior: 'auto' });
+      }
+    }, 150);
   };
 
   const scrollToSlide = (index: number) => {
     const track = trackRef.current;
     if (!track) return;
-    track.scrollTo({ left: index * track.clientWidth, behavior: 'smooth' });
+    const current = Math.round(track.scrollLeft / track.clientWidth);
+    const base = current - (((current % slides.length) + slides.length) % slides.length);
+    track.scrollTo({ left: (base + index) * track.clientWidth, behavior: 'smooth' });
   };
 
   // Auto-advances so the rules actually get seen instead of sitting on
   // slide 1 waiting for a swipe -- still fully swipeable manually at any
-  // point, this just keeps things moving on their own too.
+  // point, this just keeps things moving on their own too. Always steps
+  // forward by one real slide (never wraps backward visually) so it stays
+  // consistent with the infinite-swipe behavior above.
   useEffect(() => {
     const id = setInterval(() => {
-      setActiveSlide((prev) => {
-        const next = (prev + 1) % slides.length;
-        scrollToSlide(next);
-        return next;
-      });
+      const track = trackRef.current;
+      if (!track) return;
+      const current = Math.round(track.scrollLeft / track.clientWidth);
+      const next = current + 1;
+      track.scrollTo({ left: next * track.clientWidth, behavior: 'smooth' });
+      setActiveSlide(((next % slides.length) + slides.length) % slides.length);
     }, 3200);
     return () => clearInterval(id);
   }, []);
@@ -140,8 +174,8 @@ export default function RulesPage() {
             className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar -mx-4 px-4"
             style={{ scrollbarWidth: 'none' }}
           >
-            {slides.map((slide) => (
-              <div key={slide.id} className="w-full shrink-0 snap-center px-1">
+            {loopedSlides.map((slide) => (
+              <div key={slide.loopKey} className="w-full shrink-0 snap-center px-1">
                 <div
                   className="flex flex-col items-center text-center px-6 py-10 border border-gold/20 rounded-[2rem] min-h-[380px] justify-center shadow-[0_0_40px_-16px_rgba(192,38,211,0.35)]"
                   style={{ background: 'linear-gradient(160deg, rgba(192,38,211,0.1) 0%, rgba(28,28,30,0.9) 55%)' }}
@@ -149,10 +183,10 @@ export default function RulesPage() {
                   <div className="w-24 h-24 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-7 shadow-[0_0_24px_-6px_rgba(192,38,211,0.5)]">
                     {slide.icon}
                   </div>
-                  <h2 className="text-3xl font-display font-semibold text-ink mb-4">
+                  <h2 className="text-2xl font-display font-semibold text-ink mb-4">
                     {slide.title}
                   </h2>
-                  <p className="text-[#9DA0A6] text-base leading-relaxed max-w-[300px] font-light">
+                  <p className="text-[#9DA0A6] text-sm italic leading-relaxed max-w-[300px] font-light">
                     {slide.desc}
                   </p>
                 </div>

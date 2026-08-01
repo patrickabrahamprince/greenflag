@@ -1,4 +1,5 @@
 import React from 'react';
+import { hapticTap } from '@/lib/haptics';
 
 /** Props for the Bumble‑style interest grid. */
 interface InterestGridProps {
@@ -33,6 +34,10 @@ export const InterestGrid: React.FC<InterestGridProps> = ({
 }) => {
   const handleClick = (option: string) => {
     if (readOnly || !onToggle) return;
+    // Every other tappable control in onboarding pairs a scale-down with
+    // a haptic tap -- these chips only had the scale, which read as dead
+    // next to everything around them.
+    hapticTap();
     const isSelected = selected.includes(option);
     if (isSelected) {
       onToggle('have', option);

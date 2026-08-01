@@ -84,16 +84,16 @@ export function Providers({ children }: { children: React.ReactNode }) {
           bottom: 'calc(max(1rem, env(safe-area-inset-bottom)) + 5.5rem + var(--kb-inset, 0px))',
         }}
         toastOptions={{
-          duration: 3200,
+          duration: 2000,
           style: {
             background: 'linear-gradient(135deg, rgba(192,38,211,0.22) 0%, rgba(28,28,30,0.98) 40%, rgba(15,15,17,0.98) 100%)',
             color: '#FFFFFF',
             border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '16px',
-            padding: '14px 18px',
+            borderRadius: '999px',
+            padding: '10px 22px',
             fontSize: '13.5px',
             fontWeight: 500,
-            maxWidth: '340px',
+            maxWidth: '92vw',
             boxShadow: '0 16px 40px -8px rgba(0,0,0,0.6), 0 0 0 1px rgba(192,38,211,0.08)',
           },
           success: { iconTheme: { primary: '#E879F9', secondary: '#111111' } },

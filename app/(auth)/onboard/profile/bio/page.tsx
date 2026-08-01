@@ -14,6 +14,8 @@ const BIO_EXAMPLES = [
   '"Will debate you on the best biryani in town."',
   '"Currently training for a marathon I\'m dreading."',
   '"Ask me about the time I got lost in Ladakh."',
+  '"Overly competitive at board games. No regrets."',
+  '"Homemade pasta on weekends, chaos on weekdays."',
 ];
 
 // Step 3 of the profile wizard -- About You bio, split out of the old
@@ -72,13 +74,13 @@ export default function ProfileBioPage() {
         <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
           <StepDots current={4} total={6} />
           <div
-            className="w-full aspect-[4/3] rounded-3xl flex flex-col items-center justify-center mb-8 px-8 text-center"
+            className="w-full aspect-[3/4] rounded-3xl flex flex-col items-center justify-center mb-8 px-8 text-center overflow-hidden"
             style={{ background: 'radial-gradient(ellipse 120% 100% at 30% 20%, rgba(192, 38, 211, 0.5) 0%, transparent 60%), radial-gradient(ellipse 100% 100% at 80% 90%, rgba(124, 58, 237, 0.45) 0%, transparent 65%), #17091F' }}
           >
             <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center mb-5">
               <Quote size={22} className="text-ink" />
             </div>
-            <p key={exampleIdx} className="font-display text-xl text-ink/90 leading-snug animate-fade-in">
+            <p key={exampleIdx} className="font-display text-sm text-ink/90 leading-snug animate-slide-up">
               {BIO_EXAMPLES[exampleIdx]}
             </p>
             <p className="text-ink/40 text-xs uppercase tracking-widest mt-4">Like this, but you</p>
