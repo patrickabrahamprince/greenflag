@@ -9,6 +9,13 @@ import { hapticTap } from '@/lib/haptics';
 
 const BIO_MIN_CHARS = 15;
 
+const BIO_EXAMPLES = [
+  '"Coffee snob, terrible dancer, great listener."',
+  '"Will debate you on the best biryani in town."',
+  '"Currently training for a marathon I\'m dreading."',
+  '"Ask me about the time I got lost in Ladakh."',
+];
+
 // Step 3 of the profile wizard -- About You bio, split out of the old
 // single-page form (see /onboard/profile for the wizard's intent).
 export default function ProfileBioPage() {
@@ -23,6 +30,7 @@ export default function ProfileBioPage() {
   const [value, setValue] = useState(bio);
   const [error, setError] = useState('');
   const [showIntro, setShowIntro] = useState(true);
+  const [exampleIdx, setExampleIdx] = useState(0);
 
   useEffect(() => {
     if (!name) { router.replace('/onboard/name'); return; }
@@ -30,6 +38,16 @@ export default function ProfileBioPage() {
     if (!city) { router.replace('/onboard/profile/location'); return; }
     if (!instagramHandle) { router.replace('/onboard/profile/instagram'); }
   }, []);
+
+  // A cycling example bio isn't just decorative -- it gives someone
+  // staring at a blank text field an actual sense of the tone/length
+  // that works, instead of a static quote icon that (per feedback) read
+  // as "showing nothing".
+  useEffect(() => {
+    if (!showIntro) return;
+    const id = setInterval(() => setExampleIdx((i) => (i + 1) % BIO_EXAMPLES.length), 2400);
+    return () => clearInterval(id);
+  }, [showIntro]);
 
   const handleContinue = () => {
     hapticTap();
@@ -54,12 +72,16 @@ export default function ProfileBioPage() {
         <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
           <StepDots current={4} total={6} />
           <div
-            className="w-full aspect-[4/3] rounded-3xl flex items-center justify-center mb-8"
+            className="w-full aspect-[4/3] rounded-3xl flex flex-col items-center justify-center mb-8 px-8 text-center"
             style={{ background: 'radial-gradient(ellipse 120% 100% at 30% 20%, rgba(192, 38, 211, 0.5) 0%, transparent 60%), radial-gradient(ellipse 100% 100% at 80% 90%, rgba(124, 58, 237, 0.45) 0%, transparent 65%), #17091F' }}
           >
-            <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center">
-              <Quote size={26} className="text-ink" />
+            <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center mb-5">
+              <Quote size={22} className="text-ink" />
             </div>
+            <p key={exampleIdx} className="font-display text-xl text-ink/90 leading-snug animate-fade-in">
+              {BIO_EXAMPLES[exampleIdx]}
+            </p>
+            <p className="text-ink/40 text-xs uppercase tracking-widest mt-4">Like this, but you</p>
           </div>
           <h1 className="font-display text-3xl text-ink mb-3">Personality goes a long way</h1>
           <p className="text-ink/50 text-sm leading-relaxed">It&apos;s your time to shine.</p>

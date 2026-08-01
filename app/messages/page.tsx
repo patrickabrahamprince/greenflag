@@ -32,7 +32,7 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
   return (
     <button
       onClick={() => router.push(`/messages/${conv.id}`)}
-      className="w-full flex items-center gap-3 p-4 text-left transition-colors border-b border-[#2A2A2A]"
+      className="w-full flex items-center gap-3 px-6 py-4 text-left transition-colors border-b border-[#2A2A2A]"
     >
       <div
         className="w-12 h-12 rounded-full flex-shrink-0 overflow-hidden flex items-center justify-center bg-[#1C1C1E]"

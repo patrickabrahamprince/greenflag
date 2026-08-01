@@ -124,7 +124,6 @@ export default function ProfileLocationPage() {
           onChange={(e) => { setCityValue(e.target.value); setError(''); }}
           onKeyDown={(e) => { if (e.key === 'Enter') handleContinue(); }}
           placeholder={gpsDetecting ? 'Detecting location...' : 'Your city'}
-          autoFocus
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-city' : undefined}
           className={`input w-full text-lg ${error ? 'border-red-500' : ''}`}
         />

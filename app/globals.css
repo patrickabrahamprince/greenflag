@@ -45,6 +45,7 @@ body::-webkit-scrollbar,
    usage across the app without touching any of those files. */
 .min-h-dvh {
   min-height: calc(100dvh - var(--kb-inset)) !important;
+  transition: min-height 180ms ease-out;
 }
 
 @property --border-angle {

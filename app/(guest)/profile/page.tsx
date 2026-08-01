@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Settings, LogOut, Edit3, Coins } from 'lucide-react';
+import { Settings, LogOut, Edit3, Coins, Loader2 } from 'lucide-react';
 import { ProfileImageCarousel } from '@/components/shared/ProfileImageCarousel';
 import { MyStandardsSection } from '@/components/profile/MyStandardsSection';
 import { createClient } from '@/lib/supabase/client';
@@ -22,7 +22,13 @@ export default function ProfilePage() {
     router.replace('/login');
   };
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <div className="min-h-dvh flex items-center justify-center screen-gradient">
+        <Loader2 className="w-8 h-8 animate-spin text-gold" />
+      </div>
+    );
+  }
 
   return (
     <div className="page-container animate-fade-in">
@@ -67,19 +73,22 @@ export default function ProfilePage() {
 
       {user.persona !== 'woman' && (
         <div className="px-4 mt-6">
-          <div className="card">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+          <div
+            className="rounded-2xl border border-gold/20 p-5 flex items-center justify-between"
+            style={{ background: 'linear-gradient(135deg, rgba(192,38,211,0.16) 0%, rgba(28,28,30,0.9) 60%)' }}
+          >
+            <div className="flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-full bg-gold/15 border border-gold/30 flex items-center justify-center shrink-0">
                 <Coins className="w-5 h-5 text-gold" />
-                <div>
-                  <p className="text-white font-medium">Coins: {balance}</p>
-                  <p className="text-xs text-muted mt-0.5">Spend coins to connect</p>
-                </div>
               </div>
-              <button onClick={() => router.push('/coins')} className="btn-primary text-sm py-2 px-4">
-                Buy Coins
-              </button>
+              <div>
+                <p className="text-2xl font-display font-semibold text-white leading-none">{balance}</p>
+                <p className="text-xs text-muted mt-1">Coins &middot; spend to connect</p>
+              </div>
             </div>
+            <button onClick={() => router.push('/coins')} className="btn-primary text-sm py-2.5 px-5 shrink-0">
+              Buy
+            </button>
           </div>
         </div>
       )}

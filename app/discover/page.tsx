@@ -340,7 +340,7 @@ export default function DiscoverPage() {
         <div className="flex items-center justify-end px-5 pt-safe-top pb-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent">
           <div className="pointer-events-auto">
             {persona === 'woman' ? (
-              <div className="glass-surface flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-display font-semibold text-ink/70">
+              <div className="glass-surface border-0 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-display font-semibold text-ink/70">
                 <span className="text-gold text-[10px]">◆</span>
                 {coinBalance}
               </div>

@@ -21,7 +21,7 @@ export function CoinBadge({ onClick, className }: CoinBadgeProps) {
     <button
       onClick={onClick}
       className={cn(
-        'glass-surface flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-display font-bold text-ink transition-colors',
+        'glass-surface border-0 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-display font-bold text-ink transition-colors',
         className
       )}
     >

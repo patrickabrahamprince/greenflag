@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
 import { hapticTap } from '@/lib/haptics';
+import { createClient } from '@/lib/supabase/client';
 
 // Its own screen, not folded into the big profile form -- a standalone
 // name-collection step is a well-documented conversion lever on its own
@@ -18,7 +19,7 @@ export default function OnboardNamePage() {
   const [value, setValue] = useState('');
   const [error, setError] = useState('');
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     hapticTap();
     const trimmed = value.trim();
     if (trimmed.length < 2) {
@@ -26,7 +27,26 @@ export default function OnboardNamePage() {
       return;
     }
     setName(trimmed);
-    router.push(persona === 'woman' ? '/onboard/profile' : '/onboard/phone');
+
+    if (persona === 'woman') {
+      router.push('/onboard/profile');
+      return;
+    }
+
+    // Google/Apple sign-in gives an email but never a phone number --
+    // routing those users to /onboard/phone anyway meant that screen's
+    // own "already has email, no phone needed" check fired a beat after
+    // mount and bounced them straight to /onboard/profile, showing up as
+    // the phone screen flashing on and immediately off. Checking here
+    // first skips the screen entirely instead of visiting and leaving it.
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.email && !user.phone) {
+      await supabase.from('profiles').update({ phone_verified: true }).eq('id', user.id);
+      router.push('/onboard/profile');
+      return;
+    }
+    router.push('/onboard/phone');
   };
 
   return (

@@ -32,7 +32,8 @@ export default function OnboardPage() {
             <div className="w-16 h-16 rounded-full bg-gold/15 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Crown className="w-8 h-8 text-gold" />
             </div>
-            <span className="font-display text-2xl text-ink">
+            <span className="text-[10px] font-semibold tracking-widest text-gold uppercase">Woman</span>
+            <span className="font-display text-2xl text-ink -mt-2">
               I Set The Standard
             </span>
             <span className="text-sm text-ink/60 max-w-[260px] leading-relaxed">
@@ -50,7 +51,8 @@ export default function OnboardPage() {
             <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center group-hover:scale-110 transition-transform">
               <Compass className="w-8 h-8 text-black/70" />
             </div>
-            <span className="font-display text-2xl text-ink">
+            <span className="text-[10px] font-semibold tracking-widest text-ink/50 uppercase">Men</span>
+            <span className="font-display text-2xl text-ink -mt-2">
               I Rise To It
             </span>
             <span className="text-sm text-ink/60 max-w-[260px] leading-relaxed">

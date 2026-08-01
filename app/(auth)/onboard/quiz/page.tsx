@@ -14,16 +14,14 @@ interface Question {
   options: string[];
 }
 
+// Trimmed from 11 to 5 -- the demographic ones (education, smoking, kids)
+// felt like a form, not a quiz. These five keep even coverage across all
+// four archetypes below while actually being fun to answer.
 const QUIZ_QUESTIONS: Question[] = [
   {
     id: 'relationship_goal',
-    question: 'What brings you to Greenflag?',
-    options: ['A long-term partnership', 'Marriage-minded', 'Intentional, but open', 'Exploring with intention'],
-  },
-  {
-    id: 'weekend_vibe',
-    question: 'Your ideal Sunday?',
-    options: ['Slow coffee & pages', 'Outdoors & movement', 'Brunch with your circle', 'Slow morning, no plans'],
+    question: "What's the real reason you're here?",
+    options: ['Ready to settle down', 'Marriage-minded', 'Open, but intentional', 'Chasing a spark'],
   },
   {
     id: 'love_language',
@@ -32,64 +30,33 @@ const QUIZ_QUESTIONS: Question[] = [
   },
   {
     id: 'first_date',
-    question: 'Your ideal first encounter?',
+    question: 'Your dream first date?',
     options: ['A quiet coffee walk', 'Cocktails, low light', 'A class or experience together', 'An intimate dinner'],
   },
   {
-    id: 'communication',
-    question: 'How do you stay connected?',
-    options: ['Thoughtful messages', 'Unplanned calls', 'Face to face', 'A shared sense of humor'],
-  },
-  {
     id: 'humor_style',
-    question: 'Your humor?',
+    question: 'Be honest -- your humor is...',
     options: ['Dry & understated', 'Playful & witty', 'Sharp & clever', 'Dark & dry'],
   },
   {
     id: 'ideal_trip',
-    question: 'Where would you escape to?',
+    question: 'If you disappeared tomorrow, where\'d you be?',
     options: ['Private beach', 'Old European city', 'Mountains, off-grid', 'Culinary capital'],
-  },
-  {
-    id: 'pets',
-    question: 'Pets?',
-    options: ['Dog person', 'Cat person', 'Animal lover', 'Not just yet'],
-  },
-  {
-    id: 'education',
-    question: 'Education level?',
-    options: ['High School', "Bachelor's Degree", "Master's Degree", 'Doctorate'],
-  },
-  {
-    id: 'smoking',
-    question: 'Smoking?',
-    options: ['Never', 'Socially', 'Regularly', "Trying to quit"],
-  },
-  {
-    id: 'kids',
-    question: 'Kids?',
-    options: ['Have kids', "Don't want kids", 'Want kids someday', 'Open either way'],
   },
 ];
 
 // Deterministic, not real psychology -- a lightweight "aha" reveal after
 // the quiz instead of the answers just disappearing into storage with no
 // payoff. Each option maps to one of four traits; whichever trait shows
-// up most across the 8 answers picks the archetype shown back.
+// up most across the 5 answers picks the archetype shown back.
 type Trait = 'Grounded' | 'Romantic' | 'Adventurous' | 'Playful';
 
 const TRAIT_MAP: Record<string, Record<string, Trait>> = {
   relationship_goal: {
-    'A long-term partnership': 'Grounded',
+    'Ready to settle down': 'Grounded',
     'Marriage-minded': 'Grounded',
-    'Intentional, but open': 'Romantic',
-    'Exploring with intention': 'Adventurous',
-  },
-  weekend_vibe: {
-    'Slow coffee & pages': 'Grounded',
-    'Outdoors & movement': 'Adventurous',
-    'Brunch with your circle': 'Playful',
-    'Slow morning, no plans': 'Romantic',
+    'Open, but intentional': 'Romantic',
+    'Chasing a spark': 'Adventurous',
   },
   love_language: {
     'Quality time together': 'Romantic',
@@ -103,12 +70,6 @@ const TRAIT_MAP: Record<string, Record<string, Trait>> = {
     'A class or experience together': 'Adventurous',
     'An intimate dinner': 'Romantic',
   },
-  communication: {
-    'Thoughtful messages': 'Romantic',
-    'Unplanned calls': 'Playful',
-    'Face to face': 'Grounded',
-    'A shared sense of humor': 'Playful',
-  },
   humor_style: {
     'Dry & understated': 'Grounded',
     'Playful & witty': 'Playful',
@@ -120,12 +81,6 @@ const TRAIT_MAP: Record<string, Record<string, Trait>> = {
     'Old European city': 'Romantic',
     'Mountains, off-grid': 'Adventurous',
     'Culinary capital': 'Playful',
-  },
-  pets: {
-    'Dog person': 'Playful',
-    'Cat person': 'Grounded',
-    'Animal lover': 'Romantic',
-    'Not just yet': 'Adventurous',
   },
 };
 

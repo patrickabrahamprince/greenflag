@@ -13,6 +13,8 @@ import { checkPhotosForFace } from '@/lib/faceDetection';
 import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 
+const REQUIRED_PHOTOS = 3;
+
 // Step 4 (final) of the profile wizard -- photos, then the actual upload +
 // profile upsert that used to run at the end of the old single-page form.
 export default function ProfilePhotosPage() {
@@ -72,7 +74,10 @@ export default function ProfilePhotosPage() {
 
   const handleContinue = async () => {
     hapticTap();
-    if (photos.length < 1) { setError('Please add at least 1 photo'); return; }
+    if (photos.length < REQUIRED_PHOTOS) {
+      setError(`Add ${REQUIRED_PHOTOS - photos.length} more photo${REQUIRED_PHOTOS - photos.length === 1 ? '' : 's'} to continue`);
+      return;
+    }
 
     setCheckingFace(true);
     const faceResult = await checkPhotosForFace(photoFiles);
@@ -194,7 +199,7 @@ export default function ProfilePhotosPage() {
 
         <PhotoUploadSlots
           photos={photos}
-          maxPhotos={3}
+          maxPhotos={REQUIRED_PHOTOS}
           onAdd={handlePhotoAdd}
           onRemove={handlePhotoRemove}
           error={error}

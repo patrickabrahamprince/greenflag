@@ -50,12 +50,20 @@ export default function ProfileTeasersPage() {
 
   return (
     <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
-      <button
-        onClick={() => router.push('/onboard/profile/bio')}
-        className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit"
-      >
-        <ArrowLeft size={24} />
-      </button>
+      <div className="flex items-center justify-between mb-6">
+        <button
+          onClick={() => router.push('/onboard/profile/bio')}
+          className="text-ink/40 hover:text-ink active:scale-90 transition-all w-fit"
+        >
+          <ArrowLeft size={24} />
+        </button>
+        <button
+          onClick={handleContinue}
+          className="text-xs font-semibold tracking-widest uppercase text-gold/80 hover:text-gold active:scale-90 transition-all"
+        >
+          Skip
+        </button>
+      </div>
 
       <div className="flex-1 flex flex-col max-w-md mx-auto w-full">
         <StepDots current={5} total={6} />

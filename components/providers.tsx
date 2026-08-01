@@ -86,25 +86,18 @@ export function Providers({ children }: { children: React.ReactNode }) {
         toastOptions={{
           duration: 3200,
           style: {
-            background: 'linear-gradient(135deg, rgba(28,28,30,0.98) 0%, rgba(15,15,17,0.98) 100%)',
+            background: 'linear-gradient(135deg, rgba(192,38,211,0.22) 0%, rgba(28,28,30,0.98) 40%, rgba(15,15,17,0.98) 100%)',
             color: '#FFFFFF',
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderLeft: '4px solid #C026D3',
-            borderRadius: '14px',
-            padding: '12px 16px',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: '16px',
+            padding: '14px 18px',
             fontSize: '13.5px',
             fontWeight: 500,
             maxWidth: '340px',
-            boxShadow: '0 12px 32px -8px rgba(0,0,0,0.55)',
+            boxShadow: '0 16px 40px -8px rgba(0,0,0,0.6), 0 0 0 1px rgba(192,38,211,0.08)',
           },
-          success: {
-            iconTheme: { primary: '#22C55E', secondary: '#111111' },
-            style: { borderLeft: '4px solid #22C55E' },
-          },
-          error: {
-            iconTheme: { primary: '#EF4444', secondary: '#111111' },
-            style: { borderLeft: '4px solid #EF4444' },
-          },
+          success: { iconTheme: { primary: '#E879F9', secondary: '#111111' } },
+          error: { iconTheme: { primary: '#E879F9', secondary: '#111111' } },
         }}
       />
     </>

@@ -11,22 +11,26 @@ import toast from 'react-hot-toast';
 
 const POINTS = [
   {
-    icon: <CalendarDays className="w-6 h-6 text-gold" />,
+    icon: <CalendarDays className="w-8 h-8 text-gold" />,
+    step: 'Day 1-3',
     title: '3 Days, 3 Intentions',
     desc: 'Each day: one thought, one image, one voice. Simple. Honest.',
   },
   {
-    icon: <ShieldCheck className="w-6 h-6 text-gold" />,
+    icon: <ShieldCheck className="w-8 h-8 text-gold" />,
+    step: 'Every day',
     title: 'Sincerity Is Currency',
     desc: 'Real answers open doors. Effort is seen.',
   },
   {
-    icon: <Clock className="w-6 h-6 text-gold" />,
+    icon: <Clock className="w-8 h-8 text-gold" />,
+    step: 'After each day',
     title: 'She Sets The Pace',
     desc: 'After each day, she reviews. The next day unlocks after.',
   },
   {
-    icon: <Sparkles className="w-6 h-6 text-gold" />,
+    icon: <Sparkles className="w-8 h-8 text-gold" />,
+    step: 'The payoff',
     title: 'Earn The Conversation',
     desc: 'Complete all three days with intention, and the conversation begins.',
   },
@@ -39,6 +43,7 @@ export default function HowItWorksPage() {
   const [continuing, setContinuing] = useState(false);
   const [persona, setPersona] = useState<'man' | 'woman' | null>(null);
   const [approvalStatus, setApprovalStatus] = useState<string | null>(null);
+  const [step, setStep] = useState(0);
   const setGlobalUser = useUserStore((s) => s.setUser);
 
   useEffect(() => {
@@ -109,17 +114,37 @@ export default function HowItWorksPage() {
           <p className="text-[#9DA0A6] text-sm">Three days. One real connection.</p>
         </div>
 
-        <div className="space-y-4">
-          {POINTS.map((point) => (
-            <div key={point.title} className="flex gap-4 bg-[#1C1C1E] border border-[#2A2A2A] rounded-2xl p-4">
-              <div className="w-11 h-11 shrink-0 rounded-full bg-gold/10 flex items-center justify-center">
-                {point.icon}
-              </div>
-              <div>
-                <h3 className="text-ink font-semibold text-sm mb-1">{point.title}</h3>
-                <p className="text-[#9DA0A6] text-xs leading-relaxed font-light">{point.desc}</p>
-              </div>
+        {/* Tap through one point at a time instead of a static wall of
+            four cards -- same content, but it now asks for a tap before
+            revealing the next step. */}
+        <button
+          type="button"
+          onClick={() => { hapticTap(); setStep((s) => (s + 1) % POINTS.length); }}
+          className="w-full text-left bg-[#1C1C1E] border border-gold/20 rounded-3xl p-6 active:scale-[0.98] transition-transform"
+        >
+          <div className="flex items-center justify-between mb-5">
+            <span className="text-[10px] font-semibold tracking-widest text-gold uppercase">{POINTS[step].step}</span>
+            <span className="text-[10px] text-ink/30">{step + 1} / {POINTS.length}</span>
+          </div>
+          <div key={step} className="animate-fade-in">
+            <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-4">
+              {POINTS[step].icon}
             </div>
+            <h3 className="text-ink font-display text-xl mb-2">{POINTS[step].title}</h3>
+            <p className="text-[#9DA0A6] text-sm leading-relaxed font-light">{POINTS[step].desc}</p>
+          </div>
+        </button>
+
+        <div className="flex items-center justify-center gap-2 mt-4">
+          {POINTS.map((point, i) => (
+            <button
+              key={point.title}
+              onClick={() => { hapticTap(); setStep(i); }}
+              aria-label={`Go to point ${i + 1}`}
+              className={`rounded-full transition-all duration-300 ${
+                i === step ? 'w-6 h-1.5 bg-gold' : 'w-1.5 h-1.5 bg-[#3C3C3E]'
+              }`}
+            />
           ))}
         </div>
 

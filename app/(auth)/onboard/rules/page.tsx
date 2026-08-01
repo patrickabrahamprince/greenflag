@@ -91,6 +91,20 @@ export default function RulesPage() {
     track.scrollTo({ left: index * track.clientWidth, behavior: 'smooth' });
   };
 
+  // Auto-advances so the rules actually get seen instead of sitting on
+  // slide 1 waiting for a swipe -- still fully swipeable manually at any
+  // point, this just keeps things moving on their own too.
+  useEffect(() => {
+    const id = setInterval(() => {
+      setActiveSlide((prev) => {
+        const next = (prev + 1) % slides.length;
+        scrollToSlide(next);
+        return next;
+      });
+    }, 3200);
+    return () => clearInterval(id);
+  }, []);
+
   const handleContinue = () => {
     hapticTap();
     router.push('/onboard/how-it-works');
@@ -108,17 +122,13 @@ export default function RulesPage() {
     <div className="w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
       <div className="max-w-md mx-auto w-full flex flex-col pb-safe-bottom flex-1">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="text-ink/40 hover:text-ink active:scale-90 transition-all p-1 -ml-1"
+            className="text-ink/40 hover:text-ink active:scale-90 transition-all p-1 -ml-1 w-fit"
           >
             <ArrowLeft size={24} />
           </button>
-          <span className="text-xs font-semibold text-[#9DA0A6]">House Rules</span>
-          <div className="invisible p-1 -mr-1" aria-hidden="true">
-            <ArrowLeft size={24} />
-          </div>
         </div>
 
         {/* Carousel + dots + CTA center as one group instead of the
