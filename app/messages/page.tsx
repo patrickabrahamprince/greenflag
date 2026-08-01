@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Heart, Loader2 } from 'lucide-react';
+import { ArrowLeft, Heart, Loader2, MessageCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
+import { EmptyState } from '@/components/shared/empty-state';
 import type { Database } from '@/types/supabase';
 
 type ProfileRow = Database['public']['Tables']['profiles']['Row'];
@@ -170,6 +171,7 @@ function InProgressMatches({ userId, supabase }: { userId: string; supabase: Ret
 }
 
 function ChatList({ userId, supabase, persona }: ChatListPageProps) {
+  const router = useRouter();
   const [conversations, setConversations] = useState<ChatConversation[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -225,11 +227,22 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
   if (conversations.length === 0) {
     return (
       <div className="flex-1 flex flex-col items-center pt-20 px-6">
-        <p className="text-sm font-thin text-center" style={{ color: '#9DA0A6' }}>
-          {persona === 'woman'
-            ? 'Your conversations begin once he completes your Standard.'
-            : 'No conversations yet. Discover a profile to begin.'}
-        </p>
+        <EmptyState
+          icon={<MessageCircle className="w-6 h-6" />}
+          title="No messages yet"
+          description={
+            persona === 'woman'
+              ? 'Your conversations begin once he completes your Standard.'
+              : 'No conversations yet. Discover a profile to begin.'
+          }
+          action={
+            persona !== 'woman' && (
+              <button onClick={() => router.push('/discover')} className="btn-primary px-6 py-3 text-sm">
+                Go to Discover
+              </button>
+            )
+          }
+        />
         {persona === 'woman' && <InProgressMatches userId={userId} supabase={supabase} />}
       </div>
     );
