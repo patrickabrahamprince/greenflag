@@ -8,38 +8,29 @@ import { Keyboard } from '@capacitor/keyboard';
 // keyboard show/hide events (Keyboard resize mode is 'none' -- see
 // capacitor.config.ts for why letting Capacitor's own resize modes handle
 // this wasn't reliable). One override rule on .min-h-dvh in globals.css
-// picks this up everywhere, so there's nothing to wire up per-page.
+// picks this up everywhere, so there's nothing to wire up per-page. That
+// rule applies the change with no CSS transition on purpose -- the CTA
+// snaps to its new position instantly instead of visibly sliding.
 //
-// An on-device debug overlay (components/kb-debug-overlay.tsx) proved the
-// CTA was never actually moving while someone was typing -- it only ever
-// dropped after tapping away from a field to dismiss the keyboard. The
-// real bug was the fixed 500ms wait before committing that close: it was
-// sized to survive a real Next.js route transition (blur old field ->
-// mount new screen -> autofocus new field), but it made the far more
-// common case -- just tapping away on the same screen -- feel like the
-// button drops on its own, half a second after you've already moved on,
-// disconnected from the keyboard's own ~250-300ms close animation.
+// An on-device debug overlay (since removed) proved the CTA never
+// actually moved while someone was typing -- it only ever moved after
+// tapping away from a field to dismiss the keyboard. The bug was a fixed
+// 500ms wait before committing that close: it was sized to survive a
+// real Next.js route transition (blur old field -> mount new screen ->
+// autofocus new field), but it made the far more common case -- just
+// tapping away on the same screen -- feel delayed and disconnected from
+// the actual dismiss.
 //
 // Fix: poll document.activeElement every 50ms instead of waiting a flat
 // 500ms. A real dismiss (nothing refocuses) commits after two clear
-// checks in a row (~100ms) -- fast enough to track the keyboard's own
-// animation. A route transition still gets up to 500ms of retries before
-// giving up, so it's protected exactly like before; it just no longer
-// makes every ordinary tap-away feel delayed.
+// checks in a row (~100ms). A route transition still gets up to 500ms of
+// retries before giving up, so it's protected exactly like before.
 const HIDE_POLL_MS = 50;
 const HIDE_CONFIRM_MS = 100;
 const HIDE_MAX_WAIT_MS = 500;
 
 function isTextField(el: Element | null): boolean {
   return !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || (el as HTMLElement).isContentEditable);
-}
-
-// TEMPORARY: broadcasts every raw native event and every actual DOM write
-// so KbDebugOverlay can show ground truth on-device, instead of guessing
-// again at what iOS is actually reporting while someone types. Remove
-// this + the overlay once the real cause is confirmed.
-function debugLog(line: string) {
-  window.dispatchEvent(new CustomEvent('kb-debug', { detail: line }));
 }
 
 export function KeyboardInsetListener() {
@@ -54,7 +45,6 @@ export function KeyboardInsetListener() {
     };
 
     const showHandle = Keyboard.addListener('keyboardWillShow', (info) => {
-      debugLog(`RAW show ${info.keyboardHeight}px (isShown=${isShown})`);
       if (hideTimer) {
         clearTimeout(hideTimer);
         hideTimer = null;
@@ -62,10 +52,8 @@ export function KeyboardInsetListener() {
       if (isShown) return;
       isShown = true;
       setInset(info.keyboardHeight);
-      debugLog(`APPLIED ${info.keyboardHeight}px`);
     });
     const hideHandle = Keyboard.addListener('keyboardWillHide', () => {
-      debugLog(`RAW hide (activeElement=${document.activeElement?.tagName})`);
       if (hideTimer) clearTimeout(hideTimer);
 
       const startedAt = Date.now();
@@ -86,7 +74,6 @@ export function KeyboardInsetListener() {
           hideTimer = null;
           isShown = false;
           setInset(0);
-          debugLog(`APPLIED 0px (${confirmedClear ? 'confirmed clear' : 'max wait'})`);
           return;
         }
         hideTimer = setTimeout(poll, HIDE_POLL_MS);

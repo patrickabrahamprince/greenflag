@@ -7,7 +7,6 @@ import { useUserStore, useCoinStore } from '@/lib/store';
 import { PushNotificationRegistrar } from './push-notification-registrar';
 import { PwaRegistrar } from './pwa-registrar';
 import { KeyboardInsetListener } from './keyboard-inset-listener';
-import { KbDebugOverlay } from './kb-debug-overlay';
 import { useScreenshotGuard } from '@/lib/hooks/useScreenshotGuard';
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -70,7 +69,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <PwaRegistrar />
       <PushNotificationRegistrar />
       <KeyboardInsetListener />
-      <KbDebugOverlay />
       {children}
       <Toaster
         position="bottom-center"
