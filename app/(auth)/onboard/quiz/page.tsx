@@ -197,7 +197,7 @@ export default function QuizPage() {
 
   if (reveal) {
     return (
-      <div className="relative w-full animate-fade-in min-h-dvh flex flex-col justify-center px-6 bg-[#000000] text-center">
+      <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center px-6 bg-[#000000] text-center">
         <OnboardingBackground image="/onboarding/quiz.jpg" />
         <div className="max-w-sm mx-auto w-full">
           <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_-8px_rgba(192,38,211,0.6)]">
@@ -235,7 +235,7 @@ export default function QuizPage() {
     : "There's no wrong answer — just be honest.";
 
   return (
-    <div className="relative w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
       <OnboardingBackground image="/onboarding/quiz.jpg" />
       <div className="max-w-md mx-auto w-full flex flex-col pb-safe-bottom">
         <div>

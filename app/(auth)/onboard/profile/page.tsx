@@ -41,7 +41,7 @@ export default function ProfileAgePage() {
   };
 
   return (
-    <div className="relative w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
       <OnboardingBackground image="/onboarding/age.jpg" />
       <button
         onClick={() => router.push('/onboard/name')}

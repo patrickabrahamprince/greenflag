@@ -50,7 +50,7 @@ export default function ProfileTeasersPage() {
   };
 
   return (
-    <div className="relative w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
       <OnboardingBackground image="/onboarding/teasers.jpg" />
       <div className="flex items-center justify-between mb-6">
         <button
