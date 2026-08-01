@@ -83,5 +83,22 @@
 	     resolves and the field just sits on "Detecting location...". -->
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>GreenFlag uses your location to suggest your city during profile setup.</string>
+	<!-- Native Google Sign-In (lib/native/socialLogin.ts via
+	     @capgo/capacitor-social-login). GIDClientID is the iOS OAuth
+	     client id from Google Cloud Console (project "Viveapp"); the URL
+	     scheme is that same id's components reversed, per Google's own
+	     convention, so Google's SDK can hand control back to this app
+	     after the native sign-in sheet closes. -->
+	<key>GIDClientID</key>
+	<string>953419391945-edi4itkvgt4t7qtprsil9d7mnm9ih2bc.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.953419391945-edi4itkvgt4t7qtprsil9d7mnm9ih2bc</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
