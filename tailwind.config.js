@@ -41,8 +41,13 @@ module.exports = {
         'slide-down': 'slideDown 400ms ease-out',
         'shimmer': 'shimmer 2s infinite linear',
         'logo-in': 'logoIn 600ms cubic-bezier(0.16, 1, 0.3, 1)',
+        'sheet-up': 'sheetUp 320ms cubic-bezier(0.16, 1, 0.3, 1)',
       },
       keyframes: {
+        sheetUp: {
+          '0%': { transform: 'translateY(100%)' },
+          '100%': { transform: 'translateY(0)' },
+        },
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },

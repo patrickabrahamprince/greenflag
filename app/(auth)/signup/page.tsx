@@ -11,6 +11,8 @@ import { OtpVerificationForm } from '@/components/discovery/OtpVerificationForm'
 import { SignupFooter } from '@/components/discovery/SignupFooter'
 import { GoogleButton } from '@/components/ui/GoogleButton'
 import { AppleButton } from '@/components/ui/AppleButton'
+import { TermsGateModal } from '@/components/auth/TermsGateModal'
+import { hasAcceptedTerms, markTermsAccepted } from '@/lib/termsGate'
 
 type AuthMode = 'email' | 'phone'
 type PhoneStep = 'number' | 'otp'
@@ -28,9 +30,31 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
   const [appleLoading, setAppleLoading] = useState(false)
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null)
   const supabase = createClient()
 
-  const handleGoogleSignup = async () => {
+  // First sign-up action on this device shows a one-time terms gate
+  // before running the real handler; every action afterward runs
+  // straight through since acceptance is remembered (see login/page.tsx
+  // for the matching gate on returning users).
+  const withTermsGate = (action: () => void) => {
+    if (hasAcceptedTerms()) {
+      action()
+    } else {
+      setPendingAction(() => action)
+    }
+  }
+
+  const handleAcceptTerms = () => {
+    markTermsAccepted()
+    const action = pendingAction
+    setPendingAction(null)
+    action?.()
+  }
+
+  const handleGoogleSignup = () => withTermsGate(handleGoogleSignupInner)
+
+  const handleGoogleSignupInner = async () => {
     setGoogleLoading(true)
     try {
       // Native gets the real iOS account picker; web keeps the existing
@@ -58,7 +82,9 @@ export default function SignupPage() {
   // Required alongside Google -- Apple guideline 4.8. See handleAppleLogin
   // in app/(auth)/login/page.tsx for why this won't work until Sign In
   // with Apple is configured in the Developer Portal + Supabase.
-  const handleAppleSignup = async () => {
+  const handleAppleSignup = () => withTermsGate(handleAppleSignupInner)
+
+  const handleAppleSignupInner = async () => {
     setAppleLoading(true)
     try {
       if (Capacitor.isNativePlatform()) {
@@ -87,8 +113,12 @@ export default function SignupPage() {
     setOtp('')
   }
 
-  const handleEmailSignup = async (e: React.FormEvent) => {
+  const handleEmailSignup = (e: React.FormEvent) => {
     e.preventDefault()
+    withTermsGate(() => handleEmailSignupInner())
+  }
+
+  const handleEmailSignupInner = async () => {
     setLoading(true)
     setError('')
     try {
@@ -112,8 +142,12 @@ export default function SignupPage() {
     }
   }
 
-  const handleSendOtp = async (e: React.FormEvent) => {
+  const handleSendOtp = (e: React.FormEvent) => {
     e.preventDefault()
+    withTermsGate(() => handleSendOtpInner())
+  }
+
+  const handleSendOtpInner = async () => {
     setLoading(true)
     setError('')
     try {
@@ -206,6 +240,11 @@ export default function SignupPage() {
 
         <SignupFooter />
       </div>
+      <TermsGateModal
+        open={pendingAction !== null}
+        onAccept={handleAcceptTerms}
+        onClose={() => setPendingAction(null)}
+      />
     </div>
   )
 }

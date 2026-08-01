@@ -9,6 +9,8 @@ import { Loader2 } from 'lucide-react'
 import { GoogleButton } from '@/components/ui/GoogleButton'
 import { AppleButton } from '@/components/ui/AppleButton'
 import { SignOutStrip } from './sign-out'
+import { TermsGateModal } from '@/components/auth/TermsGateModal'
+import { hasAcceptedTerms, markTermsAccepted } from '@/lib/termsGate'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -19,6 +21,25 @@ export default function LoginPage() {
   const supabase = createClient()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null)
+
+  // First sign-in/sign-up action on this device shows a one-time terms
+  // gate before running the real handler; every action afterward runs
+  // straight through since acceptance is remembered.
+  const withTermsGate = (action: () => void) => {
+    if (hasAcceptedTerms()) {
+      action()
+    } else {
+      setPendingAction(() => action)
+    }
+  }
+
+  const handleAcceptTerms = () => {
+    markTermsAccepted()
+    const action = pendingAction
+    setPendingAction(null)
+    action?.()
+  }
 
   // Shared by password login and both native social flows -- signInWithOAuth
   // (web) redirects through /auth/callback and handles this itself, but
@@ -52,7 +73,9 @@ export default function LoginPage() {
     }
   }
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = () => withTermsGate(handleGoogleLoginInner)
+
+  const handleGoogleLoginInner = async () => {
     setGoogleLoading(true)
     try {
       // Native gets the real iOS account picker via Google's SDK; web keeps
@@ -84,7 +107,9 @@ export default function LoginPage() {
   // capability enabled on the App ID in the Apple Developer Portal; the
   // web path needs Apple configured as an OAuth provider in Supabase.
   // Neither is done yet, so both branches are wired up ahead of that.
-  const handleAppleLogin = async () => {
+  const handleAppleLogin = () => withTermsGate(handleAppleLoginInner)
+
+  const handleAppleLoginInner = async () => {
     setAppleLoading(true)
     try {
       if (Capacitor.isNativePlatform()) {
@@ -139,6 +164,11 @@ export default function LoginPage() {
         </p>
         <SignOutStrip />
       </div>
+      <TermsGateModal
+        open={pendingAction !== null}
+        onAccept={handleAcceptTerms}
+        onClose={() => setPendingAction(null)}
+      />
     </div>
   )
 }
