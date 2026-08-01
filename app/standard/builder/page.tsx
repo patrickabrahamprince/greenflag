@@ -287,7 +287,7 @@ export default function StandardBuilderPage() {
                   {meta.label}
                 </span>
 
-                <div className="flex flex-wrap gap-2 mb-2">
+                <div className="flex flex-wrap gap-2.5 mb-3">
                   {presets.map((preset) => {
                     const selected = task.prompt === preset;
                     return (
@@ -295,10 +295,8 @@ export default function StandardBuilderPage() {
                         key={preset}
                         type="button"
                         onClick={() => updateTaskPrompt(currentSlot.dayNumber, task.taskNumber, preset)}
-                        className={`px-3 py-2 rounded-xl text-xs text-left transition-all border ${
-                          selected
-                            ? 'bg-gold/10 border-gold text-white font-medium'
-                            : 'bg-[#1C1C1E] border-[#2A2A2A] text-ink/70 hover:border-ink/30'
+                        className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
+                          selected ? 'bg-gold text-white' : 'bg-[#1C1C1E] border border-[#2A2A2A] text-ink/70 hover:border-ink/30'
                         }`}
                       >
                         {preset}
