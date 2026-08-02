@@ -58,7 +58,7 @@ export function SwipeToDismiss({ onDelete, onPin, pinned, children }: SwipeToDis
   };
 
   return (
-    <div className="relative overflow-hidden rounded-[2rem]">
+    <div className="relative overflow-hidden rounded-xl">
       <div className="absolute inset-0 flex">
         <div className="flex-1 flex items-center gap-1.5 pl-6" style={{ background: 'rgba(192,38,211,0.15)' }}>
           {onPin && (
