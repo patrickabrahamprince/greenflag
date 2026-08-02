@@ -1,7 +1,3 @@
-'use client';
-
-import { useState } from 'react';
-
 interface OnboardingBackgroundProps {
   image: string;
 }
@@ -12,17 +8,18 @@ interface OnboardingBackgroundProps {
 // needs to change. The scrim gets more opaque toward the bottom since
 // that's where the CTA and body copy usually live; the fuchsia glow up
 // top keeps it feeling like this app rather than a generic photo dump.
+//
+// The image is always visible immediately (no opacity/onLoad gating) --
+// a prior version faded it in from opacity-0 once its onLoad event
+// fired, which left it permanently invisible whenever that event didn't
+// fire (a real failure mode in the native WebView, not just a rare
+// edge case). animate-fade-in is a plain CSS keyframe that plays on
+// mount regardless of whether the image data has actually arrived yet,
+// so there's no state for a missed event to get stuck in.
 export function OnboardingBackground({ image }: OnboardingBackgroundProps) {
-  const [loaded, setLoaded] = useState(false);
-
   return (
     <div className="absolute inset-0 -z-10 overflow-hidden bg-[#0B0614]">
-      <img
-        src={image}
-        alt=""
-        onLoad={() => setLoaded(true)}
-        className={`w-full h-full object-cover transition-opacity duration-500 ease-out ${loaded ? 'opacity-100' : 'opacity-0'}`}
-      />
+      <img key={image} src={image} alt="" className="w-full h-full object-cover animate-fade-in" />
       <div
         className="absolute inset-0"
         style={{
