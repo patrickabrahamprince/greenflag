@@ -1,10 +1,16 @@
 'use client';
 
 import { useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 const EDGE_ZONE_PX = 24;
 const SWIPE_THRESHOLD_PX = 70;
+
+// Login is the very first screen anyone can land on -- there's nothing
+// meaningful behind it for router.back() to go to, so swiping there was
+// either a no-op that still consumed the gesture or bounced somewhere
+// broken. Simplest fix: don't track the gesture at all on this route.
+const DISABLED_ROUTES = ['/login'];
 
 interface SwipeBackGestureProps {
   children: React.ReactNode;
@@ -20,11 +26,14 @@ interface SwipeBackGestureProps {
 // notification dismiss, etc).
 export function SwipeBackGesture({ children }: SwipeBackGestureProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
   const tracking = useRef(false);
+  const disabled = DISABLED_ROUTES.includes(pathname);
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    if (disabled) return;
     const x = e.touches[0].clientX;
     tracking.current = x <= EDGE_ZONE_PX;
     if (tracking.current) {
@@ -34,7 +43,7 @@ export function SwipeBackGesture({ children }: SwipeBackGestureProps) {
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!tracking.current || touchStartX.current === null) return;
+    if (disabled || !tracking.current || touchStartX.current === null) return;
     const dx = e.changedTouches[0].clientX - touchStartX.current;
     const dy = e.changedTouches[0].clientY - (touchStartY.current ?? 0);
     tracking.current = false;

@@ -78,7 +78,7 @@ const WHY_THIS_WORKS = [
 
 function StandardIntroScreen({ onContinue }: { onContinue: () => void }) {
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh screen-gradient px-6 pt-safe-top pb-10 max-w-app mx-auto flex flex-col">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh screen-gradient px-6 pt-safe-top pb-32 max-w-app mx-auto flex flex-col">
       <OnboardingBackground image="/onboarding/how-it-works.jpg" />
       <div className="flex-1">
         <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-6 shadow-[0_0_30px_-8px_rgba(192,38,211,0.6)]">
@@ -104,12 +104,17 @@ function StandardIntroScreen({ onContinue }: { onContinue: () => void }) {
         </div>
       </div>
 
-      <button
-        onClick={onContinue}
-        className="btn-primary w-full py-4 mt-6 font-semibold text-sm active:scale-95 transition-transform shadow-[0_0_30px_-10px_rgba(192,38,211,0.6)]"
-      >
-        Begin Day 1
-      </button>
+      {/* Fixed instead of flowing after the value-prop cards -- with three
+          cards of copy, the button could sit below the fold and need a
+          scroll to reach, which defeats the point of a single clear CTA. */}
+      <div className="fixed bottom-0 inset-x-0 z-10 px-6 pt-8 pb-safe-bottom bg-gradient-to-t from-[#0B0614] via-[#0B0614]/95 to-transparent">
+        <button
+          onClick={onContinue}
+          className="btn-primary w-full max-w-app mx-auto py-4 font-semibold text-sm active:scale-95 transition-transform shadow-[0_0_30px_-10px_rgba(192,38,211,0.6)] block"
+        >
+          Begin Day 1
+        </button>
+      </div>
     </div>
   );
 }

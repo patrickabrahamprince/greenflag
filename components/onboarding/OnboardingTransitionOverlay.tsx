@@ -1,12 +1,37 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import { useOnboardingTransitionStore } from '@/lib/onboarding/useOnboardingNav';
+
+// A stuck-black-screen failsafe -- if navigation somehow never actually
+// changes the route (a thrown error, a blocked redirect), this clears the
+// overlay anyway rather than leaving the screen black forever.
+const FAILSAFE_MS = 2500;
 
 // Mounted once in app/(auth)/layout.tsx so every onboarding screen's
 // forward-navigation click (via useOnboardingNav) gets a shared crossfade
 // without each page having to render its own overlay markup.
 export function OnboardingTransitionOverlay() {
   const active = useOnboardingTransitionStore((s) => s.active);
+  const deactivate = useOnboardingTransitionStore((s) => s.deactivate);
+  const pathname = usePathname();
+  const mounted = useRef(false);
+
+  // Ties the fade-back-out to the route actually having changed, instead
+  // of a guessed delay -- see useOnboardingNav.ts for why a fixed timeout
+  // here raced real navigation and flashed the old screen back into view.
+  useEffect(() => {
+    if (mounted.current) deactivate();
+    mounted.current = true;
+  }, [pathname, deactivate]);
+
+  useEffect(() => {
+    if (!active) return;
+    const id = setTimeout(deactivate, FAILSAFE_MS);
+    return () => clearTimeout(id);
+  }, [active, deactivate]);
+
   return (
     <div
       aria-hidden

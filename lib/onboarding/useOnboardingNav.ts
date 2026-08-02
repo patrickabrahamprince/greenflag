@@ -20,7 +20,6 @@ export const useOnboardingTransitionStore = create<OnboardingTransitionState>((s
 }));
 
 const FADE_OUT_MS = 200;
-const SETTLE_MS = 120;
 const PRELOAD_TIMEOUT_MS = 500;
 
 function wait(ms: number): Promise<void> {
@@ -51,11 +50,16 @@ function preloadImage(src: string): Promise<void> {
 
 // Wraps router.push/replace for onboarding's forward-progress clicks: fades
 // the current screen to the overlay, gives the destination's background
-// image a bounded head start, navigates, then fades the overlay back out
-// once the new screen (which fades itself in via its own animate-fade-in)
-// has had a moment to paint. Pass the destination's OnboardingBackground
-// image (when it has one) so the crossfade doesn't reveal a half-loaded
-// photo.
+// image a bounded head start, then navigates. The overlay itself (not
+// this hook) is responsible for fading back out -- it watches the actual
+// route via usePathname() and clears once Next has really finished
+// swapping in the new screen. A fixed delay here instead (there used to
+// be one) races the real navigation: on a route that hasn't been
+// prefetched, fetching + rendering the new segment can easily take
+// longer than a guessed timeout, so the overlay would fade out early and
+// flash the OLD screen back into view before the real destination
+// arrived a moment later -- looked exactly like "goes black, shows the
+// same screen again, then finally moves on."
 export function useOnboardingNav() {
   const router = useRouter();
 
@@ -64,8 +68,6 @@ export function useOnboardingNav() {
     await Promise.all([image ? preloadImage(image) : Promise.resolve(), wait(FADE_OUT_MS)]);
     if (replace) router.replace(path);
     else router.push(path);
-    await wait(SETTLE_MS);
-    useOnboardingTransitionStore.getState().deactivate();
   };
 
   return {
