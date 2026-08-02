@@ -7,6 +7,9 @@ import toast from 'react-hot-toast';
 import { ProgressSegmentBar } from '@/components/connection/ProgressSegmentBar';
 import { useCountdown, formatCountdown } from '@/lib/hooks/useCountdown';
 import { useUserStore } from '@/lib/store';
+import { getCached, setCached } from '@/lib/pageCache';
+
+const MATCHES_CACHE_KEY = 'my-connections:matches';
 
 const TERMINAL_STATUSES = ['completed', 'rejected', 'expired_no_submission', 'refunded'];
 const URGENT_THRESHOLD_MS = 12 * 60 * 60 * 1000;
@@ -148,8 +151,8 @@ export default function MyConnectionsPage() {
   const router = useRouter();
   const currentUser = useUserStore((s) => s.user);
   const isMan = currentUser?.persona !== 'woman';
-  const [matches, setMatches] = useState<MatchListItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [matches, setMatches] = useState<MatchListItem[]>(() => getCached(MATCHES_CACHE_KEY) ?? []);
+  const [loading, setLoading] = useState(() => getCached<MatchListItem[]>(MATCHES_CACHE_KEY) === undefined);
   const [actioningId, setActioningId] = useState<string | null>(null);
 
   const loadMatches = () => {
@@ -162,7 +165,10 @@ export default function MyConnectionsPage() {
         return res.json();
       })
       .then((data) => {
-        if (data) setMatches(data.matches || []);
+        if (data) {
+          setMatches(data.matches || []);
+          setCached(MATCHES_CACHE_KEY, data.matches || []);
+        }
       })
       .finally(() => setLoading(false));
   };

@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
 import { EmptyState } from '@/components/shared/empty-state';
+import { getCached, setCached } from '@/lib/pageCache';
 import type { Database } from '@/types/supabase';
 
 type ProfileRow = Database['public']['Tables']['profiles']['Row'];
@@ -172,8 +173,9 @@ function InProgressMatches({ userId, supabase }: { userId: string; supabase: Ret
 
 function ChatList({ userId, supabase, persona }: ChatListPageProps) {
   const router = useRouter();
-  const [conversations, setConversations] = useState<ChatConversation[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cacheKey = `messages:conversations:${userId}`;
+  const [conversations, setConversations] = useState<ChatConversation[]>(() => getCached(cacheKey) ?? []);
+  const [loading, setLoading] = useState(() => getCached<ChatConversation[]>(cacheKey) === undefined);
 
   useEffect(() => {
     const load = async () => {
@@ -207,6 +209,7 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
         );
 
         setConversations(enriched);
+        setCached(cacheKey, enriched);
       } catch (err) {
         // Safe catch
       } finally {
@@ -214,6 +217,7 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
       }
     };
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, supabase]);
 
   if (loading) {

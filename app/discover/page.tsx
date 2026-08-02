@@ -10,6 +10,10 @@ import { createClient } from '@/lib/supabase/client'
 import { useCoinStore } from '@/lib/store'
 import { hapticDecision, hapticSuccess } from '@/lib/haptics'
 import { DiscoverySkeleton } from '@/components/discovery/DiscoverySkeleton'
+import { getCached, setCached } from '@/lib/pageCache'
+
+const PROFILES_CACHE_KEY = 'discover:profiles'
+const HAS_MORE_CACHE_KEY = 'discover:hasMore'
 
 interface DiscoverProfile {
   id: string
@@ -33,11 +37,11 @@ interface DiscoverProfile {
 }
 
 export default function DiscoverPage() {
-  const [profiles, setProfiles] = useState<DiscoverProfile[]>([])
+  const [profiles, setProfiles] = useState<DiscoverProfile[]>(() => getCached(PROFILES_CACHE_KEY) ?? [])
   const [pageLoading, setPageLoading] = useState(false)
   const [likingId, setLikingId] = useState<string | null>(null)
   const [page, setPage] = useState(0)
-  const [hasMore, setHasMore] = useState(true)
+  const [hasMore, setHasMore] = useState(() => getCached(HAS_MORE_CACHE_KEY) ?? true)
   const [persona, setPersona] = useState<string | null>(null)
   const [confirmProfileId, setConfirmProfileId] = useState<string | null>(null)
   const [photoUnlockConfirm, setPhotoUnlockConfirm] = useState<string | null>(null)
@@ -199,8 +203,14 @@ export default function DiscoverPage() {
         return
       }
       const data = (json.profiles ?? []).filter((p: DiscoverProfile) => (p.photos?.length ?? 0) > 0)
-      if (data.length < 3) setHasMore(false)
-      setProfiles(prev => page === 0 ? data : [...prev, ...data])
+      const stillHasMore = data.length >= 3
+      if (!stillHasMore) setHasMore(false)
+      setCached(HAS_MORE_CACHE_KEY, stillHasMore)
+      setProfiles(prev => {
+        const next = page === 0 ? data : [...prev, ...data]
+        setCached(PROFILES_CACHE_KEY, next)
+        return next
+      })
     } catch {
       toast.error('Failed to load profiles')
     } finally {
@@ -216,8 +226,11 @@ export default function DiscoverPage() {
       const res = await fetch('/api/discover')
       const json = await res.json()
       const data = (json.profiles ?? []).filter((p: DiscoverProfile) => (p.photos?.length ?? 0) > 0)
-      if (data.length < 3) setHasMore(false)
+      const stillHasMore = data.length >= 3
+      if (!stillHasMore) setHasMore(false)
+      setCached(HAS_MORE_CACHE_KEY, stillHasMore)
       setProfiles(data)
+      setCached(PROFILES_CACHE_KEY, data)
       setPage(0)
       fetchedForPage.current.add(0)
       scrollRef.current?.scrollTo({ top: 0 })
@@ -285,7 +298,11 @@ export default function DiscoverPage() {
       }
       const { matchId } = await res.json()
       deductCoins(500)
-      setProfiles(prev => prev.filter(p => p.id !== profileId))
+      setProfiles(prev => {
+        const next = prev.filter(p => p.id !== profileId)
+        setCached(PROFILES_CACHE_KEY, next)
+        return next
+      })
       hapticSuccess()
       if (matchId) {
         router.push(`/task/${matchId}`)

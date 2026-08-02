@@ -2,10 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bell, Check, Loader2, Sparkles } from 'lucide-react';
+import { Bell, Check, Loader2, Pin, Sparkles } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { SwipeToDismiss } from '@/components/shared/SwipeToDismiss';
+import { getCached, setCached } from '@/lib/pageCache';
 import toast from 'react-hot-toast';
+
+const NOTIFICATIONS_CACHE_KEY = 'notifications:list';
 
 interface Notification {
   id: string;
@@ -14,6 +17,14 @@ interface Notification {
   data: Record<string, unknown> | null;
   read_at: string | null;
   created_at: string;
+  pinned: boolean;
+}
+
+function sortNotifications(list: Notification[]): Notification[] {
+  return [...list].sort((a, b) => {
+    if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
 }
 
 // Where a notification should take you depends on what actually happened,
@@ -60,8 +71,8 @@ function getNotificationRoute(data: Record<string, unknown> | null): string | nu
 export default function NotificationsPage() {
   const router = useRouter();
   const supabase = createClient();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [notifications, setNotifications] = useState<Notification[]>(() => getCached(NOTIFICATIONS_CACHE_KEY) ?? []);
+  const [loading, setLoading] = useState(() => getCached<Notification[]>(NOTIFICATIONS_CACHE_KEY) === undefined);
   const [markingRead, setMarkingRead] = useState(false);
 
   useEffect(() => {
@@ -79,7 +90,9 @@ export default function NotificationsPage() {
         .order('created_at', { ascending: false })
         .limit(50);
 
-      setNotifications((data as Notification[]) || []);
+      const sorted = sortNotifications((data as Notification[]) || []);
+      setNotifications(sorted);
+      setCached(NOTIFICATIONS_CACHE_KEY, sorted);
       setLoading(false);
     };
 
@@ -121,8 +134,22 @@ export default function NotificationsPage() {
   };
 
   const handleDismiss = async (id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
+    setNotifications((prev) => {
+      const next = prev.filter((n) => n.id !== id);
+      setCached(NOTIFICATIONS_CACHE_KEY, next);
+      return next;
+    });
     await supabase.from('notifications').delete().eq('id', id);
+  };
+
+  const handlePin = async (notif: Notification) => {
+    const nextPinned = !notif.pinned;
+    setNotifications((prev) => {
+      const next = sortNotifications(prev.map((n) => (n.id === notif.id ? { ...n, pinned: nextPinned } : n)));
+      setCached(NOTIFICATIONS_CACHE_KEY, next);
+      return next;
+    });
+    await supabase.from('notifications').update({ pinned: nextPinned }).eq('id', notif.id);
   };
 
   const unreadCount = notifications.filter((n) => !n.read_at).length;
@@ -165,17 +192,22 @@ export default function NotificationsPage() {
             </p>
           </div>
         ) : (
-          <div className="space-y-1">
+          <div className="space-y-3">
             {notifications.map((notif) => {
               const notifType = (notif.data as Record<string, unknown> | null)?.type;
               const isLuxury = notifType === 'day_approved' || notifType === 'media_approved';
 
               if (isLuxury) {
                 return (
-                  <SwipeToDismiss key={notif.id} onDismiss={() => handleDismiss(notif.id)}>
+                  <SwipeToDismiss
+                    key={notif.id}
+                    onDelete={() => handleDismiss(notif.id)}
+                    onPin={() => handlePin(notif)}
+                    pinned={notif.pinned}
+                  >
                     <button
                       onClick={() => handleNotificationClick(notif)}
-                      className="w-full text-left p-4 rounded-xl transition-all border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-[#0B0614] shadow-[0_0_24px_-10px_rgba(192,38,211,0.6)] hover:border-gold/50 active:scale-[0.98]"
+                      className="w-full text-left p-6 rounded-[2rem] transition-all border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-[#0B0614] shadow-[0_0_24px_-10px_rgba(192,38,211,0.6)] hover:border-gold/50 active:scale-[0.98]"
                     >
                       <div className="flex items-start gap-3">
                         <div className="w-8 h-8 rounded-full bg-gold/15 border border-gold/40 flex items-center justify-center shrink-0">
@@ -183,7 +215,8 @@ export default function NotificationsPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1">
-                            <p className="font-display text-base text-gold tracking-wide">
+                            <p className="font-display text-base text-gold tracking-wide flex items-center gap-1.5">
+                              {notif.pinned && <Pin className="w-3 h-3 text-gold/70 shrink-0" />}
                               {notif.title}
                             </p>
                             {!notif.read_at && (
@@ -207,10 +240,15 @@ export default function NotificationsPage() {
               }
 
               return (
-                <SwipeToDismiss key={notif.id} onDismiss={() => handleDismiss(notif.id)}>
+                <SwipeToDismiss
+                  key={notif.id}
+                  onDelete={() => handleDismiss(notif.id)}
+                  onPin={() => handlePin(notif)}
+                  pinned={notif.pinned}
+                >
                   <button
                     onClick={() => handleNotificationClick(notif)}
-                    className={`w-full text-left p-4 transition-all active:scale-[0.98] ${
+                    className={`w-full text-left p-6 rounded-[2rem] transition-all active:scale-[0.98] ${
                       notif.read_at
                         ? 'bg-[#0B0614] hover:bg-surface/50'
                         : 'bg-surface/80 hover:bg-surface'
@@ -222,9 +260,10 @@ export default function NotificationsPage() {
                       }`} />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
-                          <p className={`text-sm font-medium ${
+                          <p className={`text-sm font-medium flex items-center gap-1.5 ${
                             notif.read_at ? 'text-muted' : 'text-ink'
                           }`}>
+                            {notif.pinned && <Pin className="w-3 h-3 text-gold/70 shrink-0" />}
                             {notif.title}
                           </p>
                           {!notif.read_at && (

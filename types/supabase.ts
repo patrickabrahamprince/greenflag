@@ -785,6 +785,7 @@ export type Database = {
           delivered_at: string | null
           id: string
           link: string | null
+          pinned: boolean
           read: boolean
           read_at: string | null
           title: string
@@ -798,6 +799,7 @@ export type Database = {
           delivered_at?: string | null
           id?: string
           link?: string | null
+          pinned?: boolean
           read?: boolean
           read_at?: string | null
           title: string
@@ -811,6 +813,7 @@ export type Database = {
           delivered_at?: string | null
           id?: string
           link?: string | null
+          pinned?: boolean
           read?: boolean
           read_at?: string | null
           title?: string
