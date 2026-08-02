@@ -207,14 +207,29 @@ export async function notifyBothOfCompletion(
 export async function notifyManOfRejection(
   supabase: AnySupabaseClient,
   manId: string,
-  connectionId: string
+  connectionId: string,
+  reason?: string
 ): Promise<void> {
   await sendNotification({
     supabase,
     user_id: manId,
     title: 'Connection Ended',
-    body: 'Connection ended. She chose not to continue.',
+    body: reason ? `She chose not to continue: "${reason}"` : 'Connection ended. She chose not to continue.',
     data: { connectionId, type: 'rejected' },
+  });
+}
+
+export async function notifyManOfRetryUnlocked(
+  supabase: AnySupabaseClient,
+  manId: string,
+  connectionId: string
+): Promise<void> {
+  await sendNotification({
+    supabase,
+    user_id: manId,
+    title: 'Another Chance',
+    body: "She's open to giving you another chance. Retry when you're ready.",
+    data: { connectionId, type: 'retry_unlocked' },
   });
 }
 

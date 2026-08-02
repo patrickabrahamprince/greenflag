@@ -2,6 +2,7 @@ import './globals.css'
 import { Bricolage_Grotesque } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { SwipeBackGesture } from '@/components/layout/SwipeBackGesture'
 import Script from 'next/script'
 import type { Metadata, Viewport } from 'next'
 
@@ -64,7 +65,9 @@ export default function RootLayout({
             exists, throwing instead of opening checkout. */}
         <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
         <ErrorBoundary>
-          <Providers>{children}</Providers>
+          <Providers>
+            <SwipeBackGesture>{children}</SwipeBackGesture>
+          </Providers>
         </ErrorBoundary>
       </body>
     </html>

@@ -16,6 +16,14 @@ import { useScreenshotTarget } from '@/lib/hooks/useScreenshotGuard';
 const TERMINAL_STATUSES = ['rejected', 'expired_no_submission', 'refunded'];
 const REVEAL_COST = 20;
 const SPECIAL_SEND_COST = 150;
+// Mirrors RETRY_COST in api/matches/[id]/retry/route.ts.
+const RETRY_COST = 100;
+
+const REJECT_REASON_CHIPS = [
+  "Didn't follow instructions",
+  'Effort felt low',
+  'Not a match after all',
+];
 
 interface MatchData {
   id: string;
@@ -24,6 +32,9 @@ interface MatchData {
   chat_unlocked: boolean;
   next_day_unlocks_at: string | null;
   review_deadline: string | null;
+  rejection_reason: string | null;
+  retry_unlocked_at: string | null;
+  retry_decision: string | null;
 }
 
 interface SpecialSend {
@@ -88,6 +99,60 @@ function LeaveWarningModal({ onStay, onLeave }: { onStay: () => void; onLeave: (
   );
 }
 
+function RejectReasonModal({
+  onCancel,
+  onConfirm,
+  submitting,
+}: {
+  onCancel: () => void;
+  onConfirm: (reason: string) => void;
+  submitting: boolean;
+}) {
+  const [reason, setReason] = useState('');
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center p-0" style={{ background: 'rgba(0,0,0,0.6)' }}>
+      <div className="w-full max-w-app bg-[#000000] rounded-t-2xl p-6 pb-8">
+        <h3 className="font-display text-xl text-ink mb-1.5">Why are you rejecting this?</h3>
+        <p className="text-ink/50 text-xs mb-4">He&apos;ll see this, so he knows where he fell short.</p>
+        <div className="flex flex-wrap gap-2 mb-4">
+          {REJECT_REASON_CHIPS.map((chip) => (
+            <button
+              key={chip}
+              onClick={() => setReason(chip)}
+              className={`px-3 py-1.5 rounded-full text-xs border transition-all ${
+                reason === chip ? 'border-gold text-gold bg-gold/10' : 'border-white/10 text-ink/60'
+              }`}
+            >
+              {chip}
+            </button>
+          ))}
+        </div>
+        <textarea
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          placeholder="Say more (required)..."
+          rows={3}
+          maxLength={300}
+          className="input resize-none"
+        />
+        <div className="flex gap-3 mt-5">
+          <button onClick={onCancel} className="btn-secondary flex-1">
+            Cancel
+          </button>
+          <button
+            onClick={() => onConfirm(reason)}
+            disabled={reason.trim().length < 3 || submitting}
+            className="btn-primary flex-1 flex items-center justify-center gap-2"
+          >
+            {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Reject'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface OtherProfile {
   id: string;
   name: string;
@@ -121,6 +186,9 @@ export default function TaskPage() {
   const [specialType, setSpecialType] = useState<'text' | 'photo' | 'voice' | null>(null);
   const [specialRevealed, setSpecialRevealed] = useState(false);
   const [revealingSpecial, setRevealingSpecial] = useState(false);
+  const [rejectTarget, setRejectTarget] = useState<IntentionRecord | null>(null);
+  const [rejecting, setRejecting] = useState(false);
+  const [retrying, setRetrying] = useState(false);
 
   useScreenshotTarget(otherProfile?.id, 'task');
 
@@ -181,12 +249,41 @@ export default function TaskPage() {
     );
   }
 
+  const handleRetry = async () => {
+    setRetrying(true);
+    try {
+      const res = await fetch(`/api/matches/${matchId}/retry`, { method: 'POST' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        if (data?.error === 'INSUFFICIENT_COINS') {
+          toast.error(`Not enough coins. You need ${data.coins_needed} coins to retry.`);
+        } else {
+          toast.error(data?.error || 'Retry failed');
+        }
+        return;
+      }
+      deductCoins(RETRY_COST);
+      toast.success("You're back in — resubmit when you're ready.");
+      fetchMatch();
+    } catch {
+      toast.error('Network error.');
+    } finally {
+      setRetrying(false);
+    }
+  };
+
   if (TERMINAL_STATUSES.includes(match.status)) {
     return (
       <EndedScreen
         reason={match.status}
         otherName={otherProfile.name}
         onBack={() => router.push('/discover')}
+        rejectionReason={match.rejection_reason}
+        canRetry={!isWoman && !!match.retry_unlocked_at && match.retry_decision === 'accepted'}
+        retryPending={!isWoman && match.retry_decision === 'pending'}
+        retryCost={RETRY_COST}
+        retrying={retrying}
+        onRetry={handleRetry}
       />
     );
   }
@@ -207,13 +304,14 @@ export default function TaskPage() {
     }
   };
 
-  const handleReview = async (intentionItem: IntentionRecord, decision: 'approve' | 'reject') => {
+  const handleReview = async (intentionItem: IntentionRecord, decision: 'approve' | 'reject', reason?: string) => {
+    if (decision === 'reject') setRejecting(true);
     setReviewingTaskNumber(intentionItem.task_number ?? 1);
     try {
       const res = await fetch(`/api/matches/${matchId}/review-task`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ day_number: currentDay, task_number: intentionItem.task_number ?? 1, decision }),
+        body: JSON.stringify({ day_number: currentDay, task_number: intentionItem.task_number ?? 1, decision, reason }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -221,6 +319,7 @@ export default function TaskPage() {
         return;
       }
       if (decision === 'reject') {
+        setRejectTarget(null);
         toast.success('Match ended.');
       } else if (data.chat_unlocked) {
         toast.success('All three days complete — your conversation is unlocked!');
@@ -234,6 +333,7 @@ export default function TaskPage() {
       toast.error('Network error.');
     } finally {
       setReviewingTaskNumber(null);
+      setRejecting(false);
     }
   };
 
@@ -399,7 +499,7 @@ export default function TaskPage() {
                     Approve
                   </button>
                   <button
-                    onClick={() => handleReview(intentionItem, 'reject')}
+                    onClick={() => setRejectTarget(intentionItem)}
                     disabled={reviewingTaskNumber === intentionItem.task_number}
                     className="btn-secondary text-xs px-4 py-2 flex-1"
                   >
@@ -607,6 +707,14 @@ export default function TaskPage() {
         <LeaveWarningModal
           onStay={() => setShowLeaveWarning(false)}
           onLeave={() => router.push('/discover')}
+        />
+      )}
+
+      {rejectTarget && (
+        <RejectReasonModal
+          submitting={rejecting}
+          onCancel={() => setRejectTarget(null)}
+          onConfirm={(reason) => handleReview(rejectTarget, 'reject', reason)}
         />
       )}
     </div>

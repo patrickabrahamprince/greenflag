@@ -122,21 +122,59 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
     };
   }, []);
 
-  const uploadFile = useCallback(async (file: Blob, ext: string): Promise<string | null> => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
+  const uploadFile = useCallback(async (file: Blob, ext: string, userId: string): Promise<string | null> => {
     const filename = `${Date.now()}.${ext}`;
-    const path = `${user.id}/day${dayNumber}/${filename}`;
+    const path = `${userId}/day${dayNumber}/${filename}`;
     const { error } = await supabase.storage.from('submissions').upload(path, file);
     if (error) return null;
     const { data } = supabase.storage.from('submissions').getPublicUrl(path);
     return data.publicUrl;
   }, [supabase, dayNumber]);
 
+  // Camera photos routinely come in at 3-8MB — on a slow connection that
+  // upload alone dwarfs everything else in the submit flow. Downscaling to
+  // a display-appropriate size before it ever leaves the device is the
+  // single biggest lever on perceived "submitting is slow" latency.
+  const compressImage = (file: File, maxDimension = 1600, quality = 0.8): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        let { width, height } = img;
+        if (width > maxDimension || height > maxDimension) {
+          if (width > height) {
+            height = Math.round((height / width) * maxDimension);
+            width = maxDimension;
+          } else {
+            width = Math.round((width / height) * maxDimension);
+            height = maxDimension;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) { reject(new Error('Canvas not supported')); return; }
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('Compression failed'))), 'image/jpeg', quality);
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Failed to load image')); };
+      img.src = url;
+    });
+  };
+
   const handleSubmit = async () => {
     setError(null);
     setSubmitting(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setError('Session expired. Please log in again.');
+        setSubmitting(false);
+        return;
+      }
+
       let mediaUrl: string | null = null;
       let text: string | null = null;
       let mediaType = intention.type;
@@ -144,10 +182,11 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
       if (intention.type === 'text') {
         text = textContent;
       } else if (intention.type === 'photo' && photoFile) {
-        mediaUrl = await uploadFile(photoFile, photoFile.name.split('.').pop() || 'jpg');
+        const compressed = await compressImage(photoFile).catch(() => photoFile);
+        mediaUrl = await uploadFile(compressed, 'jpg', user.id);
       } else if (intention.type === 'voice' && recordedBlob) {
         const fileExt = recordedBlob.type.includes('mp4') ? 'mp4' : recordedBlob.type.includes('aac') ? 'aac' : 'webm';
-        mediaUrl = await uploadFile(recordedBlob, fileExt);
+        mediaUrl = await uploadFile(recordedBlob, fileExt, user.id);
       }
 
       if (intention.type !== 'text' && !mediaUrl) {

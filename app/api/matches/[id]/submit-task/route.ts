@@ -48,11 +48,14 @@ export async function POST(
     }
 
     const SUBMIT_COST = 10;
-    const { data: wallet } = await admin
-      .from('wallets')
-      .select('balance')
-      .eq('user_id', user.id)
-      .maybeSingle();
+    // Wallet balance and the match row are independent reads (neither
+    // depends on the other's result) -- running them together instead of
+    // one after another halves this pair's contribution to the request's
+    // total latency.
+    const [{ data: wallet }, { data: match, error: matchErr }] = await Promise.all([
+      admin.from('wallets').select('balance').eq('user_id', user.id).maybeSingle(),
+      admin.from('matches').select('id, user1_id, user2_id, current_day, status, next_day_unlocks_at').eq('id', id).maybeSingle(),
+    ]);
 
     if ((wallet?.balance ?? 0) < SUBMIT_COST) {
       return NextResponse.json(
@@ -60,12 +63,6 @@ export async function POST(
         { status: 402 }
       );
     }
-
-    const { data: match, error: matchErr } = await admin
-      .from('matches')
-      .select('id, user1_id, user2_id, current_day, status, next_day_unlocks_at')
-      .eq('id', id)
-      .maybeSingle();
 
     if (matchErr || !match) {
       return NextResponse.json({ error: 'Match not found' }, { status: 404 });
@@ -85,12 +82,13 @@ export async function POST(
 
     const day_number = match.current_day;
 
-    const { data: standard } = await admin
-      .from('standards')
-      .select('id')
-      .eq('woman_id', match.user2_id)
-      .eq('is_active', true)
-      .maybeSingle();
+    // Neither read below depends on the other -- the existing-submission
+    // check only needs day_number (already have it from match), not the
+    // standard/intention lookup.
+    const [{ data: standard }, { data: existingSub }] = await Promise.all([
+      admin.from('standards').select('id').eq('woman_id', match.user2_id).eq('is_active', true).maybeSingle(),
+      admin.from('submissions').select('id, approved').eq('match_id', id).eq('day_number', day_number ?? 1).eq('task_number', task_number ?? 1).maybeSingle(),
+    ]);
 
     const { data: intention } = standard
       ? await admin
@@ -105,14 +103,6 @@ export async function POST(
     if (!intention || intention.type !== media_type) {
       return NextResponse.json({ error: 'This task does not match what she asked for' }, { status: 400 });
     }
-
-    const { data: existingSub } = await admin
-      .from('submissions')
-      .select('id, approved')
-      .eq('match_id', id)
-      .eq('day_number', day_number ?? 1)
-      .eq('task_number', task_number ?? 1)
-      .maybeSingle();
 
     if (existingSub && existingSub.approved === true) {
       return NextResponse.json({ error: 'Task already completed' }, { status: 400 });

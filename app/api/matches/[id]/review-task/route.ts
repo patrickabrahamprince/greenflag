@@ -3,6 +3,8 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { createClient } from '@supabase/supabase-js';
 import { notifyManOfDayApproval, notifyBothOfCompletion, notifyManOfRejection } from '@/lib/notifications';
 
+const REJECT_REASON_MAX_LENGTH = 300;
+
 function getAdmin() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -23,10 +25,14 @@ export async function POST(
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { day_number, task_number, decision } = await req.json();
+    const { day_number, task_number, decision, reason } = await req.json();
     if (decision !== 'approve' && decision !== 'reject') {
       return NextResponse.json({ error: 'decision must be approve or reject' }, { status: 400 });
     }
+    if (decision === 'reject' && (typeof reason !== 'string' || reason.trim().length < 3)) {
+      return NextResponse.json({ error: 'A reason is required to reject.' }, { status: 400 });
+    }
+    const trimmedReason = typeof reason === 'string' ? reason.trim().slice(0, REJECT_REASON_MAX_LENGTH) : null;
 
     const { data: match, error: matchErr } = await admin
       .from('matches')
@@ -54,10 +60,19 @@ export async function POST(
     }
 
     if (decision === 'reject') {
-      await admin.from('matches').update({ status: 'rejected', next_day_unlocks_at: null }).eq('id', id);
+      await admin.from('matches').update({
+        status: 'rejected',
+        next_day_unlocks_at: null,
+        rejection_reason: trimmedReason,
+        rejected_at: new Date().toISOString(),
+        rejected_submission_id: submission.id,
+        retry_unlocked_at: null,
+        retry_decision: null,
+        retry_prompt_sent_at: null,
+      }).eq('id', id);
       await admin.from('funnel_events').insert({ match_id: id, event_type: 'rejected' });
       try {
-        await notifyManOfRejection(admin, match.user1_id, id);
+        await notifyManOfRejection(admin, match.user1_id, id, trimmedReason || undefined);
       } catch {
         // Safe catch for notification failure
       }

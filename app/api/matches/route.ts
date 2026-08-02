@@ -19,7 +19,7 @@ export async function GET() {
 
     const { data: matches, error } = await admin
       .from('matches')
-      .select('id, user1_id, user2_id, current_day, status, chat_unlocked, completed_at, next_day_unlocks_at, submit_deadline, review_deadline, created_at')
+      .select('id, user1_id, user2_id, current_day, status, chat_unlocked, completed_at, next_day_unlocks_at, submit_deadline, review_deadline, created_at, retry_unlocked_at, retry_decision')
       .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
       .order('created_at', { ascending: false });
 
@@ -43,6 +43,8 @@ export async function GET() {
         next_day_unlocks_at: m.next_day_unlocks_at,
         submit_deadline: m.submit_deadline,
         review_deadline: m.review_deadline,
+        retry_unlocked_at: m.retry_unlocked_at,
+        retry_decision: m.retry_decision,
         otherName: other?.name || 'Unknown',
         otherPhoto: other?.photos?.[0] || null,
       };

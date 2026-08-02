@@ -23,7 +23,7 @@ export async function GET(
 
     const { data: match, error: matchErr } = await admin
       .from('matches')
-      .select('id, user1_id, user2_id, current_day, status, chat_unlocked, completed_at, next_day_unlocks_at, submit_deadline, review_deadline')
+      .select('id, user1_id, user2_id, current_day, status, chat_unlocked, completed_at, next_day_unlocks_at, submit_deadline, review_deadline, rejection_reason, retry_unlocked_at, retry_decision')
       .eq('id', id)
       .maybeSingle();
 

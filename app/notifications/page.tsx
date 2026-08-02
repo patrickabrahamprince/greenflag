@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Bell, Check, Loader2, Sparkles } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { SwipeToDismiss } from '@/components/shared/SwipeToDismiss';
 import toast from 'react-hot-toast';
 
 interface Notification {
@@ -39,9 +40,12 @@ function getNotificationRoute(data: Record<string, unknown> | null): string | nu
     case 'media_rejected':
     case 'rejected':
     case 'standard_begin':
+    case 'retry_unlocked':
       return connectionId ? `/task/${connectionId}` : null;
     case 'standard_hint':
       return matchId ? `/task/${matchId}` : null;
+    case 'retry_decision':
+      return '/my-connections';
     case 'nudge':
       return fromUserId ? `/profile/${fromUserId}` : null;
     case 'account_banned':
@@ -116,6 +120,11 @@ export default function NotificationsPage() {
     }
   };
 
+  const handleDismiss = async (id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+    await supabase.from('notifications').delete().eq('id', id);
+  };
+
   const unreadCount = notifications.filter((n) => !n.read_at).length;
 
   if (loading) {
@@ -163,25 +172,68 @@ export default function NotificationsPage() {
 
               if (isLuxury) {
                 return (
+                  <SwipeToDismiss key={notif.id} onDismiss={() => handleDismiss(notif.id)}>
+                    <button
+                      onClick={() => handleNotificationClick(notif)}
+                      className="w-full text-left p-4 rounded-xl transition-all border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-[#0B0614] shadow-[0_0_24px_-10px_rgba(192,38,211,0.6)] hover:border-gold/50 active:scale-[0.98]"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-full bg-gold/15 border border-gold/40 flex items-center justify-center shrink-0">
+                          <Sparkles className="w-4 h-4 text-gold" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1">
+                            <p className="font-display text-base text-gold tracking-wide">
+                              {notif.title}
+                            </p>
+                            {!notif.read_at && (
+                              <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
+                            )}
+                          </div>
+                          <p className="text-sm text-ink/80">{notif.body}</p>
+                          <p className="text-[10px] text-muted/40 mt-1">
+                            {new Date(notif.created_at).toLocaleDateString('en-IN', {
+                              day: 'numeric',
+                              month: 'short',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  </SwipeToDismiss>
+                );
+              }
+
+              return (
+                <SwipeToDismiss key={notif.id} onDismiss={() => handleDismiss(notif.id)}>
                   <button
-                    key={notif.id}
                     onClick={() => handleNotificationClick(notif)}
-                    className="w-full text-left p-4 rounded-xl transition-all border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-transparent shadow-[0_0_24px_-10px_rgba(192,38,211,0.6)] hover:border-gold/50 active:scale-[0.98]"
+                    className={`w-full text-left p-4 transition-all active:scale-[0.98] ${
+                      notif.read_at
+                        ? 'bg-[#0B0614] hover:bg-surface/50'
+                        : 'bg-surface/80 hover:bg-surface'
+                    }`}
                   >
                     <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full bg-gold/15 border border-gold/40 flex items-center justify-center shrink-0">
-                        <Sparkles className="w-4 h-4 text-gold" />
-                      </div>
+                      <div className={`w-2 h-2 rounded-full mt-2 shrink-0 ${
+                        notif.read_at ? 'bg-transparent' : 'bg-gold'
+                      }`} />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
-                          <p className="font-display text-base text-gold tracking-wide">
+                          <p className={`text-sm font-medium ${
+                            notif.read_at ? 'text-muted' : 'text-ink'
+                          }`}>
                             {notif.title}
                           </p>
                           {!notif.read_at && (
-                            <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
+                            <Check className="w-3.5 h-3.5 text-muted shrink-0" />
                           )}
                         </div>
-                        <p className="text-sm text-ink/80">{notif.body}</p>
+                        <p className={`text-sm ${notif.read_at ? 'text-muted/60' : 'text-muted'}`}>
+                          {notif.body}
+                        </p>
                         <p className="text-[10px] text-muted/40 mt-1">
                           {new Date(notif.created_at).toLocaleDateString('en-IN', {
                             day: 'numeric',
@@ -193,48 +245,7 @@ export default function NotificationsPage() {
                       </div>
                     </div>
                   </button>
-                );
-              }
-
-              return (
-                <button
-                  key={notif.id}
-                  onClick={() => handleNotificationClick(notif)}
-                  className={`w-full text-left p-4 rounded-xl transition-all active:scale-[0.98] ${
-                    notif.read_at
-                      ? 'bg-transparent hover:bg-surface/50'
-                      : 'bg-surface/80 hover:bg-surface'
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className={`w-2 h-2 rounded-full mt-2 shrink-0 ${
-                      notif.read_at ? 'bg-transparent' : 'bg-gold'
-                    }`} />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <p className={`text-sm font-medium ${
-                          notif.read_at ? 'text-muted' : 'text-ink'
-                        }`}>
-                          {notif.title}
-                        </p>
-                        {!notif.read_at && (
-                          <Check className="w-3.5 h-3.5 text-muted shrink-0" />
-                        )}
-                      </div>
-                      <p className={`text-sm ${notif.read_at ? 'text-muted/60' : 'text-muted'}`}>
-                        {notif.body}
-                      </p>
-                      <p className="text-[10px] text-muted/40 mt-1">
-                        {new Date(notif.created_at).toLocaleDateString('en-IN', {
-                          day: 'numeric',
-                          month: 'short',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                </button>
+                </SwipeToDismiss>
               );
             })}
           </div>
