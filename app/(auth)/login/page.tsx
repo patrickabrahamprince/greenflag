@@ -136,7 +136,7 @@ export default function LoginPage() {
 
   return (
     <div className="relative isolate min-h-dvh flex flex-col p-6 pt-safe-top pb-safe-bottom bg-[#0B0614]">
-      <OnboardingBackground image="/onboarding/hero.jpg" />
+      <OnboardingBackground image="/onboarding/hero.jpg" light />
 
       {/* Logo centers in whatever space is left above the buttons instead
           of the whole block being centered as one unit -- that's what

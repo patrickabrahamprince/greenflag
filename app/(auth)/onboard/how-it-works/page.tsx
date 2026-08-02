@@ -9,6 +9,7 @@ import { SocialProofLine } from '@/components/shared/SocialProofLine';
 import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
+import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 const POINTS = [
   {
@@ -39,6 +40,7 @@ const POINTS = [
 
 export default function HowItWorksPage() {
   const router = useRouter();
+  const { goTo } = useOnboardingNav();
   const supabase = createClient();
   const [loading, setLoading] = useState(true);
   const [continuing, setContinuing] = useState(false);
@@ -129,7 +131,7 @@ export default function HowItWorksPage() {
     // Pending women wait for admin review on a dedicated screen; pending men
     // go straight into Discover, where browsing while pending is allowed.
     if (approvalStatus === 'pending' && persona !== 'man') {
-      router.push('/onboard/pending');
+      goTo('/onboard/pending', '/onboarding/pending.jpg');
       return;
     }
     if (persona === 'woman') {

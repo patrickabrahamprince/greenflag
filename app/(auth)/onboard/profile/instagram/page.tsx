@@ -7,6 +7,7 @@ import { useOnboardingStore } from '@/lib/store';
 import { StepDots } from '@/components/shared/StepDots';
 import { hapticTap } from '@/lib/haptics';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
+import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 // Step 2 of the profile wizard -- Instagram handle, split out of the old
 // single-page form (see /onboard/profile for the wizard's intent).
@@ -19,6 +20,7 @@ import { OnboardingBackground } from '@/components/onboarding/OnboardingBackgrou
 // already did for the "verified" case.
 export default function ProfileInstagramPage() {
   const router = useRouter();
+  const { goTo } = useOnboardingNav();
   const name = useOnboardingStore((s) => s.name);
   const age = useOnboardingStore((s) => s.age);
   const city = useOnboardingStore((s) => s.city);
@@ -38,7 +40,7 @@ export default function ProfileInstagramPage() {
     hapticTap();
     if (!handle.trim()) { setError('Instagram handle is required'); return; }
     setInstagram(handle.trim(), false);
-    router.push('/onboard/profile/bio');
+    goTo('/onboard/profile/bio', '/onboarding/bio.jpg');
   };
 
   return (

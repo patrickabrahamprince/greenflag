@@ -1,5 +1,10 @@
 interface OnboardingBackgroundProps {
   image: string;
+  // Login is the one screen that keeps the original, lighter scrim --
+  // it's the very first thing anyone sees, so the photo needs to still
+  // read as a photo rather than a near-silhouette. Every other onboarding
+  // screen uses the darker default now for stronger text contrast.
+  light?: boolean;
 }
 
 // Full-bleed photo + a brand-matched dark scrim, sitting behind a
@@ -16,17 +21,15 @@ interface OnboardingBackgroundProps {
 // edge case). animate-fade-in is a plain CSS keyframe that plays on
 // mount regardless of whether the image data has actually arrived yet,
 // so there's no state for a missed event to get stuck in.
-export function OnboardingBackground({ image }: OnboardingBackgroundProps) {
+export function OnboardingBackground({ image, light }: OnboardingBackgroundProps) {
+  const scrim = light
+    ? 'radial-gradient(ellipse 120% 50% at 50% 0%, rgba(192,38,211,0.18) 0%, transparent 55%), linear-gradient(180deg, rgba(11,6,20,0.32) 0%, rgba(11,6,20,0.6) 55%, rgba(11,6,20,0.9) 100%)'
+    : 'radial-gradient(ellipse 120% 50% at 50% 0%, rgba(192,38,211,0.16) 0%, transparent 50%), linear-gradient(180deg, rgba(11,6,20,0.5) 0%, rgba(11,6,20,0.75) 55%, rgba(11,6,20,0.96) 100%)';
+
   return (
     <div className="absolute inset-0 -z-10 overflow-hidden bg-[#0B0614]">
       <img key={image} src={image} alt="" className="w-full h-full object-cover animate-fade-in" />
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(ellipse 120% 50% at 50% 0%, rgba(192,38,211,0.18) 0%, transparent 55%), linear-gradient(180deg, rgba(11,6,20,0.32) 0%, rgba(11,6,20,0.6) 55%, rgba(11,6,20,0.9) 100%)',
-        }}
-      />
+      <div className="absolute inset-0" style={{ background: scrim }} />
     </div>
   );
 }

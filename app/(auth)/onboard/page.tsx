@@ -6,9 +6,11 @@ import { Crown, Compass, Venus, Mars, Loader2 } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
 import { hapticTap } from '@/lib/haptics';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
+import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 export default function OnboardPage() {
   const router = useRouter();
+  const { goTo } = useOnboardingNav();
   const setPersona = useOnboardingStore((s) => s.setPersona);
   const [selecting, setSelecting] = useState<'woman' | 'man' | null>(null);
 
@@ -23,7 +25,7 @@ export default function OnboardPage() {
     hapticTap();
     setSelecting(persona);
     setPersona(persona);
-    router.push('/onboard/name');
+    goTo('/onboard/name', '/onboarding/name.jpg');
   };
 
   return (

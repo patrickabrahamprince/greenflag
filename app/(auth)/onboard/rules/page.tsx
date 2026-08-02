@@ -16,6 +16,7 @@ import { createClient } from '@/lib/supabase/client';
 import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
+import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 // Define each slide with an icon, title, and description.
 const slides = [
@@ -59,6 +60,7 @@ const slides = [
 
 export default function RulesPage() {
   const router = useRouter();
+  const { goTo } = useOnboardingNav();
   const supabase = createClient();
   const [loading, setLoading] = useState(true);
   const [activeSlide, setActiveSlide] = useState(0);
@@ -142,7 +144,7 @@ export default function RulesPage() {
 
   const handleContinue = () => {
     hapticTap();
-    router.push('/onboard/how-it-works');
+    goTo('/onboard/how-it-works', '/onboarding/how-it-works.jpg');
   };
 
   if (loading) {

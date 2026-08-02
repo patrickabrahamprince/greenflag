@@ -7,6 +7,7 @@ import { useOnboardingStore } from '@/lib/store';
 import { StepDots } from '@/components/shared/StepDots';
 import { hapticTap } from '@/lib/haptics';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
+import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 const MIN_AGE = 18;
 // Matches the live DB check constraint on profiles.age (age >= 18 AND
@@ -20,6 +21,7 @@ const MAX_AGE = 60;
 // with location. One question per screen throughout.
 export default function ProfileAgePage() {
   const router = useRouter();
+  const { goTo } = useOnboardingNav();
   const name = useOnboardingStore((s) => s.name);
   const age = useOnboardingStore((s) => s.age);
   const setAge = useOnboardingStore((s) => s.setAge);
@@ -37,7 +39,7 @@ export default function ProfileAgePage() {
     if (ageNum < MIN_AGE) { setError('You must be 18+'); return; }
     if (ageNum > MAX_AGE) { setError('Please enter a valid age'); return; }
     setAge(ageNum);
-    router.push('/onboard/profile/location');
+    goTo('/onboard/profile/location', '/onboarding/location.jpg');
   };
 
   return (

@@ -12,6 +12,7 @@ import { compressImage } from '@/lib/compressImage';
 import { checkPhotosForFace } from '@/lib/faceDetection';
 import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
+import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 const REQUIRED_PHOTOS = 3;
 
@@ -19,6 +20,7 @@ const REQUIRED_PHOTOS = 3;
 // profile upsert that used to run at the end of the old single-page form.
 export default function ProfilePhotosPage() {
   const router = useRouter();
+  const { goTo } = useOnboardingNav();
   const supabase = createClient();
   const persona = useOnboardingStore((s) => s.persona);
   const name = useOnboardingStore((s) => s.name);
@@ -177,7 +179,7 @@ export default function ProfilePhotosPage() {
     const { data: freshProfile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
     if (freshProfile) setGlobalUser(freshProfile as any);
 
-    router.push('/onboard/quiz');
+    goTo('/onboard/quiz', '/onboarding/hero.jpg');
   };
 
   return (

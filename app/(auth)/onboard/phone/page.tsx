@@ -11,9 +11,11 @@ import { createClient } from '@/lib/supabase/client';
 import { signInWithGoogleNative, signInWithAppleNative } from '@/lib/native/socialLogin';
 import toast from 'react-hot-toast';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
+import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 export default function PhonePage() {
   const router = useRouter();
+  const { goTo } = useOnboardingNav();
   const supabase = createClient();
   const [phone, setPhone] = useState('');
   const [otpSent, setOtpSent] = useState(false);
@@ -75,7 +77,7 @@ export default function PhonePage() {
       setError(verifyError.message);
       return;
     }
-    router.push('/onboard/profile');
+    goTo('/onboard/profile', '/onboarding/age.jpg');
   };
 
   const handleSkip = async () => {
@@ -87,7 +89,7 @@ export default function PhonePage() {
         .update({ phone_verified: true })
         .eq('id', user.id);
     }
-    router.push('/onboard/profile');
+    goTo('/onboard/profile', '/onboarding/age.jpg');
   };
 
   const handleGoogleLogin = async () => {
@@ -98,7 +100,7 @@ export default function PhonePage() {
       // app/(auth)/login/page.tsx for why these need to differ.
       if (Capacitor.isNativePlatform()) {
         await signInWithGoogleNative();
-        router.push('/onboard/profile');
+        goTo('/onboard/profile', '/onboarding/age.jpg');
       } else {
         await supabase.auth.signInWithOAuth({
           provider: 'google',
@@ -123,7 +125,7 @@ export default function PhonePage() {
     try {
       if (Capacitor.isNativePlatform()) {
         await signInWithAppleNative();
-        router.push('/onboard/profile');
+        goTo('/onboard/profile', '/onboarding/age.jpg');
       } else {
         await supabase.auth.signInWithOAuth({
           provider: 'apple',

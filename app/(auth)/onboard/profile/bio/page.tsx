@@ -7,6 +7,7 @@ import { useOnboardingStore } from '@/lib/store';
 import { StepDots } from '@/components/shared/StepDots';
 import { hapticTap } from '@/lib/haptics';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
+import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 const BIO_MIN_CHARS = 15;
 
@@ -25,6 +26,7 @@ const BIO_EXAMPLES = [
 // single-page form (see /onboard/profile for the wizard's intent).
 export default function ProfileBioPage() {
   const router = useRouter();
+  const { goTo } = useOnboardingNav();
   const name = useOnboardingStore((s) => s.name);
   const age = useOnboardingStore((s) => s.age);
   const city = useOnboardingStore((s) => s.city);
@@ -61,7 +63,7 @@ export default function ProfileBioPage() {
     if (trimmed.length < BIO_MIN_CHARS) { setError(`Write at least ${BIO_MIN_CHARS} characters`); return; }
     if (value.length > 200) { setError('Keep it under 200 characters'); return; }
     setBio(trimmed);
-    router.push('/onboard/profile/teasers');
+    goTo('/onboard/profile/teasers', '/onboarding/teasers.jpg');
   };
 
   if (showIntro) {

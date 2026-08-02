@@ -49,7 +49,7 @@ export function PendingReviewBanner() {
   if (secondsLeft === null) return null;
 
   return (
-    <div className="fixed top-0 inset-x-0 z-40 flex items-center justify-center gap-2 bg-gold/10 border-b border-gold/30 py-2 backdrop-blur-sm">
+    <div className="fixed top-0 inset-x-0 z-40 flex items-center justify-center gap-2 bg-gold/10 border-b border-gold/30 py-2 pt-safe-top backdrop-blur-sm">
       <ShieldCheck className="w-3.5 h-3.5 text-gold animate-pulse" />
       <p className="text-xs text-ink/80 font-medium">
         Verifying your profile — {secondsLeft}s

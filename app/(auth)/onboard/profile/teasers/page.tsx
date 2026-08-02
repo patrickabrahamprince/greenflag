@@ -8,6 +8,7 @@ import { StepDots } from '@/components/shared/StepDots';
 import { BottomSheet } from '@/components/shared/BottomSheet';
 import { hapticTap } from '@/lib/haptics';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
+import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 const TEASER_PROMPTS = [
   'The way to my heart is',
@@ -24,6 +25,7 @@ const TEASER_PROMPTS = [
 // usable profile, it just means one less thing for a match to react to.
 export default function ProfileTeasersPage() {
   const router = useRouter();
+  const { goTo } = useOnboardingNav();
   const name = useOnboardingStore((s) => s.name);
   const age = useOnboardingStore((s) => s.age);
   const city = useOnboardingStore((s) => s.city);
@@ -46,7 +48,7 @@ export default function ProfileTeasersPage() {
   const handleContinue = () => {
     hapticTap();
     setTeaser(prompt.trim(), answer.trim());
-    router.push('/onboard/profile/photos');
+    goTo('/onboard/profile/photos');
   };
 
   return (

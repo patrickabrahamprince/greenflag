@@ -7,6 +7,7 @@ import { useOnboardingStore } from '@/lib/store';
 import { hapticTap } from '@/lib/haptics';
 import { createClient } from '@/lib/supabase/client';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
+import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 // Its own screen, not folded into the big profile form -- a standalone
 // name-collection step is a well-documented conversion lever on its own
@@ -15,6 +16,7 @@ import { OnboardingBackground } from '@/components/onboarding/OnboardingBackgrou
 // staying generic.
 export default function OnboardNamePage() {
   const router = useRouter();
+  const { goTo } = useOnboardingNav();
   const persona = useOnboardingStore((s) => s.persona);
   const setName = useOnboardingStore((s) => s.setName);
   const [value, setValue] = useState('');
@@ -31,7 +33,8 @@ export default function OnboardNamePage() {
     setName(trimmed);
 
     if (persona === 'woman') {
-      router.push('/onboard/profile');
+      setContinuing(true);
+      goTo('/onboard/profile', '/onboarding/age.jpg');
       return;
     }
 
@@ -47,10 +50,10 @@ export default function OnboardNamePage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (user?.email && !user.phone) {
       await supabase.from('profiles').update({ phone_verified: true }).eq('id', user.id);
-      router.push('/onboard/profile');
+      goTo('/onboard/profile', '/onboarding/age.jpg');
       return;
     }
-    router.push('/onboard/phone');
+    goTo('/onboard/phone', '/onboarding/phone.jpg');
   };
 
   return (

@@ -1,3 +1,5 @@
+import { OnboardingTransitionOverlay } from '@/components/onboarding/OnboardingTransitionOverlay';
+
 export default function AuthLayout({
   children,
 }: {
@@ -11,5 +13,10 @@ export default function AuthLayout({
   // leaving a black gutter down both sides -- most visible on login,
   // where the gutter's flat black cut directly into the violet gradient
   // that's supposed to bleed edge-to-edge.
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <OnboardingTransitionOverlay />
+    </>
+  );
 }

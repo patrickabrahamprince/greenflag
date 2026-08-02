@@ -11,6 +11,7 @@ import { PermissionPrimer } from '@/components/shared/PermissionPrimer';
 import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
+import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 const INDIAN_CITIES = [
   'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai',
@@ -21,6 +22,7 @@ const INDIAN_CITIES = [
 // what used to be a shared age+location screen.
 export default function ProfileLocationPage() {
   const router = useRouter();
+  const { goTo } = useOnboardingNav();
   const name = useOnboardingStore((s) => s.name);
   const age = useOnboardingStore((s) => s.age);
   const city = useOnboardingStore((s) => s.city);
@@ -97,7 +99,7 @@ export default function ProfileLocationPage() {
     hapticTap();
     if (!cityValue.trim()) { setError('City is required'); return; }
     setLocation(cityValue.trim(), lat, lng);
-    router.push('/onboard/profile/instagram');
+    goTo('/onboard/profile/instagram', '/onboarding/instagram.jpg');
   };
 
   return (

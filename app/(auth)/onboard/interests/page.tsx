@@ -11,6 +11,7 @@ import { useInterestsSelection } from '@/components/discovery/useInterestsSelect
 import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
+import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 const INTEREST_TAGS = [
   'Books', 'Music', 'Travel', 'Fitness', 'Gastronomy', 'Art',
@@ -21,6 +22,7 @@ const INTEREST_TAGS = [
 
 export default function InterestsPage() {
   const router = useRouter();
+  const { replaceTo } = useOnboardingNav();
   const supabase = createClient();
   const persona = useOnboardingStore((s) => s.persona);
   const isWoman = persona === 'woman';
@@ -65,7 +67,7 @@ export default function InterestsPage() {
 
     setLoading(false);
     toast.success('Profile curated');
-    router.replace('/onboard/rules');
+    replaceTo('/onboard/rules', '/onboarding/rules.jpg');
   };
 
   return (

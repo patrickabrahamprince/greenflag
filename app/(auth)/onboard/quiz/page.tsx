@@ -8,6 +8,7 @@ import { useOnboardingStore } from '@/lib/store';
 import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
+import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 interface Question {
   id: string;
@@ -138,6 +139,7 @@ function computeArchetype(answers: Record<string, string>): { title: string; des
 
 export default function QuizPage() {
   const router = useRouter();
+  const { goTo } = useOnboardingNav();
   const supabase = createClient();
   const name = useOnboardingStore((s) => s.name);
   const [loading, setLoading] = useState(true);
@@ -231,7 +233,7 @@ export default function QuizPage() {
           <h1 className="font-display text-3xl text-ink mb-4">{reveal.title}</h1>
           <p className="text-ink/60 text-sm leading-relaxed mb-10">{reveal.description}</p>
           <button
-            onClick={() => router.push('/onboard/interests')}
+            onClick={() => goTo('/onboard/interests', '/onboarding/interests.jpg')}
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'quiz-reveal-continue' : undefined}
             className="btn-primary w-full py-4 font-semibold text-sm active:scale-95 transition-transform"
           >
