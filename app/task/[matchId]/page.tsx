@@ -439,11 +439,14 @@ export default function TaskPage() {
               ? `Come back to review ${otherProfile.name}'s answers and see if he meets your Standard.`
               : `Come back then to continue your Standard with ${otherProfile.name}.`}
           </p>
-          {!isWoman && (
-            <button onClick={() => router.push('/discover')} className="btn-secondary text-sm px-6">
-              Discover New Profiles
+          <div className="flex gap-3 w-full max-w-xs">
+            <button onClick={() => router.push(`/profile/${otherProfile.id}`)} className="btn-secondary flex-1 text-sm px-4">
+              View Profile
             </button>
-          )}
+            <button onClick={() => router.push('/discover')} className="btn-primary flex-1 text-sm px-4">
+              Discover More
+            </button>
+          </div>
         </div>
       ) : (
         <>

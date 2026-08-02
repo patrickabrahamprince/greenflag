@@ -19,6 +19,19 @@ const SPECIAL_SEND_COST = 150;
 // native prompt once, asking again each time is just friction.
 const MIC_PRIMED_KEY = 'gf_mic_primed';
 
+// audio/mp4 first: it's the only container WebKit's MediaRecorder can
+// actually produce, and also the one format every platform (WebKit,
+// Chromium, Firefox) can always play back. webm/opus is Chromium's/
+// Android's own default when mp4 isn't supported for recording -- it
+// plays back fine on other Chromium/Firefox browsers, just not on
+// WebKit, which never implemented WebM decoding for <audio>.
+const AUDIO_MIME_CANDIDATES = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/aac'];
+
+function pickSupportedMimeType(): string | undefined {
+  if (typeof MediaRecorder === 'undefined' || !MediaRecorder.isTypeSupported) return undefined;
+  return AUDIO_MIME_CANDIDATES.find((type) => MediaRecorder.isTypeSupported(type));
+}
+
 interface SubmitResult {
   status?: string;
   review_deadline?: string | null;
@@ -55,6 +68,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const preferredMimeTypeRef = useRef<string | undefined>(undefined);
 
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const audioUrlRef = useRef<string | null>(null);
@@ -258,10 +272,22 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
 
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
-      
-      // Let the browser pick its default MIME — no mimeType option at all
-      // This is the most compatible approach across all browsers
-      const recorder = new MediaRecorder(stream);
+
+      // Letting the browser pick its own default (no mimeType option) was
+      // the actual cause of recordings that "recorded fine" but silently
+      // failed to play back elsewhere: WebKit's MediaRecorder can leave
+      // `recorder.mimeType` as an empty string for an audio-only stream,
+      // which fell through to the '|| audio/webm' fallback below and
+      // mislabeled a real MP4/AAC recording as webm. The file then got a
+      // .webm extension and Content-Type despite containing MP4 bytes, so
+      // any player trying to decode it as webm just failed. Requesting an
+      // explicit, verified-supported type up front removes that ambiguity
+      // -- the spec guarantees the recorder uses exactly what you asked
+      // for once isTypeSupported confirms it.
+      preferredMimeTypeRef.current = pickSupportedMimeType();
+      const recorder = preferredMimeTypeRef.current
+        ? new MediaRecorder(stream, { mimeType: preferredMimeTypeRef.current })
+        : new MediaRecorder(stream);
       mediaRecorderRef.current = recorder;
       chunksRef.current = [];
 
@@ -314,8 +340,10 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
       };
 
       recorder.onstop = () => {
-        // Use base MIME type without codec params (e.g. 'audio/webm' not 'audio/webm;codecs=opus')
-        const baseMime = (recorder.mimeType || 'audio/webm').split(';')[0];
+        // Prefer the type we explicitly requested (and got, per spec) over
+        // recorder.mimeType -- see the comment above pickSupportedMimeType
+        // for why trusting the browser-reported value alone was the bug.
+        const baseMime = (preferredMimeTypeRef.current || recorder.mimeType || 'audio/webm').split(';')[0];
         const blob = new Blob(chunksRef.current, { type: baseMime });
         
         // Revoke previous blob URL
