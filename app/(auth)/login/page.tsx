@@ -147,7 +147,7 @@ export default function LoginPage() {
         {/* Pushed down from the logo instead of sitting right beneath it --
             with no email/password form above it anymore, butting the
             buttons straight up against the logo felt cramped. */}
-        <div className="space-y-3 mt-16">
+        <div className="space-y-3 mt-24">
           <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />
           <AppleButton onClick={handleAppleLogin} loading={appleLoading} />
         </div>
