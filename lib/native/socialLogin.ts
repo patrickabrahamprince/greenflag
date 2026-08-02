@@ -60,9 +60,18 @@ export async function signInWithGoogleNative(): Promise<void> {
 
   const rawNonce = randomNonce();
   const hashedNonce = await sha256Hex(rawNonce);
+  // forcePrompt skips the plugin's "restore previous sign-in" fast path on
+  // iOS (GIDSignIn.hasPreviousSignIn() -> restorePreviousSignIn ->
+  // refreshTokensIfNeeded), which silently reuses whatever ID token is
+  // already cached in the device Keychain from an earlier session --
+  // that cached token's nonce claim reflects whichever nonce was current
+  // back when it was first issued, not the fresh one generated above, so
+  // Supabase's hash comparison fails with "nonces mismatched" on every
+  // sign-in after the first on a given device. Forcing the prompt makes
+  // it always run a real interactive sign-in bound to this nonce.
   const { result } = await SocialLogin.login({
     provider: 'google',
-    options: { nonce: hashedNonce, scopes: ['email', 'profile'] },
+    options: { nonce: hashedNonce, scopes: ['email', 'profile'], forcePrompt: true },
   });
 
   if (result.responseType !== 'online' || !result.idToken) {
