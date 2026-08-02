@@ -59,31 +59,58 @@ export function AppLockGate() {
     }
   };
 
+  const hasUser = !!user;
+
+  // Locks whenever we learn someone is actually signed in -- keyed on
+  // `hasUser` itself rather than checked once at mount. The native
+  // checkBiometry() round-trip reliably finishes before the Supabase
+  // session restore in Providers.tsx does (that's two sequential network
+  // calls vs. one local bridge call), so a one-time check at mount time
+  // would read `hasUser` as false even for someone who's genuinely
+  // logged in -- confirmed via device logs: checkBiometry kept resolving
+  // isAvailable:true but authenticate() was never being called at all,
+  // on both cold start and right after a fresh login. Re-running this
+  // per `hasUser` transition (false -> true, at cold start or right
+  // after login) closes that race instead of racing it.
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform() || !hasUser) return;
+    let cancelled = false;
+    BiometricAuth.checkBiometry().then((result) => {
+      if (cancelled || !result.isAvailable) return;
+      setLocked(true);
+      attemptUnlock();
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [hasUser, attemptUnlock]);
+
+  // Separately, re-lock on every return from the background -- this one
+  // really can rely on a ref since it fires long after mount, well past
+  // any session-restore race.
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
 
     let resumeHandle: { remove: () => void } | undefined;
+    let mounted = true;
 
     // addResumeListener requires checkBiometry() to have been called at
     // least once first, per the plugin's own contract.
-    BiometricAuth.checkBiometry().then((result) => {
-      if (!result.isAvailable) return;
-
-      if (hasUserRef.current) {
-        setLocked(true);
-        attemptUnlock();
-      }
-
+    BiometricAuth.checkBiometry().then(() => {
       BiometricAuth.addResumeListener((info) => {
         if (!info.isAvailable || !hasUserRef.current) return;
         setLocked(true);
         attemptUnlock();
       }).then((handle) => {
-        resumeHandle = handle;
+        if (mounted) resumeHandle = handle;
+        else handle.remove();
       });
     });
 
-    return () => resumeHandle?.remove();
+    return () => {
+      mounted = false;
+      resumeHandle?.remove();
+    };
   }, [attemptUnlock]);
 
   if (!locked) return null;
