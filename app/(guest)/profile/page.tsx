@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Settings, LogOut, Edit3, Coins, Loader2, BadgeCheck } from 'lucide-react';
+import { Settings, LogOut, Edit3, Coins, Loader2, BadgeCheck, MapPin, Cake } from 'lucide-react';
 import { ProfileImageCarousel } from '@/components/shared/ProfileImageCarousel';
 import { MyStandardsSection } from '@/components/profile/MyStandardsSection';
 import { createClient } from '@/lib/supabase/client';
@@ -43,7 +43,7 @@ export default function ProfilePage() {
         </button>
       </div>
 
-      <div className="relative w-full aspect-[3/4] mb-4 rounded-3xl overflow-hidden">
+      <div className="relative w-full aspect-[3/4] mb-5 rounded-3xl overflow-hidden shadow-[0_20px_60px_-20px_rgba(192,38,211,0.35)]">
         <ProfileImageCarousel images={user.photos ?? []} />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent pointer-events-none" />
         {user.phone_verified && (
@@ -52,31 +52,59 @@ export default function ProfilePage() {
             <span className="text-[10px] font-semibold text-white tracking-wide">Verified</span>
           </div>
         )}
+        <button
+          onClick={() => { hapticTap(); router.push('/profile/edit'); }}
+          className="absolute bottom-3 right-3 w-10 h-10 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center active:scale-90 transition-transform"
+        >
+          <Edit3 className="w-4 h-4 text-white" />
+        </button>
       </div>
 
       <div className="flex flex-col items-center pb-6">
         <h2 className="text-2xl font-display text-white">{user.name}</h2>
-        <p className="text-muted text-sm mt-1">{user.age} &middot; {user.city}</p>
+
+        <div className="flex items-center gap-2 mt-2.5">
+          {!!user.age && (
+            <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium text-white/70 bg-white/5 border border-white/10">
+              <Cake className="w-3 h-3" />
+              {user.age}
+            </span>
+          )}
+          {!!user.city && (
+            <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium text-white/70 bg-white/5 border border-white/10">
+              <MapPin className="w-3 h-3" />
+              {user.city}
+            </span>
+          )}
+        </div>
+
         {user.bio && (
-          <p className={
-            user.persona === 'woman'
-              ? 'italic text-gray-600 leading-relaxed mt-3 text-center max-w-xs'
-              : 'text-muted text-sm mt-3 text-center max-w-xs'
-          }>
-            {user.bio}
-          </p>
+          <div className="mt-5 mx-4 max-w-xs rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1.5">About</p>
+            <p className={
+              user.persona === 'woman'
+                ? 'italic text-gray-300 leading-relaxed text-sm'
+                : 'text-ink/80 text-sm leading-relaxed'
+            }>
+              {user.bio}
+            </p>
+          </div>
         )}
+
         {!!user.interests_have?.length && (
-          <div className="flex flex-wrap justify-center gap-1.5 mt-4 max-w-xs">
-            {user.interests_have.map((tag) => (
-              <button
-                key={tag}
-                onClick={hapticTap}
-                className="px-3 py-1 rounded-full text-[11px] font-medium text-gold bg-gold/10 border border-gold/20 active:scale-90 transition-transform"
-              >
-                {tag}
-              </button>
-            ))}
+          <div className="mt-5 mx-4 max-w-xs">
+            <p className="text-[10px] uppercase tracking-widest text-white/40 mb-2 text-center">Interests</p>
+            <div className="flex flex-wrap justify-center gap-1.5">
+              {user.interests_have.map((tag) => (
+                <button
+                  key={tag}
+                  onClick={hapticTap}
+                  className="px-3 py-1 rounded-full text-[11px] font-medium text-gold bg-gold/10 border border-gold/20 active:scale-90 transition-transform"
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -86,7 +114,7 @@ export default function ProfilePage() {
           itself until now. */}
       {user.teaser_prompt && user.teaser_answer && (
         <div
-          className="mx-4 mb-6 rounded-2xl border border-gold/20 p-5"
+          className="mx-4 mb-6 rounded-2xl border border-gold/20 p-5 shadow-[0_12px_32px_-16px_rgba(192,38,211,0.4)]"
           style={{ background: 'linear-gradient(135deg, rgba(192,38,211,0.1) 0%, rgba(28,28,30,0.9) 60%)' }}
         >
           <p className="text-[10px] uppercase tracking-widest text-gold/70 mb-2">{user.teaser_prompt}</p>
@@ -111,7 +139,7 @@ export default function ProfilePage() {
       {user.persona !== 'woman' && (
         <div className="px-4 mt-6">
           <div
-            className="rounded-2xl border border-gold/20 p-5 flex items-center justify-between"
+            className="rounded-2xl border border-gold/20 p-5 flex items-center justify-between shadow-[0_12px_32px_-16px_rgba(192,38,211,0.4)]"
             style={{ background: 'linear-gradient(135deg, rgba(192,38,211,0.16) 0%, rgba(28,28,30,0.9) 60%)' }}
           >
             <div className="flex items-center gap-3.5">
@@ -130,7 +158,7 @@ export default function ProfilePage() {
         </div>
       )}
 
-      <div className="px-4 mt-8">
+      <div className="px-4 mt-8 pt-6 border-t border-white/[0.06]">
         <button onClick={handleLogout} disabled={loggingOut} className="btn-danger w-full flex items-center justify-center gap-2">
           {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
           Sign Out
