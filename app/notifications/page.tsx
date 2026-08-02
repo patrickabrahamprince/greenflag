@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bell, Check, Loader2, Pin, Sparkles } from 'lucide-react';
+import { Bell, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { SwipeToDismiss } from '@/components/shared/SwipeToDismiss';
 import { getCached, setCached } from '@/lib/pageCache';
@@ -207,32 +207,17 @@ export default function NotificationsPage() {
                   >
                     <button
                       onClick={() => handleNotificationClick(notif)}
-                      className="w-full text-left p-3.5 rounded-xl transition-all border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-[#0B0614] shadow-[0_0_24px_-10px_rgba(192,38,211,0.6)] hover:border-gold/50 active:scale-[0.98]"
+                      className="w-full text-left p-3 rounded-xl transition-all border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-[#0B0614] active:scale-[0.98]"
                     >
-                      {/* Header row: icon + title + unread dot, visually its
-                          own line above the body text rather than one long
-                          flush block. */}
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="w-6 h-6 rounded-full bg-gold/15 border border-gold/40 flex items-center justify-center shrink-0">
-                          <Sparkles className="w-3 h-3 text-gold" />
-                        </div>
-                        {notif.pinned && <Pin className="w-3 h-3 text-gold/70 shrink-0" />}
-                        <p className="font-display text-sm text-gold tracking-wide flex-1 min-w-0 truncate">
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <p className="text-sm font-medium text-gold flex-1 min-w-0 truncate">
                           {notif.title}
                         </p>
                         {!notif.read_at && (
                           <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
                         )}
                       </div>
-                      <p className="text-xs text-ink/80 pl-8">{notif.body}</p>
-                      <p className="text-[10px] text-muted/40 mt-0.5 pl-8">
-                        {new Date(notif.created_at).toLocaleDateString('en-IN', {
-                          day: 'numeric',
-                          month: 'short',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </p>
+                      <p className="text-xs text-ink/70 truncate">{notif.body}</p>
                     </button>
                   </SwipeToDismiss>
                 );
@@ -247,36 +232,24 @@ export default function NotificationsPage() {
                 >
                   <button
                     onClick={() => handleNotificationClick(notif)}
-                    className={`w-full text-left p-3.5 rounded-xl transition-all active:scale-[0.98] ${
+                    className={`w-full text-left p-3 rounded-xl transition-all active:scale-[0.98] ${
                       notif.read_at
                         ? 'bg-[#0B0614] hover:bg-surface/50'
                         : 'bg-surface/80 hover:bg-surface'
                     }`}
                   >
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className={`w-2 h-2 rounded-full shrink-0 ${
-                        notif.read_at ? 'bg-transparent border border-muted/40' : 'bg-gold'
-                      }`} />
-                      {notif.pinned && <Pin className="w-3 h-3 text-gold/70 shrink-0" />}
-                      <p className={`text-sm font-semibold flex-1 min-w-0 truncate ${
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <p className={`text-sm font-medium flex-1 min-w-0 truncate ${
                         notif.read_at ? 'text-muted' : 'text-ink'
                       }`}>
                         {notif.title}
                       </p>
                       {!notif.read_at && (
-                        <Check className="w-3.5 h-3.5 text-muted shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
                       )}
                     </div>
-                    <p className={`text-xs pl-4 ${notif.read_at ? 'text-muted/60' : 'text-muted'}`}>
+                    <p className={`text-xs truncate ${notif.read_at ? 'text-muted/60' : 'text-muted'}`}>
                       {notif.body}
-                    </p>
-                    <p className="text-[10px] text-muted/40 mt-0.5 pl-4">
-                      {new Date(notif.created_at).toLocaleDateString('en-IN', {
-                        day: 'numeric',
-                        month: 'short',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
                     </p>
                   </button>
                 </SwipeToDismiss>

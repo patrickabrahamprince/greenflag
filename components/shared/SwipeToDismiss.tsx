@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { Pin, Trash2 } from 'lucide-react';
 
 interface SwipeToDismissProps {
   onDelete: () => void;
@@ -59,18 +58,12 @@ export function SwipeToDismiss({ onDelete, onPin, pinned, children }: SwipeToDis
 
   return (
     <div className="relative overflow-hidden rounded-xl">
-      <div className="absolute inset-0 flex">
-        <div className="flex-1 flex items-center gap-1.5 pl-6" style={{ background: 'rgba(192,38,211,0.15)' }}>
-          {onPin && (
-            <>
-              <Pin className="w-4 h-4 text-gold" />
-              <span className="text-xs font-medium text-gold">{pinned ? 'Unpin' : 'Pin'}</span>
-            </>
-          )}
+      <div className="absolute inset-0 flex bg-[#1C1C1E]">
+        <div className="flex-1 flex items-center pl-5">
+          {onPin && <span className="text-xs text-ink/50">{pinned ? 'Unpin' : 'Pin'}</span>}
         </div>
-        <div className="flex-1 flex items-center justify-end gap-1.5 pr-6 bg-red-950/50">
-          <span className="text-xs font-medium text-red-400">Delete</span>
-          <Trash2 className="w-4 h-4 text-red-400" />
+        <div className="flex-1 flex items-center justify-end pr-5">
+          <span className="text-xs text-ink/50">Delete</span>
         </div>
       </div>
       <div
