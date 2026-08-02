@@ -16,6 +16,8 @@ export interface Profile {
   interests_looking_for?: string[] | null;
   why_me_prompts?: string[] | null;
   quiz_answers?: Record<string, string> | null;
+  teaser_prompt?: string | null;
+  teaser_answer?: string | null;
   blur_key?: string | null;
   connected_count?: number | null;
   coins?: number | null;

@@ -15,6 +15,18 @@ interface Question {
   options: string[];
 }
 
+// One background per question instead of a single static one -- reuses
+// photos already shown earlier in onboarding (age/interests/etc.) rather
+// than new files, so by the time someone reaches the quiz these are
+// already sitting in the browser cache and switch instantly.
+const QUESTION_IMAGES = [
+  '/onboarding/hero.jpg',
+  '/onboarding/interests.jpg',
+  '/onboarding/teasers.jpg',
+  '/onboarding/quiz-playful.jpg',
+  '/onboarding/rules.jpg',
+];
+
 // Trimmed from 11 to 5 -- the demographic ones (education, smoking, kids)
 // felt like a form, not a quiz. These five keep even coverage across all
 // four archetypes below while actually being fun to answer.
@@ -246,7 +258,7 @@ export default function QuizPage() {
 
   return (
     <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
-      <OnboardingBackground image="/onboarding/quiz.jpg" />
+      <OnboardingBackground image={QUESTION_IMAGES[currentIdx] || '/onboarding/quiz.jpg'} />
       <div className="max-w-md mx-auto w-full flex flex-col pb-safe-bottom">
         <div>
           {/* Header */}

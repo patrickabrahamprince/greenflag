@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Crown, Compass } from 'lucide-react';
+import { Crown, Compass, Venus, Mars } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
 import { hapticTap } from '@/lib/haptics';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
@@ -34,7 +34,10 @@ export default function OnboardPage() {
             <div className="w-16 h-16 rounded-full bg-gold/15 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Crown className="w-8 h-8 text-gold" />
             </div>
-            <span className="text-[10px] font-semibold tracking-widest text-gold uppercase">Woman</span>
+            <span className="flex items-center gap-1 text-[10px] font-semibold tracking-widest text-gold uppercase">
+              <Venus className="w-3 h-3" />
+              Woman
+            </span>
             <span className="font-display text-2xl text-ink -mt-2">
               I Set The Standard
             </span>
@@ -47,13 +50,16 @@ export default function OnboardPage() {
         <button
           onClick={() => handleSelect('man')}
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'persona-man' : undefined}
-          className="w-full h-56 rounded-xl bg-[#1C1C1E] border border-[#2A2A2A] hover:border-ink/30 transition-all duration-300 relative overflow-hidden group active:scale-[0.98]"
+          className="w-full h-56 rounded-xl bg-gradient-to-br from-gold/10 to-gold/5 border border-gold/30 hover:border-gold transition-all duration-300 relative overflow-hidden group active:scale-[0.98]"
         >
           <div className="relative z-10 h-full flex flex-col items-center justify-center gap-3">
-            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Compass className="w-8 h-8 text-black/70" />
+            <div className="w-16 h-16 rounded-full bg-gold/15 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Compass className="w-8 h-8 text-gold" />
             </div>
-            <span className="text-[10px] font-semibold tracking-widest text-ink/50 uppercase">Men</span>
+            <span className="flex items-center gap-1 text-[10px] font-semibold tracking-widest text-gold uppercase">
+              <Mars className="w-3 h-3" />
+              Men
+            </span>
             <span className="font-display text-2xl text-ink -mt-2">
               I Rise To It
             </span>

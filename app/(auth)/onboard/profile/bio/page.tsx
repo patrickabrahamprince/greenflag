@@ -75,21 +75,21 @@ export default function ProfileBioPage() {
           <ArrowLeft size={24} />
         </button>
 
-        <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
+        <div className="flex-1 flex flex-col justify-center items-center max-w-md mx-auto w-full text-center">
           <StepDots current={4} total={6} />
-          <div
-            className="w-full aspect-[3/4] rounded-3xl flex flex-col items-center justify-center mb-8 px-8 text-center overflow-hidden"
-            style={{ background: 'radial-gradient(ellipse 120% 100% at 30% 20%, rgba(192, 38, 211, 0.5) 0%, transparent 60%), radial-gradient(ellipse 100% 100% at 80% 90%, rgba(124, 58, 237, 0.45) 0%, transparent 65%), #17091F' }}
-          >
-            <div key={exampleIdx} className="w-14 h-14 rounded-full overflow-hidden mb-5 border border-white/20 animate-slide-up">
-              <img src={BIO_EXAMPLES[exampleIdx].image} alt="" className="w-full h-full object-cover" />
-            </div>
-            <p key={`${exampleIdx}-quote`} className="font-display text-sm text-ink/90 leading-snug animate-slide-up">
-              {BIO_EXAMPLES[exampleIdx].quote}
-            </p>
-            <p className="text-ink/40 text-xs uppercase tracking-widest mt-4">Like this, but you</p>
+
+          {/* No enclosing card anymore -- the photo+quote pair sits
+              directly on the page's own background photo instead of a
+              separate boxed panel. */}
+          <div key={exampleIdx} className="w-20 h-20 rounded-full overflow-hidden mb-5 border border-white/20 shadow-[0_0_30px_-8px_rgba(192,38,211,0.6)] animate-slide-up">
+            <img src={BIO_EXAMPLES[exampleIdx].image} alt="" className="w-full h-full object-cover" />
           </div>
-          <h1 className="font-display text-3xl text-ink mb-3">Personality goes a long way</h1>
+          <p key={`${exampleIdx}-quote`} className="font-display text-base text-ink/90 leading-snug animate-slide-up px-6">
+            {BIO_EXAMPLES[exampleIdx].quote}
+          </p>
+          <p className="text-ink/40 text-xs uppercase tracking-widest mt-3 mb-8">Like this, but you</p>
+
+          <h1 className="font-display text-xl text-ink mb-3 whitespace-nowrap">Personality goes a long way</h1>
           <p className="text-ink/50 text-sm leading-relaxed">It&apos;s your time to shine.</p>
         </div>
 
@@ -136,7 +136,7 @@ export default function ProfileBioPage() {
           className={`input resize-none ${error ? 'border-red-500' : ''}`}
         />
         <div className="flex items-center justify-between mt-1">
-          <span className={`text-xs ${value.length < BIO_MIN_CHARS ? 'text-amber-400' : 'text-[#9DA0A6]'}`}>
+          <span className={`text-[10px] ${value.length < BIO_MIN_CHARS ? 'text-amber-400' : 'text-[#9DA0A6]'}`}>
             {value.length < BIO_MIN_CHARS ? `Min ${BIO_MIN_CHARS} characters` : ''}
           </span>
           <span className="text-xs text-[#9DA0A6]">{value.length}/200</span>

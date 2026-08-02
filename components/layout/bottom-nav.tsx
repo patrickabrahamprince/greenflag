@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Compass, Heart, User, MessageSquare, Bell } from 'lucide-react';
+import { Compass, Heart, User, MessageSquare, Bell, ShieldAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
+import { hapticTap } from '@/lib/haptics';
 import { PendingReviewBanner } from '@/components/PendingReviewBanner';
 
 const manTabs = [
@@ -31,6 +32,13 @@ export function BottomNav() {
   const user = useUserStore((s) => s.user);
   const tabs = user?.persona === 'woman' ? womanTabs : manTabs;
   const [unreadCount, setUnreadCount] = useState(0);
+  // Tapping away from an unfinished Standard used to silently bounce her
+  // straight back (see the removed effect below) -- no explanation, just
+  // a forced redirect. Now it asks instead: her draft is saved either way
+  // (standard/builder's own save-draft calls handle that), this is purely
+  // about confirming she meant to leave mid-flow.
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
+  const isSettingStandard = pathname === '/standard/builder';
 
   useEffect(() => {
     if (!user?.id) return;
@@ -47,26 +55,17 @@ export function BottomNav() {
     return () => { supabase.removeChannel(channel); };
   }, [user?.id]);
 
-  // Safety net for any woman without an active Standard (e.g. seeded via
-  // admin API, or a pre-existing account from before Standard-setting
-  // moved into onboarding) -- reuses the same endpoint the onboarding
-  // step itself uses, no new backend needed. Mounted on every page that
-  // shows this nav, so it catches her regardless of where she lands.
-  // Skips /onboard/pending -- that screen runs its own 90s review timer
-  // before routing her to /standard/builder itself; this effect firing
-  // immediately on mount would short-circuit the review screen.
-  useEffect(() => {
-    if (user?.persona !== 'woman') return;
-    if (pathname === '/onboard/pending') return;
-    fetch('/api/standards/standard-builder')
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data && data.redirect !== '/my-connections' && pathname !== '/standard/builder') {
-          router.replace('/standard/builder');
-        }
-      })
-      .catch(() => {});
-  }, [user?.persona, pathname, router]);
+  const handleTabClick = (e: React.MouseEvent, href: string) => {
+    if (!isSettingStandard) return;
+    e.preventDefault();
+    hapticTap();
+    setPendingHref(href);
+  };
+
+  const confirmLeave = () => {
+    if (pendingHref) router.push(pendingHref);
+    setPendingHref(null);
+  };
 
   return (
     <>
@@ -77,7 +76,12 @@ export function BottomNav() {
           const active = pathname === tab.href;
           const isNotifications = tab.href === '/notifications';
           return (
-            <Link key={tab.name} href={tab.href} className="flex flex-col items-center justify-center gap-0.5 relative w-14 py-1">
+            <Link
+              key={tab.name}
+              href={tab.href}
+              onClick={(e) => handleTabClick(e, tab.href)}
+              className="flex flex-col items-center justify-center gap-0.5 relative w-14 py-1"
+            >
               <div className="relative">
                 <div
                   className={cn(
@@ -101,6 +105,28 @@ export function BottomNav() {
         })}
       </div>
     </nav>
+
+    {pendingHref && (
+      <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60] p-6">
+        <div className="bg-[#111111] border border-white/[0.06] rounded-2xl p-6 max-w-sm w-full text-center">
+          <div className="w-14 h-14 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-4">
+            <ShieldAlert className="w-6 h-6 text-gold" />
+          </div>
+          <h3 className="text-xl font-display text-ink mb-2">Leave without finishing?</h3>
+          <p className="text-sm text-ink/60 leading-relaxed mb-6">
+            You haven&apos;t set your Standard yet. What you&apos;ve filled in is saved — come back anytime to finish.
+          </p>
+          <div className="flex gap-3">
+            <button onClick={() => setPendingHref(null)} className="btn-secondary flex-1 py-3">
+              Stay
+            </button>
+            <button onClick={confirmLeave} className="btn-primary flex-1 py-3">
+              Leave
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
     </>
   );
 }

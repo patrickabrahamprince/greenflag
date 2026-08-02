@@ -81,6 +81,19 @@ export default function ProfilePage() {
         )}
       </div>
 
+      {/* Hinge-style prompt card -- the teaser Q&A collected during
+          onboarding was never actually shown anywhere on the profile
+          itself until now. */}
+      {user.teaser_prompt && user.teaser_answer && (
+        <div
+          className="mx-4 mb-6 rounded-2xl border border-gold/20 p-5"
+          style={{ background: 'linear-gradient(135deg, rgba(192,38,211,0.1) 0%, rgba(28,28,30,0.9) 60%)' }}
+        >
+          <p className="text-[10px] uppercase tracking-widest text-gold/70 mb-2">{user.teaser_prompt}</p>
+          <p className="font-display text-lg text-white leading-snug">{user.teaser_answer}</p>
+        </div>
+      )}
+
       <div className="space-y-3 px-4">
         <button onClick={() => { hapticTap(); router.push('/profile/edit'); }} className="btn-primary w-full flex items-center justify-center gap-2">
           <Edit3 className="w-4 h-4" />

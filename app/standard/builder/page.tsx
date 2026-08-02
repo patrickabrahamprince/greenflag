@@ -6,6 +6,7 @@ import { Loader2, Mic, Camera, Type as TypeIcon, ArrowLeft, Lock, ShieldCheck, E
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 import { hapticSuccess } from '@/lib/haptics';
+import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 
 type IntentionType = 'text' | 'photo' | 'voice';
 
@@ -77,7 +78,8 @@ const WHY_THIS_WORKS = [
 
 function StandardIntroScreen({ onContinue }: { onContinue: () => void }) {
   return (
-    <div className="w-full animate-fade-in min-h-[calc(100dvh-5rem)] screen-gradient px-6 pt-safe-top pb-10 max-w-app mx-auto flex flex-col">
+    <div className="relative isolate w-full animate-fade-in min-h-[calc(100dvh-5rem)] screen-gradient px-6 pt-safe-top pb-10 max-w-app mx-auto flex flex-col">
+      <OnboardingBackground image="/onboarding/how-it-works.jpg" />
       <div className="flex-1">
         <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-6 shadow-[0_0_30px_-8px_rgba(192,38,211,0.6)]">
           <Sparkles className="w-7 h-7 text-gold" />
@@ -227,6 +229,29 @@ export default function StandardBuilderPage() {
     }
   };
 
+  // Fire-and-forget: a woman who backs out via the bottom nav after
+  // finishing a day (but before Day 3) used to lose everything, since
+  // nothing was persisted until the final activate call. This saves
+  // whatever's filled in so far every time she clears a day, so the
+  // standard-builder GET loader picks it back up wherever she left off.
+  const saveDraft = async (finishedSlots: DaySlot[]) => {
+    try {
+      await fetch('/api/standards/save-draft', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          intentions: finishedSlots.flatMap((s) =>
+            s.tasks.map((t) => ({ dayNumber: s.dayNumber, taskNumber: t.taskNumber, prompt: t.prompt.trim() }))
+          ),
+        }),
+      });
+    } catch {
+      // Best-effort -- a failed draft save shouldn't block her from moving
+      // to the next day; activateStandard() still does the real, validated
+      // save at the end regardless.
+    }
+  };
+
   const handleContinue = () => {
     if (!currentDayFilled) {
       toast.error('Complete all 3 intentions for today to continue.');
@@ -236,6 +261,7 @@ export default function StandardBuilderPage() {
       activateStandard();
       return;
     }
+    saveDraft(slots);
     if (DAY_LOCK_DIALOGS[step]) {
       setShowDayDialog(true);
       return;
@@ -258,7 +284,8 @@ export default function StandardBuilderPage() {
   const progressPercent = ((step + 1) / slots.length) * 100;
 
   return (
-    <div className="min-h-dvh screen-gradient px-6 pt-safe-top pb-24 max-w-app mx-auto">
+    <div className="relative isolate min-h-dvh screen-gradient px-6 pt-safe-top pb-24 max-w-app mx-auto">
+      <OnboardingBackground image="/onboarding/quiz-romantic.jpg" />
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => setStep((s) => Math.max(0, s - 1))}

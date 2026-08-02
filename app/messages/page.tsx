@@ -226,7 +226,7 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
 
   if (conversations.length === 0) {
     return (
-      <div className="flex-1 flex flex-col items-center pt-20 px-6">
+      <div className="flex-1 flex flex-col items-center pt-20 pb-8 px-6">
         <EmptyState
           icon={<MessageCircle className="w-6 h-6" />}
           title="No messages yet"
@@ -235,15 +235,16 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
               ? 'Your conversations begin once he completes your Standard.'
               : 'No conversations yet. Discover a profile to begin.'
           }
-          action={
-            persona !== 'woman' && (
-              <button onClick={() => router.push('/discover')} className="btn-primary px-6 py-3 text-sm">
-                Go to Discover
-              </button>
-            )
-          }
         />
         {persona === 'woman' && <InProgressMatches userId={userId} supabase={supabase} />}
+        {/* Pinned to the bottom of the available space instead of sitting
+            right under the description -- keeps it reachable with a
+            thumb regardless of how tall the empty-state copy is. */}
+        {persona !== 'woman' && (
+          <button onClick={() => router.push('/discover')} className="btn-primary w-full max-w-xs py-3 text-sm mt-auto">
+            Go to Discover
+          </button>
+        )}
       </div>
     );
   }

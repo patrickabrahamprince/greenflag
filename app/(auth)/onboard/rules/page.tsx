@@ -180,7 +180,7 @@ export default function RulesPage() {
               <div key={slide.loopKey} className="w-full shrink-0 snap-center px-1">
                 <div
                   className="flex flex-col items-center text-center px-6 py-10 border border-gold/20 rounded-[2rem] min-h-[380px] justify-center shadow-[0_0_40px_-16px_rgba(192,38,211,0.35)]"
-                  style={{ background: 'linear-gradient(160deg, rgba(192,38,211,0.1) 0%, rgba(28,28,30,0.9) 55%)' }}
+                  style={{ background: 'linear-gradient(160deg, rgba(192,38,211,0.08) 0%, rgba(28,28,30,0.5) 55%)' }}
                 >
                   <div className="w-24 h-24 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-7 shadow-[0_0_24px_-6px_rgba(192,38,211,0.5)]">
                     {slide.icon}

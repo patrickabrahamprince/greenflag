@@ -190,7 +190,7 @@ body::-webkit-scrollbar,
   .input {
     @apply w-full rounded-none px-0 py-3
            text-ink placeholder:text-ink/40 bg-transparent
-           border-0 border-b border-border
+           border-0 border-b border-white/50
            transition-all duration-300 ease-out
            focus:outline-none focus:border-gold;
   }

@@ -1,3 +1,7 @@
+'use client';
+
+import { useState } from 'react';
+
 interface OnboardingBackgroundProps {
   image: string;
 }
@@ -9,9 +13,16 @@ interface OnboardingBackgroundProps {
 // that's where the CTA and body copy usually live; the fuchsia glow up
 // top keeps it feeling like this app rather than a generic photo dump.
 export function OnboardingBackground({ image }: OnboardingBackgroundProps) {
+  const [loaded, setLoaded] = useState(false);
+
   return (
-    <div className="absolute inset-0 -z-10 overflow-hidden">
-      <img src={image} alt="" className="w-full h-full object-cover" />
+    <div className="absolute inset-0 -z-10 overflow-hidden bg-[#0B0614]">
+      <img
+        src={image}
+        alt=""
+        onLoad={() => setLoaded(true)}
+        className={`w-full h-full object-cover transition-opacity duration-500 ease-out ${loaded ? 'opacity-100' : 'opacity-0'}`}
+      />
       <div
         className="absolute inset-0"
         style={{
