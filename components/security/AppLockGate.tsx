@@ -30,7 +30,23 @@ export function AppLockGate() {
   const [checking, setChecking] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
+  // Presenting the Face ID sheet itself can make iOS briefly report the
+  // app as inactive-then-active again (a real, widely-reported quirk of
+  // LocalAuthentication, not just something this app does) -- without
+  // guarding against it, that blip looks exactly like "the app resumed
+  // from the background" to the resume listener below, which fires
+  // another attemptUnlock(), which shows Face ID again, whose dismissal
+  // triggers the same blip again, forever. authenticatingRef blocks a
+  // second attempt from starting while one is already in flight; the
+  // cooldown after one just finished additionally absorbs the trailing
+  // blip that can fire as the sheet's dismissal animation completes.
+  const authenticatingRef = useRef(false);
+  const lastAttemptEndedAtRef = useRef(0);
+  const AUTH_COOLDOWN_MS = 1500;
+
   const attemptUnlock = useCallback(async () => {
+    if (authenticatingRef.current) return;
+    authenticatingRef.current = true;
     setChecking(true);
     try {
       await BiometricAuth.authenticate({
@@ -42,7 +58,13 @@ export function AppLockGate() {
       // Failed or cancelled -- stays locked, "Try Again" retries.
     } finally {
       setChecking(false);
+      authenticatingRef.current = false;
+      lastAttemptEndedAtRef.current = Date.now();
     }
+  }, []);
+
+  const canAttempt = useCallback(() => {
+    return !authenticatingRef.current && Date.now() - lastAttemptEndedAtRef.current > AUTH_COOLDOWN_MS;
   }, []);
 
   const handleLogout = async () => {
@@ -76,14 +98,14 @@ export function AppLockGate() {
     if (!Capacitor.isNativePlatform() || !hasUser) return;
     let cancelled = false;
     BiometricAuth.checkBiometry().then((result) => {
-      if (cancelled || !result.isAvailable) return;
+      if (cancelled || !result.isAvailable || !canAttempt()) return;
       setLocked(true);
       attemptUnlock();
     });
     return () => {
       cancelled = true;
     };
-  }, [hasUser, attemptUnlock]);
+  }, [hasUser, attemptUnlock, canAttempt]);
 
   // Separately, re-lock on every return from the background -- this one
   // really can rely on a ref since it fires long after mount, well past
@@ -98,7 +120,7 @@ export function AppLockGate() {
     // least once first, per the plugin's own contract.
     BiometricAuth.checkBiometry().then(() => {
       BiometricAuth.addResumeListener((info) => {
-        if (!info.isAvailable || !hasUserRef.current) return;
+        if (!info.isAvailable || !hasUserRef.current || !canAttempt()) return;
         setLocked(true);
         attemptUnlock();
       }).then((handle) => {
@@ -111,7 +133,7 @@ export function AppLockGate() {
       mounted = false;
       resumeHandle?.remove();
     };
-  }, [attemptUnlock]);
+  }, [attemptUnlock, canAttempt]);
 
   if (!locked) return null;
 
