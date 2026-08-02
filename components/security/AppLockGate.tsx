@@ -1,10 +1,12 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Capacitor } from '@capacitor/core';
 import { BiometricAuth } from '@aparajita/capacitor-biometric-auth';
 import { ShieldCheck, Loader2 } from 'lucide-react';
-import { useUserStore } from '@/lib/store';
+import { createClient } from '@/lib/supabase/client';
+import { useUserStore, useCoinStore } from '@/lib/store';
 
 // Locks the whole app behind Face ID/Touch ID whenever someone's already
 // signed in -- on cold start and every time the app comes back to the
@@ -17,12 +19,16 @@ import { useUserStore } from '@/lib/store';
 // someone who has no way to satisfy the prompt would just lock them out
 // of their own account.
 export function AppLockGate() {
+  const router = useRouter();
   const user = useUserStore((s) => s.user);
+  const clearUser = useUserStore((s) => s.clearUser);
+  const setBalance = useCoinStore((s) => s.setBalance);
   const hasUserRef = useRef(!!user);
   hasUserRef.current = !!user;
 
   const [locked, setLocked] = useState(false);
   const [checking, setChecking] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   const attemptUnlock = useCallback(async () => {
     setChecking(true);
@@ -38,6 +44,20 @@ export function AppLockGate() {
       setChecking(false);
     }
   }, []);
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      clearUser();
+      setBalance(0);
+      setLocked(false);
+      router.replace('/login');
+    } finally {
+      setLoggingOut(false);
+    }
+  };
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
@@ -81,6 +101,18 @@ export function AppLockGate() {
         className="btn-primary px-8 py-3 flex items-center justify-center gap-2"
       >
         {checking ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Try Again'}
+      </button>
+      {/* Without this, declining or repeatedly failing Face ID leaves no
+          way back into the app at all -- a real risk for App Review
+          (a reviewer who cancels the prompt has to be able to get
+          somewhere) and for a genuine user locked out by a Face ID
+          failure. */}
+      <button
+        onClick={handleLogout}
+        disabled={loggingOut}
+        className="mt-4 text-xs text-ink/40 hover:text-ink underline underline-offset-4 decoration-ink/20 hover:decoration-ink/40 transition-colors disabled:opacity-50"
+      >
+        {loggingOut ? 'Logging out...' : 'Log Out'}
       </button>
     </div>
   );
