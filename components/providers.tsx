@@ -8,6 +8,7 @@ import { PushNotificationRegistrar } from './push-notification-registrar';
 import { PwaRegistrar } from './pwa-registrar';
 import { KeyboardInsetListener } from './keyboard-inset-listener';
 import { useScreenshotGuard } from '@/lib/hooks/useScreenshotGuard';
+import { AppLockGate } from './security/AppLockGate';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const user = useUserStore((s) => s.user);
@@ -70,6 +71,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <PushNotificationRegistrar />
       <KeyboardInsetListener />
       {children}
+      <AppLockGate />
       <Toaster
         position="bottom-center"
         containerStyle={{

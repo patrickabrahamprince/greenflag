@@ -83,6 +83,12 @@
 	     resolves and the field just sits on "Detecting location...". -->
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>GreenFlag uses your location to suggest your city during profile setup.</string>
+	<!-- AppLockGate (components/security/AppLockGate.tsx) calls
+	     LocalAuthentication via @aparajita/capacitor-biometric-auth to lock
+	     the app behind Face ID on launch/resume -- iOS crashes outright if
+	     this key is missing when the Face ID prompt is invoked. -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>GreenFlag uses Face ID to keep your matches and messages private if someone else picks up your phone.</string>
 	<!-- Native Google Sign-In (lib/native/socialLogin.ts via
 	     @capgo/capacitor-social-login). GIDClientID is the iOS OAuth
 	     client id from Google Cloud Console (project "Viveapp"); the URL
