@@ -135,19 +135,21 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative isolate min-h-dvh flex items-center justify-center p-6 pt-safe-top pb-safe-bottom bg-[#0B0614]">
+    <div className="relative isolate min-h-dvh flex flex-col p-6 pt-safe-top pb-safe-bottom bg-[#0B0614]">
       <OnboardingBackground image="/onboarding/hero.jpg" />
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-12">
-          <img src="/logo.png" alt="GreenFlag" className="w-36 h-36 mx-auto animate-logo-in" />
-        </div>
 
+      {/* Logo centers in whatever space is left above the buttons instead
+          of the whole block being centered as one unit -- that's what
+          actually pins Google/Apple to the bottom of the screen instead
+          of just "lower than before". */}
+      <div className="flex-1 flex items-center justify-center">
+        <img src="/logo.png" alt="GreenFlag" className="w-36 h-36 animate-logo-in" />
+      </div>
+
+      <div className="w-full max-w-sm mx-auto">
         {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
 
-        {/* Pushed down from the logo instead of sitting right beneath it --
-            with no email/password form above it anymore, butting the
-            buttons straight up against the logo felt cramped. */}
-        <div className="space-y-3 mt-24">
+        <div className="space-y-3">
           <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />
           <AppleButton onClick={handleAppleLogin} loading={appleLoading} />
         </div>
