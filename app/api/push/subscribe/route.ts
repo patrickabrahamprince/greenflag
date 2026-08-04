@@ -10,7 +10,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const rl = checkRateLimit(user.id, 'push_subscribe', RATE_LIMITS.pushSubscribe);
+    const rl = await checkRateLimit(user.id, 'push_subscribe', RATE_LIMITS.pushSubscribe);
     if (!rl.allowed) {
       return NextResponse.json({ error: 'Rate limit exceeded' }, {
         status: 429,

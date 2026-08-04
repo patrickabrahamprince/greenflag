@@ -52,6 +52,7 @@ function getNotificationRoute(data: Record<string, unknown> | null): string | nu
     case 'rejected':
     case 'standard_begin':
     case 'retry_unlocked':
+    case 'review_reminder':
       return connectionId ? `/task/${connectionId}` : null;
     case 'standard_hint':
       return matchId ? `/task/${matchId}` : null;
@@ -106,9 +107,11 @@ export default function NotificationsPage() {
 
     await supabase.rpc('mark_notifications_read', { p_user_id: user.id });
 
-    setNotifications((prev) =>
-      prev.map((n) => ({ ...n, read_at: n.read_at || new Date().toISOString() }))
-    );
+    setNotifications((prev) => {
+      const next = prev.map((n) => ({ ...n, read_at: n.read_at || new Date().toISOString() }));
+      setCached(NOTIFICATIONS_CACHE_KEY, next);
+      return next;
+    });
     toast.success('All marked as read');
     setMarkingRead(false);
   };
@@ -121,9 +124,11 @@ export default function NotificationsPage() {
         .update({ read_at: new Date().toISOString() })
         .eq('id', notif.id);
 
-      setNotifications((prev) =>
-        prev.map((n) => n.id === notif.id ? { ...n, read_at: new Date().toISOString() } : n)
-      );
+      setNotifications((prev) => {
+        const next = prev.map((n) => n.id === notif.id ? { ...n, read_at: new Date().toISOString() } : n);
+        setCached(NOTIFICATIONS_CACHE_KEY, next);
+        return next;
+      });
     }
 
     // Navigate based on notification type

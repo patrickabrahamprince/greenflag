@@ -35,13 +35,42 @@ export async function POST(
 
     const { data: match, error: matchErr } = await admin
       .from('matches')
-      .select('id, user1_id, user2_id, status, retry_unlocked_at, retry_decision, rejected_submission_id')
+      .select('id, user1_id, user2_id, status, retry_unlocked_at, retry_decision, rejected_submission_id, rejection_reason, rejected_at, retry_prompt_sent_at')
       .eq('id', id)
       .maybeSingle();
     if (matchErr || !match) return NextResponse.json({ error: 'Match not found' }, { status: 404 });
     if (match.user1_id !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     if (match.status !== 'rejected' || !match.retry_unlocked_at || match.retry_decision !== 'accepted') {
       return NextResponse.json({ error: 'Retry is not available for this match' }, { status: 400 });
+    }
+
+    // Claim the row FIRST, atomically, before charging anything -- a
+    // double-tap (or duplicate network dispatch) that outruns the client's
+    // own disabled-while-retrying state would otherwise have both requests
+    // read status='rejected' above and both go on to charge coins. Gating
+    // this UPDATE on `.eq('status', 'rejected')` means Postgres's row-level
+    // locking serializes the two: whichever commits second matches 0 rows
+    // and bails via `!claimed` below, before it's ever charged.
+    const { data: claimed, error: claimErr } = await admin
+      .from('matches')
+      .update({
+        status: 'pending_submission',
+        next_day_unlocks_at: null,
+        submit_deadline: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
+        rejection_reason: null,
+        rejected_at: null,
+        rejected_submission_id: null,
+        retry_unlocked_at: null,
+        retry_decision: null,
+        retry_prompt_sent_at: null,
+      })
+      .eq('id', id)
+      .eq('status', 'rejected')
+      .select('id')
+      .maybeSingle();
+
+    if (claimErr || !claimed) {
+      return NextResponse.json({ error: 'This retry has already been used.' }, { status: 409 });
     }
 
     const { data: deductResult } = await admin.rpc('deduct_coins', {
@@ -51,6 +80,17 @@ export async function POST(
       p_metadata: { match_id: id },
     });
     if (!deductResult?.success) {
+      // Coins failed -- put the match back exactly how the claim found it,
+      // rather than leaving it stuck in pending_submission unpaid-for.
+      await admin.from('matches').update({
+        status: 'rejected',
+        rejection_reason: match.rejection_reason,
+        rejected_at: match.rejected_at,
+        rejected_submission_id: match.rejected_submission_id,
+        retry_unlocked_at: match.retry_unlocked_at,
+        retry_decision: match.retry_decision,
+        retry_prompt_sent_at: match.retry_prompt_sent_at,
+      }).eq('id', id);
       return NextResponse.json({ error: 'INSUFFICIENT_COINS', coins_needed: RETRY_COST }, { status: 402 });
     }
 
@@ -58,33 +98,18 @@ export async function POST(
       await admin.from('submissions').delete().eq('id', match.rejected_submission_id);
     }
 
-    const { error: updateErr } = await admin.from('matches').update({
-      status: 'pending_submission',
-      next_day_unlocks_at: null,
-      submit_deadline: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
-      rejection_reason: null,
-      rejected_at: null,
-      rejected_submission_id: null,
-      retry_unlocked_at: null,
-      retry_decision: null,
-      retry_prompt_sent_at: null,
-    }).eq('id', id);
-
-    if (updateErr) {
-      // Payment already went through -- refund it, since the match was
-      // never actually reset.
-      await admin.rpc('add_coins', {
-        p_user_id: user.id,
-        p_amount: RETRY_COST,
-        p_description: 'Refund: retry failed to save',
-        p_metadata: { match_id: id },
-      });
-      return NextResponse.json({ error: updateErr.message }, { status: 400 });
-    }
+    // Deleting the rejected submission can leave a SIBLING task from the
+    // same day still submitted-and-unreviewed (he's allowed to submit all
+    // 3 of a day's tasks before she reviews any of them) -- hardcoding
+    // 'pending_submission' here ignored that and made the match invisible
+    // to sweep_expired_matches' 24h auto-refund safety net, which only
+    // watches 'pending_review' rows. recompute_match_gate re-derives the
+    // real status from what's actually left in `submissions` now.
+    const { data: gateResult } = await admin.rpc('recompute_match_gate', { p_match_id: id });
 
     await admin.from('funnel_events').insert({ match_id: id, event_type: 'retried' });
 
-    return NextResponse.json({ success: true, status: 'pending_submission' });
+    return NextResponse.json({ success: true, status: gateResult?.status ?? 'pending_submission' });
   } catch (e) {
     console.error('retry error:', e);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

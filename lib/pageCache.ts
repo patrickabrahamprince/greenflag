@@ -14,3 +14,13 @@ export function getCached<T>(key: string): T | undefined {
 export function setCached<T>(key: string, value: T): void {
   cache.set(key, value);
 }
+
+// Every consumer (discover, my-connections, notifications) keys this cache
+// with a plain global constant, not a per-user key -- on the native app,
+// the JS runtime survives a logout, so without this a second account
+// logging in on the same device would initially render from the FIRST
+// account's cached profiles/matches/notifications until the background
+// refetch overwrites it. Call this on every sign-out path.
+export function clearCache(): void {
+  cache.clear();
+}

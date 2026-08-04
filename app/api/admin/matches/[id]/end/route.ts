@@ -36,12 +36,16 @@ export async function POST(
       return NextResponse.json({ error: 'Match is already resolved' }, { status: 400 });
     }
 
-    const { error } = await admin
+    const { data: ended, error } = await admin
       .from('matches')
       .update({ status: 'rejected', next_day_unlocks_at: null, review_deadline: null, submit_deadline: null })
-      .eq('id', id);
+      .eq('id', id)
+      .eq('status', match.status)
+      .select('id')
+      .maybeSingle();
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (!ended) return NextResponse.json({ error: 'Match changed state -- refresh and try again.' }, { status: 409 });
 
     await logAuditAction(supabase, adminEmail, 'end_match', id, { reason: reason ?? null });
 

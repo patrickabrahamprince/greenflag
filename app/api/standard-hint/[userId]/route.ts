@@ -28,7 +28,7 @@ export async function POST(
     return NextResponse.json({ error: 'Cannot hint yourself' }, { status: 400 });
   }
 
-  const rate = checkRateLimit(`${user.id}:${userId}`, 'standardHint', RATE_LIMITS.standardHint);
+  const rate = await checkRateLimit(`${user.id}:${userId}`, 'standardHint', RATE_LIMITS.standardHint);
   if (!rate.allowed) {
     return NextResponse.json({ error: "You've already nudged him recently" }, { status: 429 });
   }

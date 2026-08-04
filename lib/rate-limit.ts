@@ -1,21 +1,10 @@
-interface RateLimitEntry {
-  count: number;
-  windowStart: number;
-}
+import { createClient } from '@supabase/supabase-js';
 
-const store = new Map<string, RateLimitEntry>();
-
-const CLEANUP_INTERVAL = 60_000;
-let lastCleanup = Date.now();
-
-function cleanup() {
-  const now = Date.now();
-  if (now - lastCleanup < CLEANUP_INTERVAL) return;
-  lastCleanup = now;
-  const cutoff = now - 300_000;
-  store.forEach((entry, key) => {
-    if (entry.windowStart < cutoff) store.delete(key);
-  });
+function getAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
 }
 
 export interface RateLimitConfig {
@@ -29,28 +18,38 @@ export interface RateLimitResult {
   retryAfter: number;
 }
 
-export function checkRateLimit(
+// Backed by a Postgres table + atomic upsert RPC (see migration
+// 20261230000000_db_backed_rate_limit.sql), not an in-memory Map -- this
+// app runs on Vercel's Edge middleware and serverless functions, both of
+// which can have several warm instances running concurrently, each with
+// its own separate JS heap. An in-memory counter is only ever enforced
+// per-instance, so the real effective limit under concurrent traffic was
+// the configured number multiplied by however many instances happened to
+// be warm, not the configured number itself.
+export async function checkRateLimit(
   identifier: string,
   action: string,
   config: RateLimitConfig
-): RateLimitResult {
-  cleanup();
+): Promise<RateLimitResult> {
+  const key = `${identifier}:${action}`;
+  const { data, error } = await getAdmin().rpc('check_rate_limit', {
+    p_key: key,
+    p_max_requests: config.maxRequests,
+    p_window_ms: config.windowSeconds * 1000,
+  });
 
-  const now = Date.now();
-  const windowMs = config.windowSeconds * 1000;
-  const windowStart = Math.floor(now / windowMs) * windowMs;
-  const key = `${identifier}:${action}:${windowStart}`;
-
-  const entry = store.get(key);
-  const count = entry?.count ?? 0;
-
-  if (count >= config.maxRequests) {
-    const retryAfter = Math.ceil((windowStart + windowMs - now) / 1000);
-    return { allowed: false, remaining: 0, retryAfter };
+  if (error || !data) {
+    // Fail open, not closed -- a rate-limit RPC outage shouldn't take
+    // down auth/payments/task-submit entirely.
+    console.error('checkRateLimit RPC error:', error);
+    return { allowed: true, remaining: config.maxRequests, retryAfter: 0 };
   }
 
-  store.set(key, { count: count + 1, windowStart });
-  return { allowed: true, remaining: config.maxRequests - count - 1, retryAfter: 0 };
+  return {
+    allowed: data.allowed,
+    remaining: data.remaining,
+    retryAfter: data.retry_after,
+  };
 }
 
 export function getClientIp(request: Request): string {

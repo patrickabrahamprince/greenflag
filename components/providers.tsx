@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useCoinStore } from '@/lib/store';
+import { clearCache } from '@/lib/pageCache';
 import { PushNotificationRegistrar } from './push-notification-registrar';
 import { PwaRegistrar } from './pwa-registrar';
 import { KeyboardInsetListener } from './keyboard-inset-listener';
@@ -49,6 +50,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         if (event === 'SIGNED_OUT') {
           clearUser();
           setBalance(0);
+          clearCache();
         } else if (session?.user) {
           supabase
             .from('profiles')

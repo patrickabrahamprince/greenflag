@@ -28,7 +28,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const rl = checkRateLimit(user.id, 'coin_purchase', RATE_LIMITS.coinPurchase);
+    const rl = await checkRateLimit(user.id, 'coin_purchase', RATE_LIMITS.coinPurchase);
     if (!rl.allowed) {
       return NextResponse.json({ error: 'Rate limit exceeded' }, {
         status: 429,

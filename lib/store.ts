@@ -1,6 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Profile, Connection } from '@/types';
 
 interface UserState {
@@ -63,27 +64,20 @@ export const useScreenshotContextStore = create<ScreenshotContextState>((set) =>
   clearScreenshotContext: () => set({ notifyUserId: null, context: null }),
 }));
 
-export const useOnboardingStore = create<OnboardingState>((set) => ({
-  persona: null,
-  name: '',
-  age: null,
-  city: '',
-  lat: null,
-  lng: null,
-  instagramHandle: '',
-  instagramVerified: false,
-  bio: '',
-  teaserPrompt: '',
-  teaserAnswer: '',
-  setPersona: (persona) => set({ persona }),
-  setName: (name) => set({ name }),
-  setAge: (age) => set({ age }),
-  setLocation: (city, lat, lng) => set({ city, lat, lng }),
-  setInstagram: (instagramHandle, instagramVerified) => set({ instagramHandle, instagramVerified }),
-  setBio: (bio) => set({ bio }),
-  setTeaser: (teaserPrompt, teaserAnswer) => set({ teaserPrompt, teaserAnswer }),
-  clearOnboarding: () =>
-    set({
+// Persisted to localStorage: this store is the only place profile-wizard
+// answers (name, age, city, instagram, bio, teaser) live until the very
+// last screen of onboarding actually writes a profiles row -- six-plus
+// screens in, someone can be carrying real answers here with nothing
+// saved server-side yet. Without persistence, any mid-flow reload (the
+// web Google OAuth redirect through /auth/callback, or the WKWebView
+// reloading under memory pressure) silently wiped everything and
+// middleware.ts bounced them back to persona-select to start over.
+// clearOnboarding() removes the persisted copy too (via `state: null`),
+// so a completed signup doesn't leave stale answers sitting in
+// localStorage for a hypothetical future onboarding pass.
+export const useOnboardingStore = create<OnboardingState>()(
+  persist(
+    (set) => ({
       persona: null,
       name: '',
       age: null,
@@ -95,8 +89,38 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
       bio: '',
       teaserPrompt: '',
       teaserAnswer: '',
+      setPersona: (persona) => set({ persona }),
+      setName: (name) => set({ name }),
+      setAge: (age) => set({ age }),
+      setLocation: (city, lat, lng) => set({ city, lat, lng }),
+      setInstagram: (instagramHandle, instagramVerified) => set({ instagramHandle, instagramVerified }),
+      setBio: (bio) => set({ bio }),
+      setTeaser: (teaserPrompt, teaserAnswer) => set({ teaserPrompt, teaserAnswer }),
+      clearOnboarding: () =>
+        set({
+          persona: null,
+          name: '',
+          age: null,
+          city: '',
+          lat: null,
+          lng: null,
+          instagramHandle: '',
+          instagramVerified: false,
+          bio: '',
+          teaserPrompt: '',
+          teaserAnswer: '',
+        }),
     }),
-}));
+    {
+      name: 'gf-onboarding',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => {
+        const { setPersona, setName, setAge, setLocation, setInstagram, setBio, setTeaser, clearOnboarding, ...data } = state;
+        return data;
+      },
+    }
+  )
+);
 
 if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_E2E_TESTING === 'true') {
   (window as any).__e2e = { onboardingStore: useOnboardingStore };

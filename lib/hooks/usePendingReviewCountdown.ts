@@ -45,9 +45,27 @@ export function usePendingReviewCountdown(): PendingReviewCountdown {
       setSecondsLeft(remaining);
       if (remaining <= 0 && !approvedRef.current) {
         approvedRef.current = true;
-        fetch('/api/onboarding/self-approve', { method: 'POST' }).then(() => {
-          setUser({ ...user, approval_status: 'approved' });
-        });
+        fetch('/api/onboarding/self-approve', { method: 'POST' })
+          .then(async (res) => {
+            if (res.ok) {
+              setUser({ ...user, approval_status: 'approved' });
+              return;
+            }
+            const body = await res.json().catch(() => ({}));
+            // "Not pending" means another path (admin action, an earlier
+            // retry that actually landed) already resolved this -- not a
+            // failure to retry, just nothing left to do.
+            if (body?.error === 'Not pending') return;
+            throw new Error('self-approve failed');
+          })
+          .catch(() => {
+            // A network blip or cold serverless function shouldn't
+            // permanently strand approval_status at 'pending' server-side
+            // with the client having no idea anything went wrong --
+            // resetting the ref lets the next tick (1s later, since
+            // `remaining` stays at 0) retry instead of giving up forever.
+            approvedRef.current = false;
+          });
       }
     };
     tick();

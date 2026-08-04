@@ -21,7 +21,7 @@ export async function middleware(req: NextRequest) {
   // Rate limit API auth/admin routes
   if (pathname.startsWith('/api/auth') || pathname.startsWith('/api/admin')) {
     const ip = getClientIp(req);
-    const result = checkRateLimit(ip, 'api_auth', RATE_LIMITS.auth);
+    const result = await checkRateLimit(ip, 'api_auth', RATE_LIMITS.auth);
     if (!result.allowed) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
     }

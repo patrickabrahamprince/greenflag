@@ -163,15 +163,28 @@ export default function StandardBuilderPage() {
           const byDayTask = new Map(
             (data.intentions as SavedIntention[]).map((i) => [`${i.day_number}-${i.task_number}`, i])
           );
-          setSlots(
-            [1, 2, 3].map((dayNumber) => ({
-              dayNumber,
-              tasks: TASK_META.map((m) => {
-                const existing = byDayTask.get(`${dayNumber}-${m.taskNumber}`);
-                return { taskNumber: m.taskNumber, type: m.type, prompt: existing?.prompt ?? '' };
-              }),
-            }))
+          const restoredSlots = [1, 2, 3].map((dayNumber) => ({
+            dayNumber,
+            tasks: TASK_META.map((m) => {
+              const existing = byDayTask.get(`${dayNumber}-${m.taskNumber}`);
+              return { taskNumber: m.taskNumber, type: m.type, prompt: existing?.prompt ?? '' };
+            }),
+          }));
+          setSlots(restoredSlots);
+
+          // Draft-saved progress was being restored into `slots` correctly,
+          // but `step`/`showIntro` stayed at their defaults regardless --
+          // someone who'd already finished Day 1 (and drafted into Day 2)
+          // was dropped back at the intro screen and Day 1's form every
+          // time, forced to re-click through days she'd already completed.
+          const firstIncompleteIdx = restoredSlots.findIndex((s) =>
+            s.tasks.some((t) => !t.prompt.trim())
           );
+          const hasAnyProgress = restoredSlots.some((s) => s.tasks.some((t) => t.prompt.trim()));
+          if (hasAnyProgress) {
+            setShowIntro(false);
+            setStep(firstIncompleteIdx === -1 ? 2 : firstIncompleteIdx);
+          }
         }
       } catch {
         toast.error('Failed to load your Standard.');

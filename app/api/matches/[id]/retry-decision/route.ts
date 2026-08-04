@@ -42,15 +42,35 @@ export async function POST(
       return NextResponse.json({ error: 'No retry decision pending for this match' }, { status: 400 });
     }
 
+    // Guarded on 'pending' (already confirmed above at read time) so a
+    // double-tap of Yes/No, or this racing a concurrent nudge, can't both
+    // commit -- whichever loses matches 0 rows and gets a 409 instead of
+    // silently overwriting the other's decision.
     if (decision === 'deny') {
-      await admin.from('matches').update({ retry_decision: 'denied' }).eq('id', id);
+      const { data: denied } = await admin.from('matches')
+        .update({ retry_decision: 'denied' })
+        .eq('id', id)
+        .eq('retry_decision', 'pending')
+        .select('id')
+        .maybeSingle();
+      if (!denied) {
+        return NextResponse.json({ error: 'This match changed state -- refresh and try again.' }, { status: 409 });
+      }
       return NextResponse.json({ success: true, decision: 'denied' });
     }
 
-    await admin.from('matches').update({
-      retry_unlocked_at: new Date().toISOString(),
-      retry_decision: 'accepted',
-    }).eq('id', id);
+    const { data: accepted } = await admin.from('matches')
+      .update({
+        retry_unlocked_at: new Date().toISOString(),
+        retry_decision: 'accepted',
+      })
+      .eq('id', id)
+      .eq('retry_decision', 'pending')
+      .select('id')
+      .maybeSingle();
+    if (!accepted) {
+      return NextResponse.json({ error: 'This match changed state -- refresh and try again.' }, { status: 409 });
+    }
 
     try {
       await notifyManOfRetryUnlocked(admin, match.user1_id, id);

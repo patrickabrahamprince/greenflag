@@ -70,7 +70,7 @@ export default function ViewProfilePage() {
           isGuest={user?.persona === 'man'}
           connecting={connecting}
           onEdit={() => router.push('/profile')}
-          onContinue={() => router.push(`/${profile.name.toLowerCase()}`)}
+          onContinue={() => connection && router.push(`/task/${connection.id}`)}
           onMeet={handleMeet}
         />
       </div>

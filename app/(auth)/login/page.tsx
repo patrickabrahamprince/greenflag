@@ -61,8 +61,15 @@ export default function LoginPage() {
     else window.location.href = '/discover'
   }
 
-  const handleLogin = async (e: React.FormEvent) => {
+  // Google/Apple both go through withTermsGate (see handleGoogleLogin/
+  // handleAppleLogin below) -- this fallback form skipped it entirely,
+  // so anyone using "Having trouble?" never saw the terms gate at all.
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
+    withTermsGate(handleLoginInner)
+  }
+
+  const handleLoginInner = async () => {
     setLoading(true)
     setError('')
     try {

@@ -23,7 +23,7 @@ export async function GET(
     .from('matches')
     .select(`
       id, current_day, status, chat_unlocked, created_at, completed_at,
-      next_day_unlocks_at, submit_deadline, review_deadline,
+      next_day_unlocks_at, submit_deadline, review_deadline, rejection_reason,
       man:user1_id(id, name, photos),
       woman:user2_id(id, name, photos)
     `)
@@ -33,9 +33,13 @@ export async function GET(
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   if (!match) return NextResponse.json({ error: 'Match not found' }, { status: 404 });
 
+  // submissions has no `type` or `rejection_reason` column -- those were
+  // tracked in the original init.sql schema but production dropped them;
+  // the type a submission actually is lives on `media_type`, and rejection
+  // is recorded on the match (selected above), not per-submission.
   const { data: submissions } = await admin
     .from('submissions')
-    .select('id, day_number, task_number, type, prompt, content, media_url, media_type, approved, moderation_status, rejection_reason, submitted_at, reviewed_at')
+    .select('id, day_number, task_number, content, media_url, media_type, approved, moderation_status, submitted_at, reviewed_at')
     .eq('match_id', id)
     .order('day_number')
     .order('task_number');

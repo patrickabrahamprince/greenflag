@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CalendarDays, ShieldCheck, Clock, Sparkles, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
-import { useUserStore } from '@/lib/store';
+import { useUserStore, useOnboardingStore } from '@/lib/store';
 import { SocialProofLine } from '@/components/shared/SocialProofLine';
 import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
@@ -48,6 +48,7 @@ export default function HowItWorksPage() {
   const [approvalStatus, setApprovalStatus] = useState<string | null>(null);
   const [step, setStep] = useState(0);
   const setGlobalUser = useUserStore((s) => s.setUser);
+  const clearOnboarding = useOnboardingStore((s) => s.clearOnboarding);
   const trackRef = useRef<HTMLDivElement>(null);
   const settleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -127,6 +128,13 @@ export default function HowItWorksPage() {
         if (freshProfile) setGlobalUser(freshProfile as any);
       }
     }
+
+    // This is the true end of the onboarding wizard -- every path from
+    // here on is a real app screen (pending, Standard builder, Discover),
+    // none of which read from useOnboardingStore, so it's safe to drop
+    // the persisted profile-wizard answers now rather than leaving them
+    // sitting in localStorage indefinitely.
+    clearOnboarding();
 
     // Pending women wait for admin review on a dedicated screen; pending men
     // go straight into Discover, where browsing while pending is allowed.

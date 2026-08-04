@@ -19,8 +19,13 @@ export async function POST(req: Request) {
 
     const { amount, description } = await req.json();
 
-    if (!amount || typeof amount !== 'number') {
-      return NextResponse.json({ error: 'amount is required' }, { status: 400 });
+    // amount &lt;= 0 must be rejected explicitly -- `!amount` alone lets any
+    // negative number through, and deduct_coins() only checks whether
+    // balance &lt; p_amount before doing `balance - p_amount`, so a negative
+    // amount passes that check and *adds* to the balance instead of
+    // subtracting, effectively minting coins.
+    if (!amount || typeof amount !== 'number' || !Number.isInteger(amount) || amount <= 0) {
+      return NextResponse.json({ error: 'amount must be a positive integer' }, { status: 400 });
     }
 
     // deduct_coins() is only callable via the service-role client now --

@@ -60,7 +60,13 @@ export async function POST(
     }
 
     if (decision === 'reject') {
-      await admin.from('matches').update({
+      // Guarded on the status this request actually observed -- without
+      // it, a reject landing in the same instant sweep_expired_matches
+      // sweeps this row (review_deadline just passed -> 'refunded') could
+      // silently overwrite the sweep's outcome (or vice versa) with
+      // whichever write commits last, leaving contradictory bookkeeping
+      // (e.g. coins already refunded, but status now says 'rejected').
+      const { data: rejected } = await admin.from('matches').update({
         status: 'rejected',
         next_day_unlocks_at: null,
         rejection_reason: trimmedReason,
@@ -69,7 +75,12 @@ export async function POST(
         retry_unlocked_at: null,
         retry_decision: null,
         retry_prompt_sent_at: null,
-      }).eq('id', id);
+      }).eq('id', id).eq('status', match.status).select('id').maybeSingle();
+
+      if (!rejected) {
+        return NextResponse.json({ error: 'This match changed state -- refresh and try again.' }, { status: 409 });
+      }
+
       await admin.from('funnel_events').insert({ match_id: id, event_type: 'rejected' });
       try {
         await notifyManOfRejection(admin, match.user1_id, id, trimmedReason || undefined);

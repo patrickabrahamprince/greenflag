@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Heart, Loader2, MessageCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -176,6 +176,8 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
   const cacheKey = `messages:conversations:${userId}`;
   const [conversations, setConversations] = useState<ChatConversation[]>(() => getCached(cacheKey) ?? []);
   const [loading, setLoading] = useState(() => getCached<ChatConversation[]>(cacheKey) === undefined);
+  const conversationsRef = useRef(conversations);
+  conversationsRef.current = conversations;
 
   useEffect(() => {
     const load = async () => {
@@ -219,6 +221,44 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, supabase]);
+
+  // Without this, a new message only ever showed up in the preview list
+  // after navigating away from it and back (the initial load's own
+  // useEffect re-running on remount) -- messages/[connectionId]/page.tsx
+  // already does the equivalent for the conversation itself, this is the
+  // same pattern for the list. No single-match filter is possible here
+  // (this needs to hear about every match this user is in, not one), so
+  // it subscribes broadly and checks client-side against the ids already
+  // loaded, via a ref so the handler always sees the current list instead
+  // of whatever it closed over at subscribe time.
+  useEffect(() => {
+    const channel = supabase
+      .channel(`messages-list:${userId}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages' },
+        (payload) => {
+          const newMsg = payload.new as { match_id: string; content: string; created_at: string | null };
+          if (!conversationsRef.current.some((c) => c.id === newMsg.match_id)) return;
+
+          setConversations((prev) => {
+            const next = prev
+              .map((c) => c.id === newMsg.match_id
+                ? { ...c, last_message: { content: newMsg.content, created_at: newMsg.created_at } }
+                : c)
+              .sort((a, b) => {
+                if (a.id === newMsg.match_id) return -1;
+                if (b.id === newMsg.match_id) return 1;
+                return 0;
+              });
+            setCached(cacheKey, next);
+            return next;
+          });
+        }
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [userId, supabase, cacheKey]);
 
   if (loading) {
     return (
