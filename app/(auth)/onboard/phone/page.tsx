@@ -42,6 +42,7 @@ export default function PhonePage() {
       }
     };
     init();
+    router.prefetch('/onboard/profile');
   }, []);
 
   const handlePhoneChange = useCallback((e164: string) => {

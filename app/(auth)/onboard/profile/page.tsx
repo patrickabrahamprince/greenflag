@@ -30,6 +30,7 @@ export default function ProfileAgePage() {
 
   useEffect(() => {
     if (!name) router.replace('/onboard/name');
+    router.prefetch('/onboard/profile/location');
   }, []);
 
   const handleContinue = () => {

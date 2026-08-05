@@ -43,6 +43,7 @@ export default function ProfileTeasersPage() {
     if (!age) { router.replace('/onboard/profile'); return; }
     if (!city) { router.replace('/onboard/profile/location'); return; }
     if (!bio) { router.replace('/onboard/profile/bio'); }
+    router.prefetch('/onboard/profile/photos');
   }, []);
 
   const handleContinue = () => {

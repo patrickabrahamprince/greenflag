@@ -93,6 +93,7 @@ export default function ProfileLocationPage() {
     // reflexively denied -- show the benefit first and let detectLocation()
     // run only once they've actively opted in.
     if (!city) setShowLocationPrimer(true);
+    router.prefetch('/onboard/profile/instagram');
   }, []);
 
   const handleContinue = () => {

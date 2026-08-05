@@ -34,6 +34,7 @@ export default function ProfileInstagramPage() {
     if (!name) { router.replace('/onboard/name'); return; }
     if (!age) { router.replace('/onboard/profile'); return; }
     if (!city) { router.replace('/onboard/profile/location'); }
+    router.prefetch('/onboard/profile/bio');
   }, []);
 
   const handleContinue = () => {

@@ -159,6 +159,7 @@ export default function QuizPage() {
       setLoading(false);
     };
     fetchSession();
+    router.prefetch('/onboard/interests');
   }, [supabase, router]);
 
   const handleOptionSelect = (option: string) => {

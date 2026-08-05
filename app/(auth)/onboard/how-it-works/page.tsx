@@ -108,6 +108,9 @@ export default function HowItWorksPage() {
       setLoading(false);
     };
     fetchProfile();
+    router.prefetch('/onboard/pending');
+    router.prefetch('/standard/builder');
+    router.prefetch('/discover');
   }, [supabase, router]);
 
   const handleContinue = async () => {

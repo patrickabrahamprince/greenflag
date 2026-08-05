@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -28,6 +28,10 @@ export default function InterestsPage() {
   const isWoman = persona === 'woman';
 
   const { interestsHave, lookingFor, toggle, validate } = useInterestsSelection();
+
+  useEffect(() => {
+    router.prefetch('/onboard/rules');
+  }, [router]);
   const [loading, setLoading] = useState(false);
 
   const handleContinue = async () => {

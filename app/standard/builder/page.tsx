@@ -106,8 +106,17 @@ function StandardIntroScreen({ onContinue }: { onContinue: () => void }) {
 
       {/* Fixed instead of flowing after the value-prop cards -- with three
           cards of copy, the button could sit below the fold and need a
-          scroll to reach, which defeats the point of a single clear CTA. */}
-      <div className="fixed bottom-0 inset-x-0 z-10 px-6 pt-8 pb-safe-bottom bg-gradient-to-t from-[#0B0614] via-[#0B0614]/95 to-transparent">
+          scroll to reach, which defeats the point of a single clear CTA.
+          Anchored above the bottom nav (this route's own layout.tsx
+          renders BottomNav as a sibling, fixed at z-50) rather than at
+          the true bottom-0 -- a plain bottom-0 put this bar directly
+          underneath the nav pill, hiding the button entirely. Same
+          clearance value Toaster in providers.tsx uses for the same
+          reason. */}
+      <div
+        className="fixed inset-x-0 z-10 px-6 pt-8 pb-4 bg-gradient-to-t from-[#0B0614] via-[#0B0614]/95 to-transparent"
+        style={{ bottom: 'calc(max(1rem, env(safe-area-inset-bottom)) + 5.5rem)' }}
+      >
         <button
           onClick={onContinue}
           className="btn-primary w-full max-w-app mx-auto py-4 font-semibold text-sm active:scale-95 transition-transform shadow-[0_0_30px_-10px_rgba(192,38,211,0.6)] block"

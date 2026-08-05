@@ -91,6 +91,7 @@ export default function RulesPage() {
       setLoading(false);
     };
     checkSession();
+    router.prefetch('/onboard/how-it-works');
   }, [supabase, router]);
 
   // Start centered in the middle copy so the first swipe in either

@@ -48,6 +48,7 @@ export default function ProfilePhotosPage() {
     if (!city) { router.replace('/onboard/profile/location'); return; }
     if (!bio) { router.replace('/onboard/profile/bio'); return; }
     setShowFaceNudge(true);
+    router.prefetch('/onboard/quiz');
   }, []);
 
   const handlePhotoAdd = async (files: File[]) => {

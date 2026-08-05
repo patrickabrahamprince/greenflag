@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
@@ -22,6 +22,14 @@ export default function OnboardNamePage() {
   const [value, setValue] = useState('');
   const [error, setError] = useState('');
   const [continuing, setContinuing] = useState(false);
+
+  // Both possible destinations (woman -> profile, man -> phone) are
+  // prefetched since which one wins depends on persona/async user lookup
+  // resolved in handleContinue below.
+  useEffect(() => {
+    router.prefetch('/onboard/profile');
+    router.prefetch('/onboard/phone');
+  }, [router]);
 
   const handleContinue = async () => {
     hapticTap();

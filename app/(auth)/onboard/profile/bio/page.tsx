@@ -44,6 +44,7 @@ export default function ProfileBioPage() {
     if (!age) { router.replace('/onboard/profile'); return; }
     if (!city) { router.replace('/onboard/profile/location'); return; }
     if (!instagramHandle) { router.replace('/onboard/profile/instagram'); }
+    router.prefetch('/onboard/profile/teasers');
   }, []);
 
   // A cycling example bio isn't just decorative -- it gives someone

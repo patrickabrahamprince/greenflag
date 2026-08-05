@@ -35,8 +35,18 @@ export function OnboardingTransitionOverlay() {
   return (
     <div
       aria-hidden
-      className="fixed inset-0 z-[70] bg-[#0B0614] pointer-events-none transition-opacity duration-200 ease-out"
+      className="fixed inset-0 z-[70] bg-[#0B0614] pointer-events-none transition-opacity duration-200 ease-out flex items-center justify-center"
       style={{ opacity: active ? 1 : 0 }}
-    />
+    >
+      {/* A plain color fade read as "a blur screen" flashing between
+          pages -- a small centered logo gives the pause something to
+          look at instead of a blank flat color. */}
+      <img
+        src="/logo.png"
+        alt=""
+        className="w-16 h-16 transition-transform duration-200 ease-out"
+        style={{ transform: active ? 'scale(1)' : 'scale(0.85)' }}
+      />
+    </div>
   );
 }
