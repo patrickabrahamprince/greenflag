@@ -12,10 +12,16 @@ import { hapticWarning } from '@/lib/haptics';
 
 function formatPhoneDisplay(phone: string | undefined): string {
   if (!phone) return 'Not available';
-  const parsed = parsePhoneNumber(phone);
-  if (parsed && parsed.isValid()) {
-    return parsed.formatInternational();
-  }
+  // parsePhoneNumber throws (rather than returning undefined) on numbers it
+  // can't confidently parse -- with only one ErrorBoundary wrapping the
+  // whole app, an uncaught throw here takes down the entire page, not just
+  // this card.
+  try {
+    const parsed = parsePhoneNumber(phone);
+    if (parsed && parsed.isValid()) {
+      return parsed.formatInternational();
+    }
+  } catch {}
   return phone;
 }
 
