@@ -169,7 +169,7 @@ export default function NotificationsPage() {
 
   return (
     <div className="min-h-dvh screen-gradient">
-      <div className="max-w-app mx-auto px-6 pt-safe-top pb-6">
+      <div className="max-w-app mx-auto px-6 pt-safe-top pb-24">
         {unreadCount > 0 && (
           <div className="flex items-center justify-between mb-6">
             <span className="text-xs bg-gold/20 text-gold px-2 py-0.5 rounded-full">
