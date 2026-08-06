@@ -35,6 +35,7 @@ export async function POST(req: Request) {
 
     // task/messages both imply an existing match between the two people --
     // verify it rather than letting any authenticated user page someone.
+    let connectionId: string | undefined;
     if (context === 'task' || context === 'messages') {
       const { data: match } = await admin
         .from('matches')
@@ -42,6 +43,7 @@ export async function POST(req: Request) {
         .or(`and(user1_id.eq.${user.id},user2_id.eq.${notifyUserId}),and(user1_id.eq.${notifyUserId},user2_id.eq.${user.id})`)
         .maybeSingle();
       if (!match) return NextResponse.json({ error: 'No connection with this user' }, { status: 403 });
+      connectionId = match.id;
     }
 
     const { data: fromProfile } = await admin.from('profiles').select('name').eq('id', user.id).single();
@@ -57,7 +59,7 @@ export async function POST(req: Request) {
       user_id: notifyUserId,
       title: 'Screenshot Detected',
       body: bodyByContext[context],
-      data: { type: 'screenshot_alert', context },
+      data: { type: 'screenshot_alert', context, connectionId },
     });
 
     return NextResponse.json({ success: true });

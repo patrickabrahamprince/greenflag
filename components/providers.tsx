@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useCoinStore } from '@/lib/store';
 import { clearCache } from '@/lib/pageCache';
-import { PushNotificationRegistrar } from './push-notification-registrar';
 import { PwaRegistrar } from './pwa-registrar';
 import { KeyboardInsetListener } from './keyboard-inset-listener';
 import { useScreenshotGuard } from '@/lib/hooks/useScreenshotGuard';
@@ -70,7 +69,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <>
       <PwaRegistrar />
-      <PushNotificationRegistrar />
       <KeyboardInsetListener />
       {children}
       <AppLockGate />

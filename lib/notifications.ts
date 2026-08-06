@@ -120,6 +120,31 @@ async function triggerApplePush(
   );
 }
 
+// Maps a notification's `type` to the Settings -> Notifications toggle
+// that should gate its *push* delivery. The in-app notification row (the
+// Alerts tab list) is unaffected either way -- these toggles are
+// specifically about whether it also buzzes the device.
+const PUSH_PREF_CATEGORY: Record<string, keyof PushPrefs> = {
+  new_message: 'messages',
+  standard_begin: 'matches',
+  nudge: 'nudges',
+};
+type PushPrefs = { messages: boolean; matches: boolean; nudges: boolean; dailyRecap: boolean; other: boolean };
+
+async function isPushAllowed(
+  supabase: AnySupabaseClient,
+  userId: string,
+  type: string | undefined
+): Promise<boolean> {
+  const category = (type && PUSH_PREF_CATEGORY[type]) || 'other';
+  const { data } = await supabase.from('profiles').select('push_prefs').eq('id', userId).single();
+  const prefs = data?.push_prefs as Partial<PushPrefs> | null;
+  // Default to allowed when unset -- an existing user predates the
+  // push_prefs column defaulting every key to true, so a missing key
+  // here must not silently suppress a push they never opted out of.
+  return prefs?.[category] !== false;
+}
+
 export async function sendNotification(payload: NotificationPayload): Promise<void> {
   try {
     const { error } = await payload.supabase.from('notifications').insert({
@@ -129,6 +154,10 @@ export async function sendNotification(payload: NotificationPayload): Promise<vo
       data: payload.data || {},
     });
     if (error) console.error('Notification insert error:', error);
+
+    const type = payload.data?.type as string | undefined;
+    const allowed = await isPushAllowed(payload.supabase, payload.user_id, type);
+    if (!allowed) return;
 
     const url = (payload.data?.connectionId as string)
       ? `/messages/${payload.data?.connectionId}`

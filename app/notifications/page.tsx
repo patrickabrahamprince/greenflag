@@ -6,6 +6,7 @@ import { Bell, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { SwipeToDismiss } from '@/components/shared/SwipeToDismiss';
 import { getCached, setCached } from '@/lib/pageCache';
+import { useNotificationStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 
 const NOTIFICATIONS_CACHE_KEY = 'notifications:list';
@@ -64,6 +65,13 @@ function getNotificationRoute(data: Record<string, unknown> | null): string | nu
       return '/banned';
     case 'application_rejected':
       return '/onboard/rejected';
+    case 'screenshot_alert': {
+      if (!connectionId) return null;
+      const context = data.context as string | undefined;
+      return context === 'task' ? `/task/${connectionId}` : `/messages/${connectionId}`;
+    }
+    case 'bonus':
+      return '/coins';
     default:
       return connectionId ? `/messages/${connectionId}` : null;
   }
@@ -75,8 +83,12 @@ export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>(() => getCached(NOTIFICATIONS_CACHE_KEY) ?? []);
   const [loading, setLoading] = useState(() => getCached<Notification[]>(NOTIFICATIONS_CACHE_KEY) === undefined);
   const [markingRead, setMarkingRead] = useState(false);
+  const setUnreadCount = useNotificationStore((s) => s.setUnreadCount);
+  const decrementUnread = useNotificationStore((s) => s.decrement);
 
   useEffect(() => {
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
     const load = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -94,11 +106,31 @@ export default function NotificationsPage() {
       const sorted = sortNotifications((data as Notification[]) || []);
       setNotifications(sorted);
       setCached(NOTIFICATIONS_CACHE_KEY, sorted);
+      setUnreadCount(sorted.filter((n) => !n.read_at).length);
       setLoading(false);
+
+      // Bottom-nav's badge already subscribes to inserts to bump its
+      // count, but this list itself previously never subscribed at all --
+      // a notification arriving while this page was open updated the
+      // badge but never showed up here until a full remount re-fetched.
+      channel = supabase
+        .channel('notifications-list')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, (payload) => {
+          setNotifications((prev) => {
+            const next = sortNotifications([payload.new as Notification, ...prev]);
+            setCached(NOTIFICATIONS_CACHE_KEY, next);
+            return next;
+          });
+        })
+        .subscribe();
     };
 
     load();
-  }, [supabase, router]);
+
+    return () => {
+      if (channel) supabase.removeChannel(channel);
+    };
+  }, [supabase, router, setUnreadCount]);
 
   const handleMarkAllRead = async () => {
     setMarkingRead(true);
@@ -112,6 +144,7 @@ export default function NotificationsPage() {
       setCached(NOTIFICATIONS_CACHE_KEY, next);
       return next;
     });
+    setUnreadCount(0);
     toast.success('All marked as read');
     setMarkingRead(false);
   };
@@ -129,6 +162,7 @@ export default function NotificationsPage() {
         setCached(NOTIFICATIONS_CACHE_KEY, next);
         return next;
       });
+      decrementUnread();
     }
 
     // Navigate based on notification type
@@ -140,6 +174,8 @@ export default function NotificationsPage() {
 
   const handleDismiss = async (id: string) => {
     setNotifications((prev) => {
+      const dismissed = prev.find((n) => n.id === id);
+      if (dismissed && !dismissed.read_at) decrementUnread();
       const next = prev.filter((n) => n.id !== id);
       setCached(NOTIFICATIONS_CACHE_KEY, next);
       return next;

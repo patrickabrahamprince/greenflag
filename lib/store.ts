@@ -17,6 +17,13 @@ interface CoinState {
   add: (amount: number) => void;
 }
 
+interface NotificationState {
+  unreadCount: number;
+  setUnreadCount: (count: number) => void;
+  increment: () => void;
+  decrement: (by?: number) => void;
+}
+
 interface ConnectionState {
   connections: Connection[];
   setConnections: (connections: Connection[]) => void;
@@ -138,6 +145,19 @@ export const useCoinStore = create<CoinState>((set) => ({
   deduct: (amount) =>
     set((state) => ({ balance: Math.max(0, state.balance - amount) })),
   add: (amount) => set((state) => ({ balance: state.balance + amount })),
+}));
+
+// Bottom-nav's badge and the Alerts list both need the unread count, but
+// they mount/unmount independently as the user navigates tabs -- a shared
+// store instead of two separate local useState calls is what lets marking
+// something read on the Alerts page actually move the badge instead of
+// the two silently drifting out of sync until the badge's own next full
+// refetch.
+export const useNotificationStore = create<NotificationState>((set) => ({
+  unreadCount: 0,
+  setUnreadCount: (count) => set({ unreadCount: Math.max(0, count) }),
+  increment: () => set((state) => ({ unreadCount: state.unreadCount + 1 })),
+  decrement: (by = 1) => set((state) => ({ unreadCount: Math.max(0, state.unreadCount - by) })),
 }));
 
 export const useConnectionStore = create<ConnectionState>((set) => ({

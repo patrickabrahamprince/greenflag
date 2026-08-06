@@ -124,7 +124,8 @@ serve(async (req) => {
         supabase,
         woman.id,
         'Monthly Bonus!',
-        'Your monthly 100 coins have been credited.'
+        'Your monthly 100 coins have been credited.',
+        { type: 'bonus' }
       );
 
       // Log to audit_logs

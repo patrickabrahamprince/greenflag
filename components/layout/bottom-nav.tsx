@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Compass, Heart, User, MessageSquare, Bell, ShieldAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useUserStore } from '@/lib/store';
+import { useUserStore, useNotificationStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
 import { hapticTap } from '@/lib/haptics';
 import { PendingReviewBanner } from '@/components/PendingReviewBanner';
@@ -31,7 +31,9 @@ export function BottomNav() {
   const router = useRouter();
   const user = useUserStore((s) => s.user);
   const tabs = user?.persona === 'woman' ? womanTabs : manTabs;
-  const [unreadCount, setUnreadCount] = useState(0);
+  const unreadCount = useNotificationStore((s) => s.unreadCount);
+  const setUnreadCount = useNotificationStore((s) => s.setUnreadCount);
+  const incrementUnread = useNotificationStore((s) => s.increment);
   // Tapping away from an unfinished Standard used to silently bounce her
   // straight back (see the removed effect below) -- no explanation, just
   // a forced redirect. Now it asks instead: her draft is saved either way
@@ -50,10 +52,10 @@ export function BottomNav() {
     fetchCount();
     const channel = supabase
       .channel('notifications-changes')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, () => { setUnreadCount((prev) => prev + 1); })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, () => { incrementUnread(); })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [user?.id]);
+  }, [user?.id, incrementUnread]);
 
   const handleTabClick = (e: React.MouseEvent, href: string) => {
     if (!isSettingStandard) return;

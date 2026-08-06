@@ -974,6 +974,7 @@ export type Database = {
           phone: string | null
           phone_verified: boolean | null
           photos: string[] | null
+          push_prefs: Json
           push_token: string | null
           quiz_answers: Json | null
           review_started_at: string | null
@@ -1029,6 +1030,7 @@ export type Database = {
           phone?: string | null
           phone_verified?: boolean | null
           photos?: string[] | null
+          push_prefs?: Json
           push_token?: string | null
           quiz_answers?: Json | null
           review_started_at?: string | null
@@ -1084,6 +1086,7 @@ export type Database = {
           phone?: string | null
           phone_verified?: boolean | null
           photos?: string[] | null
+          push_prefs?: Json
           push_token?: string | null
           quiz_answers?: Json | null
           review_started_at?: string | null
