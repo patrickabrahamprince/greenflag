@@ -54,7 +54,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="h-dvh screen-gradient flex flex-col">
+    <div className="h-[calc(100dvh-5rem)] screen-gradient flex flex-col">
       <div
         ref={scrollRef}
         onTouchStart={onTouchStart}

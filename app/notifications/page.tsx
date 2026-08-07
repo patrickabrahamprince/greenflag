@@ -235,7 +235,7 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="h-dvh screen-gradient flex flex-col">
+    <div className="h-[calc(100dvh-5rem)] screen-gradient flex flex-col">
       <div className="max-w-app mx-auto w-full px-6 pt-safe-top">
         <div className="flex items-center justify-between mb-6 pt-4">
           <div className="flex items-center gap-2">

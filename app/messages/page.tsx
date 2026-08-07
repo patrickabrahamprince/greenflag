@@ -340,7 +340,7 @@ export default function MessagesListPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-dvh flex flex-col screen-gradient">
+    <div className="h-[calc(100dvh-5rem)] flex flex-col screen-gradient">
       <div className="max-w-app mx-auto w-full flex-1 flex flex-col pt-safe-top">
         <ChatList userId={user.id} supabase={supabase} persona={user.persona} />
       </div>

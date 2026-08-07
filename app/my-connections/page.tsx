@@ -230,7 +230,7 @@ export default function MyConnectionsPage() {
   }
 
   return (
-    <div className="h-dvh screen-gradient max-w-app mx-auto flex flex-col">
+    <div className="h-[calc(100dvh-5rem)] screen-gradient max-w-app mx-auto flex flex-col">
       <div className="px-6 pt-safe-top">
         <div className="flex items-center justify-end mb-6">
           <button
