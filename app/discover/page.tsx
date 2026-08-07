@@ -362,7 +362,7 @@ export default function DiscoverPage() {
       <div
         ref={scrollRef}
         onTouchStart={onTouchStart}
-        className="snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth h-[calc(100dvh-5rem)] scrollbar-hide"
+        className="snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth h-dvh scrollbar-hide"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {profiles.map((p, i) => (
@@ -370,7 +370,7 @@ export default function DiscoverPage() {
             key={p.id}
             ref={i === profiles.length - 1 ? lastProfileRef : null}
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
-            className="snap-start snap-always h-[calc(100dvh-5rem)] w-full relative overflow-hidden animate-fade-in"
+            className="snap-start snap-always h-dvh w-full relative overflow-hidden animate-fade-in"
           >
             <div className="absolute inset-0 bg-black">
               {(() => {
@@ -496,14 +496,13 @@ export default function DiscoverPage() {
                 legible against whatever's in the shot. */}
             <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black via-black/75 to-transparent pointer-events-none" />
 
-            {/* pb-12 instead of the card's usual pb-6 -- the card height
-                already reserves a flat 5rem for the fixed bottom nav, but
-                the nav's real footprint (its own height plus
-                env(safe-area-inset-bottom)) runs taller than that on
-                devices with a big home-indicator inset, so the action
-                buttons need extra clearance above the theoretical 5rem
-                line or their bottom edge visually collides with the nav. */}
-            <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 px-6 pb-12 pt-10">
+            {/* The card now runs the full screen height (photo extends all
+                the way down, with the floating glass nav sitting on top of
+                it) instead of leaving a dead reserved strip below the card
+                for the nav -- pb-32 clears the nav's real footprint (its
+                own height plus env(safe-area-inset-bottom)) from the true
+                bottom of the screen. */}
+            <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 px-6 pb-32 pt-10">
               <div>
                 <h1 className="font-serif text-4xl text-ink font-semibold leading-none">
                   {p.name}
@@ -675,7 +674,7 @@ export default function DiscoverPage() {
             !hasMore instead means there's always a final snap target,
             whether the list started empty or you scrolled to the end of it. */}
         {!pageLoading && !hasMore && (
-          <div className="snap-start min-h-[calc(100dvh-5rem)] flex flex-col items-center justify-center px-8 text-center animate-fade-in">
+          <div className="snap-start min-h-dvh flex flex-col items-center justify-center px-8 text-center animate-fade-in">
             <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5">
               <Heart className="w-6 h-6 text-gold" />
             </div>
