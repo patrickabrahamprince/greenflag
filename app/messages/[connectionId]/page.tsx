@@ -72,7 +72,7 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionId, supabase, router]);
 
-  const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(load);
+  const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(load, { edge: 'bottom' });
 
   useEffect(() => {
     if (!connectionId || isLocked) return;
@@ -147,18 +147,21 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
           onTouchEnd={onTouchEnd}
           className="flex-1 min-h-0 relative overflow-y-auto overscroll-none"
         >
-          <div
-            className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
-            style={{ height: pullDistance }}
-          >
-            <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
-          </div>
           {isLocked && <LockedOverlay backRoute={backRoute} currentDay={connection?.current_day ?? 0} />}
           {messages.length === 0 && !isLocked ? (
             <EmptyChat partnerName={partnerName || ''} onSend={handleSend} />
           ) : (
             <MessageList messages={messages} userId={user?.id} bottomRef={bottomRef} />
           )}
+          {/* Bottom-anchored, not top -- this thread starts scrolled to the
+              newest message, so that's where the pull gesture arms and
+              where the indicator needs to be visible. */}
+          <div
+            className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
+            style={{ height: pullDistance }}
+          >
+            <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
+          </div>
         </div>
         {!isLocked && (
           <MessageInput input={input} onInputChange={setInput} onSend={handleSend} sending={sending} />
