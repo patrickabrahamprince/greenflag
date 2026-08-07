@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bell, Loader2 } from 'lucide-react';
+import { Bell, Loader2, Pin } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { SwipeToDismiss } from '@/components/shared/SwipeToDismiss';
 import { getCached, setCached } from '@/lib/pageCache';
@@ -303,6 +303,9 @@ export default function NotificationsPage() {
                     className="w-full text-left px-4 py-4 border-b border-border/30 transition-all active:scale-[0.98]"
                   >
                     <div className="flex items-center gap-1.5 mb-1">
+                      {notif.pinned && (
+                        <Pin className="w-3.5 h-3.5 text-gold shrink-0" fill="currentColor" />
+                      )}
                       <p className={`text-base font-semibold flex-1 min-w-0 truncate ${
                         isLuxury ? 'text-gold' : notif.read_at ? 'text-muted' : 'text-ink'
                       }`}>
