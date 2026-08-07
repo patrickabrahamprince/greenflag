@@ -8,6 +8,7 @@ import { ProgressSegmentBar } from '@/components/connection/ProgressSegmentBar';
 import { useCountdown, formatCountdown } from '@/lib/hooks/useCountdown';
 import { useUserStore } from '@/lib/store';
 import { getCached, setCached } from '@/lib/pageCache';
+import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 
 const MATCHES_CACHE_KEY = 'my-connections:matches';
 
@@ -156,7 +157,7 @@ export default function MyConnectionsPage() {
   const [actioningId, setActioningId] = useState<string | null>(null);
 
   const loadMatches = () => {
-    fetch('/api/matches')
+    return fetch('/api/matches')
       .then((res) => {
         if (res.status === 401) {
           router.push('/login');
@@ -177,6 +178,8 @@ export default function MyConnectionsPage() {
     loadMatches();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
+
+  const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(loadMatches);
 
   const handleNudge = async (matchId: string) => {
     setActioningId(matchId);
@@ -227,40 +230,57 @@ export default function MyConnectionsPage() {
   }
 
   return (
-    <div className="min-h-dvh screen-gradient px-6 pt-safe-top pb-24 max-w-app mx-auto">
-      <div className="flex items-center justify-end mb-6">
-        <button
-          onClick={() => router.push('/discover')}
-          className="btn-secondary text-xs px-3 py-2 flex items-center gap-1.5 shrink-0"
-        >
-          <Compass className="w-3.5 h-3.5" />
-          Discover New Profiles
-        </button>
+    <div className="h-dvh screen-gradient max-w-app mx-auto flex flex-col">
+      <div className="px-6 pt-safe-top">
+        <div className="flex items-center justify-end mb-6">
+          <button
+            onClick={() => router.push('/discover')}
+            className="btn-secondary text-xs px-3 py-2 flex items-center gap-1.5 shrink-0"
+          >
+            <Compass className="w-3.5 h-3.5" />
+            Discover New Profiles
+          </button>
+        </div>
       </div>
 
-      {matches.length === 0 ? (
-        <div className="flex flex-col items-center justify-center text-center px-6 mt-20">
-          <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5">
-            <Heart className="w-6 h-6 text-gold" />
+      <div
+        ref={scrollRef}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        className="flex-1 overflow-y-auto overscroll-none px-6 pb-24"
+      >
+        <div
+          className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
+          style={{ height: pullDistance }}
+        >
+          <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
+        </div>
+
+        {matches.length === 0 ? (
+          <div className="flex flex-col items-center justify-center text-center px-6 mt-20">
+            <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5">
+              <Heart className="w-6 h-6 text-gold" />
+            </div>
+            <h2 className="font-display text-xl text-ink mb-2">No Connections Yet</h2>
+            <p className="text-ink/50 text-sm">Discover someone to begin an introduction.</p>
           </div>
-          <h2 className="font-display text-xl text-ink mb-2">No Connections Yet</h2>
-          <p className="text-ink/50 text-sm">Discover someone to begin an introduction.</p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {matches.map((m) => (
-            <MatchRow
-              key={m.id}
-              match={m}
-              isMan={isMan}
-              onClick={() => router.push(`/task/${m.id}`)}
-              onNudge={() => handleNudge(m.id)}
-              onDecision={(decision) => handleDecision(m.id, decision)}
-              actionLoading={actioningId === m.id}
-            />
-          ))}
-        </div>
-      )}
+        ) : (
+          <div className="space-y-3">
+            {matches.map((m) => (
+              <MatchRow
+                key={m.id}
+                match={m}
+                isMan={isMan}
+                onClick={() => router.push(`/task/${m.id}`)}
+                onNudge={() => handleNudge(m.id)}
+                onDecision={(decision) => handleDecision(m.id, decision)}
+                actionLoading={actioningId === m.id}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

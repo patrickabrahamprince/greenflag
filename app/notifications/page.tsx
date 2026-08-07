@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 import { SwipeToDismiss } from '@/components/shared/SwipeToDismiss';
 import { getCached, setCached } from '@/lib/pageCache';
 import { useNotificationStore } from '@/lib/store';
+import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 import toast from 'react-hot-toast';
 
 const NOTIFICATIONS_CACHE_KEY = 'notifications:list';
@@ -93,28 +94,39 @@ export default function NotificationsPage() {
   const setUnreadCount = useNotificationStore((s) => s.setUnreadCount);
   const decrementUnread = useNotificationStore((s) => s.decrement);
 
+  const loadNotifications = async (userId: string) => {
+    const { data } = await supabase
+      .from('notifications')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    const sorted = sortNotifications((data as Notification[]) || []);
+    setNotifications(sorted);
+    setCached(NOTIFICATIONS_CACHE_KEY, sorted);
+    setUnreadCount(sorted.filter((n) => !n.read_at).length);
+    setLoading(false);
+  };
+
+  const refresh = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) await loadNotifications(user.id);
+  };
+
   useEffect(() => {
     let channel: ReturnType<typeof supabase.channel> | null = null;
+    let mounted = true;
 
-    const load = async () => {
+    const init = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         router.push('/login');
         return;
       }
 
-      const { data } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(50);
-
-      const sorted = sortNotifications((data as Notification[]) || []);
-      setNotifications(sorted);
-      setCached(NOTIFICATIONS_CACHE_KEY, sorted);
-      setUnreadCount(sorted.filter((n) => !n.read_at).length);
-      setLoading(false);
+      await loadNotifications(user.id);
+      if (!mounted) return;
 
       // Bottom-nav's badge already subscribes to inserts to bump its
       // count, but this list itself previously never subscribed at all --
@@ -132,12 +144,16 @@ export default function NotificationsPage() {
         .subscribe();
     };
 
-    load();
+    init();
 
     return () => {
+      mounted = false;
       if (channel) supabase.removeChannel(channel);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supabase, router, setUnreadCount]);
+
+  const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(refresh);
 
   const handleMarkAllRead = async () => {
     setMarkingRead(true);
@@ -219,8 +235,8 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="min-h-dvh screen-gradient">
-      <div className="max-w-app mx-auto px-6 pt-safe-top pb-24">
+    <div className="h-dvh screen-gradient flex flex-col">
+      <div className="max-w-app mx-auto w-full px-6 pt-safe-top">
         <div className="flex items-center justify-between mb-6 pt-4">
           <div className="flex items-center gap-2">
             <h1 className="font-display text-2xl text-ink">Alerts</h1>
@@ -240,6 +256,21 @@ export default function NotificationsPage() {
               Mark all read
             </button>
           )}
+        </div>
+      </div>
+
+      <div
+        ref={scrollRef}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        className="flex-1 overflow-y-auto overscroll-none max-w-app mx-auto w-full px-6 pb-24"
+      >
+        <div
+          className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
+          style={{ height: pullDistance }}
+        >
+          <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
         </div>
 
         {notifications.length === 0 ? (

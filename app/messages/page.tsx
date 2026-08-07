@@ -8,6 +8,7 @@ import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
 import { EmptyState } from '@/components/shared/empty-state';
 import { getCached, setCached } from '@/lib/pageCache';
+import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 import type { Database } from '@/types/supabase';
 
 type ProfileRow = Database['public']['Tables']['profiles']['Row'];
@@ -179,48 +180,51 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
   const conversationsRef = useRef(conversations);
   conversationsRef.current = conversations;
 
+  const load = async () => {
+    try {
+      const { data } = await supabase
+        .from('matches')
+        .select('*')
+        .eq('chat_unlocked', true)
+        .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
+        .order('created_at', { ascending: false });
+
+      if (!data) { setLoading(false); return; }
+
+      const enriched = await Promise.all(
+        data.map(async (conv: any) => {
+          const partnerId = conv.user1_id === userId ? conv.user2_id : conv.user1_id;
+          const { data: partner } = await supabase
+            .from('profiles')
+            .select('id, name, photos')
+            .eq('id', partnerId)
+            .single();
+          const { data: lastMsg } = await supabase
+            .from('messages')
+            .select('content, created_at')
+            .eq('match_id', conv.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          return { ...conv, partner, last_message: lastMsg };
+        })
+      );
+
+      setConversations(enriched);
+      setCached(cacheKey, enriched);
+    } catch (err) {
+      // Safe catch
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const load = async () => {
-      try {
-        const { data } = await supabase
-          .from('matches')
-          .select('*')
-          .eq('chat_unlocked', true)
-          .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
-          .order('created_at', { ascending: false });
-
-        if (!data) { setLoading(false); return; }
-
-        const enriched = await Promise.all(
-          data.map(async (conv: any) => {
-            const partnerId = conv.user1_id === userId ? conv.user2_id : conv.user1_id;
-            const { data: partner } = await supabase
-              .from('profiles')
-              .select('id, name, photos')
-              .eq('id', partnerId)
-              .single();
-            const { data: lastMsg } = await supabase
-              .from('messages')
-              .select('content, created_at')
-              .eq('match_id', conv.id)
-              .order('created_at', { ascending: false })
-              .limit(1)
-              .maybeSingle();
-            return { ...conv, partner, last_message: lastMsg };
-          })
-        );
-
-        setConversations(enriched);
-        setCached(cacheKey, enriched);
-      } catch (err) {
-        // Safe catch
-      } finally {
-        setLoading(false);
-      }
-    };
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, supabase]);
+
+  const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(load);
 
   // Without this, a new message only ever showed up in the preview list
   // after navigating away from it and back (the initial load's own
@@ -294,7 +298,19 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto scrollbar-hide">
+    <div
+      ref={scrollRef}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      className="flex-1 overflow-y-auto overscroll-none scrollbar-hide"
+    >
+      <div
+        className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
+        style={{ height: pullDistance }}
+      >
+        <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
+      </div>
       {conversations.map((conv) => (
         <ChatListItem key={conv.id} conv={conv} />
       ))}

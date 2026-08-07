@@ -8,14 +8,32 @@ import { MyStandardsSection } from '@/components/profile/MyStandardsSection';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useCoinStore } from '@/lib/store';
 import { hapticTap } from '@/lib/haptics';
+import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 
 export default function ProfilePage() {
   const router = useRouter();
   const user = useUserStore((s) => s.user);
   const balance = useCoinStore((s) => s.balance);
+  const setUser = useUserStore((s) => s.setUser);
   const clearUser = useUserStore((s) => s.clearUser);
   const setBalance = useCoinStore((s) => s.setBalance);
   const [loggingOut, setLoggingOut] = useState(false);
+
+  // Profile reads entirely from the global stores (populated once by
+  // Providers on app load) rather than fetching its own data, so
+  // "refresh" here means re-pulling the same two rows Providers fetched
+  // and re-populating those stores, not a local reload.
+  const refresh = async () => {
+    const supabase = createClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) return;
+    const { data: profile } = await supabase.from('profiles').select('*').eq('id', authUser.id).single();
+    if (profile) setUser(profile as any);
+    const { data: wallet } = await supabase.from('wallets').select('balance').eq('user_id', authUser.id).single();
+    if (wallet) setBalance(wallet.balance);
+  };
+
+  const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(refresh);
 
   const handleLogout = async () => {
     hapticTap();
@@ -36,7 +54,21 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="page-container animate-fade-in">
+    <div className="h-dvh screen-gradient flex flex-col">
+      <div
+        ref={scrollRef}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        className="flex-1 overflow-y-auto overscroll-none max-w-app mx-auto w-full px-8 pt-safe-top pb-24 animate-fade-in"
+      >
+        <div
+          className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
+          style={{ height: pullDistance }}
+        >
+          <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
+        </div>
+
       <div className="flex items-center justify-end mb-2">
         <button onClick={() => { hapticTap(); router.push('/settings'); }} className="btn-ghost p-2">
           <Settings className="w-5 h-5" />
@@ -163,6 +195,7 @@ export default function ProfilePage() {
           {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
           Sign Out
         </button>
+      </div>
       </div>
     </div>
   );
