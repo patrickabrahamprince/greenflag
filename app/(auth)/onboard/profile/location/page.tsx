@@ -2,12 +2,11 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowRight, MapPin } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { useOnboardingStore } from '@/lib/store';
 import { StepDots } from '@/components/shared/StepDots';
-import { PermissionPrimer } from '@/components/shared/PermissionPrimer';
 import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
@@ -34,7 +33,6 @@ export default function ProfileLocationPage() {
   const [error, setError] = useState('');
   const [gpsDetecting, setGpsDetecting] = useState(false);
   const [gpsDenied, setGpsDenied] = useState(false);
-  const [showLocationPrimer, setShowLocationPrimer] = useState(false);
 
   const resolveCity = useCallback(async (latitude: number, longitude: number) => {
     setLat(latitude);
@@ -89,10 +87,7 @@ export default function ProfileLocationPage() {
   useEffect(() => {
     if (!name) { router.replace('/onboard/name'); return; }
     if (!age) { router.replace('/onboard/profile'); return; }
-    // Firing the native location prompt cold (no explanation) tends to get
-    // reflexively denied -- show the benefit first and let detectLocation()
-    // run only once they've actively opted in.
-    if (!city) setShowLocationPrimer(true);
+    if (!city) detectLocation();
     router.prefetch('/onboard/profile/instagram');
   }, []);
 
@@ -151,17 +146,6 @@ export default function ProfileLocationPage() {
         Continue
         <ArrowRight className="w-4 h-4" />
       </button>
-
-      <PermissionPrimer
-        open={showLocationPrimer}
-        icon={<MapPin className="w-6 h-6 text-gold" />}
-        title="Find your city automatically?"
-        description="We'll suggest your city so you don't have to type it. We never share your exact location — just the city name."
-        confirmLabel="Enable Location"
-        skipLabel="Not Now"
-        onConfirm={() => { setShowLocationPrimer(false); detectLocation(); }}
-        onSkip={() => setShowLocationPrimer(false)}
-      />
     </div>
   );
 }
