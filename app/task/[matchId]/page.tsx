@@ -56,7 +56,7 @@ function DayCompleteModal({ unlocksAt, completedDay, onExplore }: { unlocksAt: s
   const remainingMs = useCountdown(unlocksAt);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.6)' }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.9)' }}>
       <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
         <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-5">
           <Hourglass className="w-6 h-6 text-gold" />
@@ -581,7 +581,13 @@ export default function TaskPage() {
                         ) : (
                           <div className={`flex items-center gap-2.5 ${matchingSub.content ? 'mt-3' : ''}`}>
                             <Mic className="w-4 h-4 text-gold/60 shrink-0" />
-                            <audio controls src={matchingSub.media_url} className="w-full h-8" />
+                            <audio
+                              controls
+                              preload="metadata"
+                              src={matchingSub.media_url}
+                              className="w-full h-8"
+                              onError={(e) => console.error('Submission audio failed to load:', matchingSub.media_url, e.currentTarget.error)}
+                            />
                           </div>
                         )
                       )}
@@ -696,7 +702,12 @@ export default function TaskPage() {
           onSubmit={() => {
             setShowSheet(false);
             setActiveIntention(null);
-            toast.success('Response submitted — awaiting her review');
+            // Shorter + narrower than the app default here specifically --
+            // this toast sits over the middle of the screen where the task
+            // cards are, and the default 92vw-wide, 2s toast was wide/long
+            // enough to sit on top of (and block taps on) the next task's
+            // own Submit Response button right after submitting this one.
+            toast.success('Response submitted — awaiting her review', { duration: 1400, style: { maxWidth: '80vw' } });
             fetchMatch();
           }}
         />
@@ -716,7 +727,7 @@ export default function TaskPage() {
           onSubmit={() => {
             setShowSpecialPicker(false);
             setSpecialType(null);
-            toast.success('Special note sent');
+            toast.success('Special note sent', { duration: 1400, style: { maxWidth: '80vw' } });
             fetchMatch();
           }}
         />

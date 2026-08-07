@@ -403,7 +403,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
 
   if (showSuccessPopup) {
     return (
-      <div className="fixed inset-0 z-[60] flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.6)' }}>
+      <div className="fixed inset-0 z-[60] flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.9)' }}>
         <div className="w-full max-w-sm rounded-2xl p-6 text-center animate-scale-in bg-[#000000]">
           <div className="w-12 h-12 bg-green-50 border border-green-200 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-xl text-green-600 font-bold">✓</span>

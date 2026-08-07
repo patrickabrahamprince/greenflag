@@ -45,6 +45,16 @@ export function AppLockGate() {
   const lastAttemptEndedAtRef = useRef(0);
   const AUTH_COOLDOWN_MS = 1500;
   const biometryAvailableRef = useRef(false);
+  // On a fresh login, the hasUser-transition effect below and a genuine
+  // native-OAuth-sheet resume event can both legitimately fire attemptUnlock
+  // -- e.g. resume fires first (returning from the Google/Apple sign-in
+  // sheet, which does fully background this app), succeeds, and only
+  // afterwards does the profile fetch in Providers.tsx populate the store
+  // and flip hasUser, by which point AUTH_COOLDOWN_MS has already elapsed.
+  // Both triggers are really the same "just arrived in the app" moment, so
+  // once either has produced one successful unlock, the other shouldn't
+  // prompt again -- only an actual later backgrounding (resume) should.
+  const hasUnlockedOnceRef = useRef(false);
 
   const attemptUnlock = useCallback(async () => {
     if (authenticatingRef.current) return;
@@ -55,6 +65,7 @@ export function AppLockGate() {
         reason: 'Unlock GreenFlag',
         allowDeviceCredential: true,
       });
+      hasUnlockedOnceRef.current = true;
       setLocked(false);
     } catch {
       // Failed or cancelled -- stays locked, "Try Again" retries.
@@ -97,12 +108,12 @@ export function AppLockGate() {
   // per `hasUser` transition (false -> true, at cold start or right
   // after login) closes that race instead of racing it.
   useEffect(() => {
-    if (!Capacitor.isNativePlatform() || !hasUser) return;
+    if (!Capacitor.isNativePlatform() || !hasUser || hasUnlockedOnceRef.current) return;
     let cancelled = false;
     BiometricAuth.checkBiometry().then((result) => {
       if (cancelled) return;
       biometryAvailableRef.current = result.isAvailable;
-      if (!result.isAvailable || !canAttempt()) return;
+      if (!result.isAvailable || !canAttempt() || hasUnlockedOnceRef.current) return;
       setLocked(true);
       attemptUnlock();
     });

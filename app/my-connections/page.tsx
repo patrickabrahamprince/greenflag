@@ -253,6 +253,8 @@ export default function MyConnectionsPage() {
         onTouchEnd={onTouchEnd}
         className="flex-1 overflow-y-auto overscroll-none px-6 pt-safe-top pb-24 flex flex-col"
       >
+        <h1 className="font-display text-2xl text-ink shrink-0 mb-6 pt-4">Connections</h1>
+
         <div
           className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out shrink-0"
           style={{ height: pullDistance }}
