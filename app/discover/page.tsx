@@ -423,7 +423,7 @@ export default function DiscoverPage() {
                         {p.match_percentage}% Greenflag Alignment
                       </span>
                     </div>
-                    {persona === 'woman' && interestCounts[p.id] !== undefined && (
+                    {persona === 'woman' && !!interestCounts[p.id] && (
                       <span className="glass-surface rounded-full px-3 py-1 text-white/80 text-[11px] whitespace-nowrap">
                         Intention from {interestCounts[p.id]} {interestCounts[p.id] === 1 ? 'person' : 'people'}
                       </span>
@@ -475,7 +475,7 @@ export default function DiscoverPage() {
                             src={src}
                             alt=""
                             className={photoClass}
-                            onError={e => { e.currentTarget.style.display = 'none' }}
+                            onError={e => { e.currentTarget.src = '/placeholder-avatar.svg' }}
                           />
                           {unlockButton}
                         </div>
@@ -528,41 +528,45 @@ export default function DiscoverPage() {
                   )}
                 </div>
               )}
-              <div className={persona === 'woman' ? 'flex flex-wrap gap-1.5' : 'flex flex-wrap gap-2'}>
-                {(p.interests_have?.length ? p.interests_have : p.interests ?? []).slice(0, 5).map((interest: string) => {
-                  const isMatched = Array.isArray(p.match_reasons) && p.match_reasons.includes(interest);
-                  const sizeClass = persona === 'woman' ? 'px-2.5 py-1 text-xs' : 'px-4 py-2 text-sm';
-                  return (
-                    <span
-                      key={interest}
-                      className={
-                        (isMatched
-                          ? `glass-surface ${sizeClass} rounded-full bg-gold text-white font-medium shadow-[0_2px_10px_rgba(192,38,211,0.5)] leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-[0_4px_16px_rgba(192,38,211,0.8)] active:scale-95`
-                          : `glass-surface ${sizeClass} rounded-full text-ink font-medium leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:bg-white/10 active:scale-95`)
-                      }
-                    >
-                      {interest}
-                    </span>
-                  );
-                })}
-              </div>
               {(() => {
-                const lookingFor = (p.interests_looking_for?.length ? p.interests_looking_for : p.looking_for_interests ?? []).slice(0, 4)
-                if (lookingFor.length === 0) return null
+                const shownInterests = (p.interests_have?.length ? p.interests_have : p.interests ?? []).slice(0, 5)
+                const lookingFor = (p.interests_looking_for?.length ? p.interests_looking_for : p.looking_for_interests ?? [])
+                  .filter((interest) => !shownInterests.includes(interest))
+                  .slice(0, 3)
                 return (
-                  <div>
-                    <p className="text-ink/40 text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">Values</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {lookingFor.map((interest: string) => (
-                        <span
-                          key={interest}
-                          className="px-2.5 py-1 text-xs rounded-full border border-white/20 text-ink/70 font-medium leading-none"
-                        >
-                          {interest}
-                        </span>
-                      ))}
+                  <>
+                    <div className={persona === 'woman' ? 'flex flex-wrap gap-1.5' : 'flex flex-wrap gap-2'}>
+                      {shownInterests.map((interest: string) => {
+                        const isMatched = Array.isArray(p.match_reasons) && p.match_reasons.includes(interest);
+                        const sizeClass = persona === 'woman' ? 'px-2.5 py-1 text-xs' : 'px-4 py-2 text-sm';
+                        return (
+                          <span
+                            key={interest}
+                            className={
+                              (isMatched
+                                ? `glass-surface ${sizeClass} rounded-full bg-gold text-white font-medium shadow-[0_2px_10px_rgba(192,38,211,0.5)] leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-[0_4px_16px_rgba(192,38,211,0.8)] active:scale-95`
+                                : `glass-surface ${sizeClass} rounded-full text-ink font-medium leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:bg-white/10 active:scale-95`)
+                            }
+                          >
+                            {interest}
+                          </span>
+                        );
+                      })}
                     </div>
-                  </div>
+                    {lookingFor.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-ink/40 text-xs font-semibold uppercase tracking-wide leading-none">Values</span>
+                        {lookingFor.map((interest: string) => (
+                          <span
+                            key={interest}
+                            className="px-2.5 py-1 text-xs rounded-full border border-white/20 text-ink/70 font-medium leading-none"
+                          >
+                            {interest}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </>
                 )
               })()}
               {p.bio && (
