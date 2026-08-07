@@ -273,7 +273,7 @@ export default function MyConnectionsPage() {
         </div>
 
         {matches.length === 0 ? (
-          <div className="flex flex-col items-center justify-center text-center px-6 mt-20">
+          <div className="min-h-full flex flex-col items-center justify-center text-center px-6">
             <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5">
               <Heart className="w-6 h-6 text-gold" />
             </div>

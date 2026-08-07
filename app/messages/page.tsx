@@ -276,7 +276,7 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
 
   if (conversations.length === 0) {
     return (
-      <div className="flex-1 flex flex-col items-center pt-20 pb-28 px-6">
+      <div className="flex-1 flex flex-col items-center justify-center pb-28 px-6">
         <EmptyState
           icon={<MessageCircle className="w-6 h-6" />}
           title="No messages yet"
