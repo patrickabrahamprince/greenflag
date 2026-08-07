@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 import { BackButton } from './back-button';
 import { CoinBadge } from '@/components/shared/coin-badge';
 import { cn } from '@/lib/utils';
@@ -22,6 +23,7 @@ export function Header({
   showBalance,
   className,
 }: HeaderProps) {
+  const router = useRouter();
   return (
     <div className={cn('relative flex items-center justify-center h-16 px-8 bg-[#000000]/80 backdrop-blur-xl border-b border-[#2A2A2A]', className)}>
       {showBack && <BackButton />}
@@ -35,7 +37,7 @@ export function Header({
         <div className="absolute right-4 top-1/2 -translate-y-1/2">{rightElement}</div>
       ) : showBalance ? (
         <div className="absolute right-4 top-1/2 -translate-y-1/2">
-          <CoinBadge />
+          <CoinBadge onClick={() => router.push('/coins')} />
         </div>
       ) : null}
     </div>

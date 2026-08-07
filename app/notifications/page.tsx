@@ -26,6 +26,11 @@ interface Notification {
   pinned: boolean;
 }
 
+interface ConnectionParty {
+  name: string;
+  photo: string | null;
+}
+
 function sortNotifications(list: Notification[]): Notification[] {
   return [...list].sort((a, b) => {
     if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
@@ -95,6 +100,7 @@ export default function NotificationsPage() {
   const [loading, setLoading] = useState(() => getCached<Notification[]>(NOTIFICATIONS_CACHE_KEY) === undefined);
   const [markingRead, setMarkingRead] = useState(false);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [partyByConnectionId, setPartyByConnectionId] = useState<Record<string, ConnectionParty>>({});
   const setUnreadCount = useNotificationStore((s) => s.setUnreadCount);
   const decrementUnread = useNotificationStore((s) => s.decrement);
   const { show: showSwipeHint, dismiss: dismissSwipeHint } = useFirstTimeHint('notifications-swipe');
@@ -132,6 +138,22 @@ export default function NotificationsPage() {
 
       await loadNotifications(user.id);
       if (!mounted) return;
+
+      // Notifications only carry a connectionId, not the other party's
+      // name/photo -- reusing the existing /api/matches list (which already
+      // resolves otherName/otherPhoto per connection) instead of adding a
+      // new endpoint or touching the notification-insert triggers.
+      fetch('/api/matches')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (!mounted || !data?.matches) return;
+          const map: Record<string, ConnectionParty> = {};
+          for (const m of data.matches) {
+            map[m.id] = { name: m.otherName, photo: m.otherPhoto };
+          }
+          setPartyByConnectionId(map);
+        })
+        .catch(() => {});
 
       // Bottom-nav's badge already subscribes to inserts to bump its
       // count, but this list itself previously never subscribed at all --
@@ -301,6 +323,14 @@ export default function NotificationsPage() {
               const isLuxury = notifType === 'day_approved' || notifType === 'media_approved';
               const isExpanded = expandedIds.has(notif.id);
               const hasRoute = !!getNotificationRoute(notif.data as Record<string, unknown> | null);
+              const connectionId = (notif.data as Record<string, unknown> | null)?.connectionId as string | undefined;
+              const party = connectionId ? partyByConnectionId[connectionId] : undefined;
+              // "Day Approved" on its own doesn't say who -- the other
+              // notification types already name the person in their body
+              // text, but this one's title is a static string server-side.
+              const displayTitle = notifType === 'day_approved' && party
+                ? `${party.name} approved Day ${(notif.data as Record<string, unknown>)?.dayNumber ?? ''}`.trim()
+                : notif.title;
 
               return (
                 <SwipeToDismiss
@@ -311,8 +341,18 @@ export default function NotificationsPage() {
                 >
                   <button
                     onClick={(e) => { e.stopPropagation(); handleNotificationClick(notif); }}
-                    className="w-full text-left px-4 py-4 border-b border-border/30 transition-all active:scale-[0.98]"
+                    className="w-full flex items-center gap-3 text-left px-4 py-4 border-b border-border/30 transition-all active:scale-[0.98]"
                   >
+                    {party && (
+                      <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 bg-[#1C1C1E]">
+                        {party.photo ? (
+                          <img src={party.photo} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-ink/30 text-xs">{party.name[0]}</div>
+                        )}
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5 mb-1">
                       {notif.pinned && (
                         <Pin className="w-3.5 h-3.5 text-gold shrink-0" fill="currentColor" />
@@ -320,7 +360,7 @@ export default function NotificationsPage() {
                       <p className={`text-base font-semibold flex-1 min-w-0 truncate ${
                         isLuxury ? 'text-gold' : notif.read_at ? 'text-muted' : 'text-ink'
                       }`}>
-                        {notif.title}
+                        {displayTitle}
                       </p>
                       {!notif.read_at && (
                         <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
@@ -336,6 +376,7 @@ export default function NotificationsPage() {
                     ) : (
                       <p className="text-xs text-gold/70 italic">Tap to view</p>
                     )}
+                    </div>
                   </button>
                 </SwipeToDismiss>
               );

@@ -49,6 +49,7 @@ export default function DiscoverPage() {
   const [persona, setPersona] = useState<string | null>(null)
   const [confirmProfileId, setConfirmProfileId] = useState<string | null>(null)
   const [photoUnlockConfirm, setPhotoUnlockConfirm] = useState<string | null>(null)
+  const [showInsufficientFunds, setShowInsufficientFunds] = useState(false)
   const [unlockingPhotoId, setUnlockingPhotoId] = useState<string | null>(null)
   const [unlockedPhotoIds, setUnlockedPhotoIds] = useState<Set<string>>(new Set())
   // placeholder-avatar.svg is a near-black icon on a near-black card --
@@ -285,6 +286,10 @@ export default function DiscoverPage() {
       })
       if (!res.ok) {
         const err = await res.json()
+        if (err.error === 'insufficient_funds') {
+          setShowInsufficientFunds(true)
+          return
+        }
         throw new Error(err.error || 'Failed to like profile')
       }
       const { matchId } = await res.json()
@@ -353,7 +358,7 @@ export default function DiscoverPage() {
                 {coinBalance}
               </div>
             ) : (
-              <CoinBadge />
+              <CoinBadge onClick={() => { hapticTap(); router.push('/coins'); }} />
             )}
           </div>
         </div>
@@ -445,14 +450,14 @@ export default function DiscoverPage() {
                         <button
                           onClick={(e) => { e.stopPropagation(); hapticTap(); goTo(idx - 1) }}
                           aria-label="Previous photo"
-                          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center"
+                          className="absolute left-2 top-[38%] -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center"
                         >
                           <ChevronLeft className="w-5 h-5 text-white" />
                         </button>
                         <button
                           onClick={(e) => { e.stopPropagation(); hapticTap(); goTo(idx + 1) }}
                           aria-label="Next photo"
-                          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center"
+                          className="absolute right-2 top-[38%] -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center"
                         >
                           <ChevronRight className="w-5 h-5 text-white" />
                         </button>
@@ -749,6 +754,34 @@ export default function DiscoverPage() {
                 className="btn-primary flex-1 whitespace-nowrap disabled:opacity-50"
               >
                 Unlock
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showInsufficientFunds && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
+          <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
+            <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Coins className="w-6 h-6 text-gold" />
+            </div>
+            <h4 className="font-display text-2xl text-ink mb-2">Not Enough Coins</h4>
+            <p className="text-ink/60 text-sm leading-relaxed mb-6">
+              You need more coins to meet her Standard. Top up to keep going.
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setShowInsufficientFunds(false)}
+                className="btn-secondary flex-1 whitespace-nowrap"
+              >
+                Not Now
+              </button>
+              <button
+                onClick={() => { hapticTap(); setShowInsufficientFunds(false); router.push('/coins'); }}
+                className="btn-primary flex-1 whitespace-nowrap"
+              >
+                Buy Coins
               </button>
             </div>
           </div>
