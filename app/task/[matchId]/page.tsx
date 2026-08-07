@@ -395,7 +395,7 @@ export default function TaskPage() {
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
-      className="h-[calc(100dvh-5rem)] overflow-y-auto overscroll-none screen-gradient px-6 pt-safe-top pb-10 max-w-app mx-auto flex flex-col"
+      className="h-[calc(100dvh-5rem)] overflow-y-auto overscroll-none screen-gradient px-6 pt-safe-top pb-24 max-w-app mx-auto flex flex-col"
     >
       <div
         className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
