@@ -441,17 +441,6 @@ export default function DiscoverPage() {
                     )}
 
                     {total > 1 && (
-                      <div className="absolute top-3 inset-x-3 z-10 flex gap-1">
-                        {photos.map((_, dotIdx) => (
-                          <div
-                            key={dotIdx}
-                            className={`flex-1 h-[3px] rounded-full transition-colors ${dotIdx === idx ? 'bg-white' : 'bg-white/30'}`}
-                          />
-                        ))}
-                      </div>
-                    )}
-
-                    {total > 1 && (
                       <>
                         <button
                           onClick={(e) => { e.stopPropagation(); hapticTap(); goTo(idx - 1) }}
