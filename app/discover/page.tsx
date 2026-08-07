@@ -507,7 +507,14 @@ export default function DiscoverPage() {
                 legible against whatever's in the shot. */}
             <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black via-black/75 to-transparent pointer-events-none" />
 
-            <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 px-6 pb-6 pt-10">
+            {/* pb-12 instead of the card's usual pb-6 -- the card height
+                already reserves a flat 5rem for the fixed bottom nav, but
+                the nav's real footprint (its own height plus
+                env(safe-area-inset-bottom)) runs taller than that on
+                devices with a big home-indicator inset, so the action
+                buttons need extra clearance above the theoretical 5rem
+                line or their bottom edge visually collides with the nav. */}
+            <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 px-6 pb-12 pt-10">
               <div>
                 <h1 className="font-serif text-4xl text-ink font-semibold leading-none">
                   {p.name}
