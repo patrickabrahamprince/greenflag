@@ -89,6 +89,7 @@ export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>(() => getCached(NOTIFICATIONS_CACHE_KEY) ?? []);
   const [loading, setLoading] = useState(() => getCached<Notification[]>(NOTIFICATIONS_CACHE_KEY) === undefined);
   const [markingRead, setMarkingRead] = useState(false);
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const setUnreadCount = useNotificationStore((s) => s.setUnreadCount);
   const decrementUnread = useNotificationStore((s) => s.decrement);
 
@@ -171,7 +172,15 @@ export default function NotificationsPage() {
       decrementUnread();
     }
 
-    // Navigate based on notification type
+    // First tap reveals the full (untruncated) title/body instead of
+    // immediately yanking you to another screen before you've actually
+    // read it -- only a second tap, on an already-expanded card,
+    // navigates.
+    if (!expandedIds.has(notif.id)) {
+      setExpandedIds((prev) => new Set(prev).add(notif.id));
+      return;
+    }
+
     const route = getNotificationRoute(notif.data as Record<string, unknown> | null);
     if (route) {
       router.push(route);
@@ -248,6 +257,8 @@ export default function NotificationsPage() {
             {notifications.map((notif) => {
               const notifType = (notif.data as Record<string, unknown> | null)?.type;
               const isLuxury = notifType === 'day_approved' || notifType === 'media_approved';
+              const isExpanded = expandedIds.has(notif.id);
+              const hasRoute = !!getNotificationRoute(notif.data as Record<string, unknown> | null);
 
               if (isLuxury) {
                 return (
@@ -259,17 +270,20 @@ export default function NotificationsPage() {
                   >
                     <button
                       onClick={() => handleNotificationClick(notif)}
-                      className="w-full text-left p-3 rounded-xl transition-all border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-[#0B0614] active:scale-[0.98]"
+                      className="w-full text-left p-3 rounded-xl transition-all border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-surface active:scale-[0.98]"
                     >
                       <div className="flex items-center gap-1.5 mb-0.5">
-                        <p className="text-sm font-medium text-gold flex-1 min-w-0 truncate">
+                        <p className={`text-sm font-medium text-gold flex-1 min-w-0 ${isExpanded ? '' : 'truncate'}`}>
                           {notif.title}
                         </p>
                         {!notif.read_at && (
                           <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
                         )}
                       </div>
-                      <p className="text-xs text-ink/70 truncate">{notif.body}</p>
+                      <p className={`text-xs text-ink/70 ${isExpanded ? '' : 'truncate'}`}>{notif.body}</p>
+                      {isExpanded && hasRoute && (
+                        <p className="text-xs text-gold mt-2 font-medium">Tap again to view →</p>
+                      )}
                     </button>
                   </SwipeToDismiss>
                 );
@@ -284,14 +298,14 @@ export default function NotificationsPage() {
                 >
                   <button
                     onClick={() => handleNotificationClick(notif)}
-                    className={`w-full text-left p-3 rounded-xl transition-all active:scale-[0.98] ${
+                    className={`w-full text-left p-3 rounded-xl border transition-all active:scale-[0.98] ${
                       notif.read_at
-                        ? 'bg-[#0B0614] hover:bg-surface/50'
-                        : 'bg-surface/80 hover:bg-surface'
+                        ? 'bg-surface/50 border-border/40 hover:bg-surface/80'
+                        : 'bg-surface border-gold/20 hover:border-gold/40'
                     }`}
                   >
                     <div className="flex items-center gap-1.5 mb-0.5">
-                      <p className={`text-sm font-medium flex-1 min-w-0 truncate ${
+                      <p className={`text-sm font-medium flex-1 min-w-0 ${isExpanded ? '' : 'truncate'} ${
                         notif.read_at ? 'text-muted' : 'text-ink'
                       }`}>
                         {notif.title}
@@ -300,9 +314,12 @@ export default function NotificationsPage() {
                         <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
                       )}
                     </div>
-                    <p className={`text-xs truncate ${notif.read_at ? 'text-muted/60' : 'text-muted'}`}>
+                    <p className={`text-xs ${isExpanded ? '' : 'truncate'} ${notif.read_at ? 'text-muted/60' : 'text-muted'}`}>
                       {notif.body}
                     </p>
+                    {isExpanded && hasRoute && (
+                      <p className="text-xs text-gold mt-2 font-medium">Tap again to view →</p>
+                    )}
                   </button>
                 </SwipeToDismiss>
               );
