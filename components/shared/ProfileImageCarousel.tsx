@@ -5,9 +5,10 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface ProfileImageCarouselProps {
   images: (string | null | undefined)[]
+  disableLightbox?: boolean
 }
 
-export function ProfileImageCarousel({ images }: ProfileImageCarouselProps) {
+export function ProfileImageCarousel({ images, disableLightbox = false }: ProfileImageCarouselProps) {
   const validImages = images.filter(Boolean) as string[]
   const total = validImages.length
 
@@ -35,7 +36,7 @@ export function ProfileImageCarousel({ images }: ProfileImageCarouselProps) {
     setLightboxOpen(true)
   }
 
-  const handleMainClick = () => openLightbox(mainIdx)
+  const handleMainClick = () => { if (!disableLightbox) openLightbox(mainIdx) }
 
   return (
     <>
@@ -56,7 +57,7 @@ export function ProfileImageCarousel({ images }: ProfileImageCarouselProps) {
         }}
       >
         <div
-          className="relative overflow-hidden cursor-pointer w-full h-full"
+          className={`relative overflow-hidden w-full h-full ${disableLightbox ? '' : 'cursor-pointer'}`}
           onClick={handleMainClick}
         >
           {total > 1 && (
