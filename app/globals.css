@@ -1,7 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-html, body { background: #0B0614 !important; }
+/* Same recipe as .screen-gradient below, duplicated here rather than
+   applying that class to body -- pages center their own content at
+   max-w-app, so on anything wider than 480px (landscape, most obviously)
+   that centered column left a flat #0B0614 margin outside it that didn't
+   match the gradient inside, a visible seam right where the bottom nav
+   sits. Painting the same gradient on body itself means there's no seam
+   regardless of how wide the viewport is or where a page's own content
+   column ends. */
+html, body {
+  background:
+    radial-gradient(ellipse 140% 90% at 50% -25%, rgba(192, 38, 211, 0.45) 0%, rgba(124, 58, 237, 0.22) 35%, rgba(11, 6, 20, 0) 70%),
+    radial-gradient(ellipse 100% 70% at 100% 100%, rgba(124, 58, 237, 0.18) 0%, transparent 60%),
+    #0B0614 !important;
+}
 /* Without this, iOS Safari's rubber-band bounce at the top/bottom of a
    normal document-scroll page visually drags `position: fixed` elements
    (the bottom nav) along with the bounce, making it look like the nav
