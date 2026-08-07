@@ -253,41 +253,12 @@ export default function NotificationsPage() {
             </p>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div>
             {notifications.map((notif) => {
               const notifType = (notif.data as Record<string, unknown> | null)?.type;
               const isLuxury = notifType === 'day_approved' || notifType === 'media_approved';
               const isExpanded = expandedIds.has(notif.id);
               const hasRoute = !!getNotificationRoute(notif.data as Record<string, unknown> | null);
-
-              if (isLuxury) {
-                return (
-                  <SwipeToDismiss
-                    key={notif.id}
-                    onDelete={() => handleDismiss(notif.id)}
-                    onPin={() => handlePin(notif)}
-                    pinned={notif.pinned}
-                  >
-                    <button
-                      onClick={() => handleNotificationClick(notif)}
-                      className="w-full text-left p-3 rounded-xl transition-all border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-surface active:scale-[0.98]"
-                    >
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <p className={`text-sm font-medium text-gold flex-1 min-w-0 ${isExpanded ? '' : 'truncate'}`}>
-                          {notif.title}
-                        </p>
-                        {!notif.read_at && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
-                        )}
-                      </div>
-                      <p className={`text-xs text-ink/70 ${isExpanded ? '' : 'truncate'}`}>{notif.body}</p>
-                      {isExpanded && hasRoute && (
-                        <p className="text-xs text-gold mt-2 font-medium">Tap again to view →</p>
-                      )}
-                    </button>
-                  </SwipeToDismiss>
-                );
-              }
 
               return (
                 <SwipeToDismiss
@@ -298,15 +269,11 @@ export default function NotificationsPage() {
                 >
                   <button
                     onClick={() => handleNotificationClick(notif)}
-                    className={`w-full text-left p-3 rounded-xl border transition-all active:scale-[0.98] ${
-                      notif.read_at
-                        ? 'bg-surface/50 border-border/40 hover:bg-surface/80'
-                        : 'bg-surface border-gold/20 hover:border-gold/40'
-                    }`}
+                    className="w-full text-left py-3 border-b border-border/30 transition-all active:scale-[0.98]"
                   >
-                    <div className="flex items-center gap-1.5 mb-0.5">
-                      <p className={`text-sm font-medium flex-1 min-w-0 ${isExpanded ? '' : 'truncate'} ${
-                        notif.read_at ? 'text-muted' : 'text-ink'
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <p className={`text-base font-semibold flex-1 min-w-0 truncate ${
+                        isLuxury ? 'text-gold' : notif.read_at ? 'text-muted' : 'text-ink'
                       }`}>
                         {notif.title}
                       </p>
@@ -314,11 +281,15 @@ export default function NotificationsPage() {
                         <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
                       )}
                     </div>
-                    <p className={`text-xs ${isExpanded ? '' : 'truncate'} ${notif.read_at ? 'text-muted/60' : 'text-muted'}`}>
-                      {notif.body}
-                    </p>
-                    {isExpanded && hasRoute && (
-                      <p className="text-xs text-gold mt-2 font-medium">Tap again to view →</p>
+                    {isExpanded ? (
+                      <>
+                        <p className="text-xs text-muted">{notif.body}</p>
+                        {hasRoute && (
+                          <p className="text-xs text-gold mt-2 font-medium">Tap again to view →</p>
+                        )}
+                      </>
+                    ) : (
+                      <p className="text-xs text-gold/70 italic">Tap to view</p>
                     )}
                   </button>
                 </SwipeToDismiss>
