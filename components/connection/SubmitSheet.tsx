@@ -427,7 +427,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
                 onClick={() => {
                   onSubmit(submitResult);
                 }}
-                className="btn-primary flex-1 py-2.5 text-xs font-semibold whitespace-nowrap"
+                className="btn-primary flex-1 min-w-0 !px-3 py-2.5 text-xs font-semibold whitespace-nowrap"
               >
                 Next Task{remainingTasksToday > 0 ? ` (${remainingTasksToday} left)` : ''}
               </button>
@@ -437,7 +437,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
                 onSubmit(submitResult);
                 router.push('/discover');
               }}
-              className={`whitespace-nowrap ${mode === 'special' || isLastTaskToday ? 'btn-primary flex-1 py-2.5 text-xs font-semibold' : 'btn-secondary flex-1 py-2.5 text-xs font-medium'}`}
+              className={`whitespace-nowrap flex-1 min-w-0 !px-3 ${mode === 'special' || isLastTaskToday ? 'btn-primary py-2.5 text-xs font-semibold' : 'btn-secondary py-2.5 text-xs font-medium'}`}
             >
               Explore More
             </button>
@@ -447,10 +447,16 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
     );
   }
 
+  // This sheet is a fixed-position overlay, not one of the app's
+  // .min-h-dvh screens, so it doesn't get the global --kb-inset handling
+  // in globals.css -- without this, the keyboard (native resize is
+  // disabled app-wide, see capacitor.config.ts) covered the text input at
+  // the bottom of the sheet on every question.
   return (
     <div className="fixed inset-0 z-[60] flex items-end justify-center" style={{ background: 'rgba(0,0,0,0.5)' }}>
       <div
         className="w-full max-w-app rounded-t-none p-5 pb-8 animate-slide-up bg-[#000000]"
+        style={{ marginBottom: 'var(--kb-inset, 0px)', transition: 'margin-bottom 200ms ease-out' }}
       >
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">

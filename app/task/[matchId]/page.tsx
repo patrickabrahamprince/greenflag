@@ -612,19 +612,19 @@ export default function TaskPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => { setSpecialType('text'); setShowSpecialPicker(true); }}
-                className="flex-1 btn-secondary text-xs py-2 flex items-center justify-center gap-1.5"
+                className="flex-1 min-w-0 btn-secondary !px-2 text-xs py-2 flex items-center justify-center gap-1.5"
               >
                 <TypeIcon className="w-3.5 h-3.5" /> Note
               </button>
               <button
                 onClick={() => { setSpecialType('photo'); setShowSpecialPicker(true); }}
-                className="flex-1 btn-secondary text-xs py-2 flex items-center justify-center gap-1.5"
+                className="flex-1 min-w-0 btn-secondary !px-2 text-xs py-2 flex items-center justify-center gap-1.5"
               >
                 <Camera className="w-3.5 h-3.5" /> Photo
               </button>
               <button
                 onClick={() => { setSpecialType('voice'); setShowSpecialPicker(true); }}
-                className="flex-1 btn-secondary text-xs py-2 flex items-center justify-center gap-1.5"
+                className="flex-1 min-w-0 btn-secondary !px-2 text-xs py-2 flex items-center justify-center gap-1.5"
               >
                 <Mic className="w-3.5 h-3.5" /> Voice
               </button>
