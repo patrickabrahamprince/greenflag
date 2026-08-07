@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Capacitor } from '@capacitor/core';
+import { App } from '@capacitor/app';
 import { BiometricAuth } from '@aparajita/capacitor-biometric-auth';
 import { ShieldCheck, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -43,6 +44,7 @@ export function AppLockGate() {
   const authenticatingRef = useRef(false);
   const lastAttemptEndedAtRef = useRef(0);
   const AUTH_COOLDOWN_MS = 1500;
+  const biometryAvailableRef = useRef(false);
 
   const attemptUnlock = useCallback(async () => {
     if (authenticatingRef.current) return;
@@ -98,7 +100,9 @@ export function AppLockGate() {
     if (!Capacitor.isNativePlatform() || !hasUser) return;
     let cancelled = false;
     BiometricAuth.checkBiometry().then((result) => {
-      if (cancelled || !result.isAvailable || !canAttempt()) return;
+      if (cancelled) return;
+      biometryAvailableRef.current = result.isAvailable;
+      if (!result.isAvailable || !canAttempt()) return;
       setLocked(true);
       attemptUnlock();
     });
@@ -107,26 +111,30 @@ export function AppLockGate() {
     };
   }, [hasUser, attemptUnlock, canAttempt]);
 
-  // Separately, re-lock on every return from the background -- this one
-  // really can rely on a ref since it fires long after mount, well past
-  // any session-restore race.
+  // Separately, re-lock whenever the app genuinely returns from the
+  // background -- deliberately NOT using the biometric plugin's own
+  // addResumeListener here. That helper is built on @capacitor/app's
+  // `appStateChange` event, which (confirmed in @capacitor/app's own iOS
+  // source) fires off UIApplication's didBecomeActive/willResignActive --
+  // the same pair iOS fires for ANY transient system sheet, not just real
+  // backgrounding: Face ID's own prompt, the native Google/Apple sign-in
+  // account picker, permission dialogs, Razorpay's checkout sheet. Every
+  // one of those was re-triggering this lock. @capacitor/app's `resume`
+  // event is wired to willEnterForegroundNotification instead, which iOS
+  // only fires on an actual return from the background.
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
 
     let resumeHandle: { remove: () => void } | undefined;
     let mounted = true;
 
-    // addResumeListener requires checkBiometry() to have been called at
-    // least once first, per the plugin's own contract.
-    BiometricAuth.checkBiometry().then(() => {
-      BiometricAuth.addResumeListener((info) => {
-        if (!info.isAvailable || !hasUserRef.current || !canAttempt()) return;
-        setLocked(true);
-        attemptUnlock();
-      }).then((handle) => {
-        if (mounted) resumeHandle = handle;
-        else handle.remove();
-      });
+    App.addListener('resume', () => {
+      if (!biometryAvailableRef.current || !hasUserRef.current || !canAttempt()) return;
+      setLocked(true);
+      attemptUnlock();
+    }).then((handle) => {
+      if (mounted) resumeHandle = handle;
+      else handle.remove();
     });
 
     return () => {

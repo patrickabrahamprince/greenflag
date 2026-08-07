@@ -2,6 +2,8 @@
 
 import { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { App } from '@capacitor/app';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useCoinStore } from '@/lib/store';
 import { clearCache } from '@/lib/pageCache';
@@ -63,7 +65,34 @@ export function Providers({ children }: { children: React.ReactNode }) {
       }
     );
 
-    return () => subscription.unsubscribe();
+    // Supabase's autoRefreshToken relies on a JS setTimeout scheduled
+    // relative to the access token's expiry -- WKWebView suspends JS
+    // timers while the app is backgrounded, so that timer silently never
+    // fires, and the in-memory session is already stale by the time the
+    // app resumes. Nothing was re-triggering a refresh on resume, so
+    // every page's own getUser() check would then fail and bounce to
+    // /login -- and since native Google sign-in always forces the
+    // interactive account picker rather than silently restoring (see
+    // forcePrompt in lib/native/socialLogin.ts), that looked exactly like
+    // being asked to sign in with Google again rather than what it
+    // actually was: a session that quietly expired while backgrounded.
+    let listenerHandles: { remove: () => void }[] = [];
+    let mounted = true;
+    if (Capacitor.isNativePlatform()) {
+      Promise.all([
+        App.addListener('resume', () => { supabase.auth.startAutoRefresh(); }),
+        App.addListener('pause', () => { supabase.auth.stopAutoRefresh(); }),
+      ]).then((handles) => {
+        if (mounted) listenerHandles = handles;
+        else handles.forEach((h) => h.remove());
+      });
+    }
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+      listenerHandles.forEach((h) => h.remove());
+    };
   }, []);
 
   return (
