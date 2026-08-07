@@ -99,6 +99,12 @@ export default function DiscoverPage() {
 
   useEffect(() => {
     let cancelled = false
+    // Neither call below normally rejects (the Supabase client resolves
+    // with an { error } field rather than throwing for ordinary query
+    // failures), but a real connectivity drop during the request can still
+    // reject the promise -- without a .catch() here, that left the page
+    // stuck on the loading logo forever since nothing else ever sets
+    // checkingAccess back to false.
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) { if (!cancelled) setCheckingAccess(false); return }
       supabase.from('profiles').select('persona').eq('id', user.id).single().then(({ data }) => {
@@ -129,8 +135,8 @@ export default function DiscoverPage() {
         } else {
           setCheckingAccess(false)
         }
-      })
-    })
+      }, () => { if (!cancelled) setCheckingAccess(false) })
+    }).catch(() => { if (!cancelled) setCheckingAccess(false) })
     return () => { cancelled = true }
   }, [])
 
