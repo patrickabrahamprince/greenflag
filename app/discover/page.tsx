@@ -69,6 +69,10 @@ export default function DiscoverPage() {
   const [nudgingId, setNudgingId] = useState<string | null>(null)
   const [nudgeDialog, setNudgeDialog] = useState<{ visible: boolean; charged: boolean; cost: number } | null>(null)
   const [nudgeConfirm, setNudgeConfirm] = useState<{ profileId: string; cost: number } | null>(null)
+  // Which photo each card's carousel is currently showing, keyed by profile
+  // id -- a single Record instead of per-card useState, since hooks can't
+  // be called inside the profiles.map() below.
+  const [cardPhotoIdx, setCardPhotoIdx] = useState<Record<string, number>>({})
   const coinBalance = useCoinStore((s) => s.balance)
   const deductCoins = useCoinStore((s) => s.deduct)
   const router = useRouter()
@@ -77,6 +81,7 @@ export default function DiscoverPage() {
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const touchStartY = useRef<number | null>(null)
+  const cardTouchStart = useRef<Record<string, { x: number; y: number }>>({})
   const pulling = useRef(false)
 
   const observer = useRef<IntersectionObserver>()
@@ -413,90 +418,110 @@ export default function DiscoverPage() {
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
             className="snap-start snap-always h-[calc(100dvh-5rem)] w-full relative overflow-hidden animate-fade-in"
           >
-            <div className="absolute inset-0 grid grid-cols-3 gap-0 bg-black">
-              <div className="col-span-2 relative">
-                <img
-                  src={p.photos?.[0]}
-                  alt=""
-                  className="w-full h-full object-cover"
-                  onError={e => { e.currentTarget.src = '/placeholder-avatar.svg' }}
-                />
-                {typeof p.match_percentage === 'number' && (
-                  <div className="absolute top-12 left-3 z-10 flex flex-col items-start gap-1">
-                    <div className="glass-surface flex items-center gap-1.5 rounded-full px-3 py-1.5">
-                      <span className="text-gold text-xs">◆</span>
-                      <span className="font-display font-bold text-white text-sm whitespace-nowrap">
-                        {p.match_percentage}% Greenflag Alignment
-                      </span>
-                    </div>
-                    {persona === 'woman' && !!interestCounts[p.id] && (
-                      <span className="glass-surface rounded-full px-3 py-1 text-white/80 text-[11px] whitespace-nowrap">
-                        Intention from {interestCounts[p.id]} {interestCounts[p.id] === 1 ? 'person' : 'people'}
-                      </span>
+            <div className="absolute inset-0 bg-black">
+              {(() => {
+                const photos = (p.photos ?? []).filter(Boolean) as string[]
+                const total = photos.length
+                const idx = total > 0 ? ((cardPhotoIdx[p.id] ?? 0) % total + total) % total : 0
+                const src = photos[idx]
+                // Blur is a paywall cue for men unlocking a woman's card --
+                // a woman browsing men should always see clear photos. Only
+                // the first photo is ever shown clear; swiping to any later
+                // photo hits the paywall. Photo unlock (100 coins,
+                // /api/photo-unlock) is its own purchase, separate from
+                // Meet Her Standard -- once paid, photosUnlocked persists
+                // across visits.
+                const isPhotosUnlocked = persona === 'woman' || !!p.photosUnlocked || unlockedPhotoIds.has(p.id)
+                const isLocked = idx > 0 && !isPhotosUnlocked
+
+                const goTo = (nextIdx: number) => {
+                  if (total <= 1) return
+                  setCardPhotoIdx(prev => ({ ...prev, [p.id]: ((nextIdx % total) + total) % total }))
+                }
+
+                return (
+                  <div
+                    className="relative w-full h-full overflow-hidden"
+                    onTouchStart={(e) => {
+                      cardTouchStart.current[p.id] = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+                    }}
+                    onTouchEnd={(e) => {
+                      const start = cardTouchStart.current[p.id]
+                      delete cardTouchStart.current[p.id]
+                      if (!start) return
+                      const dx = e.changedTouches[0].clientX - start.x
+                      const dy = e.changedTouches[0].clientY - start.y
+                      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+                        goTo(idx + (dx > 0 ? -1 : 1))
+                      }
+                    }}
+                  >
+                    {src && failedPhotoUrls.has(src) ? (
+                      <div className="w-full h-full flex items-center justify-center bg-[#2A2A2C]">
+                        <ImageOff className="w-8 h-8 text-white/25" />
+                      </div>
+                    ) : (
+                      <img
+                        src={src}
+                        alt=""
+                        className={`w-full h-full object-cover ${isLocked ? 'blur scale-110' : ''}`}
+                        onError={() => src && setFailedPhotoUrls(prev => new Set(prev).add(src))}
+                      />
+                    )}
+
+                    {isLocked && (
+                      <button
+                        onClick={() => setPhotoUnlockConfirm(p.id)}
+                        aria-label="Unlock"
+                        className="glass-surface absolute inset-0 m-auto z-20 flex items-center justify-center gap-1.5 h-9 w-fit px-4 rounded-full active:scale-95 transition-all shadow-lg"
+                      >
+                        <Lock className="w-3.5 h-3.5 text-white shrink-0" />
+                        <span className="text-white text-xs uppercase tracking-wide font-display font-bold whitespace-nowrap">Unlock Photos</span>
+                      </button>
+                    )}
+
+                    {total > 1 && (
+                      <div className="absolute top-3 inset-x-3 z-10 flex gap-1">
+                        {photos.map((_, dotIdx) => (
+                          <div
+                            key={dotIdx}
+                            className={`flex-1 h-[3px] rounded-full transition-colors ${dotIdx === idx ? 'bg-white' : 'bg-white/30'}`}
+                          />
+                        ))}
+                      </div>
+                    )}
+
+                    {typeof p.match_percentage === 'number' && (
+                      <div className="absolute top-12 left-3 z-10 flex flex-col items-start gap-1">
+                        <div className="glass-surface flex items-center gap-1.5 rounded-full px-3 py-1.5">
+                          <span className="text-gold text-xs">◆</span>
+                          <span className="font-display font-bold text-white text-sm whitespace-nowrap">
+                            {p.match_percentage}% Greenflag Alignment
+                          </span>
+                        </div>
+                        {persona === 'woman' && !!interestCounts[p.id] && (
+                          <span className="glass-surface rounded-full px-3 py-1 text-white/80 text-[11px] whitespace-nowrap">
+                            Intention from {interestCounts[p.id]} {interestCounts[p.id] === 1 ? 'person' : 'people'}
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
-                )}
-              </div>
-              <div className="relative col-span-1 overflow-hidden -ml-3">
-                {(() => {
-                  const extraPhotos = [p.photos?.[1], p.photos?.[2]].filter(Boolean) as string[]
-                  // Blur is a paywall cue for men unlocking a woman's card --
-                  // a woman browsing men should always see clear photos.
-                  // Photo unlock (100 coins, /api/photo-unlock) is its own
-                  // purchase, separate from Meet Her Standard -- once paid,
-                  // photosUnlocked persists across visits.
-                  const isPhotosUnlocked = persona === 'woman' || !!p.photosUnlocked || unlockedPhotoIds.has(p.id)
-                  const photoClass = `w-full h-full object-cover ${isPhotosUnlocked ? '' : 'blur scale-110'}`
-                  const unlockButton = !isPhotosUnlocked && (
-                    <button
-                      onClick={() => setPhotoUnlockConfirm(p.id)}
-                      aria-label="Unlock"
-                      className="glass-surface absolute inset-0 m-auto z-20 flex items-center justify-center gap-1.5 h-8 w-fit px-3 rounded-full active:scale-95 transition-all shadow-lg"
-                    >
-                      <Lock className="w-3 h-3 text-white shrink-0" />
-                      <span className="text-white text-xs uppercase tracking-wide font-display font-bold whitespace-nowrap">Unlock</span>
-                    </button>
-                  )
-                  if (extraPhotos.length === 0) {
-                    return (
-                      <div className="relative w-full h-full">
-                        <img
-                          src={p.photos?.[0]}
-                          alt=""
-                          className={photoClass}
-                          onError={e => { e.currentTarget.style.display = 'none' }}
-                        />
-                        {unlockButton}
-                      </div>
-                    )
-                  }
-                  return (
-                    <div
-                      className="grid gap-px h-full"
-                      style={{ gridTemplateRows: `repeat(${extraPhotos.length}, 1fr)` }}
-                    >
-                      {extraPhotos.map((src, idx) => (
-                        <div key={idx} className="relative overflow-hidden bg-[#2A2A2C]">
-                          {failedPhotoUrls.has(src) ? (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <ImageOff className="w-5 h-5 text-white/25" />
-                            </div>
-                          ) : (
-                            <img
-                              src={src}
-                              alt=""
-                              className={photoClass}
-                              onError={() => setFailedPhotoUrls(prev => new Set(prev).add(src))}
-                            />
-                          )}
-                          {unlockButton}
-                        </div>
-                      ))}
-                    </div>
-                  )
-                })()}
-              </div>
+                )
+              })()}
             </div>
+
+            {/* Frosted layer directly over the photo, faded out via mask so
+                it only affects the lower portion where the info block sits
+                -- the gradient scrim right after handles the actual text
+                contrast/darkening on top of this blur. */}
+            <div
+              className="absolute inset-x-0 bottom-0 h-2/5 backdrop-blur-md pointer-events-none"
+              style={{
+                WebkitMaskImage: 'linear-gradient(to top, black 35%, transparent 100%)',
+                maskImage: 'linear-gradient(to top, black 35%, transparent 100%)',
+              }}
+            />
 
             {/* Bottom scrim: photo is full-bleed behind this, so the info
                 block needs a gradient underlay for the white text to stay
@@ -600,37 +625,32 @@ export default function DiscoverPage() {
                 </div>
               )}
 
-              <div className="flex items-center gap-4 pt-2 shrink-0">
+              <div className="flex items-center justify-center gap-5 pt-2 shrink-0">
                 {persona === 'woman' ? (
                   <>
-                    <button
-                      onClick={() => handleBegin(p.id)}
-                      disabled={likingId === p.id}
-                      aria-label="View Profile"
-                      className="btn-primary flex-1 h-14 flex items-center justify-center gap-2"
-                    >
-                      {likingId === p.id ? (
-                        <Loader2 className="w-5 h-5 animate-spin text-white" />
-                      ) : (
-                        <>
-                          <Heart className="w-5 h-5 text-white" />
-                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">View Profile</span>
-                        </>
-                      )}
-                    </button>
                     <button
                       onClick={() => handleNudge(p.id)}
                       disabled={nudgingId === p.id}
                       aria-label="Nudge"
-                      className="glass-surface flex-1 h-14 rounded-full flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
+                      className="glass-surface size-14 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-50 shrink-0"
                     >
                       {nudgingId === p.id ? (
                         <Loader2 className="w-5 h-5 animate-spin text-white" />
                       ) : (
-                        <>
-                          <Bell className="w-5 h-5 text-white" />
-                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">Nudge</span>
-                        </>
+                        <Bell className="w-6 h-6 text-white" />
+                      )}
+                    </button>
+                    <button
+                      onClick={() => handleBegin(p.id)}
+                      disabled={likingId === p.id}
+                      aria-label="View Profile"
+                      className="size-16 rounded-full flex items-center justify-center active:scale-[0.98] transition-all duration-300 ease-out disabled:opacity-50 shrink-0"
+                      style={{ background: 'linear-gradient(135deg, #E879F9 0%, #C026D3 45%, #86198F 100%)', boxShadow: '0 4px 20px -4px rgba(192, 38, 211, 0.45)' }}
+                    >
+                      {likingId === p.id ? (
+                        <Loader2 className="w-6 h-6 animate-spin text-white" />
+                      ) : (
+                        <Heart className="w-7 h-7 text-white" fill="white" />
                       )}
                     </button>
                   </>
@@ -646,16 +666,14 @@ export default function DiscoverPage() {
                     <button
                       onClick={() => setConfirmProfileId(p.id)}
                       disabled={likingId === p.id}
-                      aria-label="Like"
-                      className="btn-primary flex-1 h-14 flex items-center justify-center gap-2"
+                      aria-label="Meet Her Standard"
+                      className="size-16 rounded-full flex items-center justify-center active:scale-[0.98] transition-all duration-300 ease-out disabled:opacity-50 shrink-0"
+                      style={{ background: 'linear-gradient(135deg, #E879F9 0%, #C026D3 45%, #86198F 100%)', boxShadow: '0 4px 20px -4px rgba(192, 38, 211, 0.45)' }}
                     >
                       {likingId === p.id ? (
-                        <Loader2 className="w-5 h-5 animate-spin text-white" />
+                        <Loader2 className="w-6 h-6 animate-spin text-white" />
                       ) : (
-                        <>
-                          <Heart className="w-5 h-5 text-white" />
-                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">Meet Her Standard</span>
-                        </>
+                        <Heart className="w-7 h-7 text-white" fill="white" />
                       )}
                     </button>
                   </>
