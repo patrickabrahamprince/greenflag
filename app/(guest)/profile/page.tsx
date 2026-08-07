@@ -77,7 +77,7 @@ export default function ProfilePage() {
       </div>
 
       <div className="relative w-full aspect-[3/4] mb-5 rounded-3xl overflow-hidden shadow-[0_20px_60px_-20px_rgba(192,38,211,0.35)]">
-        <ProfileImageCarousel images={user.photos ?? []} />
+        <ProfileImageCarousel images={user.photos ?? []} disableLightbox />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent pointer-events-none" />
         {user.phone_verified && (
           <div className="absolute top-3 left-3 flex items-center gap-1 bg-black/50 backdrop-blur-md rounded-full pl-1.5 pr-2.5 py-1 animate-fade-in">
@@ -112,7 +112,7 @@ export default function ProfilePage() {
         </div>
 
         {user.bio && (
-          <div className="mt-5 w-full rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+          <div className="mt-5 w-full rounded-xl border border-white/10 bg-white/[0.03] p-6">
             <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1.5">About</p>
             <p className={
               user.persona === 'woman'
@@ -147,7 +147,7 @@ export default function ProfilePage() {
           itself until now. */}
       {user.teaser_prompt && user.teaser_answer && (
         <div
-          className="mx-4 mb-6 rounded-2xl border border-gold/20 p-5 shadow-[0_12px_32px_-16px_rgba(192,38,211,0.4)]"
+          className="mb-6 rounded-xl border border-gold/20 p-6 shadow-[0_12px_32px_-16px_rgba(192,38,211,0.4)]"
           style={{ background: 'linear-gradient(135deg, rgba(192,38,211,0.1) 0%, rgba(28,28,30,0.9) 60%)' }}
         >
           <p className="text-[10px] uppercase tracking-widest text-gold/70 mb-2">{user.teaser_prompt}</p>
