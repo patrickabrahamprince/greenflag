@@ -62,8 +62,6 @@ export default function DiscoverPage() {
   // starts true so neither cached nor freshly-fetched cards can flash
   // before that's settled.
   const [checkingAccess, setCheckingAccess] = useState(true)
-  const [pullDistance, setPullDistance] = useState(0)
-  const [refreshing, setRefreshing] = useState(false)
   const [interestCounts, setInterestCounts] = useState<Record<string, number>>({})
   const [expandedBios, setExpandedBios] = useState<Set<string>>(new Set())
   const [nudgingId, setNudgingId] = useState<string | null>(null)
@@ -80,8 +78,6 @@ export default function DiscoverPage() {
   const { show: showSwipeHint, dismiss: dismissSwipeHint } = useFirstTimeHint('discover-swipe-up')
 
   const scrollRef = useRef<HTMLDivElement>(null)
-  const touchStartY = useRef<number | null>(null)
-  const pulling = useRef(false)
   const cardTouchStart = useRef<Record<string, { x: number; y: number }>>({})
 
   const observer = useRef<IntersectionObserver>()
@@ -253,31 +249,7 @@ export default function DiscoverPage() {
     }
   }
 
-  async function handleRefresh() {
-    setRefreshing(true)
-    fetchedForPage.current.clear()
-    setHasMore(true)
-    try {
-      const res = await fetch('/api/discover')
-      const json = await res.json()
-      const data = (json.profiles ?? []).filter((p: DiscoverProfile) => (p.photos?.length ?? 0) > 0)
-      const stillHasMore = data.length >= 3
-      if (!stillHasMore) setHasMore(false)
-      setCached(HAS_MORE_CACHE_KEY, stillHasMore)
-      setProfiles(data)
-      setCached(PROFILES_CACHE_KEY, data)
-      setPage(0)
-      fetchedForPage.current.add(0)
-      scrollRef.current?.scrollTo({ top: 0 })
-    } catch {
-      toast.error('Failed to refresh')
-    } finally {
-      setRefreshing(false)
-      setPullDistance(0)
-    }
-  }
-
-  function onTouchStart(e: React.TouchEvent) {
+  function onTouchStart() {
     // Dismissing here (gesture start, before any scrolling happens) instead
     // of via onScroll matters: onScroll fires dozens of times through an
     // active swipe, and on the very first swipe (before the hint's state
@@ -286,39 +258,14 @@ export default function DiscoverPage() {
     // progress -- WebKit is known to abort/stick scroll-snap when DOM
     // inside the scrolling container mutates mid-gesture.
     dismissSwipeHint()
-    if ((scrollRef.current?.scrollTop ?? 0) > 0) return
-    touchStartY.current = e.touches[0].clientY
-    pulling.current = true
-  }
-
-  function onTouchMove(e: React.TouchEvent) {
-    if (!pulling.current || touchStartY.current === null) return
-    const delta = e.touches[0].clientY - touchStartY.current
-    if (delta > 0 && (scrollRef.current?.scrollTop ?? 0) === 0) {
-      setPullDistance(Math.min(delta * 0.5, 90))
-    } else {
-      pulling.current = false
-    }
-  }
-
-  function onTouchEnd() {
-    if (!pulling.current) return
-    pulling.current = false
-    touchStartY.current = null
-    if (pullDistance > 60) {
-      handleRefresh()
-    } else {
-      setPullDistance(0)
-    }
   }
 
   function scrollToNext(index: number) {
     const container = scrollRef.current
     if (!container) return
-    // children[0] is the pull-to-refresh loader div, so profile cards
-    // start at children[1] -- index i's card lives at children[i + 1],
-    // making the *next* card children[i + 2].
-    const next = container.children[index + 2] as HTMLElement | undefined
+    // Profile cards are children[0], children[1], ... -- the *next* card
+    // after index i is children[i + 1].
+    const next = container.children[index + 1] as HTMLElement | undefined
     next?.scrollIntoView({ behavior: 'smooth' })
   }
 
@@ -415,17 +362,9 @@ export default function DiscoverPage() {
       <div
         ref={scrollRef}
         onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
         className="snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth h-[calc(100dvh-5rem)] scrollbar-hide"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        <div
-          className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
-          style={{ height: pullDistance }}
-        >
-          <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
-        </div>
         {profiles.map((p, i) => (
           <div
             key={p.id}
