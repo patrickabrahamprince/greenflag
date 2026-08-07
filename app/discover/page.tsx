@@ -442,9 +442,10 @@ export default function DiscoverPage() {
 
                 return (
                   <div className="relative w-full h-full overflow-hidden">
-                    {src && failedPhotoUrls.has(src) ? (
-                      <div className="w-full h-full flex items-center justify-center bg-[#2A2A2C]">
-                        <ImageOff className="w-8 h-8 text-white/25" />
+                    {!src || failedPhotoUrls.has(src) ? (
+                      <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-[#2A2A2C]">
+                        <ImageOff className="w-9 h-9 text-white/25" />
+                        <span className="text-white/30 text-xs font-medium">No photo available</span>
                       </div>
                     ) : (
                       <img
