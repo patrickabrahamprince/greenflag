@@ -12,6 +12,9 @@ import { useCoinStore } from '@/lib/store'
 import { hapticDecision, hapticSuccess } from '@/lib/haptics'
 import { DiscoverySkeleton } from '@/components/discovery/DiscoverySkeleton'
 import { getCached, setCached } from '@/lib/pageCache'
+import { useFirstTimeHint } from '@/lib/hooks/useFirstTimeHint'
+import { FirstTimeHint } from '@/components/shared/FirstTimeHint'
+import { ChevronUp } from 'lucide-react'
 
 const PROFILES_CACHE_KEY = 'discover:profiles'
 const HAS_MORE_CACHE_KEY = 'discover:hasMore'
@@ -64,6 +67,7 @@ export default function DiscoverPage() {
   const deductCoins = useCoinStore((s) => s.deduct)
   const router = useRouter()
   const supabase = createClient()
+  const { show: showSwipeHint, dismiss: dismissSwipeHint } = useFirstTimeHint('discover-swipe-up')
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const touchStartY = useRef<number | null>(null)
@@ -386,6 +390,7 @@ export default function DiscoverPage() {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
+        onScroll={dismissSwipeHint}
         className="snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth h-[calc(100dvh-5rem)] scrollbar-hide"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
@@ -541,6 +546,25 @@ export default function DiscoverPage() {
                   );
                 })}
               </div>
+              {(() => {
+                const lookingFor = (p.interests_looking_for?.length ? p.interests_looking_for : p.looking_for_interests ?? []).slice(0, 4)
+                if (lookingFor.length === 0) return null
+                return (
+                  <div>
+                    <p className="text-ink/40 text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">Values</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {lookingFor.map((interest: string) => (
+                        <span
+                          key={interest}
+                          className="px-2.5 py-1 text-xs rounded-full border border-white/20 text-ink/70 font-medium leading-none"
+                        >
+                          {interest}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })()}
               {p.bio && (
                 <div>
                   <p className="text-gold text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">The Standard</p>
@@ -753,6 +777,16 @@ export default function DiscoverPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {profiles.length > 0 && (
+        <FirstTimeHint
+          show={showSwipeHint}
+          icon={<ChevronUp className="w-4 h-4 text-gold" />}
+          text="Swipe up to see the next profile"
+          onDismiss={dismissSwipeHint}
+          position="bottom"
+        />
       )}
     </div>
   )

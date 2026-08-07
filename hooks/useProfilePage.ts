@@ -15,7 +15,6 @@ export function useProfilePage(id: string | string[]) {
   const [isOwn, setIsOwn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
-  const [photoIdx, setPhotoIdx] = useState(0);
   const [showReport, setShowReport] = useState(false);
   const [reportReason, setReportReason] = useState('');
   const [reportDetails, setReportDetails] = useState('');
@@ -138,8 +137,6 @@ export function useProfilePage(id: string | string[]) {
     isOwn,
     loading,
     connecting,
-    photoIdx,
-    setPhotoIdx,
     showReport,
     setShowReport,
     reportReason,

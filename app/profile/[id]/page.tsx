@@ -16,7 +16,7 @@ export default function ViewProfilePage() {
   const params = useParams();
   const {
     user, profile, match, connection, isOwn, loading, connecting,
-    photoIdx, setPhotoIdx, showReport, setShowReport,
+    showReport, setShowReport,
     reportReason, setReportReason, reportDetails, setReportDetails,
     submittingReport, showBlockConfirm, setShowBlockConfirm, blocking,
     handleMeet, handleReport, handleBlock, refetch, router,
@@ -37,7 +37,6 @@ export default function ViewProfilePage() {
   if (!profile) return null;
 
   const photos = profile.photos || [];
-  const photo = photos[photoIdx] || '';
 
   return (
     <div
@@ -54,15 +53,12 @@ export default function ViewProfilePage() {
         <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
       </div>
       <ProfileHeroSection
-        photo={photo}
         name={profile.name}
         photos={photos}
-        photoIdx={photoIdx}
         isOwn={isOwn}
         onBack={() => router.back()}
         onReport={() => setShowReport(true)}
         onBlock={() => setShowBlockConfirm(true)}
-        onPhotoSelect={setPhotoIdx}
       />
       <ProfileInfo
         name={profile.name}

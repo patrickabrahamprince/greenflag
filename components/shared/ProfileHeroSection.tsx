@@ -4,22 +4,17 @@ import { ArrowLeft, Flag, UserX } from 'lucide-react';
 import { ProfileImageCarousel } from './ProfileImageCarousel';
 
 interface ProfileHeroSectionProps {
-  photo: string;
   name: string;
   photos: string[];
-  photoIdx: number;
   isOwn: boolean;
   onBack: () => void;
   onReport: () => void;
   onBlock: () => void;
-  onPhotoSelect: (idx: number) => void;
 }
 
 export function ProfileHeroSection({
-  photo,
   name,
   photos,
-  photoIdx,
   isOwn,
   onBack,
   onReport,

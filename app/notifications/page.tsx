@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bell, Loader2, Pin } from 'lucide-react';
+import { Bell, Loader2, Pin, ArrowLeftRight } from 'lucide-react';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { createClient } from '@/lib/supabase/client';
 import { SwipeToDismiss } from '@/components/shared/SwipeToDismiss';
 import { getCached, setCached } from '@/lib/pageCache';
 import { useNotificationStore } from '@/lib/store';
 import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
+import { useFirstTimeHint } from '@/lib/hooks/useFirstTimeHint';
+import { FirstTimeHint } from '@/components/shared/FirstTimeHint';
 import toast from 'react-hot-toast';
 
 const NOTIFICATIONS_CACHE_KEY = 'notifications:list';
@@ -94,6 +96,7 @@ export default function NotificationsPage() {
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const setUnreadCount = useNotificationStore((s) => s.setUnreadCount);
   const decrementUnread = useNotificationStore((s) => s.decrement);
+  const { show: showSwipeHint, dismiss: dismissSwipeHint } = useFirstTimeHint('notifications-swipe');
 
   const loadNotifications = async (userId: string) => {
     const { data } = await supabase
@@ -265,6 +268,7 @@ export default function NotificationsPage() {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
+        onTouchStartCapture={dismissSwipeHint}
         onClick={() => setExpandedIds(new Set())}
         className="flex-1 overflow-y-auto overscroll-none max-w-app mx-auto w-full px-6 pb-24"
       >
@@ -334,6 +338,16 @@ export default function NotificationsPage() {
           </div>
         )}
       </div>
+
+      {notifications.length > 0 && (
+        <FirstTimeHint
+          show={showSwipeHint}
+          icon={<ArrowLeftRight className="w-4 h-4 text-gold" />}
+          text="Swipe to pin or delete"
+          onDismiss={dismissSwipeHint}
+          position="bottom"
+        />
+      )}
     </div>
   );
 }

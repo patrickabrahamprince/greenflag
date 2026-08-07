@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
 import { uploadFile, deleteFile } from '@/lib/supabase/storage';
+import { compressImage } from '@/lib/compressImage';
 
 const CITIES = [
   'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad',
@@ -58,10 +59,15 @@ export default function EditProfilePage() {
       return;
     }
 
-    const fileExt = file.name.split('.').pop() || 'jpg';
-    const path = `${authUser.id}/${idx}.${fileExt}`;
+    // Same 3:4 center-crop + downscale every other upload path in the app
+    // goes through (onboarding, task submissions) -- without it, a photo
+    // replaced here kept its original aspect ratio while everything
+    // uploaded during onboarding was already cropped consistently, so
+    // edited photos stood out as a different shape/zoom next to the rest.
+    const compressed = await compressImage(file);
+    const path = `${authUser.id}/${idx}.jpg`;
 
-    const { url, error } = await uploadFile('profile-photos', path, file);
+    const { url, error } = await uploadFile('profile-photos', path, compressed);
 
     if (error) {
       toast.error('Upload failed: ' + error);
