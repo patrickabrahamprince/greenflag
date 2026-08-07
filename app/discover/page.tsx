@@ -381,16 +381,21 @@ export default function DiscoverPage() {
   }
 
   return (
-    <div className="relative screen-gradient h-[calc(100dvh-5rem)] max-w-app mx-auto flex flex-col">
-      <div className="relative z-20 shrink-0 flex items-center justify-end px-3 pt-safe-top pb-2.5 bg-[#0B0614] border-b border-white/[0.06] shadow-[0_4px_16px_-4px_rgba(0,0,0,0.5)]">
-        {persona === 'woman' ? (
-          <div className="glass-surface border-0 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-display font-semibold text-ink/70">
-            <span className="text-gold text-[10px]">◆</span>
-            {coinBalance}
-          </div>
-        ) : (
-          <CoinBadge />
-        )}
+    <div className="relative screen-gradient min-h-dvh max-w-app mx-auto">
+      <div
+        className="relative z-20 bg-[#0B0614] border-b border-white/[0.06] shadow-[0_4px_16px_-4px_rgba(0,0,0,0.5)]"
+        style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+      >
+        <div className="h-12 flex items-center justify-end px-3">
+          {persona === 'woman' ? (
+            <div className="glass-surface border-0 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-display font-semibold text-ink/70">
+              <span className="text-gold text-[10px]">◆</span>
+              {coinBalance}
+            </div>
+          ) : (
+            <CoinBadge />
+          )}
+        </div>
       </div>
 
       <div
@@ -399,8 +404,11 @@ export default function DiscoverPage() {
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
         onScroll={dismissSwipeHint}
-        className="flex-1 min-h-0 snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth scrollbar-hide"
-        style={{ WebkitOverflowScrolling: 'touch' }}
+        className="snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth scrollbar-hide"
+        style={{
+          WebkitOverflowScrolling: 'touch',
+          height: 'calc(100dvh - 5rem - env(safe-area-inset-top, 0px) - 49px)',
+        }}
       >
         <div
           className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
