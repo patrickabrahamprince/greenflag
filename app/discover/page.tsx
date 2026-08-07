@@ -711,7 +711,14 @@ export default function DiscoverPage() {
             <Loader2 className="animate-spin text-gold" size={32} />
           </div>
         )}
-        {!pageLoading && profiles.length === 0 && (
+        {/* Was gated on profiles.length === 0, so once you'd loaded any
+            profiles at all there was nothing rendered after the last real
+            card -- no snap target to land on and, with overscroll disabled,
+            nothing to bounce you back either. Swiping past the last card
+            just left the view stuck in dead overscrolled space. Gating on
+            !hasMore instead means there's always a final snap target,
+            whether the list started empty or you scrolled to the end of it. */}
+        {!pageLoading && !hasMore && (
           <div className="snap-start min-h-[calc(100dvh-5rem)] flex flex-col items-center justify-center px-8 text-center animate-fade-in">
             <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5">
               <Heart className="w-6 h-6 text-gold" />
