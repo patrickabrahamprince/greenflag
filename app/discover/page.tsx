@@ -51,6 +51,12 @@ export default function DiscoverPage() {
   const [photoUnlockConfirm, setPhotoUnlockConfirm] = useState<string | null>(null)
   const [unlockingPhotoId, setUnlockingPhotoId] = useState<string | null>(null)
   const [unlockedPhotoIds, setUnlockedPhotoIds] = useState<Set<string>>(new Set())
+  // Placeholder-avatar.svg is a near-black icon on a near-black card --
+  // swapping a failed side-photo's src to it just produced an
+  // indistinguishable-from-broken dark rectangle. Tracking failed URLs and
+  // dropping them from the grid instead lets the surviving photo expand to
+  // fill the space, same as if that slot never existed.
+  const [failedPhotoUrls, setFailedPhotoUrls] = useState<Set<string>>(new Set())
   // Gates both the real feed fetch and its render until we know whether
   // this visit is about to redirect elsewhere (see the effect below) --
   // starts true so neither cached nor freshly-fetched cards can flash
@@ -433,7 +439,9 @@ export default function DiscoverPage() {
               </div>
               <div className="relative col-span-1 overflow-hidden -ml-3">
                 {(() => {
-                  const extraPhotos = [p.photos?.[1], p.photos?.[2]].filter(Boolean) as string[]
+                  const extraPhotos = [p.photos?.[1], p.photos?.[2]]
+                    .filter(Boolean)
+                    .filter((url) => !failedPhotoUrls.has(url as string)) as string[]
                   // Blur is a paywall cue for men unlocking a woman's card --
                   // a woman browsing men should always see clear photos.
                   // Photo unlock (100 coins, /api/photo-unlock) is its own
@@ -475,7 +483,7 @@ export default function DiscoverPage() {
                             src={src}
                             alt=""
                             className={photoClass}
-                            onError={e => { e.currentTarget.src = '/placeholder-avatar.svg' }}
+                            onError={() => setFailedPhotoUrls(prev => new Set(prev).add(src))}
                           />
                           {unlockButton}
                         </div>
