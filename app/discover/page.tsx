@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell, ImageOff } from 'lucide-react'
+import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell, ImageOff, ChevronLeft, ChevronRight } from 'lucide-react'
 import { LoadingLogo } from '@/components/shared/LoadingLogo'
 import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
@@ -491,6 +491,25 @@ export default function DiscoverPage() {
                       </div>
                     )}
 
+                    {total > 1 && (
+                      <>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); goTo(idx - 1) }}
+                          aria-label="Previous photo"
+                          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center"
+                        >
+                          <ChevronLeft className="w-5 h-5 text-white" />
+                        </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); goTo(idx + 1) }}
+                          aria-label="Next photo"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center"
+                        >
+                          <ChevronRight className="w-5 h-5 text-white" />
+                        </button>
+                      </>
+                    )}
+
                     {typeof p.match_percentage === 'number' && (
                       <div className="absolute top-12 left-3 z-10 flex flex-col items-start gap-1">
                         <div className="glass-surface flex items-center gap-1.5 rounded-full px-3 py-1.5">
@@ -625,32 +644,37 @@ export default function DiscoverPage() {
                 </div>
               )}
 
-              <div className="flex items-center justify-center gap-5 pt-2 shrink-0">
+              <div className={persona === 'woman' ? 'flex items-center gap-4 pt-2 shrink-0' : 'flex items-center justify-center gap-5 pt-2 shrink-0'}>
                 {persona === 'woman' ? (
                   <>
-                    <button
-                      onClick={() => handleNudge(p.id)}
-                      disabled={nudgingId === p.id}
-                      aria-label="Nudge"
-                      className="glass-surface size-14 rounded-full flex items-center justify-center active:scale-95 transition-all disabled:opacity-50 shrink-0"
-                    >
-                      {nudgingId === p.id ? (
-                        <Loader2 className="w-5 h-5 animate-spin text-white" />
-                      ) : (
-                        <Bell className="w-6 h-6 text-white" />
-                      )}
-                    </button>
                     <button
                       onClick={() => handleBegin(p.id)}
                       disabled={likingId === p.id}
                       aria-label="View Profile"
-                      className="size-16 rounded-full flex items-center justify-center active:scale-[0.98] transition-all duration-300 ease-out disabled:opacity-50 shrink-0"
-                      style={{ background: 'linear-gradient(135deg, #E879F9 0%, #C026D3 45%, #86198F 100%)', boxShadow: '0 4px 20px -4px rgba(192, 38, 211, 0.45)' }}
+                      className="btn-primary flex-1 h-14 flex items-center justify-center gap-2"
                     >
                       {likingId === p.id ? (
-                        <Loader2 className="w-6 h-6 animate-spin text-white" />
+                        <Loader2 className="w-5 h-5 animate-spin text-white" />
                       ) : (
-                        <Heart className="w-7 h-7 text-white" fill="white" />
+                        <>
+                          <Heart className="w-5 h-5 text-white" />
+                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">View Profile</span>
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => handleNudge(p.id)}
+                      disabled={nudgingId === p.id}
+                      aria-label="Nudge"
+                      className="glass-surface flex-1 h-14 rounded-full flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
+                    >
+                      {nudgingId === p.id ? (
+                        <Loader2 className="w-5 h-5 animate-spin text-white" />
+                      ) : (
+                        <>
+                          <Bell className="w-5 h-5 text-white" />
+                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">Nudge</span>
+                        </>
                       )}
                     </button>
                   </>
