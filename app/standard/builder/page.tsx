@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 import { hapticSuccess } from '@/lib/haptics';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
+import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 
 type IntentionType = 'text' | 'photo' | 'voice';
 
@@ -145,6 +146,55 @@ export default function StandardBuilderPage() {
   const [showDayDialog, setShowDayDialog] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
 
+  const load = async () => {
+    try {
+      const res = await fetch('/api/standards/standard-builder');
+      if (res.status === 401) {
+        router.replace('/login');
+        return;
+      }
+      const data = await res.json();
+
+      if (data.redirect) {
+        router.replace(data.redirect);
+        return;
+      }
+
+      if (Array.isArray(data.intentions) && data.intentions.length > 0) {
+        type SavedIntention = { day_number: number; task_number: number; type: IntentionType; prompt: string };
+        const byDayTask = new Map(
+          (data.intentions as SavedIntention[]).map((i) => [`${i.day_number}-${i.task_number}`, i])
+        );
+        const restoredSlots = [1, 2, 3].map((dayNumber) => ({
+          dayNumber,
+          tasks: TASK_META.map((m) => {
+            const existing = byDayTask.get(`${dayNumber}-${m.taskNumber}`);
+            return { taskNumber: m.taskNumber, type: m.type, prompt: existing?.prompt ?? '' };
+          }),
+        }));
+        setSlots(restoredSlots);
+
+        // Draft-saved progress was being restored into `slots` correctly,
+        // but `step`/`showIntro` stayed at their defaults regardless --
+        // someone who'd already finished Day 1 (and drafted into Day 2)
+        // was dropped back at the intro screen and Day 1's form every
+        // time, forced to re-click through days she'd already completed.
+        const firstIncompleteIdx = restoredSlots.findIndex((s) =>
+          s.tasks.some((t) => !t.prompt.trim())
+        );
+        const hasAnyProgress = restoredSlots.some((s) => s.tasks.some((t) => t.prompt.trim()));
+        if (hasAnyProgress) {
+          setShowIntro(false);
+          setStep(firstIncompleteIdx === -1 ? 2 : firstIncompleteIdx);
+        }
+      }
+    } catch {
+      toast.error('Failed to load your Standard.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!currentUser) return;
 
@@ -153,57 +203,11 @@ export default function StandardBuilderPage() {
       return;
     }
 
-    const load = async () => {
-      try {
-        const res = await fetch('/api/standards/standard-builder');
-        if (res.status === 401) {
-          router.replace('/login');
-          return;
-        }
-        const data = await res.json();
-
-        if (data.redirect) {
-          router.replace(data.redirect);
-          return;
-        }
-
-        if (Array.isArray(data.intentions) && data.intentions.length > 0) {
-          type SavedIntention = { day_number: number; task_number: number; type: IntentionType; prompt: string };
-          const byDayTask = new Map(
-            (data.intentions as SavedIntention[]).map((i) => [`${i.day_number}-${i.task_number}`, i])
-          );
-          const restoredSlots = [1, 2, 3].map((dayNumber) => ({
-            dayNumber,
-            tasks: TASK_META.map((m) => {
-              const existing = byDayTask.get(`${dayNumber}-${m.taskNumber}`);
-              return { taskNumber: m.taskNumber, type: m.type, prompt: existing?.prompt ?? '' };
-            }),
-          }));
-          setSlots(restoredSlots);
-
-          // Draft-saved progress was being restored into `slots` correctly,
-          // but `step`/`showIntro` stayed at their defaults regardless --
-          // someone who'd already finished Day 1 (and drafted into Day 2)
-          // was dropped back at the intro screen and Day 1's form every
-          // time, forced to re-click through days she'd already completed.
-          const firstIncompleteIdx = restoredSlots.findIndex((s) =>
-            s.tasks.some((t) => !t.prompt.trim())
-          );
-          const hasAnyProgress = restoredSlots.some((s) => s.tasks.some((t) => t.prompt.trim()));
-          if (hasAnyProgress) {
-            setShowIntro(false);
-            setStep(firstIncompleteIdx === -1 ? 2 : firstIncompleteIdx);
-          }
-        }
-      } catch {
-        toast.error('Failed to load your Standard.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser, router]);
+
+  const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(load);
 
   const updateTaskPrompt = (dayNumber: number, taskNumber: number, value: string) => {
     setSlots((prev) =>
@@ -311,8 +315,20 @@ export default function StandardBuilderPage() {
   const progressPercent = ((step + 1) / slots.length) * 100;
 
   return (
-    <div className="relative isolate min-h-dvh screen-gradient px-6 pt-safe-top pb-24 max-w-app mx-auto">
+    <div
+      ref={scrollRef}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      className="relative isolate h-[calc(100dvh-5rem)] overflow-y-auto overscroll-none screen-gradient px-6 pt-safe-top pb-24 max-w-app mx-auto"
+    >
       <OnboardingBackground image="/onboarding/quiz-romantic.jpg" />
+      <div
+        className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
+        style={{ height: pullDistance }}
+      >
+        <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
+      </div>
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => setStep((s) => Math.max(0, s - 1))}

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { PushPermission } from '@/components/shared/PushPermission';
+import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 
 interface Prefs {
   messages: boolean;
@@ -56,12 +57,18 @@ export default function NotificationSettingsPage() {
   const [prefs, setPrefs] = useState<Prefs | null>(null);
   const [saving, setSaving] = useState<PrefKey | null>(null);
 
-  useEffect(() => {
-    fetch('/api/notifications/prefs')
+  const loadPrefs = () => {
+    return fetch('/api/notifications/prefs')
       .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((data) => setPrefs(data.prefs))
-      .catch(() => toast.error('Failed to load notification settings'));
+      .catch(() => { toast.error('Failed to load notification settings'); });
+  };
+
+  useEffect(() => {
+    loadPrefs();
   }, []);
+
+  const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(loadPrefs);
 
   const handleToggle = async (key: PrefKey, value: boolean) => {
     if (!prefs) return;
@@ -84,13 +91,29 @@ export default function NotificationSettingsPage() {
   };
 
   return (
-    <div className="page-container animate-fade-in pb-32">
-      <div className="page-header">
-        <button onClick={() => router.back()} className="btn-ghost p-2">
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <h1 className="font-display text-xl text-ink flex-1">Notifications</h1>
+    <div className="h-[calc(100dvh-5rem)] screen-gradient flex flex-col">
+      <div className="max-w-app mx-auto w-full px-8 pt-safe-top">
+        <div className="page-header">
+          <button onClick={() => router.back()} className="btn-ghost p-2">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <h1 className="font-display text-xl text-ink flex-1">Notifications</h1>
+        </div>
       </div>
+
+      <div
+        ref={scrollRef}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        className="flex-1 overflow-y-auto overscroll-none max-w-app mx-auto w-full px-8 pb-32 animate-fade-in"
+      >
+        <div
+          className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
+          style={{ height: pullDistance }}
+        >
+          <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
+        </div>
 
       <div className="px-4 space-y-6">
         <div className="card flex items-center justify-between gap-3">
@@ -156,6 +179,7 @@ export default function NotificationSettingsPage() {
             </div>
           </>
         )}
+      </div>
       </div>
     </div>
   );

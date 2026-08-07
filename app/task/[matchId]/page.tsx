@@ -12,6 +12,7 @@ import { SubmitSheet } from '@/components/connection/SubmitSheet';
 import type { IntentionRecord, SubmissionRecord } from '@/components/connection/types';
 import { useCountdown, formatCountdown } from '@/lib/hooks/useCountdown';
 import { useScreenshotTarget } from '@/lib/hooks/useScreenshotGuard';
+import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 
 const TERMINAL_STATUSES = ['rejected', 'expired_no_submission', 'refunded'];
 const REVEAL_COST = 20;
@@ -220,6 +221,8 @@ export default function TaskPage() {
     fetchMatch();
   }, [fetchMatch]);
 
+  const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(fetchMatch);
+
   if (loading || !currentUser) {
     return (
       <div className="min-h-dvh flex items-center justify-center screen-gradient">
@@ -378,7 +381,19 @@ export default function TaskPage() {
   };
 
   return (
-    <div className="min-h-dvh screen-gradient px-6 pt-safe-top pb-10 max-w-app mx-auto flex flex-col">
+    <div
+      ref={scrollRef}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      className="h-[calc(100dvh-5rem)] overflow-y-auto overscroll-none screen-gradient px-6 pt-safe-top pb-10 max-w-app mx-auto flex flex-col"
+    >
+      <div
+        className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
+        style={{ height: pullDistance }}
+      >
+        <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
+      </div>
       <div className="flex items-center justify-between mb-6">
         <button onClick={handleBack} className="p-1 -ml-1 text-ink/40 hover:text-ink active:scale-90 transition-all">
           <ArrowLeft className="w-5 h-5" />

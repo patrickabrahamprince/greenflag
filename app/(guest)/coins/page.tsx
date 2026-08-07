@@ -12,6 +12,7 @@ import { APPLE_COIN_PRODUCT_IDS } from '@/lib/iap-products';
 import { CoinBalance } from '@/components/guest/CoinBalance';
 import { PackageCard } from '@/components/guest/PackageCard';
 import { TransactionHistory } from '@/components/guest/TransactionHistory';
+import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 
 const PACKAGES = [
   // TEMPORARY: 399 -> 2 for a real end-to-end Razorpay payment test
@@ -57,45 +58,48 @@ export default function CoinsPage() {
       .catch((err) => console.error('Failed to load Apple products:', err));
   }, [isNative]);
 
+  const load = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+
+    const { data: profile } = await supabase.from('profiles').select('persona').eq('id', user.id).single();
+    if (profile?.persona === 'woman') {
+      router.replace('/profile');
+      return;
+    }
+
+    const { data: wallet } = await supabase
+      .from('wallets')
+      .select('balance')
+      .eq('user_id', user.id)
+      .single();
+
+    if (wallet) {
+      setBalance((wallet as { balance: number }).balance);
+    }
+
+    // coin_transactions (not transactions -- confirmed empty on
+    // production) is what add_coins/deduct_coins actually write to.
+    const { data: txData } = await supabase
+      .from('coin_transactions')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    setTransactions((txData as Transaction[]) || []);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const load = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        router.push('/login');
-        return;
-      }
-
-      const { data: profile } = await supabase.from('profiles').select('persona').eq('id', user.id).single();
-      if (profile?.persona === 'woman') {
-        router.replace('/profile');
-        return;
-      }
-
-      const { data: wallet } = await supabase
-        .from('wallets')
-        .select('balance')
-        .eq('user_id', user.id)
-        .single();
-
-      if (wallet) {
-        setBalance((wallet as { balance: number }).balance);
-      }
-
-      // coin_transactions (not transactions -- confirmed empty on
-      // production) is what add_coins/deduct_coins actually write to.
-      const { data: txData } = await supabase
-        .from('coin_transactions')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(20);
-
-      setTransactions((txData as Transaction[]) || []);
-      setLoading(false);
-    };
-
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supabase, router, setBalance]);
+
+  const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(load);
 
   if (loading) {
     return (
@@ -106,23 +110,38 @@ export default function CoinsPage() {
   }
 
   return (
-    <div className="page-container animate-fade-in">
-      <CoinBalance balance={balance} />
+    <div className="h-[calc(100dvh-5rem)] screen-gradient flex flex-col">
+      <div
+        ref={scrollRef}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        className="flex-1 overflow-y-auto overscroll-none max-w-app mx-auto w-full px-8 pt-safe-top pb-24 animate-fade-in"
+      >
+        <div
+          className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
+          style={{ height: pullDistance }}
+        >
+          <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
+        </div>
 
-      <div className="px-4 space-y-3">
-        {PACKAGES.map((pkg) => (
-          <PackageCard
-            key={pkg.coins}
-            pkg={pkg}
-            displayPrice={appleProducts[pkg.appleProductId]?.displayPrice}
-            purchasing={isNative ? purchasingProductId !== null : razorpayPurchasing !== null}
-            isPurchasingThis={isNative ? purchasingProductId === pkg.appleProductId : razorpayPurchasing === pkg.price}
-            onBuy={() => (isNative ? handleApplePurchase(pkg.appleProductId) : handleRazorpayBuy(pkg))}
-          />
-        ))}
+        <CoinBalance balance={balance} />
+
+        <div className="px-4 space-y-3">
+          {PACKAGES.map((pkg) => (
+            <PackageCard
+              key={pkg.coins}
+              pkg={pkg}
+              displayPrice={appleProducts[pkg.appleProductId]?.displayPrice}
+              purchasing={isNative ? purchasingProductId !== null : razorpayPurchasing !== null}
+              isPurchasingThis={isNative ? purchasingProductId === pkg.appleProductId : razorpayPurchasing === pkg.price}
+              onBuy={() => (isNative ? handleApplePurchase(pkg.appleProductId) : handleRazorpayBuy(pkg))}
+            />
+          ))}
+        </div>
+
+        <TransactionHistory transactions={transactions} />
       </div>
-
-      <TransactionHistory transactions={transactions} />
     </div>
   );
 }

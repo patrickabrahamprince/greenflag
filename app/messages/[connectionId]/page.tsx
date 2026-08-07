@@ -14,6 +14,8 @@ import { MessageInput } from '@/components/chat/MessageInput';
 import { LockedOverlay } from '@/components/chat/LockedOverlay';
 import { EmptyChat } from '@/components/chat/EmptyChat';
 import { useScreenshotTarget } from '@/lib/hooks/useScreenshotGuard';
+import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
+import { Loader2 } from 'lucide-react';
 
 export default function ChatPage({ params }: { params: { connectionId: string } }) {
   const { connectionId } = params;
@@ -39,34 +41,38 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
 
   useScreenshotTarget(connection?.partner?.id, 'messages');
 
+  const load = async () => {
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) { router.push('/login'); return; }
+    const res = await fetch(`/api/matches/${connectionId}`);
+    const data = await res.json();
+    if (data.match) {
+      setConnection({
+        id: data.match.id,
+        status: data.match.status,
+        chat_unlocked: data.match.chat_unlocked,
+        connected: data.match.status === 'completed' || data.match.chat_unlocked,
+        current_day: data.match.current_day,
+        partner: data.otherProfile
+          ? { id: data.otherProfile.id, name: data.otherProfile.name, photos: data.otherProfile.photos || [] }
+          : null,
+      });
+    }
+    const { data: msgs } = await supabase
+      .from('messages')
+      .select('*')
+      .eq('match_id', connectionId)
+      .order('created_at', { ascending: true });
+    setMessages((msgs as Message[]) || []);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const load = async () => {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (!authUser) { router.push('/login'); return; }
-      const res = await fetch(`/api/matches/${connectionId}`);
-      const data = await res.json();
-      if (data.match) {
-        setConnection({
-          id: data.match.id,
-          status: data.match.status,
-          chat_unlocked: data.match.chat_unlocked,
-          connected: data.match.status === 'completed' || data.match.chat_unlocked,
-          current_day: data.match.current_day,
-          partner: data.otherProfile
-            ? { id: data.otherProfile.id, name: data.otherProfile.name, photos: data.otherProfile.photos || [] }
-            : null,
-        });
-      }
-      const { data: msgs } = await supabase
-        .from('messages')
-        .select('*')
-        .eq('match_id', connectionId)
-        .order('created_at', { ascending: true });
-      setMessages((msgs as Message[]) || []);
-      setLoading(false);
-    };
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionId, supabase, router]);
+
+  const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(load);
 
   useEffect(() => {
     if (!connectionId || isLocked) return;
@@ -134,7 +140,19 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
           isChatUnlocked={!!connection?.chat_unlocked}
         />
         {connection?.connected && <ConnectedBanner />}
-        <div className="flex-1 min-h-0 relative">
+        <div
+          ref={scrollRef}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          className="flex-1 min-h-0 relative overflow-y-auto overscroll-none"
+        >
+          <div
+            className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
+            style={{ height: pullDistance }}
+          >
+            <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
+          </div>
           {isLocked && <LockedOverlay backRoute={backRoute} currentDay={connection?.current_day ?? 0} />}
           {messages.length === 0 && !isLocked ? (
             <EmptyChat partnerName={partnerName || ''} onSend={handleSend} />

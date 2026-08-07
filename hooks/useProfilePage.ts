@@ -23,28 +23,30 @@ export function useProfilePage(id: string | string[]) {
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
   const [blocking, setBlocking] = useState(false);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await fetch(`/api/profile/${id}`);
-        const data = await res.json();
-        if (res.ok) {
-          setProfile(data.profile);
-          setMatch(data.match);
-          setConnection(data.connection);
-          setIsOwn(data.isOwnProfile);
-        } else {
-          toast.error('Profile not found');
-          router.back();
-        }
-      } catch {
-        toast.error('Failed to load profile');
+  const fetchProfile = async () => {
+    try {
+      const res = await fetch(`/api/profile/${id}`);
+      const data = await res.json();
+      if (res.ok) {
+        setProfile(data.profile);
+        setMatch(data.match);
+        setConnection(data.connection);
+        setIsOwn(data.isOwnProfile);
+      } else {
+        toast.error('Profile not found');
         router.back();
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch {
+      toast.error('Failed to load profile');
+      router.back();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, router]);
 
   const handleMeet = async () => {
@@ -151,6 +153,7 @@ export function useProfilePage(id: string | string[]) {
     handleMeet,
     handleReport,
     handleBlock,
+    refetch: fetchProfile,
     router,
   };
 }

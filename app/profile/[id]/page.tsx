@@ -9,6 +9,7 @@ import { ProfileActionBar } from '@/components/shared/ProfileActionBar';
 import { ReportModal } from '@/components/shared/ReportModal';
 import { BlockConfirmModal } from '@/components/shared/BlockConfirmModal';
 import { useScreenshotTarget } from '@/lib/hooks/useScreenshotGuard';
+import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 
 export default function ViewProfilePage() {
   const params = useParams();
@@ -17,10 +18,12 @@ export default function ViewProfilePage() {
     photoIdx, setPhotoIdx, showReport, setShowReport,
     reportReason, setReportReason, reportDetails, setReportDetails,
     submittingReport, showBlockConfirm, setShowBlockConfirm, blocking,
-    handleMeet, handleReport, handleBlock, router,
+    handleMeet, handleReport, handleBlock, refetch, router,
   } = useProfilePage(params.id);
 
   useScreenshotTarget(!isOwn ? profile?.id : undefined, 'profile');
+
+  const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(refetch);
 
   if (loading) {
     return (
@@ -36,7 +39,19 @@ export default function ViewProfilePage() {
   const photo = photos[photoIdx] || '';
 
   return (
-    <div className="min-h-dvh screen-gradient pb-24">
+    <div
+      ref={scrollRef}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      className="h-dvh overflow-y-auto overscroll-none screen-gradient pb-24"
+    >
+      <div
+        className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
+        style={{ height: pullDistance }}
+      >
+        <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
+      </div>
       <ProfileHeroSection
         photo={photo}
         name={profile.name}

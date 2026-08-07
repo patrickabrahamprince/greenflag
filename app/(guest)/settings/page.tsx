@@ -9,6 +9,7 @@ import { parsePhoneNumber } from 'libphonenumber-js';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useCoinStore } from '@/lib/store';
 import { hapticWarning } from '@/lib/haptics';
+import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 
 function formatPhoneDisplay(phone: string | undefined): string {
   if (!phone) return 'Not available';
@@ -43,16 +44,19 @@ export default function SettingsPage() {
   const [deleteReasons, setDeleteReasons] = useState<string[]>([]);
   const [deleteFeedback, setDeleteFeedback] = useState('');
 
+  const fetchPhone = async () => {
+    const supabase = createClient();
+    const { data } = await supabase.auth.getUser();
+    if (data.user?.phone) {
+      setPhone(data.user.phone);
+    }
+  };
+
   useEffect(() => {
-    const fetchPhone = async () => {
-      const supabase = createClient();
-      const { data } = await supabase.auth.getUser();
-      if (data.user?.phone) {
-        setPhone(data.user.phone);
-      }
-    };
     fetchPhone();
   }, []);
+
+  const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(fetchPhone);
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -116,13 +120,29 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="page-container animate-fade-in pb-32">
-      <div className="page-header">
-        <button onClick={() => router.back()} className="btn-ghost p-2">
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <h1 className="font-display text-xl text-ink flex-1">Settings</h1>
+    <div className="h-[calc(100dvh-5rem)] screen-gradient flex flex-col">
+      <div className="max-w-app mx-auto w-full px-8 pt-safe-top">
+        <div className="page-header">
+          <button onClick={() => router.back()} className="btn-ghost p-2">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <h1 className="font-display text-xl text-ink flex-1">Settings</h1>
+        </div>
       </div>
+
+      <div
+        ref={scrollRef}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        className="flex-1 overflow-y-auto overscroll-none max-w-app mx-auto w-full px-8 pb-32 animate-fade-in"
+      >
+        <div
+          className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
+          style={{ height: pullDistance }}
+        >
+          <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
+        </div>
 
       <div className="px-4 space-y-6">
         <div className="card">
@@ -313,6 +333,7 @@ export default function SettingsPage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
