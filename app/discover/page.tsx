@@ -81,7 +81,6 @@ export default function DiscoverPage() {
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const touchStartY = useRef<number | null>(null)
-  const cardTouchStart = useRef<Record<string, { x: number; y: number }>>({})
   const pulling = useRef(false)
 
   const observer = useRef<IntersectionObserver>()
@@ -382,20 +381,16 @@ export default function DiscoverPage() {
   }
 
   return (
-    <div className="relative screen-gradient min-h-dvh max-w-app mx-auto">
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex flex-col pointer-events-none">
-        <div className="flex items-center justify-end px-5 pt-safe-top pb-4 bg-gradient-to-b from-black/40 via-black/10 to-transparent">
-          <div className="pointer-events-auto">
-            {persona === 'woman' ? (
-              <div className="glass-surface border-0 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-display font-semibold text-ink/70">
-                <span className="text-gold text-[10px]">◆</span>
-                {coinBalance}
-              </div>
-            ) : (
-              <CoinBadge />
-            )}
+    <div className="relative screen-gradient h-[calc(100dvh-5rem)] max-w-app mx-auto flex flex-col">
+      <div className="relative z-20 shrink-0 flex items-center justify-end px-5 pt-safe-top pb-3 bg-[#0B0614]">
+        {persona === 'woman' ? (
+          <div className="glass-surface border-0 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-display font-semibold text-ink/70">
+            <span className="text-gold text-[10px]">◆</span>
+            {coinBalance}
           </div>
-        </div>
+        ) : (
+          <CoinBadge />
+        )}
       </div>
 
       <div
@@ -404,7 +399,7 @@ export default function DiscoverPage() {
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
         onScroll={dismissSwipeHint}
-        className="snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth h-[calc(100dvh-5rem)] scrollbar-hide"
+        className="flex-1 min-h-0 snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth scrollbar-hide"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         <div
@@ -418,7 +413,7 @@ export default function DiscoverPage() {
             key={p.id}
             ref={i === profiles.length - 1 ? lastProfileRef : null}
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
-            className="snap-start snap-always h-[calc(100dvh-5rem)] w-full relative overflow-hidden animate-fade-in"
+            className="snap-start snap-always h-full w-full relative overflow-hidden animate-fade-in"
           >
             <div className="absolute inset-0 bg-black">
               {(() => {
@@ -442,22 +437,7 @@ export default function DiscoverPage() {
                 }
 
                 return (
-                  <div
-                    className="relative w-full h-full overflow-hidden"
-                    onTouchStart={(e) => {
-                      cardTouchStart.current[p.id] = { x: e.touches[0].clientX, y: e.touches[0].clientY }
-                    }}
-                    onTouchEnd={(e) => {
-                      const start = cardTouchStart.current[p.id]
-                      delete cardTouchStart.current[p.id]
-                      if (!start) return
-                      const dx = e.changedTouches[0].clientX - start.x
-                      const dy = e.changedTouches[0].clientY - start.y
-                      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
-                        goTo(idx + (dx > 0 ? -1 : 1))
-                      }
-                    }}
-                  >
+                  <div className="relative w-full h-full overflow-hidden">
                     {src && failedPhotoUrls.has(src) ? (
                       <div className="w-full h-full flex items-center justify-center bg-[#2A2A2C]">
                         <ImageOff className="w-8 h-8 text-white/25" />
@@ -483,7 +463,7 @@ export default function DiscoverPage() {
                     )}
 
                     {total > 1 && (
-                      <div className="absolute top-3 inset-x-3 z-10 flex gap-1">
+                      <div className="absolute top-2 inset-x-3 z-10 flex gap-1">
                         {photos.map((_, dotIdx) => (
                           <div
                             key={dotIdx}
@@ -513,7 +493,7 @@ export default function DiscoverPage() {
                     )}
 
                     {typeof p.match_percentage === 'number' && (
-                      <div className="absolute top-12 left-3 z-10 flex flex-col items-start gap-1">
+                      <div className="absolute top-8 left-3 z-10 flex flex-col items-start gap-1">
                         <div className="glass-surface flex items-center gap-1.5 rounded-full px-3 py-1.5">
                           <span className="text-gold text-xs">◆</span>
                           <span className="font-display font-bold text-white text-sm whitespace-nowrap">
@@ -714,7 +694,7 @@ export default function DiscoverPage() {
           </div>
         )}
         {!pageLoading && profiles.length === 0 && (
-          <div className="snap-start min-h-[calc(100dvh-5rem)] flex flex-col items-center justify-center px-8 text-center animate-fade-in">
+          <div className="snap-start min-h-full flex flex-col items-center justify-center px-8 text-center animate-fade-in">
             <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5">
               <Heart className="w-6 h-6 text-gold" />
             </div>
