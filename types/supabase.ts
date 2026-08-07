@@ -453,6 +453,35 @@ export type Database = {
           },
         ]
       }
+      engagement_nudges: {
+        Row: {
+          user_id: string
+          nudge_type: string
+          sent_count: number
+          last_sent_at: string
+        }
+        Insert: {
+          user_id: string
+          nudge_type: string
+          sent_count?: number
+          last_sent_at?: string
+        }
+        Update: {
+          user_id?: string
+          nudge_type?: string
+          sent_count?: number
+          last_sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "engagement_nudges_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       funnel_events: {
         Row: {
           id: string
