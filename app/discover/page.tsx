@@ -382,19 +382,18 @@ export default function DiscoverPage() {
 
   return (
     <div className="relative screen-gradient min-h-dvh max-w-app mx-auto">
-      <div
-        className="relative z-20 bg-[#0B0614] border-b border-white/[0.06] shadow-[0_4px_16px_-4px_rgba(0,0,0,0.5)]"
-        style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
-      >
-        <div className="h-12 flex items-center justify-end px-3">
-          {persona === 'woman' ? (
-            <div className="glass-surface border-0 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-display font-semibold text-ink/70">
-              <span className="text-gold text-[10px]">◆</span>
-              {coinBalance}
-            </div>
-          ) : (
-            <CoinBadge />
-          )}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex flex-col pointer-events-none">
+        <div className="flex items-center justify-end px-5 pt-safe-top pb-10 bg-gradient-to-b from-black/70 via-black/25 to-transparent">
+          <div className="pointer-events-auto">
+            {persona === 'woman' ? (
+              <div className="glass-surface border-0 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-display font-semibold text-ink/70">
+                <span className="text-gold text-[10px]">◆</span>
+                {coinBalance}
+              </div>
+            ) : (
+              <CoinBadge />
+            )}
+          </div>
         </div>
       </div>
 
@@ -404,11 +403,8 @@ export default function DiscoverPage() {
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
         onScroll={dismissSwipeHint}
-        className="snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth scrollbar-hide"
-        style={{
-          WebkitOverflowScrolling: 'touch',
-          height: 'calc(100dvh - 5rem - env(safe-area-inset-top, 0px) - 49px)',
-        }}
+        className="snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth h-[calc(100dvh-5rem)] scrollbar-hide"
+        style={{ WebkitOverflowScrolling: 'touch' }}
       >
         <div
           className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
@@ -421,7 +417,7 @@ export default function DiscoverPage() {
             key={p.id}
             ref={i === profiles.length - 1 ? lastProfileRef : null}
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
-            className="snap-start snap-always h-full w-full relative overflow-hidden animate-fade-in"
+            className="snap-start snap-always h-[calc(100dvh-5rem)] w-full relative overflow-hidden animate-fade-in"
           >
             <div className="absolute inset-0 bg-black">
               {(() => {
@@ -470,12 +466,8 @@ export default function DiscoverPage() {
                       </button>
                     )}
 
-                    {/* Keeps the top dashes/badge legible regardless of how
-                        bright the photo itself is at the top edge. */}
-                    <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/50 to-transparent pointer-events-none" />
-
                     {total > 1 && (
-                      <div className="absolute top-2 inset-x-3 z-10 flex gap-1">
+                      <div className="absolute top-3 inset-x-3 z-10 flex gap-1">
                         {photos.map((_, dotIdx) => (
                           <div
                             key={dotIdx}
@@ -505,7 +497,7 @@ export default function DiscoverPage() {
                     )}
 
                     {typeof p.match_percentage === 'number' && (
-                      <div className="absolute top-6 left-3 z-10 flex flex-col items-start gap-1">
+                      <div className="absolute top-12 left-3 z-10 flex flex-col items-start gap-1">
                         <div className="glass-surface flex items-center gap-1.5 rounded-full px-3 py-1.5">
                           <span className="text-gold text-xs">◆</span>
                           <span className="font-display font-bold text-white text-sm whitespace-nowrap">
@@ -706,7 +698,7 @@ export default function DiscoverPage() {
           </div>
         )}
         {!pageLoading && profiles.length === 0 && (
-          <div className="snap-start min-h-full flex flex-col items-center justify-center px-8 text-center animate-fade-in">
+          <div className="snap-start min-h-[calc(100dvh-5rem)] flex flex-col items-center justify-center px-8 text-center animate-fade-in">
             <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5">
               <Heart className="w-6 h-6 text-gold" />
             </div>
