@@ -17,7 +17,13 @@ export function useFirstTimeHint(key: string) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
+  // Callers wire this straight into onScroll/onTouchStart, which fire on
+  // every frame of a native scroll -- without this guard, an already-
+  // dismissed hint would still hit localStorage.setItem on every single
+  // one of those events, blocking the main thread repeatedly and making
+  // the scroll itself feel janky.
   const dismiss = () => {
+    if (!show) return;
     if (typeof window !== 'undefined') localStorage.setItem(storageKey, '1');
     setShow(false);
   };

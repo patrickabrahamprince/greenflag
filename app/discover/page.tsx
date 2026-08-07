@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell } from 'lucide-react'
+import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell, ImageOff } from 'lucide-react'
 import { LoadingLogo } from '@/components/shared/LoadingLogo'
 import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
@@ -51,11 +51,11 @@ export default function DiscoverPage() {
   const [photoUnlockConfirm, setPhotoUnlockConfirm] = useState<string | null>(null)
   const [unlockingPhotoId, setUnlockingPhotoId] = useState<string | null>(null)
   const [unlockedPhotoIds, setUnlockedPhotoIds] = useState<Set<string>>(new Set())
-  // Placeholder-avatar.svg is a near-black icon on a near-black card --
-  // swapping a failed side-photo's src to it just produced an
-  // indistinguishable-from-broken dark rectangle. Tracking failed URLs and
-  // dropping them from the grid instead lets the surviving photo expand to
-  // fill the space, same as if that slot never existed.
+  // placeholder-avatar.svg is a near-black icon on a near-black card --
+  // swapping a failed side-photo's src to it read as a solid black hole,
+  // not a placeholder. Tracking failed URLs and rendering an explicit
+  // lighter-gray placeholder in that slot (instead of changing the grid's
+  // row count) keeps the card's layout stable while scrolling.
   const [failedPhotoUrls, setFailedPhotoUrls] = useState<Set<string>>(new Set())
   // Gates both the real feed fetch and its render until we know whether
   // this visit is about to redirect elsewhere (see the effect below) --
@@ -439,9 +439,7 @@ export default function DiscoverPage() {
               </div>
               <div className="relative col-span-1 overflow-hidden -ml-3">
                 {(() => {
-                  const extraPhotos = [p.photos?.[1], p.photos?.[2]]
-                    .filter(Boolean)
-                    .filter((url) => !failedPhotoUrls.has(url as string)) as string[]
+                  const extraPhotos = [p.photos?.[1], p.photos?.[2]].filter(Boolean) as string[]
                   // Blur is a paywall cue for men unlocking a woman's card --
                   // a woman browsing men should always see clear photos.
                   // Photo unlock (100 coins, /api/photo-unlock) is its own
@@ -478,13 +476,19 @@ export default function DiscoverPage() {
                       style={{ gridTemplateRows: `repeat(${extraPhotos.length}, 1fr)` }}
                     >
                       {extraPhotos.map((src, idx) => (
-                        <div key={idx} className="relative overflow-hidden">
-                          <img
-                            src={src}
-                            alt=""
-                            className={photoClass}
-                            onError={() => setFailedPhotoUrls(prev => new Set(prev).add(src))}
-                          />
+                        <div key={idx} className="relative overflow-hidden bg-[#2A2A2C]">
+                          {failedPhotoUrls.has(src) ? (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <ImageOff className="w-5 h-5 text-white/25" />
+                            </div>
+                          ) : (
+                            <img
+                              src={src}
+                              alt=""
+                              className={photoClass}
+                              onError={() => setFailedPhotoUrls(prev => new Set(prev).add(src))}
+                            />
+                          )}
                           {unlockButton}
                         </div>
                       ))}
