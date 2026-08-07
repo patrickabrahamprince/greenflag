@@ -47,7 +47,11 @@ export default function DiscoverPage() {
   const [photoUnlockConfirm, setPhotoUnlockConfirm] = useState<string | null>(null)
   const [unlockingPhotoId, setUnlockingPhotoId] = useState<string | null>(null)
   const [unlockedPhotoIds, setUnlockedPhotoIds] = useState<Set<string>>(new Set())
-  const [redirectingToStandard, setRedirectingToStandard] = useState(false)
+  // Gates both the real feed fetch and its render until we know whether
+  // this visit is about to redirect elsewhere (see the effect below) --
+  // starts true so neither cached nor freshly-fetched cards can flash
+  // before that's settled.
+  const [checkingAccess, setCheckingAccess] = useState(true)
   const [pullDistance, setPullDistance] = useState(0)
   const [refreshing, setRefreshing] = useState(false)
   const [interestCounts, setInterestCounts] = useState<Record<string, number>>({})
@@ -79,41 +83,49 @@ export default function DiscoverPage() {
   const fetchedForPage = useRef<Set<number>>(new Set())
 
   useEffect(() => {
+    let cancelled = false
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return
+      if (!user) { if (!cancelled) setCheckingAccess(false); return }
       supabase.from('profiles').select('persona').eq('id', user.id).single().then(({ data }) => {
+        if (cancelled) return
         if (data?.persona) setPersona(data.persona)
 
         // A woman without an active Standard shouldn't be able to browse
         // Discover at all -- BottomNav has its own safety net for this, but
         // that's a sibling effect that resolves asynchronously, so Discover
-        // itself would render (including its "no new profiles" empty state)
-        // for a beat before the redirect landed. Checking here too means
-        // Discover never shows real content/empty-state to her in the
-        // meantime -- it shows a spinner and replaces itself immediately,
-        // so pressing back into Discover from Standard Builder can't flash
-        // a misleading "no new profiles" message.
+        // itself would render (including its "no new profiles" empty state,
+        // or briefly some other man's card straight from the pageCache
+        // hydrated at mount) for a beat before the redirect landed.
+        // checkingAccess holds the real feed fetch and render off entirely
+        // until this settles, so pressing back into Discover from Standard
+        // Builder can't flash a misleading card or empty state.
         if (data?.persona === 'woman') {
           fetch('/api/standards/standard-builder')
             .then(res => (res.ok ? res.json() : null))
             .then(sData => {
+              if (cancelled) return
               if (sData && sData.redirect !== '/my-connections') {
-                setRedirectingToStandard(true)
                 router.replace('/standard/builder')
+                return // navigating away -- leave checkingAccess true
               }
+              setCheckingAccess(false)
             })
-            .catch(() => {})
+            .catch(() => { if (!cancelled) setCheckingAccess(false) })
+        } else {
+          setCheckingAccess(false)
         }
       })
     })
+    return () => { cancelled = true }
   }, [])
 
   useEffect(() => {
+    if (checkingAccess) return
     if (!fetchedForPage.current.has(page)) {
       fetchedForPage.current.add(page)
       fetchProfiles()
     }
-  }, [page])
+  }, [page, checkingAccess])
 
   // Interest-count line only renders on the woman's view of a man's card,
   // so only fetch it there -- one lightweight call per newly-seen profile.
@@ -336,7 +348,7 @@ export default function DiscoverPage() {
     }
   }
 
-  if (redirectingToStandard) {
+  if (checkingAccess) {
     return (
       <div className="min-h-dvh flex items-center justify-center screen-gradient">
         <Loader2 className="w-8 h-8 animate-spin text-gold" />
