@@ -19,14 +19,21 @@ alter table public.engagement_nudges enable row level security;
 -- Runs frequently (every 30 min) since several of these nudges are timing-
 -- sensitive (e.g. the 2h-after-submission early review nudge) -- pg_cron
 -- rather than Vercel Cron because the Hobby plan allows only one Vercel
--- cron per day (see app/api/cron/daily/route.ts), same reason
--- send-review-reminders already runs this way.
+-- cron per day (see app/api/cron/daily/route.ts).
 --
--- Requires two Postgres GUCs set once, manually, in the SQL editor
--- (never hardcode a real secret into a committed migration file):
---   ALTER DATABASE postgres SET app.settings.greenflag_url = 'https://greenflag-dusky.vercel.app';
---   ALTER DATABASE postgres SET app.settings.cron_secret = '<the CRON_SECRET env var value>';
--- Without both set, this silently no-ops every run rather than erroring.
+-- Uses Supabase Vault for the URL/secret rather than a Postgres GUC
+-- (ALTER DATABASE ... SET) -- Supabase Cloud's hosted `postgres` role
+-- isn't a true superuser and can't register custom GUCs (confirmed via a
+-- real "permission denied to set parameter" error), unlike a
+-- self-hosted/local instance. Vault is Supabase's own supported
+-- mechanism for exactly this: a secret a SECURITY DEFINER function can
+-- read at runtime without needing GUC privileges. Run once, manually, in
+-- the SQL editor before this migration (never commit real secret values
+-- to a migration file):
+--   select vault.create_secret('https://greenflag-dusky.vercel.app', 'greenflag_url');
+--   select vault.create_secret('<the CRON_SECRET env var value>', 'cron_secret');
+-- Without both secrets present, this silently no-ops every run rather
+-- than erroring.
 CREATE EXTENSION IF NOT EXISTS pg_net WITH SCHEMA extensions;
 
 CREATE OR REPLACE FUNCTION public.trigger_engagement_nudges()
@@ -36,9 +43,11 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
-  v_app_url TEXT := current_setting('app.settings.greenflag_url', true);
-  v_cron_secret TEXT := current_setting('app.settings.cron_secret', true);
+  v_app_url TEXT;
+  v_cron_secret TEXT;
 BEGIN
+  SELECT decrypted_secret INTO v_app_url FROM vault.decrypted_secrets WHERE name = 'greenflag_url';
+  SELECT decrypted_secret INTO v_cron_secret FROM vault.decrypted_secrets WHERE name = 'cron_secret';
   IF v_app_url IS NULL OR v_cron_secret IS NULL THEN
     RETURN;
   END IF;
