@@ -27,13 +27,13 @@ export function ProfileHeroSection({
 
       <button
         onClick={onBack}
-        className="absolute top-4 left-4 z-10 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center"
+        className="absolute top-safe-top left-4 z-10 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center"
       >
         <ArrowLeft className="w-5 h-5 text-white" />
       </button>
 
       {!isOwn && (
-        <div className="absolute top-4 right-4 z-10 flex gap-2">
+        <div className="absolute top-safe-top right-4 z-10 flex gap-2">
           <button
             onClick={onBlock}
             className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center"
