@@ -618,13 +618,13 @@ export default function DiscoverPage() {
                       onClick={() => handleBegin(p.id)}
                       disabled={likingId === p.id}
                       aria-label="View Profile"
-                      className="btn-primary flex-1 h-14 flex items-center justify-center gap-2"
+                      className="btn-primary flex-1 h-11 flex items-center justify-center gap-1.5"
                     >
                       {likingId === p.id ? (
-                        <Loader2 className="w-5 h-5 animate-spin text-white" />
+                        <Loader2 className="w-4 h-4 animate-spin text-white" />
                       ) : (
                         <>
-                          <Heart className="w-5 h-5 text-white" />
+                          <Heart className="w-4 h-4 text-white" />
                           <span className="text-white text-xs uppercase tracking-wide font-display font-bold">View Profile</span>
                         </>
                       )}
@@ -633,13 +633,13 @@ export default function DiscoverPage() {
                       onClick={() => handleNudge(p.id)}
                       disabled={nudgingId === p.id}
                       aria-label="Nudge"
-                      className="glass-surface flex-1 h-14 rounded-full flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
+                      className="glass-surface flex-1 h-11 rounded-full flex items-center justify-center gap-1.5 active:scale-95 transition-all disabled:opacity-50"
                     >
                       {nudgingId === p.id ? (
-                        <Loader2 className="w-5 h-5 animate-spin text-white" />
+                        <Loader2 className="w-4 h-4 animate-spin text-white" />
                       ) : (
                         <>
-                          <Bell className="w-5 h-5 text-white" />
+                          <Bell className="w-4 h-4 text-white" />
                           <span className="text-white text-xs uppercase tracking-wide font-display font-bold">Nudge</span>
                         </>
                       )}
@@ -650,21 +650,21 @@ export default function DiscoverPage() {
                     <button
                       onClick={() => { hapticTap(); scrollToNext(i) }}
                       aria-label="Pass"
-                      className="glass-surface size-14 rounded-full flex items-center justify-center active:scale-95 transition-all shrink-0"
+                      className="glass-surface size-11 rounded-full flex items-center justify-center active:scale-95 transition-all shrink-0"
                     >
-                      <X className="w-6 h-6 text-ink/60" />
+                      <X className="w-5 h-5 text-ink/60" />
                     </button>
                     <button
                       onClick={() => { hapticDecision(); setConfirmProfileId(p.id) }}
                       disabled={likingId === p.id}
                       aria-label="Meet Her Standard"
-                      className="size-16 rounded-full flex items-center justify-center active:scale-[0.98] transition-all duration-300 ease-out disabled:opacity-50 shrink-0"
+                      className="size-12 rounded-full flex items-center justify-center active:scale-[0.98] transition-all duration-300 ease-out disabled:opacity-50 shrink-0"
                       style={{ background: 'linear-gradient(135deg, #E879F9 0%, #C026D3 45%, #86198F 100%)', boxShadow: '0 4px 20px -4px rgba(192, 38, 211, 0.45)' }}
                     >
                       {likingId === p.id ? (
-                        <Loader2 className="w-6 h-6 animate-spin text-white" />
+                        <Loader2 className="w-5 h-5 animate-spin text-white" />
                       ) : (
-                        <Heart className="w-7 h-7 text-white" fill="white" />
+                        <Heart className="w-6 h-6 text-white" fill="white" />
                       )}
                     </button>
                   </>
