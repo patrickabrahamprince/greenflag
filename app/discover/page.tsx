@@ -277,6 +277,14 @@ export default function DiscoverPage() {
   }
 
   function onTouchStart(e: React.TouchEvent) {
+    // Dismissing here (gesture start, before any scrolling happens) instead
+    // of via onScroll matters: onScroll fires dozens of times through an
+    // active swipe, and on the very first swipe (before the hint's state
+    // has flipped) each of those firings could trigger a re-render of the
+    // whole card list while WebKit's momentum-scroll gesture is still in
+    // progress -- WebKit is known to abort/stick scroll-snap when DOM
+    // inside the scrolling container mutates mid-gesture.
+    dismissSwipeHint()
     if ((scrollRef.current?.scrollTop ?? 0) > 0) return
     touchStartY.current = e.touches[0].clientY
     pulling.current = true
@@ -408,7 +416,6 @@ export default function DiscoverPage() {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        onScroll={dismissSwipeHint}
         className="snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth h-[calc(100dvh-5rem)] scrollbar-hide"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
