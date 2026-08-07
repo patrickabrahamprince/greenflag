@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Heart, Compass, Bell, Check, X } from 'lucide-react';
+import { Loader2, Heart, Bell, Check, X } from 'lucide-react';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import toast from 'react-hot-toast';
 import { ProgressSegmentBar } from '@/components/connection/ProgressSegmentBar';
@@ -246,24 +246,12 @@ export default function MyConnectionsPage() {
 
   return (
     <div className="h-[calc(100dvh-5rem)] screen-gradient max-w-app mx-auto flex flex-col">
-      <div className="px-6 pt-safe-top">
-        <div className="flex items-center justify-end mb-6">
-          <button
-            onClick={() => { hapticTap(); router.push('/discover'); }}
-            className="btn-secondary text-xs px-3 py-2 flex items-center gap-1.5 shrink-0"
-          >
-            <Compass className="w-3.5 h-3.5" />
-            Discover New Profiles
-          </button>
-        </div>
-      </div>
-
       <div
         ref={scrollRef}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className="flex-1 overflow-y-auto overscroll-none px-6 pb-24 flex flex-col"
+        className="flex-1 overflow-y-auto overscroll-none px-6 pt-safe-top pb-24 flex flex-col"
       >
         <div
           className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out shrink-0"
