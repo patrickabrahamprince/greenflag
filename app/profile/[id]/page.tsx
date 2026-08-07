@@ -1,7 +1,6 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { useProfilePage } from '@/hooks/useProfilePage';
 import { ProfileHeroSection } from '@/components/shared/ProfileHeroSection';
@@ -10,7 +9,6 @@ import { ProfileActionBar } from '@/components/shared/ProfileActionBar';
 import { ReportModal } from '@/components/shared/ReportModal';
 import { BlockConfirmModal } from '@/components/shared/BlockConfirmModal';
 import { useScreenshotTarget } from '@/lib/hooks/useScreenshotGuard';
-import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 
 export default function ViewProfilePage() {
   const params = useParams();
@@ -19,12 +17,10 @@ export default function ViewProfilePage() {
     showReport, setShowReport,
     reportReason, setReportReason, reportDetails, setReportDetails,
     submittingReport, showBlockConfirm, setShowBlockConfirm, blocking,
-    handleMeet, handleReport, handleBlock, refetch, router,
+    handleMeet, handleReport, handleBlock, router,
   } = useProfilePage(params.id);
 
   useScreenshotTarget(!isOwn ? profile?.id : undefined, 'profile');
-
-  const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(refetch);
 
   if (loading) {
     return (
@@ -39,19 +35,7 @@ export default function ViewProfilePage() {
   const photos = profile.photos || [];
 
   return (
-    <div
-      ref={scrollRef}
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
-      className="h-dvh overflow-y-auto overscroll-none screen-gradient pb-24"
-    >
-      <div
-        className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
-        style={{ height: pullDistance }}
-      >
-        <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
-      </div>
+    <div className="h-dvh overflow-y-auto overscroll-none screen-gradient pb-24">
       <ProfileHeroSection
         name={profile.name}
         photos={photos}
