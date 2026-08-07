@@ -263,17 +263,17 @@ export default function MyConnectionsPage() {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className="flex-1 overflow-y-auto overscroll-none px-6 pb-24"
+        className="flex-1 overflow-y-auto overscroll-none px-6 pb-24 flex flex-col"
       >
         <div
-          className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
+          className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out shrink-0"
           style={{ height: pullDistance }}
         >
           <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
         </div>
 
         {matches.length === 0 ? (
-          <div className="min-h-full flex flex-col items-center justify-center text-center px-6">
+          <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
             <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5">
               <Heart className="w-6 h-6 text-gold" />
             </div>
