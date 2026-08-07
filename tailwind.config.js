@@ -47,6 +47,11 @@ module.exports = {
         'shimmer': 'shimmer 2s infinite linear',
         'logo-in': 'logoIn 600ms cubic-bezier(0.16, 1, 0.3, 1)',
         'sheet-up': 'sheetUp 280ms cubic-bezier(0.16, 1, 0.3, 1)',
+        // Loops for as long as it's mounted, unlike logo-in's single
+        // entrance -- used for the onboarding transition overlay and the
+        // shared LoadingLogo indicator, both of which show for an
+        // unknown/unbounded duration.
+        'logo-pulse': 'logoPulse 1.4s ease-in-out infinite',
       },
       keyframes: {
         sheetUp: {
@@ -60,6 +65,10 @@ module.exports = {
         logoIn: {
           '0%': { opacity: '0', transform: 'scale(0.82)' },
           '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+        logoPulse: {
+          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+          '50%': { opacity: '0.6', transform: 'scale(0.85)' },
         },
         slideUp: {
           '0%': { opacity: '0', transform: 'translateY(20px)' },

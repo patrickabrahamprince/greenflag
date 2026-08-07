@@ -183,6 +183,15 @@ body::-webkit-scrollbar,
            transition-all duration-300 ease-out;
   }
 
+  /* Confirm/report/block-style modal dialogs -- a subtle brand gradient
+     instead of a flat surface fill, matching the teaser-prompt card's
+     established gold/violet treatment elsewhere in the app. */
+  .dialog-card {
+    @apply border border-gold/20 rounded-2xl p-6
+           transition-all duration-300 ease-out;
+    background: linear-gradient(135deg, rgba(192,38,211,0.14) 0%, rgba(28,28,30,0.97) 60%);
+  }
+
   .card-hover {
     @apply card hover:border-gold;
   }

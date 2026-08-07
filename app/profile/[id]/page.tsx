@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { useProfilePage } from '@/hooks/useProfilePage';
 import { ProfileHeroSection } from '@/components/shared/ProfileHeroSection';
 import { ProfileInfo } from '@/components/shared/ProfileInfo';
@@ -28,7 +29,7 @@ export default function ViewProfilePage() {
   if (loading) {
     return (
       <div className="min-h-dvh screen-gradient flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-gold" />
+        <LoadingLogo />
       </div>
     );
   }

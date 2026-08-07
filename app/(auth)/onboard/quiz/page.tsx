@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, ArrowLeft, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
+import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { createClient } from '@/lib/supabase/client';
 import { useOnboardingStore } from '@/lib/store';
 import { hapticTap } from '@/lib/haptics';
@@ -214,8 +215,8 @@ export default function QuizPage() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex items-center justify-center bg-[#000000]">
-        <Loader2 className="w-8 h-8 animate-spin text-gold" />
+      <div className="min-h-dvh flex items-center justify-center screen-gradient">
+        <LoadingLogo />
       </div>
     );
   }

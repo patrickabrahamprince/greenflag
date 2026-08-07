@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, Mic, Camera, Type as TypeIcon, ArrowLeft, Lock, ShieldCheck, Eye, MessageCircle, Sparkles } from 'lucide-react';
+import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 import { hapticSuccess } from '@/lib/haptics';
@@ -303,7 +304,7 @@ export default function StandardBuilderPage() {
   if (!currentUser || loading) {
     return (
       <div className="min-h-dvh flex items-center justify-center screen-gradient">
-        <Loader2 className="w-8 h-8 animate-spin text-gold" />
+        <LoadingLogo />
       </div>
     );
   }
@@ -408,7 +409,7 @@ export default function StandardBuilderPage() {
 
       {showDayDialog && DAY_LOCK_DIALOGS[step] && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
-          <div className="bg-[#111111] border border-white/[0.06] rounded-2xl p-6 max-w-sm w-full text-center">
+          <div className="dialog-card max-w-sm w-full text-center">
             <div className="w-14 h-14 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-4">
               <Lock className="w-6 h-6 text-gold" />
             </div>

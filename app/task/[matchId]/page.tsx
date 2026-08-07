@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Loader2, MessageCircle, Hourglass, CheckCircle2, AlertTriangle, Lock, Coins, Sparkles, Type as TypeIcon, Camera, Mic, Quote } from 'lucide-react';
+import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import toast from 'react-hot-toast';
 import { useUserStore, useCoinStore } from '@/lib/store';
 import { ConnectedScreen } from '@/components/ConnectedScreen';
@@ -226,7 +227,7 @@ export default function TaskPage() {
   if (loading || !currentUser) {
     return (
       <div className="min-h-dvh flex items-center justify-center screen-gradient">
-        <Loader2 className="w-8 h-8 animate-spin text-gold" />
+        <LoadingLogo />
       </div>
     );
   }

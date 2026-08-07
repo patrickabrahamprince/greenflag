@@ -58,7 +58,7 @@ export function TaskEmptyState({ type, hostName, onNavigate }: TaskEmptyStatePro
       className={cn(
         type === 'submitted'
           ? 'card text-center py-8'
-          : 'min-h-dvh bg-[#000000] flex items-center justify-center px-6'
+          : 'min-h-dvh screen-gradient flex items-center justify-center px-6'
       )}
     >
       <div className="text-center">

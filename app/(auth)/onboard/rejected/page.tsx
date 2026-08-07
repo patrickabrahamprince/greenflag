@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { XCircle, LogOut, RotateCcw, Loader2 } from 'lucide-react';
+import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { createClient } from '@/lib/supabase/client';
 import toast from 'react-hot-toast';
 
@@ -57,8 +58,8 @@ export default function RejectedApplicationPage() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex items-center justify-center bg-[#000000]">
-        <Loader2 className="w-8 h-8 animate-spin text-gold" />
+      <div className="min-h-dvh flex items-center justify-center screen-gradient">
+        <LoadingLogo />
       </div>
     );
   }

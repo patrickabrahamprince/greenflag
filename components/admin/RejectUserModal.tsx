@@ -22,7 +22,7 @@ export function RejectUserModal({
 }: RejectUserModalProps) {
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-      <div className="card max-w-md w-full p-6">
+      <div className="dialog-card max-w-md w-full">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">

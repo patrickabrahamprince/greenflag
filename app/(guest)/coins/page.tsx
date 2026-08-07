@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { useCoinStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
 import { useCoinPurchase } from '@/lib/useCoinPurchase';
@@ -104,7 +105,7 @@ export default function CoinsPage() {
   if (loading) {
     return (
       <div className="min-h-dvh screen-gradient flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-gold" />
+        <LoadingLogo />
       </div>
     );
   }

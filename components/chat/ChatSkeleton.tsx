@@ -1,6 +1,6 @@
 export function ChatSkeleton() {
   return (
-    <div className="min-h-dvh bg-[#000000] px-4 py-4">
+    <div className="min-h-dvh screen-gradient px-4 py-4">
       <div className="space-y-4">
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className={`flex ${i % 2 === 0 ? 'justify-start' : 'justify-end'}`}>

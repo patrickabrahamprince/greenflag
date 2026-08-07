@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell } from 'lucide-react'
+import { LoadingLogo } from '@/components/shared/LoadingLogo'
 import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
 import { SocialProofLine } from '@/components/shared/SocialProofLine'
@@ -351,7 +352,7 @@ export default function DiscoverPage() {
   if (checkingAccess) {
     return (
       <div className="min-h-dvh flex items-center justify-center screen-gradient">
-        <Loader2 className="w-8 h-8 animate-spin text-gold" />
+        <LoadingLogo />
       </div>
     )
   }

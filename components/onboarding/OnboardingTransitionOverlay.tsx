@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { useOnboardingTransitionStore } from '@/lib/onboarding/useOnboardingNav';
+import { LoadingLogo } from '@/components/shared/LoadingLogo';
 
 // A stuck-black-screen failsafe -- if navigation somehow never actually
 // changes the route (a thrown error, a blocked redirect), this clears the
@@ -35,18 +36,17 @@ export function OnboardingTransitionOverlay() {
   return (
     <div
       aria-hidden
-      className="fixed inset-0 z-[70] bg-[#0B0614] pointer-events-none transition-opacity duration-200 ease-out flex items-center justify-center"
+      className="fixed inset-0 z-[70] bg-black/40 backdrop-blur-2xl pointer-events-none transition-opacity duration-200 ease-out flex items-center justify-center"
       style={{ opacity: active ? 1 : 0 }}
     >
-      {/* A plain color fade read as "a blur screen" flashing between
-          pages -- a small centered logo gives the pause something to
-          look at instead of a blank flat color. */}
-      <img
-        src="/logo.png"
-        alt=""
-        className="w-16 h-16 transition-transform duration-200 ease-out"
-        style={{ transform: active ? 'scale(1)' : 'scale(0.85)' }}
-      />
+      {/* backdrop-blur (rather than a flat fill) keeps the outgoing
+          screen visible-but-frosted underneath instead of cutting to a
+          solid color -- reads as one continuous screen softening rather
+          than a hard cut to black. The logo pulses continuously (not a
+          static scale-snap) since this can be visible for a variable,
+          unbounded stretch depending on how long the actual navigation
+          takes. */}
+      <LoadingLogo size={64} className={active ? '' : 'opacity-0'} />
     </div>
   );
 }

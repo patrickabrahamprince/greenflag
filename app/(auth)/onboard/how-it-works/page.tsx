@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CalendarDays, ShieldCheck, Clock, Sparkles, Loader2 } from 'lucide-react';
+import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useOnboardingStore } from '@/lib/store';
 import { SocialProofLine } from '@/components/shared/SocialProofLine';
@@ -154,8 +155,8 @@ export default function HowItWorksPage() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex items-center justify-center bg-[#000000]">
-        <Loader2 className="w-8 h-8 animate-spin text-gold" />
+      <div className="min-h-dvh flex items-center justify-center screen-gradient">
+        <LoadingLogo />
       </div>
     );
   }

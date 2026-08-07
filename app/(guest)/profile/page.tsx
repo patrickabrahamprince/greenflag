@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Settings, LogOut, Edit3, Coins, Loader2, BadgeCheck, MapPin, Cake } from 'lucide-react';
+import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { ProfileImageCarousel } from '@/components/shared/ProfileImageCarousel';
 import { MyStandardsSection } from '@/components/profile/MyStandardsSection';
 import { createClient } from '@/lib/supabase/client';
@@ -48,7 +49,7 @@ export default function ProfilePage() {
   if (!user) {
     return (
       <div className="min-h-dvh flex items-center justify-center screen-gradient">
-        <Loader2 className="w-8 h-8 animate-spin text-gold" />
+        <LoadingLogo />
       </div>
     );
   }
@@ -111,7 +112,7 @@ export default function ProfilePage() {
         </div>
 
         {user.bio && (
-          <div className="mt-5 mx-4 max-w-xs rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+          <div className="mt-5 w-full rounded-2xl border border-white/10 bg-white/[0.03] p-4">
             <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1.5">About</p>
             <p className={
               user.persona === 'woman'
@@ -124,7 +125,7 @@ export default function ProfilePage() {
         )}
 
         {!!user.interests_have?.length && (
-          <div className="mt-5 mx-4 max-w-xs">
+          <div className="mt-5 w-full">
             <p className="text-[10px] uppercase tracking-widest text-white/40 mb-2 text-center">Interests</p>
             <div className="flex flex-wrap justify-center gap-1.5">
               {user.interests_have.map((tag) => (

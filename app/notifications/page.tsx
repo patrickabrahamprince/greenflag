@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Bell, Loader2, Pin } from 'lucide-react';
+import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { createClient } from '@/lib/supabase/client';
 import { SwipeToDismiss } from '@/components/shared/SwipeToDismiss';
 import { getCached, setCached } from '@/lib/pageCache';
@@ -229,7 +230,7 @@ export default function NotificationsPage() {
   if (loading) {
     return (
       <div className="min-h-dvh screen-gradient flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-gold" />
+        <LoadingLogo />
       </div>
     );
   }
@@ -264,6 +265,7 @@ export default function NotificationsPage() {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
+        onClick={() => setExpandedIds(new Set())}
         className="flex-1 overflow-y-auto overscroll-none max-w-app mx-auto w-full px-6 pb-24"
       >
         <div
@@ -299,7 +301,7 @@ export default function NotificationsPage() {
                   pinned={notif.pinned}
                 >
                   <button
-                    onClick={() => handleNotificationClick(notif)}
+                    onClick={(e) => { e.stopPropagation(); handleNotificationClick(notif); }}
                     className="w-full text-left px-4 py-4 border-b border-border/30 transition-all active:scale-[0.98]"
                   >
                     <div className="flex items-center gap-1.5 mb-1">

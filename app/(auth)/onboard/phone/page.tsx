@@ -156,7 +156,7 @@ export default function PhonePage() {
       <OnboardingBackground image="/onboarding/phone.jpg" />
       <button
         onClick={() => router.push('/onboard/name')}
-        className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-8 w-fit"
+        className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit"
       >
         <ArrowLeft size={24} />
       </button>

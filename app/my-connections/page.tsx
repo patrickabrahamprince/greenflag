@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, Heart, Compass, Bell, Check, X } from 'lucide-react';
+import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import toast from 'react-hot-toast';
 import { ProgressSegmentBar } from '@/components/connection/ProgressSegmentBar';
 import { useCountdown, formatCountdown } from '@/lib/hooks/useCountdown';
@@ -11,6 +12,16 @@ import { getCached, setCached } from '@/lib/pageCache';
 import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 
 const MATCHES_CACHE_KEY = 'my-connections:matches';
+// Same key Discover itself caches under (see PROFILES_CACHE_KEY in
+// app/discover/page.tsx) -- reused read-only here so the empty state can
+// preview a few real profiles without a second network round trip.
+const DISCOVER_PROFILES_CACHE_KEY = 'discover:profiles';
+
+interface DiscoverProfilePreview {
+  id: string;
+  name: string;
+  photos?: string[];
+}
 
 const TERMINAL_STATUSES = ['completed', 'rejected', 'expired_no_submission', 'refunded'];
 const URGENT_THRESHOLD_MS = 12 * 60 * 60 * 1000;
@@ -153,6 +164,7 @@ export default function MyConnectionsPage() {
   const currentUser = useUserStore((s) => s.user);
   const isMan = currentUser?.persona !== 'woman';
   const [matches, setMatches] = useState<MatchListItem[]>(() => getCached(MATCHES_CACHE_KEY) ?? []);
+  const discoverPreview = (getCached<DiscoverProfilePreview[]>(DISCOVER_PROFILES_CACHE_KEY) ?? []).slice(0, 4);
   const [loading, setLoading] = useState(() => getCached<MatchListItem[]>(MATCHES_CACHE_KEY) === undefined);
   const [actioningId, setActioningId] = useState<string | null>(null);
 
@@ -224,7 +236,7 @@ export default function MyConnectionsPage() {
   if (loading) {
     return (
       <div className="min-h-dvh flex items-center justify-center screen-gradient">
-        <Loader2 className="w-8 h-8 animate-spin text-gold" />
+        <LoadingLogo />
       </div>
     );
   }
@@ -264,6 +276,24 @@ export default function MyConnectionsPage() {
             </div>
             <h2 className="font-display text-xl text-ink mb-2">No Connections Yet</h2>
             <p className="text-ink/50 text-sm">Discover someone to begin an introduction.</p>
+
+            {discoverPreview.length > 0 && (
+              <button
+                onClick={() => router.push('/discover')}
+                className="mt-6 flex flex-col items-center gap-2 active:scale-95 transition-transform"
+              >
+                <div className="flex -space-x-3">
+                  {discoverPreview.map((p) => (
+                    <div key={p.id} className="w-11 h-11 rounded-full border-2 border-[#0B0614] overflow-hidden bg-surface-light">
+                      {p.photos?.[0] && (
+                        <img src={p.photos[0]} alt="" className="w-full h-full object-cover" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <span className="text-xs text-gold font-medium">See who&apos;s new on Discover</span>
+              </button>
+            )}
           </div>
         ) : (
           <div className="space-y-3">

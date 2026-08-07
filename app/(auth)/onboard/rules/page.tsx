@@ -17,6 +17,7 @@ import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
+import { LoadingLogo } from '@/components/shared/LoadingLogo';
 
 // Define each slide with an icon, title, and description.
 const slides = [
@@ -150,8 +151,8 @@ export default function RulesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex items-center justify-center bg-[#000000]">
-        <Loader2 className="w-8 h-8 animate-spin text-gold" />
+      <div className="min-h-dvh flex items-center justify-center screen-gradient">
+        <LoadingLogo />
       </div>
     );
   }
