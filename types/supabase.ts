@@ -459,18 +459,21 @@ export type Database = {
           nudge_type: string
           sent_count: number
           last_sent_at: string
+          last_variant: number | null
         }
         Insert: {
           user_id: string
           nudge_type: string
           sent_count?: number
           last_sent_at?: string
+          last_variant?: number | null
         }
         Update: {
           user_id?: string
           nudge_type?: string
           sent_count?: number
           last_sent_at?: string
+          last_variant?: number | null
         }
         Relationships: [
           {

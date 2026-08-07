@@ -15,6 +15,31 @@ function unauthorized(req: Request) {
 }
 
 type Admin = ReturnType<typeof getAdmin>;
+type Persona = 'man' | 'woman' | string;
+
+// GreenFlag is IST-only in practice (see the existing IST self-gate in
+// app/api/cron/daily/route.ts) -- no per-user timezone data exists, so a
+// single shared window is the honest option rather than pretending to
+// personalize send time per user. 8am-9pm keeps every nudge out of
+// sleeping hours without adding a queue/backlog system.
+function isWithinSendWindow(): boolean {
+  const istHour = new Date(Date.now() + 5.5 * 60 * 60 * 1000).getUTCHours();
+  return istHour >= 8 && istHour < 21;
+}
+
+// Deterministic per-(user, nudge type) variant assignment -- same user
+// always sees the same phrasing on repeat sends of a given nudge instead
+// of flip-flopping, and different users spread across variants roughly
+// evenly for later comparison (last_variant is stored precisely so that
+// comparison is possible; this route doesn't itself measure conversion).
+function pickVariant(userId: string, nudgeType: string, count: number): number {
+  const str = `${userId}:${nudgeType}`;
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash * 31 + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash) % count;
+}
 
 // Escalating cooldown per nudge type -- index is the number of times
 // already sent (sentCount), value is how many hours must pass before the
@@ -54,7 +79,7 @@ async function shouldSend(admin: Admin, userId: string, nudgeType: string): Prom
   return hoursSinceLastSend >= requiredHours;
 }
 
-async function recordSend(admin: Admin, userId: string, nudgeType: string): Promise<void> {
+async function recordSend(admin: Admin, userId: string, nudgeType: string, variant: number): Promise<void> {
   const { data } = await admin
     .from('engagement_nudges')
     .select('sent_count')
@@ -67,6 +92,7 @@ async function recordSend(admin: Admin, userId: string, nudgeType: string): Prom
     nudge_type: nudgeType,
     sent_count: (data?.sent_count ?? 0) + 1,
     last_sent_at: new Date().toISOString(),
+    last_variant: variant,
   });
 }
 
@@ -95,29 +121,49 @@ async function nudgeUnseenStandardBegins(admin: Admin): Promise<number> {
     : { data: [] };
   const nameByManId = new Map((men ?? []).map((m) => [m.id, m.name]));
 
+  const variants = (manName: string | undefined) => [
+    { title: 'Still there? 👀', body: manName ? `${manName} is still waiting on you.` : "Someone's been waiting on you to set your Standard." },
+    { title: "Don't keep him waiting", body: manName ? `${manName} is ready when you are -- come set your Standard.` : "He's ready when you are -- come set your Standard." },
+  ];
+
   let sent = 0;
   for (const row of rows) {
     if (!(await shouldSend(admin, row.user_id, 'standard_begin_followup'))) continue;
     const connectionId = (row.data as Record<string, unknown> | null)?.connectionId as string | undefined;
     const manName = connectionId ? nameByManId.get(manIdByConnection.get(connectionId) ?? '') : undefined;
+    const options = variants(manName);
+    const variant = pickVariant(row.user_id, 'standard_begin_followup', options.length);
     await sendNotification({
       supabase: admin,
       user_id: row.user_id,
-      title: 'Still there? 👀',
-      body: manName ? `${manName} is still waiting on you.` : "Someone's been waiting on you to set your Standard.",
+      title: options[variant].title,
+      body: options[variant].body,
       data: { type: 'standard_begin', connectionId },
     });
-    await recordSend(admin, row.user_id, 'standard_begin_followup');
+    await recordSend(admin, row.user_id, 'standard_begin_followup', variant);
     sent++;
   }
   return sent;
+}
+
+function dormantVariants(persona: Persona, name: string) {
+  if (persona === 'man') {
+    return [
+      { title: 'New people are waiting 👀', body: `${name}, new profiles matching your Standard are up. Come take a look.` },
+      { title: "You're missing out", body: `${name}, women are setting new Standards right now -- don't miss your match.` },
+    ];
+  }
+  return [
+    { title: 'New people are waiting 👀', body: `${name}, new people want to meet your Standard. Come take a look.` },
+    { title: "You're missing out", body: `${name}, guys are trying to meet your Standard right now -- don't miss them.` },
+  ];
 }
 
 async function nudgeDormantUsers(admin: Admin): Promise<number> {
   const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
   const { data: rows } = await admin
     .from('profiles')
-    .select('id, name')
+    .select('id, name, persona')
     .lt('last_active', cutoff)
     .eq('is_banned', false);
 
@@ -129,20 +175,39 @@ async function nudgeDormantUsers(admin: Admin): Promise<number> {
       .select('id', { count: 'exact', head: true })
       .eq('user_id', row.id)
       .is('read_at', null);
+
+    const options = dormantVariants(row.persona, row.name);
+    const variant = pickVariant(row.id, 'dormant_winback', options.length);
+    const base = options[variant];
     const body = unread && unread > 0
-      ? `${row.name}, you have ${unread} thing${unread === 1 ? '' : 's'} waiting -- plus new people matching your Standard.`
-      : `${row.name}, new people are waiting to meet your Standard. Come take a look.`;
+      ? `${base.body} You also have ${unread} thing${unread === 1 ? '' : 's'} waiting.`
+      : base.body;
+
     await sendNotification({
       supabase: admin,
       user_id: row.id,
-      title: 'New people are waiting 👀',
+      title: base.title,
       body,
       data: { type: 'dormant_winback' },
     });
-    await recordSend(admin, row.id, 'dormant_winback');
+    await recordSend(admin, row.id, 'dormant_winback', variant);
     sent++;
   }
   return sent;
+}
+
+function idleCoinsVariants(persona: Persona, name: string | undefined, balance: number) {
+  const who = name ? `${name}, ` : '';
+  if (persona === 'man') {
+    return [
+      { body: `${who}you have ${balance} coins sitting unused. Go meet someone's Standard today.` },
+      { body: `${who}${balance} coins won't spend themselves. Go meet her Standard.` },
+    ];
+  }
+  return [
+    { body: `${who}you have ${balance} coins sitting unused. See what you can do with them.` },
+    { body: `${who}${balance} coins are just sitting there. Time to use them.` },
+  ];
 }
 
 async function nudgeIdleCoins(admin: Admin): Promise<number> {
@@ -156,24 +221,26 @@ async function nudgeIdleCoins(admin: Admin): Promise<number> {
   const userIds = wallets.map((w) => w.user_id);
   const [{ data: recentSpends }, { data: profiles }] = await Promise.all([
     admin.from('coin_transactions').select('user_id').lt('amount', 0).gte('created_at', threeDaysAgo).in('user_id', userIds),
-    admin.from('profiles').select('id, name').in('id', userIds),
+    admin.from('profiles').select('id, name, persona').in('id', userIds),
   ]);
   const recentlySpentIds = new Set((recentSpends ?? []).map((r) => r.user_id));
-  const nameById = new Map((profiles ?? []).map((p) => [p.id, p.name]));
+  const profileById = new Map((profiles ?? []).map((p) => [p.id, p]));
 
   let sent = 0;
   for (const wallet of wallets) {
     if (recentlySpentIds.has(wallet.user_id)) continue;
     if (!(await shouldSend(admin, wallet.user_id, 'idle_coins'))) continue;
-    const name = nameById.get(wallet.user_id);
+    const profile = profileById.get(wallet.user_id);
+    const options = idleCoinsVariants(profile?.persona ?? '', profile?.name, wallet.balance);
+    const variant = pickVariant(wallet.user_id, 'idle_coins', options.length);
     await sendNotification({
       supabase: admin,
       user_id: wallet.user_id,
       title: 'Coins doing nothing 💸',
-      body: `${name ? `${name}, ` : ''}you have ${wallet.balance} coins sitting unused. Go meet someone's Standard today.`,
+      body: options[variant].body,
       data: { type: 'idle_coins' },
     });
-    await recordSend(admin, wallet.user_id, 'idle_coins');
+    await recordSend(admin, wallet.user_id, 'idle_coins', variant);
     sent++;
   }
   return sent;
@@ -198,30 +265,48 @@ async function nudgeEarlyReviews(admin: Admin): Promise<number> {
   const { data: men } = await admin.from('profiles').select('id, name').in('id', manIds);
   const nameByManId = new Map((men ?? []).map((m) => [m.id, m.name]));
 
+  const variants = (manName: string | undefined, day: number) => [
+    { body: manName ? `${manName} is waiting on your Day ${day} review. Don't keep him hanging.` : "Don't keep him hanging -- review his submission now." },
+    { body: manName ? `Day ${day} is ready -- ${manName} is counting on you to review it.` : `Day ${day} is ready for your review.` },
+  ];
+
   let sent = 0;
   for (const row of rows) {
     if (!(await shouldSend(admin, row.user2_id, 'review_waiting_early'))) continue;
     const manName = nameByManId.get(row.user1_id);
+    const options = variants(manName, row.current_day);
+    const variant = pickVariant(row.user2_id, 'review_waiting_early', options.length);
     await sendNotification({
       supabase: admin,
       user_id: row.user2_id,
       title: "He's waiting on you 👀",
-      body: manName
-        ? `${manName} is waiting on your Day ${row.current_day} review. Don't keep him hanging.`
-        : "Don't keep him hanging -- review his submission now.",
+      body: options[variant].body,
       data: { type: 'review_reminder', connectionId: row.id },
     });
-    await recordSend(admin, row.user2_id, 'review_waiting_early');
+    await recordSend(admin, row.user2_id, 'review_waiting_early', variant);
     sent++;
   }
   return sent;
+}
+
+function profileIncompleteVariants(persona: Persona, name: string, whatToAdd: string) {
+  if (persona === 'man') {
+    return [
+      { body: `${name}, add ${whatToAdd} to get noticed way more. Takes under a minute.` },
+      { body: `${name}, profiles with ${whatToAdd} get chosen way more often. Add yours now.` },
+    ];
+  }
+  return [
+    { body: `${name}, add ${whatToAdd} to get noticed way more. Takes under a minute.` },
+    { body: `${name}, add ${whatToAdd} so your Standard gets taken seriously. Takes under a minute.` },
+  ];
 }
 
 async function nudgeIncompleteProfiles(admin: Admin): Promise<number> {
   const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
   const { data: rows } = await admin
     .from('profiles')
-    .select('id, name, bio, photos')
+    .select('id, name, bio, photos, persona')
     .lt('created_at', dayAgo)
     .eq('is_banned', false);
 
@@ -233,14 +318,16 @@ async function nudgeIncompleteProfiles(admin: Admin): Promise<number> {
     if (!(await shouldSend(admin, row.id, 'profile_incomplete'))) continue;
 
     const whatToAdd = missingBio && missingPhotos ? 'a bio and more photos' : missingBio ? 'a bio' : 'more photos';
+    const options = profileIncompleteVariants(row.persona, row.name, whatToAdd);
+    const variant = pickVariant(row.id, 'profile_incomplete', options.length);
     await sendNotification({
       supabase: admin,
       user_id: row.id,
       title: 'Get 3x more attention',
-      body: `${row.name}, add ${whatToAdd} to get noticed way more. Takes under a minute.`,
+      body: options[variant].body,
       data: { type: 'profile_incomplete' },
     });
-    await recordSend(admin, row.id, 'profile_incomplete');
+    await recordSend(admin, row.id, 'profile_incomplete', variant);
     sent++;
   }
   return sent;
@@ -249,6 +336,10 @@ async function nudgeIncompleteProfiles(admin: Admin): Promise<number> {
 export async function POST(req: Request) {
   if (unauthorized(req)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  if (!isWithinSendWindow()) {
+    return NextResponse.json({ ok: true, skipped: true, reason: 'outside_send_window' });
   }
 
   const admin = getAdmin();
