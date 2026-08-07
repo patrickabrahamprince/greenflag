@@ -9,6 +9,7 @@ import { createClient } from '@/lib/supabase/client';
 import { EmptyState } from '@/components/shared/empty-state';
 import { getCached, setCached } from '@/lib/pageCache';
 import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
+import { hapticTap, hapticDecision } from '@/lib/haptics';
 import type { Database } from '@/types/supabase';
 
 type ProfileRow = Database['public']['Tables']['profiles']['Row'];
@@ -33,7 +34,7 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
 
   return (
     <button
-      onClick={() => router.push(`/messages/${conv.id}`)}
+      onClick={() => { hapticTap(); router.push(`/messages/${conv.id}`); }}
       className="w-full flex items-center gap-3 px-6 py-4 text-left transition-colors border-b border-[#2A2A2A]"
     >
       <div
@@ -120,6 +121,7 @@ function InProgressMatches({ userId, supabase }: { userId: string; supabase: Ret
   }, [userId, supabase]);
 
   const handleLike = async (partnerId: string) => {
+    hapticDecision();
     setSendingId(partnerId);
     try {
       const res = await fetch(`/api/standard-hint/${partnerId}`, { method: 'POST' });
@@ -289,7 +291,7 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
             right under the description -- keeps it reachable with a
             thumb regardless of how tall the empty-state copy is. */}
         {persona !== 'woman' && (
-          <button onClick={() => router.push('/discover')} className="btn-primary w-full max-w-xs py-3 text-sm mt-auto">
+          <button onClick={() => { hapticTap(); router.push('/discover'); }} className="btn-primary w-full max-w-xs py-3 text-sm mt-auto">
             Go to Discover
           </button>
         )}

@@ -11,6 +11,7 @@ import { useNotificationStore } from '@/lib/store';
 import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 import { useFirstTimeHint } from '@/lib/hooks/useFirstTimeHint';
 import { FirstTimeHint } from '@/components/shared/FirstTimeHint';
+import { hapticTap, hapticDecision, hapticWarning } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 
 const NOTIFICATIONS_CACHE_KEY = 'notifications:list';
@@ -160,6 +161,7 @@ export default function NotificationsPage() {
   const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(refresh);
 
   const handleMarkAllRead = async () => {
+    hapticTap();
     setMarkingRead(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setMarkingRead(false); return; }
@@ -177,6 +179,7 @@ export default function NotificationsPage() {
   };
 
   const handleNotificationClick = async (notif: Notification) => {
+    hapticTap();
     // Mark as read
     if (!notif.read_at) {
       await supabase
@@ -208,6 +211,7 @@ export default function NotificationsPage() {
   };
 
   const handleDismiss = async (id: string) => {
+    hapticWarning();
     setNotifications((prev) => {
       const dismissed = prev.find((n) => n.id === id);
       if (dismissed && !dismissed.read_at) decrementUnread();
@@ -219,6 +223,7 @@ export default function NotificationsPage() {
   };
 
   const handlePin = async (notif: Notification) => {
+    hapticDecision();
     const nextPinned = !notif.pinned;
     setNotifications((prev) => {
       const next = sortNotifications(prev.map((n) => (n.id === notif.id ? { ...n, pinned: nextPinned } : n)));

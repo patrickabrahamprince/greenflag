@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/lib/store';
+import { hapticDecision, hapticSuccess, hapticWarning } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 import type { ProfileData, MatchInfo, ConnectionInfo } from '@/components/shared/profile-types';
 
@@ -50,6 +51,7 @@ export function useProfilePage(id: string | string[]) {
 
   const handleMeet = async () => {
     if (!profile) return;
+    hapticDecision();
     setConnecting(true);
     try {
       const res = await fetch('/api/likes', {
@@ -67,6 +69,7 @@ export function useProfilePage(id: string | string[]) {
         throw new Error(err.error || 'Failed to like profile');
       }
       const { matchId } = await res.json();
+      hapticSuccess();
       if (matchId) {
         router.push(`/task/${matchId}`);
       } else {
@@ -82,6 +85,7 @@ export function useProfilePage(id: string | string[]) {
 
   const handleReport = async () => {
     if (!reportReason) { toast.error('Select a reason'); return; }
+    hapticWarning();
     setSubmittingReport(true);
     try {
       const res = await fetch('/api/reports', {
@@ -107,6 +111,7 @@ export function useProfilePage(id: string | string[]) {
 
   const handleBlock = async () => {
     if (!profile) return;
+    hapticWarning();
     setBlocking(true);
     try {
       const res = await fetch('/api/block', {

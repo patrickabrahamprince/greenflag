@@ -10,6 +10,7 @@ import { useCountdown, formatCountdown } from '@/lib/hooks/useCountdown';
 import { useUserStore } from '@/lib/store';
 import { getCached, setCached } from '@/lib/pageCache';
 import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
+import { hapticTap, hapticDecision } from '@/lib/haptics';
 
 const MATCHES_CACHE_KEY = 'my-connections:matches';
 // Same key Discover itself caches under (see PROFILES_CACHE_KEY in
@@ -93,7 +94,7 @@ function MatchRow({
     <div className={`rounded-2xl shadow-sm overflow-hidden ${
       needsHisSubmission ? 'bg-red-500/[0.06] border border-red-500/20' : 'bg-[#111111]'
     }`}>
-      <button onClick={onClick} className="w-full flex items-center gap-3 p-4">
+      <button onClick={() => { hapticTap(); onClick(); }} className="w-full flex items-center gap-3 p-4">
         <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-[#1C1C1E]">
           {match.otherPhoto ? (
             <img src={match.otherPhoto} alt="" className="w-full h-full object-cover" />
@@ -194,6 +195,7 @@ export default function MyConnectionsPage() {
   const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(loadMatches);
 
   const handleNudge = async (matchId: string) => {
+    hapticDecision();
     setActioningId(matchId);
     try {
       const res = await fetch(`/api/matches/${matchId}/nudge-retry`, { method: 'POST' });
@@ -212,6 +214,7 @@ export default function MyConnectionsPage() {
   };
 
   const handleDecision = async (matchId: string, decision: 'accept' | 'deny') => {
+    hapticDecision();
     setActioningId(matchId);
     try {
       const res = await fetch(`/api/matches/${matchId}/retry-decision`, {
@@ -246,7 +249,7 @@ export default function MyConnectionsPage() {
       <div className="px-6 pt-safe-top">
         <div className="flex items-center justify-end mb-6">
           <button
-            onClick={() => router.push('/discover')}
+            onClick={() => { hapticTap(); router.push('/discover'); }}
             className="btn-secondary text-xs px-3 py-2 flex items-center gap-1.5 shrink-0"
           >
             <Compass className="w-3.5 h-3.5" />
@@ -279,7 +282,7 @@ export default function MyConnectionsPage() {
 
             {discoverPreview.length > 0 && (
               <button
-                onClick={() => router.push('/discover')}
+                onClick={() => { hapticTap(); router.push('/discover'); }}
                 className="mt-6 flex flex-col items-center gap-2 active:scale-95 transition-transform"
               >
                 <div className="flex -space-x-3">

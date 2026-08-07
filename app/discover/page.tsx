@@ -9,7 +9,7 @@ import { CoinBadge } from '@/components/shared/coin-badge'
 import { SocialProofLine } from '@/components/shared/SocialProofLine'
 import { createClient } from '@/lib/supabase/client'
 import { useCoinStore } from '@/lib/store'
-import { hapticDecision, hapticSuccess } from '@/lib/haptics'
+import { hapticTap, hapticDecision, hapticSuccess } from '@/lib/haptics'
 import { DiscoverySkeleton } from '@/components/discovery/DiscoverySkeleton'
 import { getCached, setCached } from '@/lib/pageCache'
 import { useFirstTimeHint } from '@/lib/hooks/useFirstTimeHint'
@@ -197,6 +197,7 @@ export default function DiscoverPage() {
 
   async function handleNudge(profileId: string) {
     if (nudgingId) return
+    hapticDecision()
     setNudgingId(profileId)
     try {
       await sendNudge(profileId, false)
@@ -312,6 +313,7 @@ export default function DiscoverPage() {
     setLikingId(profileId)
     try {
       if (persona === 'woman') {
+        hapticTap()
         router.push(`/profile/${profileId}`)
         return
       }
@@ -471,7 +473,7 @@ export default function DiscoverPage() {
 
                     {isLocked && (
                       <button
-                        onClick={() => setPhotoUnlockConfirm(p.id)}
+                        onClick={() => { hapticTap(); setPhotoUnlockConfirm(p.id) }}
                         aria-label="Unlock"
                         className="glass-surface absolute inset-0 m-auto z-20 flex items-center justify-center gap-1.5 h-9 w-fit px-4 rounded-full active:scale-95 transition-all shadow-lg"
                       >
@@ -494,14 +496,14 @@ export default function DiscoverPage() {
                     {total > 1 && (
                       <>
                         <button
-                          onClick={(e) => { e.stopPropagation(); goTo(idx - 1) }}
+                          onClick={(e) => { e.stopPropagation(); hapticTap(); goTo(idx - 1) }}
                           aria-label="Previous photo"
                           className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center"
                         >
                           <ChevronLeft className="w-5 h-5 text-white" />
                         </button>
                         <button
-                          onClick={(e) => { e.stopPropagation(); goTo(idx + 1) }}
+                          onClick={(e) => { e.stopPropagation(); hapticTap(); goTo(idx + 1) }}
                           aria-label="Next photo"
                           className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center"
                         >
@@ -681,14 +683,14 @@ export default function DiscoverPage() {
                 ) : (
                   <>
                     <button
-                      onClick={() => scrollToNext(i)}
+                      onClick={() => { hapticTap(); scrollToNext(i) }}
                       aria-label="Pass"
                       className="glass-surface size-14 rounded-full flex items-center justify-center active:scale-95 transition-all shrink-0"
                     >
                       <X className="w-6 h-6 text-ink/60" />
                     </button>
                     <button
-                      onClick={() => setConfirmProfileId(p.id)}
+                      onClick={() => { hapticDecision(); setConfirmProfileId(p.id) }}
                       disabled={likingId === p.id}
                       aria-label="Meet Her Standard"
                       className="size-16 rounded-full flex items-center justify-center active:scale-[0.98] transition-all duration-300 ease-out disabled:opacity-50 shrink-0"

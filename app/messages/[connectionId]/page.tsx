@@ -15,6 +15,7 @@ import { LockedOverlay } from '@/components/chat/LockedOverlay';
 import { EmptyChat } from '@/components/chat/EmptyChat';
 import { useScreenshotTarget } from '@/lib/hooks/useScreenshotGuard';
 import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
+import { hapticTap } from '@/lib/haptics';
 import { Loader2 } from 'lucide-react';
 
 export default function ChatPage({ params }: { params: { connectionId: string } }) {
@@ -109,6 +110,7 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
   const handleSend = async (messageText?: string) => {
     const text = messageText || input.trim();
     if (!text || sending) return;
+    hapticTap();
     setSending(true);
     setInput('');
     try {

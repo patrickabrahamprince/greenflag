@@ -14,6 +14,7 @@ import type { IntentionRecord, SubmissionRecord } from '@/components/connection/
 import { useCountdown, formatCountdown } from '@/lib/hooks/useCountdown';
 import { useScreenshotTarget } from '@/lib/hooks/useScreenshotGuard';
 import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
+import { hapticDecision, hapticSuccess, hapticWarning } from '@/lib/haptics';
 
 const TERMINAL_STATUSES = ['rejected', 'expired_no_submission', 'refunded'];
 const REVEAL_COST = 20;
@@ -309,7 +310,12 @@ export default function TaskPage() {
   };
 
   const handleReview = async (intentionItem: IntentionRecord, decision: 'approve' | 'reject', reason?: string) => {
-    if (decision === 'reject') setRejecting(true);
+    if (decision === 'reject') {
+      hapticWarning();
+      setRejecting(true);
+    } else {
+      hapticDecision();
+    }
     setReviewingTaskNumber(intentionItem.task_number ?? 1);
     try {
       const res = await fetch(`/api/matches/${matchId}/review-task`, {
@@ -355,6 +361,7 @@ export default function TaskPage() {
         return;
       }
       deductCoins(REVEAL_COST);
+      hapticSuccess();
       setRevealedSubmissionIds((prev) => new Set(prev).add(submissionId));
     } catch {
       toast.error('Network error.');
@@ -373,6 +380,7 @@ export default function TaskPage() {
         return;
       }
       deductCoins(REVEAL_COST);
+      hapticSuccess();
       setSpecialRevealed(true);
     } catch {
       toast.error('Network error.');
