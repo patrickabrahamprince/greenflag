@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { Pin, Trash2 } from 'lucide-react';
 
 interface SwipeToDismissProps {
   onDelete: () => void;
@@ -10,6 +11,7 @@ interface SwipeToDismissProps {
 }
 
 const ACTION_THRESHOLD = 80;
+const REVEAL_FADE_START = 10;
 
 // Same touch-ref pattern as ProfileImageCarousel (touchStartX/Y refs,
 // horizontal-dominant + distance check on touchend) but driving a live
@@ -17,6 +19,13 @@ const ACTION_THRESHOLD = 80;
 // follows the finger. Direction decides the action: swipe left reveals
 // delete on the right (and removes the card), swipe right reveals pin on
 // the left (and just snaps back -- pinning doesn't remove anything).
+//
+// The pin/delete affordances are small icon chips that fade in via
+// opacity as you drag past REVEAL_FADE_START, rather than a full-width
+// solid panel sitting behind the row at all times -- the previous
+// always-there bg-[#1C1C1E] rectangle was visible through any row whose
+// own foreground wasn't fully opaque, which read as an unwanted "black
+// box" on every row instead of only appearing mid-swipe.
 export function SwipeToDismiss({ onDelete, onPin, pinned, children }: SwipeToDismissProps) {
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
@@ -56,14 +65,26 @@ export function SwipeToDismiss({ onDelete, onPin, pinned, children }: SwipeToDis
     touchStartY.current = null;
   };
 
+  const pinOpacity = dragX > REVEAL_FADE_START ? Math.min((dragX - REVEAL_FADE_START) / (ACTION_THRESHOLD - REVEAL_FADE_START), 1) : 0;
+  const deleteOpacity = dragX < -REVEAL_FADE_START ? Math.min((-dragX - REVEAL_FADE_START) / (ACTION_THRESHOLD - REVEAL_FADE_START), 1) : 0;
+
   return (
-    <div className="relative overflow-hidden rounded-xl">
-      <div className="absolute inset-0 flex bg-[#1C1C1E]">
-        <div className="flex-1 flex items-center pl-5">
-          {onPin && <span className="text-xs text-ink/50">{pinned ? 'Unpin' : 'Pin'}</span>}
-        </div>
-        <div className="flex-1 flex items-center justify-end pr-5">
-          <span className="text-xs text-ink/50">Delete</span>
+    <div className="relative overflow-hidden">
+      <div className="absolute inset-0 flex items-center">
+        {onPin && (
+          <div
+            className="ml-3 w-9 h-9 rounded-full bg-gold/20 flex items-center justify-center shrink-0"
+            style={{ opacity: pinOpacity, transition: dragging ? 'none' : 'opacity 200ms ease-out' }}
+          >
+            <Pin className="w-4 h-4 text-gold" fill={pinned ? 'currentColor' : 'none'} />
+          </div>
+        )}
+        <div className="flex-1" />
+        <div
+          className="mr-3 w-9 h-9 rounded-full bg-red-500/20 flex items-center justify-center shrink-0"
+          style={{ opacity: deleteOpacity, transition: dragging ? 'none' : 'opacity 200ms ease-out' }}
+        >
+          <Trash2 className="w-4 h-4 text-red-400" />
         </div>
       </div>
       <div

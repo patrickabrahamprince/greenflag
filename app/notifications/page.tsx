@@ -300,7 +300,7 @@ export default function NotificationsPage() {
                 >
                   <button
                     onClick={() => handleNotificationClick(notif)}
-                    className="w-full text-left px-3 py-3 bg-[#0B0614] border-b border-border/30 transition-all active:scale-[0.98]"
+                    className="w-full text-left px-4 py-4 border-b border-border/30 transition-all active:scale-[0.98]"
                   >
                     <div className="flex items-center gap-1.5 mb-1">
                       <p className={`text-base font-semibold flex-1 min-w-0 truncate ${
