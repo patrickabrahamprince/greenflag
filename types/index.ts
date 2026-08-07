@@ -27,6 +27,7 @@ export interface Profile {
   ban_reason?: string | null;
   approval_status?: string | null;
   review_started_at?: string | null;
+  push_primer_shown?: boolean | null;
   created_at: string | null;
 }
 
