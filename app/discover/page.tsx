@@ -82,6 +82,7 @@ export default function DiscoverPage() {
   const scrollRef = useRef<HTMLDivElement>(null)
   const touchStartY = useRef<number | null>(null)
   const pulling = useRef(false)
+  const cardTouchStart = useRef<Record<string, { x: number; y: number }>>({})
 
   const observer = useRef<IntersectionObserver>()
   const lastProfileRef = useCallback((node: HTMLDivElement) => {
@@ -454,7 +455,27 @@ export default function DiscoverPage() {
                 }
 
                 return (
-                  <div className="relative w-full h-full overflow-hidden">
+                  <div
+                    className="relative w-full h-full overflow-hidden"
+                    onTouchStart={(e) => {
+                      cardTouchStart.current[p.id] = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+                    }}
+                    onTouchEnd={(e) => {
+                      const start = cardTouchStart.current[p.id]
+                      delete cardTouchStart.current[p.id]
+                      if (!start) return
+                      const dx = e.changedTouches[0].clientX - start.x
+                      const dy = e.changedTouches[0].clientY - start.y
+                      // Dominant-horizontal + distance check, same pattern as
+                      // ProfileImageCarousel -- a vertical swipe (the much
+                      // more common gesture here, for moving to the next
+                      // profile) never satisfies this, so it's left alone
+                      // for the outer scroll-snap container to handle.
+                      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+                        goTo(idx + (dx > 0 ? -1 : 1))
+                      }
+                    }}
+                  >
                     {!src || failedPhotoUrls.has(src) ? (
                       <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-[#2A2A2C]">
                         <ImageOff className="w-9 h-9 text-white/25" />
