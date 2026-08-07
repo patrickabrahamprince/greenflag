@@ -382,7 +382,7 @@ export default function DiscoverPage() {
 
   return (
     <div className="relative screen-gradient h-[calc(100dvh-5rem)] max-w-app mx-auto flex flex-col">
-      <div className="relative z-20 shrink-0 flex items-center justify-end px-5 pt-safe-top pb-3 bg-[#0B0614]">
+      <div className="relative z-20 shrink-0 flex items-center justify-end px-3 pt-safe-top pb-2.5 bg-[#0B0614] border-b border-white/[0.06] shadow-[0_4px_16px_-4px_rgba(0,0,0,0.5)]">
         {persona === 'woman' ? (
           <div className="glass-surface border-0 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-display font-semibold text-ink/70">
             <span className="text-gold text-[10px]">◆</span>
@@ -462,6 +462,10 @@ export default function DiscoverPage() {
                       </button>
                     )}
 
+                    {/* Keeps the top dashes/badge legible regardless of how
+                        bright the photo itself is at the top edge. */}
+                    <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/50 to-transparent pointer-events-none" />
+
                     {total > 1 && (
                       <div className="absolute top-2 inset-x-3 z-10 flex gap-1">
                         {photos.map((_, dotIdx) => (
@@ -493,7 +497,7 @@ export default function DiscoverPage() {
                     )}
 
                     {typeof p.match_percentage === 'number' && (
-                      <div className="absolute top-8 left-3 z-10 flex flex-col items-start gap-1">
+                      <div className="absolute top-6 left-3 z-10 flex flex-col items-start gap-1">
                         <div className="glass-surface flex items-center gap-1.5 rounded-full px-3 py-1.5">
                           <span className="text-gold text-xs">◆</span>
                           <span className="font-display font-bold text-white text-sm whitespace-nowrap">
