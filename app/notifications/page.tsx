@@ -72,6 +72,12 @@ function getNotificationRoute(data: Record<string, unknown> | null): string | nu
     }
     case 'bonus':
       return '/coins';
+    case 'dormant_winback':
+      return '/discover';
+    case 'idle_coins':
+      return '/discover';
+    case 'profile_incomplete':
+      return '/profile/edit';
     default:
       return connectionId ? `/messages/${connectionId}` : null;
   }
@@ -206,11 +212,16 @@ export default function NotificationsPage() {
   return (
     <div className="min-h-dvh screen-gradient">
       <div className="max-w-app mx-auto px-6 pt-safe-top pb-24">
-        {unreadCount > 0 && (
-          <div className="flex items-center justify-between mb-6">
-            <span className="text-xs bg-gold/20 text-gold px-2 py-0.5 rounded-full">
-              {unreadCount} new
-            </span>
+        <div className="flex items-center justify-between mb-6 pt-4">
+          <div className="flex items-center gap-2">
+            <h1 className="font-display text-2xl text-ink">Alerts</h1>
+            {unreadCount > 0 && (
+              <span className="text-xs bg-gold/20 text-gold px-2 py-0.5 rounded-full">
+                {unreadCount} new
+              </span>
+            )}
+          </div>
+          {unreadCount > 0 && (
             <button
               onClick={handleMarkAllRead}
               disabled={markingRead}
@@ -219,8 +230,8 @@ export default function NotificationsPage() {
               {markingRead && <Loader2 className="w-3 h-3 animate-spin" />}
               Mark all read
             </button>
-          </div>
-        )}
+          )}
+        </div>
 
         {notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20">
