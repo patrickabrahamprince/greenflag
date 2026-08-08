@@ -66,7 +66,7 @@ function DayCompleteModal({ unlocksAt, completedDay, onExplore }: { unlocksAt: s
           His Day {completedDay + 1} intentions unlock for him tomorrow. Check My Connections
           to see if he stays consistent.
         </p>
-        <p className="font-display text-4xl text-gold tracking-wider mb-6">
+        <p className="font-display text-3xl text-gold tracking-wider mb-6">
           {remainingMs !== null ? formatCountdown(remainingMs) : '--:--:--'}
         </p>
         <button onClick={onExplore} className="btn-primary w-full">
@@ -455,7 +455,7 @@ export default function TaskPage() {
             <Hourglass className="w-6 h-6 text-gold" />
           </div>
           <h2 className="font-display text-2xl text-ink mb-2">Day {currentDay} unlocks in</h2>
-          <p className="font-display text-4xl text-gold tracking-wider mb-3">
+          <p className="font-display text-3xl text-gold tracking-wider mb-3">
             <LiveCountdown target={match.next_day_unlocks_at} />
           </p>
           <p className="text-ink/50 text-sm mb-6">

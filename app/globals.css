@@ -77,6 +77,19 @@ body::-webkit-scrollbar,
   flex-shrink: 0;
   height: var(--kb-inset, 0px);
 }
+/* body also carries .min-h-dvh (just for background-color coverage, see
+   layout.tsx), not because it's one of the flex-column screens this
+   spacer trick targets. Without this override, focusing any text field
+   anywhere sets --kb-inset globally, and since that only resets on an
+   actual route change (not when the keyboard closes -- see
+   keyboard-inset-listener.tsx), staying on the same route after typing
+   (e.g. submitting a task's text answer without navigating away) left a
+   real chunk of extra, unstyled space sitting on body itself, right
+   above the fixed nav -- tinted by screen-gradient's own violet glow
+   into what read as a stray blue layer obstructing whatever was under it. */
+body.min-h-dvh::after {
+  content: none;
+}
 
 @property --border-angle {
   syntax: '<angle>';
@@ -200,9 +213,12 @@ body::-webkit-scrollbar,
      instead of a flat surface fill, matching the teaser-prompt card's
      established gold/violet treatment elsewhere in the app. */
   .dialog-card {
-    @apply border border-gold/20 rounded-2xl p-6
+    @apply border border-gold/20 rounded-2xl p-8
            transition-all duration-300 ease-out;
-    background: linear-gradient(135deg, rgba(192,38,211,0.14) 0%, rgba(28,28,30,0.97) 60%);
+    /* First stop was only 14% opaque, letting whatever sits behind the
+       dialog (e.g. Settings' own "Danger Zone" icon/text) show through
+       prominently in that corner instead of reading as a solid card. */
+    background: linear-gradient(135deg, rgba(192,38,211,0.35) 0%, rgba(28,28,30,0.98) 60%);
   }
 
   .card-hover {
