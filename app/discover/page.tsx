@@ -2,13 +2,14 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell, ImageOff, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell, ImageOff, ChevronLeft, ChevronRight, Gift } from 'lucide-react'
 import { LoadingLogo } from '@/components/shared/LoadingLogo'
 import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
 import { SocialProofLine } from '@/components/shared/SocialProofLine'
 import { createClient } from '@/lib/supabase/client'
 import { useCoinStore } from '@/lib/store'
+import { GIFT_TYPES } from '@/lib/gift-types'
 import { hapticTap, hapticDecision, hapticSuccess } from '@/lib/haptics'
 import { DiscoverySkeleton } from '@/components/discovery/DiscoverySkeleton'
 import { getCached, setCached } from '@/lib/pageCache'
@@ -68,6 +69,9 @@ export default function DiscoverPage() {
   const [nudgingId, setNudgingId] = useState<string | null>(null)
   const [nudgeDialog, setNudgeDialog] = useState<{ visible: boolean; charged: boolean; cost: number } | null>(null)
   const [nudgeConfirm, setNudgeConfirm] = useState<{ profileId: string; cost: number } | null>(null)
+  const [giftPickerProfileId, setGiftPickerProfileId] = useState<string | null>(null)
+  const [sendingGiftType, setSendingGiftType] = useState<string | null>(null)
+  const [showGiftInsufficientFunds, setShowGiftInsufficientFunds] = useState(false)
   // Which photo each card's carousel is currently showing, keyed by profile
   // id -- a single Record instead of per-card useState, since hooks can't
   // be called inside the profiles.map() below.
@@ -221,6 +225,37 @@ export default function DiscoverPage() {
     } finally {
       setNudgingId(null)
       setNudgeConfirm(null)
+    }
+  }
+
+  async function handleSendGift(profileId: string, giftTypeId: string) {
+    if (sendingGiftType) return
+    hapticDecision()
+    setSendingGiftType(giftTypeId)
+    try {
+      const res = await fetch('/api/gifts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ toUserId: profileId, giftType: giftTypeId }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setGiftPickerProfileId(null)
+        if (data.error === 'INSUFFICIENT_COINS') {
+          setShowGiftInsufficientFunds(true)
+        } else {
+          toast.error(data.error || 'Failed to send gift')
+        }
+        return
+      }
+      deductCoins(data.cost)
+      hapticSuccess()
+      setGiftPickerProfileId(null)
+      toast.success('Gift sent!')
+    } catch {
+      toast.error('Failed to send gift')
+    } finally {
+      setSendingGiftType(null)
     }
   }
 
@@ -596,7 +631,7 @@ export default function DiscoverPage() {
                 </div>
               )}
 
-              <div className={persona === 'woman' ? 'flex items-center gap-4 pt-2 shrink-0' : 'flex items-center justify-center gap-5 pt-2 shrink-0'}>
+              <div className={persona === 'woman' ? 'flex items-center gap-4 pt-2 shrink-0' : 'flex items-center justify-center gap-4 pt-2 shrink-0'}>
                 {persona === 'woman' ? (
                   <>
                     <button
@@ -638,6 +673,13 @@ export default function DiscoverPage() {
                       className="glass-surface size-11 rounded-full flex items-center justify-center active:scale-95 transition-all shrink-0"
                     >
                       <X className="w-5 h-5 text-ink/60" />
+                    </button>
+                    <button
+                      onClick={() => { hapticTap(); setGiftPickerProfileId(p.id) }}
+                      aria-label="Send Gift"
+                      className="glass-surface size-11 rounded-full flex items-center justify-center active:scale-95 transition-all shrink-0"
+                    >
+                      <Gift className="w-5 h-5 text-ink/60" />
                     </button>
                     <button
                       onClick={() => { hapticDecision(); setConfirmProfileId(p.id) }}
@@ -771,6 +813,75 @@ export default function DiscoverPage() {
               </button>
               <button
                 onClick={() => { hapticTap(); setShowInsufficientFunds(false); router.push('/coins'); }}
+                className="btn-primary flex-1 whitespace-nowrap"
+              >
+                Buy Coins
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {giftPickerProfileId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
+          <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
+            <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Gift className="w-6 h-6 text-gold" />
+            </div>
+            <h4 className="font-display text-2xl text-ink mb-2">Send a Gift</h4>
+            <p className="text-ink/60 text-sm leading-relaxed mb-6">
+              A no-commitment way to stand out — no match required.
+            </p>
+            <div className="space-y-2.5 mb-4">
+              {GIFT_TYPES.map((gift) => (
+                <button
+                  key={gift.id}
+                  onClick={() => handleSendGift(giftPickerProfileId, gift.id)}
+                  disabled={!!sendingGiftType}
+                  className="w-full glass-surface rounded-xl px-4 py-3 flex items-center justify-between active:scale-[0.98] transition-all disabled:opacity-50"
+                >
+                  <span className="flex items-center gap-2.5 text-white font-display text-sm font-semibold">
+                    <span className="text-xl">{gift.emoji}</span>
+                    {gift.label}
+                  </span>
+                  {sendingGiftType === gift.id ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-gold" />
+                  ) : (
+                    <span className="text-gold text-xs font-display font-bold">{gift.cost} coins</span>
+                  )}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setGiftPickerProfileId(null)}
+              disabled={!!sendingGiftType}
+              className="btn-secondary w-full whitespace-nowrap disabled:opacity-50"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showGiftInsufficientFunds && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
+          <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
+            <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Coins className="w-6 h-6 text-gold" />
+            </div>
+            <h4 className="font-display text-2xl text-ink mb-2">Not Enough Coins</h4>
+            <p className="text-ink/60 text-sm leading-relaxed mb-6">
+              You need more coins to send this gift. Top up to keep going.
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setShowGiftInsufficientFunds(false)}
+                className="btn-secondary flex-1 whitespace-nowrap"
+              >
+                Not Now
+              </button>
+              <button
+                onClick={() => { hapticTap(); setShowGiftInsufficientFunds(false); router.push('/coins'); }}
                 className="btn-primary flex-1 whitespace-nowrap"
               >
                 Buy Coins
