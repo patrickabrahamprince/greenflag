@@ -443,6 +443,53 @@ export default function TaskPage() {
         </div>
       )}
 
+      {/* Rendered regardless of isLocked -- previously this only showed
+          inside the unlocked branch below, so the moment her own approval
+          of the day's last task advanced the day (setting
+          next_day_unlocks_at and flipping isLocked to true on the refetch
+          that follows), an unrevealed special note vanished behind the
+          locked countdown screen before she'd gotten to it. Combined with
+          the API now also looking one day back (see route.ts), this keeps
+          it reachable through that transition instead of losing it. */}
+      {specialSend && isWoman && (
+        <div className="rounded-2xl p-4 mb-4 border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-transparent shadow-[0_0_24px_-10px_rgba(192,38,211,0.6)]">
+          <div className="flex items-center gap-2 mb-2">
+            <Sparkles className="w-4 h-4 text-gold" />
+            <p className="font-display text-sm text-gold">A Special Note From {otherProfile.name}</p>
+          </div>
+          {!specialSend.alreadyViewed || specialRevealed ? (
+            <>
+              {specialSend.type === 'text' && (
+                <p className="text-sm text-ink/80 italic">&quot;{specialSend.content}&quot;</p>
+              )}
+              {specialSend.media_url && (
+                specialSend.type === 'photo' ? (
+                  <img src={specialSend.media_url} alt="" className="rounded-lg w-full max-h-64 object-cover" />
+                ) : (
+                  <audio controls src={specialSend.media_url} className="w-full h-8" />
+                )
+              )}
+            </>
+          ) : (
+            <div className="relative rounded-lg overflow-hidden">
+              <div className="py-6 text-center bg-[#1C1C1E] blur-sm select-none">
+                <p className="text-xs text-ink/60">A surprise, just for you.</p>
+              </div>
+              <button
+                onClick={handleRevealSpecial}
+                disabled={revealingSpecial}
+                className="glass-surface absolute inset-0 m-auto h-8 w-fit px-3 rounded-full flex items-center gap-1.5 active:scale-95 transition-all disabled:opacity-50"
+              >
+                <Coins className="w-3 h-3 text-gold shrink-0" />
+                <span className="text-white text-xs font-display font-bold whitespace-nowrap">
+                  Reveal — {REVEAL_COST}
+                </span>
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
       {isLocked && match.next_day_unlocks_at ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
           {!isWoman && (
@@ -480,7 +527,15 @@ export default function TaskPage() {
         </div>
       )}
 
-      <div className="space-y-4 mb-6 flex-1 overflow-y-auto scrollbar-hide">
+      {/* Just one flex-column layout div, not a second independent scroll
+          container -- the page's own outer div (above) already handles
+          scrolling for everything on this screen. Nesting overflow-y-auto
+          here on top of that meant iOS WebView sometimes gave scroll/touch
+          priority to one container over the other, leaving whichever task
+          card sat below the fold (typically task 3, right after
+          submitting task 1 shifted the layout) unreachable -- looked
+          exactly like it was "blocked", not just scrolled past. */}
+      <div className="space-y-4 mb-6">
         {intentions.map((intentionItem) => {
           const matchingSub = submissions.find((s) => s.task_number === intentionItem.task_number);
           const hasSubmittedContent = !!(matchingSub?.content || matchingSub?.media_url);
@@ -639,44 +694,6 @@ export default function TaskPage() {
         )
       )}
 
-      {specialSend && isWoman && (
-        <div className="rounded-2xl p-4 mb-4 border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-transparent shadow-[0_0_24px_-10px_rgba(192,38,211,0.6)]">
-          <div className="flex items-center gap-2 mb-2">
-            <Sparkles className="w-4 h-4 text-gold" />
-            <p className="font-display text-sm text-gold">A Special Note From {otherProfile.name}</p>
-          </div>
-          {!specialSend.alreadyViewed || specialRevealed ? (
-            <>
-              {specialSend.type === 'text' && (
-                <p className="text-sm text-ink/80 italic">&quot;{specialSend.content}&quot;</p>
-              )}
-              {specialSend.media_url && (
-                specialSend.type === 'photo' ? (
-                  <img src={specialSend.media_url} alt="" className="rounded-lg w-full max-h-64 object-cover" />
-                ) : (
-                  <audio controls src={specialSend.media_url} className="w-full h-8" />
-                )
-              )}
-            </>
-          ) : (
-            <div className="relative rounded-lg overflow-hidden">
-              <div className="py-6 text-center bg-[#1C1C1E] blur-sm select-none">
-                <p className="text-xs text-ink/60">A surprise, just for you.</p>
-              </div>
-              <button
-                onClick={handleRevealSpecial}
-                disabled={revealingSpecial}
-                className="glass-surface absolute inset-0 m-auto h-8 w-fit px-3 rounded-full flex items-center gap-1.5 active:scale-95 transition-all disabled:opacity-50"
-              >
-                <Coins className="w-3 h-3 text-gold shrink-0" />
-                <span className="text-white text-xs font-display font-bold whitespace-nowrap">
-                  Reveal — {REVEAL_COST}
-                </span>
-              </button>
-            </div>
-          )}
-        </div>
-      )}
         </>
       )}
 

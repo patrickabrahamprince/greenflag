@@ -65,11 +65,23 @@ export async function GET(
       .eq('match_id', id)
       .eq('day_number', match.current_day);
 
+    // Scoping strictly to current_day meant a special send became
+    // unreachable the instant the day it was sent on finished -- her own
+    // approval of the day's last task advances current_day server-side
+    // (see review-task/route.ts), and that fetchMatch() refetch could
+    // land before she'd gotten to reveal a special note she'd already
+    // seen sitting there, permanently losing it (it also can't outlive
+    // the day the response arrives on, since day_number no longer
+    // matches). Including current_day - 1 gives her through the
+    // approval that advances the day to still see/reveal it.
     const { data: specialSend } = await admin
       .from('special_sends')
       .select('id, day_number, type, content, media_url, media_type, created_at, viewed_at')
       .eq('match_id', id)
-      .eq('day_number', match.current_day)
+      .gte('day_number', Math.max(1, match.current_day - 1))
+      .lte('day_number', match.current_day)
+      .order('day_number', { ascending: false })
+      .limit(1)
       .maybeSingle();
 
     // First time the woman fetches it, mark it viewed -- that one look is
