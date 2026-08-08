@@ -5,6 +5,10 @@ export const APPLE_COIN_PRODUCTS: Record<string, number> = {
   'com.greenflagapp.app.coins500': 500,
   'com.greenflagapp.app.coins1200': 1200,
   'com.greenflagapp.app.coins2500': 2500,
+  // Real-money end-to-end test at the smallest possible spend -- admin-
+  // only in the UI (see app/(guest)/coins/page.tsx), so a live customer
+  // never sees a 5-coin pack sitting next to the real ones.
+  'com.greenflagapp.app.coinstest': 5,
 };
 
 export const APPLE_COIN_PRODUCT_IDS = Object.keys(APPLE_COIN_PRODUCTS);

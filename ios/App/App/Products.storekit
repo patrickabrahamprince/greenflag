@@ -46,6 +46,21 @@
       "productID" : "com.greenflagapp.app.coins2500",
       "referenceName" : "2500 Coins",
       "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "5",
+      "familyShareable" : false,
+      "internalID" : "3F90BF45-AB9E-4B0E-A26A-16BAE8F9A38A",
+      "localizations" : [
+        {
+          "description" : "Admin-only real-money test purchase",
+          "displayName" : "Test 5 Coins",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.greenflagapp.app.coinstest",
+      "referenceName" : "Test 5 Coins",
+      "type" : "Consumable"
     }
   ],
   "settings" : {

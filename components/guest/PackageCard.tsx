@@ -5,6 +5,7 @@ interface Package {
   price: number;
   popular?: boolean;
   best?: boolean;
+  test?: boolean;
 }
 
 interface PackageCardProps {
@@ -29,6 +30,11 @@ export function PackageCard({ pkg, displayPrice, purchasing, isPurchasingThis, o
       {pkg.best && (
         <span className="absolute top-2 right-2 text-[10px] font-medium text-gold bg-gold/10 px-2 py-0.5 rounded-full">
           Best Value
+        </span>
+      )}
+      {pkg.test && (
+        <span className="absolute top-2 right-2 text-[10px] font-medium text-red-400 bg-red-400/10 px-2 py-0.5 rounded-full">
+          Admin Test
         </span>
       )}
       <div className="flex items-center justify-between">
