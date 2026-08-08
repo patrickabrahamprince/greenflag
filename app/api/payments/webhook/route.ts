@@ -2,10 +2,8 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
-// TEMPORARY: 399 -> 2, matching create-order, for a real end-to-end
-// payment test. Revert once a real ₹2 purchase is confirmed to land.
 const COIN_PACKS: Record<number, number> = {
-  2: 500,
+  399: 500,
   799: 1200,
   1499: 2500,
 };

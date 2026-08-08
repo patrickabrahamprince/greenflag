@@ -3,10 +3,8 @@ import Razorpay from 'razorpay';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 
-// TEMPORARY: 399 -> 2 for a real end-to-end payment test. Revert to 399
-// once a real ₹2 purchase is confirmed to land in coin_transactions.
 const COIN_PACKS: Record<number, { coins: number; priceINR: number }> = {
-  2: { coins: 500, priceINR: 2 },
+  399: { coins: 500, priceINR: 399 },
   799: { coins: 1200, priceINR: 799 },
   1499: { coins: 2500, priceINR: 1499 },
 };

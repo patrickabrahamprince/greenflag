@@ -16,11 +16,7 @@ import { TransactionHistory } from '@/components/guest/TransactionHistory';
 import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 
 const PACKAGES = [
-  // TEMPORARY: 399 -> 2 for a real end-to-end Razorpay payment test
-  // (web only -- iOS always goes through Apple IAP regardless of this
-  // value). Revert once a real ₹2 purchase is confirmed to land in
-  // coin_transactions.
-  { coins: 500, price: 2, appleProductId: 'com.greenflagapp.app.coins500', popular: true },
+  { coins: 500, price: 399, appleProductId: 'com.greenflagapp.app.coins500', popular: true },
   { coins: 1200, price: 799, appleProductId: 'com.greenflagapp.app.coins1200', best: true },
   { coins: 2500, price: 1499, appleProductId: 'com.greenflagapp.app.coins2500' },
 ];
