@@ -23,9 +23,10 @@ const PACKAGES = [
 // Real-money round-trip check at the smallest possible spend -- confirms
 // the whole pipeline (StoreKit purchase -> /api/payments/apple/verify ->
 // credit_coins_idempotent_apple) with an actual charge, not a sandbox
-// simulation. Admin-only (see isAdmin below) so a real customer never
-// sees a 5-coin pack next to the real ones.
-const TEST_PACKAGE = { coins: 5, price: 5, appleProductId: 'com.greenflagapp.app.coinstest', test: true };
+// simulation. Visible to every account for now (was admin-only) --
+// remove or re-gate this before App Review / public launch, since a
+// real customer or reviewer will otherwise see it too.
+const TEST_PACKAGE = { coins: 5, price: 9, appleProductId: 'com.greenflagapp.app.coinstest', test: true };
 
 interface Transaction {
   id: number;
@@ -41,7 +42,6 @@ export default function CoinsPage() {
   const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [appleProducts, setAppleProducts] = useState<Record<string, IAPProduct>>({});
-  const [isAdmin, setIsAdmin] = useState(false);
   const supabase = createClient();
 
   const { isNative, purchase: handleApplePurchase, purchasingProductId } = useAppleIAP();
@@ -73,9 +73,6 @@ export default function CoinsPage() {
     if (wallet) {
       setBalance((wallet as { balance: number }).balance);
     }
-
-    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single();
-    setIsAdmin(!!(profile as { is_admin?: boolean } | null)?.is_admin);
 
     // coin_transactions (not transactions -- confirmed empty on
     // production) is what add_coins/deduct_coins actually write to.
@@ -130,7 +127,7 @@ export default function CoinsPage() {
         )}
 
         <div className="px-4 space-y-3">
-          {(isAdmin ? [...PACKAGES, TEST_PACKAGE] : PACKAGES).map((pkg) => (
+          {[...PACKAGES, TEST_PACKAGE].map((pkg) => (
             <PackageCard
               key={pkg.appleProductId}
               pkg={pkg}
