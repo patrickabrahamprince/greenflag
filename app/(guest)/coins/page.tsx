@@ -6,7 +6,6 @@ import { Loader2 } from 'lucide-react';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { useCoinStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
-import { useCoinPurchase } from '@/lib/useCoinPurchase';
 import { useAppleIAP } from '@/lib/hooks/useAppleIAP';
 import { InAppPurchase, type IAPProduct } from '@/lib/native/inAppPurchase';
 import { APPLE_COIN_PRODUCT_IDS } from '@/lib/iap-products';
@@ -37,15 +36,10 @@ export default function CoinsPage() {
   const [appleProducts, setAppleProducts] = useState<Record<string, IAPProduct>>({});
   const supabase = createClient();
 
-  const { purchasing: razorpayPurchasing, handleBuy: handleRazorpayBuy } = useCoinPurchase({
-    onBalanceUpdate: setBalance,
-    onTransactionsUpdate: setTransactions,
-  });
   const { isNative, purchase: handleApplePurchase, purchasingProductId } = useAppleIAP();
 
-  // Real StoreKit pricing (App Store Connect owns the actual price tier,
-  // not the Razorpay INR figures above) -- fetched once so the card shows
-  // what Apple will actually charge instead of a guessed number.
+  // Real StoreKit pricing -- fetched once so the card shows what Apple
+  // will actually charge instead of the guessed INR figure in PACKAGES.
   useEffect(() => {
     if (!isNative) return;
     InAppPurchase.getProducts({ productIds: APPLE_COIN_PRODUCT_IDS })
@@ -124,15 +118,21 @@ export default function CoinsPage() {
 
         <CoinBalance balance={balance} />
 
+        {!isNative && (
+          <p className="px-4 mb-3 text-xs text-muted text-center">
+            Coins can only be purchased in the GreenFlag iOS app.
+          </p>
+        )}
+
         <div className="px-4 space-y-3">
           {PACKAGES.map((pkg) => (
             <PackageCard
               key={pkg.coins}
               pkg={pkg}
               displayPrice={appleProducts[pkg.appleProductId]?.displayPrice}
-              purchasing={isNative ? purchasingProductId !== null : razorpayPurchasing !== null}
-              isPurchasingThis={isNative ? purchasingProductId === pkg.appleProductId : razorpayPurchasing === pkg.price}
-              onBuy={() => (isNative ? handleApplePurchase(pkg.appleProductId) : handleRazorpayBuy(pkg))}
+              purchasing={!isNative || purchasingProductId !== null}
+              isPurchasingThis={purchasingProductId === pkg.appleProductId}
+              onBuy={() => handleApplePurchase(pkg.appleProductId)}
             />
           ))}
         </div>

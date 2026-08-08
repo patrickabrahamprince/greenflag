@@ -54,18 +54,13 @@ const nextConfig = {
           key: 'Content-Security-Policy',
           value: [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://api.razorpay.com",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
             "style-src 'self' 'unsafe-inline'",
             "img-src 'self' data: blob: https: http:",
             "media-src 'self' blob: data:",
             "font-src 'self'",
-            "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.razorpay.com https://lumberjack.razorpay.com",
-            // checkout.razorpay.com alone isn't enough -- Razorpay serves
-            // several payment-method steps (UPI intent/QR, some bank
-            // redirects) as a frame from api.razorpay.com directly, not
-            // just via XHR. Missing it here is exactly what produces
-            // Chrome's "This content is blocked" message mid-checkout.
-            "frame-src 'self' https://checkout.razorpay.com https://api.razorpay.com",
+            "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+            "frame-src 'self'",
           ].join('; '),
         },
       ],

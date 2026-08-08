@@ -1,10 +1,8 @@
 import { registerPlugin } from '@capacitor/core';
 
 // Bridges ios/App/App/InAppPurchasePlugin.swift. No web implementation is
-// registered -- coin purchases on web keep using Razorpay (see
-// lib/useCoinPurchase.ts); this plugin only exists for the native iOS app,
-// where Apple requires coins to be sold as a StoreKit consumable rather
-// than through a third-party processor.
+// registered -- coins are iOS-app-only, sold as a StoreKit consumable per
+// Apple's requirements, with no other purchase path.
 export interface IAPProduct {
   productId: string;
   displayName: string;

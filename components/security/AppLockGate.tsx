@@ -129,8 +129,8 @@ export function AppLockGate() {
   // source) fires off UIApplication's didBecomeActive/willResignActive --
   // the same pair iOS fires for ANY transient system sheet, not just real
   // backgrounding: Face ID's own prompt, the native Google/Apple sign-in
-  // account picker, permission dialogs, Razorpay's checkout sheet. Every
-  // one of those was re-triggering this lock. @capacitor/app's `resume`
+  // account picker, permission dialogs. Every one of those was
+  // re-triggering this lock. @capacitor/app's `resume`
   // event is wired to willEnterForegroundNotification instead, which iOS
   // only fires on an actual return from the background.
   useEffect(() => {

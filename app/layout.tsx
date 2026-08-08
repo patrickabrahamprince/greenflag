@@ -3,7 +3,6 @@ import { Bricolage_Grotesque } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { SwipeBackGesture } from '@/components/layout/SwipeBackGesture'
-import Script from 'next/script'
 import type { Metadata, Viewport } from 'next'
 
 // Single unified typeface across the whole app. Poppins (tried first per
@@ -58,12 +57,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={bricolage.variable} style={{ colorScheme: 'dark' }}>
       <body className="min-h-dvh bg-[#000000] text-[#FFFFFF] font-sans">
-        {/* afterInteractive (not lazyOnload) -- lazyOnload only loads
-            during browser idle time, which can be several seconds after
-            the Coins page is already interactive. Someone tapping Buy
-            quickly would hit `new window.Razorpay(...)` before the SDK
-            exists, throwing instead of opening checkout. */}
-        <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
         <ErrorBoundary>
           <Providers>
             <SwipeBackGesture>{children}</SwipeBackGesture>

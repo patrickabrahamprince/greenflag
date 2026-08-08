@@ -9,7 +9,7 @@ import { APPLE_COIN_PRODUCT_IDS } from '@/lib/iap-products';
 
 // This only ever runs inside the native iOS app -- Capacitor.isNativePlatform()
 // is false on web, and there's no InAppPurchase plugin registered there
-// anyway. Web keeps using Razorpay (see useCoinPurchase.ts).
+// anyway. Coins are iOS-app-only; there's no web purchase path.
 export function useAppleIAP() {
   const [purchasingProductId, setPurchasingProductId] = useState<string | null>(null);
   const isNative = Capacitor.isNativePlatform();

@@ -9,9 +9,9 @@ interface Package {
 
 interface PackageCardProps {
   pkg: Package;
-  // Real StoreKit price string (e.g. "₹399.00") when running native and
-  // App Store Connect pricing has loaded -- falls back to the Razorpay
-  // INR figure on web, or while Apple's price hasn't loaded yet.
+  // Real StoreKit price string (e.g. "₹399.00") once App Store Connect
+  // pricing has loaded -- falls back to the guessed INR figure in
+  // PACKAGES while that's still in flight.
   displayPrice?: string;
   purchasing: boolean;
   isPurchasingThis: boolean;
