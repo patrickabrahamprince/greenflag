@@ -37,6 +37,7 @@
 		AB12CD34EF56000000000005 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		AB12CD34EF56000000000007 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AB12CD34EF56000000000009 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
+		AB12CD34EF56000000000010 /* Products.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Products.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +85,7 @@
 				AB12CD34EF56000000000005 /* MainViewController.swift */,
 				AB12CD34EF56000000000007 /* PrivacyInfo.xcprivacy */,
 				AB12CD34EF56000000000009 /* App.entitlements */,
+				AB12CD34EF56000000000010 /* Products.storekit */,
 			);
 			path = App;
 			sourceTree = "<group>";

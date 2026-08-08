@@ -72,7 +72,6 @@ export default function DiscoverPage() {
   // id -- a single Record instead of per-card useState, since hooks can't
   // be called inside the profiles.map() below.
   const [cardPhotoIdx, setCardPhotoIdx] = useState<Record<string, number>>({})
-  const coinBalance = useCoinStore((s) => s.balance)
   const deductCoins = useCoinStore((s) => s.deduct)
   const router = useRouter()
   const supabase = createClient()
@@ -352,14 +351,7 @@ export default function DiscoverPage() {
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex flex-col pointer-events-none">
         <div className="flex items-center justify-end px-5 pt-safe-top pb-10 bg-gradient-to-b from-black/70 via-black/25 to-transparent">
           <div className="pointer-events-auto">
-            {persona === 'woman' ? (
-              <div className="glass-surface border-0 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-display font-semibold text-ink/70">
-                <span className="text-gold text-[10px]">◆</span>
-                {coinBalance}
-              </div>
-            ) : (
-              <CoinBadge onClick={() => { hapticTap(); router.push('/coins'); }} />
-            )}
+            <CoinBadge onClick={() => { hapticTap(); router.push('/coins'); }} />
           </div>
         </div>
       </div>

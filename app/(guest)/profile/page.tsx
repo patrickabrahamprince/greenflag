@@ -169,27 +169,27 @@ export default function ProfilePage() {
 
       {user.persona === 'woman' && <MyStandardsSection userId={user.id} />}
 
-      {user.persona !== 'woman' && (
-        <div className="px-4 mt-6">
-          <div
-            className="rounded-2xl border border-gold/20 p-5 flex items-center justify-between shadow-[0_12px_32px_-16px_rgba(192,38,211,0.4)]"
-            style={{ background: 'linear-gradient(135deg, rgba(192,38,211,0.16) 0%, rgba(28,28,30,0.9) 60%)' }}
-          >
-            <div className="flex items-center gap-3.5">
-              <div className="w-11 h-11 rounded-full bg-gold/15 border border-gold/30 flex items-center justify-center shrink-0">
-                <Coins className="w-5 h-5 text-gold" />
-              </div>
-              <div>
-                <p className="text-2xl font-display font-semibold text-white leading-none">{balance}</p>
-                <p className="text-xs text-muted mt-1">Coins &middot; spend to connect</p>
-              </div>
+      <div className="px-4 mt-6">
+        <div
+          className="rounded-2xl border border-gold/20 p-5 flex items-center justify-between shadow-[0_12px_32px_-16px_rgba(192,38,211,0.4)]"
+          style={{ background: 'linear-gradient(135deg, rgba(192,38,211,0.16) 0%, rgba(28,28,30,0.9) 60%)' }}
+        >
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-full bg-gold/15 border border-gold/30 flex items-center justify-center shrink-0">
+              <Coins className="w-5 h-5 text-gold" />
             </div>
-            <button onClick={() => { hapticTap(); router.push('/coins'); }} className="btn-primary text-sm py-2.5 px-5 shrink-0">
-              Buy
-            </button>
+            <div>
+              <p className="text-2xl font-display font-semibold text-white leading-none">{balance}</p>
+              <p className="text-xs text-muted mt-1">
+                {user.persona === 'woman' ? 'Coins · for nudges & reveals' : 'Coins · spend to connect'}
+              </p>
+            </div>
           </div>
+          <button onClick={() => { hapticTap(); router.push('/coins'); }} className="btn-primary text-sm py-2.5 px-5 shrink-0">
+            Buy
+          </button>
         </div>
-      )}
+      </div>
 
       <div className="px-4 mt-8 pt-6 border-t border-white/[0.06]">
         <button onClick={handleLogout} disabled={loggingOut} className="btn-danger w-full flex items-center justify-center gap-2">

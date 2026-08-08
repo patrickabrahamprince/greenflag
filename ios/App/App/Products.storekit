@@ -1,0 +1,111 @@
+{
+  "identifier" : "FBA48514-E6CC-4970-8AAE-A672AC1C1D58",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "399",
+      "familyShareable" : false,
+      "internalID" : "B95B515D-FFC9-476D-B2E4-6E5800A30242",
+      "localizations" : [
+        {
+          "description" : "500 coins for GreenFlag",
+          "displayName" : "500 Coins",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.greenflagapp.app.coins500",
+      "referenceName" : "500 Coins",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "799",
+      "familyShareable" : false,
+      "internalID" : "10BBEAAA-C521-4BE2-BC1F-F9D4E4E1B61B",
+      "localizations" : [
+        {
+          "description" : "1200 coins for GreenFlag",
+          "displayName" : "1200 Coins",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.greenflagapp.app.coins1200",
+      "referenceName" : "1200 Coins",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "1499",
+      "familyShareable" : false,
+      "internalID" : "58842A35-9D70-4E0F-B931-7D1949F80B7E",
+      "localizations" : [
+        {
+          "description" : "2500 coins for GreenFlag",
+          "displayName" : "2500 Coins",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.greenflagapp.app.coins2500",
+      "referenceName" : "2500 Coins",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "0",
+    "_developerTeamID" : "",
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 0,
+    "_locale" : "en_IN",
+    "_storefront" : "IND",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ]
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

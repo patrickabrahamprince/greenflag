@@ -13,7 +13,8 @@ function getAdmin() {
 }
 
 // First nudge on a given profile is free. Nudging the same profile again
-// costs coins -- the one exception to "women never pay" on this app --
+// costs coins -- one of the handful of paid actions on a woman's side of
+// the app (alongside reveal-submission and special-send/reveal) --
 // but that charge is never silent: a repeat nudge without `confirm: true`
 // returns needsConfirm instead of charging, so the client can ask first.
 export async function POST(
