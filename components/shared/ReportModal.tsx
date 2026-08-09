@@ -27,7 +27,15 @@ export function ReportModal({
 
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
-      <div className="dialog-card max-w-md w-full">
+      {/* Native keyboard resize is disabled app-wide (capacitor.config.ts),
+          so the viewport never shrinks when the keyboard opens -- without
+          this, the textarea + Submit button on a smaller device could end
+          up positioned behind the keyboard with no way to scroll to them.
+          Matches the --kb-inset handling already used in SubmitSheet.tsx. */}
+      <div
+        className="dialog-card max-w-md w-full max-h-[85dvh] overflow-y-auto"
+        style={{ marginBottom: 'var(--kb-inset, 0px)', transition: 'margin-bottom 200ms ease-out' }}
+      >
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-display text-lg text-ink">Report User</h3>
           <button onClick={onClose} className="btn-ghost p-1">

@@ -1,6 +1,14 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { notifyNewMessage } from '@/lib/notifications';
+
+function getAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 export async function POST(req: Request) {
   try {
@@ -59,6 +67,11 @@ export async function POST(req: Request) {
     }
 
     try {
+      // Sending someone else's notification row requires the admin client
+      // -- notifications RLS only lets a user insert their own (see
+      // migration tightening notifications INSERT), and this is
+      // inherently notifying the OTHER match participant, not the caller.
+      const admin = getAdmin();
       const recipientId = match.user1_id === user.id ? match.user2_id : match.user1_id;
       const { data: senderProfile } = await supabase
         .from('profiles')
@@ -66,7 +79,7 @@ export async function POST(req: Request) {
         .eq('id', user.id)
         .single();
 
-      await notifyNewMessage(supabase, recipientId, senderProfile?.name || 'Someone', match_id, content.trim());
+      await notifyNewMessage(admin, recipientId, senderProfile?.name || 'Someone', match_id, content.trim());
     } catch {
       // Safe catch for notification failure
     }

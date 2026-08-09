@@ -28,8 +28,18 @@ export function useAppleIAP() {
     if (!res.ok) {
       throw new Error(data.error || 'Verification failed');
     }
-    await InAppPurchase.finishTransaction({ transactionId: transaction.transactionId });
     useCoinStore.getState().setBalance(data.new_balance);
+    try {
+      await InAppPurchase.finishTransaction({ transactionId: transaction.transactionId });
+    } catch (err) {
+      // The purchase already succeeded and coins are already credited --
+      // a bridge hiccup here shouldn't surface as "Purchase failed" to the
+      // user (they were already charged and paid). Leaving it unfinished
+      // is safe: it stays in StoreKit's queue and getUnfinishedTransactions()
+      // picks it up again on next launch; the idempotent credit RPC means
+      // that retry can't double-credit.
+      console.error('finishTransaction failed after successful credit:', err);
+    }
     return data.new_balance as number;
   }, []);
 

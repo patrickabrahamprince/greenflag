@@ -18,7 +18,7 @@ export async function POST(
   if (!auth.ok) return auth.response;
   const { supabase, adminId, adminEmail } = auth.data;
 
-  const { action } = await req.json();
+  const { action } = await req.json().catch(() => ({}));
   if (action !== 'approve' && action !== 'reject') {
     return NextResponse.json({ error: 'action must be approve or reject' }, { status: 400 });
   }

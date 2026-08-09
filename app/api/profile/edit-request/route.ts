@@ -29,7 +29,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const body = await req.json();
+  const body = await req.json().catch(() => null);
+  if (!body) {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+  }
   const requestedChanges: Partial<Record<EditableField, Json>> = {};
   for (const field of EDITABLE_FIELDS) {
     if (field in body) requestedChanges[field] = body[field];

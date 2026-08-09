@@ -68,6 +68,14 @@ export async function POST(
     charged: isRepeat,
   });
   if (insertErr) {
+    if (isRepeat) {
+      await admin.rpc('add_coins', {
+        p_user_id: user.id,
+        p_amount: REPEAT_NUDGE_COST,
+        p_description: 'Refund: nudge failed to save',
+        p_metadata: { to_user_id: id },
+      });
+    }
     return NextResponse.json({ error: insertErr.message }, { status: 500 });
   }
 
