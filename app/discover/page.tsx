@@ -8,9 +8,10 @@ import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
 import { InsufficientCoinsDialog } from '@/components/shared/InsufficientCoinsDialog'
 import { IconButton } from '@/components/shared/IconButton'
+import { MatchMomentOverlay } from '@/components/shared/MatchMomentOverlay'
 import { SocialProofLine } from '@/components/shared/SocialProofLine'
 import { createClient } from '@/lib/supabase/client'
-import { useCoinStore } from '@/lib/store'
+import { useCoinStore, useUserStore } from '@/lib/store'
 import { GIFT_TYPES } from '@/lib/gift-types'
 import { MEET_STANDARD_COST } from '@/lib/coin-costs'
 import { hapticTap, hapticDecision, hapticSuccess } from '@/lib/haptics'
@@ -57,6 +58,8 @@ export default function DiscoverPage() {
   const [persona, setPersona] = useState<string | null>(null)
   const [confirmProfileId, setConfirmProfileId] = useState<string | null>(null)
   const [insufficientCoinsMessage, setInsufficientCoinsMessage] = useState<string | null>(null)
+  const [matchMoment, setMatchMoment] = useState<{ theirPhoto: string | null; nextPath: string | null } | null>(null)
+  const currentUser = useUserStore((s) => s.user)
   // placeholder-avatar.svg is a near-black icon on a near-black card --
   // swapping a failed side-photo's src to it read as a solid black hole,
   // not a placeholder. Tracking failed URLs and rendering an explicit
@@ -239,6 +242,7 @@ export default function DiscoverPage() {
         router.push(`/profile/${profileId}`)
         return
       }
+      const theirPhoto = profiles.find(p => p.id === profileId)?.photos?.[0] ?? null
       const res = await fetch('/api/likes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -260,15 +264,19 @@ export default function DiscoverPage() {
         return next
       })
       hapticSuccess()
-      if (matchId) {
-        router.push(`/task/${matchId}`)
-      } else {
-        toast.success("You've met her Standard")
-      }
+      setMatchMoment({ theirPhoto, nextPath: matchId ? `/task/${matchId}` : null })
     } catch (e: any) {
       toast.error(e.message)
     } finally {
       setLikingId(null)
+    }
+  }
+
+  function handleMatchMomentContinue() {
+    const nextPath = matchMoment?.nextPath ?? null
+    setMatchMoment(null)
+    if (nextPath) {
+      router.push(nextPath)
     }
   }
 
@@ -745,6 +753,13 @@ export default function DiscoverPage() {
           onDismiss={() => setInsufficientCoinsMessage(null)}
         />
       )}
+
+      <MatchMomentOverlay
+        open={!!matchMoment}
+        myPhoto={currentUser?.photos?.[0] ?? null}
+        theirPhoto={matchMoment?.theirPhoto ?? null}
+        onContinue={handleMatchMomentContinue}
+      />
 
       {nudgeDialog && (
         <div
