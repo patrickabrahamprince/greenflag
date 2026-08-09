@@ -20,6 +20,7 @@ import { useFirstTimeHint } from '@/lib/hooks/useFirstTimeHint'
 import { useNudge } from '@/lib/hooks/useNudge'
 import { useGifting } from '@/lib/hooks/useGifting'
 import { usePhotoUnlock } from '@/lib/hooks/usePhotoUnlock'
+import { usePrefersReducedMotion } from '@/lib/hooks/usePrefersReducedMotion'
 import { FirstTimeHint } from '@/components/shared/FirstTimeHint'
 import { ChevronUp } from 'lucide-react'
 
@@ -81,6 +82,7 @@ export default function DiscoverPage() {
     closePhotoUnlockConfirm,
     handlePhotoUnlock,
   } = usePhotoUnlock(setInsufficientCoinsMessage)
+  const prefersReducedMotion = usePrefersReducedMotion()
   // Which photo each card's carousel is currently showing, keyed by profile
   // id -- a single Record instead of per-card useState, since hooks can't
   // be called inside the profiles.map() below.
@@ -306,7 +308,7 @@ export default function DiscoverPage() {
             key={p.id}
             ref={i === profiles.length - 1 ? lastProfileRef : null}
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
-            className="snap-start snap-always h-dvh w-full relative overflow-hidden animate-fade-in"
+            className={`snap-start snap-always h-dvh w-full relative overflow-hidden ${prefersReducedMotion ? '' : 'animate-card-enter'}`}
           >
             <div className="absolute inset-0 bg-black">
               {(() => {

@@ -52,6 +52,7 @@ module.exports = {
         // shared LoadingLogo indicator, both of which show for an
         // unknown/unbounded duration.
         'logo-pulse': 'logoPulse 1.4s ease-in-out infinite',
+        'card-enter': 'cardEnter 220ms ease-out',
       },
       keyframes: {
         sheetUp: {
@@ -81,6 +82,10 @@ module.exports = {
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
+        },
+        cardEnter: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },
       maxWidth: {
