@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { sendNotification } from '@/lib/notifications';
+import { SPECIAL_SEND_COST } from '@/lib/coin-costs';
 
-const SPECIAL_SEND_COST = 150;
 const VALID_TYPES = ['text', 'photo', 'voice'];
 const TERMINAL_STATUSES = ['completed', 'rejected', 'expired_no_submission', 'refunded'];
 

@@ -3,6 +3,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { createClient } from '@supabase/supabase-js';
 import { notifyWomanOfMediaReady } from '@/lib/notifications';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { SUBMIT_COST } from '@/lib/coin-costs';
 
 const TERMINAL_STATUSES = ['completed', 'rejected', 'expired_no_submission', 'refunded'];
 const VALID_MEDIA_TYPES = ['text', 'photo', 'voice'];
@@ -47,7 +48,6 @@ export async function POST(
       return NextResponse.json({ error: 'Text must be 10-500 characters' }, { status: 400 });
     }
 
-    const SUBMIT_COST = 10;
     // Wallet balance and the match row are independent reads (neither
     // depends on the other's result) -- running them together instead of
     // one after another halves this pair's contribution to the request's

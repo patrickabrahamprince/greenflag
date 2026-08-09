@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
-
-const PHOTO_UNLOCK_COST = 100;
+import { PHOTO_UNLOCK_COST } from '@/lib/coin-costs';
 
 function getAdmin() {
   return createClient(
@@ -50,7 +49,7 @@ export async function POST(
   });
   const deductData = deductResult.data as { success?: boolean } | null;
   if (deductResult.error || !deductData?.success) {
-    return NextResponse.json({ error: 'Not enough coins to unlock' }, { status: 402 });
+    return NextResponse.json({ error: 'INSUFFICIENT_COINS', coins_needed: PHOTO_UNLOCK_COST }, { status: 402 });
   }
 
   const { error: insertErr } = await admin

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Loader2, MessageCircle, Hourglass, CheckCircle2, AlertTriangle, Lock, Coins, Sparkles, Type as TypeIcon, Camera, Mic, Quote } from 'lucide-react';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
+import { InsufficientCoinsDialog } from '@/components/shared/InsufficientCoinsDialog';
 import toast from 'react-hot-toast';
 import { useUserStore, useCoinStore } from '@/lib/store';
 import { ConnectedScreen } from '@/components/ConnectedScreen';
@@ -15,12 +16,9 @@ import { useCountdown, formatCountdown } from '@/lib/hooks/useCountdown';
 import { useScreenshotTarget } from '@/lib/hooks/useScreenshotGuard';
 import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 import { hapticDecision, hapticSuccess, hapticWarning } from '@/lib/haptics';
+import { REVEAL_COST, SPECIAL_SEND_COST, RETRY_COST } from '@/lib/coin-costs';
 
 const TERMINAL_STATUSES = ['rejected', 'expired_no_submission', 'refunded'];
-const REVEAL_COST = 20;
-const SPECIAL_SEND_COST = 150;
-// Mirrors RETRY_COST in api/matches/[id]/retry/route.ts.
-const RETRY_COST = 100;
 
 const REJECT_REASON_CHIPS = [
   "Didn't follow instructions",
@@ -192,6 +190,7 @@ export default function TaskPage() {
   const [rejectTarget, setRejectTarget] = useState<IntentionRecord | null>(null);
   const [rejecting, setRejecting] = useState(false);
   const [retrying, setRetrying] = useState(false);
+  const [insufficientCoinsMessage, setInsufficientCoinsMessage] = useState<string | null>(null);
 
   useScreenshotTarget(otherProfile?.id, 'task');
 
@@ -357,7 +356,11 @@ export default function TaskPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        toast.error(data?.error || 'Failed to reveal');
+        if (data?.error === 'INSUFFICIENT_COINS') {
+          setInsufficientCoinsMessage('You need more coins to reveal this. Top up to keep going.');
+        } else {
+          toast.error(data?.error || 'Failed to reveal');
+        }
         return;
       }
       deductCoins(REVEAL_COST);
@@ -376,7 +379,11 @@ export default function TaskPage() {
       const res = await fetch(`/api/matches/${matchId}/special-send/reveal`, { method: 'POST' });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        toast.error(data?.error || 'Failed to reveal');
+        if (data?.error === 'INSUFFICIENT_COINS') {
+          setInsufficientCoinsMessage('You need more coins to reveal this. Top up to keep going.');
+        } else {
+          toast.error(data?.error || 'Failed to reveal');
+        }
         return;
       }
       deductCoins(REVEAL_COST);
@@ -770,6 +777,13 @@ export default function TaskPage() {
           submitting={rejecting}
           onCancel={() => setRejectTarget(null)}
           onConfirm={(reason) => handleReview(rejectTarget, 'reject', reason)}
+        />
+      )}
+
+      {insufficientCoinsMessage && (
+        <InsufficientCoinsDialog
+          message={insufficientCoinsMessage}
+          onDismiss={() => setInsufficientCoinsMessage(null)}
         />
       )}
     </div>

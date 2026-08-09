@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { useCoinStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
@@ -64,7 +65,7 @@ export default function CoinsPage() {
       return;
     }
 
-    const { data: wallet } = await supabase
+    const { data: wallet, error: walletError } = await supabase
       .from('wallets')
       .select('balance')
       .eq('user_id', user.id)
@@ -72,6 +73,11 @@ export default function CoinsPage() {
 
     if (wallet) {
       setBalance((wallet as { balance: number }).balance);
+    } else if (walletError) {
+      // Previously silently no-op'd here, leaving the balance display at
+      // whatever stale value was already in the store with no indication
+      // it might be wrong.
+      toast.error('Could not load your coin balance. Pull to refresh.');
     }
 
     // coin_transactions (not transactions -- confirmed empty on

@@ -6,14 +6,19 @@ import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell, Imag
 import { LoadingLogo } from '@/components/shared/LoadingLogo'
 import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
+import { InsufficientCoinsDialog } from '@/components/shared/InsufficientCoinsDialog'
 import { SocialProofLine } from '@/components/shared/SocialProofLine'
 import { createClient } from '@/lib/supabase/client'
 import { useCoinStore } from '@/lib/store'
 import { GIFT_TYPES } from '@/lib/gift-types'
+import { MEET_STANDARD_COST } from '@/lib/coin-costs'
 import { hapticTap, hapticDecision, hapticSuccess } from '@/lib/haptics'
 import { DiscoverySkeleton } from '@/components/discovery/DiscoverySkeleton'
 import { getCached, setCached } from '@/lib/pageCache'
 import { useFirstTimeHint } from '@/lib/hooks/useFirstTimeHint'
+import { useNudge } from '@/lib/hooks/useNudge'
+import { useGifting } from '@/lib/hooks/useGifting'
+import { usePhotoUnlock } from '@/lib/hooks/usePhotoUnlock'
 import { FirstTimeHint } from '@/components/shared/FirstTimeHint'
 import { ChevronUp } from 'lucide-react'
 
@@ -49,10 +54,7 @@ export default function DiscoverPage() {
   const [hasMore, setHasMore] = useState(() => getCached(HAS_MORE_CACHE_KEY) ?? true)
   const [persona, setPersona] = useState<string | null>(null)
   const [confirmProfileId, setConfirmProfileId] = useState<string | null>(null)
-  const [photoUnlockConfirm, setPhotoUnlockConfirm] = useState<string | null>(null)
-  const [showInsufficientFunds, setShowInsufficientFunds] = useState(false)
-  const [unlockingPhotoId, setUnlockingPhotoId] = useState<string | null>(null)
-  const [unlockedPhotoIds, setUnlockedPhotoIds] = useState<Set<string>>(new Set())
+  const [insufficientCoinsMessage, setInsufficientCoinsMessage] = useState<string | null>(null)
   // placeholder-avatar.svg is a near-black icon on a near-black card --
   // swapping a failed side-photo's src to it read as a solid black hole,
   // not a placeholder. Tracking failed URLs and rendering an explicit
@@ -66,12 +68,18 @@ export default function DiscoverPage() {
   const [checkingAccess, setCheckingAccess] = useState(true)
   const [interestCounts, setInterestCounts] = useState<Record<string, number>>({})
   const [expandedBios, setExpandedBios] = useState<Set<string>>(new Set())
-  const [nudgingId, setNudgingId] = useState<string | null>(null)
-  const [nudgeDialog, setNudgeDialog] = useState<{ visible: boolean; charged: boolean; cost: number } | null>(null)
-  const [nudgeConfirm, setNudgeConfirm] = useState<{ profileId: string; cost: number } | null>(null)
-  const [giftPickerProfileId, setGiftPickerProfileId] = useState<string | null>(null)
-  const [sendingGiftType, setSendingGiftType] = useState<string | null>(null)
-  const [showGiftInsufficientFunds, setShowGiftInsufficientFunds] = useState(false)
+  const { nudgingId, nudgeDialog, nudgeConfirm, handleNudge, handleConfirmNudge, cancelNudgeConfirm } =
+    useNudge(setInsufficientCoinsMessage)
+  const { giftPickerProfileId, sendingGiftType, openGiftPicker, closeGiftPicker, handleSendGift } =
+    useGifting(setInsufficientCoinsMessage)
+  const {
+    photoUnlockConfirm,
+    unlockingPhotoId,
+    unlockedPhotoIds,
+    openPhotoUnlockConfirm,
+    closePhotoUnlockConfirm,
+    handlePhotoUnlock,
+  } = usePhotoUnlock(setInsufficientCoinsMessage)
   // Which photo each card's carousel is currently showing, keyed by profile
   // id -- a single Record instead of per-card useState, since hooks can't
   // be called inside the profiles.map() below.
@@ -174,91 +182,6 @@ export default function DiscoverPage() {
     })
   }
 
-  function showNudgeSentDialog(charged: boolean, cost: number) {
-    setNudgeDialog({ visible: true, charged, cost })
-    setTimeout(() => setNudgeDialog(prev => prev ? { ...prev, visible: false } : null), 1400)
-    setTimeout(() => setNudgeDialog(null), 1900)
-  }
-
-  async function sendNudge(profileId: string, confirm: boolean) {
-    const res = await fetch(`/api/nudge/${profileId}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ confirm }),
-    })
-    const data = await res.json()
-    if (!res.ok) {
-      toast.error(data.error || 'Failed to send nudge')
-      return
-    }
-    if (data.needsConfirm) {
-      setNudgeConfirm({ profileId, cost: data.cost })
-      return
-    }
-    if (data.charged && data.cost) {
-      deductCoins(data.cost)
-    }
-    showNudgeSentDialog(!!data.charged, data.cost || 0)
-  }
-
-  async function handleNudge(profileId: string) {
-    if (nudgingId) return
-    hapticDecision()
-    setNudgingId(profileId)
-    try {
-      await sendNudge(profileId, false)
-    } catch {
-      toast.error('Failed to send nudge')
-    } finally {
-      setNudgingId(null)
-    }
-  }
-
-  async function handleConfirmNudge() {
-    if (!nudgeConfirm) return
-    const { profileId } = nudgeConfirm
-    setNudgingId(profileId)
-    try {
-      await sendNudge(profileId, true)
-    } catch {
-      toast.error('Failed to send nudge')
-    } finally {
-      setNudgingId(null)
-      setNudgeConfirm(null)
-    }
-  }
-
-  async function handleSendGift(profileId: string, giftTypeId: string) {
-    if (sendingGiftType) return
-    hapticDecision()
-    setSendingGiftType(giftTypeId)
-    try {
-      const res = await fetch('/api/gifts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ toUserId: profileId, giftType: giftTypeId }),
-      })
-      const data = await res.json()
-      if (!res.ok) {
-        setGiftPickerProfileId(null)
-        if (data.error === 'INSUFFICIENT_COINS') {
-          setShowGiftInsufficientFunds(true)
-        } else {
-          toast.error(data.error || 'Failed to send gift')
-        }
-        return
-      }
-      deductCoins(data.cost)
-      hapticSuccess()
-      setGiftPickerProfileId(null)
-      toast.success('Gift sent!')
-    } catch {
-      toast.error('Failed to send gift')
-    } finally {
-      setSendingGiftType(null)
-    }
-  }
-
   async function fetchProfiles() {
     setPageLoading(true)
     try {
@@ -321,13 +244,13 @@ export default function DiscoverPage() {
       if (!res.ok) {
         const err = await res.json()
         if (err.error === 'insufficient_funds') {
-          setShowInsufficientFunds(true)
+          setInsufficientCoinsMessage('You need more coins to meet her Standard. Top up to keep going.')
           return
         }
         throw new Error(err.error || 'Failed to like profile')
       }
       const { matchId } = await res.json()
-      deductCoins(500)
+      deductCoins(MEET_STANDARD_COST)
       setProfiles(prev => {
         const next = prev.filter(p => p.id !== profileId)
         setCached(PROFILES_CACHE_KEY, next)
@@ -343,26 +266,6 @@ export default function DiscoverPage() {
       toast.error(e.message)
     } finally {
       setLikingId(null)
-    }
-  }
-
-  async function handlePhotoUnlock(profileId: string) {
-    setUnlockingPhotoId(profileId)
-    try {
-      const res = await fetch(`/api/photo-unlock/${profileId}`, { method: 'POST' })
-      const data = await res.json()
-      if (!res.ok) {
-        toast.error(data.error || 'Failed to unlock photos')
-        return
-      }
-      if (!data.alreadyUnlocked && data.cost) {
-        deductCoins(data.cost)
-      }
-      setUnlockedPhotoIds(prev => new Set(prev).add(profileId))
-    } catch {
-      toast.error('Failed to unlock photos')
-    } finally {
-      setUnlockingPhotoId(null)
     }
   }
 
@@ -463,7 +366,7 @@ export default function DiscoverPage() {
 
                     {isLocked && (
                       <button
-                        onClick={() => { hapticTap(); setPhotoUnlockConfirm(p.id) }}
+                        onClick={() => { hapticTap(); openPhotoUnlockConfirm(p.id) }}
                         aria-label="Unlock"
                         className="glass-surface absolute inset-0 m-auto z-20 flex items-center justify-center gap-1.5 h-9 w-fit px-4 rounded-full active:scale-95 transition-all shadow-lg"
                       >
@@ -675,7 +578,7 @@ export default function DiscoverPage() {
                       <X className="w-5 h-5 text-ink/60" />
                     </button>
                     <button
-                      onClick={() => { hapticTap(); setGiftPickerProfileId(p.id) }}
+                      onClick={() => { hapticTap(); openGiftPicker(p.id) }}
                       aria-label="Send Gift"
                       className="glass-surface size-11 rounded-full flex items-center justify-center active:scale-95 transition-all shrink-0"
                     >
@@ -733,7 +636,7 @@ export default function DiscoverPage() {
             </div>
             <h4 className="font-display text-2xl text-ink mb-2">Make Your Move?</h4>
             <p className="text-ink/60 text-sm leading-relaxed mb-3">
-              500 coins begins your 3-day pursuit — worth it if she&apos;s the one.
+              {MEET_STANDARD_COST} coins begins your 3-day pursuit — worth it if she&apos;s the one.
             </p>
             <SocialProofLine className="text-[11px] text-ink/40 mb-6" />
             <div className="flex gap-4">
@@ -772,7 +675,7 @@ export default function DiscoverPage() {
             </p>
             <div className="flex gap-4">
               <button
-                onClick={() => setPhotoUnlockConfirm(null)}
+                onClick={() => closePhotoUnlockConfirm()}
                 className="btn-secondary flex-1 whitespace-nowrap"
               >
                 Not Now
@@ -780,7 +683,7 @@ export default function DiscoverPage() {
               <button
                 onClick={() => {
                   const targetId = photoUnlockConfirm;
-                  setPhotoUnlockConfirm(null);
+                  closePhotoUnlockConfirm();
                   hapticDecision();
                   handlePhotoUnlock(targetId);
                 }}
@@ -788,34 +691,6 @@ export default function DiscoverPage() {
                 className="btn-primary flex-1 whitespace-nowrap disabled:opacity-50"
               >
                 Unlock
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showInsufficientFunds && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
-          <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
-            <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Coins className="w-6 h-6 text-gold" />
-            </div>
-            <h4 className="font-display text-2xl text-ink mb-2">Not Enough Coins</h4>
-            <p className="text-ink/60 text-sm leading-relaxed mb-6">
-              You need more coins to meet her Standard. Top up to keep going.
-            </p>
-            <div className="flex gap-4">
-              <button
-                onClick={() => setShowInsufficientFunds(false)}
-                className="btn-secondary flex-1 whitespace-nowrap"
-              >
-                Not Now
-              </button>
-              <button
-                onClick={() => { hapticTap(); setShowInsufficientFunds(false); router.push('/coins'); }}
-                className="btn-primary flex-1 whitespace-nowrap"
-              >
-                Buy Coins
               </button>
             </div>
           </div>
@@ -853,7 +728,7 @@ export default function DiscoverPage() {
               ))}
             </div>
             <button
-              onClick={() => setGiftPickerProfileId(null)}
+              onClick={() => closeGiftPicker()}
               disabled={!!sendingGiftType}
               className="btn-secondary w-full whitespace-nowrap disabled:opacity-50"
             >
@@ -863,32 +738,11 @@ export default function DiscoverPage() {
         </div>
       )}
 
-      {showGiftInsufficientFunds && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
-          <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
-            <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Coins className="w-6 h-6 text-gold" />
-            </div>
-            <h4 className="font-display text-2xl text-ink mb-2">Not Enough Coins</h4>
-            <p className="text-ink/60 text-sm leading-relaxed mb-6">
-              You need more coins to send this gift. Top up to keep going.
-            </p>
-            <div className="flex gap-4">
-              <button
-                onClick={() => setShowGiftInsufficientFunds(false)}
-                className="btn-secondary flex-1 whitespace-nowrap"
-              >
-                Not Now
-              </button>
-              <button
-                onClick={() => { hapticTap(); setShowGiftInsufficientFunds(false); router.push('/coins'); }}
-                className="btn-primary flex-1 whitespace-nowrap"
-              >
-                Buy Coins
-              </button>
-            </div>
-          </div>
-        </div>
+      {insufficientCoinsMessage && (
+        <InsufficientCoinsDialog
+          message={insufficientCoinsMessage}
+          onDismiss={() => setInsufficientCoinsMessage(null)}
+        />
       )}
 
       {nudgeDialog && (
@@ -920,7 +774,7 @@ export default function DiscoverPage() {
               You've already nudged this profile. Nudging again will cost {nudgeConfirm.cost} coins.
             </p>
             <div className="flex gap-4">
-              <button onClick={() => setNudgeConfirm(null)} disabled={nudgingId === nudgeConfirm.profileId} className="btn-secondary flex-1 whitespace-nowrap disabled:opacity-50">
+              <button onClick={() => cancelNudgeConfirm()} disabled={nudgingId === nudgeConfirm.profileId} className="btn-secondary flex-1 whitespace-nowrap disabled:opacity-50">
                 Cancel
               </button>
               <button

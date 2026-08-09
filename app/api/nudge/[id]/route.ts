@@ -2,8 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { sendNotification } from '@/lib/notifications';
-
-const REPEAT_NUDGE_COST = 50;
+import { REPEAT_NUDGE_COST } from '@/lib/coin-costs';
 
 function getAdmin() {
   return createClient(
@@ -58,7 +57,7 @@ export async function POST(
     });
     const deductData = deductResult.data as { success?: boolean } | null;
     if (deductResult.error || !deductData?.success) {
-      return NextResponse.json({ error: 'Not enough coins to nudge again' }, { status: 402 });
+      return NextResponse.json({ error: 'INSUFFICIENT_COINS', coins_needed: REPEAT_NUDGE_COST }, { status: 402 });
     }
   }
 

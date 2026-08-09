@@ -6,12 +6,7 @@ import { X, Camera, Mic, Type, Upload } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useCoinStore } from '@/lib/store';
 import type { IntentionRecord } from './types';
-
-// Mirrors the server-side costs in submit-task/route.ts (SUBMIT_COST) and
-// special-send/route.ts (SPECIAL_SEND_COST) -- neither response echoes the
-// amount charged, so the client-side coin display has to know it too.
-const TASK_SUBMIT_COST = 10;
-const SPECIAL_SEND_COST = 150;
+import { SUBMIT_COST as TASK_SUBMIT_COST, SPECIAL_SEND_COST } from '@/lib/coin-costs';
 
 // audio/mp4 first: it's the only container WebKit's MediaRecorder can
 // actually produce, and also the one format every platform (WebKit,

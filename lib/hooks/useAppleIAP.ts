@@ -54,6 +54,28 @@ export function useAppleIAP() {
       .catch((err) => console.error('Failed to check unfinished IAP transactions:', err));
   }, [isNative, verifyAndCredit]);
 
+  // Covers a transaction that completes outside the direct purchase()
+  // call below -- e.g. a family organizer approving an Ask-to-Buy request
+  // while the app is already open. Without this listener that event was
+  // emitted natively and silently dropped; it would still eventually be
+  // picked up by getUnfinishedTransactions() above, but only on the next
+  // cold start, not promptly.
+  useEffect(() => {
+    if (!isNative) return;
+    let handle: { remove: () => void } | undefined;
+    let mounted = true;
+    InAppPurchase.addListener('transactionUpdated', (transaction) => {
+      verifyAndCredit(transaction).catch((err) => console.error('Failed to credit updated IAP transaction:', err));
+    }).then((h) => {
+      if (mounted) handle = h;
+      else h.remove();
+    });
+    return () => {
+      mounted = false;
+      handle?.remove();
+    };
+  }, [isNative, verifyAndCredit]);
+
   const purchase = useCallback(async (productId: string) => {
     if (!APPLE_COIN_PRODUCT_IDS.includes(productId)) {
       toast.error('Unknown coin package');
