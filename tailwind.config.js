@@ -44,7 +44,7 @@ module.exports = {
         'fade-in': 'fadeIn 220ms ease-out',
         'slide-up': 'slideUp 240ms ease-out',
         'slide-down': 'slideDown 200ms ease-out',
-        'shimmer': 'shimmer 2s infinite linear',
+        'shimmer': 'shimmer 1.4s ease-in-out infinite',
         'logo-in': 'logoIn 600ms cubic-bezier(0.16, 1, 0.3, 1)',
         'sheet-up': 'sheetUp 280ms cubic-bezier(0.16, 1, 0.3, 1)',
         // Loops for as long as it's mounted, unlike logo-in's single
