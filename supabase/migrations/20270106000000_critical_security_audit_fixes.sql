@@ -100,11 +100,23 @@ CREATE POLICY "Anyone can read intentions of active standards" ON intentions FOR
   EXISTS (SELECT 1 FROM standards WHERE id = intentions.standard_id AND is_active = true)
 );
 
--- 6. MEDIUM: is_admin()/get_my_gender() are embedded unwrapped in
--- dozens of RLS policies across nearly every table but were never
--- marked STABLE, so Postgres treats them as VOLATILE and re-evaluates
--- per row instead of once per statement -- the "RLS calling a function
--- per row" anti-pattern, at schema-wide scale.
+-- 6. MEDIUM: is_admin() is embedded unwrapped in dozens of RLS policies
+-- across nearly every table but was never marked STABLE, so Postgres
+-- treats it as VOLATILE and re-evaluates per row instead of once per
+-- statement -- the "RLS calling a function per row" anti-pattern, at
+-- schema-wide scale.
+--
+-- get_my_gender() does NOT need this fix -- it's a leftover mistake in
+-- an earlier version of this migration, which copied the pre-rename
+-- body from 20261107000000_fix_rls_recursion.sql (`SELECT gender FROM
+-- profiles ...`). The `gender` column was dropped in
+-- 20261203000000_ship_phase1_fixes.sql, which already replaced this
+-- function correctly (`SELECT persona::TEXT ...`) and already marked it
+-- STABLE at the same time -- so the live function is already correct
+-- and doesn't need touching here. Re-creating it with the stale `gender`
+-- reference (as this migration originally did) breaks it with
+-- `column "gender" does not exist`, since CREATE OR REPLACE on a
+-- LANGUAGE SQL function is validated at creation time.
 CREATE OR REPLACE FUNCTION public.is_admin()
 RETURNS boolean
 STABLE
@@ -115,15 +127,6 @@ AS $$
     (SELECT is_admin FROM public.profiles WHERE id = auth.uid()),
     false
   );
-$$ LANGUAGE sql;
-
-CREATE OR REPLACE FUNCTION public.get_my_gender()
-RETURNS text
-STABLE
-SECURITY DEFINER
-SET search_path = public
-AS $$
-  SELECT gender FROM public.profiles WHERE id = auth.uid();
 $$ LANGUAGE sql;
 
 -- 7. HIGH: mark_notifications_read(p_user_id)/get_unread_count(p_user_id)
