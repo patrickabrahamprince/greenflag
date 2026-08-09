@@ -42,7 +42,7 @@ export function MatchMomentOverlay({ open, myPhoto, theirPhoto, onContinue }: Ma
       onClick={onContinue}
       className="fixed inset-0 z-50 flex flex-col items-center justify-center px-8 cursor-pointer"
       style={{
-        background: 'radial-gradient(ellipse 120% 80% at 20% 20%, rgba(192, 38, 211, 0.55) 0%, transparent 55%), radial-gradient(ellipse 100% 90% at 90% 85%, rgba(124, 58, 237, 0.5) 0%, transparent 60%), #0B0614',
+        background: 'radial-gradient(ellipse 120% 80% at 20% 20%, rgba(192, 38, 211, 0.55) 0%, transparent 55%), radial-gradient(ellipse 100% 90% at 90% 85%, rgba(134, 25, 143, 0.5) 0%, transparent 60%), #0B0614',
       }}
     >
       <div className="relative w-full max-w-[280px] h-[200px] mb-10">

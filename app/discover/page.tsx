@@ -272,13 +272,13 @@ export default function DiscoverPage() {
     }
   }
 
-  function handleMatchMomentContinue() {
+  const handleMatchMomentContinue = useCallback(() => {
     const nextPath = matchMoment?.nextPath ?? null
     setMatchMoment(null)
     if (nextPath) {
       router.push(nextPath)
     }
-  }
+  }, [matchMoment, router])
 
   if (checkingAccess) {
     return (
