@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell, ImageOff, ChevronLeft, ChevronRight, Gift } from 'lucide-react'
+import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell, ImageOff, ChevronLeft, ChevronRight, Gift, Flag } from 'lucide-react'
 import { LoadingLogo } from '@/components/shared/LoadingLogo'
 import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
@@ -396,10 +396,10 @@ export default function DiscoverPage() {
 
                     {typeof p.match_percentage === 'number' && (
                       <div className="absolute top-12 left-3 z-10 flex flex-col items-start gap-1">
-                        <div className="glass-surface flex items-center gap-1.5 rounded-full px-3 py-1.5">
-                          <span className="text-gold text-xs">◆</span>
-                          <span className="font-display font-bold text-white text-sm whitespace-nowrap">
-                            {p.match_percentage}% Greenflag Alignment
+                        <div className="glass-surface flex items-center gap-1 rounded-full pl-2 pr-2.5 py-1">
+                          <Flag className="w-3 h-3 text-gold" fill="currentColor" />
+                          <span className="font-display font-bold text-white text-xs whitespace-nowrap">
+                            {p.match_percentage}%
                           </span>
                         </div>
                         {persona === 'woman' && !!interestCounts[p.id] && (
