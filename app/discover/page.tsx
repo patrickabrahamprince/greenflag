@@ -7,6 +7,7 @@ import { LoadingLogo } from '@/components/shared/LoadingLogo'
 import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
 import { InsufficientCoinsDialog } from '@/components/shared/InsufficientCoinsDialog'
+import { IconButton } from '@/components/shared/IconButton'
 import { SocialProofLine } from '@/components/shared/SocialProofLine'
 import { createClient } from '@/lib/supabase/client'
 import { useCoinStore } from '@/lib/store'
@@ -570,20 +571,18 @@ export default function DiscoverPage() {
                   </>
                 ) : (
                   <>
-                    <button
+                    <IconButton
+                      icon={<X className="w-5 h-5 text-ink/60" />}
+                      label="Pass"
                       onClick={() => { hapticTap(); scrollToNext(i) }}
-                      aria-label="Pass"
-                      className="glass-surface size-11 rounded-full flex items-center justify-center active:scale-95 transition-all shrink-0"
-                    >
-                      <X className="w-5 h-5 text-ink/60" />
-                    </button>
-                    <button
+                      className="shrink-0"
+                    />
+                    <IconButton
+                      icon={<Gift className="w-5 h-5 text-ink/60" />}
+                      label="Send Gift"
                       onClick={() => { hapticTap(); openGiftPicker(p.id) }}
-                      aria-label="Send Gift"
-                      className="glass-surface size-11 rounded-full flex items-center justify-center active:scale-95 transition-all shrink-0"
-                    >
-                      <Gift className="w-5 h-5 text-ink/60" />
-                    </button>
+                      className="shrink-0"
+                    />
                     <button
                       onClick={() => { hapticDecision(); setConfirmProfileId(p.id) }}
                       disabled={likingId === p.id}
