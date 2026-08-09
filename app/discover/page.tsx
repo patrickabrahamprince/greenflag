@@ -2,14 +2,16 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell, ImageOff, ChevronLeft, ChevronRight, Gift } from 'lucide-react'
+import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell, ImageOff, ChevronLeft, ChevronRight, Gift, Flag } from 'lucide-react'
 import { LoadingLogo } from '@/components/shared/LoadingLogo'
 import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
 import { InsufficientCoinsDialog } from '@/components/shared/InsufficientCoinsDialog'
+import { IconButton } from '@/components/shared/IconButton'
+import { MatchMomentOverlay } from '@/components/shared/MatchMomentOverlay'
 import { SocialProofLine } from '@/components/shared/SocialProofLine'
 import { createClient } from '@/lib/supabase/client'
-import { useCoinStore } from '@/lib/store'
+import { useCoinStore, useUserStore } from '@/lib/store'
 import { GIFT_TYPES } from '@/lib/gift-types'
 import { MEET_STANDARD_COST } from '@/lib/coin-costs'
 import { hapticTap, hapticDecision, hapticSuccess } from '@/lib/haptics'
@@ -19,6 +21,7 @@ import { useFirstTimeHint } from '@/lib/hooks/useFirstTimeHint'
 import { useNudge } from '@/lib/hooks/useNudge'
 import { useGifting } from '@/lib/hooks/useGifting'
 import { usePhotoUnlock } from '@/lib/hooks/usePhotoUnlock'
+import { usePrefersReducedMotion } from '@/lib/hooks/usePrefersReducedMotion'
 import { FirstTimeHint } from '@/components/shared/FirstTimeHint'
 import { ChevronUp } from 'lucide-react'
 
@@ -55,6 +58,8 @@ export default function DiscoverPage() {
   const [persona, setPersona] = useState<string | null>(null)
   const [confirmProfileId, setConfirmProfileId] = useState<string | null>(null)
   const [insufficientCoinsMessage, setInsufficientCoinsMessage] = useState<string | null>(null)
+  const [matchMoment, setMatchMoment] = useState<{ theirPhoto: string | null; nextPath: string | null } | null>(null)
+  const currentUser = useUserStore((s) => s.user)
   // placeholder-avatar.svg is a near-black icon on a near-black card --
   // swapping a failed side-photo's src to it read as a solid black hole,
   // not a placeholder. Tracking failed URLs and rendering an explicit
@@ -80,6 +85,7 @@ export default function DiscoverPage() {
     closePhotoUnlockConfirm,
     handlePhotoUnlock,
   } = usePhotoUnlock(setInsufficientCoinsMessage)
+  const prefersReducedMotion = usePrefersReducedMotion()
   // Which photo each card's carousel is currently showing, keyed by profile
   // id -- a single Record instead of per-card useState, since hooks can't
   // be called inside the profiles.map() below.
@@ -236,6 +242,7 @@ export default function DiscoverPage() {
         router.push(`/profile/${profileId}`)
         return
       }
+      const theirPhoto = profiles.find(p => p.id === profileId)?.photos?.[0] ?? null
       const res = await fetch('/api/likes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -257,17 +264,21 @@ export default function DiscoverPage() {
         return next
       })
       hapticSuccess()
-      if (matchId) {
-        router.push(`/task/${matchId}`)
-      } else {
-        toast.success("You've met her Standard")
-      }
+      setMatchMoment({ theirPhoto, nextPath: matchId ? `/task/${matchId}` : null })
     } catch (e: any) {
       toast.error(e.message)
     } finally {
       setLikingId(null)
     }
   }
+
+  const handleMatchMomentContinue = useCallback(() => {
+    const nextPath = matchMoment?.nextPath ?? null
+    setMatchMoment(null)
+    if (nextPath) {
+      router.push(nextPath)
+    }
+  }, [matchMoment, router])
 
   if (checkingAccess) {
     return (
@@ -305,7 +316,7 @@ export default function DiscoverPage() {
             key={p.id}
             ref={i === profiles.length - 1 ? lastProfileRef : null}
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
-            className="snap-start snap-always h-dvh w-full relative overflow-hidden animate-fade-in"
+            className={`snap-start snap-always h-dvh w-full relative overflow-hidden ${prefersReducedMotion ? '' : 'animate-card-enter'}`}
           >
             <div className="absolute inset-0 bg-black">
               {(() => {
@@ -396,10 +407,10 @@ export default function DiscoverPage() {
 
                     {typeof p.match_percentage === 'number' && (
                       <div className="absolute top-12 left-3 z-10 flex flex-col items-start gap-1">
-                        <div className="glass-surface flex items-center gap-1.5 rounded-full px-3 py-1.5">
-                          <span className="text-gold text-xs">◆</span>
-                          <span className="font-display font-bold text-white text-sm whitespace-nowrap">
-                            {p.match_percentage}% Greenflag Alignment
+                        <div className="glass-surface flex items-center gap-1 rounded-full pl-2 pr-2.5 py-1">
+                          <Flag className="w-3 h-3 text-gold" fill="currentColor" />
+                          <span className="font-display font-bold text-white text-xs whitespace-nowrap">
+                            {p.match_percentage}%
                           </span>
                         </div>
                         {persona === 'woman' && !!interestCounts[p.id] && (
@@ -570,20 +581,18 @@ export default function DiscoverPage() {
                   </>
                 ) : (
                   <>
-                    <button
+                    <IconButton
+                      icon={<X className="w-5 h-5 text-ink/60" />}
+                      label="Pass"
                       onClick={() => { hapticTap(); scrollToNext(i) }}
-                      aria-label="Pass"
-                      className="glass-surface size-11 rounded-full flex items-center justify-center active:scale-95 transition-all shrink-0"
-                    >
-                      <X className="w-5 h-5 text-ink/60" />
-                    </button>
-                    <button
+                      className="shrink-0"
+                    />
+                    <IconButton
+                      icon={<Gift className="w-5 h-5 text-ink/60" />}
+                      label="Send Gift"
                       onClick={() => { hapticTap(); openGiftPicker(p.id) }}
-                      aria-label="Send Gift"
-                      className="glass-surface size-11 rounded-full flex items-center justify-center active:scale-95 transition-all shrink-0"
-                    >
-                      <Gift className="w-5 h-5 text-ink/60" />
-                    </button>
+                      className="shrink-0"
+                    />
                     <button
                       onClick={() => { hapticDecision(); setConfirmProfileId(p.id) }}
                       disabled={likingId === p.id}
@@ -744,6 +753,13 @@ export default function DiscoverPage() {
           onDismiss={() => setInsufficientCoinsMessage(null)}
         />
       )}
+
+      <MatchMomentOverlay
+        open={!!matchMoment}
+        myPhoto={currentUser?.photos?.[0] ?? null}
+        theirPhoto={matchMoment?.theirPhoto ?? null}
+        onContinue={handleMatchMomentContinue}
+      />
 
       {nudgeDialog && (
         <div

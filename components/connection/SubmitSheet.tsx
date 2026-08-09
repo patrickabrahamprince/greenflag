@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { X, Camera, Mic, Type, Upload } from 'lucide-react';
+import { LoadingButton } from '@/components/shared/LoadingButton';
 import { createClient } from '@/lib/supabase/client';
 import { useCoinStore } from '@/lib/store';
 import type { IntentionRecord } from './types';
@@ -613,14 +614,16 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
           <p className="text-red-400 text-sm text-center mt-5 font-medium">{error}</p>
         )}
 
-        <button
+        <LoadingButton
+          loading={submitting}
+          loadingLabel="Submitting"
+          icon={<Upload className="w-4 h-4" />}
           onClick={handleSubmit}
-          disabled={!canSubmit || submitting}
-          className="btn-primary w-full mt-5 flex items-center justify-center gap-2"
+          disabled={!canSubmit}
+          className="w-full mt-5"
         >
-          <Upload className="w-4 h-4" />
-          {submitting ? 'Submitting...' : 'Submit'}
-        </button>
+          Submit
+        </LoadingButton>
       </div>
     </div>
   );

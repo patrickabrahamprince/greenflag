@@ -44,7 +44,7 @@ module.exports = {
         'fade-in': 'fadeIn 220ms ease-out',
         'slide-up': 'slideUp 240ms ease-out',
         'slide-down': 'slideDown 200ms ease-out',
-        'shimmer': 'shimmer 2s infinite linear',
+        'shimmer': 'shimmer 1.4s ease-in-out infinite',
         'logo-in': 'logoIn 600ms cubic-bezier(0.16, 1, 0.3, 1)',
         'sheet-up': 'sheetUp 280ms cubic-bezier(0.16, 1, 0.3, 1)',
         // Loops for as long as it's mounted, unlike logo-in's single
@@ -52,6 +52,11 @@ module.exports = {
         // shared LoadingLogo indicator, both of which show for an
         // unknown/unbounded duration.
         'logo-pulse': 'logoPulse 1.4s ease-in-out infinite',
+        'card-enter': 'cardEnter 220ms ease-out',
+        'match-card-left': 'matchCardInLeft 620ms cubic-bezier(0.34, 1.56, 0.64, 1) both',
+        'match-card-right': 'matchCardInRight 620ms cubic-bezier(0.34, 1.56, 0.64, 1) 100ms both',
+        'match-glow': 'matchGlowPop 620ms cubic-bezier(0.34, 1.56, 0.64, 1) 280ms both',
+        'match-text': 'matchTextUp 300ms ease-out 480ms both',
       },
       keyframes: {
         sheetUp: {
@@ -81,6 +86,27 @@ module.exports = {
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
+        },
+        cardEnter: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        matchCardInLeft: {
+          '0%': { opacity: '0', transform: 'translate(-40px, 20px) rotate(-16deg) scale(0.9)' },
+          '100%': { opacity: '1', transform: 'translate(-18px, 0) rotate(-6deg) scale(1)' },
+        },
+        matchCardInRight: {
+          '0%': { opacity: '0', transform: 'translate(40px, 20px) rotate(16deg) scale(0.9)' },
+          '100%': { opacity: '1', transform: 'translate(18px, 0) rotate(6deg) scale(1)' },
+        },
+        matchGlowPop: {
+          '0%': { opacity: '0', transform: 'scale(0.5)' },
+          '60%': { opacity: '1', transform: 'scale(1.15)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+        matchTextUp: {
+          '0%': { opacity: '0', transform: 'translateY(12px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },
       maxWidth: {

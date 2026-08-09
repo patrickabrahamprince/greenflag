@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E879F9"/>
+      <stop offset="45%" stop-color="#C026D3"/>
+      <stop offset="100%" stop-color="#86198F"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <!-- pole -->
+  <rect x="432" y="200" width="40" height="624" rx="8" fill="#ffffff"/>
+  <!-- flowing pennant: one convex top curve, one concave bottom curve, single clean taper to a point -->
+  <path d="M 472 220
+           Q 680 232, 820 340
+           Q 680 448, 472 460
+           Z"
+        fill="#ffffff"/>
+</svg>
