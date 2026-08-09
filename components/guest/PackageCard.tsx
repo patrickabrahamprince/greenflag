@@ -1,4 +1,5 @@
-import { Crown, Zap, ShoppingCart, Loader2 } from 'lucide-react';
+import { Crown, Zap, ShoppingCart } from 'lucide-react';
+import { LoadingButton } from '@/components/shared/LoadingButton';
 
 interface Package {
   coins: number;
@@ -49,18 +50,16 @@ export function PackageCard({ pkg, displayPrice, purchasing, isPurchasingThis, o
             <p className="text-xs text-muted">{displayPrice || `₹${pkg.price}`}</p>
           </div>
         </div>
-        <button
+        <LoadingButton
+          loading={isPurchasingThis}
+          loadingLabel="Processing"
+          icon={<ShoppingCart className="w-3.5 h-3.5" />}
           onClick={onBuy}
           disabled={purchasing}
-          className="btn-primary text-sm py-2 px-4 flex items-center gap-1.5 disabled:opacity-50"
+          className="text-sm py-2 px-4"
         >
-          {isPurchasingThis ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          ) : (
-            <ShoppingCart className="w-3.5 h-3.5" />
-          )}
-          {isPurchasingThis ? 'Processing...' : 'Buy'}
-        </button>
+          Buy
+        </LoadingButton>
       </div>
     </div>
   );

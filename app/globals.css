@@ -159,7 +159,8 @@ body.min-h-dvh::after {
     @apply glass-surface relative text-ink font-display font-bold rounded-full px-8 py-3
            text-xs uppercase tracking-wide
            transition-all duration-300 ease-out
-           hover:border-gold active:scale-[0.98];
+           hover:border-gold active:scale-[0.98]
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
   }
 
   /* Traveling light around the border: an animated conic-gradient ring
@@ -194,7 +195,8 @@ body.min-h-dvh::after {
     @apply text-ink/50 font-medium rounded-xl px-4 py-2
            text-xs uppercase tracking-wide
            transition-all duration-300 ease-out
-           hover:text-ink active:scale-[0.98];
+           hover:text-ink active:scale-[0.98]
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
   }
 
   .btn-danger {
