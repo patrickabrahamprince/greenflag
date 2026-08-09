@@ -1,9 +1,9 @@
 'use client';
 
 import { Loader2 } from 'lucide-react';
-import type { ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
-interface LoadingButtonProps {
+interface LoadingButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'disabled' | 'type'> {
   loading: boolean;
   loadingLabel: string;
   icon?: ReactNode;
@@ -31,10 +31,12 @@ export function LoadingButton({
   className = '',
   children,
   type = 'button',
+  ...rest
 }: LoadingButtonProps) {
   const base = variant === 'primary' ? 'btn-primary' : 'btn-secondary';
   return (
     <button
+      {...rest}
       type={type}
       onClick={onClick}
       disabled={disabled || loading}

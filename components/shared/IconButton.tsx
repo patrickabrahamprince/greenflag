@@ -13,12 +13,13 @@ interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 // than a full-width pill does. Formalizes the ad-hoc
 // `glass-surface size-11 rounded-full` pattern already used inline on
 // Discover into one reusable component.
-export function IconButton({ icon, label, className = '', ...rest }: IconButtonProps) {
+export function IconButton({ icon, label, className = '', type = 'button', ...rest }: IconButtonProps) {
   return (
     <button
-      aria-label={label}
+      type={type}
       className={`glass-surface w-[46px] h-[46px] rounded-full flex items-center justify-center active:scale-[0.92] transition-all duration-200 disabled:opacity-50 ${className}`}
       {...rest}
+      aria-label={label}
     >
       {icon}
     </button>
