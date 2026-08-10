@@ -32,8 +32,8 @@ export function ReviewTimerRing({ secondsLeft, totalSeconds }: ReviewTimerRingPr
         />
         <defs>
           <linearGradient id="reviewRingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#D7FF81" />
-            <stop offset="100%" stopColor="#BC96FF" />
+            <stop offset="0%" stopColor="#D2042D" />
+            <stop offset="100%" stopColor="#F0BCC5" />
           </linearGradient>
         </defs>
       </svg>

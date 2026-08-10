@@ -315,7 +315,7 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
       </div>
       {/* Separated card rows with a real gap between them, per the design
           system -- was a flush list divided by hairline borders. */}
-      <div className="px-4 space-y-3">
+      <div className="px-6 space-y-3">
         {conversations.map((conv) => (
           <ChatListItem key={conv.id} conv={conv} />
         ))}

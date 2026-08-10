@@ -23,15 +23,15 @@ function MatchConfetti() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
       <div className="absolute w-10 h-10 rounded-full bg-gold/70" style={{ top: '8%', left: '12%' }} />
-      <div className="absolute w-6 h-6 rounded-full bg-[#FC4363]/60" style={{ top: '16%', right: '18%' }} />
+      <div className="absolute w-6 h-6 rounded-full bg-[#45050C]/70" style={{ top: '16%', right: '18%' }} />
       <div
         className="absolute w-8 h-8 bg-lavender/50"
         style={{ top: '10%', right: '35%', clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)', borderRadius: '4px' }}
       />
       <div className="absolute w-5 h-5 rounded-full border-2 border-gold/60" style={{ bottom: '14%', left: '20%' }} />
-      <div className="absolute w-7 h-7 rounded-full bg-[#612AFF]/60" style={{ bottom: '10%', right: '14%' }} />
+      <div className="absolute w-7 h-7 rounded-full bg-lavender/60" style={{ bottom: '10%', right: '14%' }} />
       <div
-        className="absolute w-6 h-6 bg-[#FC4363]/50"
+        className="absolute w-6 h-6 bg-[#45050C]/60"
         style={{ bottom: '20%', left: '38%', clipPath: 'polygon(50% 0%, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0% 50%, 35% 35%)' }}
       />
       <div
@@ -95,9 +95,9 @@ export function MatchMomentOverlay({ open, myPhoto, theirPhoto, onContinue }: Ma
         </div>
         <div
           className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full flex items-center justify-center bg-gold ${glowAnim}`}
-          style={{ boxShadow: '0 0 40px 10px rgba(215, 255, 129, 0.5)' }}
+          style={{ boxShadow: '0 0 40px 10px rgba(210, 4, 45, 0.5)' }}
         >
-          <Flag className="w-7 h-7 text-ink-dark" fill="currentColor" />
+          <Flag className="w-7 h-7 text-ink" fill="currentColor" />
         </div>
       </div>
       <div className={`relative z-10 text-center ${textAnim}`}>

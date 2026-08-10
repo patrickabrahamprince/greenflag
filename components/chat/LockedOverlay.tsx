@@ -11,7 +11,7 @@ export function LockedOverlay({ backRoute, currentDay }: LockedOverlayProps) {
   const progress = Math.min((currentDay / 5) * 100, 100);
 
   return (
-    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center backdrop-blur-sm px-8" style={{ background: 'rgba(27,16,59,0.95)' }}>
+    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center backdrop-blur-sm px-8" style={{ background: 'rgba(15,10,10,0.95)' }}>
       <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-well">
         <Lock className="w-7 h-7 text-gold" />
       </div>

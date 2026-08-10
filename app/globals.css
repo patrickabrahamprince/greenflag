@@ -8,12 +8,12 @@
    match the color inside, a visible seam right where the bottom nav
    sits. Painting the same base fill on body itself means there's no seam
    regardless of how wide the viewport is or where a page's own content
-   column ends. Dateasy's design system is one continuous flat dark-purple
-   environment -- no radial glow, depth comes from the elevation ramp
-   (well/base/raised/card/overlay), not from a gradient painted over the
+   column ends. Obsidian Velvet is one continuous flat black environment
+   -- no radial glow, depth comes from the elevation ramp (well/base/
+   raised/card/overlay), not from a gradient painted over the
    background. */
 html, body {
-  background: #371F7D !important;
+  background: #000000 !important;
 }
 /* Without this, iOS Safari's rubber-band bounce at the top/bottom of a
    normal document-scroll page visually drags `position: fixed` elements
@@ -85,7 +85,7 @@ body::-webkit-scrollbar,
    keyboard-inset-listener.tsx), staying on the same route after typing
    (e.g. submitting a task's text answer without navigating away) left a
    real chunk of extra, unstyled space sitting on body itself, right
-   above the fixed nav -- filled with body's own #371F7D base color,
+   above the fixed nav -- filled with body's own #000000 base color,
    read as a stray solid-color layer obstructing whatever was under it. */
 body.min-h-dvh::after {
   content: none;
@@ -125,21 +125,24 @@ body.min-h-dvh::after {
      not a fixed width/height -- callers (flex-1, inline px-8 py-3, etc.)
      already size themselves across ~60 call sites, and baking in w-full
      or a fixed h-14 here would silently override every one of them. */
+  /* Crimson is a dark, saturated fill -- unlike Dateasy's light Mindaro,
+     this needs WHITE text (text-ink), not dark. */
   .btn-primary {
-    @apply relative text-ink-dark font-display font-bold rounded-pill px-8
+    @apply relative text-ink font-display font-bold rounded-pill px-8
            min-h-[52px] flex items-center justify-center
            text-label
            transition-all duration-200 ease-out
            active:scale-[0.98]
            disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
-    background: #D7FF81;
+    background: #D2042D;
   }
 
   .btn-primary:hover {
-    background: #E4FFA3;
+    background: #E8324F;
   }
 
-  /* Secondary: Lavender fill, dark text, pill. */
+  /* Secondary: rose-tint fill, dark text, pill -- rose-tint is a light
+     fill, same contrast direction Dateasy's lavender had. */
   .btn-secondary {
     @apply relative text-ink-dark font-display font-bold rounded-pill px-8
            min-h-[52px] flex items-center justify-center
@@ -147,14 +150,14 @@ body.min-h-dvh::after {
            transition-all duration-200 ease-out
            active:scale-[0.98]
            disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
-    background: #BC96FF;
+    background: #F0BCC5;
   }
 
   .btn-secondary:hover {
-    background: #C9A9FF;
+    background: #F5CDD4;
   }
 
-  /* Tertiary: transparent, 1px Lavender border, white text, pill. */
+  /* Tertiary: transparent, 1px rose-tint border, white text, pill. */
   .btn-ghost {
     @apply text-ink font-display font-medium rounded-pill px-6
            min-h-[44px] flex items-center justify-center
@@ -162,19 +165,19 @@ body.min-h-dvh::after {
            transition-all duration-200 ease-out
            active:scale-[0.98]
            disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
-    border-color: #BC96FF;
+    border-color: #F0BCC5;
   }
 
   .btn-ghost:hover {
-    background: rgba(188, 150, 255, 0.1);
+    background: rgba(240, 188, 197, 0.1);
   }
 
   .btn-danger {
-    @apply bg-[#FC4363]/15 text-[#FC4363] border border-[#FC4363]/30 font-display font-medium rounded-pill px-8
+    @apply bg-[#D2042D]/15 text-[#D2042D] border border-[#D2042D]/30 font-display font-medium rounded-pill px-8
            min-h-[52px] flex items-center justify-center
            text-label
            transition-all duration-200 ease-out
-           hover:bg-[#FC4363]/25 active:scale-[0.98];
+           hover:bg-[#D2042D]/25 active:scale-[0.98];
   }
 
   /* Cards -- card-elevation fill, 24px radius, no border, no shadow. */
@@ -192,7 +195,7 @@ body.min-h-dvh::after {
     /* First stop was only 14% opaque, letting whatever sits behind the
        dialog (e.g. Settings' own "Danger Zone" icon/text) show through
        prominently in that corner instead of reading as a solid card. */
-    background: linear-gradient(135deg, rgba(97,42,255,0.35) 0%, rgba(27,16,59,0.98) 60%);
+    background: linear-gradient(135deg, rgba(69,5,12,0.55) 0%, rgba(15,10,10,0.98) 60%);
   }
 
   .card-hover {
@@ -224,17 +227,17 @@ body.min-h-dvh::after {
   .input:-webkit-autofill:hover,
   .input:-webkit-autofill:focus {
     -webkit-text-fill-color: #FFFFFF;
-    -webkit-box-shadow: 0 0 0px 1000px #1B103B inset;
-    box-shadow: 0 0 0px 1000px #1B103B inset;
+    -webkit-box-shadow: 0 0 0px 1000px #0F0A0A inset;
+    box-shadow: 0 0 0px 1000px #0F0A0A inset;
     transition: background-color 9999s ease-in-out 0s;
   }
 
   .input-error {
-    @apply border-[#FC4363] focus:border-[#FC4363];
+    @apply border-[#D2042D] focus:border-[#D2042D];
   }
 
   .text-gradient {
-    background: linear-gradient(135deg, #D7FF81 0%, #BC96FF 60%, #612AFF 100%);
+    background: linear-gradient(135deg, #D2042D 0%, #F0BCC5 60%, #45050C 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -288,24 +291,23 @@ body.min-h-dvh::after {
   .hairline {
     height: 1px;
     width: 100%;
-    background: #4A2A8C;
+    background: #2A1519;
   }
 
-  /* Floating Lavender pill per the design system -- flat fill, no
-     glassmorphism/blur (the deck's bottom nav is solid, not frosted). */
+  /* Floating rose-tint pill -- flat fill, no glassmorphism/blur. */
   .nav-glass {
-    background: #BC96FF;
+    background: #F0BCC5;
   }
 
   .glass-surface {
     @apply backdrop-blur-xl border border-white/10;
     background:
       linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03)),
-      rgba(20, 8, 28, 0.45);
+      rgba(10, 5, 5, 0.5);
   }
 
   .gold-border-left {
-    border-left: 2px solid #D7FF81;
+    border-left: 2px solid #D2042D;
   }
 
   .match-arc {
@@ -320,13 +322,13 @@ body.min-h-dvh::after {
 
   .match-arc-bg {
     fill: none;
-    stroke: #4A2A8C;
+    stroke: #2A1519;
     stroke-width: 2;
   }
 
   .match-arc-fill {
     fill: none;
-    stroke: #D7FF81;
+    stroke: #D2042D;
     stroke-width: 2;
     stroke-linecap: round;
     transition: stroke-dashoffset 1s ease-out;

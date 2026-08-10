@@ -18,8 +18,10 @@ await page.getByText('Accept Terms').click({ timeout: 10000 });
 await page.waitForURL(/\/discover|\/admin/, { timeout: 20000 });
 
 const screens = [
-  { path: '/my-connections', name: 'connections' },
-  { path: '/settings/notifications', name: 'settings-notifications' },
+  { path: '/discover', name: 'discover' },
+  { path: '/messages', name: 'chat-list' },
+  { path: '/profile', name: 'profile' },
+  { path: '/onboard/interests', name: 'interests' },
 ];
 
 for (const { path, name } of screens) {

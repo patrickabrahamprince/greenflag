@@ -459,7 +459,7 @@ export default function TaskPage() {
           the API now also looking one day back (see route.ts), this keeps
           it reachable through that transition instead of losing it. */}
       {specialSend && isWoman && (
-        <div className="rounded-2xl p-4 mb-4 border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-transparent shadow-[0_0_24px_-10px_rgba(215,255,129,0.6)]">
+        <div className="rounded-2xl p-4 mb-4 border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-transparent shadow-[0_0_24px_-10px_rgba(210,4,45,0.6)]">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="w-4 h-4 text-gold" />
             <p className="font-display text-sm text-gold">A Special Note From {otherProfile.name}</p>

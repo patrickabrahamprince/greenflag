@@ -9,13 +9,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Was bg-gold (Mindaro) + text-white, the exact unreadable
-        // pairing the design system's contrast rule warns about, plus a
-        // hover fill from the old dark-magenta palette.
-        primary: 'bg-gold text-ink-dark hover:bg-[#E4FFA3]',
+        // Crimson is dark/saturated, so it needs white text (was Mindaro,
+        // a light fill needing dark text -- the opposite contrast need).
+        primary: 'bg-gold text-ink hover:bg-[#E8324F]',
         secondary: 'bg-transparent text-ink border border-border hover:border-gold',
         ghost: 'text-ink/50 hover:text-ink hover:bg-well',
-        danger: 'bg-[#FC4363]/15 text-[#FC4363] hover:bg-[#FC4363]/25',
+        danger: 'bg-[#D2042D]/15 text-[#D2042D] hover:bg-[#D2042D]/25',
       },
       size: {
         sm: 'px-4 py-1.5 text-[11px]',

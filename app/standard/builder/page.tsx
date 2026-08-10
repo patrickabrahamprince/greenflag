@@ -83,7 +83,7 @@ function StandardIntroScreen({ onContinue }: { onContinue: () => void }) {
     <div className="relative isolate w-full animate-fade-in min-h-dvh screen-gradient px-6 pt-safe-top pb-32 max-w-app mx-auto flex flex-col">
       <OnboardingBackground image="/onboarding/how-it-works.jpg" />
       <div className="flex-1">
-        <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-6 shadow-[0_0_30px_-8px_rgba(215,255,129,0.6)]">
+        <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-6 shadow-[0_0_30px_-8px_rgba(210,4,45,0.6)]">
           <Sparkles className="w-7 h-7 text-gold" />
         </div>
         <h1 className="font-display text-3xl text-ink mb-3">Set Your Standard</h1>
@@ -121,7 +121,7 @@ function StandardIntroScreen({ onContinue }: { onContinue: () => void }) {
       >
         <button
           onClick={onContinue}
-          className="btn-primary w-full max-w-app mx-auto py-4 font-semibold text-sm active:scale-95 transition-transform shadow-[0_0_30px_-10px_rgba(215,255,129,0.6)] block"
+          className="btn-primary w-full max-w-app mx-auto py-4 font-semibold text-sm active:scale-95 transition-transform shadow-[0_0_30px_-10px_rgba(210,4,45,0.6)] block"
         >
           Begin Day 1
         </button>
@@ -377,7 +377,7 @@ export default function StandardBuilderPage() {
                         type="button"
                         onClick={() => updateTaskPrompt(currentSlot.dayNumber, task.taskNumber, preset)}
                         className={`px-4 py-2.5 rounded-pill text-sm font-medium transition-all active:scale-90 ${
-                          selected ? 'bg-gold text-ink-dark' : 'bg-well border border-transparent text-ink/70 hover:border-lavender/40'
+                          selected ? 'bg-gold text-ink' : 'bg-well border border-transparent text-ink/70 hover:border-lavender/40'
                         }`}
                       >
                         {preset}

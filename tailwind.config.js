@@ -8,44 +8,50 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // --- Dateasy design system tokens (source of truth) ---
+        // --- Obsidian Velvet design system tokens (source of truth) ---
         // Palette
-        mindaro: '#D7FF81',
-        lavender: '#BC96FF',
-        indigo: '#371F7D',
-        'electric-violet': '#612AFF',
-        'pinkish-red': '#FC4363',
-        // Elevation ramp: one continuous dark-purple environment, depth is
-        // a step up this ramp -- never a shadow, never a gradient.
-        well: '#1B103B',
-        base: '#371F7D',
-        raised: '#4A2A8C',
-        card: '#522E98',
-        overlay: '#5722A4',
-        // Mindaro/Lavender are light fills -- text/icons on them must be
-        // dark, never white. Use text-ink-dark on bg-accent/bg-lavender.
-        'ink-dark': '#371F7D',
+        crimson: '#D2042D',
+        wine: '#45050C',
+        'rose-tint': '#F0BCC5',
+        // Elevation ramp: black environment, depth is a step up this ramp
+        // -- never a shadow, never a gradient.
+        well: '#0F0A0A',
+        base: '#000000',
+        raised: '#2A1519',
+        card: '#1A1A1A',
+        overlay: '#241014',
+        // Crimson is dark/saturated -- fills using it need WHITE text
+        // (use text-ink, already white). rose-tint is a light fill and
+        // needs dark text -- that's what ink-dark is for.
+        'ink-dark': '#1A1A1A',
 
         // --- Legacy token names, repointed to the new palette ---
-        // Kept so ~470 existing call sites across the app (bg-cream,
-        // text-ink, bg-gold, etc.) keep working without editing each one --
-        // same trick the previous theme migration in this repo used. Real
-        // per-usage contrast fixes (bg-accent + text-white pairings that
-        // are now unreadable) are swept separately, file by file, not by
-        // changing what these names resolve to.
-        cream: '#371F7D',       // was near-black bg -> now Persian Indigo (base)
+        // Kept so existing call sites across the app (bg-cream, text-ink,
+        // bg-gold, etc.) keep working without editing each one -- same
+        // trick the Dateasy migration used. IMPORTANT DIFFERENCE from that
+        // migration: Mindaro (the previous `gold`) was a LIGHT fill, so
+        // every bg-gold call site was paired with text-ink-dark. Crimson
+        // is a DARK, saturated fill -- the opposite contrast need. Every
+        // bg-gold + text-ink-dark pairing from the Dateasy pass has been
+        // swept file-by-file to text-ink (white) alongside this token
+        // change; see the accompanying commit for the list.
+        cream: '#000000',       // was Persian Indigo bg -> now Neutral black
         ink: '#FFFFFF',         // unchanged -- primary text stays white
-        black: '#1B103B',       // was near-black -> now well (recessed)
-        'black-deep': '#1B103B',// was near-black -> now well (recessed)
-        gold: '#D7FF81',        // was magenta accent -> now Mindaro
-        'gold-light': '#D7FF81',
-        'gold-dark': '#612AFF', // was dark magenta -> now Electric Violet
-        blush: '#FC4363',       // was magenta -> now Pinkish Red (like/heart)
-        violet: '#612AFF',      // was #7C3AED -> now Electric Violet exactly
-        surface: '#522E98',     // was nearly-black card bg -> now card
-        'surface-light': '#4A2A8C', // was dark gray -> now raised
-        border: '#4A2A8C',      // was dark gray -> now raised
+        black: '#0F0A0A',       // now well (recessed)
+        'black-deep': '#0F0A0A',// now well (recessed)
+        gold: '#D2042D',        // was Mindaro (light) -> now Crimson (dark) -- contrast flips
+        'gold-light': '#D2042D',
+        'gold-dark': '#45050C', // was Electric Violet -> now Wine
+        blush: '#D2042D',       // was Pinkish Red -> unified with Crimson (one red family)
+        violet: '#45050C',      // was Electric Violet -> now Wine
+        surface: '#1A1A1A',     // now card
+        'surface-light': '#2A1519', // now raised
+        border: '#2A1519',      // now raised
         muted: '#FFFFFF99',     // unchanged -- 60% white
+        // bottom-nav.tsx's active-tab disc (dark disc on the light pill,
+        // was Persian Indigo) -- kept as its own token since "well"/"base"
+        // read ambiguously in that file; same near-black as base.
+        indigo: '#000000',
       },
       fontFamily: {
         // Cabinet Grotesk, per the Dateasy design system. These three keys

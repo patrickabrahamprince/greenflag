@@ -80,7 +80,7 @@ export default function ProfilePage() {
         </button>
       </div>
 
-      <div className="relative w-full aspect-[3/4] mb-5 rounded-photo overflow-hidden shadow-[0_20px_60px_-20px_rgba(97,42,255,0.35)]">
+      <div className="relative w-full aspect-[3/4] mb-5 rounded-photo overflow-hidden shadow-[0_20px_60px_-20px_rgba(69,5,12,0.35)]">
         <ProfileImageCarousel images={user.photos ?? []} disableLightbox />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent pointer-events-none" />
         {user.phone_verified && (
@@ -151,8 +151,8 @@ export default function ProfilePage() {
           itself until now. */}
       {user.teaser_prompt && user.teaser_answer && (
         <div
-          className="mb-6 rounded-card border border-gold/20 p-6 shadow-[0_12px_32px_-16px_rgba(97,42,255,0.4)]"
-          style={{ background: 'linear-gradient(135deg, rgba(215,255,129,0.12) 0%, rgba(27,16,59,0.9) 60%)' }}
+          className="mb-6 rounded-card border border-gold/20 p-6 shadow-[0_12px_32px_-16px_rgba(69,5,12,0.4)]"
+          style={{ background: 'linear-gradient(135deg, rgba(210,4,45,0.12) 0%, rgba(15,10,10,0.9) 60%)' }}
         >
           <p className="text-[10px] uppercase tracking-widest text-gold/70 mb-2">{user.teaser_prompt}</p>
           <p className="font-display text-lg text-white leading-snug">{user.teaser_answer}</p>
@@ -179,8 +179,8 @@ export default function ProfilePage() {
             tier, so the card keeps its real balance/purchase content but
             picks up the same on-palette accent treatment. */}
         <div
-          className="rounded-card border border-gold/20 p-5 flex items-center justify-between shadow-[0_12px_32px_-16px_rgba(215,255,129,0.3)]"
-          style={{ background: 'linear-gradient(135deg, rgba(215,255,129,0.16) 0%, rgba(27,16,59,0.9) 60%)' }}
+          className="rounded-card border border-gold/20 p-5 flex items-center justify-between shadow-[0_12px_32px_-16px_rgba(210,4,45,0.3)]"
+          style={{ background: 'linear-gradient(135deg, rgba(210,4,45,0.16) 0%, rgba(15,10,10,0.9) 60%)' }}
         >
           <div className="flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-full bg-gold/15 border border-gold/30 flex items-center justify-center shrink-0">

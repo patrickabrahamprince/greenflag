@@ -525,7 +525,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
                   <button
                     onClick={() => { setError(null); togglePlay(); }}
                     className="w-11 h-11 rounded-full flex items-center justify-center text-ink-dark active:scale-95 transition-all shrink-0"
-                    style={{ background: '#D7FF81' }}
+                    style={{ background: '#D2042D' }}
                     aria-label={isPlaying ? 'Pause' : 'Play'}
                   >
                     {isPlaying ? (
@@ -552,7 +552,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
                     }}
                     className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer accent-gold"
                     style={{
-                      background: `linear-gradient(to right, #D7FF81 ${(playbackTime / (recordedDuration || 1)) * 100}%, #4A2A8C ${(playbackTime / (recordedDuration || 1)) * 100}%)`,
+                      background: `linear-gradient(to right, #D2042D ${(playbackTime / (recordedDuration || 1)) * 100}%, #2A1519 ${(playbackTime / (recordedDuration || 1)) * 100}%)`,
                     }}
                     aria-label="Playback position"
                   />
@@ -595,8 +595,8 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
                   onClick={handleRecordTap}
                   className="w-20 h-20 rounded-full flex items-center justify-center transition-all"
                   style={{
-                    background: isRecording ? 'rgba(239,68,68,0.1)' : '#1B103B',
-                    border: isRecording ? '2px solid rgba(239,68,68,0.4)' : '1px solid #4A2A8C',
+                    background: isRecording ? 'rgba(239,68,68,0.1)' : '#0F0A0A',
+                    border: isRecording ? '2px solid rgba(239,68,68,0.4)' : '1px solid #2A1519',
                   }}
                 >
                   <Mic className={`w-8 h-8 ${isRecording ? 'text-red-500 animate-pulse' : 'text-gold'}`} />

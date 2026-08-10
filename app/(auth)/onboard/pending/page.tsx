@@ -54,7 +54,7 @@ export default function PendingApprovalPage() {
         </>
       ) : (
         <div className="animate-fade-in">
-          <div className="w-20 h-20 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_-8px_rgba(215,255,129,0.6)]">
+          <div className="w-20 h-20 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_-8px_rgba(210,4,45,0.6)]">
             <Sparkles className="w-9 h-9 text-gold" />
           </div>
 

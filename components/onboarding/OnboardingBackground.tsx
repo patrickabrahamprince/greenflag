@@ -11,8 +11,7 @@ interface OnboardingBackgroundProps {
 // screen's existing content via a negative z-index -- drop this in as
 // the first child of a `relative` root and nothing else on the page
 // needs to change. The scrim gets more opaque toward the bottom since
-// that's where the CTA and body copy usually live; the fuchsia glow up
-// top keeps it feeling like this app rather than a generic photo dump.
+// that's where the CTA and body copy usually live.
 //
 // The image is always visible immediately (no opacity/onLoad gating) --
 // a prior version faded it in from opacity-0 once its onLoad event
@@ -22,12 +21,11 @@ interface OnboardingBackgroundProps {
 // mount regardless of whether the image data has actually arrived yet,
 // so there's no state for a missed event to get stuck in.
 export function OnboardingBackground({ image, light }: OnboardingBackgroundProps) {
-  // Fades to the base purple (#371F7D), not black -- the design system's
-  // photo screens use a plain dark scrim with no colored glow, unlike
-  // the old magenta radial glow this replaced.
+  // Fades to base black (#000000) -- the design system's photo screens
+  // use a plain dark scrim with no colored glow.
   const scrim = light
-    ? 'linear-gradient(180deg, rgba(55,31,125,0.35) 0%, rgba(55,31,125,0.65) 55%, rgba(55,31,125,0.92) 100%)'
-    : 'linear-gradient(180deg, rgba(55,31,125,0.55) 0%, rgba(55,31,125,0.8) 55%, rgba(55,31,125,0.97) 100%)';
+    ? 'linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.65) 55%, rgba(0,0,0,0.92) 100%)'
+    : 'linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.8) 55%, rgba(0,0,0,0.97) 100%)';
 
   return (
     <div className="absolute inset-0 -z-10 overflow-hidden bg-base">

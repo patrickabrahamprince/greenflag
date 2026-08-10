@@ -226,7 +226,7 @@ export default function QuizPage() {
       <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center px-6 bg-base text-center">
         <OnboardingBackground image={reveal.image} />
         <div className="max-w-sm mx-auto w-full">
-          <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_-8px_rgba(215,255,129,0.5)]">
+          <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_-8px_rgba(210,4,45,0.5)]">
             <Sparkles className="w-7 h-7 text-gold" />
           </div>
           <p className="text-ink/50 text-xs uppercase tracking-widest mb-3">
@@ -261,7 +261,7 @@ export default function QuizPage() {
     : "There's no wrong answer — just be honest.";
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-base">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
       <OnboardingBackground image={QUESTION_IMAGES[currentIdx] || '/onboarding/quiz.jpg'} />
       <div className="max-w-md mx-auto w-full flex flex-col pb-safe-bottom">
         <div>
@@ -306,7 +306,7 @@ export default function QuizPage() {
                   data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? `quiz-option-${optionIdx}` : undefined}
                   className={`w-full py-4 px-5 rounded-tile text-left text-sm transition-all duration-200 flex items-center justify-between border-2 ${
                     isSelected
-                      ? 'bg-gold/10 border-gold text-ink font-medium scale-[1.02] shadow-[0_0_20px_-6px_rgba(215,255,129,0.4)]'
+                      ? 'bg-gold/10 border-gold text-ink font-medium scale-[1.02] shadow-[0_0_20px_-6px_rgba(210,4,45,0.4)]'
                       : 'bg-well border-transparent text-ink/70 hover:border-ink/20 active:scale-[0.98]'
                   }`}
                 >

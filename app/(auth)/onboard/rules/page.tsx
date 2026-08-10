@@ -158,7 +158,7 @@ export default function RulesPage() {
   }
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-base">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
       <OnboardingBackground image="/onboarding/rules.jpg" />
       <div className="max-w-md mx-auto w-full flex flex-col pb-safe-bottom flex-1">
         {/* Header */}
@@ -183,10 +183,10 @@ export default function RulesPage() {
             {loopedSlides.map((slide) => (
               <div key={slide.loopKey} className="w-full shrink-0 snap-center px-1">
                 <div
-                  className="flex flex-col items-center text-center px-6 py-10 border border-gold/20 rounded-[2rem] min-h-[380px] justify-center shadow-[0_0_40px_-16px_rgba(215,255,129,0.35)]"
-                  style={{ background: 'linear-gradient(160deg, rgba(215,255,129,0.08) 0%, rgba(28,28,30,0.5) 55%)' }}
+                  className="flex flex-col items-center text-center px-6 py-10 border border-gold/20 rounded-[2rem] min-h-[380px] justify-center shadow-[0_0_40px_-16px_rgba(210,4,45,0.35)]"
+                  style={{ background: 'linear-gradient(160deg, rgba(210,4,45,0.08) 0%, rgba(15,10,10,0.5) 55%)' }}
                 >
-                  <div className="w-24 h-24 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-7 shadow-[0_0_24px_-6px_rgba(215,255,129,0.5)]">
+                  <div className="w-24 h-24 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-7 shadow-[0_0_24px_-6px_rgba(210,4,45,0.5)]">
                     {slide.icon}
                   </div>
                   <h2 className="text-2xl font-display font-semibold text-ink mb-4">
@@ -208,7 +208,7 @@ export default function RulesPage() {
                 onClick={() => scrollToSlide(i)}
                 aria-label={`Go to rule ${i + 1}`}
                 className={`rounded-full transition-all duration-300 ${
-                  i === activeSlide ? 'w-6 h-1.5 bg-gold shadow-[0_0_10px_-1px_rgba(215,255,129,0.8)]' : 'w-1.5 h-1.5 bg-raised'
+                  i === activeSlide ? 'w-6 h-1.5 bg-gold shadow-[0_0_10px_-1px_rgba(210,4,45,0.8)]' : 'w-1.5 h-1.5 bg-raised'
                 }`}
               />
             ))}
@@ -218,7 +218,7 @@ export default function RulesPage() {
               like, one tap moves on regardless of which slide you're on. */}
           <button
             onClick={handleContinue}
-            className="btn-primary w-full py-4 font-semibold text-sm active:scale-95 transition-transform shadow-[0_0_30px_-10px_rgba(215,255,129,0.6)]"
+            className="btn-primary w-full py-4 font-semibold text-sm active:scale-95 transition-transform shadow-[0_0_30px_-10px_rgba(210,4,45,0.6)]"
           >
             Agree & Continue
           </button>

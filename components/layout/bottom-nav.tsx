@@ -76,7 +76,7 @@ export function BottomNav() {
       {/* Icon-only floating pill per the design system -- the deck's nav
           carries no visible labels; tab names stay as sr-only text so
           screen readers still announce each destination. */}
-      <div className="nav-glass rounded-pill flex justify-around items-center py-2 px-1 shadow-[0_8px_32px_-4px_rgba(27,16,59,0.5)]">
+      <div className="nav-glass rounded-pill flex justify-around items-center py-2 px-1 shadow-[0_8px_32px_-4px_rgba(15,10,10,0.5)]">
         {tabs.map((tab) => {
           const active = pathname === tab.href;
           const isNotifications = tab.href === '/notifications';
@@ -100,7 +100,7 @@ export function BottomNav() {
                   <tab.icon className={cn('transition-all duration-200', active ? 'text-gold w-4 h-4' : 'text-ink-dark/50 w-4 h-4')} strokeWidth={active ? 2.5 : 1.5} />
                 </div>
                 {isNotifications && unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 bg-[#FC4363] rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 bg-[#D2042D] rounded-full flex items-center justify-center">
                     <span className="text-[9px] font-bold text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>
                   </span>
                 )}

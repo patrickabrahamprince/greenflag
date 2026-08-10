@@ -46,8 +46,8 @@ export function VoiceRecorder({ onRecord }: VoiceRecorderProps) {
           isRecording ? 'animate-pulse' : ''
         )}
         style={{
-          background: isRecording ? 'rgba(239,68,68,0.15)' : '#1B103B',
-          border: isRecording ? '2px solid rgba(239,68,68,0.4)' : '1px solid #4A2A8C',
+          background: isRecording ? 'rgba(239,68,68,0.15)' : '#0F0A0A',
+          border: isRecording ? '2px solid rgba(239,68,68,0.4)' : '1px solid #2A1519',
         }}
       >
         <Mic className={cn('w-8 h-8', isRecording ? 'text-red-500' : 'text-gold')} />
@@ -56,9 +56,9 @@ export function VoiceRecorder({ onRecord }: VoiceRecorderProps) {
         {isRecording ? 'Recording... tap to stop' : 'Tap to start recording'}
       </p>
       <div className="w-full max-w-xs">
-        <div className="h-12 rounded-xl flex items-center justify-center gap-1 px-4" style={{ background: '#1B103B' }}>
+        <div className="h-12 rounded-xl flex items-center justify-center gap-1 px-4" style={{ background: '#0F0A0A' }}>
           {isRecording && Array.from({ length: 20 }).map((_, i) => (
-            <div key={i} className="w-0.5 rounded-full animate-pulse" style={{ height: `${Math.random() * 100}%`, background: 'rgba(215,255,129,0.6)', animationDelay: `${i * 0.05}s` }} />
+            <div key={i} className="w-0.5 rounded-full animate-pulse" style={{ height: `${Math.random() * 100}%`, background: 'rgba(210,4,45,0.6)', animationDelay: `${i * 0.05}s` }} />
           ))}
           {!isRecording && !recorded && <span className="text-xs text-muted font-thin">Waveform preview</span>}
         </div>

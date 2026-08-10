@@ -162,7 +162,7 @@ export default function HowItWorksPage() {
   }
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-base">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
       <OnboardingBackground image="/onboarding/how-it-works.jpg" />
       <div className="max-w-md mx-auto w-full flex-1 flex flex-col justify-center pb-safe-bottom">
         <div className="text-center mb-8">

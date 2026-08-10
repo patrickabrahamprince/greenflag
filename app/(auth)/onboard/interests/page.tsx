@@ -75,7 +75,7 @@ export default function InterestsPage() {
   };
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-base">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
       <OnboardingBackground image="/onboarding/interests.jpg" />
       <button onClick={() => router.push('/onboard/quiz')} className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit">
         <ArrowLeft size={24} />

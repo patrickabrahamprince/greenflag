@@ -419,14 +419,16 @@ export default function DiscoverPage() {
                       </>
                     )}
 
-                    {/* Compatibility badge -- solid Mindaro pill, dark
+                    {/* Compatibility badge -- solid Crimson pill, white
                         glyph + percentage, top-right per the design system
-                        (previously a translucent glass pill, top-left). */}
+                        (previously a translucent glass pill, top-left).
+                        Crimson is dark/saturated -- unlike Mindaro, this
+                        needs white text/icon, not dark. */}
                     {typeof p.match_percentage === 'number' && (
                       <div className="absolute top-safe-top right-3 mt-8 z-10 flex flex-col items-end gap-1">
                         <div className="bg-gold flex items-center gap-1 rounded-pill pl-2 pr-2.5 py-1">
-                          <Flag className="w-3 h-3 text-ink-dark" fill="currentColor" />
-                          <span className="font-display font-bold text-ink-dark text-xs whitespace-nowrap">
+                          <Flag className="w-3 h-3 text-ink" fill="currentColor" />
+                          <span className="font-display font-bold text-ink text-xs whitespace-nowrap">
                             {p.match_percentage}%
                           </span>
                         </div>
@@ -525,12 +527,11 @@ export default function DiscoverPage() {
                             key={interest}
                             className={
                               (isMatched
-                                // Solid Mindaro fill needs dark text, not white
-                                // -- the CONTRAST RULE the design system calls
-                                // out explicitly (bg-accent + text-white is
-                                // unreadable). Shadow repointed off the old
-                                // magenta to an on-palette Mindaro glow.
-                                ? `${sizeClass} rounded-full bg-gold text-ink-dark font-medium shadow-[0_2px_10px_rgba(215,255,129,0.4)] leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-[0_4px_16px_rgba(215,255,129,0.6)] active:scale-95`
+                                // Solid Crimson fill needs white text --
+                                // Crimson is dark/saturated (unlike
+                                // Dateasy's light Mindaro, which needed
+                                // dark text here instead).
+                                ? `${sizeClass} rounded-full bg-gold text-ink font-medium shadow-[0_2px_10px_rgba(210,4,45,0.4)] leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-[0_4px_16px_rgba(210,4,45,0.6)] active:scale-95`
                                 : `glass-surface ${sizeClass} rounded-full text-ink font-medium leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:bg-white/10 active:scale-95`)
                             }
                           >
@@ -635,7 +636,7 @@ export default function DiscoverPage() {
                       onClick={() => { hapticDecision(); setConfirmProfileId(p.id) }}
                       disabled={likingId === p.id}
                       aria-label="Meet Her Standard"
-                      className="w-16 h-16 rounded-full flex items-center justify-center active:scale-[0.98] transition-all duration-300 ease-out disabled:opacity-50 shrink-0 bg-[#FC4363]"
+                      className="w-16 h-16 rounded-full flex items-center justify-center active:scale-[0.98] transition-all duration-300 ease-out disabled:opacity-50 shrink-0 bg-[#D2042D]"
                     >
                       {likingId === p.id ? (
                         <Loader2 className="w-6 h-6 animate-spin text-white" />

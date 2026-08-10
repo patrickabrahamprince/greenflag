@@ -156,7 +156,7 @@ export default function EditProfilePage() {
                           e.stopPropagation();
                           handleRemovePhoto(i);
                         }}
-                        className="absolute top-1 right-1 w-6 h-6 bg-[#FC4363] rounded-full flex items-center justify-center"
+                        className="absolute top-1 right-1 w-6 h-6 bg-[#D2042D] rounded-full flex items-center justify-center"
                       >
                         <X className="w-3 h-3 text-white" />
                       </button>

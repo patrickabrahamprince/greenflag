@@ -69,7 +69,7 @@ export default function ProfileBioPage() {
 
   if (showIntro) {
     return (
-      <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-base">
+      <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
       <OnboardingBackground image="/onboarding/bio.jpg" />
         <button
           onClick={() => router.push('/onboard/profile/instagram')}
@@ -84,7 +84,7 @@ export default function ProfileBioPage() {
           {/* No enclosing card anymore -- the photo+quote pair sits
               directly on the page's own background photo instead of a
               separate boxed panel. */}
-          <div key={exampleIdx} className="w-20 h-20 rounded-full overflow-hidden mb-5 border border-white/20 shadow-[0_0_30px_-8px_rgba(215,255,129,0.6)] animate-slide-up">
+          <div key={exampleIdx} className="w-20 h-20 rounded-full overflow-hidden mb-5 border border-white/20 shadow-[0_0_30px_-8px_rgba(210,4,45,0.6)] animate-slide-up">
             <img src={BIO_EXAMPLES[exampleIdx].image} alt="" className="w-full h-full object-cover" />
           </div>
           <p key={`${exampleIdx}-quote`} className="font-display text-base text-ink/90 leading-snug animate-slide-up px-6">
@@ -108,7 +108,7 @@ export default function ProfileBioPage() {
   }
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-base">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
       <OnboardingBackground image="/onboarding/bio.jpg" />
       <button
         onClick={() => setShowIntro(true)}

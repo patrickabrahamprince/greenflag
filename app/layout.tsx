@@ -58,7 +58,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={cabinetGrotesk.variable} style={{ colorScheme: 'dark' }}>
-      <body className="min-h-dvh bg-[#371F7D] text-[#FFFFFF] font-sans">
+      <body className="min-h-dvh bg-[#000000] text-[#FFFFFF] font-sans">
         <ErrorBoundary>
           <Providers>
             <SwipeBackGesture>{children}</SwipeBackGesture>

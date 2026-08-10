@@ -17,7 +17,7 @@ export function ConnectedScreen({ womanPhoto, womanName, connectionId }: Connect
     // Locked palette confetti (Mindaro/Lavender/Electric Violet/white),
     // was a much brighter magenta/purple pair outside the design system
     // entirely.
-    confetti({ particleCount: 150, spread: 80, colors: ['#D7FF81', '#BC96FF', '#612AFF', '#fff'] });
+    confetti({ particleCount: 150, spread: 80, colors: ['#D2042D', '#F0BCC5', '#45050C', '#fff'] });
   }, []);
 
   return (
@@ -40,7 +40,7 @@ export function ConnectedScreen({ womanPhoto, womanName, connectionId }: Connect
       </p>
       <button
         onClick={() => router.push(`/messages/${connectionId}`)}
-        className="bg-gold text-ink-dark font-display text-lg px-8 py-3 rounded-pill font-medium hover:bg-[#E4FFA3] transition-colors"
+        className="bg-gold text-ink font-display text-lg px-8 py-3 rounded-pill font-medium hover:bg-[#E8324F] transition-colors"
       >
         Open Chat →
       </button>

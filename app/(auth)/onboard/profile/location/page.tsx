@@ -99,7 +99,7 @@ export default function ProfileLocationPage() {
   };
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-base">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
       <OnboardingBackground image="/onboarding/location.jpg" />
       <button
         onClick={() => router.push('/onboard/profile')}

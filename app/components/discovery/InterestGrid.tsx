@@ -58,12 +58,11 @@ export const InterestGrid: React.FC<InterestGridProps> = ({
           const isSelected = selected.includes(opt);
           const baseClasses =
             'px-3 py-1.5 rounded-pill text-xs font-medium transition-all cursor-pointer select-none active:scale-90';
-          // Selected = solid Mindaro + dark text, unselected = transparent
-          // + 1px Lavender border + white text, per the design system's
-          // chip spec. The selected state was previously bg-gold
-          // (Mindaro) + text-white -- the exact unreadable pairing the
-          // system's own contrast rule warns about.
-          const selectedClasses = 'bg-gold text-ink-dark';
+          // Selected = solid Crimson + white text (Crimson is dark/
+          // saturated, so it needs light text -- the opposite of
+          // Dateasy's light Mindaro, which needed dark text here).
+          // Unselected = transparent + 1px rose-tint border + white text.
+          const selectedClasses = 'bg-gold text-ink';
           const unselectedClasses =
             'bg-transparent border border-lavender/40 text-ink hover:border-lavender/70';
           return (
