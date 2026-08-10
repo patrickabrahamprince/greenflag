@@ -12,6 +12,14 @@ import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 
 type IntentionType = 'text' | 'photo' | 'voice';
 
+// Must match app/api/standards/activate/route.ts's own >= 10 check --
+// that route silently rejected a short answer with a single bundled
+// error covering all 9 tasks across all 3 days, so a short custom
+// answer typed on Day 1 only ever surfaced as a confusing failure after
+// finishing Day 3. Enforcing the same minimum here means the block (and
+// a clear message) happens on the actual day with the problem.
+const MIN_PROMPT_LENGTH = 10;
+
 interface DayTask {
   taskNumber: number;
   type: IntentionType;
@@ -181,7 +189,7 @@ export default function StandardBuilderPage() {
         // was dropped back at the intro screen and Day 1's form every
         // time, forced to re-click through days she'd already completed.
         const firstIncompleteIdx = restoredSlots.findIndex((s) =>
-          s.tasks.some((t) => !t.prompt.trim())
+          s.tasks.some((t) => t.prompt.trim().length < MIN_PROMPT_LENGTH)
         );
         const hasAnyProgress = restoredSlots.some((s) => s.tasks.some((t) => t.prompt.trim()));
         if (hasAnyProgress) {
@@ -229,7 +237,7 @@ export default function StandardBuilderPage() {
   }, [step]);
 
   const currentSlot = slots[step];
-  const currentDayFilled = currentSlot.tasks.every((t) => t.prompt.trim().length > 0);
+  const currentDayFilled = currentSlot.tasks.every((t) => t.prompt.trim().length >= MIN_PROMPT_LENGTH);
   const isLastDay = step === slots.length - 1;
 
   const activateStandard = async () => {
@@ -286,7 +294,7 @@ export default function StandardBuilderPage() {
 
   const handleContinue = () => {
     if (!currentDayFilled) {
-      toast.error('Complete all 3 intentions for today to continue.');
+      toast.error(`Each intention today needs at least ${MIN_PROMPT_LENGTH} characters to continue.`);
       return;
     }
     if (isLastDay) {
@@ -402,6 +410,11 @@ export default function StandardBuilderPage() {
                   placeholder="Or define your own..."
                   className="input w-full text-sm placeholder:text-xs"
                 />
+                {customValue.length > 0 && customValue.length < MIN_PROMPT_LENGTH && (
+                  <p className="text-[10px] text-amber-400 mt-1">
+                    Min {MIN_PROMPT_LENGTH} characters ({customValue.length}/{MIN_PROMPT_LENGTH})
+                  </p>
+                )}
               </div>
             );
           })}

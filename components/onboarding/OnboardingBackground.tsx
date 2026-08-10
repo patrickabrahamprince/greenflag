@@ -20,16 +20,24 @@ interface OnboardingBackgroundProps {
 // edge case). animate-fade-in is a plain CSS keyframe that plays on
 // mount regardless of whether the image data has actually arrived yet,
 // so there's no state for a missed event to get stuck in.
+// Stronger than the shared --wine-glow-bottom (globals.css) on purpose --
+// here it's fighting a real photo plus a heavy black scrim on top of it,
+// where the shared version only ever sits over flat black. The same
+// alpha that reads clearly on a pure-black screen all but disappears
+// under a busy photo, so onboarding gets its own, more saturated pass.
+const ONBOARDING_WINE_GLOW =
+  'radial-gradient(ellipse 150% 65% at 50% 100%, rgba(69, 5, 12, 0.85) 0%, rgba(69, 5, 12, 0.5) 40%, transparent 78%)';
+
 export function OnboardingBackground({ image, light }: OnboardingBackgroundProps) {
-  // The wine glow (--wine-glow-bottom, see globals.css) lives on this
-  // scrim div rather than the wrapper's own bg-base -- the full-bleed
-  // <img> below sits on top of the wrapper and would otherwise hide the
-  // glow completely. Listed first so it paints above the black gradient
-  // and actually reads as a warm tint bleeding through the darkened photo.
+  // The wine glow lives on this scrim div rather than the wrapper's own
+  // bg-base -- the full-bleed <img> below sits on top of the wrapper and
+  // would otherwise hide the glow completely. Listed first so it paints
+  // above the black gradient and actually reads as a warm tint bleeding
+  // through the darkened photo.
   const darkGradient = light
     ? 'linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.65) 55%, rgba(0,0,0,0.92) 100%)'
     : 'linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.8) 55%, rgba(0,0,0,0.97) 100%)';
-  const scrim = `var(--wine-glow-bottom), ${darkGradient}`;
+  const scrim = `${ONBOARDING_WINE_GLOW}, ${darkGradient}`;
 
   return (
     <div className="absolute inset-0 -z-10 overflow-hidden bg-base">

@@ -62,7 +62,7 @@ export default function ProfileTeasersPage() {
         </button>
       </div>
 
-      <div className="flex-1 flex flex-col max-w-md mx-auto w-full">
+      <div className="flex-1 flex flex-col max-w-md mx-auto w-full pb-28">
         <StepDots current={5} total={6} />
 
         <h1 className="font-display text-2xl text-ink mb-2">Share a fun fact</h1>
@@ -92,14 +92,23 @@ export default function ProfileTeasersPage() {
         )}
       </div>
 
-      <button
-        onClick={handleContinue}
-        data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-teasers-continue' : undefined}
-        className="btn-primary w-full py-4 mb-safe-bottom max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+      {/* Fixed and pinned to the true bottom (rising only by --kb-inset
+          when a keyboard is actually open) instead of following normal
+          flex flow -- flowing after flex-1 content let the button sit
+          higher than necessary whenever the content above it was short. */}
+      <div
+        className="fixed inset-x-0 z-10 px-6 pt-8 pb-4 bg-gradient-to-t from-base via-base/95 to-transparent"
+        style={{ bottom: 'calc(max(1rem, env(safe-area-inset-bottom)) + var(--kb-inset, 0px))' }}
       >
-        {prompt && answer.trim() ? 'Continue' : 'Skip for now'}
-        <ArrowRight className="w-4 h-4" />
-      </button>
+        <button
+          onClick={handleContinue}
+          data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-teasers-continue' : undefined}
+          className="btn-primary w-full py-4 max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+        >
+          {prompt && answer.trim() ? 'Continue' : 'Skip for now'}
+          <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
 
       <BottomSheet open={pickerOpen} onClose={() => setPickerOpen(false)}>
         <h2 className="font-display text-xl text-ink mb-4">Pick a prompt</h2>

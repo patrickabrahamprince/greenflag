@@ -315,14 +315,16 @@ body.min-h-dvh::after {
     background: #2A1519;
   }
 
-  /* Floating dark pill, flat fill, no glassmorphism/blur. Deliberately
-     its own shade rather than the card/base token (both pure black now)
-     -- the nav needs to read as a distinct floating layer against a
-     background it would otherwise be identical to. Darkened from #1A1A1A
-     toward black; still one step up from base/card so that distinction
-     holds. */
+  /* Floating pill -- now genuinely translucent with a backdrop blur
+     (true "glass", living up to the class name) instead of the flat
+     opaque fill this used to be. Still its own shade rather than the
+     card/base token (both pure black) so it reads as a distinct layer;
+     the blur is what keeps it legible over whatever scrolls underneath
+     now that it's no longer a solid color. */
   .nav-glass {
-    background: #121212;
+    background: rgba(18, 18, 18, 0.55);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
   /* Rotating "comet" ring around the active tab's disc -- a thin arc of
