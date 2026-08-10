@@ -22,6 +22,7 @@ const screens = [
   { path: '/messages', name: 'chat-list' },
   { path: '/messages/929ad331-b49a-4bb6-bbd3-bc3916a457aa', name: 'chat-conversation' },
   { path: '/profile', name: 'profile' },
+  { path: '/profile/edit', name: 'profile-edit' },
 ];
 
 for (const { path, name } of screens) {

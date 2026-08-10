@@ -70,13 +70,17 @@ export default function ProfilePage() {
           <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
         </div>
 
+      {/* Plain icon tap target, not .btn-ghost -- that class is now a
+          bordered Lavender pill (correct for text CTAs), which reads
+          wrong around a bare gear icon. Matches the round icon-button
+          convention the deck uses for profile-screen chrome. */}
       <div className="flex items-center justify-end mb-2">
-        <button onClick={() => { hapticTap(); router.push('/settings'); }} className="btn-ghost p-2">
+        <button onClick={() => { hapticTap(); router.push('/settings'); }} aria-label="Settings" className="p-2 text-ink active:opacity-60 transition-opacity">
           <Settings className="w-5 h-5" />
         </button>
       </div>
 
-      <div className="relative w-full aspect-[3/4] mb-5 rounded-3xl overflow-hidden shadow-[0_20px_60px_-20px_rgba(192,38,211,0.35)]">
+      <div className="relative w-full aspect-[3/4] mb-5 rounded-photo overflow-hidden shadow-[0_20px_60px_-20px_rgba(97,42,255,0.35)]">
         <ProfileImageCarousel images={user.photos ?? []} disableLightbox />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent pointer-events-none" />
         {user.phone_verified && (
@@ -112,7 +116,7 @@ export default function ProfilePage() {
         </div>
 
         {user.bio && (
-          <div className="mt-5 w-full rounded-xl border border-white/10 bg-white/[0.03] p-6">
+          <div className="mt-5 w-full rounded-card bg-card p-6">
             <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1.5">About</p>
             <p className={
               user.persona === 'woman'
@@ -147,8 +151,8 @@ export default function ProfilePage() {
           itself until now. */}
       {user.teaser_prompt && user.teaser_answer && (
         <div
-          className="mb-6 rounded-xl border border-gold/20 p-6 shadow-[0_12px_32px_-16px_rgba(192,38,211,0.4)]"
-          style={{ background: 'linear-gradient(135deg, rgba(192,38,211,0.1) 0%, rgba(28,28,30,0.9) 60%)' }}
+          className="mb-6 rounded-card border border-gold/20 p-6 shadow-[0_12px_32px_-16px_rgba(97,42,255,0.4)]"
+          style={{ background: 'linear-gradient(135deg, rgba(215,255,129,0.12) 0%, rgba(27,16,59,0.9) 60%)' }}
         >
           <p className="text-[10px] uppercase tracking-widest text-gold/70 mb-2">{user.teaser_prompt}</p>
           <p className="font-display text-lg text-white leading-snug">{user.teaser_answer}</p>
@@ -170,9 +174,13 @@ export default function ProfilePage() {
       {user.persona === 'woman' && <MyStandardsSection userId={user.id} />}
 
       <div className="px-4 mt-6">
+        {/* Closest real analog to the deck's Mindaro subscription card --
+            this app's monetization surface is coins, not a subscription
+            tier, so the card keeps its real balance/purchase content but
+            picks up the same on-palette accent treatment. */}
         <div
-          className="rounded-2xl border border-gold/20 p-5 flex items-center justify-between shadow-[0_12px_32px_-16px_rgba(192,38,211,0.4)]"
-          style={{ background: 'linear-gradient(135deg, rgba(192,38,211,0.16) 0%, rgba(28,28,30,0.9) 60%)' }}
+          className="rounded-card border border-gold/20 p-5 flex items-center justify-between shadow-[0_12px_32px_-16px_rgba(215,255,129,0.3)]"
+          style={{ background: 'linear-gradient(135deg, rgba(215,255,129,0.16) 0%, rgba(27,16,59,0.9) 60%)' }}
         >
           <div className="flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-full bg-gold/15 border border-gold/30 flex items-center justify-center shrink-0">

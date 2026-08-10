@@ -116,7 +116,7 @@ export default function EditProfilePage() {
   return (
     <div className="page-container animate-fade-in">
       <div className="page-header">
-        <button onClick={() => router.back()} className="btn-ghost p-2">
+        <button onClick={() => router.back()} aria-label="Back" className="p-2 -ml-2 text-ink active:opacity-60 transition-opacity">
           <ArrowLeft className="w-5 h-5" />
         </button>
         <h1 className="text-xl font-display flex-1">Edit Profile</h1>
@@ -137,8 +137,15 @@ export default function EditProfilePage() {
           <div className="grid grid-cols-3 gap-2">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="relative">
+                {/* Filled photos get a solid tile; empty slots get a
+                    dashed border instead, per the design system's
+                    "dashed + slots" pattern for add-photo targets. */}
                 <div
-                  className="aspect-square rounded-xl bg-surface border border-border flex items-center justify-center overflow-hidden"
+                  className={
+                    photos[i]
+                      ? 'aspect-square rounded-tile bg-well flex items-center justify-center overflow-hidden'
+                      : 'aspect-square rounded-tile bg-transparent border-2 border-dashed border-lavender/40 flex items-center justify-center overflow-hidden'
+                  }
                   onClick={() => !photos[i] && fileInputRefs.current[i]?.click()}
                 >
                   {photos[i] ? (
@@ -149,7 +156,7 @@ export default function EditProfilePage() {
                           e.stopPropagation();
                           handleRemovePhoto(i);
                         }}
-                        className="absolute top-1 right-1 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center"
+                        className="absolute top-1 right-1 w-6 h-6 bg-[#FC4363] rounded-full flex items-center justify-center"
                       >
                         <X className="w-3 h-3 text-white" />
                       </button>

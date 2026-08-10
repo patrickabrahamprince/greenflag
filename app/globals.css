@@ -199,11 +199,19 @@ body.min-h-dvh::after {
     @apply card hover:border-gold;
   }
 
+  /* Filled well, no border at rest, Mindaro border on focus, per the
+     design system -- was an underline-only field (transparent bg, bottom
+     border only). The deck also puts the field's label as a caption
+     inside the field itself rather than floating above the box; that
+     would mean restructuring every label+input pairing across the app
+     (many files), so it's deliberately not done here -- this fixes the
+     field's own container styling only, which is safe as a single
+     shared-class change. */
   .input {
-    @apply w-full rounded-none px-0 py-3
-           text-ink placeholder:text-ink/40 bg-transparent
-           border-0 border-b border-white/50
-           transition-all duration-300 ease-out
+    @apply w-full rounded-tile px-4 py-3
+           text-ink placeholder:text-ink/40 bg-well
+           border-2 border-transparent
+           transition-all duration-200 ease-out
            focus:outline-none focus:border-gold;
   }
 
@@ -216,13 +224,13 @@ body.min-h-dvh::after {
   .input:-webkit-autofill:hover,
   .input:-webkit-autofill:focus {
     -webkit-text-fill-color: #FFFFFF;
-    -webkit-box-shadow: 0 0 0px 1000px #000000 inset;
-    box-shadow: 0 0 0px 1000px #000000 inset;
+    -webkit-box-shadow: 0 0 0px 1000px #1B103B inset;
+    box-shadow: 0 0 0px 1000px #1B103B inset;
     transition: background-color 9999s ease-in-out 0s;
   }
 
   .input-error {
-    @apply border-red-500 focus:border-red-500;
+    @apply border-[#FC4363] focus:border-[#FC4363];
   }
 
   .text-gradient {
