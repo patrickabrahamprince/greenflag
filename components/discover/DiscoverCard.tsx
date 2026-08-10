@@ -38,17 +38,17 @@ export function DiscoverCard({ profile, onSwipe }: DiscoverCardProps) {
       />
 
       {!photo && (
-        <div className="absolute inset-0 bg-[#1C1C1E]" />
+        <div className="absolute inset-0 bg-well" />
       )}
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
       <div className="absolute bottom-0 left-0 right-0 p-5">
-        <h2 className="text-2xl font-bold text-[#EDEADE] mb-1">
+        <h2 className="text-2xl font-bold text-ink mb-1">
           {profile.name}{profile.age ? `, ${profile.age}` : ''}
         </h2>
         {profile.city && (
-          <p className="text-sm text-[#9DA0A6] mb-3">{profile.city}</p>
+          <p className="text-sm text-ink/50 mb-3">{profile.city}</p>
         )}
         {profile.common_interests > 0 && (
           <div className="inline-flex items-center gap-1.5 bg-gold/20 border border-gold/40 rounded-full px-3 py-1 mb-4">

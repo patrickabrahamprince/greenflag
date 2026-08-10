@@ -51,7 +51,7 @@ export function ProfileInfo({
 
   return (
     <div className="px-8 pt-8">
-      <div className="flex items-center gap-x-4 gap-y-1 flex-wrap text-sm text-ink/60 border-b border-[#2A2A2A] py-6">
+      <div className="flex items-center gap-x-4 gap-y-1 flex-wrap text-sm text-ink/60 border-b border-raised py-6">
         <span className="text-ink/80">{age}</span>
         {city_auto && (
           <div className="flex items-center gap-1.5">
@@ -77,17 +77,17 @@ export function ProfileInfo({
       </div>
 
       {bio && (
-        <p className="text-ink/80 text-base leading-relaxed border-b border-[#2A2A2A] py-6">{bio}</p>
+        <p className="text-ink/80 text-base leading-relaxed border-b border-raised py-6">{bio}</p>
       )}
 
       {teaserPrompt && teaserAnswer && (
-        <div className="border-b border-[#2A2A2A] py-6">
+        <div className="border-b border-raised py-6">
           <PromptCard caption={teaserPrompt} answer={teaserAnswer} />
         </div>
       )}
 
       {interests.length > 0 && (
-        <div className="border-b border-[#2A2A2A] py-6">
+        <div className="border-b border-raised py-6">
           <p className="text-xs text-ink/40 uppercase tracking-widest mb-3">Interests</p>
           <div className="flex flex-wrap gap-2">
             {interests.map((interest) => (
@@ -98,7 +98,7 @@ export function ProfileInfo({
       )}
 
       {lookingForInterests.length > 0 && (
-        <div className="border-b border-[#2A2A2A] py-6">
+        <div className="border-b border-raised py-6">
           <p className="text-xs text-ink/40 uppercase tracking-widest mb-3">What {name} Values</p>
           <div className="flex flex-wrap gap-2">
             {lookingForInterests.map((interest) => (
@@ -109,7 +109,7 @@ export function ProfileInfo({
       )}
 
       {answeredQuestions.length > 0 && (
-        <div className="border-b border-[#2A2A2A] py-6">
+        <div className="border-b border-raised py-6">
           <p className="text-xs text-ink/40 uppercase tracking-widest mb-4">Get To Know {name}</p>
           <div className="space-y-5">
             {answeredQuestions.map((id) => (

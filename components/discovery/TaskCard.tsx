@@ -57,10 +57,10 @@ export function TaskCard({
         )}
       </div>
       <h3 className="text-sm font-medium text-ink mb-1">{task.title}</h3>
-      <p className="text-xs text-[#9DA0A6] mb-3">{task.prompt}</p>
+      <p className="text-xs text-ink/50 mb-3">{task.prompt}</p>
 
       {isTaskSubmitted ? (
-        <div className="text-xs text-[#9DA0A6] bg-[#1C1C1E] rounded-lg p-3">
+        <div className="text-xs text-ink/50 bg-well rounded-lg p-3">
           {submission.media_url ? (
             <img
               src={submission.media_url}
@@ -99,11 +99,11 @@ export function TaskCard({
               ) : (
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-[#2A2A2A] rounded-xl p-6 text-center cursor-pointer hover:border-gold transition-colors"
+                  className="border-2 border-dashed border-raised rounded-xl p-6 text-center cursor-pointer hover:border-gold transition-colors"
                 >
-                  <Image className="w-6 h-6 text-[#9DA0A6] mx-auto mb-2" />
-                  <p className="text-xs text-[#9DA0A6]">Tap to take a photo</p>
-                  <p className="text-[10px] text-[#A8A8AC] mt-1">JPG, PNG up to 5MB</p>
+                  <Image className="w-6 h-6 text-ink/50 mx-auto mb-2" />
+                  <p className="text-xs text-ink/50">Tap to take a photo</p>
+                  <p className="text-[10px] text-ink/50 mt-1">JPG, PNG up to 5MB</p>
                 </div>
               )}
               <input

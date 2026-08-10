@@ -92,10 +92,10 @@ function MatchRow({
 
   return (
     <div className={`rounded-2xl shadow-sm overflow-hidden ${
-      needsHisSubmission ? 'bg-red-500/[0.06] border border-red-500/20' : 'bg-[#111111]'
+      needsHisSubmission ? 'bg-red-500/[0.06] border border-red-500/20' : 'bg-well'
     }`}>
       <button onClick={() => { hapticTap(); onClick(); }} className="w-full flex items-center gap-3 p-4">
-        <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-[#1C1C1E]">
+        <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-well">
           {match.otherPhoto ? (
             <img src={match.otherPhoto} alt="" className="w-full h-full object-cover" />
           ) : (
@@ -277,7 +277,7 @@ export default function MyConnectionsPage() {
               >
                 <div className="flex -space-x-3">
                   {discoverPreview.map((p) => (
-                    <div key={p.id} className="w-11 h-11 rounded-full border-2 border-[#0B0614] overflow-hidden bg-surface-light">
+                    <div key={p.id} className="w-11 h-11 rounded-full border-2 border-base overflow-hidden bg-surface-light">
                       {p.photos?.[0] && (
                         <img src={p.photos[0]} alt="" className="w-full h-full object-cover" />
                       )}

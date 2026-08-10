@@ -52,13 +52,13 @@ export default function BannedPage() {
           <Ban className="w-10 h-10 text-red-500" />
         </div>
         <h1 className="font-display text-2xl text-ink mb-3">Account Suspended</h1>
-        <p className="text-[#9DA0A6] mb-6">
+        <p className="text-ink/50 mb-6">
           {reason || 'Your account has been suspended. If you believe this was a mistake, please contact support.'}
         </p>
         <button
           onClick={handleLogout}
           disabled={loggingOut}
-          className="w-full max-w-xs mx-auto h-12 rounded-xl border border-[#2A2A2A] text-ink font-medium active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+          className="w-full max-w-xs mx-auto h-12 rounded-xl border border-raised text-ink font-medium active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
         >
           {loggingOut && <Loader2 className="w-4 h-4 animate-spin" />}
           Sign Out

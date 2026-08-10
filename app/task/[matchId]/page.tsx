@@ -55,7 +55,7 @@ function DayCompleteModal({ unlocksAt, completedDay, onExplore }: { unlocksAt: s
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.9)' }}>
-      <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
+      <div className="w-full max-w-sm bg-base rounded-2xl shadow-2xl p-8 text-center">
         <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-5">
           <Hourglass className="w-6 h-6 text-gold" />
         </div>
@@ -78,7 +78,7 @@ function DayCompleteModal({ unlocksAt, completedDay, onExplore }: { unlocksAt: s
 function LeaveWarningModal({ onStay, onLeave }: { onStay: () => void; onLeave: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.6)' }}>
-      <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
+      <div className="w-full max-w-sm bg-base rounded-2xl shadow-2xl p-8 text-center">
         <div className="w-14 h-14 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-5">
           <AlertTriangle className="w-6 h-6 text-red-400" />
         </div>
@@ -113,7 +113,7 @@ function RejectReasonModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center p-0" style={{ background: 'rgba(0,0,0,0.6)' }}>
-      <div className="w-full max-w-app bg-[#000000] rounded-t-2xl p-6 pb-8">
+      <div className="w-full max-w-app bg-base rounded-t-2xl p-6 pb-8">
         <h3 className="font-display text-xl text-ink mb-1.5">Why are you rejecting this?</h3>
         <p className="text-ink/50 text-xs mb-4">He&apos;ll see this, so he knows where he fell short.</p>
         <div className="flex flex-wrap gap-2 mb-4">
@@ -459,7 +459,7 @@ export default function TaskPage() {
           the API now also looking one day back (see route.ts), this keeps
           it reachable through that transition instead of losing it. */}
       {specialSend && isWoman && (
-        <div className="rounded-2xl p-4 mb-4 border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-transparent shadow-[0_0_24px_-10px_rgba(192,38,211,0.6)]">
+        <div className="rounded-2xl p-4 mb-4 border border-gold/30 bg-gradient-to-r from-gold/[0.12] via-gold/[0.05] to-transparent shadow-[0_0_24px_-10px_rgba(215,255,129,0.6)]">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="w-4 h-4 text-gold" />
             <p className="font-display text-sm text-gold">A Special Note From {otherProfile.name}</p>
@@ -479,7 +479,7 @@ export default function TaskPage() {
             </>
           ) : (
             <div className="relative rounded-lg overflow-hidden">
-              <div className="py-6 text-center bg-[#1C1C1E] blur-sm select-none">
+              <div className="py-6 text-center bg-well blur-sm select-none">
                 <p className="text-xs text-ink/60">A surprise, just for you.</p>
               </div>
               <button
@@ -598,18 +598,18 @@ export default function TaskPage() {
               )}
 
               {matchingSub && (matchingSub.content || matchingSub.media_url) && (
-                <div className="border-t border-[#2A2A2A] pt-3 mt-3">
+                <div className="border-t border-raised pt-3 mt-3">
                   {!isWoman ? (
                     // Once sent, it's out of his hands -- no re-reading his
                     // own answer, no reveal option. Keeps him moving forward
                     // instead of dwelling on/editing what he already sent.
-                    <div className="rounded-lg py-4 flex flex-col items-center gap-1.5 bg-[#1C1C1E]">
+                    <div className="rounded-lg py-4 flex flex-col items-center gap-1.5 bg-well">
                       <Lock className="w-4 h-4 text-ink/30" />
                       <p className="text-xs text-ink/40">Sent — awaiting her decision</p>
                     </div>
                   ) : isTaskApproved && !revealedSubmissionIds.has(matchingSub.id) ? (
                     <div className="relative rounded-lg overflow-hidden">
-                      <div className="py-6 text-center bg-[#1C1C1E] blur-sm select-none">
+                      <div className="py-6 text-center bg-well blur-sm select-none">
                         <p className="text-xs text-ink/60">
                           {matchingSub.content ? `"${matchingSub.content}"` : 'Content hidden after approval'}
                         </p>
@@ -626,7 +626,7 @@ export default function TaskPage() {
                       </button>
                     </div>
                   ) : (
-                    <div className="rounded-xl bg-[#1C1C1E] border border-[#2A2A2A] p-4">
+                    <div className="rounded-xl bg-well border border-raised p-4">
                       {matchingSub.content && (
                         <div className="flex gap-2.5">
                           <Quote className="w-4 h-4 text-gold/60 shrink-0 mt-0.5" />
@@ -664,7 +664,7 @@ export default function TaskPage() {
 
       {allTasksSubmittedToday && !isWoman && (
         specialSend ? (
-          <div className="rounded-2xl p-4 mb-4 flex items-center gap-3 bg-[#1C1C1E] border border-[#2A2A2A]">
+          <div className="rounded-2xl p-4 mb-4 flex items-center gap-3 bg-well border border-raised">
             <Lock className="w-4 h-4 text-ink/30 shrink-0" />
             <p className="text-xs text-ink/40">Special note sent — your one-time move for today is used.</p>
           </div>

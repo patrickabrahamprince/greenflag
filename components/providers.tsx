@@ -119,7 +119,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         toastOptions={{
           duration: 2000,
           style: {
-            background: 'linear-gradient(135deg, rgba(192,38,211,0.22) 0%, rgba(28,28,30,0.98) 40%, rgba(15,15,17,0.98) 100%)',
+            background: 'linear-gradient(135deg, rgba(215,255,129,0.22) 0%, rgba(28,28,30,0.98) 40%, rgba(15,15,17,0.98) 100%)',
             color: '#FFFFFF',
             border: '1px solid rgba(255,255,255,0.1)',
             borderRadius: '999px',
@@ -127,10 +127,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
             fontSize: '13.5px',
             fontWeight: 500,
             maxWidth: '92vw',
-            boxShadow: '0 16px 40px -8px rgba(0,0,0,0.6), 0 0 0 1px rgba(192,38,211,0.08)',
+            boxShadow: '0 16px 40px -8px rgba(0,0,0,0.6), 0 0 0 1px rgba(215,255,129,0.08)',
           },
-          success: { iconTheme: { primary: '#E879F9', secondary: '#111111' } },
-          error: { iconTheme: { primary: '#E879F9', secondary: '#111111' } },
+          success: { iconTheme: { primary: '#D7FF81', secondary: '#1B103B' } },
+          error: { iconTheme: { primary: '#D7FF81', secondary: '#1B103B' } },
         }}
       />
     </>

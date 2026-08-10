@@ -38,8 +38,8 @@ export function InterestTagGrid({
                 isSelected
                   ? 'border border-gold bg-gold/10 text-ink'
                   : locked
-                  ? 'border border-[#2A2A2A] bg-transparent text-muted/30 cursor-not-allowed'
-                  : 'border border-[#2A2A2A] bg-transparent text-muted hover:text-ink'
+                  ? 'border border-raised bg-transparent text-muted/30 cursor-not-allowed'
+                  : 'border border-raised bg-transparent text-muted hover:text-ink'
               )}
             >
               {item}

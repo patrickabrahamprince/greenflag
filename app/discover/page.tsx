@@ -362,7 +362,7 @@ export default function DiscoverPage() {
                     }}
                   >
                     {!src || failedPhotoUrls.has(src) ? (
-                      <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-[#2A2A2C]">
+                      <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-well">
                         <ImageOff className="w-9 h-9 text-white/25" />
                         <span className="text-white/30 text-xs font-medium">No photo available</span>
                       </div>

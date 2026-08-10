@@ -86,7 +86,7 @@ export function MyStandardsSection({ userId }: { userId: string }) {
           <div
             key={dayNumber}
             className="rounded-2xl p-4 border border-gold/20"
-            style={{ background: 'linear-gradient(135deg, rgba(192,38,211,0.08) 0%, rgba(17,17,17,0.9) 60%)' }}
+            style={{ background: 'linear-gradient(135deg, rgba(215,255,129,0.08) 0%, rgba(17,17,17,0.9) 60%)' }}
           >
             <span className="text-xs text-gold/80 uppercase tracking-widest font-semibold">Day {dayNumber}</span>
             <div className="space-y-2.5 mt-2.5">

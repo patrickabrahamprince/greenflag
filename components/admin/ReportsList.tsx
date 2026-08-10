@@ -14,7 +14,7 @@ export function ReportsList({ reports, onBanUser, onDeleteReport }: ReportsListP
   return (
     <div className="space-y-4">
       {reports.map((r) => (
-        <div key={r.id} className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-4">
+        <div key={r.id} className="bg-[#1A1A1A] border border-raised rounded-xl p-4">
           <div className="flex justify-between items-start mb-2">
             <div>
               <span className="text-red-400 font-medium">{r.reporter?.name || 'Unknown'}</span>
@@ -35,7 +35,7 @@ export function ReportsList({ reports, onBanUser, onDeleteReport }: ReportsListP
             </button>
             <button
               onClick={() => onDeleteReport(r.id)}
-              className="px-3 py-1 bg-[#2A2A2A] text-xs rounded hover:bg-[#3A3A3A]"
+              className="px-3 py-1 bg-raised text-xs rounded hover:bg-[#3A3A3A]"
             >
               Dismiss
             </button>

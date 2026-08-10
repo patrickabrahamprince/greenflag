@@ -39,22 +39,22 @@ export function ReportModal({
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-display text-lg text-ink">Report User</h3>
           <button onClick={onClose} className="btn-ghost p-1">
-            <X className="w-5 h-5 text-[#9DA0A6]" />
+            <X className="w-5 h-5 text-ink/50" />
           </button>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm text-[#9DA0A6] mb-2">Reason</label>
+            <label className="block text-sm text-ink/50 mb-2">Reason</label>
             <div className="space-y-2">
               {['Fake profile', 'Inappropriate content', 'Harassment', 'Other'].map((r) => (
                 <label
                   key={r}
-                  className="flex items-center gap-3 p-3 rounded-lg border border-[#2A2A2A] cursor-pointer transition-colors hover:border-gold/40"
+                  className="flex items-center gap-3 p-3 rounded-lg border border-raised cursor-pointer transition-colors hover:border-gold/40"
                 >
                   <span
                     className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
-                      reason === r ? 'border-gold' : 'border-[#9DA0A6]'
+                      reason === r ? 'border-gold' : 'border-ink/30'
                     }`}
                   >
                     {reason === r && <span className="w-2 h-2 rounded-full bg-gold" />}
@@ -73,7 +73,7 @@ export function ReportModal({
             </div>
           </div>
           <div>
-            <label className="block text-sm text-[#9DA0A6] mb-2">Details (optional)</label>
+            <label className="block text-sm text-ink/50 mb-2">Details (optional)</label>
             <textarea
               className="input min-h-[80px] resize-none"
               placeholder="Add any additional context..."

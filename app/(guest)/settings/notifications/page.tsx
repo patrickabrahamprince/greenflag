@@ -132,7 +132,7 @@ export default function NotificationSettingsPage() {
           <>
             <div>
               <p className="text-xs text-ink/40 uppercase tracking-widest mb-2 px-1">New Activity</p>
-              <div className="card divide-y divide-[#2A2A2A]">
+              <div className="card divide-y divide-raised">
                 <ToggleRow
                   label="Messages"
                   value={prefs.messages}

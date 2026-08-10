@@ -157,7 +157,7 @@ export function AppLockGate() {
   if (!locked) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0B0614] px-8 text-center">
+    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-base px-8 text-center">
       <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-5">
         <ShieldCheck className="w-7 h-7 text-gold" />
       </div>

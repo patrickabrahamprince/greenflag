@@ -44,7 +44,7 @@ export function PhotoUploadSlots({
         className={`rounded-xl border-2 border-dashed flex items-center justify-center relative overflow-hidden transition-all duration-300 ${className} ${
           photo
             ? 'border-transparent'
-            : 'border-[#2A2A2A] hover:border-gold active:scale-95 cursor-pointer'
+            : 'border-raised hover:border-gold active:scale-95 cursor-pointer'
         }`}
       >
         {photo ? (
@@ -62,7 +62,7 @@ export function PhotoUploadSlots({
             </button>
           </>
         ) : (
-          <Upload size={20} className="text-[#9DA0A6]" />
+          <Upload size={20} className="text-ink/50" />
         )}
       </div>
     );
@@ -71,7 +71,7 @@ export function PhotoUploadSlots({
   return (
     <div>
       <label className="block text-sm font-medium text-ink mb-1.5">
-        Photos <span className="text-[#9DA0A6] font-normal">({maxPhotos} required)</span>
+        Photos <span className="text-ink/50 font-normal">({maxPhotos} required)</span>
       </label>
       {maxPhotos === 3 ? (
         <div className="grid grid-cols-2 grid-rows-2 gap-3 h-64">
@@ -93,7 +93,7 @@ export function PhotoUploadSlots({
         data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'photo-upload' : undefined}
         onChange={handleChange}
       />
-      <p className="text-xs text-[#9DA0A6] mt-1.5">{photos.length}/{maxPhotos} added</p>
+      <p className="text-xs text-ink/50 mt-1.5">{photos.length}/{maxPhotos} added</p>
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
       <button
         type="button"
@@ -106,7 +106,7 @@ export function PhotoUploadSlots({
       {showTips && (
         <ul className="mt-2 space-y-1.5 list-disc list-inside">
           {PHOTO_TIPS.map((tip) => (
-            <li key={tip} className="text-xs text-[#9DA0A6] leading-relaxed">{tip}</li>
+            <li key={tip} className="text-xs text-ink/50 leading-relaxed">{tip}</li>
           ))}
         </ul>
       )}

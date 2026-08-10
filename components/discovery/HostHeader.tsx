@@ -15,7 +15,7 @@ interface HostHeaderProps {
 export function HostHeader({ host, timeLeft, onBack }: HostHeaderProps) {
   return (
     <div className="mb-4">
-      <button onClick={onBack} className="text-[#9DA0A6] mb-4">
+      <button onClick={onBack} className="text-ink/50 mb-4">
         <ArrowLeft className="w-5 h-5" />
       </button>
 
@@ -25,7 +25,7 @@ export function HostHeader({ host, timeLeft, onBack }: HostHeaderProps) {
           <h1 className="font-display text-xl text-ink">
             {host.name}, {host.age}
           </h1>
-          <p className="text-xs text-[#9DA0A6]">Complete 8 tasks to unlock chat</p>
+          <p className="text-xs text-ink/50">Complete 8 tasks to unlock chat</p>
         </div>
       </div>
 

@@ -59,7 +59,7 @@ export default function ProfileRequestsPage() {
       ) : (
         <div className="space-y-3">
           {requests.map((r) => (
-            <div key={r.id} className="bg-[#1C1C1E] border border-[#2A2A2A] rounded-2xl p-4">
+            <div key={r.id} className="bg-well border border-raised rounded-2xl p-4">
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <p className="text-white font-medium text-sm">{requesterName(r)}</p>

@@ -344,7 +344,7 @@ export default function NotificationsPage() {
                     className="w-full flex items-center gap-3 text-left px-4 py-4 border-b border-border/30 transition-all active:scale-[0.98]"
                   >
                     {party && (
-                      <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 bg-[#1C1C1E]">
+                      <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 bg-well">
                         {party.photo ? (
                           <img src={party.photo} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                         ) : (

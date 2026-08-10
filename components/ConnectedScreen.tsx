@@ -14,11 +14,18 @@ export function ConnectedScreen({ womanPhoto, womanName, connectionId }: Connect
   const router = useRouter();
 
   useEffect(() => {
-    confetti({ particleCount: 150, spread: 80, colors: ['#D946EF', '#fff', '#6B21A8'] });
+    // Locked palette confetti (Mindaro/Lavender/Electric Violet/white),
+    // was a much brighter magenta/purple pair outside the design system
+    // entirely.
+    confetti({ particleCount: 150, spread: 80, colors: ['#D7FF81', '#BC96FF', '#612AFF', '#fff'] });
   }, []);
 
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center px-6 bg-gradient-to-b from-[#D946EF] to-[#6B21A8]">
+    // Flat base fill, matching the design system's "no gradient
+    // backgrounds" direction (same treatment as MatchMomentOverlay) --
+    // was a full-bleed bright magenta-to-purple gradient outside the
+    // locked palette.
+    <div className="min-h-dvh flex flex-col items-center justify-center px-6 bg-base">
       <p className="text-4xl font-serif text-white mb-4">✦ 8 / 8 ✦</p>
       <h1 className="text-5xl font-display text-white mb-8">Connected</h1>
       <img
@@ -33,7 +40,7 @@ export function ConnectedScreen({ womanPhoto, womanName, connectionId }: Connect
       </p>
       <button
         onClick={() => router.push(`/messages/${connectionId}`)}
-        className="bg-gold text-black font-display text-lg px-8 py-3 rounded-full font-medium hover:bg-[#86198F] transition-colors"
+        className="bg-gold text-ink-dark font-display text-lg px-8 py-3 rounded-pill font-medium hover:bg-[#E4FFA3] transition-colors"
       >
         Open Chat →
       </button>

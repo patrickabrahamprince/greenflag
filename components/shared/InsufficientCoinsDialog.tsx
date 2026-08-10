@@ -19,7 +19,7 @@ export function InsufficientCoinsDialog({ message, onDismiss }: InsufficientCoin
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
-      <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
+      <div className="w-full max-w-sm bg-base rounded-2xl shadow-2xl p-8 text-center">
         <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
           <Coins className="w-6 h-6 text-gold" />
         </div>

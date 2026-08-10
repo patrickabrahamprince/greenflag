@@ -23,7 +23,7 @@ const REVEAL_FADE_START = 10;
 // The pin/delete affordances are small icon chips that fade in via
 // opacity as you drag past REVEAL_FADE_START, rather than a full-width
 // solid panel sitting behind the row at all times -- the previous
-// always-there bg-[#1C1C1E] rectangle was visible through any row whose
+// always-there bg-well rectangle was visible through any row whose
 // own foreground wasn't fully opaque, which read as an unwanted "black
 // box" on every row instead of only appearing mid-swipe.
 export function SwipeToDismiss({ onDelete, onPin, pinned, children }: SwipeToDismissProps) {

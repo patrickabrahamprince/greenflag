@@ -25,7 +25,7 @@ export function Header({
 }: HeaderProps) {
   const router = useRouter();
   return (
-    <div className={cn('relative flex items-center justify-center h-16 px-8 bg-[#000000]/80 backdrop-blur-xl border-b border-[#2A2A2A]', className)}>
+    <div className={cn('relative flex items-center justify-center h-16 px-8 bg-base/80 backdrop-blur-xl border-b border-raised', className)}>
       {showBack && <BackButton />}
       <div className="flex flex-col items-center">
         <h1 className="font-display text-2xl text-ink tracking-tight">{title}</h1>

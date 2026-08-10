@@ -16,7 +16,7 @@ const configs: Record<EmptyStateType, {
   showRefund?: boolean;
 }> = {
   'no-connection': {
-    icon: <AlertCircle className="w-12 h-12 text-[#9DA0A6]" />,
+    icon: <AlertCircle className="w-12 h-12 text-ink/50" />,
     title: 'No active connection',
     description: '',
   },
@@ -64,7 +64,7 @@ export function TaskEmptyState({ type, hostName, onNavigate }: TaskEmptyStatePro
       <div className="text-center">
         {config.icon}
         <h2 className="font-display text-lg text-ink mb-2">{config.title}</h2>
-        <p className="text-sm text-[#9DA0A6] mb-2">
+        <p className="text-sm text-ink/50 mb-2">
           {type === 'no-connection'
             ? `You haven\u2019t applied to meet ${hostName} yet.`
             : config.description}

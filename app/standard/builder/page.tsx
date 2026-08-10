@@ -83,7 +83,7 @@ function StandardIntroScreen({ onContinue }: { onContinue: () => void }) {
     <div className="relative isolate w-full animate-fade-in min-h-dvh screen-gradient px-6 pt-safe-top pb-32 max-w-app mx-auto flex flex-col">
       <OnboardingBackground image="/onboarding/how-it-works.jpg" />
       <div className="flex-1">
-        <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-6 shadow-[0_0_30px_-8px_rgba(192,38,211,0.6)]">
+        <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-6 shadow-[0_0_30px_-8px_rgba(215,255,129,0.6)]">
           <Sparkles className="w-7 h-7 text-gold" />
         </div>
         <h1 className="font-display text-3xl text-ink mb-3">Set Your Standard</h1>
@@ -93,13 +93,13 @@ function StandardIntroScreen({ onContinue }: { onContinue: () => void }) {
 
         <div className="space-y-4">
           {WHY_THIS_WORKS.map((point) => (
-            <div key={point.title} className="flex gap-4 bg-[#1C1C1E] border border-[#2A2A2A] rounded-2xl p-4">
+            <div key={point.title} className="flex gap-4 bg-well border border-raised rounded-2xl p-4">
               <div className="w-11 h-11 shrink-0 rounded-full bg-gold/10 flex items-center justify-center">
                 <point.icon className="w-5 h-5 text-gold" />
               </div>
               <div>
                 <h3 className="text-ink font-semibold text-sm mb-1">{point.title}</h3>
-                <p className="text-[#9DA0A6] text-xs leading-relaxed font-light">{point.desc}</p>
+                <p className="text-ink/50 text-xs leading-relaxed font-light">{point.desc}</p>
               </div>
             </div>
           ))}
@@ -116,12 +116,12 @@ function StandardIntroScreen({ onContinue }: { onContinue: () => void }) {
           clearance value Toaster in providers.tsx uses for the same
           reason. */}
       <div
-        className="fixed inset-x-0 z-10 px-6 pt-8 pb-4 bg-gradient-to-t from-[#0B0614] via-[#0B0614]/95 to-transparent"
+        className="fixed inset-x-0 z-10 px-6 pt-8 pb-4 bg-gradient-to-t from-base via-base/95 to-transparent"
         style={{ bottom: 'calc(max(1rem, env(safe-area-inset-bottom)) + 5.5rem)' }}
       >
         <button
           onClick={onContinue}
-          className="btn-primary w-full max-w-app mx-auto py-4 font-semibold text-sm active:scale-95 transition-transform shadow-[0_0_30px_-10px_rgba(192,38,211,0.6)] block"
+          className="btn-primary w-full max-w-app mx-auto py-4 font-semibold text-sm active:scale-95 transition-transform shadow-[0_0_30px_-10px_rgba(215,255,129,0.6)] block"
         >
           Begin Day 1
         </button>
@@ -341,7 +341,7 @@ export default function StandardBuilderPage() {
         <div className="w-6" />
       </div>
 
-      <div className="w-full bg-[#1C1C1E] h-1 rounded-full mb-6 overflow-hidden">
+      <div className="w-full bg-well h-1 rounded-full mb-6 overflow-hidden">
         <div className="bg-gold h-full transition-all duration-300 ease-out" style={{ width: `${progressPercent}%` }} />
       </div>
 

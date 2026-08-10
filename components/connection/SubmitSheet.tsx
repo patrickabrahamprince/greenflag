@@ -400,14 +400,14 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
   if (showSuccessPopup) {
     return (
       <div className="fixed inset-0 z-[60] flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.9)' }}>
-        <div className="w-full max-w-sm rounded-2xl p-6 text-center animate-scale-in bg-[#000000]">
+        <div className="w-full max-w-sm rounded-2xl p-6 text-center animate-scale-in bg-base">
           <div className="w-12 h-12 bg-green-50 border border-green-200 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-xl text-green-600 font-bold">✓</span>
           </div>
           <h4 className="font-display text-ink text-lg mb-2">
             {mode === 'special' ? 'Special Note Sent' : 'Response Submitted'}
           </h4>
-          <p className="text-[#9DA0A6] text-xs mb-6 leading-relaxed">
+          <p className="text-ink/50 text-xs mb-6 leading-relaxed">
             {mode === 'special'
               ? "She'll see it as a surprise. That was your one-time move for today."
               : !isLastTaskToday
@@ -451,7 +451,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
   return (
     <div className="fixed inset-0 z-[60] flex items-end justify-center" style={{ background: 'rgba(0,0,0,0.5)' }}>
       <div
-        className="w-full max-w-app rounded-t-none p-5 pb-8 animate-slide-up bg-[#000000]"
+        className="w-full max-w-app rounded-t-none p-5 pb-8 animate-slide-up bg-base"
         style={{ marginBottom: 'var(--kb-inset, 0px)', transition: 'margin-bottom 200ms ease-out' }}
       >
         <div className="flex items-center justify-between mb-5">
@@ -459,7 +459,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
             <Icon className="w-5 h-5 text-gold" />
             <h3 className="font-display text-ink">{mode === 'special' ? 'Something Special' : `Day ${dayNumber}`}</h3>
           </div>
-          <button onClick={onClose} className="p-1 text-[#9DA0A6] hover:text-ink">
+          <button onClick={onClose} className="p-1 text-ink/50 hover:text-ink">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -473,14 +473,14 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
               rows={5}
               className="input resize-none"
             />
-            <p className="text-right text-xs text-[#9DA0A6]">{textContent.length}/500</p>
+            <p className="text-right text-xs text-ink/50">{textContent.length}/500</p>
           </div>
         )}
 
         {intention.type === 'photo' && (
           <div className="space-y-4">
             {photoPreview ? (
-              <div className="relative rounded-none overflow-hidden aspect-video bg-[#1C1C1E]">
+              <div className="relative rounded-none overflow-hidden aspect-video bg-well">
                 <img src={photoPreview} alt="" className="w-full h-full object-cover" />
                 <button
                   onClick={() => { setPhotoFile(null); setPhotoPreview(null); }}
@@ -493,10 +493,10 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
             ) : (
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full aspect-video flex flex-col items-center justify-center gap-3 border border-dashed border-[#2A2A2A] hover:border-gold/50 transition-colors bg-[#1C1C1E]"
+                className="w-full aspect-video flex flex-col items-center justify-center gap-3 border border-dashed border-raised hover:border-gold/50 transition-colors bg-well"
               >
-                <Camera className="w-10 h-10 text-[#9DA0A6]" />
-                <span className="text-sm text-[#9DA0A6]">Tap to take a photo</span>
+                <Camera className="w-10 h-10 text-ink/50" />
+                <span className="text-sm text-ink/50">Tap to take a photo</span>
               </button>
             )}
             <input ref={fileInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handlePhotoSelect} />
@@ -524,8 +524,8 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
                 <div className="flex items-center gap-3 w-full max-w-xs">
                   <button
                     onClick={() => { setError(null); togglePlay(); }}
-                    className="w-11 h-11 rounded-full flex items-center justify-center text-black active:scale-95 transition-all shrink-0"
-                    style={{ background: '#C026D3' }}
+                    className="w-11 h-11 rounded-full flex items-center justify-center text-ink-dark active:scale-95 transition-all shrink-0"
+                    style={{ background: '#D7FF81' }}
                     aria-label={isPlaying ? 'Pause' : 'Play'}
                   >
                     {isPlaying ? (
@@ -552,11 +552,11 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
                     }}
                     className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer accent-gold"
                     style={{
-                      background: `linear-gradient(to right, #C026D3 ${(playbackTime / (recordedDuration || 1)) * 100}%, #2A2A2A ${(playbackTime / (recordedDuration || 1)) * 100}%)`,
+                      background: `linear-gradient(to right, #D7FF81 ${(playbackTime / (recordedDuration || 1)) * 100}%, #4A2A8C ${(playbackTime / (recordedDuration || 1)) * 100}%)`,
                     }}
                     aria-label="Playback position"
                   />
-                  <span className="text-xs text-[#9DA0A6] font-mono tabular-nums shrink-0">
+                  <span className="text-xs text-ink/50 font-mono tabular-nums shrink-0">
                     {formatTime(playbackTime)}/{formatTime(recordedDuration)}
                   </span>
                 </div>
@@ -571,7 +571,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
                     setIsPlaying(false);
                     setError(null);
                   }}
-                  className="text-xs text-[#9DA0A6] underline hover:text-ink mt-1"
+                  className="text-xs text-ink/50 underline hover:text-ink mt-1"
                 >
                   Re-record
                 </button>
@@ -595,8 +595,8 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
                   onClick={handleRecordTap}
                   className="w-20 h-20 rounded-full flex items-center justify-center transition-all"
                   style={{
-                    background: isRecording ? 'rgba(239,68,68,0.1)' : '#1C1C1E',
-                    border: isRecording ? '2px solid rgba(239,68,68,0.4)' : '1px solid #2A2A2A',
+                    background: isRecording ? 'rgba(239,68,68,0.1)' : '#1B103B',
+                    border: isRecording ? '2px solid rgba(239,68,68,0.4)' : '1px solid #4A2A8C',
                   }}
                 >
                   <Mic className={`w-8 h-8 ${isRecording ? 'text-red-500 animate-pulse' : 'text-gold'}`} />
@@ -604,7 +604,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
                 {isRecording && <p className="text-red-500 text-xs font-medium animate-pulse">{recordedDuration}s / 30s</p>}
               </div>
             )}
-            <p className="text-xs text-[#9DA0A6] font-thin">
+            <p className="text-xs text-ink/50 font-thin">
               {isRecording ? 'Tap to stop' : recordedBlob ? 'Ready to submit' : 'Tap to start recording'}
             </p>
           </div>

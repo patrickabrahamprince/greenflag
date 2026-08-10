@@ -16,7 +16,7 @@ export function TaskProgressBar({
   return (
     <div className={cn('mb-6', className)}>
       <div className="flex justify-between text-sm mb-1">
-        <span className="text-[#9DA0A6]">Progress</span>
+        <span className="text-ink/50">Progress</span>
         <span className="text-gold">{completedCount}/{totalTasks}</span>
       </div>
       <div className="flex gap-0.5">
