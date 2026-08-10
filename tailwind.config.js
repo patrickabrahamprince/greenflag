@@ -27,7 +27,12 @@ module.exports = {
         base: '#000000',
         raised: '#2A1519',
         card: '#000000',
-        overlay: '#241014',
+        // Was #241014 -- read as a lighter reddish-brown against the rest
+        // of the now-black app on the Terms sheet and every other
+        // BottomSheet-based surface (login options, permission primers,
+        // profile-detail pickers). Darkened toward the same black
+        // environment while keeping a faint wine undertone.
+        overlay: '#150A0C',
         // Crimson is dark/saturated -- fills using it need WHITE text
         // (use text-ink, already white). rose-tint (now white) is a
         // light fill and needs dark text -- that's what ink-dark is for,

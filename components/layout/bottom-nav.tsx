@@ -76,7 +76,7 @@ export function BottomNav() {
       {/* Icon-only floating pill per the design system -- the deck's nav
           carries no visible labels; tab names stay as sr-only text so
           screen readers still announce each destination. */}
-      <div className="nav-glass rounded-pill flex justify-around items-center py-2 px-1 shadow-[0_8px_32px_-4px_rgba(15,10,10,0.5)]">
+      <div className="nav-glass rounded-pill flex justify-around items-center py-3 px-2 shadow-[0_8px_32px_-4px_rgba(15,10,10,0.5)]">
         {tabs.map((tab) => {
           const active = pathname === tab.href;
           const isNotifications = tab.href === '/notifications';
@@ -89,15 +89,16 @@ export function BottomNav() {
             >
               <span className="sr-only">{tab.name}</span>
               <div className="relative">
-                {/* Pill is a dark (#1A1A1A) fill -- "active" reads via a
-                    pure-black disc (one shade darker still) plus the
-                    crimson icon and larger size; inactive icons are
-                    white at reduced opacity, since ink-dark (black)
-                    would be invisible against this dark a pill. */}
+                {/* Pill is a dark fill -- "active" reads via a pure-black
+                    disc (one shade darker still), the crimson icon, larger
+                    size, and a slow rotating comet ring (.nav-active-ring,
+                    globals.css); inactive icons are white at reduced
+                    opacity, since ink-dark (black) would be invisible
+                    against this dark a pill. */}
                 <div
                   className={cn(
                     'flex items-center justify-center rounded-full transition-all duration-200',
-                    active ? 'w-9 h-9 bg-indigo' : 'w-8 h-8'
+                    active ? 'w-9 h-9 bg-indigo nav-active-ring' : 'w-8 h-8'
                   )}
                 >
                   <tab.icon className={cn('transition-all duration-200', active ? 'text-gold w-4 h-4' : 'text-ink/40 w-4 h-4')} strokeWidth={active ? 2.5 : 1.5} />

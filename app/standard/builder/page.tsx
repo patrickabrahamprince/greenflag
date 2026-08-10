@@ -390,6 +390,15 @@ export default function StandardBuilderPage() {
                   type="text"
                   value={customValue}
                   onChange={(e) => updateTaskPrompt(currentSlot.dayNumber, task.taskNumber, e.target.value)}
+                  onFocus={(e) => {
+                    // The keyboard's slide-up animation hasn't started yet
+                    // at focus time, so scrolling immediately targets the
+                    // pre-keyboard layout and still lands short -- same
+                    // ~300ms the rest of the app treats as the keyboard's
+                    // animation duration (see KeyboardInsetListener).
+                    const target = e.currentTarget;
+                    setTimeout(() => target.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300);
+                  }}
                   placeholder="Or define your own..."
                   className="input w-full text-sm placeholder:text-xs"
                 />
@@ -406,6 +415,13 @@ export default function StandardBuilderPage() {
       >
         {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : isLastDay ? 'Activate My Standard' : `Continue to Day ${step + 2}`}
       </button>
+
+      {/* This screen scrolls its own div (h-[calc(100dvh-5rem)]
+          overflow-y-auto) instead of using .min-h-dvh, so it never picked
+          up the app-wide --kb-inset spacer that keeps a focused field
+          clear of the keyboard -- Day 3's last input (Voice) had nothing
+          pushing it into view once the keyboard opened over it. */}
+      <div style={{ height: 'var(--kb-inset, 0px)' }} />
 
       {showDayDialog && DAY_LOCK_DIALOGS[step] && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">

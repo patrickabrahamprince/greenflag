@@ -11,7 +11,8 @@ interface CategorizedInterestPickerProps {
   description?: string;
   categories: InterestCategory[];
   selected: string[];
-  max: number;
+  /** Omit for unlimited selection -- no pill ever locks. */
+  max?: number;
   onToggle: (value: string) => void;
   dataTestIdPrefix?: string;
 }
@@ -52,7 +53,9 @@ export function CategorizedInterestPicker({
     <div className="my-4">
       <div className="flex items-baseline justify-between mb-1.5">
         <h2 className="font-display text-base text-ink">{title}</h2>
-        <span className="text-xs font-semibold text-gold">{selected.length}/{max}</span>
+        <span className="text-xs font-semibold text-gold">
+          {max ? `${selected.length}/${max}` : `${selected.length} selected`}
+        </span>
       </div>
       {description && <p className="text-xs text-ink/50 mb-2.5">{description}</p>}
 
@@ -70,7 +73,7 @@ export function CategorizedInterestPicker({
               <div className="flex flex-wrap gap-1.5">
                 {visible.map((item) => {
                   const isSelected = selected.includes(item);
-                  const locked = !isSelected && selected.length >= max;
+                  const locked = !isSelected && !!max && selected.length >= max;
                   return (
                     <button
                       key={item}

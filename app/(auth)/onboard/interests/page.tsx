@@ -20,16 +20,18 @@ export default function InterestsPage() {
   const persona = useOnboardingStore((s) => s.persona);
   const isWoman = persona === 'woman';
 
-  const { interestsHave, lookingFor, toggle, validate } = useInterestsSelection();
+  const { interestsHave, lookingFor, toggle } = useInterestsSelection();
 
   useEffect(() => {
     router.prefetch('/onboard/rules');
   }, [router]);
   const [loading, setLoading] = useState(false);
 
+  // Selection is uncapped and entirely optional now (see the Skip button
+  // below), so this is just "save whatever's picked, including nothing"
+  // -- there's no validation left to gate it.
   const handleContinue = async () => {
     hapticTap();
-    if (!validate(isWoman)) return;
     setLoading(true);
 
     const { data: { user } } = await supabase.auth.getUser();
@@ -70,17 +72,26 @@ export default function InterestsPage() {
   return (
     <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
       <OnboardingBackground image="/onboarding/interests.jpg" />
-      <button onClick={() => router.push('/onboard/quiz')} className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit">
-        <ArrowLeft size={24} />
-      </button>
+      <div className="flex items-center justify-between mb-6">
+        <button onClick={() => router.push('/onboard/quiz')} className="text-ink/40 hover:text-ink active:scale-90 transition-all">
+          <ArrowLeft size={24} />
+        </button>
+        <button
+          onClick={handleContinue}
+          disabled={loading}
+          className="text-xs font-semibold tracking-widest uppercase text-gold/80 hover:text-gold active:scale-90 transition-all"
+        >
+          Skip
+        </button>
+      </div>
 
       <div className="flex-1 max-w-md mx-auto w-full space-y-8 pb-safe-bottom">
-        <CategorizedInterestPicker title="What Defines You" description="Choose 5"
-          categories={INTEREST_CATEGORIES} selected={interestsHave} max={5} onToggle={(val) => toggle('have', val)}
+        <CategorizedInterestPicker title="What Defines You" description="Choose as many as you like"
+          categories={INTEREST_CATEGORIES} selected={interestsHave} onToggle={(val) => toggle('have', val)}
           dataTestIdPrefix={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'interest-have' : undefined} />
 
-        <CategorizedInterestPicker title={isWoman ? "What You Value In Him" : "What You Value In Her"} description="Choose 5"
-          categories={INTEREST_CATEGORIES} selected={lookingFor} max={5} onToggle={(val) => toggle('looking', val)}
+        <CategorizedInterestPicker title={isWoman ? "What You Value In Him" : "What You Value In Her"} description="Choose as many as you like"
+          categories={INTEREST_CATEGORIES} selected={lookingFor} onToggle={(val) => toggle('looking', val)}
           dataTestIdPrefix={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'interest-looking' : undefined} />
 
         <button onClick={handleContinue} disabled={loading}

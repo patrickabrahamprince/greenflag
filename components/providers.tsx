@@ -122,10 +122,16 @@ export function Providers({ children }: { children: React.ReactNode }) {
             background: 'linear-gradient(135deg, rgba(210,4,45,0.22) 0%, rgba(15,10,10,0.98) 40%, rgba(0,0,0,0.98) 100%)',
             color: '#FFFFFF',
             border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '999px',
-            padding: '10px 22px',
+            // 999px looked right for the typical one-line toast, but forced
+            // a long, wrapped, multi-line error (e.g. the Standard
+            // builder's "needs at least 10 characters" message) into a
+            // huge stadium-shaped blob instead of a normal rounded box --
+            // 20px scales sensibly at any line count.
+            borderRadius: '20px',
+            padding: '12px 20px',
             fontSize: '13.5px',
             fontWeight: 500,
+            lineHeight: 1.4,
             maxWidth: '92vw',
             boxShadow: '0 16px 40px -8px rgba(0,0,0,0.6), 0 0 0 1px rgba(210,4,45,0.08)',
           },
