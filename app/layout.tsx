@@ -1,22 +1,24 @@
 import './globals.css'
-import { Bricolage_Grotesque } from 'next/font/google'
+import localFont from 'next/font/local'
 import { Providers } from '@/components/providers'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { SwipeBackGesture } from '@/components/layout/SwipeBackGesture'
 import type { Metadata, Viewport } from 'next'
 
-// Single unified typeface across the whole app. Poppins (tried first per
-// justinmind.com's mobile app font guide) reads as generic/templated --
-// it's one of the most overused fonts in low-effort app UIs. Bricolage
-// Grotesque is a variable grotesque with distinctive, slightly asymmetric
-// letterforms that avoids that "default Bootstrap-y" look while still
-// being a clean UI sans. No true italic cut -- drop faux-italic styling
-// on any element that used it, lean on weight/tracking instead.
-const bricolage = Bricolage_Grotesque({
-  subsets: ['latin'],
-  weight: 'variable',
+// Cabinet Grotesk, per the Dateasy design system -- self-hosted via
+// next/font/local (not next/font/google, since it isn't on Google Fonts)
+// so the four weights this app actually uses are bundled and available
+// offline inside the Capacitor WKWebView, not fetched from Fontshare's
+// CDN at runtime.
+const cabinetGrotesk = localFont({
+  src: [
+    { path: './fonts/cabinet-grotesk/CabinetGrotesk-Regular.woff2', weight: '400', style: 'normal' },
+    { path: './fonts/cabinet-grotesk/CabinetGrotesk-Medium.woff2', weight: '500', style: 'normal' },
+    { path: './fonts/cabinet-grotesk/CabinetGrotesk-Bold.woff2', weight: '700', style: 'normal' },
+    { path: './fonts/cabinet-grotesk/CabinetGrotesk-Extrabold.woff2', weight: '800', style: 'normal' },
+  ],
   display: 'swap',
-  variable: '--font-bricolage',
+  variable: '--font-cabinet-grotesk',
 })
 
 export const metadata: Metadata = {
@@ -55,8 +57,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={bricolage.variable} style={{ colorScheme: 'dark' }}>
-      <body className="min-h-dvh bg-[#000000] text-[#FFFFFF] font-sans">
+    <html lang="en" className={cabinetGrotesk.variable} style={{ colorScheme: 'dark' }}>
+      <body className="min-h-dvh bg-[#371F7D] text-[#FFFFFF] font-sans">
         <ErrorBoundary>
           <Providers>
             <SwipeBackGesture>{children}</SwipeBackGesture>

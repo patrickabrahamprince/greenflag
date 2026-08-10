@@ -73,7 +73,10 @@ export function BottomNav() {
     <>
     <PendingReviewBanner />
     <nav className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-app">
-      <div className="nav-glass rounded-[1.75rem] flex justify-around items-center py-2 px-1 shadow-[0_8px_32px_-4px_rgba(0,0,0,0.5)]">
+      {/* Icon-only floating pill per the design system -- the deck's nav
+          carries no visible labels; tab names stay as sr-only text so
+          screen readers still announce each destination. */}
+      <div className="nav-glass rounded-pill flex justify-around items-center py-2 px-1 shadow-[0_8px_32px_-4px_rgba(27,16,59,0.5)]">
         {tabs.map((tab) => {
           const active = pathname === tab.href;
           const isNotifications = tab.href === '/notifications';
@@ -82,26 +85,26 @@ export function BottomNav() {
               key={tab.name}
               href={tab.href}
               onClick={(e) => handleTabClick(e, tab.href)}
-              className="flex flex-col items-center justify-center gap-0.5 relative w-14 py-1"
+              className="flex flex-col items-center justify-center gap-0.5 relative w-14 py-2"
             >
+              <span className="sr-only">{tab.name}</span>
               <div className="relative">
+                {/* Pill is a light Lavender fill, so "active" reads by
+                    going dark (indigo disc), not lighter. */}
                 <div
                   className={cn(
                     'flex items-center justify-center rounded-full transition-all duration-200',
-                    active ? 'w-9 h-9 bg-gold shadow-[0_4px_16px_rgba(192,38,211,0.5)]' : 'w-8 h-8'
+                    active ? 'w-9 h-9 bg-indigo' : 'w-8 h-8'
                   )}
                 >
-                  <tab.icon className={cn('transition-all duration-200', active ? 'text-white w-4 h-4' : 'text-ink/40 w-4 h-4')} strokeWidth={active ? 2.5 : 1.5} />
+                  <tab.icon className={cn('transition-all duration-200', active ? 'text-gold w-4 h-4' : 'text-ink-dark/50 w-4 h-4')} strokeWidth={active ? 2.5 : 1.5} />
                 </div>
                 {isNotifications && unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 bg-red-500 rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 bg-[#FC4363] rounded-full flex items-center justify-center">
                     <span className="text-[9px] font-bold text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>
                   </span>
                 )}
               </div>
-              <span className={cn('text-[8px] leading-none font-display font-medium tracking-normal text-center whitespace-nowrap transition-colors duration-200', active ? 'text-gold' : 'text-ink/40')}>
-                {tab.name}
-              </span>
             </Link>
           );
         })}

@@ -1,19 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* Same recipe as .screen-gradient below, duplicated here rather than
+/* Same flat fill as .screen-gradient below, duplicated here rather than
    applying that class to body -- pages center their own content at
    max-w-app, so on anything wider than 480px (landscape, most obviously)
-   that centered column left a flat #0B0614 margin outside it that didn't
-   match the gradient inside, a visible seam right where the bottom nav
-   sits. Painting the same gradient on body itself means there's no seam
+   that centered column left a mismatched margin outside it that didn't
+   match the color inside, a visible seam right where the bottom nav
+   sits. Painting the same base fill on body itself means there's no seam
    regardless of how wide the viewport is or where a page's own content
-   column ends. */
+   column ends. Dateasy's design system is one continuous flat dark-purple
+   environment -- no radial glow, depth comes from the elevation ramp
+   (well/base/raised/card/overlay), not from a gradient painted over the
+   background. */
 html, body {
-  background:
-    radial-gradient(ellipse 140% 90% at 50% -25%, rgba(192, 38, 211, 0.45) 0%, rgba(124, 58, 237, 0.22) 35%, rgba(11, 6, 20, 0) 70%),
-    radial-gradient(ellipse 100% 70% at 100% 100%, rgba(124, 58, 237, 0.18) 0%, transparent 60%),
-    #0B0614 !important;
+  background: #371F7D !important;
 }
 /* Without this, iOS Safari's rubber-band bounce at the top/bottom of a
    normal document-scroll page visually drags `position: fixed` elements
@@ -85,20 +85,10 @@ body::-webkit-scrollbar,
    keyboard-inset-listener.tsx), staying on the same route after typing
    (e.g. submitting a task's text answer without navigating away) left a
    real chunk of extra, unstyled space sitting on body itself, right
-   above the fixed nav -- tinted by screen-gradient's own violet glow
-   into what read as a stray blue layer obstructing whatever was under it. */
+   above the fixed nav -- filled with body's own #371F7D base color,
+   read as a stray solid-color layer obstructing whatever was under it. */
 body.min-h-dvh::after {
   content: none;
-}
-
-@property --border-angle {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
-}
-
-@keyframes border-spin {
-  to { --border-angle: 360deg; }
 }
 
 @layer base {
@@ -130,84 +120,66 @@ body.min-h-dvh::after {
 }
 
 @layer components {
+  /* Primary: Mindaro fill, dark text, pill, flat -- no gradient, no glow,
+     no animated border ring. Sized with padding + a minimum tap height,
+     not a fixed width/height -- callers (flex-1, inline px-8 py-3, etc.)
+     already size themselves across ~60 call sites, and baking in w-full
+     or a fixed h-14 here would silently override every one of them. */
   .btn-primary {
-    --border-angle: 0deg;
-    @apply relative text-white font-display font-bold rounded-full px-8 py-3.5
-           text-xs uppercase tracking-wide
-           transition-all duration-300 ease-out
+    @apply relative text-ink-dark font-display font-bold rounded-pill px-8
+           min-h-[52px] flex items-center justify-center
+           text-label
+           transition-all duration-200 ease-out
            active:scale-[0.98]
            disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
-    background: linear-gradient(135deg, #E879F9 0%, #C026D3 45%, #86198F 100%);
-    box-shadow: 0 4px 20px -4px rgba(192, 38, 211, 0.45);
-  }
-
-  .btn-primary::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    overflow: hidden;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent 60%);
-    pointer-events: none;
+    background: #D7FF81;
   }
 
   .btn-primary:hover {
-    background: linear-gradient(135deg, #F0ABFC 0%, #C026D3 45%, #86198F 100%);
+    background: #E4FFA3;
   }
 
+  /* Secondary: Lavender fill, dark text, pill. */
   .btn-secondary {
-    @apply glass-surface relative text-ink font-display font-bold rounded-full px-8 py-3
-           text-xs uppercase tracking-wide
-           transition-all duration-300 ease-out
-           hover:border-gold active:scale-[0.98]
+    @apply relative text-ink-dark font-display font-bold rounded-pill px-8
+           min-h-[52px] flex items-center justify-center
+           text-label
+           transition-all duration-200 ease-out
+           active:scale-[0.98]
            disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
+    background: #BC96FF;
   }
 
-  /* Traveling light around the border: an animated conic-gradient ring
-     masked down to just the border thickness (mask-composite: exclude
-     cuts out the content-box, leaving only the ring visible). Positive/
-     primary actions only (btn-primary) -- secondary/cancel-style buttons
-     don't get it, so the glow itself signals "this is the affirmative
-     choice" in confirm dialogs. Slow and dim on purpose: this should read
-     as ambient, not as a flashing call for attention. */
-  .btn-primary::after {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: inherit;
-    padding: 2px;
-    background: conic-gradient(
-      from var(--border-angle),
-      transparent 0%,
-      rgba(255, 255, 255, 0.5) 8%,
-      transparent 18%,
-      transparent 100%
-    );
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask-composite: exclude;
-    animation: border-spin 9s linear infinite;
-    pointer-events: none;
+  .btn-secondary:hover {
+    background: #C9A9FF;
   }
 
+  /* Tertiary: transparent, 1px Lavender border, white text, pill. */
   .btn-ghost {
-    @apply text-ink/50 font-medium rounded-xl px-4 py-2
-           text-xs uppercase tracking-wide
-           transition-all duration-300 ease-out
-           hover:text-ink active:scale-[0.98]
+    @apply text-ink font-display font-medium rounded-pill px-6
+           min-h-[44px] flex items-center justify-center
+           text-label border
+           transition-all duration-200 ease-out
+           active:scale-[0.98]
            disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
+    border-color: #BC96FF;
+  }
+
+  .btn-ghost:hover {
+    background: rgba(188, 150, 255, 0.1);
   }
 
   .btn-danger {
-    @apply bg-red-950/40 text-red-400 border border-red-900/50 font-medium rounded-xl px-8 py-3
-           text-xs uppercase tracking-wide
-           transition-all duration-300 ease-out
-           hover:bg-red-950/60 active:scale-[0.98];
+    @apply bg-[#FC4363]/15 text-[#FC4363] border border-[#FC4363]/30 font-display font-medium rounded-pill px-8
+           min-h-[52px] flex items-center justify-center
+           text-label
+           transition-all duration-200 ease-out
+           hover:bg-[#FC4363]/25 active:scale-[0.98];
   }
 
+  /* Cards -- card-elevation fill, 24px radius, no border, no shadow. */
   .card {
-    @apply bg-surface border border-border rounded-2xl p-7
+    @apply bg-card rounded-card p-5
            transition-all duration-300 ease-out;
   }
 
@@ -220,7 +192,7 @@ body.min-h-dvh::after {
     /* First stop was only 14% opaque, letting whatever sits behind the
        dialog (e.g. Settings' own "Danger Zone" icon/text) show through
        prominently in that corner instead of reading as a solid card. */
-    background: linear-gradient(135deg, rgba(192,38,211,0.35) 0%, rgba(28,28,30,0.98) 60%);
+    background: linear-gradient(135deg, rgba(97,42,255,0.35) 0%, rgba(27,16,59,0.98) 60%);
   }
 
   .card-hover {
@@ -254,7 +226,7 @@ body.min-h-dvh::after {
   }
 
   .text-gradient {
-    background: linear-gradient(135deg, #E879F9 0%, #C026D3 50%, #86198F 100%);
+    background: linear-gradient(135deg, #D7FF81 0%, #BC96FF 60%, #612AFF 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -274,26 +246,15 @@ body.min-h-dvh::after {
   }
 
   .page-container {
-    @apply min-h-dvh max-w-app mx-auto px-8 pt-safe-top pb-24;
-    background:
-      radial-gradient(ellipse 140% 90% at 50% -25%, rgba(192, 38, 211, 0.45) 0%, rgba(124, 58, 237, 0.22) 35%, rgba(11, 6, 20, 0) 70%),
-      radial-gradient(ellipse 100% 70% at 100% 100%, rgba(124, 58, 237, 0.18) 0%, transparent 60%),
-      #0B0614;
+    @apply min-h-dvh max-w-app mx-auto px-8 pt-safe-top pb-24 bg-base;
   }
 
-  /* Shared immersive backdrop for full-screen views: a saturated
-     magenta-to-violet glow anchored top-center with a smooth 3-stop
-     falloff (no hard edge), plus a faint violet glow bottom-right for
-     depth, over a purple-tinted near-black base instead of pure #000 --
-     so every screen reads as one continuous, lit surface. Earlier
-     attempts used raw gold at low opacity, which darkens toward a muddy
-     brown instead of holding its hue; magenta/violet don't have that
-     problem. */
+  /* Shared backdrop for full-screen views: Dateasy's design system is one
+     continuous flat dark-purple environment -- no radial glow. Depth
+     comes from the elevation ramp (well/base/raised/card/overlay), not
+     from a gradient painted over the background. */
   .screen-gradient {
-    background:
-      radial-gradient(ellipse 140% 90% at 50% -25%, rgba(192, 38, 211, 0.45) 0%, rgba(124, 58, 237, 0.22) 35%, rgba(11, 6, 20, 0) 70%),
-      radial-gradient(ellipse 100% 70% at 100% 100%, rgba(124, 58, 237, 0.18) 0%, transparent 60%),
-      #0B0614;
+    @apply bg-base;
   }
 
   .page-header {
@@ -319,14 +280,13 @@ body.min-h-dvh::after {
   .hairline {
     height: 1px;
     width: 100%;
-    background: #2A2A2A;
+    background: #4A2A8C;
   }
 
+  /* Floating Lavender pill per the design system -- flat fill, no
+     glassmorphism/blur (the deck's bottom nav is solid, not frosted). */
   .nav-glass {
-    @apply backdrop-blur-2xl border border-white/10;
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02)),
-      rgba(20, 8, 28, 0.55);
+    background: #BC96FF;
   }
 
   .glass-surface {
@@ -337,7 +297,7 @@ body.min-h-dvh::after {
   }
 
   .gold-border-left {
-    border-left: 2px solid #C026D3;
+    border-left: 2px solid #D7FF81;
   }
 
   .match-arc {
@@ -352,13 +312,13 @@ body.min-h-dvh::after {
 
   .match-arc-bg {
     fill: none;
-    stroke: #2A2A2A;
+    stroke: #4A2A8C;
     stroke-width: 2;
   }
 
   .match-arc-fill {
     fill: none;
-    stroke: #C026D3;
+    stroke: #D7FF81;
     stroke-width: 2;
     stroke-linecap: round;
     transition: stroke-dashoffset 1s ease-out;
