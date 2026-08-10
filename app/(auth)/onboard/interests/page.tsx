@@ -5,20 +5,13 @@ import { useRouter } from 'next/navigation';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useOnboardingStore } from '@/lib/store';
-import { InterestGrid } from '../../../components/discovery/InterestGrid';
-import { WhyMePrompts } from '@/components/discovery/WhyMePrompts';
+import { CategorizedInterestPicker } from '@/components/discovery/CategorizedInterestPicker';
 import { useInterestsSelection } from '@/components/discovery/useInterestsSelection';
+import { INTEREST_CATEGORIES } from '@/lib/constants/interestCategories';
 import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
-
-const INTEREST_TAGS = [
-  'Books', 'Music', 'Travel', 'Fitness', 'Gastronomy', 'Art',
-  'Cinema', 'Philosophy', 'Spirituality', 'Business', 'Technology',
-  'Fashion', 'Nature', 'Coffee Culture', 'Nightlife', 'Yoga', 'Writing',
-  'Photography', 'Dance', 'Wellness',
-];
 
 export default function InterestsPage() {
   const router = useRouter();
@@ -82,12 +75,12 @@ export default function InterestsPage() {
       </button>
 
       <div className="flex-1 max-w-md mx-auto w-full space-y-8 pb-safe-bottom">
-        <InterestGrid title="What Defines You" description="Choose 5"
-          options={INTEREST_TAGS} selected={interestsHave} max={5} onToggle={(_, val) => toggle('have', val)}
+        <CategorizedInterestPicker title="What Defines You" description="Choose 5"
+          categories={INTEREST_CATEGORIES} selected={interestsHave} max={5} onToggle={(val) => toggle('have', val)}
           dataTestIdPrefix={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'interest-have' : undefined} />
 
-        <InterestGrid title={isWoman ? "What You Value In Him" : "What You Value In Her"} description="Choose 5"
-          options={INTEREST_TAGS} selected={lookingFor} max={5} onToggle={(_, val) => toggle('looking', val)}
+        <CategorizedInterestPicker title={isWoman ? "What You Value In Him" : "What You Value In Her"} description="Choose 5"
+          categories={INTEREST_CATEGORIES} selected={lookingFor} max={5} onToggle={(val) => toggle('looking', val)}
           dataTestIdPrefix={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'interest-looking' : undefined} />
 
         <button onClick={handleContinue} disabled={loading}

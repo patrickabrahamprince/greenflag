@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Save, Loader2, X, Camera, Clock } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, X, Camera, Clock, ChevronRight, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
@@ -241,6 +241,21 @@ export default function EditProfilePage() {
           )}
         </button>
       </fieldset>
+
+      {/* Lifestyle/Basics/Anthem live on their own screen and save
+          instantly -- unlike the fields above, they're low-stakes
+          metadata, not identity claims, so they skip the review queue
+          entirely (see /profile/edit/details). */}
+      <div className="px-4 mt-3">
+        <button
+          onClick={() => router.push('/profile/edit/details')}
+          className="w-full flex items-center gap-3 px-4 py-4 bg-white/5 border border-white/10 rounded-2xl text-left active:scale-[0.98] transition-transform"
+        >
+          <Sparkles className="w-4 h-4 text-gold shrink-0" />
+          <span className="flex-1 text-sm text-ink font-medium">More About You</span>
+          <ChevronRight className="w-4 h-4 text-ink/40 shrink-0" />
+        </button>
+      </div>
     </div>
   );
 }

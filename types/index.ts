@@ -18,6 +18,16 @@ export interface Profile {
   quiz_answers?: Record<string, string> | null;
   teaser_prompt?: string | null;
   teaser_answer?: string | null;
+  smoking?: string | null;
+  drinking?: string | null;
+  pets?: string | null;
+  workout?: string | null;
+  zodiac?: string | null;
+  education_level?: string | null;
+  family_plans?: string | null;
+  communication_style?: string | null;
+  anthem_title?: string | null;
+  anthem_artist?: string | null;
   blur_key?: string | null;
   connected_count?: number | null;
   coins?: number | null;

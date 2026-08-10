@@ -9,15 +9,7 @@ import { BottomSheet } from '@/components/shared/BottomSheet';
 import { hapticTap } from '@/lib/haptics';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
-
-const TEASER_PROMPTS = [
-  'The way to my heart is',
-  'A random fact I love is',
-  'My ideal Sunday looks like',
-  'I get way too competitive about',
-  'The best way to ask me out is',
-  'I will never shut up about',
-];
+import { TEASER_PROMPTS } from '@/lib/constants/profileDetails';
 
 // Step 5 of 6 in the profile wizard -- an optional icebreaker prompt,
 // shown on the profile as a highlighted quote card (see PromptCard).

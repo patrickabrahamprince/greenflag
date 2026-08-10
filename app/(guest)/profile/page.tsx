@@ -6,6 +6,7 @@ import { Settings, LogOut, Edit3, Coins, Loader2, BadgeCheck, MapPin, Cake } fro
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { ProfileImageCarousel } from '@/components/shared/ProfileImageCarousel';
 import { MyStandardsSection } from '@/components/profile/MyStandardsSection';
+import { ProfileCompletion } from '@/components/profile/ProfileCompletion';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useCoinStore } from '@/lib/store';
 import { hapticTap } from '@/lib/haptics';
@@ -114,6 +115,8 @@ export default function ProfilePage() {
             </span>
           )}
         </div>
+
+        <ProfileCompletion user={user} />
 
         {user.bio && (
           <div className="mt-5 w-full rounded-card bg-card p-6">

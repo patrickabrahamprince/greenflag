@@ -1017,6 +1017,16 @@ export type Database = {
           teaser_prompt: string | null
           verification_status: string | null
           why_me_prompts: string[] | null
+          smoking: string | null
+          drinking: string | null
+          pets: string | null
+          workout: string | null
+          zodiac: string | null
+          education_level: string | null
+          family_plans: string | null
+          communication_style: string | null
+          anthem_title: string | null
+          anthem_artist: string | null
         }
         Insert: {
           about_me_tags?: string[] | null
@@ -1074,6 +1084,16 @@ export type Database = {
           teaser_prompt?: string | null
           verification_status?: string | null
           why_me_prompts?: string[] | null
+          smoking?: string | null
+          drinking?: string | null
+          pets?: string | null
+          workout?: string | null
+          zodiac?: string | null
+          education_level?: string | null
+          family_plans?: string | null
+          communication_style?: string | null
+          anthem_title?: string | null
+          anthem_artist?: string | null
         }
         Update: {
           about_me_tags?: string[] | null
@@ -1131,6 +1151,16 @@ export type Database = {
           teaser_prompt?: string | null
           verification_status?: string | null
           why_me_prompts?: string[] | null
+          smoking?: string | null
+          drinking?: string | null
+          pets?: string | null
+          workout?: string | null
+          zodiac?: string | null
+          education_level?: string | null
+          family_plans?: string | null
+          communication_style?: string | null
+          anthem_title?: string | null
+          anthem_artist?: string | null
         }
         Relationships: [
           {

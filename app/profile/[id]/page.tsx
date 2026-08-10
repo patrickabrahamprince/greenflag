@@ -58,6 +58,16 @@ export default function ViewProfilePage() {
         matchOverlapping={match?.overlapping}
         teaserPrompt={profile.teaser_prompt}
         teaserAnswer={profile.teaser_answer}
+        smoking={profile.smoking}
+        drinking={profile.drinking}
+        pets={profile.pets}
+        workout={profile.workout}
+        zodiac={profile.zodiac}
+        educationLevel={profile.education_level}
+        familyPlans={profile.family_plans}
+        communicationStyle={profile.communication_style}
+        anthemTitle={profile.anthem_title}
+        anthemArtist={profile.anthem_artist}
       />
       <div className="px-8 pb-6">
         <ProfileActionBar
