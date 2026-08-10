@@ -50,8 +50,8 @@ export function DeleteReasonScreen({ onBack, onContinue }: DeleteReasonScreenPro
                 key={reason}
                 type="button"
                 onClick={() => toggleReason(reason)}
-                className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all active:scale-90 ${
-                  selected ? 'bg-gold text-white' : 'bg-[#1C1C1E] border border-[#2A2A2A] text-ink/70'
+                className={`px-4 py-2.5 rounded-pill text-sm font-medium transition-all active:scale-90 ${
+                  selected ? 'bg-gold text-ink-dark' : 'bg-well border border-transparent text-ink/70'
                 }`}
               >
                 {reason}

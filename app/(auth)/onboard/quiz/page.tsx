@@ -223,10 +223,10 @@ export default function QuizPage() {
 
   if (reveal) {
     return (
-      <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center px-6 bg-[#000000] text-center">
+      <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center px-6 bg-base text-center">
         <OnboardingBackground image={reveal.image} />
         <div className="max-w-sm mx-auto w-full">
-          <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_-8px_rgba(192,38,211,0.6)]">
+          <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_-8px_rgba(215,255,129,0.5)]">
             <Sparkles className="w-7 h-7 text-gold" />
           </div>
           <p className="text-ink/50 text-xs uppercase tracking-widest mb-3">
@@ -261,7 +261,7 @@ export default function QuizPage() {
     : "There's no wrong answer — just be honest.";
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-base">
       <OnboardingBackground image={QUESTION_IMAGES[currentIdx] || '/onboarding/quiz.jpg'} />
       <div className="max-w-md mx-auto w-full flex flex-col pb-safe-bottom">
         <div>
@@ -273,14 +273,14 @@ export default function QuizPage() {
             >
               <ArrowLeft size={24} />
             </button>
-            <span className="text-xs font-semibold text-[#9DA0A6]">
+            <span className="text-xs font-semibold text-ink/50">
               {currentIdx + 1} of {QUIZ_QUESTIONS.length}
             </span>
             <div className="w-6" /> {/* spacer */}
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full bg-[#1C1C1E] h-1 rounded-full mb-10 overflow-hidden">
+          <div className="w-full bg-well h-1 rounded-full mb-10 overflow-hidden">
             <div
               className="bg-gold h-full transition-all duration-300 ease-out"
               style={{ width: `${progressPercent}%` }}
@@ -292,7 +292,7 @@ export default function QuizPage() {
             <h2 className="text-xl font-display font-medium text-ink mb-2 leading-snug">
               {currentQuestion.question}
             </h2>
-            <p className="text-[#9DA0A6] text-xs">Choose what feels most like you</p>
+            <p className="text-ink/50 text-xs">Choose what feels most like you</p>
           </div>
 
           {/* Options Grid */}
@@ -304,10 +304,10 @@ export default function QuizPage() {
                   key={option}
                   onClick={() => handleOptionSelect(option)}
                   data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? `quiz-option-${optionIdx}` : undefined}
-                  className={`w-full py-4 px-5 rounded-xl text-left text-sm transition-all duration-200 flex items-center justify-between border ${
+                  className={`w-full py-4 px-5 rounded-tile text-left text-sm transition-all duration-200 flex items-center justify-between border-2 ${
                     isSelected
-                      ? 'bg-gold/10 border-gold text-ink font-medium scale-[1.02] shadow-[0_0_20px_-6px_rgba(192,38,211,0.5)]'
-                      : 'bg-[#1C1C1E] border-[#2A2A2A] text-ink/70 hover:border-ink/30 active:scale-[0.98]'
+                      ? 'bg-gold/10 border-gold text-ink font-medium scale-[1.02] shadow-[0_0_20px_-6px_rgba(215,255,129,0.4)]'
+                      : 'bg-well border-transparent text-ink/70 hover:border-ink/20 active:scale-[0.98]'
                   }`}
                 >
                   <span>{option}</span>
@@ -326,7 +326,7 @@ export default function QuizPage() {
           className="btn-primary w-full py-3.5 mt-8 font-semibold text-sm active:scale-95 transition-transform flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:scale-100"
         >
           {saving ? (
-            <Loader2 className="w-4 h-4 animate-spin text-black" />
+            <Loader2 className="w-4 h-4 animate-spin text-ink-dark" />
           ) : currentIdx === QUIZ_QUESTIONS.length - 1 ? (
             <>
               Complete <CheckCircle2 size={16} />

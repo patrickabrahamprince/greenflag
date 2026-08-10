@@ -376,8 +376,8 @@ export default function StandardBuilderPage() {
                         key={preset}
                         type="button"
                         onClick={() => updateTaskPrompt(currentSlot.dayNumber, task.taskNumber, preset)}
-                        className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all active:scale-90 ${
-                          selected ? 'bg-gold text-white' : 'bg-[#1C1C1E] border border-[#2A2A2A] text-ink/70 hover:border-ink/30'
+                        className={`px-4 py-2.5 rounded-pill text-sm font-medium transition-all active:scale-90 ${
+                          selected ? 'bg-gold text-ink-dark' : 'bg-well border border-transparent text-ink/70 hover:border-lavender/40'
                         }`}
                       >
                         {preset}

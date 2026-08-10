@@ -52,15 +52,20 @@ export const InterestGrid: React.FC<InterestGridProps> = ({
         {title && <h2 className="font-display text-base text-ink">{title}</h2>}
         <span className="text-xs font-semibold text-gold">{selected.length}/{max}</span>
       </div>
-      {description && <p className="text-xs text-[#9DA0A6] mb-2.5">{description}</p>}
+      {description && <p className="text-xs text-ink/50 mb-2.5">{description}</p>}
       <div className="flex flex-wrap gap-1.5">
         {options.map((opt) => {
           const isSelected = selected.includes(opt);
           const baseClasses =
-            'px-3 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer select-none active:scale-90';
-          const selectedClasses = 'bg-gold text-white';
+            'px-3 py-1.5 rounded-pill text-xs font-medium transition-all cursor-pointer select-none active:scale-90';
+          // Selected = solid Mindaro + dark text, unselected = transparent
+          // + 1px Lavender border + white text, per the design system's
+          // chip spec. The selected state was previously bg-gold
+          // (Mindaro) + text-white -- the exact unreadable pairing the
+          // system's own contrast rule warns about.
+          const selectedClasses = 'bg-gold text-ink-dark';
           const unselectedClasses =
-            'bg-[#1C1C1E] border border-[#2A2A2A] text-ink/70 hover:border-ink/30';
+            'bg-transparent border border-lavender/40 text-ink hover:border-lavender/70';
           return (
             <span
               key={opt}

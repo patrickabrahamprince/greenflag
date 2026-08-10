@@ -27,14 +27,14 @@ export function ProfileActionBar({
       {isOwn ? (
         <button
           onClick={onEdit}
-          className="w-full h-14 rounded-full border border-[#2A2A2A] bg-[#1C1C1E] text-ink font-medium active:scale-95 transition-all duration-200"
+          className="w-full h-14 rounded-pill border border-raised bg-well text-ink font-medium active:scale-95 transition-all duration-200"
         >
           Edit Profile
         </button>
       ) : hasConnection ? (
         <button
           onClick={onContinue}
-          className="w-full h-14 rounded-full bg-gold text-white font-medium active:scale-95 transition-all duration-200"
+          className="w-full h-14 rounded-pill bg-gold text-ink-dark font-medium active:scale-95 transition-all duration-200"
         >
           Continue to Tasks
         </button>
@@ -42,7 +42,7 @@ export function ProfileActionBar({
         <button
           onClick={onMeet}
           disabled={connecting}
-          className="w-full h-14 rounded-full bg-gold text-white font-medium active:scale-95 transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full h-14 rounded-pill bg-gold text-ink-dark font-medium active:scale-95 transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
         >
           {connecting ? (
             <>
@@ -55,7 +55,7 @@ export function ProfileActionBar({
       ) : (
         <button
           disabled
-          className="w-full h-14 rounded-full border border-[#2A2A2A] bg-[#1C1C1E] text-ink/40 font-medium cursor-not-allowed"
+          className="w-full h-14 rounded-pill border border-raised bg-well text-ink/40 font-medium cursor-not-allowed"
         >
           Awaiting Application
         </button>

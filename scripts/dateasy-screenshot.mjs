@@ -18,11 +18,8 @@ await page.getByText('Accept Terms').click({ timeout: 10000 });
 await page.waitForURL(/\/discover|\/admin/, { timeout: 20000 });
 
 const screens = [
-  { path: '/discover', name: 'discover' },
-  { path: '/messages', name: 'chat-list' },
-  { path: '/messages/929ad331-b49a-4bb6-bbd3-bc3916a457aa', name: 'chat-conversation' },
-  { path: '/profile', name: 'profile' },
-  { path: '/profile/edit', name: 'profile-edit' },
+  { path: '/onboard/quiz', name: 'quiz' },
+  { path: '/onboard/interests', name: 'interests' },
 ];
 
 for (const { path, name } of screens) {

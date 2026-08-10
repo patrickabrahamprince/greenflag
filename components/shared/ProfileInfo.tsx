@@ -24,7 +24,7 @@ function InterestPill({ label, matched }: { label: string; matched?: boolean }) 
       className={`px-4 py-2 rounded-full text-sm truncate transition-all ${
         matched
           ? 'bg-gold/10 border border-gold text-white font-medium shadow-md shadow-gold/5'
-          : 'bg-[#1C1C1E] border border-[#2C2C2E] text-[#EDEADE]/80'
+          : 'bg-well border border-raised text-ink/80'
       }`}
     >
       {label}

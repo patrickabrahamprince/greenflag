@@ -22,12 +22,15 @@ interface OnboardingBackgroundProps {
 // mount regardless of whether the image data has actually arrived yet,
 // so there's no state for a missed event to get stuck in.
 export function OnboardingBackground({ image, light }: OnboardingBackgroundProps) {
+  // Fades to the base purple (#371F7D), not black -- the design system's
+  // photo screens use a plain dark scrim with no colored glow, unlike
+  // the old magenta radial glow this replaced.
   const scrim = light
-    ? 'radial-gradient(ellipse 120% 50% at 50% 0%, rgba(192,38,211,0.18) 0%, transparent 55%), linear-gradient(180deg, rgba(11,6,20,0.32) 0%, rgba(11,6,20,0.6) 55%, rgba(11,6,20,0.9) 100%)'
-    : 'radial-gradient(ellipse 120% 50% at 50% 0%, rgba(192,38,211,0.16) 0%, transparent 50%), linear-gradient(180deg, rgba(11,6,20,0.5) 0%, rgba(11,6,20,0.75) 55%, rgba(11,6,20,0.96) 100%)';
+    ? 'linear-gradient(180deg, rgba(55,31,125,0.35) 0%, rgba(55,31,125,0.65) 55%, rgba(55,31,125,0.92) 100%)'
+    : 'linear-gradient(180deg, rgba(55,31,125,0.55) 0%, rgba(55,31,125,0.8) 55%, rgba(55,31,125,0.97) 100%)';
 
   return (
-    <div className="absolute inset-0 -z-10 overflow-hidden bg-[#0B0614]">
+    <div className="absolute inset-0 -z-10 overflow-hidden bg-base">
       <img key={image} src={image} alt="" className="w-full h-full object-cover animate-fade-in" />
       <div className="absolute inset-0" style={{ background: scrim }} />
     </div>
