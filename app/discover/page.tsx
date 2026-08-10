@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell, ImageOff, ChevronLeft, ChevronRight, Gift, Flag } from 'lucide-react'
+import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell, ImageOff, ChevronLeft, ChevronRight, Gift, Flag, MapPin } from 'lucide-react'
 import { LoadingLogo } from '@/components/shared/LoadingLogo'
 import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
@@ -388,6 +388,20 @@ export default function DiscoverPage() {
 
                     {total > 1 && (
                       <>
+                        {/* Story-style segmented progress bar, one segment per
+                            photo -- the deck's own photo-position indicator.
+                            Purely additive on top of the existing swipe/tap
+                            chevron navigation below; doesn't replace it. */}
+                        <div className="absolute top-safe-top inset-x-3 z-10 flex gap-1 pt-3">
+                          {photos.map((_, segIdx) => (
+                            <div key={segIdx} className="flex-1 h-1 rounded-full bg-white/40 shadow-[0_0_2px_rgba(0,0,0,0.5)] overflow-hidden">
+                              <div
+                                className="h-full bg-gold rounded-full transition-all duration-200"
+                                style={{ width: segIdx <= idx ? '100%' : '0%' }}
+                              />
+                            </div>
+                          ))}
+                        </div>
                         <button
                           onClick={(e) => { e.stopPropagation(); hapticTap(); goTo(idx - 1) }}
                           aria-label="Previous photo"
@@ -405,11 +419,14 @@ export default function DiscoverPage() {
                       </>
                     )}
 
+                    {/* Compatibility badge -- solid Mindaro pill, dark
+                        glyph + percentage, top-right per the design system
+                        (previously a translucent glass pill, top-left). */}
                     {typeof p.match_percentage === 'number' && (
-                      <div className="absolute top-12 left-3 z-10 flex flex-col items-start gap-1">
-                        <div className="glass-surface flex items-center gap-1 rounded-full pl-2 pr-2.5 py-1">
-                          <Flag className="w-3 h-3 text-gold" fill="currentColor" />
-                          <span className="font-display font-bold text-white text-xs whitespace-nowrap">
+                      <div className="absolute top-safe-top right-3 mt-8 z-10 flex flex-col items-end gap-1">
+                        <div className="bg-gold flex items-center gap-1 rounded-pill pl-2 pr-2.5 py-1">
+                          <Flag className="w-3 h-3 text-ink-dark" fill="currentColor" />
+                          <span className="font-display font-bold text-ink-dark text-xs whitespace-nowrap">
                             {p.match_percentage}%
                           </span>
                         </div>
@@ -450,13 +467,20 @@ export default function DiscoverPage() {
                 bottom of the screen. */}
             <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 px-6 pb-32 pt-10">
               <div>
-                <h1 className="font-serif text-4xl text-ink font-semibold leading-none">
-                  {p.name}
+                {/* Name + age on one line, location on its own line below
+                    with a pin glyph -- matches the deck's card typography
+                    (was name/age-and-city stacked as two differently-styled
+                    lines with no location icon). */}
+                <h1 className="font-display text-title text-ink leading-none">
+                  {p.name}{p.age ? `, ${p.age}` : ''}
                 </h1>
-                <div className="flex items-center gap-2 mt-2 flex-wrap">
-                  <p className="font-sans text-sm text-ink/60 tracking-wide uppercase leading-none">
-                    {p.age ? `${p.age}` : ''}{p.age && p.city_auto ? ' · ' : ''}{p.city_auto}
-                  </p>
+                <div className="flex items-center gap-3 mt-2 flex-wrap">
+                  {p.city_auto && (
+                    <p className="flex items-center gap-1 font-sans text-label text-ink/70 leading-none">
+                      <MapPin className="w-3.5 h-3.5 shrink-0" />
+                      {p.city_auto}
+                    </p>
+                  )}
                   {p.instagram_url && (
                     <a
                       href={p.instagram_url.startsWith('http') ? p.instagram_url : `https://instagram.com/${p.instagram_url}`}
@@ -501,7 +525,12 @@ export default function DiscoverPage() {
                             key={interest}
                             className={
                               (isMatched
-                                ? `glass-surface ${sizeClass} rounded-full bg-gold text-white font-medium shadow-[0_2px_10px_rgba(192,38,211,0.5)] leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-[0_4px_16px_rgba(192,38,211,0.8)] active:scale-95`
+                                // Solid Mindaro fill needs dark text, not white
+                                // -- the CONTRAST RULE the design system calls
+                                // out explicitly (bg-accent + text-white is
+                                // unreadable). Shadow repointed off the old
+                                // magenta to an on-palette Mindaro glow.
+                                ? `${sizeClass} rounded-full bg-gold text-ink-dark font-medium shadow-[0_2px_10px_rgba(215,255,129,0.4)] leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-[0_4px_16px_rgba(215,255,129,0.6)] active:scale-95`
                                 : `glass-surface ${sizeClass} rounded-full text-ink font-medium leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:bg-white/10 active:scale-95`)
                             }
                           >
@@ -581,15 +610,24 @@ export default function DiscoverPage() {
                   </>
                 ) : (
                   <>
+                    {/* Dismiss = dark/well fill, Gift = secondary Lavender
+                        fill, Like/pursue = the largest, primary Pinkish-Red
+                        circle -- the deck's dismiss/like color treatment,
+                        adapted to this app's real 3 actions (there's no
+                        gift-giving in the Dateasy concept to copy a color
+                        from). Was 46px glass circles + a 48px gradient-fill
+                        heart; now 56px flat circles + a 64px primary. */}
                     <IconButton
-                      icon={<X className="w-5 h-5 text-ink/60" />}
+                      icon={<X className="w-5 h-5" />}
                       label="Pass"
+                      variant="dark"
                       onClick={() => { hapticTap(); scrollToNext(i) }}
                       className="shrink-0"
                     />
                     <IconButton
-                      icon={<Gift className="w-5 h-5 text-ink/60" />}
+                      icon={<Gift className="w-5 h-5" />}
                       label="Send Gift"
+                      variant="lavender"
                       onClick={() => { hapticTap(); openGiftPicker(p.id) }}
                       className="shrink-0"
                     />
@@ -597,13 +635,12 @@ export default function DiscoverPage() {
                       onClick={() => { hapticDecision(); setConfirmProfileId(p.id) }}
                       disabled={likingId === p.id}
                       aria-label="Meet Her Standard"
-                      className="size-12 rounded-full flex items-center justify-center active:scale-[0.98] transition-all duration-300 ease-out disabled:opacity-50 shrink-0"
-                      style={{ background: 'linear-gradient(135deg, #E879F9 0%, #C026D3 45%, #86198F 100%)', boxShadow: '0 4px 20px -4px rgba(192, 38, 211, 0.45)' }}
+                      className="w-16 h-16 rounded-full flex items-center justify-center active:scale-[0.98] transition-all duration-300 ease-out disabled:opacity-50 shrink-0 bg-[#FC4363]"
                     >
                       {likingId === p.id ? (
-                        <Loader2 className="w-5 h-5 animate-spin text-white" />
+                        <Loader2 className="w-6 h-6 animate-spin text-white" />
                       ) : (
-                        <Heart className="w-6 h-6 text-white" fill="white" />
+                        <Heart className="w-7 h-7 text-white" fill="white" />
                       )}
                     </button>
                   </>
@@ -639,7 +676,7 @@ export default function DiscoverPage() {
 
       {confirmProfileId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
-          <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
+          <div className="w-full max-w-sm bg-overlay rounded-card shadow-2xl p-8 text-center">
             <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <Coins className="w-6 h-6 text-gold" />
             </div>
@@ -674,7 +711,7 @@ export default function DiscoverPage() {
 
       {photoUnlockConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
-          <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
+          <div className="w-full max-w-sm bg-overlay rounded-card shadow-2xl p-8 text-center">
             <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <Lock className="w-6 h-6 text-gold" />
             </div>
@@ -708,7 +745,7 @@ export default function DiscoverPage() {
 
       {giftPickerProfileId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
-          <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
+          <div className="w-full max-w-sm bg-overlay rounded-card shadow-2xl p-8 text-center">
             <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <Gift className="w-6 h-6 text-gold" />
             </div>
@@ -781,7 +818,7 @@ export default function DiscoverPage() {
 
       {nudgeConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
-          <div className="w-full max-w-sm bg-[#000000] rounded-2xl shadow-2xl p-8 text-center">
+          <div className="w-full max-w-sm bg-overlay rounded-card shadow-2xl p-8 text-center">
             <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <Coins className="w-6 h-6 text-gold" />
             </div>

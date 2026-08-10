@@ -24,8 +24,8 @@ const screens = [
 ];
 
 for (const { path, name } of screens) {
-  await page.goto(`http://localhost:3000${path}`);
-  await page.waitForTimeout(1500);
+  await page.goto(`http://localhost:3000${path}`, { waitUntil: 'networkidle' });
+  await page.waitForTimeout(2500);
   await page.screenshot({ path: `${OUT_DIR}/${name}.png` });
   console.log(`Captured ${name}`);
 }
