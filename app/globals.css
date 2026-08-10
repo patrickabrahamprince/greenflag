@@ -10,10 +10,13 @@
    regardless of how wide the viewport is or where a page's own content
    column ends. Obsidian Velvet is one continuous flat black environment
    -- no radial glow, depth comes from the elevation ramp (well/base/
-   raised/card/overlay), not from a gradient painted over the
-   background. */
+   raised/card/overlay). A wine (#45050C) glow now blooms from the
+   bottom edge on top of that flat fill -- see --wine-glow-bottom. */
 html, body {
-  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: var(--wine-glow-bottom) !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
 }
 /* Without this, iOS Safari's rubber-band bounce at the top/bottom of a
    normal document-scroll page visually drags `position: fixed` elements
@@ -44,6 +47,12 @@ body::-webkit-scrollbar,
 
 :root {
   --kb-inset: 0px;
+  /* Wine (#45050C) glow, anchored to the bottom edge of whatever box it's
+     painted on. Sized in percentages of that box's own padding area, so
+     the same variable blooms full-viewport-wide on a screen root and
+     scales down naturally on a small modal/sheet -- no separate variant
+     needed per surface size. */
+  --wine-glow-bottom: radial-gradient(ellipse 140% 45% at 50% 100%, rgba(69, 5, 12, 0.55) 0%, rgba(69, 5, 12, 0.22) 35%, transparent 70%);
 }
 
 /* Set by components/keyboard-inset-listener.tsx from the native
@@ -258,14 +267,21 @@ body.min-h-dvh::after {
 
   .page-container {
     @apply min-h-dvh max-w-app mx-auto px-8 pt-safe-top pb-24 bg-base;
+    background-image: var(--wine-glow-bottom);
   }
 
-  /* Shared backdrop for full-screen views: Dateasy's design system is one
-     continuous flat dark-purple environment -- no radial glow. Depth
-     comes from the elevation ramp (well/base/raised/card/overlay), not
-     from a gradient painted over the background. */
+  /* Shared backdrop for full-screen views -- flat black base fill plus
+     the wine glow blooming up from the bottom edge (--wine-glow-bottom). */
   .screen-gradient {
     @apply bg-base;
+    background-image: var(--wine-glow-bottom);
+  }
+
+  /* Every direct `bg-base` usage (onboarding screens, error/loading
+     states, modal/sheet cards) gets the same bottom glow automatically --
+     one definition instead of touching each call site individually. */
+  .bg-base {
+    background-image: var(--wine-glow-bottom);
   }
 
   .page-header {
