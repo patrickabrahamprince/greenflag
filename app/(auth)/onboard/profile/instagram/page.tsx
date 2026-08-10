@@ -45,7 +45,7 @@ export default function ProfileInstagramPage() {
   };
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-base">
       <OnboardingBackground image="/onboarding/instagram.jpg" />
       <button
         onClick={() => router.push('/onboard/profile/location')}
@@ -76,7 +76,7 @@ export default function ProfileInstagramPage() {
             className={`input pl-8 ${error ? 'border-red-500' : ''}`}
           />
         </div>
-        <p className="text-[#9DA0A6] text-xs mt-1">
+        <p className="text-ink/50 text-xs mt-1">
           This will be sent with your profile for identity approval.
         </p>
         {error && <p className="text-red-500 text-xs mt-1">{error}</p>}

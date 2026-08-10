@@ -162,12 +162,12 @@ export default function HowItWorksPage() {
   }
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-base">
       <OnboardingBackground image="/onboarding/how-it-works.jpg" />
       <div className="max-w-md mx-auto w-full flex-1 flex flex-col justify-center pb-safe-bottom">
         <div className="text-center mb-8">
           <h1 className="font-display text-2xl font-semibold text-ink mb-2">How Greenflag Works</h1>
-          <p className="text-[#9DA0A6] text-sm">Three days. One real connection.</p>
+          <p className="text-ink/50 text-sm">Three days. One real connection.</p>
         </div>
 
         {/* Swipeable carousel (matches the House Rules screen) instead of
@@ -189,7 +189,7 @@ export default function HowItWorksPage() {
                   {point.icon}
                 </div>
                 <h3 className="text-ink font-display text-xl mb-2">{point.title}</h3>
-                <p className="text-[#9DA0A6] text-sm leading-relaxed font-light">{point.desc}</p>
+                <p className="text-ink/50 text-sm leading-relaxed font-light">{point.desc}</p>
               </div>
             </div>
           ))}
@@ -202,7 +202,7 @@ export default function HowItWorksPage() {
               onClick={() => { hapticTap(); scrollToStep(i); }}
               aria-label={`Go to point ${i + 1}`}
               className={`rounded-full transition-all duration-300 ${
-                i === step ? 'w-6 h-1.5 bg-gold' : 'w-1.5 h-1.5 bg-[#3C3C3E]'
+                i === step ? 'w-6 h-1.5 bg-gold' : 'w-1.5 h-1.5 bg-raised'
               }`}
             />
           ))}

@@ -65,7 +65,7 @@ export default function RejectedApplicationPage() {
   }
 
   return (
-    <div className="w-full animate-fade-in min-h-dvh flex flex-col justify-center items-center px-8 text-center bg-[#000000]">
+    <div className="w-full animate-fade-in min-h-dvh flex flex-col justify-center items-center px-8 text-center bg-base">
       <div className="absolute top-safe-top right-4">
         <button
           onClick={handleSignOut}
@@ -86,7 +86,7 @@ export default function RejectedApplicationPage() {
       </h1>
 
       {reason && (
-        <div className="bg-[#1C1C1E] border border-[#2A2A2A] rounded-2xl p-4 max-w-sm mb-6 text-left">
+        <div className="bg-well border border-raised rounded-2xl p-4 max-w-sm mb-6 text-left">
           <p className="text-ink/40 text-xs uppercase tracking-wide mb-1">Feedback</p>
           <p className="text-ink/80 text-sm leading-relaxed">{reason}</p>
         </div>

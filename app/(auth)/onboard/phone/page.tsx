@@ -146,13 +146,13 @@ export default function PhonePage() {
   if (skipping) {
     return (
       <div className="w-full animate-fade-in min-h-dvh flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-[#9DA0A6]" />
+        <Loader2 className="w-6 h-6 animate-spin text-ink/50" />
       </div>
     );
   }
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-[#000000]">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-4 pt-safe-top bg-base">
       <OnboardingBackground image="/onboarding/phone.jpg" />
       <button
         onClick={() => router.push('/onboard/name')}
@@ -165,7 +165,7 @@ export default function PhonePage() {
         <h1 className="text-2xl font-display font-semibold text-ink mb-2">
           {otpSent ? "Verify Your Number" : "Your Number"}
         </h1>
-        <p className="text-[#9DA0A6] text-sm mb-8">
+        <p className="text-ink/50 text-sm mb-8">
           {otpSent
             ? `A code was sent to ${phone}`
             : "We'll send a discreet verification code"}
@@ -185,7 +185,7 @@ export default function PhonePage() {
         ) : (
           <div className="space-y-4">
             <div>
-              <label className="block text-xs text-[#9DA0A6] font-thin mb-1.5 tracking-wide">
+              <label className="block text-xs text-ink/50 font-thin mb-1.5 tracking-wide">
                 Verification Code
               </label>
               <input
@@ -224,7 +224,7 @@ export default function PhonePage() {
         <button
           onClick={handleSkip}
           disabled={skipping}
-          className="mt-6 w-full text-sm text-[#9DA0A6] underline underline-offset-4 decoration-ink/20 hover:text-ink hover:decoration-ink/40 transition-colors disabled:opacity-50"
+          className="mt-6 w-full text-sm text-ink/50 underline underline-offset-4 decoration-ink/20 hover:text-ink hover:decoration-ink/40 transition-colors disabled:opacity-50"
         >
           Maybe Later
         </button>
@@ -236,9 +236,9 @@ export default function PhonePage() {
         )}
 
         <div className="flex items-center gap-3 my-6">
-          <div className="flex-1 h-px bg-[#2A2A2A]" />
-          <span className="text-[#9DA0A6] text-xs">or</span>
-          <div className="flex-1 h-px bg-[#2A2A2A]" />
+          <div className="flex-1 h-px bg-raised" />
+          <span className="text-ink/50 text-xs">or</span>
+          <div className="flex-1 h-px bg-raised" />
         </div>
 
         <div className="space-y-3">

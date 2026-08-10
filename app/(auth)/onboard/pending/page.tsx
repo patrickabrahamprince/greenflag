@@ -37,7 +37,7 @@ export default function PendingApprovalPage() {
   }, [arrived, router]);
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center items-center px-8 text-center bg-[#000000]">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center items-center px-8 text-center bg-base">
       <OnboardingBackground image="/onboarding/pending.jpg" />
 
       {!arrived ? (
@@ -54,7 +54,7 @@ export default function PendingApprovalPage() {
         </>
       ) : (
         <div className="animate-fade-in">
-          <div className="w-20 h-20 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_-8px_rgba(192,38,211,0.6)]">
+          <div className="w-20 h-20 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_-8px_rgba(215,255,129,0.6)]">
             <Sparkles className="w-9 h-9 text-gold" />
           </div>
 
