@@ -42,9 +42,9 @@ export function MessageList({ messages, userId, bottomRef }: MessageListProps) {
       {groupedMessages.map((group) => (
         <div key={group.date}>
           <div className="flex items-center gap-3 py-3">
-            <div className="flex-1 h-px" style={{ background: 'rgba(212,175,55,0.15)' }} />
+            <div className="flex-1 h-px" style={{ background: 'rgba(188,150,255,0.2)' }} />
             <span className="text-[10px] text-muted/60 uppercase tracking-widest-xl font-thin">{group.date}</span>
-            <div className="flex-1 h-px" style={{ background: 'rgba(212,175,55,0.15)' }} />
+            <div className="flex-1 h-px" style={{ background: 'rgba(188,150,255,0.2)' }} />
           </div>
           {group.messages.map((message) => (
             <MessageBubble key={message.id} message={message} isOwn={message.sender_id === userId} />

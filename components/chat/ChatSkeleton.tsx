@@ -7,8 +7,8 @@ export function ChatSkeleton() {
             <div
               className={`h-10 rounded-2xl animate-pulse ${
                 i % 2 === 0
-                  ? 'w-2/3 bg-[#1C1C1E] rounded-bl-sm'
-                  : 'w-1/2 bg-gold/10 rounded-br-sm'
+                  ? 'w-2/3 bg-card rounded-bl-md'
+                  : 'w-1/2 bg-gold/20 rounded-br-md'
               }`}
             />
           </div>

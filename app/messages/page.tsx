@@ -35,10 +35,10 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
   return (
     <button
       onClick={() => { hapticTap(); router.push(`/messages/${conv.id}`); }}
-      className="w-full flex items-center gap-3 px-6 py-4 text-left transition-colors border-b border-[#2A2A2A]"
+      className="w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors bg-card rounded-card"
     >
       <div
-        className="w-12 h-12 rounded-full flex-shrink-0 overflow-hidden flex items-center justify-center bg-[#1C1C1E]"
+        className="w-12 h-12 rounded-full flex-shrink-0 overflow-hidden flex items-center justify-center bg-well"
       >
         {partnerPhoto ? (
           <img
@@ -59,13 +59,13 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
             {conv.partner?.name}
           </span>
           {conv.last_message && (
-            <span className="text-[10px] flex-shrink-0 ml-2" style={{ color: '#9DA0A6' }}>
+            <span className="text-caption text-ink/50 flex-shrink-0 ml-2">
               {conv.last_message.created_at ? new Date(conv.last_message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
             </span>
           )}
         </div>
         {conv.last_message && (
-          <p className="text-xs truncate font-thin" style={{ color: '#9DA0A6' }}>
+          <p className="text-label text-ink/50 truncate">
             {conv.last_message.content}
           </p>
         )}
@@ -146,8 +146,8 @@ function InProgressMatches({ userId, supabase }: { userId: string; supabase: Ret
       <p className="text-xs uppercase tracking-wide text-ink/40 mb-3">Waiting on your Standard</p>
       <div className="space-y-2">
         {partners.map((p) => (
-          <div key={p.matchUserId} className="flex items-center gap-3 p-3 bg-[#111111] rounded-2xl">
-            <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-[#1C1C1E]">
+          <div key={p.matchUserId} className="flex items-center gap-3 p-3 bg-card rounded-card">
+            <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-well">
               {p.photo ? (
                 <img src={p.photo} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
               ) : (
@@ -269,7 +269,7 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="w-5 h-5 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: '#C026D3', borderTopColor: 'transparent' }} />
+        <div className="w-5 h-5 rounded-full border-2 border-gold border-t-transparent animate-spin" />
       </div>
     );
   }
@@ -313,9 +313,13 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
       >
         <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
       </div>
-      {conversations.map((conv) => (
-        <ChatListItem key={conv.id} conv={conv} />
-      ))}
+      {/* Separated card rows with a real gap between them, per the design
+          system -- was a flush list divided by hairline borders. */}
+      <div className="px-4 space-y-3">
+        {conversations.map((conv) => (
+          <ChatListItem key={conv.id} conv={conv} />
+        ))}
+      </div>
     </div>
   );
 }
@@ -344,6 +348,11 @@ export default function MessagesListPage() {
   return (
     <div className="h-[calc(100dvh-5rem)] flex flex-col screen-gradient">
       <div className="max-w-app mx-auto w-full flex-1 flex flex-col pt-safe-top">
+        {/* This screen had no visible title at all before -- the deck's
+            "Chat" header is a real, additive fix, not just decoration.
+            The deck also shows a round search button here; skipped since
+            there's no chat-search feature in this app to wire it to. */}
+        <h1 className="font-display text-title text-ink px-6 pb-2">Chat</h1>
         <ChatList userId={user.id} supabase={supabase} persona={user.persona} />
       </div>
     </div>
