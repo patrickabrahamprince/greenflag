@@ -21,11 +21,15 @@ interface OnboardingBackgroundProps {
 // mount regardless of whether the image data has actually arrived yet,
 // so there's no state for a missed event to get stuck in.
 export function OnboardingBackground({ image, light }: OnboardingBackgroundProps) {
-  // Fades to base black (#000000) -- the design system's photo screens
-  // use a plain dark scrim with no colored glow.
-  const scrim = light
+  // The wine glow (--wine-glow-bottom, see globals.css) lives on this
+  // scrim div rather than the wrapper's own bg-base -- the full-bleed
+  // <img> below sits on top of the wrapper and would otherwise hide the
+  // glow completely. Listed first so it paints above the black gradient
+  // and actually reads as a warm tint bleeding through the darkened photo.
+  const darkGradient = light
     ? 'linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.65) 55%, rgba(0,0,0,0.92) 100%)'
     : 'linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.8) 55%, rgba(0,0,0,0.97) 100%)';
+  const scrim = `var(--wine-glow-bottom), ${darkGradient}`;
 
   return (
     <div className="absolute inset-0 -z-10 overflow-hidden bg-base">
