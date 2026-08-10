@@ -30,7 +30,7 @@ export function MessageInput({ input, onInputChange, onSend, sending }: MessageI
           aria-label="Send"
           className="w-10 h-10 rounded-full bg-gold flex items-center justify-center shrink-0 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 transition-all"
         >
-          {sending ? <Loader2 className="w-4 h-4 animate-spin text-ink-dark" /> : <Send className="w-4 h-4 text-ink-dark" />}
+          {sending ? <Loader2 className="w-4 h-4 animate-spin text-ink" /> : <Send className="w-4 h-4 text-ink" />}
         </button>
       </div>
     </div>

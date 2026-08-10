@@ -59,7 +59,7 @@ export function DiscoverCard({ profile, onSwipe }: DiscoverCardProps) {
         )}
         <button
           onClick={handleView}
-          className="w-full h-12 rounded-xl bg-gold text-black text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
+          className="w-full h-12 rounded-xl bg-gold text-ink text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
         >
           View Standard
           <ArrowRight className="w-4 h-4" />

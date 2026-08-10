@@ -130,7 +130,7 @@ export default function ProfileLocationPage() {
         {gpsDenied && (
           <p className="text-amber-400 text-xs mt-2">
             We couldn&apos;t detect your city — please enter it manually, or{' '}
-            <button type="button" onClick={detectLocation} className="underline underline-offset-2 hover:text-amber-300">
+            <button type="button" onClick={detectLocation} className="underline underline-offset-2 hover:text-amber-300 transition-colors duration-200">
               try again
             </button>.
           </p>

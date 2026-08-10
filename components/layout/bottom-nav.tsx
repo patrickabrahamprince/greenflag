@@ -89,15 +89,18 @@ export function BottomNav() {
             >
               <span className="sr-only">{tab.name}</span>
               <div className="relative">
-                {/* Pill is a light Lavender fill, so "active" reads by
-                    going dark (indigo disc), not lighter. */}
+                {/* Pill is a dark (#1A1A1A) fill -- "active" reads via a
+                    pure-black disc (one shade darker still) plus the
+                    crimson icon and larger size; inactive icons are
+                    white at reduced opacity, since ink-dark (black)
+                    would be invisible against this dark a pill. */}
                 <div
                   className={cn(
                     'flex items-center justify-center rounded-full transition-all duration-200',
                     active ? 'w-9 h-9 bg-indigo' : 'w-8 h-8'
                   )}
                 >
-                  <tab.icon className={cn('transition-all duration-200', active ? 'text-gold w-4 h-4' : 'text-ink-dark/50 w-4 h-4')} strokeWidth={active ? 2.5 : 1.5} />
+                  <tab.icon className={cn('transition-all duration-200', active ? 'text-gold w-4 h-4' : 'text-ink/40 w-4 h-4')} strokeWidth={active ? 2.5 : 1.5} />
                 </div>
                 {isNotifications && unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 bg-[#D2042D] rounded-full flex items-center justify-center">

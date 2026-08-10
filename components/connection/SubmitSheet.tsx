@@ -459,7 +459,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
             <Icon className="w-5 h-5 text-gold" />
             <h3 className="font-display text-ink">{mode === 'special' ? 'Something Special' : `Day ${dayNumber}`}</h3>
           </div>
-          <button onClick={onClose} className="p-1 text-ink/50 hover:text-ink">
+          <button onClick={onClose} className="p-1 text-ink/50 hover:text-ink transition-colors duration-200">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -524,7 +524,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
                 <div className="flex items-center gap-3 w-full max-w-xs">
                   <button
                     onClick={() => { setError(null); togglePlay(); }}
-                    className="w-11 h-11 rounded-full flex items-center justify-center text-ink-dark active:scale-95 transition-all shrink-0"
+                    className="w-11 h-11 rounded-full flex items-center justify-center text-ink active:scale-95 transition-all shrink-0"
                     style={{ background: '#D2042D' }}
                     aria-label={isPlaying ? 'Pause' : 'Play'}
                   >
@@ -571,7 +571,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
                     setIsPlaying(false);
                     setError(null);
                   }}
-                  className="text-xs text-ink/50 underline hover:text-ink mt-1"
+                  className="text-xs text-ink/50 underline hover:text-ink transition-colors duration-200 mt-1"
                 >
                   Re-record
                 </button>

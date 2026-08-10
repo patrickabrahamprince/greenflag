@@ -141,8 +141,8 @@ body.min-h-dvh::after {
     background: #E8324F;
   }
 
-  /* Secondary: rose-tint fill, dark text, pill -- rose-tint is a light
-     fill, same contrast direction Dateasy's lavender had. */
+  /* Secondary: white fill, dark text, pill -- rose-tint is now pure
+     white, but stays a light fill needing dark text either way. */
   .btn-secondary {
     @apply relative text-ink-dark font-display font-bold rounded-pill px-8
            min-h-[52px] flex items-center justify-center
@@ -150,14 +150,14 @@ body.min-h-dvh::after {
            transition-all duration-200 ease-out
            active:scale-[0.98]
            disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
-    background: #F0BCC5;
+    background: #FFFFFF;
   }
 
   .btn-secondary:hover {
-    background: #F5CDD4;
+    background: #F0F0F0;
   }
 
-  /* Tertiary: transparent, 1px rose-tint border, white text, pill. */
+  /* Tertiary: transparent, 1px white border, white text, pill. */
   .btn-ghost {
     @apply text-ink font-display font-medium rounded-pill px-6
            min-h-[44px] flex items-center justify-center
@@ -165,11 +165,11 @@ body.min-h-dvh::after {
            transition-all duration-200 ease-out
            active:scale-[0.98]
            disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
-    border-color: #F0BCC5;
+    border-color: #FFFFFF;
   }
 
   .btn-ghost:hover {
-    background: rgba(240, 188, 197, 0.1);
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .btn-danger {
@@ -237,7 +237,7 @@ body.min-h-dvh::after {
   }
 
   .text-gradient {
-    background: linear-gradient(135deg, #D2042D 0%, #F0BCC5 60%, #45050C 100%);
+    background: linear-gradient(135deg, #D2042D 0%, #FFFFFF 60%, #45050C 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -294,9 +294,12 @@ body.min-h-dvh::after {
     background: #2A1519;
   }
 
-  /* Floating rose-tint pill -- flat fill, no glassmorphism/blur. */
+  /* Floating dark pill, flat fill, no glassmorphism/blur. Deliberately
+     #1A1A1A rather than the card/base token (both pure black now) --
+     the nav needs to read as a distinct floating layer against a
+     background it would otherwise be identical to. */
   .nav-glass {
-    background: #F0BCC5;
+    background: #1A1A1A;
   }
 
   .glass-surface {

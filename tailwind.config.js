@@ -12,18 +12,27 @@ module.exports = {
         // Palette
         crimson: '#D2042D',
         wine: '#45050C',
-        'rose-tint': '#F0BCC5',
+        // Was a soft blush pink (#F0BCC5) -- now pure white. Still a
+        // light fill, so the contrast direction (dark text on top) is
+        // unchanged; only the hue moved.
+        'rose-tint': '#FFFFFF',
         // Elevation ramp: black environment, depth is a step up this ramp
-        // -- never a shadow, never a gradient.
+        // -- never a shadow, never a gradient. `card` and `base` are now
+        // the same value (both pure black) -- cards read as part of the
+        // same black field instead of a lighter surface. The bottom nav
+        // is the one deliberate exception (#1A1A1A, hardcoded on
+        // .nav-glass in globals.css, not this token) so it still reads as
+        // a distinct floating layer against a now-identical card/base.
         well: '#0F0A0A',
         base: '#000000',
         raised: '#2A1519',
-        card: '#1A1A1A',
+        card: '#000000',
         overlay: '#241014',
         // Crimson is dark/saturated -- fills using it need WHITE text
-        // (use text-ink, already white). rose-tint is a light fill and
-        // needs dark text -- that's what ink-dark is for.
-        'ink-dark': '#1A1A1A',
+        // (use text-ink, already white). rose-tint (now white) is a
+        // light fill and needs dark text -- that's what ink-dark is for,
+        // now pure black to match.
+        'ink-dark': '#000000',
 
         // --- Legacy token names, repointed to the new palette ---
         // Kept so existing call sites across the app (bg-cream, text-ink,
@@ -44,7 +53,7 @@ module.exports = {
         'gold-dark': '#45050C', // was Electric Violet -> now Wine
         blush: '#D2042D',       // was Pinkish Red -> unified with Crimson (one red family)
         violet: '#45050C',      // was Electric Violet -> now Wine
-        surface: '#1A1A1A',     // now card
+        surface: '#000000',     // now card (black)
         'surface-light': '#2A1519', // now raised
         border: '#2A1519',      // now raised
         muted: '#FFFFFF99',     // unchanged -- 60% white

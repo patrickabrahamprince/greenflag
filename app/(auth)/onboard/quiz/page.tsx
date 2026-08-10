@@ -326,7 +326,7 @@ export default function QuizPage() {
           className="btn-primary w-full py-3.5 mt-8 font-semibold text-sm active:scale-95 transition-transform flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:scale-100"
         >
           {saving ? (
-            <Loader2 className="w-4 h-4 animate-spin text-ink-dark" />
+            <Loader2 className="w-4 h-4 animate-spin text-ink" />
           ) : currentIdx === QUIZ_QUESTIONS.length - 1 ? (
             <>
               Complete <CheckCircle2 size={16} />

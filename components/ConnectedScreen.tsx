@@ -17,7 +17,7 @@ export function ConnectedScreen({ womanPhoto, womanName, connectionId }: Connect
     // Locked palette confetti (Mindaro/Lavender/Electric Violet/white),
     // was a much brighter magenta/purple pair outside the design system
     // entirely.
-    confetti({ particleCount: 150, spread: 80, colors: ['#D2042D', '#F0BCC5', '#45050C', '#fff'] });
+    confetti({ particleCount: 150, spread: 80, colors: ['#D2042D', '#45050C', '#fff'] });
   }, []);
 
   return (
