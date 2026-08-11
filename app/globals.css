@@ -158,17 +158,19 @@ body.min-h-dvh::after {
   /* Secondary: white fill, dark text, pill -- rose-tint is now pure
      white, but stays a light fill needing dark text either way. */
   .btn-secondary {
-    @apply relative text-ink-dark font-display font-bold rounded-pill px-8
-           min-h-[52px] flex items-center justify-center
-           text-label
+    @apply relative text-gray-900 font-medium rounded-lg px-4 py-2.5
+           flex items-center justify-center gap-2
+           text-sm
            transition-all duration-200 ease-out
-           active:scale-[0.98]
+           active:scale-[0.95]
            disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
-    background: #FFFFFF;
+    background: #F5F5F5;
+    border: 1px solid #E5E5E5;
   }
 
   .btn-secondary:hover {
-    background: #F0F0F0;
+    background: #EFEFEF;
+    border-color: #D9D9D9;
   }
 
   /* Tertiary: transparent, 1px white border, white text, pill. */
@@ -187,22 +189,25 @@ body.min-h-dvh::after {
   }
 
   .btn-danger {
-    @apply bg-[#D2042D]/15 text-[#D2042D] border border-[#D2042D]/30 font-display font-medium rounded-pill px-8
-           min-h-[52px] flex items-center justify-center
-           text-label
+    @apply bg-red-500 text-white font-medium rounded-lg px-4 py-2.5
+           flex items-center justify-center gap-2
+           text-sm
            transition-all duration-200 ease-out
-           hover:bg-[#D2042D]/25 active:scale-[0.98];
+           hover:bg-red-600 active:scale-[0.95]
+           disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
-  /* Cards -- card-elevation fill, 24px radius, no border, no shadow. */
+  /* Cards -- Apple-style with subtle shadow and refined border */
   .card {
-    @apply bg-white border border-gray-200 rounded-card p-5
+    @apply bg-white border border-gray-200/60 rounded-2xl p-6
+           shadow-sm hover:shadow-md
            transition-all duration-300 ease-out;
   }
 
-  /* Confirm/report/block-style modal dialogs -- light background with subtle border */
+  /* Confirm/report/block-style modal dialogs -- Apple-style glassmorphism */
   .dialog-card {
-    @apply border border-gray-200 rounded-2xl p-8 bg-white
+    @apply border border-gray-200/60 rounded-2xl p-8 bg-white/95
+           shadow-lg backdrop-blur-sm
            transition-all duration-300 ease-out;
   }
 
@@ -219,11 +224,11 @@ body.min-h-dvh::after {
      field's own container styling only, which is safe as a single
      shared-class change. */
   .input {
-    @apply w-full rounded-tile px-4 py-3
-           text-gray-900 placeholder:text-gray-400 bg-white
-           border-2 border-gray-300
+    @apply w-full rounded-xl px-4 py-2.5
+           text-gray-900 placeholder:text-gray-400 bg-gray-50
+           border border-gray-200
            transition-all duration-200 ease-out
-           focus:outline-none focus:border-blue-500;
+           focus:outline-none focus:bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-200;
   }
 
   /* Chrome/Safari force a yellow background on autofilled inputs unless

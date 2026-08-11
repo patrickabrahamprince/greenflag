@@ -109,7 +109,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div>
+    <div className="font-apple">
       <div className="min-h-dvh bg-white text-gray-900">
         <div className="flex h-dvh">
           {/* Desktop Sidebar */}

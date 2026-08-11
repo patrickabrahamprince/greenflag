@@ -47,14 +47,14 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-dvh bg-white flex items-center justify-center px-4">
+    <div className="min-h-dvh bg-gradient-to-br from-white via-gray-50 to-white flex items-center justify-center px-4 font-apple">
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-semibold text-gray-900">Admin</h1>
-          <p className="text-sm text-gray-500 mt-1">GreenFlag Control Panel</p>
+        <div className="text-center mb-10">
+          <h1 className="text-3xl font-semibold text-gray-900">Admin</h1>
+          <p className="text-sm text-gray-500 mt-2">GreenFlag Control Panel</p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-3">
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3">
               <p className="text-sm text-red-600">{error}</p>
@@ -92,7 +92,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 px-4 rounded-lg bg-blue-500 hover:bg-blue-600 disabled:opacity-50 font-medium transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 rounded-lg bg-blue-500 hover:bg-blue-600 disabled:opacity-50 font-medium transition-colors flex items-center justify-center gap-2 text-white shadow-sm hover:shadow-md"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
             {loading ? 'Signing in...' : 'Sign In'}

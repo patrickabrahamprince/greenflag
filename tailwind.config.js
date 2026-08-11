@@ -75,10 +75,9 @@ module.exports = {
         indigo: '#000000',
       },
       fontFamily: {
-        // Cabinet Grotesk, per the Dateasy design system. These three keys
-        // stay separate only because dozens of existing files already use
-        // font-sans/font-display/font-serif classes; repointing all three
-        // here changes the whole app without touching each file.
+        // Apple SF Pro for admin panel
+        apple: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', 'Segoe UI', 'system-ui', 'sans-serif'],
+        // Cabinet Grotesk, per the Dateasy design system
         display: ['var(--font-cabinet-grotesk)', 'system-ui', 'sans-serif'],
         sans: ['var(--font-cabinet-grotesk)', 'system-ui', 'sans-serif'],
         serif: ['var(--font-cabinet-grotesk)', 'system-ui', 'sans-serif'],
