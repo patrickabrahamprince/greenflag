@@ -65,13 +65,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     const checkAuth = async () => {
       try {
+        console.log('Admin layout verifying session for:', pathname);
         const res = await fetch('/api/admin/verify', { credentials: 'include' });
+        console.log('Admin verify response:', { status: res.status, ok: res.ok });
         if (!res.ok) {
+          console.log('Admin session invalid, redirecting to login');
           router.replace('/admin/login');
           return;
         }
         setChecking(false);
-      } catch {
+      } catch (err) {
+        console.error('Admin auth check error:', err);
         router.replace('/admin/login');
       }
     };

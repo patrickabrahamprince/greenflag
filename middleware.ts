@@ -41,7 +41,13 @@ export async function middleware(req: NextRequest) {
   // This completely bypasses Supabase auth for admin routes
   if (pathname.startsWith('/admin')) {
     const adminSession = req.cookies.get('admin_session')?.value;
-    console.log('MIDDLEWARE ADMIN CHECK:', { pathname, hasAdminSession: !!adminSession });
+    const allCookies = req.cookies.getAll();
+    console.log('MIDDLEWARE ADMIN CHECK:', {
+      pathname,
+      hasAdminSession: !!adminSession,
+      cookieCount: allCookies.length,
+      adminSessionValue: adminSession ? adminSession.substring(0, 10) + '...' : 'NONE',
+    });
     if (!adminSession) {
       console.log('MIDDLEWARE: No admin session, redirecting to /admin/login');
       const destination = new URL('/admin/login', req.url);
