@@ -99,7 +99,7 @@ export default function AdminMatches() {
 
       <div className="flex flex-wrap gap-2 mb-4">
         <select
-          className="input max-w-[180px]"
+          className="input-light max-w-[180px]"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
         >

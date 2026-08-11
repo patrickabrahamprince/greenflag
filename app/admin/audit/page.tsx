@@ -52,12 +52,12 @@ export default function AdminAudit() {
       </div>
 
       <div className="flex flex-wrap gap-2 mb-4">
-        <select className="input max-w-[180px]" value={actionFilter} onChange={(e) => { setActionFilter(e.target.value); setPage(0); }}>
+        <select className="input-light max-w-[180px]" value={actionFilter} onChange={(e) => { setActionFilter(e.target.value); setPage(0); }}>
           {ACTION_FILTERS.map((f) => (
             <option key={f.value} value={f.value}>{f.label}</option>
           ))}
         </select>
-        <input className="input max-w-[200px]" placeholder="Filter by admin email..." value={adminFilter} onChange={(e) => { setAdminFilter(e.target.value); setPage(0); }} />
+        <input className="input-light max-w-[200px]" placeholder="Filter by admin email..." value={adminFilter} onChange={(e) => { setAdminFilter(e.target.value); setPage(0); }} />
       </div>
 
       {loading ? (

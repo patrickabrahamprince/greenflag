@@ -100,7 +100,7 @@ export default function AdminResetTool() {
         <div className="card space-y-4">
           <div>
             <label className="block text-sm text-gray-500 mb-2">Profile A</label>
-            <select className="input w-full" value={userIdA} onChange={(e) => { setUserIdA(e.target.value); setConfirming(false); }}>
+            <select className="input-light w-full" value={userIdA} onChange={(e) => { setUserIdA(e.target.value); setConfirming(false); }}>
               <option value="">Select a profile...</option>
               {profiles.map((p) => (
                 <option key={p.id} value={p.id} disabled={p.id === userIdB}>
@@ -112,7 +112,7 @@ export default function AdminResetTool() {
 
           <div>
             <label className="block text-sm text-gray-500 mb-2">Profile B</label>
-            <select className="input w-full" value={userIdB} onChange={(e) => { setUserIdB(e.target.value); setConfirming(false); }}>
+            <select className="input-light w-full" value={userIdB} onChange={(e) => { setUserIdB(e.target.value); setConfirming(false); }}>
               <option value="">Select a profile...</option>
               {profiles.map((p) => (
                 <option key={p.id} value={p.id} disabled={p.id === userIdA}>
@@ -191,7 +191,7 @@ export default function AdminResetTool() {
               Type <span className="text-gray-900 font-medium">{NUKE_CONFIRM_PHRASE}</span> to confirm
             </label>
             <input
-              className="input w-full mb-3"
+              className="input-light w-full mb-3"
               value={nukeConfirmText}
               onChange={(e) => setNukeConfirmText(e.target.value)}
               placeholder={NUKE_CONFIRM_PHRASE}
