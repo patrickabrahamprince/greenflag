@@ -40,10 +40,13 @@ export async function middleware(req: NextRequest) {
   // Admin routes: check for admin session cookie (separate from main app auth)
   if (pathname.startsWith('/admin')) {
     const adminSession = req.cookies.get('admin_session')?.value;
+    console.log('MIDDLEWARE ADMIN CHECK:', { pathname, hasAdminSession: !!adminSession });
     if (!adminSession) {
+      console.log('MIDDLEWARE: No admin session, redirecting to /admin/login');
       const destination = new URL('/admin/login', req.url);
       return NextResponse.redirect(destination);
     }
+    console.log('MIDDLEWARE: Admin session found, allowing access');
     return NextResponse.next();
   }
 
