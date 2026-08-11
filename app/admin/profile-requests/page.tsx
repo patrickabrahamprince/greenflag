@@ -49,7 +49,7 @@ export default function ProfileRequestsPage() {
     <div className="animate-fade-in">
       <div className="flex items-center gap-2 mb-6">
         <UserCog className="w-5 h-5 text-blue-600" />
-        <h1 className="text-xl font-display text-white">Profile Change Requests</h1>
+        <h1 className="text-xl font-display">Profile Change Requests</h1>
       </div>
 
       {loading ? (

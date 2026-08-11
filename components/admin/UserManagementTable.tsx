@@ -56,7 +56,7 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
                     ) : (
                       <span className="text-xs text-gray-500">{u.name?.[0]}</span>
                     )}
-                    <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-black ${personaColor(u.persona || u.gender).dot}`} />
+                    <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-gray-300 ${personaColor(u.persona || u.gender).dot}`} />
                   </div>
                   <div className="min-w-0">
                     <p className="text-gray-900 font-medium text-xs truncate">{u.name}</p>
