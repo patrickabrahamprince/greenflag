@@ -45,7 +45,7 @@ export function PhotoUploadSection({
                     onClick={(e) => { e.stopPropagation(); onRemove(i); }}
                     className="absolute top-1 right-1 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80 transition-colors"
                   >
-                    <X size={14} className="text-white" />
+                    <X size={14} className="text-ink" />
                   </button>
                 </>
               ) : (

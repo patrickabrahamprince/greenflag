@@ -89,8 +89,8 @@ export function CategorizedInterestPicker({
                         isSelected
                           ? 'bg-gold text-ink'
                           : locked
-                          ? 'bg-transparent border border-white/15 text-ink/30 cursor-not-allowed'
-                          : 'bg-transparent border border-white/40 text-ink hover:border-white/70'
+                          ? 'bg-transparent border border-raised text-ink/30 cursor-not-allowed'
+                          : 'bg-transparent border border-raised text-ink hover:border-raised'
                       )}
                     >
                       {item}
@@ -104,10 +104,10 @@ export function CategorizedInterestPicker({
                   onClick={() => toggleCategory(category)}
                   className="w-full flex items-center gap-3 mt-3 text-xs font-semibold text-ink/50 hover:text-ink/80 transition-colors"
                 >
-                  <span className="flex-1 h-px bg-white/10" />
+                  <span className="flex-1 h-px bg-raised/10" />
                   {isExpanded ? 'Show less' : 'Show more'}
                   {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                  <span className="flex-1 h-px bg-white/10" />
+                  <span className="flex-1 h-px bg-raised/10" />
                 </button>
               )}
             </div>

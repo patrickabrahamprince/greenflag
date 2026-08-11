@@ -22,7 +22,7 @@ const VARIANT_CLASSES: Record<IconButtonVariant, string> = {
   glass: 'glass-surface text-ink',
   dark: 'bg-well text-ink',
   lavender: 'bg-lavender text-ink',
-  accent: 'bg-[#D2042D] text-white',
+  accent: 'bg-[#D2042D] text-ink',
 };
 
 export function IconButton({ icon, label, variant = 'dark', className = '', type = 'button', ...rest }: IconButtonProps) {

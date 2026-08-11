@@ -49,7 +49,7 @@ function InterestPill({ label, matched }: { label: string; matched?: boolean }) 
     <span
       className={`px-4 py-2 rounded-full text-sm truncate transition-all ${
         matched
-          ? 'bg-gold/10 border border-gold text-white font-medium shadow-md shadow-gold/5'
+          ? 'bg-gold/10 border border-gold text-ink font-medium shadow-md shadow-gold/5'
           : 'bg-well border border-raised text-ink/80'
       }`}
     >

@@ -487,7 +487,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
                   className="absolute top-3 right-3 p-1 rounded-full"
                   style={{ background: 'rgba(0,0,0,0.6)' }}
                 >
-                  <X className="w-4 h-4 text-white" />
+                  <X className="w-4 h-4 text-ink" />
                 </button>
               </div>
             ) : (

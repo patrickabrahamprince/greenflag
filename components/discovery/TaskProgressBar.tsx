@@ -29,7 +29,7 @@ export function TaskProgressBar({
                 ? 'bg-gold'
                 : isSubmitted
                   ? 'bg-gold/30'
-                  : 'bg-white/10'
+                  : 'bg-raised/10'
             )}
           />
         ))}

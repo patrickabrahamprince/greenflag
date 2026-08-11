@@ -28,7 +28,7 @@ export function HelpTooltip({ title, content, children }: {
             className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 bg-gray-900 text-white rounded-lg shadow-lg p-3 max-w-xs w-64">
+          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 bg-gray-900 text-ink rounded-lg shadow-lg p-3 max-w-xs w-64">
             <div className="flex items-start justify-between gap-2 mb-1">
               <h3 className="font-semibold text-sm">{title}</h3>
               <button

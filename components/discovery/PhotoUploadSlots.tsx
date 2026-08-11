@@ -86,14 +86,14 @@ export function PhotoUploadSlots({
             )}
             {photo && (
               <div className="absolute bottom-2 left-2 opacity-60 hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing">
-                <GripVertical size={16} className="text-white" />
+                <GripVertical size={16} className="text-ink" />
               </div>
             )}
             <button
               onClick={(e) => { e.stopPropagation(); onRemove(i); }}
               className="absolute top-1.5 right-1.5 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80 active:scale-90 transition-all"
             >
-              <X size={12} className="text-white" />
+              <X size={12} className="text-ink" />
             </button>
           </>
         ) : (

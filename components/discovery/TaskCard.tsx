@@ -93,7 +93,7 @@ export function TaskCard({
                     onClick={onImageRemove}
                     className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center"
                   >
-                    <X className="w-4 h-4 text-white" />
+                    <X className="w-4 h-4 text-ink" />
                   </button>
                 </div>
               ) : (

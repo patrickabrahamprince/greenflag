@@ -66,13 +66,13 @@ export function ProfileImageCarousel({ images, disableLightbox = false }: Profil
                 onClick={e => { e.stopPropagation(); setMainIdx(prev => (prev - 1 + total) % total) }}
                 className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center"
               >
-                <ChevronLeft className="w-5 h-5 text-white" />
+                <ChevronLeft className="w-5 h-5 text-ink" />
               </button>
               <button
                 onClick={e => { e.stopPropagation(); setMainIdx(prev => (prev + 1) % total) }}
                 className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center"
               >
-                <ChevronRight className="w-5 h-5 text-white" />
+                <ChevronRight className="w-5 h-5 text-ink" />
               </button>
             </>
           )}
@@ -91,7 +91,7 @@ export function ProfileImageCarousel({ images, disableLightbox = false }: Profil
                 key={i}
                 onClick={() => setMainIdx(i)}
                 className={`h-0.5 rounded-none transition-all ${
-                  i === mainIdx ? 'bg-gold w-6' : 'bg-white/40 w-3'
+                  i === mainIdx ? 'bg-gold w-6' : 'bg-ink/20 w-3'
                 }`}
               />
             ))}
@@ -108,7 +108,7 @@ export function ProfileImageCarousel({ images, disableLightbox = false }: Profil
             onClick={() => setLightboxOpen(false)}
             className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/40 flex items-center justify-center"
           >
-            <X className="w-6 h-6 text-white" />
+            <X className="w-6 h-6 text-ink" />
           </button>
           {total > 1 && (
             <>
@@ -116,13 +116,13 @@ export function ProfileImageCarousel({ images, disableLightbox = false }: Profil
                 onClick={e => { e.stopPropagation(); setLightboxIdx(prev => (prev - 1 + total) % total) }}
                 className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/40 flex items-center justify-center"
               >
-                <ChevronLeft className="w-6 h-6 text-white" />
+                <ChevronLeft className="w-6 h-6 text-ink" />
               </button>
               <button
                 onClick={e => { e.stopPropagation(); setLightboxIdx(prev => (prev + 1) % total) }}
                 className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/40 flex items-center justify-center"
               >
-                <ChevronRight className="w-6 h-6 text-white" />
+                <ChevronRight className="w-6 h-6 text-ink" />
               </button>
             </>
           )}

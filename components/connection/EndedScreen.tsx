@@ -40,8 +40,8 @@ export function EndedScreen({
       <p className="text-ink/60 text-sm font-light max-w-xs mb-4">{message}</p>
 
       {reason === 'rejected' && rejectionReason && (
-        <div className="w-full max-w-xs rounded-2xl border border-white/10 bg-white/[0.03] p-4 mb-6">
-          <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1.5">Why</p>
+        <div className="w-full max-w-xs rounded-2xl border border-raised bg-raised/20 p-4 mb-6">
+          <p className="text-[10px] uppercase tracking-widest text-ink/40 mb-1.5">Why</p>
           <p className="text-sm text-ink/80 leading-relaxed">{rejectionReason}</p>
         </div>
       )}

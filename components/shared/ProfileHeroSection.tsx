@@ -27,30 +27,30 @@ export function ProfileHeroSection({
 
       <button
         onClick={onBack}
-        className="absolute top-safe-top left-4 z-10 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center"
+        className="absolute top-safe-top left-4 z-10 w-10 h-10 rounded-full bg-raised/10 backdrop-blur-md border border-raised/20 flex items-center justify-center"
       >
-        <ArrowLeft className="w-5 h-5 text-white" />
+        <ArrowLeft className="w-5 h-5 text-ink" />
       </button>
 
       {!isOwn && (
         <div className="absolute top-safe-top right-4 z-10 flex gap-2">
           <button
             onClick={onBlock}
-            className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center"
+            className="w-10 h-10 rounded-full bg-raised/10 backdrop-blur-md border border-raised/20 flex items-center justify-center"
           >
-            <UserX className="w-5 h-5 text-white/70" />
+            <UserX className="w-5 h-5 text-ink/70" />
           </button>
           <button
             onClick={onReport}
-            className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center"
+            className="w-10 h-10 rounded-full bg-raised/10 backdrop-blur-md border border-raised/20 flex items-center justify-center"
           >
-            <Flag className="w-5 h-5 text-white/70" />
+            <Flag className="w-5 h-5 text-ink/70" />
           </button>
         </div>
       )}
 
       <div className="absolute bottom-8 left-8 z-10 pointer-events-none">
-        <h1 className="font-display text-5xl text-white">{name}</h1>
+        <h1 className="font-display text-5xl text-ink">{name}</h1>
       </div>
     </div>
   );

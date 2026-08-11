@@ -49,7 +49,7 @@ export function ProfileCompletion({ user }: ProfileCompletionProps) {
   return (
     <div className="w-full mt-2 mb-6">
       <div className="flex items-center gap-3 mb-2">
-        <div className="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden">
+        <div className="flex-1 h-1.5 rounded-full bg-raised/10 overflow-hidden">
           <div className="h-full bg-gold rounded-full transition-all duration-500" style={{ width: `${percent}%` }} />
         </div>
         <span className="text-xs font-semibold text-gold shrink-0">{percent}%</span>
@@ -60,7 +60,7 @@ export function ProfileCompletion({ user }: ProfileCompletionProps) {
           <button
             key={item.label}
             onClick={goToDetails}
-            className="w-full flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-left active:scale-[0.98] transition-transform"
+            className="w-full flex items-center gap-3 bg-raised/5 border border-raised rounded-2xl px-4 py-4 text-left active:scale-[0.98] transition-transform"
           >
             <div className="flex-1 min-w-0">
               <p className="text-sm text-ink font-medium">{item.label}</p>

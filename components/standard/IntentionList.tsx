@@ -32,7 +32,7 @@ export function IntentionList({ intentions }: IntentionListProps) {
             className="flex items-center gap-3 bg-well rounded-xl p-4"
           >
             <div className="w-9 h-9 rounded-full bg-gold flex items-center justify-center shrink-0">
-              <span className="text-xs font-bold text-white">{intent.day_number}</span>
+              <span className="text-xs font-bold text-ink">{intent.day_number}</span>
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">

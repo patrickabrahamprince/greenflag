@@ -12,7 +12,7 @@ export function GoogleButton({ onClick, loading }: GoogleButtonProps) {
     <button
       onClick={onClick}
       disabled={loading}
-      className="w-full flex items-center justify-center gap-3 bg-white text-black font-medium py-3 px-4 rounded-xl border border-white/20 hover:bg-white/90 transition-colors disabled:opacity-50"
+      className="w-full flex items-center justify-center gap-3 bg-white text-black font-medium py-3 px-4 rounded-xl border border-raised/20 hover:bg-white/90 transition-colors disabled:opacity-50"
     >
       {loading ? (
         <Loader2 className="w-5 h-5 animate-spin" />

@@ -24,7 +24,7 @@ export function PackageCard({ pkg, displayPrice, purchasing, isPurchasingThis, o
   return (
     <div className="card relative overflow-hidden">
       {pkg.popular && (
-        <span className="absolute top-2 right-2 text-[10px] font-semibold text-ink-dark bg-white px-2 py-0.5 rounded-full">
+        <span className="absolute top-2 right-2 text-[10px] font-semibold text-gold bg-gold/10 px-2 py-0.5 rounded-full">
           Most Popular
         </span>
       )}

@@ -26,16 +26,16 @@ export function ConnectedScreen({ womanPhoto, womanName, connectionId }: Connect
     // was a full-bleed bright magenta-to-purple gradient outside the
     // locked palette.
     <div className="min-h-dvh flex flex-col items-center justify-center px-6 bg-base">
-      <p className="text-4xl font-serif text-white mb-4">✦ 8 / 8 ✦</p>
-      <h1 className="text-5xl font-display text-white mb-8">Connected</h1>
+      <p className="text-4xl font-serif text-ink mb-4">✦ 8 / 8 ✦</p>
+      <h1 className="text-5xl font-display text-ink mb-8">Connected</h1>
       <img
         src={womanPhoto}
         alt={womanName}
-        className="w-40 h-40 rounded-full object-cover border-4 border-white mb-6"
+        className="w-40 h-40 rounded-full object-cover border-4 border-ink mb-6"
       />
-      <p className="text-2xl font-display text-white mb-6">{womanName}</p>
-      <div className="w-16 h-px bg-white/40 mb-6" />
-      <p className="text-white/80 text-center text-sm font-thin max-w-xs mb-8">
+      <p className="text-2xl font-display text-ink mb-6">{womanName}</p>
+      <div className="w-16 h-px bg-ink/40 mb-6" />
+      <p className="text-ink/80 text-center text-sm font-thin max-w-xs mb-8">
         Contact exchange is now unlocked. You can share Instagram, phone, or anything in chat.
       </p>
       <button

@@ -105,7 +105,7 @@ export function BottomNav() {
                 </div>
                 {isNotifications && unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 bg-[#D2042D] rounded-full flex items-center justify-center">
-                    <span className="text-[9px] font-bold text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>
+                    <span className="text-[9px] font-bold text-ink">{unreadCount > 99 ? '99+' : unreadCount}</span>
                   </span>
                 )}
               </div>

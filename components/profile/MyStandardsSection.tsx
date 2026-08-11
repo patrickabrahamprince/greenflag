@@ -74,7 +74,7 @@ export function MyStandardsSection({ userId }: { userId: string }) {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-gold" />
-          <h3 className="font-display text-lg text-white">Your Standard</h3>
+          <h3 className="font-display text-lg text-ink">Your Standard</h3>
         </div>
         <span className={`text-[10px] uppercase tracking-wide px-2.5 py-1 rounded-full ${isActive ? 'bg-green-500/10 text-green-400' : 'bg-amber-500/10 text-amber-400'}`}>
           {isActive ? 'Live' : 'Draft'}

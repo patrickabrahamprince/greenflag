@@ -79,14 +79,14 @@ export function MatchMomentOverlay({ open, myPhoto, theirPhoto, onContinue }: Ma
     >
       <MatchConfetti />
       <div className="relative z-10 w-full max-w-[280px] h-[200px] mb-10">
-        <div className={`absolute left-0 top-0 w-32 h-44 rounded-photo overflow-hidden border-2 border-white/20 shadow-2xl ${leftCardAnim}`}>
+        <div className={`absolute left-0 top-0 w-32 h-44 rounded-photo overflow-hidden border-2 border-raised/20 shadow-2xl ${leftCardAnim}`}>
           {myPhoto ? (
             <img src={myPhoto} alt="" className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full bg-surface-light" />
           )}
         </div>
-        <div className={`absolute right-0 top-0 w-32 h-44 rounded-photo overflow-hidden border-2 border-white/20 shadow-2xl ${rightCardAnim}`}>
+        <div className={`absolute right-0 top-0 w-32 h-44 rounded-photo overflow-hidden border-2 border-raised/20 shadow-2xl ${rightCardAnim}`}>
           {theirPhoto ? (
             <img src={theirPhoto} alt="" className="w-full h-full object-cover" />
           ) : (
