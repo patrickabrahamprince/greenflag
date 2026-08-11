@@ -33,6 +33,7 @@ export default function InterestsStepFourPage() {
     <InterestsStepScreen
       step={4}
       total={TOTAL_STEPS}
+      image="/onboarding/interests.jpg"
       onBack={() => router.push('/onboard/interests/3')}
       onSkip={finish}
       skipLoading={loading}

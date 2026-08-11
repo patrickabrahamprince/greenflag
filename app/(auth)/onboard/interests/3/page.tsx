@@ -33,6 +33,7 @@ export default function InterestsStepThreePage() {
     <InterestsStepScreen
       step={3}
       total={TOTAL_STEPS}
+      image="/onboarding/phone.jpg"
       onBack={() => router.push('/onboard/interests/2')}
       onSkip={finish}
       skipLoading={loading}

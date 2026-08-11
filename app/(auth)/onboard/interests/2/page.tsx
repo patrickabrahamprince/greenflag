@@ -33,6 +33,7 @@ export default function InterestsStepTwoPage() {
     <InterestsStepScreen
       step={2}
       total={TOTAL_STEPS}
+      image="/onboarding/quiz.jpg"
       onBack={() => router.push('/onboard/interests')}
       onSkip={finish}
       skipLoading={loading}

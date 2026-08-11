@@ -111,7 +111,7 @@ export default function ProfileLocationPage() {
       <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
         <StepDots current={2} total={6} />
 
-        <h1 className="font-display text-3xl text-ink mb-3">
+        <h1 className="font-display text-2xl text-ink mb-3">
           Where are you{gpsDetecting ? ' (detecting...)' : ''}?
         </h1>
         <p className="text-ink/50 text-sm leading-relaxed mb-8">

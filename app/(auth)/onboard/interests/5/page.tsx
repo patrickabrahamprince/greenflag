@@ -24,6 +24,7 @@ export default function InterestsStepFivePage() {
     <InterestsStepScreen
       step={5}
       total={TOTAL_STEPS}
+      image="/onboarding/age.jpg"
       onBack={() => router.push('/onboard/interests/4')}
       onSkip={finish}
       skipLoading={loading}

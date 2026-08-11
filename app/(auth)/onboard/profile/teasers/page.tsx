@@ -95,9 +95,13 @@ export default function ProfileTeasersPage() {
       {/* Fixed and pinned to the true bottom (rising only by --kb-inset
           when a keyboard is actually open) instead of following normal
           flex flow -- flowing after flex-1 content let the button sit
-          higher than necessary whenever the content above it was short. */}
+          higher than necessary whenever the content above it was short.
+          Hidden (not just out-z-indexed) while the prompt picker sheet is
+          open -- the sheet's backdrop is a translucent blur, not opaque,
+          so this solid crimson button was still visibly bleeding through
+          underneath it instead of actually disappearing. */}
       <div
-        className="fixed inset-x-0 z-10 px-6 pt-8 pb-4"
+        className={`fixed inset-x-0 z-10 px-6 pt-8 pb-4 transition-opacity duration-200 ${pickerOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
         style={{ bottom: 'calc(max(1rem, env(safe-area-inset-bottom)) + var(--kb-inset, 0px))' }}
       >
         <button

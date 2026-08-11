@@ -8,6 +8,7 @@ import { StepDots } from '@/components/shared/StepDots';
 interface InterestsStepScreenProps {
   step: number;
   total: number;
+  image: string;
   onBack: () => void;
   onSkip: () => void;
   skipLoading: boolean;
@@ -27,6 +28,7 @@ interface InterestsStepScreenProps {
 export function InterestsStepScreen({
   step,
   total,
+  image,
   onBack,
   onSkip,
   skipLoading,
@@ -38,7 +40,7 @@ export function InterestsStepScreen({
 }: InterestsStepScreenProps) {
   return (
     <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
-      <OnboardingBackground image="/onboarding/interests.jpg" />
+      <OnboardingBackground image={image} />
       <div className="flex items-center justify-between mb-4 shrink-0">
         <button onClick={onBack} className="text-ink/40 hover:text-ink active:scale-90 transition-all">
           <ArrowLeft size={24} />

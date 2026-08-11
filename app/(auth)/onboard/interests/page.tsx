@@ -34,6 +34,7 @@ export default function InterestsPage() {
     <InterestsStepScreen
       step={1}
       total={TOTAL_STEPS}
+      image="/onboarding/name.jpg"
       onBack={() => router.push('/onboard/quiz')}
       onSkip={finish}
       skipLoading={loading}
