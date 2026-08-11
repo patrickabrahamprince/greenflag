@@ -37,13 +37,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const supabase = createClient();
   const [checking, setChecking] = useState(true);
   const [loggingOut, setLoggingOut] = useState(false);
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     const saved = localStorage.getItem('admin-theme') as 'light' | 'dark' | null;
-    setTheme(saved || 'dark');
+    setTheme(saved || 'light');
   }, []);
 
   useEffect(() => {
@@ -79,110 +79,123 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (checking || !mounted) {
     return (
-      <div className="min-h-dvh bg-black flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
+      <div className="min-h-dvh bg-white flex items-center justify-center dark:bg-black">
+        <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
       </div>
     );
   }
 
   const isDark = theme === 'dark';
-  const bgPrimary = isDark ? 'bg-black' : 'bg-white';
-  const bgSecondary = isDark ? 'bg-[#0A0A0A]' : 'bg-gray-50';
-  const textPrimary = isDark ? 'text-[#EDEADE]' : 'text-black';
-  const textSecondary = isDark ? 'text-[#8E8E93]' : 'text-gray-600';
-  const borderColor = isDark ? 'border-white/10' : 'border-gray-200';
-  const accentColor = '#C9A961';
 
   return (
-    <div className={`min-h-dvh ${bgPrimary} flex`}>
-      <aside className={`hidden lg:flex w-64 flex-col ${bgSecondary} border-r ${borderColor} p-4`}>
-        <div className="flex items-center justify-between px-3 py-4">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#C9A961] flex items-center justify-center">
-              <span className="text-black font-bold text-sm">G</span>
-            </div>
-            <span className={`${textPrimary} font-display text-lg`}>Admin</span>
-          </div>
-          <button
-            onClick={toggleTheme}
-            className={`p-1.5 rounded-lg transition-all ${isDark ? 'bg-white/10 hover:bg-white/20' : 'bg-black/10 hover:bg-black/20'}`}
-            title={isDark ? 'Light mode' : 'Dark mode'}
-          >
-            {isDark ? <Sun className="w-4 h-4 text-[#C9A961]" /> : <Moon className="w-4 h-4 text-gray-700" />}
-          </button>
-        </div>
-        <nav className="flex-1 space-y-1 mt-6">
-          {NAV_ITEMS.map((item) => {
-            const Icon = item.icon;
-            const active = pathname === item.href || pathname.startsWith(item.href + '/');
-            return (
+    <div className={isDark ? 'dark' : ''}>
+      <div className="min-h-dvh bg-white dark:bg-black text-black dark:text-white transition-colors">
+        <div className="flex">
+          {/* Desktop Sidebar */}
+          <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-gray-200 dark:lg:border-gray-800 lg:bg-white dark:lg:bg-black">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 dark:border-gray-800">
+              <h1 className="text-xl font-semibold tracking-tight">Admin</h1>
               <button
-                key={item.href}
-                data-testid={item.label === 'Users' ? 'users-tab' : undefined}
-                onClick={() => router.push(item.href)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
-                  active
-                    ? `bg-[#C9A961]/10 text-[#C9A961]`
-                    : `${textSecondary} ${isDark ? 'hover:text-white hover:bg-white/5' : 'hover:text-black hover:bg-gray-200/50'}`
-                }`}
+                onClick={toggleTheme}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg transition-colors"
+                title="Toggle theme"
               >
-                <Icon className="w-4 h-4" />
-                {item.label}
+                {isDark ? (
+                  <Sun className="w-5 h-5 text-yellow-500" />
+                ) : (
+                  <Moon className="w-5 h-5 text-gray-600" />
+                )}
               </button>
-            );
-          })}
-        </nav>
-        <button
-          onClick={handleLogout}
-          disabled={loggingOut}
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-400 hover:bg-red-500/10 transition-all mt-auto disabled:opacity-50`}
-        >
-          {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
-          Logout
-        </button>
-      </aside>
+            </div>
 
-      <div className="flex-1 min-h-dvh">
-        <header className={`lg:hidden flex items-center justify-between px-4 py-3 border-b ${borderColor}`}>
-          <span className={`${textPrimary} font-display`}>Admin</span>
-          <div className="flex items-center gap-3">
+            <nav className="flex-1 space-y-0 px-3 py-4 overflow-y-auto">
+              {NAV_ITEMS.map((item) => {
+                const Icon = item.icon;
+                const active = pathname === item.href || pathname.startsWith(item.href + '/');
+                return (
+                  <button
+                    key={item.href}
+                    data-testid={item.label === 'Users' ? 'users-tab' : undefined}
+                    onClick={() => router.push(item.href)}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                      active
+                        ? 'bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400'
+                        : 'text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
+
             <button
-              onClick={toggleTheme}
-              className={`p-1.5 rounded-lg transition-all ${isDark ? 'bg-white/10 hover:bg-white/20' : 'bg-black/10 hover:bg-black/20'}`}
+              onClick={handleLogout}
+              disabled={loggingOut}
+              className="mx-3 mb-4 flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors disabled:opacity-50"
             >
-              {isDark ? <Sun className="w-4 h-4 text-[#C9A961]" /> : <Moon className="w-4 h-4 text-gray-700" />}
+              {loggingOut ? <Loader2 className="w-5 h-5 animate-spin" /> : <LogOut className="w-5 h-5" />}
+              <span>Logout</span>
             </button>
-            <button onClick={handleLogout} disabled={loggingOut} className="text-red-400 text-sm flex items-center gap-1.5 disabled:opacity-50">
-              {loggingOut && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-              Logout
-            </button>
-          </div>
-        </header>
+          </aside>
 
-        <div className={`lg:hidden fixed bottom-0 left-0 right-0 ${bgSecondary} border-t ${borderColor} z-50`}>
-          <nav className="flex overflow-x-auto scrollbar-hide">
-            {NAV_ITEMS.map((item) => {
-              const Icon = item.icon;
-              const active = pathname === item.href;
-              return (
+          {/* Main Content */}
+          <div className="flex-1 flex flex-col min-h-dvh">
+            {/* Mobile Header */}
+            <header className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black">
+              <h1 className="text-lg font-semibold">Admin</h1>
+              <div className="flex items-center gap-2">
                 <button
-                  key={item.href}
-                  onClick={() => router.push(item.href)}
-                  className={`flex flex-col items-center gap-0.5 px-3 py-2 text-[10px] min-w-[60px] transition-colors ${
-                    active ? 'text-[#C9A961]' : textSecondary
-                  }`}
+                  onClick={toggleTheme}
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg transition-colors"
                 >
-                  <Icon className="w-4 h-4" />
-                  {item.label}
+                  {isDark ? (
+                    <Sun className="w-5 h-5 text-yellow-500" />
+                  ) : (
+                    <Moon className="w-5 h-5 text-gray-600" />
+                  )}
                 </button>
-              );
-            })}
-          </nav>
-        </div>
+                <button
+                  onClick={handleLogout}
+                  disabled={loggingOut}
+                  className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {loggingOut ? <Loader2 className="w-5 h-5 animate-spin" /> : <LogOut className="w-5 h-5" />}
+                </button>
+              </div>
+            </header>
 
-        <main className={`p-4 lg:p-8 pb-24 lg:pb-8 ${bgPrimary}`}>
-          {children}
-        </main>
+            {/* Content */}
+            <main className="flex-1 overflow-auto bg-white dark:bg-black">
+              <div className="max-w-7xl mx-auto px-4 py-6 lg:px-8 lg:py-8">
+                {children}
+              </div>
+            </main>
+
+            {/* Mobile Bottom Nav */}
+            <nav className="lg:hidden fixed bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-black flex justify-between px-2">
+              {NAV_ITEMS.map((item) => {
+                const Icon = item.icon;
+                const active = pathname === item.href;
+                return (
+                  <button
+                    key={item.href}
+                    onClick={() => router.push(item.href)}
+                    className={`flex-1 flex flex-col items-center gap-1 py-2 text-xs font-medium transition-colors ${
+                      active
+                        ? 'text-blue-600 dark:text-blue-400'
+                        : 'text-gray-600 dark:text-gray-500'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+        </div>
       </div>
     </div>
   );
