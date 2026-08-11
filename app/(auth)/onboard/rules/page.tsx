@@ -15,57 +15,28 @@ import {
 import { createClient } from '@/lib/supabase/client';
 import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
-import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
 
-// Define each slide with an icon, title, and description.
-// Each slide gets its own background (see OnboardingBackground below) --
-// one static image behind all 6 previously made the swipe feel static;
-// cycling through the same photo set used elsewhere in onboarding gives
-// each rule its own moment instead.
+// Streamlined to 3 key rules (was 6)
 const slides = [
   {
     id: 0,
     title: 'Respect Is Standard',
     desc: 'Every profile is treated with regard. No exceptions.',
     icon: <ShieldCheck className="w-10 h-10 text-gold" />,
-    image: '/onboarding/rules.jpg',
   },
   {
     id: 1,
-    title: 'No Noise',
-    desc: 'Keep it intentional. No spam, no mass messages.',
+    title: 'Keep It Intentional',
+    desc: 'Show up genuinely. No spam, no mass messages.',
     icon: <Flame className="w-10 h-10 text-gold" />,
-    image: '/onboarding/pending.jpg',
   },
   {
     id: 2,
     title: 'Discretion First',
     desc: 'Share personal details only when you feel safe to.',
     icon: <MessageCircle className="w-10 h-10 text-gold" />,
-    image: '/onboarding/quiz-grounded.jpg',
-  },
-  {
-    id: 3,
-    title: 'Intention Has Value',
-    desc: 'Show up genuinely. Effort is seen and valued.',
-    icon: <Coins className="w-10 h-10 text-gold" />,
-    image: '/onboarding/how-it-works.jpg',
-  },
-  {
-    id: 4,
-    title: 'Your Circle, Your Rules',
-    desc: 'Manage privacy and preferences in Settings.',
-    icon: <Settings className="w-10 h-10 text-gold" />,
-    image: '/onboarding/quiz-playful.jpg',
-  },
-  {
-    id: 5,
-    title: 'Verified Profiles',
-    desc: 'Verified profiles are prioritized and distinguished.',
-    icon: <UserCheck className="w-10 h-10 text-gold" />,
-    image: '/onboarding/quiz-adventurous.jpg',
   },
 ];
 
@@ -169,7 +140,6 @@ export default function RulesPage() {
 
   return (
     <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
-      <OnboardingBackground image={slides[activeSlide].image} />
       <div className="max-w-md mx-auto w-full flex flex-col pb-safe-bottom flex-1">
         {/* Header */}
         <div className="mb-6">

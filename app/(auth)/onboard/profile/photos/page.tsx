@@ -99,9 +99,12 @@ export default function ProfilePhotosPage() {
     const rawFiles = files.slice(0, remaining);
     setCompressing(true);
     try {
-      // Check for duplicates
+      // Compress first, then check duplicates (hash must match post-compression)
+      const newFiles = await Promise.all(rawFiles.map(compressImage));
+
+      // Check for duplicates AFTER compression
       const newSignatures: string[] = [];
-      for (const file of rawFiles) {
+      for (const file of newFiles) {
         const sig = await getFileSignature(file);
         newSignatures.push(sig);
       }
@@ -117,10 +120,6 @@ export default function ProfilePhotosPage() {
         return;
       }
 
-      // Uncompressed phone-camera photos (often 3-10MB each) are why
-      // uploading used to feel like it hung -- downscale before it ever
-      // touches the network.
-      const newFiles = await Promise.all(rawFiles.map(compressImage));
       const previews = newFiles.map((f) => URL.createObjectURL(f));
       setPhotos((prev) => [...prev, ...previews]);
       setPhotoFiles((prev) => [...prev, ...newFiles]);
