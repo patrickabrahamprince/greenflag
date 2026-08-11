@@ -8,6 +8,7 @@ import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
 import { uploadFile, deleteFile } from '@/lib/supabase/storage';
 import { compressImage } from '@/lib/compressImage';
+import { EducationBanner } from '@/components/shared/EducationBanner';
 
 const CITIES = [
   'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad',
@@ -120,6 +121,14 @@ export default function EditProfilePage() {
           <ArrowLeft className="w-5 h-5" />
         </button>
         <h1 className="text-xl font-display flex-1">Edit Profile</h1>
+      </div>
+
+      <div className="px-4">
+        <EducationBanner
+          id="profile-setup"
+          title="Complete Your Profile"
+          description="The better your profile, the better your matches. Add clear photos and a genuine bio so people know who you really are."
+        />
       </div>
 
       {pendingRequest && (
