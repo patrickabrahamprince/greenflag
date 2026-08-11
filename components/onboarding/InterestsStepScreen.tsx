@@ -41,14 +41,14 @@ export function InterestsStepScreen({
   return (
     <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
       <OnboardingBackground image={image} />
-      <div className="flex items-center justify-between mb-4 shrink-0">
+      <div className="flex items-center justify-between mt-2 mb-4 shrink-0">
         <button onClick={onBack} className="text-ink/40 hover:text-ink active:scale-90 transition-all">
           <ArrowLeft size={24} />
         </button>
         <button
           onClick={onSkip}
           disabled={skipLoading}
-          className="text-sm font-semibold tracking-widest uppercase text-gold/80 hover:text-gold active:scale-90 transition-all"
+          className="px-3 py-2 -mr-3 text-sm font-semibold tracking-widest uppercase text-gold/80 hover:text-gold active:scale-90 transition-all"
         >
           Skip
         </button>

@@ -150,7 +150,12 @@ export default function LoginPage() {
           actually pins Google/Apple to the bottom of the screen instead
           of just "lower than before". */}
       <div className="flex-1 flex items-center justify-center">
-        <img src="/logo.png" alt="GreenFlag" className="w-36 h-36 animate-logo-in" />
+        <img
+          src="/logo.png"
+          alt="GreenFlag"
+          className="w-36 h-36 animate-logo-in"
+          style={{ filter: 'drop-shadow(0 12px 28px rgba(0,0,0,0.55)) drop-shadow(0 0 40px rgba(210,4,45,0.25))' }}
+        />
       </div>
 
       <div className="w-full max-w-sm mx-auto">

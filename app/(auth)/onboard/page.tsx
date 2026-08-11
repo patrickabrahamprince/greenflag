@@ -30,7 +30,7 @@ export default function OnboardPage() {
 
   return (
     <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center px-4 bg-base">
-      <OnboardingBackground image="/onboarding/teasers.jpg" />
+      <OnboardingBackground image="/onboarding/location.jpg" />
       <div className="-mt-2">
       <div className="text-center mb-10">
         <img src="/logo.png" alt="GreenFlag" className="w-32 h-32 mx-auto mb-3" />

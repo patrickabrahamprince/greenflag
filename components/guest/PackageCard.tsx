@@ -46,7 +46,7 @@ export function PackageCard({ pkg, displayPrice, purchasing, isPurchasingThis, o
             <Zap className="w-6 h-6 text-gold" />
           )}
           <div>
-            <p className="text-ink font-medium">{pkg.coins} Coins</p>
+            <p className="text-ink font-display font-bold text-lg">{pkg.coins} Coins</p>
             <p className="text-xs text-muted">{displayPrice || `₹${pkg.price}`}</p>
           </div>
         </div>

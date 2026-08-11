@@ -15,6 +15,39 @@ import toast from 'react-hot-toast';
 import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 const REQUIRED_PHOTOS = 3;
+const UPLOAD_TIMEOUT_MS = 15000;
+const MAX_UPLOAD_ATTEMPTS = 3;
+
+// A stalled storage upload (flaky mobile connection, a dropped socket)
+// used to just sit there -- no timeout meant the only outcomes were "it
+// eventually finishes" or "the person gives up after 40+ seconds staring
+// at a spinner with no idea anything's wrong." Racing each attempt
+// against a timeout turns a silent hang into a fast, visible failure
+// that retries on its own before ever bothering the user with an error.
+async function uploadPhotoWithRetry(
+  supabase: ReturnType<typeof createClient>,
+  bucket: string,
+  path: string,
+  file: File
+): Promise<string> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= MAX_UPLOAD_ATTEMPTS; attempt++) {
+    try {
+      const result = await Promise.race([
+        supabase.storage.from(bucket).upload(path, file, { upsert: true }),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Upload timed out')), UPLOAD_TIMEOUT_MS)
+        ),
+      ]);
+      if (result.error) throw result.error;
+      const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(result.data.path);
+      return urlData.publicUrl;
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error('Upload failed');
+}
 
 // Step 4 (final) of the profile wizard -- photos, then the actual upload +
 // profile upsert that used to run at the end of the old single-page form.
@@ -41,6 +74,7 @@ export default function ProfilePhotosPage() {
   const [compressing, setCompressing] = useState(false);
   const [showFaceNudge, setShowFaceNudge] = useState(false);
   const [checkingFace, setCheckingFace] = useState(false);
+  const [uploadedCount, setUploadedCount] = useState(0);
 
   useEffect(() => {
     if (!name) { router.replace('/onboard/name'); return; }
@@ -92,6 +126,7 @@ export default function ProfilePhotosPage() {
     }
 
     setLoading(true);
+    setUploadedCount(0);
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
@@ -106,22 +141,20 @@ export default function ProfilePhotosPage() {
     // back, which is what made this step feel slow even after
     // compressImage() already shrank each file. Promise.all still
     // preserves photo order in the result regardless of which upload
-    // actually finishes first.
+    // actually finishes first. Each attempt races a timeout and retries
+    // on its own (see uploadPhotoWithRetry) instead of hanging silently.
     let uploadedUrls: string[];
     try {
       uploadedUrls = await Promise.all(
         photoFiles.map(async (file, i) => {
           const path = `${user.id}/${Date.now()}-${i}.jpg`;
-          const { data, error: uploadError } = await supabase.storage
-            .from('avatars')
-            .upload(path, file, { upsert: true });
-          if (uploadError) throw uploadError;
-          const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(data.path);
-          return urlData.publicUrl;
+          const url = await uploadPhotoWithRetry(supabase, 'avatars', path, file);
+          setUploadedCount((prev) => prev + 1);
+          return url;
         })
       );
     } catch (uploadError) {
-      const message = uploadError instanceof Error ? uploadError.message : 'Please try again.';
+      const message = uploadError instanceof Error ? uploadError.message : 'Please check your connection and try again.';
       toast.error(`Photo upload failed: ${message}`);
       setLoading(false);
       return;
@@ -131,13 +164,21 @@ export default function ProfilePhotosPage() {
     // entirely in the browser and a modified client could skip it. This
     // is the real gate: it runs against the photos that actually made it
     // to storage, server-side, where nothing the client sends can bypass
-    // it.
+    // it. Aborted after a timeout -- a slow/hanging Vision API call
+    // shouldn't leave someone staring at "Finishing up..." indefinitely;
+    // the route already fails open (verified: false, unverifiable) on
+    // its own errors, this just guarantees the request doesn't hang
+    // longer than that fallback is worth waiting for.
     try {
+      const verifyController = new AbortController();
+      const verifyTimeout = setTimeout(() => verifyController.abort(), 12000);
       const verifyRes = await fetch('/api/photos/verify-face', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ photoUrls: uploadedUrls }),
+        signal: verifyController.signal,
       });
+      clearTimeout(verifyTimeout);
       const verifyData = await verifyRes.json();
       if (verifyData.reason === 'no-face-found') {
         setLoading(false);
@@ -229,7 +270,19 @@ export default function ProfilePhotosPage() {
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'submit-profile' : undefined}
           className="btn-primary w-full mt-6 active:scale-[0.98] flex items-center justify-center gap-2"
         >
-          {loading || checkingFace ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Continue'}
+          {checkingFace ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Checking photos...
+            </>
+          ) : loading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              {uploadedCount < photoFiles.length
+                ? `Uploading ${uploadedCount}/${photoFiles.length}...`
+                : 'Finishing up...'}
+            </>
+          ) : 'Continue'}
         </button>
       </div>
 

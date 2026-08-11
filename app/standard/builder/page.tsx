@@ -89,7 +89,7 @@ const WHY_THIS_WORKS = [
 function StandardIntroScreen({ onContinue }: { onContinue: () => void }) {
   return (
     <div className="relative isolate w-full animate-fade-in min-h-dvh screen-gradient px-6 pt-safe-top pb-32 max-w-app mx-auto flex flex-col">
-      <OnboardingBackground image="/onboarding/how-it-works.jpg" />
+      <OnboardingBackground image="/onboarding/how-it-works.jpg" light />
       <div className="flex-1">
         <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-6 shadow-[0_0_30px_-8px_rgba(210,4,45,0.6)]">
           <Sparkles className="w-7 h-7 text-gold" />
@@ -334,7 +334,7 @@ export default function StandardBuilderPage() {
       onTouchEnd={onTouchEnd}
       className="relative isolate h-[calc(100dvh-5rem)] overflow-y-auto overscroll-none screen-gradient px-6 pt-safe-top pb-24 max-w-app mx-auto"
     >
-      <OnboardingBackground image="/onboarding/quiz-romantic.jpg" />
+      <OnboardingBackground image="/onboarding/quiz-romantic.jpg" light />
       <div
         className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
         style={{ height: pullDistance }}
@@ -361,7 +361,12 @@ export default function StandardBuilderPage() {
         Each day: one thought, one image, one voice. He completes all three before you review.
       </p>
 
-      <div className="card p-5 mb-8">
+      {/* Frosted-glass instead of the shared .card's solid black fill --
+          that solid fill was hiding the background photo completely
+          behind the exact area holding the day's questions. A blurred,
+          translucent surface keeps the questions just as readable while
+          letting the photo stay visible through it. */}
+      <div className="bg-black/35 backdrop-blur-xl border border-white/10 rounded-card p-5 mb-8">
         <span className="text-xs text-ink/40 uppercase tracking-wide">Day {currentSlot.dayNumber}</span>
 
         <div className="space-y-5 mt-3">
@@ -440,7 +445,7 @@ export default function StandardBuilderPage() {
       <div style={{ height: 'var(--kb-inset, 0px)' }} />
 
       {showDayDialog && DAY_LOCK_DIALOGS[step] && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-50 p-6">
+        <div className="fixed inset-0 backdrop-blur-xl bg-black/80 flex items-center justify-center z-50 p-6">
           <div className="dialog-card max-w-sm w-full text-center">
             <div className="w-14 h-14 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-4">
               <Lock className="w-6 h-6 text-gold" />
