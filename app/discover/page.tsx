@@ -246,6 +246,17 @@ export default function DiscoverPage() {
     next?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  function handlePass(profileId: string, index: number) {
+    // Remove the profile from state so it doesn't reappear on scroll
+    setProfiles(prev => {
+      const next = prev.filter(p => p.id !== profileId)
+      setCached(PROFILES_CACHE_KEY, next)
+      return next
+    })
+    // Then scroll to the next card
+    scrollToNext(index)
+  }
+
   async function handleBegin(profileId: string) {
     if (likingId) return
     setLikingId(profileId)
@@ -639,7 +650,7 @@ export default function DiscoverPage() {
                       icon={<X className="w-5 h-5" />}
                       label="Pass"
                       variant="dark"
-                      onClick={() => { hapticTap(); scrollToNext(i) }}
+                      onClick={() => { hapticTap(); handlePass(p.id, i) }}
                       className="shrink-0"
                     />
                     <IconButton
