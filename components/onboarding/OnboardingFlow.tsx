@@ -106,52 +106,52 @@ export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden">
+      <div className="bg-card rounded-2xl shadow-xl max-w-md w-full overflow-hidden">
         {/* Progress bar */}
-        <div className="h-1 bg-gray-200">
+        <div className="h-1 bg-raised">
           <div
-            className="h-full bg-blue-500 transition-all duration-300"
+            className="h-full bg-gold transition-all duration-300"
             style={{ width: `${((currentStep + 1) / ONBOARDING_STEPS.length) * 100}%` }}
           />
         </div>
 
         {/* Header */}
-        <div className="px-6 pt-6 pb-4 border-b border-gray-200 flex items-start justify-between">
+        <div className="px-6 pt-6 pb-4 border-b border-raised flex items-start justify-between">
           <div className={`${step.color}`}>{step.icon}</div>
           <button
             onClick={handleSkip}
-            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1 hover:bg-raised rounded-lg transition-colors"
           >
-            <X className="w-5 h-5 text-gray-400" />
+            <X className="w-5 h-5 text-ink/60" />
           </button>
         </div>
 
         {/* Content */}
         <div className="px-6 py-6">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">{step.title}</h2>
-          <p className="text-gray-500 text-sm mb-6">{step.description}</p>
+          <h2 className="text-2xl font-display font-semibold text-ink mb-2">{step.title}</h2>
+          <p className="text-ink/60 text-sm mb-6">{step.description}</p>
 
           <div className="space-y-3">
             {step.details.map((detail, idx) => (
               <div key={idx} className="flex gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                <p className="text-gray-700 text-sm leading-relaxed">{detail}</p>
+                <div className="w-1.5 h-1.5 rounded-full bg-gold mt-2 flex-shrink-0" />
+                <p className="text-ink/80 text-sm leading-relaxed">{detail}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex gap-3">
+        <div className="px-6 py-4 bg-raised border-t border-raised flex gap-3">
           <button
             onClick={handleSkip}
-            className="flex-1 px-4 py-2 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
+            className="flex-1 px-4 py-2 text-ink/80 text-sm font-medium rounded-lg hover:bg-raised/80 transition-colors"
           >
             Skip
           </button>
           <button
             onClick={handleNext}
-            className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="flex-1 px-4 py-2 bg-gold hover:bg-gold/90 text-ink text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
           >
             {isLast ? 'Start Matching' : 'Next'}
             <ChevronRight className="w-4 h-4" />
@@ -159,7 +159,7 @@ export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
         </div>
 
         {/* Step indicator */}
-        <div className="px-6 py-3 bg-gray-50 text-center text-xs text-gray-500">
+        <div className="px-6 py-3 bg-raised text-center text-xs text-ink/60">
           Step {currentStep + 1} of {ONBOARDING_STEPS.length}
         </div>
       </div>

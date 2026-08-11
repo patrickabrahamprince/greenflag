@@ -83,12 +83,12 @@ const SECTIONS: Section[] = [
 
 export default function HowItWorks() {
   return (
-    <div className="min-h-dvh bg-gradient-to-br from-white via-gray-50 to-white">
+    <div className="min-h-dvh screen-gradient">
       {/* Header */}
-      <div className="sticky top-0 bg-white/80 backdrop-blur-sm border-b border-gray-200 z-40">
+      <div className="sticky top-0 bg-base/80 backdrop-blur-sm border-b border-raised z-40">
         <div className="max-w-app mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-gray-900">How It Works</h1>
-          <Link href="/discover" className="text-blue-500 hover:text-blue-600 text-sm font-medium">
+          <h1 className="text-xl font-display font-semibold text-ink">How It Works</h1>
+          <Link href="/discover" className="text-gold hover:text-gold/90 text-sm font-medium">
             Back
           </Link>
         </div>
@@ -97,10 +97,10 @@ export default function HowItWorks() {
       {/* Content */}
       <div className="max-w-2xl mx-auto px-4 py-8 pb-24">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-3">
+          <h2 className="text-3xl font-display font-bold text-ink mb-3">
             Set your standards. Meet your match.
           </h2>
-          <p className="text-gray-600">
+          <p className="text-ink/60">
             GreenFlag makes it easy to find people who share your values
           </p>
         </div>
@@ -110,23 +110,23 @@ export default function HowItWorks() {
           {SECTIONS.map((section, idx) => (
             <div
               key={idx}
-              className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow"
+              className="bg-card rounded-2xl border border-raised p-6 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-gold/20 text-gold flex items-center justify-center flex-shrink-0">
                   {section.icon}
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-900">{section.title}</h3>
-                  <p className="text-sm text-gray-500 mt-0.5">{section.description}</p>
+                  <h3 className="text-xl font-semibold text-ink">{section.title}</h3>
+                  <p className="text-sm text-ink/60 mt-0.5">{section.description}</p>
                 </div>
               </div>
 
               <ul className="space-y-3 ml-16">
                 {section.points.map((point, pidx) => (
                   <li key={pidx} className="flex gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                    <p className="text-gray-700 text-sm leading-relaxed">{point}</p>
+                    <div className="w-1.5 h-1.5 rounded-full bg-gold mt-2 flex-shrink-0" />
+                    <p className="text-ink/80 text-sm leading-relaxed">{point}</p>
                   </li>
                 ))}
               </ul>
@@ -136,18 +136,18 @@ export default function HowItWorks() {
 
         {/* CTA */}
         <div className="mt-12 text-center">
-          <p className="text-gray-600 mb-4">Ready to find your match?</p>
+          <p className="text-ink/60 mb-4">Ready to find your match?</p>
           <Link
             href="/discover"
-            className="inline-block px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+            className="inline-block px-8 py-3 bg-gold hover:bg-gold/90 text-ink font-medium rounded-lg transition-colors"
           >
             Start Discovering
           </Link>
         </div>
 
         {/* FAQ */}
-        <div className="mt-16 pt-12 border-t border-gray-200">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">Questions?</h3>
+        <div className="mt-16 pt-12 border-t border-raised">
+          <h3 className="text-2xl font-display font-bold text-ink mb-6">Questions?</h3>
           <div className="space-y-4">
             {[
               {
@@ -169,15 +169,15 @@ export default function HowItWorks() {
             ].map((faq, idx) => (
               <details
                 key={idx}
-                className="group bg-white rounded-lg border border-gray-200 p-4 cursor-pointer"
+                className="group bg-card rounded-lg border border-raised p-4 cursor-pointer"
               >
-                <summary className="font-medium text-gray-900 flex items-center justify-between">
+                <summary className="font-medium text-ink flex items-center justify-between">
                   {faq.q}
-                  <span className="text-gray-400 group-open:rotate-180 transition-transform">
+                  <span className="text-ink/60 group-open:rotate-180 transition-transform">
                     ▼
                   </span>
                 </summary>
-                <p className="mt-4 text-gray-600 text-sm leading-relaxed">{faq.a}</p>
+                <p className="mt-4 text-ink/80 text-sm leading-relaxed">{faq.a}</p>
               </details>
             ))}
           </div>
