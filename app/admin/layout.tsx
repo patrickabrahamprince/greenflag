@@ -14,6 +14,8 @@ import {
   UserCog,
   Heart,
   RotateCcw,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
@@ -35,6 +37,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const supabase = createClient();
   const [checking, setChecking] = useState(true);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const saved = localStorage.getItem('admin-theme') as 'light' | 'dark' | null;
+    setTheme(saved || 'dark');
+  }, []);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
@@ -61,7 +71,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     router.push('/login');
   };
 
-  if (checking) {
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    localStorage.setItem('admin-theme', newTheme);
+  };
+
+  if (checking || !mounted) {
     return (
       <div className="min-h-dvh bg-black flex items-center justify-center">
         <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
@@ -69,14 +85,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
+  const isDark = theme === 'dark';
+  const bgPrimary = isDark ? 'bg-black' : 'bg-white';
+  const bgSecondary = isDark ? 'bg-[#0A0A0A]' : 'bg-gray-50';
+  const textPrimary = isDark ? 'text-[#EDEADE]' : 'text-black';
+  const textSecondary = isDark ? 'text-[#8E8E93]' : 'text-gray-600';
+  const borderColor = isDark ? 'border-white/10' : 'border-gray-200';
+  const accentColor = '#C9A961';
+
   return (
-    <div className="min-h-dvh bg-black flex">
-      <aside className="hidden lg:flex w-64 flex-col bg-[#0A0A0A] border-r border-white/10 p-4">
-        <div className="flex items-center gap-3 px-3 py-4">
-          <div className="w-8 h-8 rounded-lg bg-[#C9A961] flex items-center justify-center">
-            <span className="text-black font-bold text-sm">G</span>
+    <div className={`min-h-dvh ${bgPrimary} flex`}>
+      <aside className={`hidden lg:flex w-64 flex-col ${bgSecondary} border-r ${borderColor} p-4`}>
+        <div className="flex items-center justify-between px-3 py-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-[#C9A961] flex items-center justify-center">
+              <span className="text-black font-bold text-sm">G</span>
+            </div>
+            <span className={`${textPrimary} font-display text-lg`}>Admin</span>
           </div>
-          <span className="text-[#EDEADE] font-display text-lg">Admin</span>
+          <button
+            onClick={toggleTheme}
+            className={`p-1.5 rounded-lg transition-all ${isDark ? 'bg-white/10 hover:bg-white/20' : 'bg-black/10 hover:bg-black/20'}`}
+            title={isDark ? 'Light mode' : 'Dark mode'}
+          >
+            {isDark ? <Sun className="w-4 h-4 text-[#C9A961]" /> : <Moon className="w-4 h-4 text-gray-700" />}
+          </button>
         </div>
         <nav className="flex-1 space-y-1 mt-6">
           {NAV_ITEMS.map((item) => {
@@ -89,8 +122,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 onClick={() => router.push(item.href)}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
                   active
-                    ? 'bg-[#C9A961]/10 text-[#C9A961]'
-                    : 'text-[#8E8E93] hover:text-white hover:bg-white/5'
+                    ? `bg-[#C9A961]/10 text-[#C9A961]`
+                    : `${textSecondary} ${isDark ? 'hover:text-white hover:bg-white/5' : 'hover:text-black hover:bg-gray-200/50'}`
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -102,7 +135,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <button
           onClick={handleLogout}
           disabled={loggingOut}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-400 hover:bg-red-500/10 transition-all mt-auto disabled:opacity-50"
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-400 hover:bg-red-500/10 transition-all mt-auto disabled:opacity-50`}
         >
           {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
           Logout
@@ -110,15 +143,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       <div className="flex-1 min-h-dvh">
-        <header className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-white/10">
-          <span className="text-[#EDEADE] font-display">Admin</span>
-          <button onClick={handleLogout} disabled={loggingOut} className="text-red-400 text-sm flex items-center gap-1.5 disabled:opacity-50">
-            {loggingOut && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-            Logout
-          </button>
+        <header className={`lg:hidden flex items-center justify-between px-4 py-3 border-b ${borderColor}`}>
+          <span className={`${textPrimary} font-display`}>Admin</span>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={toggleTheme}
+              className={`p-1.5 rounded-lg transition-all ${isDark ? 'bg-white/10 hover:bg-white/20' : 'bg-black/10 hover:bg-black/20'}`}
+            >
+              {isDark ? <Sun className="w-4 h-4 text-[#C9A961]" /> : <Moon className="w-4 h-4 text-gray-700" />}
+            </button>
+            <button onClick={handleLogout} disabled={loggingOut} className="text-red-400 text-sm flex items-center gap-1.5 disabled:opacity-50">
+              {loggingOut && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+              Logout
+            </button>
+          </div>
         </header>
 
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#0A0A0A] border-t border-white/10 z-50">
+        <div className={`lg:hidden fixed bottom-0 left-0 right-0 ${bgSecondary} border-t ${borderColor} z-50`}>
           <nav className="flex overflow-x-auto scrollbar-hide">
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
@@ -128,7 +169,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   key={item.href}
                   onClick={() => router.push(item.href)}
                   className={`flex flex-col items-center gap-0.5 px-3 py-2 text-[10px] min-w-[60px] transition-colors ${
-                    active ? 'text-[#C9A961]' : 'text-[#8E8E93]'
+                    active ? 'text-[#C9A961]' : textSecondary
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -139,7 +180,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </nav>
         </div>
 
-        <main className="p-4 lg:p-8 pb-24 lg:pb-8">
+        <main className={`p-4 lg:p-8 pb-24 lg:pb-8 ${bgPrimary}`}>
           {children}
         </main>
       </div>
