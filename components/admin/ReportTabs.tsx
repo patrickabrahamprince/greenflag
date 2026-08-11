@@ -14,7 +14,7 @@ export interface ReportTabsProps {
 
 export function ReportTabs({ activeTab, onTabChange }: ReportTabsProps) {
   return (
-    <div className="flex gap-1 bg-[#0A0A0A] rounded-xl p-1 border border-gray-200 mb-6 overflow-x-auto">
+    <div className="flex gap-1 bg-gray-100 rounded-xl p-1 border border-gray-200 mb-6 overflow-x-auto">
       {TABS.map((t) => (
         <button
           key={t.key}

@@ -220,10 +220,10 @@ body.min-h-dvh::after {
      shared-class change. */
   .input {
     @apply w-full rounded-tile px-4 py-3
-           text-ink placeholder:text-ink/40 bg-well
-           border-2 border-transparent
+           text-gray-900 placeholder:text-gray-400 bg-white
+           border-2 border-gray-300
            transition-all duration-200 ease-out
-           focus:outline-none focus:border-gold;
+           focus:outline-none focus:border-blue-500;
   }
 
   /* Chrome/Safari force a yellow background on autofilled inputs unless
@@ -234,9 +234,9 @@ body.min-h-dvh::after {
   .input:-webkit-autofill,
   .input:-webkit-autofill:hover,
   .input:-webkit-autofill:focus {
-    -webkit-text-fill-color: #FFFFFF;
-    -webkit-box-shadow: 0 0 0px 1000px #0F0A0A inset;
-    box-shadow: 0 0 0px 1000px #0F0A0A inset;
+    -webkit-text-fill-color: #111827;
+    -webkit-box-shadow: 0 0 0px 1000px #FFFFFF inset;
+    box-shadow: 0 0 0px 1000px #FFFFFF inset;
     transition: background-color 9999s ease-in-out 0s;
   }
 
