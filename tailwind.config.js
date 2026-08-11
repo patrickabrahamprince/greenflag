@@ -65,9 +65,9 @@ module.exports = {
         // that migration, not a wrong color. Wine is the closest surviving
         // "cool/secondary" tone in the locked palette.
         lavender: '#45050C',
-        surface: '#000000',     // now card (black)
-        'surface-light': '#2A1519', // now raised
-        border: '#2A1519',      // now raised
+        surface: '#FFFFFF',     // light white
+        'surface-light': '#f0f0f0', // light gray
+        border: '#e5e5e5',      // light gray border
         muted: '#FFFFFF99',     // unchanged -- 60% white
         // bottom-nav.tsx's active-tab disc (dark disc on the light pill,
         // was Persian Indigo) -- kept as its own token since "well"/"base"
