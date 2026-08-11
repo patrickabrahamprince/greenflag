@@ -43,7 +43,7 @@ export function QueueItemCard({ item, isSelected, onSelect }: QueueItemCardProps
       onClick={() => onSelect(item)}
       className={`w-full card text-left flex items-center gap-3 ${isSelected ? 'border-blue-600/50' : ''}`}
     >
-      <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center overflow-hidden shrink-0">
+      <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center overflow-hidden shrink-0">
         {item.media_type === 'photo' && item.img ? (
           <img src={item.img} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
         ) : (

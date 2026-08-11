@@ -15,7 +15,7 @@ export function QueueItemDetail({ item, onApprove, onReject, moderating }: Queue
         {item.media_type === 'voice' ? (
           <audio controls src={item.img} className="w-full" />
         ) : item.media_type === 'text' ? (
-          <p className="text-white text-base leading-relaxed italic text-center">
+          <p className="text-gray-900 text-base leading-relaxed italic text-center">
             {item.content ? `"${item.content}"` : 'No text submitted'}
           </p>
         ) : item.img ? (
@@ -28,19 +28,19 @@ export function QueueItemDetail({ item, onApprove, onReject, moderating }: Queue
       <div className="space-y-3 mb-6">
         <div>
           <span className="text-xs text-muted">Guest</span>
-          <p className="text-white font-medium">{item.name}</p>
+          <p className="text-gray-900 font-medium">{item.name}</p>
         </div>
         <div>
           <span className="text-xs text-muted">Day</span>
-          <p className="text-white font-medium">Day {item.day}</p>
+          <p className="text-gray-900 font-medium">Day {item.day}</p>
         </div>
         <div>
           <span className="text-xs text-muted">Prompt</span>
-          <p className="text-white text-sm">{item.task || 'Not available'}</p>
+          <p className="text-gray-900 text-sm">{item.task || 'Not available'}</p>
         </div>
         <div>
           <span className="text-xs text-muted">Previous Reviews</span>
-          <p className="text-white text-sm">None</p>
+          <p className="text-gray-900 text-sm">None</p>
         </div>
       </div>
 

@@ -19,7 +19,7 @@ export function ReportsList({ reports, onBanUser, onDeleteReport }: ReportsListP
             <div>
               <span className="text-red-400 font-medium">{r.reporter?.name || 'Unknown'}</span>
               <span className="text-gray-500 mx-2">reported</span>
-              <span className="text-white font-medium">{r.reported?.name || 'Unknown'}</span>
+              <span className="text-gray-900 font-medium">{r.reported?.name || 'Unknown'}</span>
             </div>
             <span className="text-gray-500 text-xs">
               {new Date(r.created_at).toLocaleString()}

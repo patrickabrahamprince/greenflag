@@ -11,7 +11,7 @@ export interface UserProfileHeaderProps {
 function personaColor(persona?: string | null) {
   if (persona === 'woman') return { ring: 'ring-pink-400/70', text: 'text-pink-400', bg: 'bg-pink-400/10' };
   if (persona === 'man') return { ring: 'ring-blue-400/70', text: 'text-blue-400', bg: 'bg-blue-400/10' };
-  return { ring: 'ring-white/10', text: 'text-gray-500', bg: 'bg-white/5' };
+  return { ring: 'ring-white/10', text: 'text-gray-500', bg: 'bg-gray-50' };
 }
 
 export function UserProfileHeader({ user }: UserProfileHeaderProps) {

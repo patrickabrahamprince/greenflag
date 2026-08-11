@@ -19,16 +19,16 @@ export function ReportCard({ report: r, showActions, onStatusChange, onBanUser, 
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs font-medium text-gray-900">Report #{r.id}</span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-500 capitalize">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-50 text-gray-500 capitalize">
               {r.reason}
             </span>
           </div>
           <p className="text-xs text-gray-500">
-            <button onClick={() => router.push(`/profile/${r.reporter_id}`)} className="hover:text-white">
+            <button onClick={() => router.push(`/profile/${r.reporter_id}`)} className="hover:text-gray-900">
               {r.reporter.name || r.reporter.email}
             </button>
             {' reported '}
-            <button onClick={() => router.push(`/profile/${r.reported_id}`)} className="hover:text-white">
+            <button onClick={() => router.push(`/profile/${r.reported_id}`)} className="hover:text-gray-900">
               {r.reported.name || r.reported.email}
             </button>
           </p>

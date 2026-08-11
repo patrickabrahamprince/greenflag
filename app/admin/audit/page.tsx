@@ -74,7 +74,7 @@ export default function AdminAudit() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-gray-500 text-xs uppercase border-b border-white/10">
+                <tr className="text-gray-500 text-xs uppercase border-b border-gray-200">
                   <th className="text-left py-3 px-2">Admin</th>
                   <th className="text-left py-3 px-2">Action</th>
                   <th className="text-left py-3 px-2">Target</th>
@@ -88,7 +88,7 @@ export default function AdminAudit() {
                       {a.admin_email || 'system'}
                     </td>
                     <td className="py-3 px-2">
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-500">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-50 text-gray-500">
                         {a.action.replace(/_/g, ' ')}
                       </span>
                     </td>

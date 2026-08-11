@@ -20,7 +20,7 @@ export interface UserManagementTableProps {
 function personaColor(persona?: string) {
   if (persona === 'woman') return { ring: 'ring-pink-400/70', dot: 'bg-pink-400', text: 'text-pink-400', bg: 'bg-pink-400/10' };
   if (persona === 'man') return { ring: 'ring-blue-400/70', dot: 'bg-blue-400', text: 'text-blue-400', bg: 'bg-blue-400/10' };
-  return { ring: 'ring-white/10', dot: 'bg-gray-500', text: 'text-gray-500', bg: 'bg-white/5' };
+  return { ring: 'ring-white/10', dot: 'bg-gray-500', text: 'text-gray-500', bg: 'bg-gray-50' };
 }
 
 export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveClick, onRejectClick, onDeleteClick, approvingId, settingAdminId }: UserManagementTableProps) {
@@ -30,7 +30,7 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
     <div className="overflow-x-auto">
       <table data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'users-table' : undefined} className="w-full text-sm">
         <thead>
-          <tr className="text-gray-500 text-xs uppercase border-b border-white/10">
+          <tr className="text-gray-500 text-xs uppercase border-b border-gray-200">
             <th className="text-left py-3 px-2">Name</th>
             <th className="text-left py-3 px-2 hidden md:table-cell">Persona</th>
             <th className="text-left py-3 px-2 hidden lg:table-cell">City</th>

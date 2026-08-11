@@ -62,7 +62,7 @@ export default function ProfileRequestsPage() {
             <div key={r.id} className="bg-well border border-gray-200 rounded-2xl p-4">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <p className="text-white font-medium text-sm">{requesterName(r)}</p>
+                  <p className="text-gray-900 font-medium text-sm">{requesterName(r)}</p>
                   <p className="text-gray-500 text-xs">{new Date(r.created_at).toLocaleString()}</p>
                 </div>
                 <div className="flex gap-2">

@@ -126,7 +126,7 @@ export default function AdminMatches() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-gray-500 text-xs uppercase border-b border-white/10">
+              <tr className="text-gray-500 text-xs uppercase border-b border-gray-200">
                 <th className="text-left py-3 px-2">Man</th>
                 <th className="text-left py-3 px-2">Woman</th>
                 <th className="text-left py-3 px-2">Day</th>
@@ -143,7 +143,7 @@ export default function AdminMatches() {
                   <td className="py-3 px-2"><PersonCell person={m.woman} /></td>
                   <td className="py-3 px-2 text-gray-500 text-xs">{m.currentDay} / 3</td>
                   <td className="py-3 px-2">
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${STATUS_STYLES[m.status] || 'bg-white/5 text-gray-500'}`}>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${STATUS_STYLES[m.status] || 'bg-gray-50 text-gray-500'}`}>
                       {m.status.replace(/_/g, ' ')}
                     </span>
                   </td>

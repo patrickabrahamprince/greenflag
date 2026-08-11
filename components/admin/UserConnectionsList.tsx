@@ -22,7 +22,7 @@ export function UserConnectionsList({ connections, userId }: UserConnectionsList
       case 'active': return 'text-green-400 bg-green-500/10';
       case 'completed': return 'text-blue-400 bg-blue-500/10';
       case 'expired': return 'text-red-400 bg-red-500/10';
-      default: return 'text-gray-500 bg-white/5';
+      default: return 'text-gray-500 bg-gray-50';
     }
   };
 
