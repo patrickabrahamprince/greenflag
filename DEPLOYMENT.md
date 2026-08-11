@@ -15,8 +15,12 @@ NEXT_PUBLIC_RAZORPAY_KEY=rzp_live_xxxxx
 RAZORPAY_KEY_SECRET=your-razorpay-secret
 RAZORPAY_WEBHOOK_SECRET=your-webhook-secret
 
-# Admin
-ADMIN_EMAILS=admin@example.com
+# Admin (separate from main app auth)
+ADMIN_EMAIL=pat@greenflag
+ADMIN_PASSWORD=Patrick@1
+
+# Deprecated: ADMIN_EMAILS is no longer used
+# ADMIN_EMAILS=admin@example.com
 
 # Web Push (optional, for push notifications)
 NEXT_PUBLIC_VAPID_PUBLIC_KEY=your-vapid-public-key
@@ -75,9 +79,30 @@ npm run build
 npm start
 ```
 
+## Admin Panel Authentication
+
+The admin panel (`/admin`) uses **separate authentication** from the main app:
+
+- **Login endpoint**: `POST /api/admin/login`
+- **Verify endpoint**: `GET /api/admin/verify` (checks session cookie)
+- **Logout endpoint**: `POST /api/admin/logout`
+- **Session cookie**: `admin_session` (httpOnly, 7-day expiry)
+
+Credentials are checked against `ADMIN_EMAIL` and `ADMIN_PASSWORD` environment variables.
+
+### Testing admin access locally
+```bash
+curl -X POST http://localhost:3000/api/admin/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"pat@greenflag","password":"Patrick@1"}' \
+  -c cookies.txt
+
+curl http://localhost:3000/admin -b cookies.txt
+```
+
 ## Pre-deployment Checklist
 
-- [ ] All environment variables set
+- [ ] All environment variables set (including `ADMIN_EMAIL` and `ADMIN_PASSWORD`)
 - [ ] Supabase RLS enabled on all tables
 - [ ] Razorpay webhook configured and tested
 - [ ] Storage buckets created

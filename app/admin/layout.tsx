@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import {
   LayoutDashboard,
   Users,
@@ -17,7 +18,6 @@ import {
   Sun,
   Moon,
 } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -47,28 +47,32 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, []);
 
   useEffect(() => {
-    supabase.auth.getUser().then(async ({ data: { user } }) => {
-      if (!user) {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('/api/admin/verify', { credentials: 'include' });
+        if (!res.ok) {
+          router.replace('/admin/login');
+          return;
+        }
+        setChecking(false);
+      } catch {
         router.replace('/admin/login');
-        return;
       }
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('is_admin')
-        .eq('id', user.id)
-        .single();
-      if (!profile?.is_admin) {
-        router.replace('/admin/login');
-        return;
-      }
-      setChecking(false);
-    });
-  }, []);
+    };
+    checkAuth();
+  }, [router]);
 
   const handleLogout = async () => {
     setLoggingOut(true);
-    await supabase.auth.signOut();
-    router.push('/login');
+    try {
+      await fetch('/api/admin/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
+    router.push('/admin/login');
   };
 
   const toggleTheme = () => {

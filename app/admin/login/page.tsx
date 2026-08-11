@@ -2,12 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 import { Loader2 } from 'lucide-react';
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const supabase = createClient();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -19,30 +17,18 @@ export default function AdminLoginPage() {
     setError('');
 
     try {
-      const { data: { user }, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       });
 
-      if (authError) throw authError;
-      if (!user) throw new Error('Login failed');
-
-      // Check if admin
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('is_admin')
-        .eq('id', user.id)
-        .single();
-
-      if (!profile?.is_admin) {
-        await supabase.auth.signOut();
-        setError('Not authorized as admin');
-        setLoading(false);
-        return;
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Login failed');
       }
 
-      // Success — go to dashboard
-      router.replace('/admin/queue');
+      router.replace('/admin');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {

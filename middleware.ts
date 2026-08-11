@@ -4,6 +4,7 @@ import { checkRateLimit, getClientIp, RATE_LIMITS } from '@/lib/rate-limit';
 
 const PUBLIC_PATHS = [
   '/login',
+  '/admin/login',
   '/auth/callback', '/auth/error',
   '/terms', '/privacy', '/support',
   '/_next', '/favicon', '/sw.js', '/manifest',
@@ -25,6 +26,16 @@ export async function middleware(req: NextRequest) {
     if (!result.allowed) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
     }
+  }
+
+  // Admin routes: check for admin session cookie (separate from main app auth)
+  if (pathname.startsWith('/admin')) {
+    const adminSession = req.cookies.get('admin_session')?.value;
+    if (!adminSession) {
+      const destination = new URL('/admin/login', req.url);
+      return NextResponse.redirect(destination);
+    }
+    return NextResponse.next();
   }
 
   // Public paths and API routes — let through immediately
@@ -85,7 +96,7 @@ export async function middleware(req: NextRequest) {
     .eq('id', user.id)
     .single();
 
-  console.log('MIDDLEWARE PROFILE:', profile?.is_admin ? 'admin' : profile?.onboarding_completed ? 'onboarded' : 'no profile');
+  console.log('MIDDLEWARE PROFILE:', profile?.onboarding_completed ? 'onboarded' : 'no profile');
 
   // Pausing (Settings -> "Pause my account") sets is_active false and signs
   // the user out -- this is the "resume" side of that: reaching any
@@ -94,21 +105,6 @@ export async function middleware(req: NextRequest) {
   // one place that needs to flip it back regardless of how they got here.
   if (profile && profile.is_active === false) {
     await supabase.from('profiles').update({ is_active: true }).eq('id', user.id);
-  }
-
-  // Admin users: redirect to /admin unless already there
-  if (profile?.is_admin) {
-    if (!pathname.startsWith('/admin')) {
-      const destination = new URL('/admin', req.url);
-      return NextResponse.redirect(destination);
-    }
-    return supabaseResponse;
-  }
-
-  // Non-admins cannot access /admin
-  if (pathname.startsWith('/admin')) {
-    const destination = new URL('/login', req.url);
-    return NextResponse.redirect(destination);
   }
 
   // Auth method agnostic: works for phone OTP, email, magic link, OAuth
