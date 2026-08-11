@@ -18,14 +18,14 @@ export default function OnboardPage() {
   // mount means the tap-to-navigate gap (previously felt like a freeze)
   // is mostly gone by the time someone actually taps.
   useEffect(() => {
-    router.prefetch('/onboard/name');
+    router.prefetch('/onboard/how-it-works');
   }, [router]);
 
   const handleSelect = (persona: 'woman' | 'man') => {
     hapticTap();
     setSelecting(persona);
     setPersona(persona);
-    goTo('/onboard/name', '/onboarding/name.jpg');
+    goTo('/onboard/how-it-works', '/onboarding/how-it-works.jpg');
   };
 
   return (

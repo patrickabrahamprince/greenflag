@@ -43,13 +43,9 @@ export default function HowItWorksPage() {
   const router = useRouter();
   const { goTo } = useOnboardingNav();
   const supabase = createClient();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [continuing, setContinuing] = useState(false);
-  const [persona, setPersona] = useState<'man' | 'woman' | null>(null);
-  const [approvalStatus, setApprovalStatus] = useState<string | null>(null);
   const [step, setStep] = useState(0);
-  const setGlobalUser = useUserStore((s) => s.setUser);
-  const clearOnboarding = useOnboardingStore((s) => s.clearOnboarding);
   const trackRef = useRef<HTMLDivElement>(null);
   const settleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -91,66 +87,11 @@ export default function HowItWorksPage() {
     track.scrollTo({ left: (base + index) * track.clientWidth, behavior: 'smooth' });
   };
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast.error('Session expired. Please sign in again.');
-        router.replace('/login');
-        return;
-      }
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('persona, approval_status')
-        .eq('id', user.id)
-        .single();
-      setPersona(profile?.persona as 'man' | 'woman' | null);
-      setApprovalStatus((profile as { approval_status?: string })?.approval_status ?? null);
-      setLoading(false);
-    };
-    fetchProfile();
-    router.prefetch('/onboard/pending');
-    router.prefetch('/standard/builder');
-    router.prefetch('/discover');
-  }, [supabase, router]);
 
   const handleContinue = async () => {
     hapticTap();
     setContinuing(true);
-
-    // The 90s review countdown (shown on /onboard/pending for women, and
-    // as a top banner via BottomNav for men browsing Discover while
-    // pending) needs its own start time -- anchoring it to account
-    // creation meant it was already expired for anyone who took more than
-    // 90s to get through the rest of onboarding (phone OTP, profile,
-    // quiz, interests, rules), which is most real users.
-    if (approvalStatus === 'pending') {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase.from('profiles').update({ review_started_at: new Date().toISOString() }).eq('id', user.id);
-        const { data: freshProfile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-        if (freshProfile) setGlobalUser(freshProfile as any);
-      }
-    }
-
-    // This is the true end of the onboarding wizard -- every path from
-    // here on is a real app screen (pending, Standard builder, Discover),
-    // none of which read from useOnboardingStore, so it's safe to drop
-    // the persisted profile-wizard answers now rather than leaving them
-    // sitting in localStorage indefinitely.
-    clearOnboarding();
-
-    // Pending women wait for admin review on a dedicated screen; pending men
-    // go straight into Discover, where browsing while pending is allowed.
-    if (approvalStatus === 'pending' && persona !== 'man') {
-      goTo('/onboard/pending', '/onboarding/pending.jpg');
-      return;
-    }
-    if (persona === 'woman') {
-      goTo('/standard/builder');
-    } else {
-      goTo('/discover');
-    }
+    goTo('/onboard/name', '/onboarding/name.jpg');
   };
 
   if (loading) {
