@@ -440,7 +440,7 @@ export default function DiscoverPage() {
                             chevron navigation below; doesn't replace it. */}
                         <div className="absolute top-safe-top inset-x-3 z-10 flex gap-1 pt-3">
                           {photos.map((_, segIdx) => (
-                            <div key={segIdx} className="flex-1 h-1 rounded-full bg-white/40 shadow-[0_0_2px_rgba(0,0,0,0.5)] overflow-hidden">
+                            <div key={segIdx} className="flex-1 h-1 rounded-full bg-ink/20 shadow-[0_0_2px_rgba(0,0,0,0.5)] overflow-hidden">
                               <div
                                 className="h-full bg-gold rounded-full transition-all duration-200"
                                 style={{ width: segIdx <= idx ? '100%' : '0%' }}
@@ -697,7 +697,7 @@ export default function DiscoverPage() {
                       {likingId === p.id ? (
                         <Loader2 className="w-6 h-6 animate-spin text-ink" />
                       ) : (
-                        <Heart className="w-7 h-7 text-ink" fill="white" />
+                        <Heart className="w-7 h-7 text-ink" fill="currentColor" />
                       )}
                     </button>
                   </>

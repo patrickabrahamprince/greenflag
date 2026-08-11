@@ -37,7 +37,7 @@ function ToggleRow({ label, description, value, onChange, disabled }: ToggleRowP
         disabled={disabled}
         className={`w-11 h-6 rounded-full shrink-0 transition-colors disabled:opacity-50 ${value ? 'bg-gold' : 'bg-surface-light'}`}
       >
-        <div className={`w-4 h-4 rounded-full bg-white transition-transform ${value ? 'translate-x-6' : 'translate-x-1'}`} />
+        <div className={`w-4 h-4 rounded-full bg-card transition-transform ${value ? 'translate-x-6' : 'translate-x-1'}`} />
       </button>
     </div>
   );
