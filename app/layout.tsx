@@ -57,8 +57,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={cabinetGrotesk.variable} style={{ colorScheme: 'light' }}>
-      <body className="min-h-dvh bg-white text-gray-900 font-sans">
+    <html lang="en" className={cabinetGrotesk.variable} style={{ colorScheme: 'dark' }}>
+      <body className="min-h-dvh bg-base text-ink font-sans">
         <ErrorBoundary>
           <Providers>
             <SwipeBackGesture>{children}</SwipeBackGesture>
