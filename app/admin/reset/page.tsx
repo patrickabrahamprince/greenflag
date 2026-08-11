@@ -38,6 +38,7 @@ export default function AdminResetTool() {
       const res = await fetch('/api/admin/nuke-all-users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ confirm: nukeConfirmText.trim() }),
       });
       const d = await res.json();
@@ -61,6 +62,7 @@ export default function AdminResetTool() {
       const res = await fetch('/api/admin/reset-connection', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ userIdA, userIdB }),
       });
       const d = await res.json();

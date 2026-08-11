@@ -129,6 +129,7 @@ export default function AdminUsers() {
       const res = await fetch('/api/admin/users/purge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           user_id: deleteTarget.id,
           confirm_admin_purge: !!deleteTarget.is_admin,
