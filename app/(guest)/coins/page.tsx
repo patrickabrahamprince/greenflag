@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import confetti from 'canvas-confetti';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { useCoinStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
@@ -140,7 +141,14 @@ export default function CoinsPage() {
               displayPrice={appleProducts[pkg.appleProductId]?.displayPrice}
               purchasing={!isNative || purchasingProductId !== null}
               isPurchasingThis={purchasingProductId === pkg.appleProductId}
-              onBuy={() => handleApplePurchase(pkg.appleProductId)}
+              onBuy={async () => {
+                const newBalance = await handleApplePurchase(pkg.appleProductId);
+                // undefined means cancelled/pending/failed -- only a real
+                // credited purchase gets the celebration.
+                if (newBalance !== undefined) {
+                  confetti({ particleCount: 120, spread: 75, origin: { y: 0.3 }, colors: ['#D2042D', '#45050C', '#fff'] });
+                }
+              }}
             />
           ))}
         </div>

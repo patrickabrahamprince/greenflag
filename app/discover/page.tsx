@@ -525,10 +525,14 @@ export default function DiscoverPage() {
                 </div>
               )}
               {(() => {
-                const shownInterests = (p.interests_have?.length ? p.interests_have : p.interests ?? []).slice(0, 5)
+                // Card shows at most 5 tags total, not 5 "have" + 3
+                // "values" -- have-interests get priority, values only
+                // fill whatever room is left under that cap.
+                const MAX_CARD_TAGS = 5
+                const shownInterests = (p.interests_have?.length ? p.interests_have : p.interests ?? []).slice(0, MAX_CARD_TAGS)
                 const lookingFor = (p.interests_looking_for?.length ? p.interests_looking_for : p.looking_for_interests ?? [])
                   .filter((interest) => !shownInterests.includes(interest))
-                  .slice(0, 3)
+                  .slice(0, Math.max(0, MAX_CARD_TAGS - shownInterests.length))
                 return (
                   <>
                     <div className={persona === 'woman' ? 'flex flex-wrap gap-1.5' : 'flex flex-wrap gap-2'}>

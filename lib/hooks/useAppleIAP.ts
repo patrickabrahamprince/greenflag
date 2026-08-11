@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { InAppPurchase, type IAPTransaction } from '@/lib/native/inAppPurchase';
 import { useCoinStore } from '@/lib/store';
 import { APPLE_COIN_PRODUCT_IDS } from '@/lib/iap-products';
+import { hapticSuccess } from '@/lib/haptics';
 
 // This only ever runs inside the native iOS app -- Capacitor.isNativePlatform()
 // is false on web, and there's no InAppPurchase plugin registered there
@@ -85,6 +86,7 @@ export function useAppleIAP() {
     try {
       const transaction = await InAppPurchase.purchase({ productId });
       const newBalance = await verifyAndCredit(transaction);
+      hapticSuccess();
       toast.success('Coins added to your balance!');
       return newBalance;
     } catch (err: unknown) {

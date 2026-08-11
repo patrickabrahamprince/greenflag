@@ -124,7 +124,7 @@ function StandardIntroScreen({ onContinue }: { onContinue: () => void }) {
           clearance value Toaster in providers.tsx uses for the same
           reason. */}
       <div
-        className="fixed inset-x-0 z-10 px-6 pt-8 pb-4 bg-gradient-to-t from-base via-base/95 to-transparent"
+        className="fixed inset-x-0 z-10 px-6 pt-8 pb-4"
         style={{ bottom: 'calc(max(1rem, env(safe-area-inset-bottom)) + 5.5rem)' }}
       >
         <button
