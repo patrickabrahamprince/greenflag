@@ -46,6 +46,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, []);
 
   useEffect(() => {
+    // Skip auth check on login page
+    if (pathname === '/admin/login') {
+      setChecking(false);
+      return;
+    }
+
     const checkAuth = async () => {
       try {
         const res = await fetch('/api/admin/verify', { credentials: 'include' });
@@ -59,7 +65,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       }
     };
     checkAuth();
-  }, [router]);
+  }, [router, pathname]);
 
   const handleLogout = async () => {
     setLoggingOut(true);
