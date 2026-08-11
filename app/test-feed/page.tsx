@@ -27,27 +27,27 @@ export default async function TestFeedPage() {
     <div className="max-w-lg mx-auto p-6 space-y-4">
       <h1 className="text-xl font-semibold">Opposite-Gender Feed Test</h1>
 
-      <div className="text-sm text-gray-400 space-y-1">
+      <div className="text-sm text-ink/60 space-y-1">
         <p><strong>Logged in as:</strong> {user.email}</p>
         <p><strong>Your persona:</strong> {current?.persona ?? '(not set)'}</p>
       </div>
 
-      <hr className="border-white/10" />
+      <hr className="border-raised" />
 
       {error && <p className="text-red-400">Error: {error}</p>}
 
       {!error && profiles.length === 0 && (
-        <p className="text-gray-500">No opposite-gender profiles found.</p>
+        <p className="text-ink/40">No opposite-gender profiles found.</p>
       )}
 
       {profiles.length > 0 && (
         <>
-          <p className="text-sm text-gray-400">Total found: {profiles.length}</p>
+          <p className="text-sm text-ink/60">Total found: {profiles.length}</p>
           <ul className="space-y-2">
             {profiles.map((p) => (
-              <li key={p.id} className="border border-white/10 rounded-lg p-3">
+              <li key={p.id} className="border border-raised rounded-lg p-3">
                 <p className="font-medium">{p.name}</p>
-                <p className="text-sm text-gray-400">Persona: {p.persona}</p>
+                <p className="text-sm text-ink/60">Persona: {p.persona}</p>
               </li>
             ))}
           </ul>

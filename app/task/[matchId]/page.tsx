@@ -122,7 +122,7 @@ function RejectReasonModal({
               key={chip}
               onClick={() => setReason(chip)}
               className={`px-3 py-1.5 rounded-full text-xs border transition-all ${
-                reason === chip ? 'border-gold text-gold bg-gold/10' : 'border-white/10 text-ink/60'
+                reason === chip ? 'border-gold text-gold bg-gold/10' : 'border-raised text-ink/60'
               }`}
             >
               {chip}
@@ -488,7 +488,7 @@ export default function TaskPage() {
                 className="glass-surface absolute inset-0 m-auto h-8 w-fit px-3 rounded-full flex items-center gap-1.5 active:scale-95 transition-all disabled:opacity-50"
               >
                 <Coins className="w-3 h-3 text-gold shrink-0" />
-                <span className="text-white text-xs font-display font-bold whitespace-nowrap">
+                <span className="text-ink text-xs font-display font-bold whitespace-nowrap">
                   Reveal — {REVEAL_COST}
                 </span>
               </button>
@@ -620,7 +620,7 @@ export default function TaskPage() {
                         className="glass-surface absolute inset-0 m-auto h-8 w-fit px-3 rounded-full flex items-center gap-1.5 active:scale-95 transition-all disabled:opacity-50"
                       >
                         <Coins className="w-3 h-3 text-gold shrink-0" />
-                        <span className="text-white text-xs font-display font-bold whitespace-nowrap">
+                        <span className="text-ink text-xs font-display font-bold whitespace-nowrap">
                           Reveal — {REVEAL_COST}
                         </span>
                       </button>

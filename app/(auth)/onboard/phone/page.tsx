@@ -230,7 +230,7 @@ export default function PhonePage() {
         </button>
 
         {userEmail && (
-          <p className="text-xs text-gray-500 mt-2 text-center">
+          <p className="text-xs text-ink/40 mt-2 text-center">
             Signed in as {userEmail}. You can add your number later in Settings.
           </p>
         )}

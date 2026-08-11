@@ -87,29 +87,29 @@ export default function ProfilePage() {
         {user.phone_verified && (
           <div className="absolute top-3 left-3 flex items-center gap-1 bg-black/50 backdrop-blur-md rounded-full pl-1.5 pr-2.5 py-1 animate-fade-in">
             <BadgeCheck className="w-3.5 h-3.5 text-gold" />
-            <span className="text-[10px] font-semibold text-white tracking-wide">Verified</span>
+            <span className="text-[10px] font-semibold text-ink tracking-wide">Verified</span>
           </div>
         )}
         <button
           onClick={() => { hapticTap(); router.push('/profile/edit'); }}
-          className="absolute bottom-3 right-3 w-10 h-10 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center active:scale-90 transition-transform"
+          className="absolute bottom-3 right-3 w-10 h-10 rounded-full bg-black/50 backdrop-blur-md border border-raised flex items-center justify-center active:scale-90 transition-transform"
         >
-          <Edit3 className="w-4 h-4 text-white" />
+          <Edit3 className="w-4 h-4 text-ink" />
         </button>
       </div>
 
       <div className="flex flex-col items-center pb-6">
-        <h2 className="text-2xl font-display text-white">{user.name}</h2>
+        <h2 className="text-2xl font-display text-ink">{user.name}</h2>
 
         <div className="flex items-center gap-2 mt-2.5">
           {!!user.age && (
-            <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium text-white/70 bg-white/5 border border-white/10">
+            <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium text-ink/70 bg-raised border border-raised">
               <Cake className="w-3 h-3" />
               {user.age}
             </span>
           )}
           {!!user.city && (
-            <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium text-white/70 bg-white/5 border border-white/10">
+            <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium text-ink/70 bg-raised border border-raised">
               <MapPin className="w-3 h-3" />
               {user.city}
             </span>
@@ -120,10 +120,10 @@ export default function ProfilePage() {
 
         {user.bio && (
           <div className="mt-5 w-full rounded-card bg-card p-6">
-            <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1.5">About</p>
+            <p className="text-[10px] uppercase tracking-widest text-ink/40 mb-1.5">About</p>
             <p className={
               user.persona === 'woman'
-                ? 'italic text-gray-300 leading-relaxed text-sm'
+                ? 'italic text-ink/80 leading-relaxed text-sm'
                 : 'text-ink/80 text-sm leading-relaxed'
             }>
               {user.bio}
@@ -133,7 +133,7 @@ export default function ProfilePage() {
 
         {!!user.interests_have?.length && (
           <div className="mt-5 w-full">
-            <p className="text-[10px] uppercase tracking-widest text-white/40 mb-2 text-center">Interests</p>
+            <p className="text-[10px] uppercase tracking-widest text-ink/40 mb-2 text-center">Interests</p>
             <div className="flex flex-wrap justify-center gap-1.5">
               {user.interests_have.map((tag) => (
                 <button
@@ -158,7 +158,7 @@ export default function ProfilePage() {
           style={{ background: 'linear-gradient(135deg, rgba(210,4,45,0.12) 0%, rgba(15,10,10,0.9) 60%)' }}
         >
           <p className="text-[10px] uppercase tracking-widest text-gold/70 mb-2">{user.teaser_prompt}</p>
-          <p className="font-display text-lg text-white leading-snug">{user.teaser_answer}</p>
+          <p className="font-display text-lg text-ink leading-snug">{user.teaser_answer}</p>
         </div>
       )}
 
@@ -190,7 +190,7 @@ export default function ProfilePage() {
               <Coins className="w-5 h-5 text-gold" />
             </div>
             <div>
-              <p className="text-2xl font-display font-semibold text-white leading-none">{balance}</p>
+              <p className="text-2xl font-display font-semibold text-ink leading-none">{balance}</p>
               <p className="text-xs text-muted mt-1">
                 {user.persona === 'woman' ? 'Coins · for nudges & reveals' : 'Coins · spend to connect'}
               </p>
@@ -202,7 +202,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="mt-8 pt-6 border-t border-white/[0.06]">
+      <div className="mt-8 pt-6 border-t border-raised/50">
         <button onClick={handleLogout} disabled={loggingOut} className="btn-danger w-full flex items-center justify-center gap-2">
           {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
           Sign Out

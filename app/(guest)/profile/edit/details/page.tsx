@@ -94,7 +94,7 @@ export default function ProfileDetailsEditPage() {
     <button
       key={field}
       onClick={() => setOpenField(field)}
-      className="w-full flex items-center gap-4 py-4 border-b border-white/5 text-left active:opacity-70 transition-opacity"
+      className="w-full flex items-center gap-4 py-4 border-b border-raised/50 text-left active:opacity-70 transition-opacity"
     >
       <div className="w-10 h-10 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center shrink-0">
         <Icon size={18} className="text-gold" />
@@ -126,7 +126,7 @@ export default function ProfileDetailsEditPage() {
         <button
           type="button"
           onClick={() => setPromptPickerOpen(true)}
-          className="w-full flex items-center justify-between bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-left active:scale-[0.98] transition-transform mt-2"
+          className="w-full flex items-center justify-between bg-raised border border-raised rounded-2xl px-5 py-4 text-left active:scale-[0.98] transition-transform mt-2"
         >
           <span className="text-ink font-medium">{prompt || 'Select a prompt'}</span>
           <Plus size={18} className="text-ink/50" />
@@ -206,7 +206,7 @@ export default function ProfileDetailsEditPage() {
             <button
               key={option}
               onClick={() => openField && saveField(openField, option)}
-              className="w-full flex items-center justify-between gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-left text-ink/90 text-sm hover:border-gold/50 active:scale-[0.98] transition-all"
+              className="w-full flex items-center justify-between gap-3 bg-raised border border-raised rounded-xl px-4 py-3.5 text-left text-ink/90 text-sm hover:border-gold/50 active:scale-[0.98] transition-all"
             >
               {option}
               {openValue === option && <Check size={16} className="text-gold shrink-0" />}
@@ -222,7 +222,7 @@ export default function ProfileDetailsEditPage() {
             <button
               key={p}
               onClick={() => { setPrompt(p); setPromptPickerOpen(false); }}
-              className="w-full flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-left text-ink/90 text-sm hover:border-gold/50 active:scale-[0.98] transition-all"
+              className="w-full flex items-center gap-3 bg-raised border border-raised rounded-xl px-4 py-3.5 text-left text-ink/90 text-sm hover:border-gold/50 active:scale-[0.98] transition-all"
             >
               <Quote size={14} className="text-gold shrink-0" />
               {p}

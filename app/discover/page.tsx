@@ -339,7 +339,7 @@ export default function DiscoverPage() {
               'Use coins to unlock special features',
             ]}
           >
-            <button className="w-6 h-6 text-white/60 hover:text-white/80 transition-colors">
+            <button className="w-6 h-6 text-ink/60 hover:text-ink/80 transition-colors">
               <svg fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
               </svg>
@@ -409,8 +409,8 @@ export default function DiscoverPage() {
                   >
                     {!src || failedPhotoUrls.has(src) ? (
                       <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-well">
-                        <ImageOff className="w-9 h-9 text-white/25" />
-                        <span className="text-white/30 text-xs font-medium">No photo available</span>
+                        <ImageOff className="w-9 h-9 text-ink/25" />
+                        <span className="text-ink/30 text-xs font-medium">No photo available</span>
                       </div>
                     ) : (
                       <img
@@ -427,8 +427,8 @@ export default function DiscoverPage() {
                         aria-label="Unlock"
                         className="glass-surface absolute inset-0 m-auto z-20 flex items-center justify-center gap-1.5 h-9 w-fit px-4 rounded-full active:scale-95 transition-all shadow-lg"
                       >
-                        <Lock className="w-3.5 h-3.5 text-white shrink-0" />
-                        <span className="text-white text-xs uppercase tracking-wide font-display font-bold whitespace-nowrap">Unlock Photos</span>
+                        <Lock className="w-3.5 h-3.5 text-ink shrink-0" />
+                        <span className="text-ink text-xs uppercase tracking-wide font-display font-bold whitespace-nowrap">Unlock Photos</span>
                       </button>
                     )}
 
@@ -453,14 +453,14 @@ export default function DiscoverPage() {
                           aria-label="Previous photo"
                           className="absolute left-2 top-[38%] -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center"
                         >
-                          <ChevronLeft className="w-5 h-5 text-white" />
+                          <ChevronLeft className="w-5 h-5 text-ink" />
                         </button>
                         <button
                           onClick={(e) => { e.stopPropagation(); hapticTap(); goTo(idx + 1) }}
                           aria-label="Next photo"
                           className="absolute right-2 top-[38%] -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center"
                         >
-                          <ChevronRight className="w-5 h-5 text-white" />
+                          <ChevronRight className="w-5 h-5 text-ink" />
                         </button>
                       </>
                     )}
@@ -485,7 +485,7 @@ export default function DiscoverPage() {
                           </HelpTooltip>
                         </div>
                         {persona === 'woman' && !!interestCounts[p.id] && (
-                          <span className="glass-surface rounded-full px-3 py-1 text-white/80 text-[11px] whitespace-nowrap">
+                          <span className="glass-surface rounded-full px-3 py-1 text-ink/80 text-[11px] whitespace-nowrap">
                             Intention from {interestCounts[p.id]} {interestCounts[p.id] === 1 ? 'person' : 'people'}
                           </span>
                         )}
@@ -588,7 +588,7 @@ export default function DiscoverPage() {
                                 // Dateasy's light Mindaro, which needed
                                 // dark text here instead).
                                 ? `${sizeClass} rounded-full bg-gold text-ink font-medium shadow-[0_2px_10px_rgba(210,4,45,0.4)] leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-[0_4px_16px_rgba(210,4,45,0.6)] active:scale-95`
-                                : `glass-surface ${sizeClass} rounded-full text-ink font-medium leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:bg-white/10 active:scale-95`)
+                                : `glass-surface ${sizeClass} rounded-full text-ink font-medium leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:bg-raised/5 active:scale-95`)
                             }
                           >
                             {interest}
@@ -602,7 +602,7 @@ export default function DiscoverPage() {
                         {lookingFor.map((interest: string) => (
                           <span
                             key={interest}
-                            className="px-2.5 py-1 text-xs rounded-full border border-white/20 text-ink/70 font-medium leading-none"
+                            className="px-2.5 py-1 text-xs rounded-full border border-raised text-ink/70 font-medium leading-none"
                           >
                             {interest}
                           </span>
@@ -641,11 +641,11 @@ export default function DiscoverPage() {
                       className="btn-primary flex-1 h-12 flex items-center justify-center gap-1.5"
                     >
                       {likingId === p.id ? (
-                        <Loader2 className="w-4 h-4 animate-spin text-white" />
+                        <Loader2 className="w-4 h-4 animate-spin text-ink" />
                       ) : (
                         <>
-                          <Heart className="w-4 h-4 text-white" />
-                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">View Profile</span>
+                          <Heart className="w-4 h-4 text-ink" />
+                          <span className="text-ink text-xs uppercase tracking-wide font-display font-bold">View Profile</span>
                         </>
                       )}
                     </button>
@@ -656,11 +656,11 @@ export default function DiscoverPage() {
                       className="glass-surface flex-1 h-12 rounded-full flex items-center justify-center gap-1.5 active:scale-95 transition-all disabled:opacity-50"
                     >
                       {nudgingId === p.id ? (
-                        <Loader2 className="w-4 h-4 animate-spin text-white" />
+                        <Loader2 className="w-4 h-4 animate-spin text-ink" />
                       ) : (
                         <>
-                          <Bell className="w-4 h-4 text-white" />
-                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">Nudge</span>
+                          <Bell className="w-4 h-4 text-ink" />
+                          <span className="text-ink text-xs uppercase tracking-wide font-display font-bold">Nudge</span>
                         </>
                       )}
                     </button>
@@ -695,9 +695,9 @@ export default function DiscoverPage() {
                       className="w-16 h-16 rounded-full flex items-center justify-center active:scale-[0.98] transition-all duration-300 ease-out disabled:opacity-50 shrink-0 bg-[#D2042D]"
                     >
                       {likingId === p.id ? (
-                        <Loader2 className="w-6 h-6 animate-spin text-white" />
+                        <Loader2 className="w-6 h-6 animate-spin text-ink" />
                       ) : (
-                        <Heart className="w-7 h-7 text-white" fill="white" />
+                        <Heart className="w-7 h-7 text-ink" fill="white" />
                       )}
                     </button>
                   </>
@@ -818,7 +818,7 @@ export default function DiscoverPage() {
                   disabled={!!sendingGiftType}
                   className="w-full glass-surface rounded-xl px-4 py-3 flex items-center justify-between active:scale-[0.98] transition-all disabled:opacity-50"
                 >
-                  <span className="flex items-center gap-2.5 text-white font-display text-sm font-semibold">
+                  <span className="flex items-center gap-2.5 text-ink font-display text-sm font-semibold">
                     <span className="text-xl">{gift.emoji}</span>
                     {gift.label}
                   </span>
@@ -859,12 +859,12 @@ export default function DiscoverPage() {
         <div
           className={`fixed inset-x-0 top-24 z-[60] flex justify-center pointer-events-none transition-opacity duration-500 ${nudgeDialog.visible ? 'opacity-100' : 'opacity-0'}`}
         >
-          <div className="glass-surface rounded-2xl px-5 py-3.5 flex items-center gap-3 shadow-2xl border border-white/10">
+          <div className="glass-surface rounded-2xl px-5 py-3.5 flex items-center gap-3 shadow-2xl border border-raised">
             <div className="w-9 h-9 rounded-full bg-green-500/15 flex items-center justify-center shrink-0">
               <Bell className="w-4 h-4 text-green-400" />
             </div>
             <div>
-              <p className="text-white font-display text-sm font-semibold leading-tight">Nudge Sent</p>
+              <p className="text-ink font-display text-sm font-semibold leading-tight">Nudge Sent</p>
               {nudgeDialog.charged && (
                 <p className="text-ink/50 text-[11px] leading-tight mt-0.5">{nudgeDialog.cost} coins invested</p>
               )}
@@ -922,7 +922,7 @@ export default function DiscoverPage() {
       {/* How It Works Link */}
       <Link
         href="/how-it-works"
-        className="fixed bottom-safe-bottom right-4 z-40 w-12 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all"
+        className="fixed bottom-safe-bottom right-4 z-40 w-12 h-12 bg-blue-500 hover:bg-blue-600 text-ink rounded-full flex items-center justify-center shadow-lg transition-all"
         title="How it works"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -330,7 +330,7 @@ export default function ProfilePhotosPage() {
 
       <BottomSheet open={showFaceNudge} onClose={() => setShowFaceNudge(false)}>
         <div className="text-center pb-6">
-          <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-5">
+          <div className="w-16 h-16 rounded-2xl bg-raised/5 flex items-center justify-center mx-auto mb-5">
             <Camera size={26} className="text-ink" />
           </div>
           <h2 className="font-display text-xl text-ink mb-2">We want to see your face</h2>

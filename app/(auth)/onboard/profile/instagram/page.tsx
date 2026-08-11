@@ -66,7 +66,7 @@ export default function ProfileInstagramPage() {
           Instagram Handle <span className="text-red-400">*</span>
         </label>
         <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">@</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink/60">@</span>
           <input
             type="text"
             value={handle}

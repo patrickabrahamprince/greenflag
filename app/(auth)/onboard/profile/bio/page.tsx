@@ -76,7 +76,7 @@ export default function ProfileBioPage() {
           className={`input resize-none ${error ? 'border-red-500' : ''}`}
         />
         <div className="flex items-center justify-between mt-1">
-          <span className={`text-[10px] ${value.length < BIO_MIN_CHARS ? 'text-white' : 'text-ink/50'}`}>
+          <span className={`text-[10px] ${value.length < BIO_MIN_CHARS ? 'text-ink' : 'text-ink/50'}`}>
             {value.length < BIO_MIN_CHARS ? `Min ${BIO_MIN_CHARS} characters` : ''}
           </span>
           <span className="text-xs text-ink/50">{value.length}/200</span>

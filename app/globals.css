@@ -13,7 +13,7 @@
    raised/card/overlay). A wine (#45050C) glow now blooms from the
    bottom edge on top of that flat fill -- see --wine-glow-bottom. */
 html, body {
-  background-color: #FFFFFF !important;
+  background-color: #000000 !important;
   background-image: none !important;
   background-repeat: no-repeat !important;
   background-attachment: fixed !important;
@@ -199,14 +199,14 @@ body.min-h-dvh::after {
 
   /* Cards -- Apple-style with subtle shadow and refined border */
   .card {
-    @apply bg-white border border-gray-200/60 rounded-2xl p-6
+    @apply bg-card border border-raised rounded-2xl p-6
            shadow-sm hover:shadow-md
            transition-all duration-300 ease-out;
   }
 
   /* Confirm/report/block-style modal dialogs -- Apple-style glassmorphism */
   .dialog-card {
-    @apply border border-gray-200/60 rounded-2xl p-8 bg-white/95
+    @apply border border-raised rounded-2xl p-8 bg-card
            shadow-lg backdrop-blur-sm
            transition-all duration-300 ease-out;
   }
@@ -248,9 +248,9 @@ body.min-h-dvh::after {
   .input:-webkit-autofill,
   .input:-webkit-autofill:hover,
   .input:-webkit-autofill:focus {
-    -webkit-text-fill-color: #111827;
-    -webkit-box-shadow: 0 0 0px 1000px #FFFFFF inset;
-    box-shadow: 0 0 0px 1000px #FFFFFF inset;
+    -webkit-text-fill-color: #F5F5DC;
+    -webkit-box-shadow: 0 0 0px 1000px #1a1a2e inset;
+    box-shadow: 0 0 0px 1000px #1a1a2e inset;
     transition: background-color 9999s ease-in-out 0s;
   }
 
@@ -320,7 +320,7 @@ body.min-h-dvh::after {
   .hairline {
     height: 1px;
     width: 100%;
-    background: #e5e5e5;
+    background: #4a4a6a;
   }
 
   /* Floating pill -- now genuinely translucent with a backdrop blur
@@ -365,10 +365,10 @@ body.min-h-dvh::after {
   }
 
   .glass-surface {
-    @apply backdrop-blur-xl border border-white/10;
+    @apply backdrop-blur-xl border border-raised;
     background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03)),
-      rgba(10, 5, 5, 0.5);
+      linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+      rgba(10, 5, 5, 0.6);
   }
 
   .gold-border-left {
@@ -387,7 +387,7 @@ body.min-h-dvh::after {
 
   .match-arc-bg {
     fill: none;
-    stroke: #e5e5e5;
+    stroke: #4a4a6a;
     stroke-width: 2;
   }
 

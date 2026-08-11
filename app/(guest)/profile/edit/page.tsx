@@ -167,7 +167,7 @@ export default function EditProfilePage() {
                         }}
                         className="absolute top-1 right-1 w-6 h-6 bg-[#D2042D] rounded-full flex items-center justify-center"
                       >
-                        <X className="w-3 h-3 text-white" />
+                        <X className="w-3 h-3 text-ink" />
                       </button>
                     </>
                   ) : uploadingIdx === i ? (
@@ -258,7 +258,7 @@ export default function EditProfilePage() {
       <div className="px-4 mt-3">
         <button
           onClick={() => router.push('/profile/edit/details')}
-          className="w-full flex items-center gap-3 px-4 py-4 bg-white/5 border border-white/10 rounded-2xl text-left active:scale-[0.98] transition-transform"
+          className="w-full flex items-center gap-3 px-4 py-4 bg-raised border border-raised rounded-2xl text-left active:scale-[0.98] transition-transform"
         >
           <Sparkles className="w-4 h-4 text-gold shrink-0" />
           <span className="flex-1 text-sm text-ink font-medium">More About You</span>
