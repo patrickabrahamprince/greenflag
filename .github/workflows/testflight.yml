@@ -1,0 +1,73 @@
+name: Build & Deploy to TestFlight
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build web app
+        run: npm run build
+
+      - name: Sync to Capacitor iOS
+        run: npx cap sync ios
+
+      - name: Create App Store Connect API Key
+        run: |
+          cat > ios/App/fastlane/app_store_connect_api_key.json << 'EOF'
+          {
+            "key_id": "${{ secrets.APP_STORE_CONNECT_KEY_ID }}",
+            "issuer_id": "${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}",
+            "key": "${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}"
+          }
+          EOF
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: ios/App
+
+      - name: Install fastlane
+        run: |
+          cd ios/App
+          gem install fastlane
+
+      - name: Build and Upload to TestFlight
+        run: |
+          cd ios/App
+          fastlane beta
+        env:
+          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          FASTLANE_SKIP_UPDATE_CHECK: true
+
+      - name: Notify on Success
+        if: success()
+        run: echo "✅ Build uploaded to TestFlight successfully!"
+
+      - name: Notify on Failure
+        if: failure()
+        run: echo "❌ Build failed. Check the logs above."

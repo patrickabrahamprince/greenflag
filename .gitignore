@@ -15,3 +15,4 @@ test-results/
 tsconfig.tsbuildinfo
 dist/
 .expo/
+ios/App/fastlane/app_store_connect_api_key.json

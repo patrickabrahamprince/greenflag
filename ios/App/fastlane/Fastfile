@@ -1,0 +1,47 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Build and upload to TestFlight"
+  lane :beta do
+    setup_ci if is_ci
+
+    # Increment build number
+    increment_build_number(
+      build_number: ENV["GITHUB_RUN_NUMBER"] || Time.now.to_i.to_s,
+      xcodeproj: "App.xcodeproj"
+    )
+
+    # Build for TestFlight
+    build_app(
+      workspace: "App.xcworkspace",
+      scheme: "App",
+      configuration: "Release",
+      derived_data_path: "build",
+      destination: "generic/platform=iOS",
+      export_method: "app-store",
+      export_options: {
+        signingStyle: "automatic",
+        teamID: ENV["APPLE_TEAM_ID"],
+        provisioningProfiles: {
+          "com.greenflagapp.app" => "match AppStore com.greenflagapp.app"
+        }
+      },
+      skip_package_ipa: false,
+      skip_package_pkg: true,
+      destination_uses_legacy_signing_settings: false
+    )
+
+    # Upload to TestFlight
+    upload_to_testflight(
+      api_key_path: "fastlane/app_store_connect_api_key.json",
+      skip_waiting_for_build_processing: true,
+      skip_submission: true
+    )
+
+    UI.success("✅ Build uploaded to TestFlight!")
+  end
+
+  error do |lane, exception|
+    UI.error("❌ Build failed: #{exception}")
+  end
+end
