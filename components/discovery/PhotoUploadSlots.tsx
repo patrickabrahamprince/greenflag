@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { Upload, X, Lightbulb } from 'lucide-react';
+import { Upload, X, Lightbulb, GripVertical } from 'lucide-react';
 
 const PHOTO_TIPS = [
   'Lead with a clear, recent photo of your face -- no group shots or sunglasses up front.',
@@ -14,6 +14,7 @@ interface PhotoUploadSlotsProps {
   maxPhotos: number;
   onAdd: (files: File[]) => void;
   onRemove: (idx: number) => void;
+  onReorder?: (fromIdx: number, toIdx: number) => void;
   error?: string;
 }
 
@@ -22,22 +23,46 @@ export function PhotoUploadSlots({
   maxPhotos,
   onAdd,
   onRemove,
+  onReorder,
   error,
 }: PhotoUploadSlotsProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [showTips, setShowTips] = useState(false);
+  const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files) onAdd(Array.from(files));
+    if (files && photos.length < maxPhotos) {
+      onAdd(Array.from(files).slice(0, maxPhotos - photos.length));
+    }
     if (inputRef.current) inputRef.current.value = '';
+  };
+
+  const handleDragStart = (idx: number) => {
+    setDraggedIdx(idx);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (idx: number) => {
+    if (draggedIdx !== null && draggedIdx !== idx && onReorder) {
+      onReorder(draggedIdx, idx);
+    }
+    setDraggedIdx(null);
   };
 
   const renderSlot = (i: number, className: string) => {
     const photo = photos[i];
+    const isPrimary = i === 0 && photo;
     return (
       <div
         key={i}
+        draggable={!!photo}
+        onDragStart={() => handleDragStart(i)}
+        onDragOver={handleDragOver}
+        onDrop={() => handleDrop(i)}
         onClick={() => {
           if (!photo && photos.length < maxPhotos) inputRef.current?.click();
         }}
@@ -45,7 +70,7 @@ export function PhotoUploadSlots({
           photo
             ? 'border-transparent'
             : 'border-raised hover:border-gold active:scale-95 cursor-pointer'
-        }`}
+        } ${draggedIdx === i ? 'opacity-50' : ''}`}
       >
         {photo ? (
           <>
@@ -54,6 +79,16 @@ export function PhotoUploadSlots({
               alt={`Photo ${i + 1}`}
               className="w-full h-full object-cover"
             />
+            {isPrimary && (
+              <div className="absolute top-2 left-2 px-2 py-1 bg-gold/90 rounded-full text-xs font-medium text-black">
+                Primary
+              </div>
+            )}
+            {photo && (
+              <div className="absolute bottom-2 left-2 opacity-60 hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing">
+                <GripVertical size={16} className="text-white" />
+              </div>
+            )}
             <button
               onClick={(e) => { e.stopPropagation(); onRemove(i); }}
               className="absolute top-1.5 right-1.5 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80 active:scale-90 transition-all"
@@ -71,8 +106,9 @@ export function PhotoUploadSlots({
   return (
     <div>
       <label className="block text-sm font-medium text-ink mb-1.5">
-        Photos <span className="text-ink/50 font-normal">({maxPhotos} required)</span>
+        Photos <span className="text-ink/50 font-normal">({maxPhotos} max - drag to reorder)</span>
       </label>
+      <p className="text-xs text-gold/70 mb-3">💡 Your largest photo becomes your primary. Drag photos to reorder.</p>
       {maxPhotos === 3 ? (
         <div className="grid grid-cols-2 grid-rows-2 gap-3 h-64">
           {renderSlot(0, 'row-span-2')}

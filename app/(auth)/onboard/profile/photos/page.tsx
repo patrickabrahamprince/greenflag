@@ -135,6 +135,21 @@ export default function ProfilePhotosPage() {
     setPhotoFiles((prev) => prev.filter((_, i) => i !== idx));
   };
 
+  const handlePhotoReorder = (fromIdx: number, toIdx: number) => {
+    setPhotos((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(fromIdx, 1);
+      next.splice(toIdx, 0, moved);
+      return next;
+    });
+    setPhotoFiles((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(fromIdx, 1);
+      next.splice(toIdx, 0, moved);
+      return next;
+    });
+  };
+
   const handleContinue = async () => {
     hapticTap();
     if (photos.length < REQUIRED_PHOTOS) {
@@ -282,6 +297,7 @@ export default function ProfilePhotosPage() {
           maxPhotos={REQUIRED_PHOTOS}
           onAdd={handlePhotoAdd}
           onRemove={handlePhotoRemove}
+          onReorder={handlePhotoReorder}
           error={error}
         />
         {compressing && (

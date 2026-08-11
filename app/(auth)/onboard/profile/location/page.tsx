@@ -119,13 +119,21 @@ export default function ProfileLocationPage() {
         </p>
 
         {gpsDetecting ? (
-          <input
-            type="text"
-            disabled
-            value="Detecting location..."
-            placeholder="Detecting location..."
-            className="input w-full text-lg opacity-50 cursor-not-allowed"
-          />
+          <div className="input w-full text-lg opacity-50 bg-well/50 border border-gold/20 rounded-lg px-4 py-3 flex items-center gap-2">
+            <div className="w-4 h-4 rounded-full border-2 border-gold border-r-transparent animate-spin" />
+            <span>Detecting location...</span>
+          </div>
+        ) : cityValue && !gpsDenied ? (
+          <div className="input w-full text-lg bg-well/50 border border-gold/40 rounded-lg px-4 py-3 flex items-center justify-between">
+            <span className="text-ink">{cityValue}</span>
+            <button
+              type="button"
+              onClick={detectLocation}
+              className="text-gold text-xs hover:text-gold/80 transition-colors"
+            >
+              Detect again
+            </button>
+          </div>
         ) : (
           <select
             value={cityValue}
