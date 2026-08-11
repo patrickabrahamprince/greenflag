@@ -49,7 +49,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) {
-        router.replace('/login');
+        router.replace('/admin/login');
         return;
       }
       const { data: profile } = await supabase
@@ -58,7 +58,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         .eq('id', user.id)
         .single();
       if (!profile?.is_admin) {
-        router.replace('/');
+        router.replace('/admin/login');
         return;
       }
       setChecking(false);
