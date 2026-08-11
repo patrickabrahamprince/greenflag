@@ -184,9 +184,16 @@ export default function ProfileDetailsEditPage() {
         <button
           onClick={saveAnthem}
           disabled={savingAnthem}
-          className="btn-secondary w-full mb-8 flex items-center justify-center gap-2"
+          className="btn-secondary w-full mb-3 flex items-center justify-center gap-2"
         >
           {savingAnthem ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Anthem'}
+        </button>
+
+        <button
+          onClick={() => router.back()}
+          className="text-center text-xs text-ink/50 hover:text-ink/70 w-full py-3 transition-colors"
+        >
+          Skip for now
         </button>
       </div>
 

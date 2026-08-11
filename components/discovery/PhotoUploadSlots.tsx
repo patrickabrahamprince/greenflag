@@ -109,6 +109,9 @@ export function PhotoUploadSlots({
         Photos <span className="text-ink/50 font-normal">({maxPhotos} max - drag to reorder)</span>
       </label>
       <p className="text-xs text-gold/70 mb-3">💡 Your largest photo becomes your primary. Drag photos to reorder.</p>
+      <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2 mb-4">
+        <p className="text-xs text-red-400">⚠️ Keep photos respectful. Inappropriate photos will result in immediate removal and account ban.</p>
+      </div>
       {maxPhotos === 3 ? (
         <div className="grid grid-cols-2 grid-rows-2 gap-3 h-64">
           {renderSlot(0, 'row-span-2')}
