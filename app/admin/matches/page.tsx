@@ -22,7 +22,7 @@ const STATUS_STYLES: Record<string, string> = {
   completed: 'bg-green-500/10 text-green-400',
   rejected: 'bg-red-500/10 text-red-400',
   expired_no_submission: 'bg-red-500/10 text-red-400',
-  refunded: 'bg-[#8E8E93]/10 text-[#8E8E93]',
+  refunded: 'bg-gray-500/10 text-gray-500',
 };
 
 const TERMINAL_STATUSES = ['completed', 'rejected', 'expired_no_submission', 'refunded'];
@@ -34,10 +34,10 @@ function PersonCell({ person }: { person: { name: string; photo: string | null }
         {person.photo ? (
           <img src={person.photo} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
         ) : (
-          <span className="text-xs text-[#8E8E93]">{person.name?.[0]}</span>
+          <span className="text-xs text-gray-500">{person.name?.[0]}</span>
         )}
       </div>
-      <span className="text-[#EDEADE] text-xs truncate">{person.name}</span>
+      <span className="text-gray-900 text-xs truncate">{person.name}</span>
     </div>
   );
 }
@@ -93,8 +93,8 @@ export default function AdminMatches() {
   return (
     <div className="animate-fade-in">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-display text-[#EDEADE]">Match Moderation</h1>
-        <span className="text-xs text-[#8E8E93]">{matches.length} total</span>
+        <h1 className="text-2xl font-display text-gray-900">Match Moderation</h1>
+        <span className="text-xs text-gray-500">{matches.length} total</span>
       </div>
 
       <div className="flex flex-wrap gap-2 mb-4">
@@ -115,18 +115,18 @@ export default function AdminMatches() {
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
+          <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
         </div>
       ) : filtered.length === 0 ? (
         <div className="empty-state py-16 text-center">
-          <Search className="w-8 h-8 text-[#8E8E93] mx-auto mb-3" />
-          <p className="text-[#8E8E93] text-sm">No matches found</p>
+          <Search className="w-8 h-8 text-gray-500 mx-auto mb-3" />
+          <p className="text-gray-500 text-sm">No matches found</p>
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-[#8E8E93] text-xs uppercase border-b border-white/10">
+              <tr className="text-gray-500 text-xs uppercase border-b border-white/10">
                 <th className="text-left py-3 px-2">Man</th>
                 <th className="text-left py-3 px-2">Woman</th>
                 <th className="text-left py-3 px-2">Day</th>
@@ -141,19 +141,19 @@ export default function AdminMatches() {
                 <tr key={m.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                   <td className="py-3 px-2"><PersonCell person={m.man} /></td>
                   <td className="py-3 px-2"><PersonCell person={m.woman} /></td>
-                  <td className="py-3 px-2 text-[#8E8E93] text-xs">{m.currentDay} / 3</td>
+                  <td className="py-3 px-2 text-gray-500 text-xs">{m.currentDay} / 3</td>
                   <td className="py-3 px-2">
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${STATUS_STYLES[m.status] || 'bg-white/5 text-[#8E8E93]'}`}>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${STATUS_STYLES[m.status] || 'bg-white/5 text-gray-500'}`}>
                       {m.status.replace(/_/g, ' ')}
                     </span>
                   </td>
-                  <td className="py-3 px-2 text-[#8E8E93] text-xs hidden md:table-cell">
+                  <td className="py-3 px-2 text-gray-500 text-xs hidden md:table-cell">
                     {m.submissionCounts.approved}/{m.submissionCounts.total} approved
                     {m.submissionCounts.flagged > 0 && (
                       <span className="text-red-400 ml-1">&middot; {m.submissionCounts.flagged} flagged</span>
                     )}
                   </td>
-                  <td className="py-3 px-2 text-[#8E8E93] text-xs hidden md:table-cell">
+                  <td className="py-3 px-2 text-gray-500 text-xs hidden md:table-cell">
                     {new Date(m.createdAt).toLocaleDateString()}
                   </td>
                   <td className="py-3 px-2">

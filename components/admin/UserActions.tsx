@@ -138,7 +138,7 @@ export function UserActions({ userId, userName, isBanned, isAdmin, approvalStatu
             <Ban className="w-3.5 h-3.5" /> Ban
           </button>
         )}
-        <button onClick={() => setShowCreditModal(true)} disabled={loading} className="flex items-center gap-1.5 px-3 py-2 bg-[#C9A961]/10 text-[#C9A961] rounded-xl text-xs font-medium hover:bg-[#C9A961]/20 transition-colors disabled:opacity-50">
+        <button onClick={() => setShowCreditModal(true)} disabled={loading} className="flex items-center gap-1.5 px-3 py-2 bg-blue-600/10 text-blue-600 rounded-xl text-xs font-medium hover:bg-blue-600/20 transition-colors disabled:opacity-50">
           <Coins className="w-3.5 h-3.5" /> Credit Coins
         </button>
         <button onClick={() => setShowDeleteModal(true)} disabled={loading} className="flex items-center gap-1.5 px-3 py-2 bg-red-600/10 text-red-500 rounded-xl text-xs font-medium hover:bg-red-600/20 transition-colors disabled:opacity-50">

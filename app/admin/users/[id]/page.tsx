@@ -55,7 +55,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
+        <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
       </div>
     );
   }
@@ -63,7 +63,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
   if (!data?.user) {
     return (
       <div className="text-center py-20">
-        <p className="text-[#8E8E93] text-sm">User not found</p>
+        <p className="text-gray-500 text-sm">User not found</p>
         <button onClick={() => router.push('/admin/users')} className="btn-secondary text-xs mt-4">Back to Users</button>
       </div>
     );
@@ -73,7 +73,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="animate-fade-in max-w-4xl">
-      <button onClick={() => router.push('/admin/users')} className="flex items-center gap-2 text-[#8E8E93] hover:text-[#EDEADE] transition-colors mb-4 text-sm">
+      <button onClick={() => router.push('/admin/users')} className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors mb-4 text-sm">
         <ArrowLeft className="w-4 h-4" /> Back to Users
       </button>
 
@@ -81,8 +81,8 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
       <UserActions userId={user.id} userName={user.name} isBanned={!!user.is_banned} isAdmin={user.is_admin} approvalStatus={user.approval_status} onRefresh={fetchUser} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
-        <div className="bg-[#111111] border border-white/[0.06] rounded-2xl p-5">
-          <h3 className="text-sm font-medium text-[#EDEADE] mb-3">Profile Details</h3>
+        <div className="bg-white border border-white/[0.06] rounded-2xl p-5">
+          <h3 className="text-sm font-medium text-gray-900 mb-3">Profile Details</h3>
           <dl className="space-y-2 text-xs">
             {[
               ['Approval Status', user.approval_status || '-'],
@@ -102,26 +102,26 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
               ['Rejection Reason', user.approval_reason || '-'],
             ].map(([label, value, testId]) => (
               <div key={String(label)} className="flex justify-between">
-                <dt className="text-[#8E8E93]">{String(label)}</dt>
-                <dd className="text-[#EDEADE] text-right max-w-[60%] truncate"
+                <dt className="text-gray-500">{String(label)}</dt>
+                <dd className="text-gray-900 text-right max-w-[60%] truncate"
                   data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' && testId ? testId : undefined}
                 >{String(value || '-')}</dd>
               </div>
             ))}
             <div className="flex justify-between items-center">
-              <dt className="text-[#8E8E93]">Instagram</dt>
+              <dt className="text-gray-500">Instagram</dt>
               <dd className="text-right">
                 {user.instagram_url ? (
                   <a
                     href={user.instagram_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#C9A961] underline underline-offset-2 hover:text-[#e0bd76]"
+                    className="text-blue-600 underline underline-offset-2 hover:text-[#e0bd76]"
                   >
                     {user.instagram_url.replace(/^https?:\/\/(www\.)?instagram\.com\//, '@')}
                   </a>
                 ) : (
-                  <span className="text-[#EDEADE]">-</span>
+                  <span className="text-gray-900">-</span>
                 )}
               </dd>
             </div>
@@ -134,19 +134,19 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
       </div>
 
       {(user.interests_have?.length || user.interests_looking_for?.length || user.quiz_answers) && (
-        <div className="mt-4 bg-[#111111] border border-white/[0.06] rounded-2xl p-5">
-          <h3 className="text-sm font-medium text-[#EDEADE] mb-3">Interests & Quiz Answers</h3>
+        <div className="mt-4 bg-white border border-white/[0.06] rounded-2xl p-5">
+          <h3 className="text-sm font-medium text-gray-900 mb-3">Interests & Quiz Answers</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
             {!!user.interests_have?.length && (
               <div>
-                <dt className="text-[#8E8E93] mb-1">Interests</dt>
-                <dd className="text-[#EDEADE]">{user.interests_have.join(', ')}</dd>
+                <dt className="text-gray-500 mb-1">Interests</dt>
+                <dd className="text-gray-900">{user.interests_have.join(', ')}</dd>
               </div>
             )}
             {!!user.interests_looking_for?.length && (
               <div>
-                <dt className="text-[#8E8E93] mb-1">Looking For</dt>
-                <dd className="text-[#EDEADE]">{user.interests_looking_for.join(', ')}</dd>
+                <dt className="text-gray-500 mb-1">Looking For</dt>
+                <dd className="text-gray-900">{user.interests_looking_for.join(', ')}</dd>
               </div>
             )}
           </div>
@@ -154,8 +154,8 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
             <dl className="space-y-1.5 text-xs mt-4 pt-4 border-t border-white/[0.06]">
               {Object.entries(user.quiz_answers).map(([q, a]) => (
                 <div key={q} className="flex justify-between gap-4">
-                  <dt className="text-[#8E8E93] capitalize">{q.replace(/_/g, ' ')}</dt>
-                  <dd className="text-[#EDEADE] text-right">{a}</dd>
+                  <dt className="text-gray-500 capitalize">{q.replace(/_/g, ' ')}</dt>
+                  <dd className="text-gray-900 text-right">{a}</dd>
                 </div>
               ))}
             </dl>
@@ -168,8 +168,8 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
       </div>
 
       {user.photos && user.photos.length > 0 && (
-        <div className="mt-4 bg-[#111111] border border-white/[0.06] rounded-2xl p-5">
-          <h3 className="text-sm font-medium text-[#EDEADE] mb-3">Photos</h3>
+        <div className="mt-4 bg-white border border-white/[0.06] rounded-2xl p-5">
+          <h3 className="text-sm font-medium text-gray-900 mb-3">Photos</h3>
           <div className="flex gap-2 overflow-x-auto pb-2">
             {user.photos.map((photo, i) => (
               <img key={i} src={photo} alt="" className="w-20 h-20 rounded-xl object-cover shrink-0" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />

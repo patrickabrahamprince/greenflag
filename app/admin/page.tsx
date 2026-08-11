@@ -32,7 +32,7 @@ export default function AdminPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
+        <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
       </div>
     );
   }
@@ -42,7 +42,7 @@ export default function AdminPage() {
   return (
     <div className="animate-fade-in">
       <div className="flex items-center justify-between mb-6">
-        <h1 data-testid="admin-dashboard-title" className="text-2xl font-display text-[#EDEADE]">Dashboard</h1>
+        <h1 data-testid="admin-dashboard-title" className="text-2xl font-display text-gray-900">Dashboard</h1>
       </div>
       <AdminDashboard />
     </div>

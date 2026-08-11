@@ -44,7 +44,7 @@ export default function AdminMatchesPage({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
+        <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
       </div>
     );
   }
@@ -52,8 +52,8 @@ export default function AdminMatchesPage({
   if (!data?.user) {
     return (
       <div className="p-8 text-center">
-        <Search className="w-8 h-8 text-[#8E8E93] mx-auto mb-3" />
-        <p className="text-[#8E8E93] text-sm">User not found</p>
+        <Search className="w-8 h-8 text-gray-500 mx-auto mb-3" />
+        <p className="text-gray-500 text-sm">User not found</p>
         <button onClick={() => router.push('/admin/users')} className="btn-secondary text-xs mt-4">
           Back to Users
         </button>
@@ -65,16 +65,16 @@ export default function AdminMatchesPage({
     <div className="animate-fade-in">
       <button
         onClick={() => router.push('/admin/users')}
-        className="flex items-center gap-2 text-[#8E8E93] hover:text-[#EDEADE] transition-colors mb-4 text-sm"
+        className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors mb-4 text-sm"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Users
       </button>
 
-      <h1 className="text-2xl font-display text-[#EDEADE] mb-1">
+      <h1 className="text-2xl font-display text-gray-900 mb-1">
         Matches for {data.user.name}
       </h1>
-      <p className="text-sm text-[#8E8E93] mb-6">
+      <p className="text-sm text-gray-500 mb-6">
         Persona: {data.user.persona} | Interests: {data.user.interests?.join(', ') || '(none)'} | Total matches: {data.total}
       </p>
 
@@ -86,11 +86,11 @@ export default function AdminMatchesPage({
                 {match.photos?.[0] ? (
                   <img src={match.photos[0]} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
                 ) : (
-                  <span className="text-lg text-[#8E8E93]">{match.name?.[0]}</span>
+                  <span className="text-lg text-gray-500">{match.name?.[0]}</span>
                 )}
               </div>
               <div className="min-w-0">
-                <div className="font-medium text-[#EDEADE] text-sm truncate">
+                <div className="font-medium text-gray-900 text-sm truncate">
                   {match.name}, {match.age}
                 </div>
                 <div className="text-sm font-bold text-green-400">
@@ -99,22 +99,22 @@ export default function AdminMatchesPage({
               </div>
             </div>
 
-            <div className="text-xs text-[#8E8E93] mb-2">Shared interests:</div>
+            <div className="text-xs text-gray-500 mb-2">Shared interests:</div>
             <div className="flex flex-wrap gap-1 mb-3">
               {(match.interests || []).map((tag) => (
                 <span
                   key={tag}
-                  className="px-2 py-0.5 bg-[#C9A961]/10 text-[#C9A961] text-[10px] rounded"
+                  className="px-2 py-0.5 bg-blue-600/10 text-blue-600 text-[10px] rounded"
                 >
                   {tag}
                 </span>
               ))}
               {(!match.interests || match.interests.length === 0) && (
-                <span className="text-[10px] text-[#5A5A5D]">None</span>
+                <span className="text-[10px] text-gray-400">None</span>
               )}
             </div>
 
-            <div className="text-[10px] text-[#5A5A5D] font-mono">
+            <div className="text-[10px] text-gray-400 font-mono">
               ID: {match.id.slice(0, 8)}... | {match.distance_km}km
             </div>
           </div>
@@ -123,8 +123,8 @@ export default function AdminMatchesPage({
 
       {data.matches.length === 0 && (
         <div className="text-center py-16">
-          <Search className="w-8 h-8 text-[#8E8E93] mx-auto mb-3" />
-          <p className="text-[#8E8E93] text-sm">
+          <Search className="w-8 h-8 text-gray-500 mx-auto mb-3" />
+          <p className="text-gray-500 text-sm">
             No matches found. Check if user onboarded + has interests set.
           </p>
         </div>

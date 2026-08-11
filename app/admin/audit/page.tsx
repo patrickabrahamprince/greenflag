@@ -48,7 +48,7 @@ export default function AdminAudit() {
   return (
     <div className="animate-fade-in">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-display text-[#EDEADE]">Audit Log</h1>
+        <h1 className="text-2xl font-display text-gray-900">Audit Log</h1>
       </div>
 
       <div className="flex flex-wrap gap-2 mb-4">
@@ -62,19 +62,19 @@ export default function AdminAudit() {
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
+          <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
         </div>
       ) : actions.length === 0 ? (
         <div className="card py-16 text-center">
-          <ScrollText className="w-8 h-8 text-[#8E8E93] mx-auto mb-3" />
-          <p className="text-[#8E8E93] text-sm">No audit entries found</p>
+          <ScrollText className="w-8 h-8 text-gray-500 mx-auto mb-3" />
+          <p className="text-gray-500 text-sm">No audit entries found</p>
         </div>
       ) : (
         <>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-[#8E8E93] text-xs uppercase border-b border-white/10">
+                <tr className="text-gray-500 text-xs uppercase border-b border-white/10">
                   <th className="text-left py-3 px-2">Admin</th>
                   <th className="text-left py-3 px-2">Action</th>
                   <th className="text-left py-3 px-2">Target</th>
@@ -84,18 +84,18 @@ export default function AdminAudit() {
               <tbody>
                 {actions.map((a) => (
                   <tr data-testid="audit-row" key={a.id} className="border-b border-white/5">
-                    <td className="py-3 px-2 text-[#EDEADE] font-medium text-xs">
+                    <td className="py-3 px-2 text-gray-900 font-medium text-xs">
                       {a.admin_email || 'system'}
                     </td>
                     <td className="py-3 px-2">
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-[#8E8E93]">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-500">
                         {a.action.replace(/_/g, ' ')}
                       </span>
                     </td>
-                    <td className="py-3 px-2 text-[#8E8E93] text-xs font-mono">
+                    <td className="py-3 px-2 text-gray-500 text-xs font-mono">
                       {a.target?.slice(0, 12) || '-'}{a.target && a.target.length > 12 ? '...' : ''}
                     </td>
-                    <td className="py-3 px-2 text-[#8E8E93] text-xs text-right">
+                    <td className="py-3 px-2 text-gray-500 text-xs text-right">
                       {new Date(a.created_at).toLocaleString()}
                     </td>
                   </tr>
@@ -108,7 +108,7 @@ export default function AdminAudit() {
             <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={page === 0} className="btn-secondary text-xs py-2 disabled:opacity-30">
               Previous
             </button>
-            <span className="text-xs text-[#8E8E93]">Page {page + 1}</span>
+            <span className="text-xs text-gray-500">Page {page + 1}</span>
             <button onClick={() => setPage((p) => p + 1)} disabled={!hasMore} className="btn-secondary text-xs py-2 disabled:opacity-30">
               Next
             </button>

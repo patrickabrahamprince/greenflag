@@ -42,8 +42,8 @@ function SubmissionCard({ sub, onModerate, moderatingId }: { sub: SubmissionDeta
     <div className="card">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Icon className="w-4 h-4 text-[#C9A961]" />
-          <span className="text-xs text-[#8E8E93] uppercase tracking-wide">Day {sub.day_number} &middot; Task {sub.task_number}</span>
+          <Icon className="w-4 h-4 text-blue-600" />
+          <span className="text-xs text-gray-500 uppercase tracking-wide">Day {sub.day_number} &middot; Task {sub.task_number}</span>
         </div>
         {sub.moderation_status && (
           <span className={`text-[10px] px-2 py-0.5 rounded-full ${
@@ -56,16 +56,16 @@ function SubmissionCard({ sub, onModerate, moderatingId }: { sub: SubmissionDeta
         )}
       </div>
 
-      {sub.prompt && <p className="text-xs text-[#8E8E93] mb-2">{sub.prompt}</p>}
+      {sub.prompt && <p className="text-xs text-gray-500 mb-2">{sub.prompt}</p>}
 
       {sub.media_type === 'voice' && sub.media_url ? (
         <audio controls src={sub.media_url} className="w-full mb-3" />
       ) : sub.media_type === 'text' ? (
-        <p className="text-[#EDEADE] text-sm italic mb-3">{sub.content ? `"${sub.content}"` : 'No text submitted'}</p>
+        <p className="text-gray-900 text-sm italic mb-3">{sub.content ? `"${sub.content}"` : 'No text submitted'}</p>
       ) : sub.media_url ? (
         <img src={sub.media_url} alt="" className="w-full max-h-64 object-cover rounded-xl mb-3" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
       ) : (
-        <p className="text-[#5A5A5D] text-sm mb-3">Not submitted yet</p>
+        <p className="text-gray-400 text-sm mb-3">Not submitted yet</p>
       )}
 
       {sub.media_url || sub.content ? (
@@ -164,7 +164,7 @@ export default function AdminMatchDetail() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
+        <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
       </div>
     );
   }
@@ -172,7 +172,7 @@ export default function AdminMatchDetail() {
   if (!match) {
     return (
       <div className="p-8 text-center">
-        <p className="text-[#8E8E93] text-sm">Match not found</p>
+        <p className="text-gray-500 text-sm">Match not found</p>
         <button onClick={() => router.push('/admin/matches')} className="btn-secondary text-xs mt-4">
           Back to Matches
         </button>
@@ -189,7 +189,7 @@ export default function AdminMatchDetail() {
     <div className="animate-fade-in">
       <button
         onClick={() => router.push('/admin/matches')}
-        className="flex items-center gap-2 text-[#8E8E93] hover:text-[#EDEADE] transition-colors mb-4 text-sm"
+        className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors mb-4 text-sm"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Matches
@@ -197,10 +197,10 @@ export default function AdminMatchDetail() {
 
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-display text-[#EDEADE] mb-1">
+          <h1 className="text-2xl font-display text-gray-900 mb-1">
             {match.man?.name} &amp; {match.woman?.name}
           </h1>
-          <p className="text-sm text-[#8E8E93]">
+          <p className="text-sm text-gray-500">
             Day {match.current_day} of 3 &middot; {match.status.replace(/_/g, ' ')}
           </p>
         </div>
@@ -219,7 +219,7 @@ export default function AdminMatchDetail() {
       <div className="space-y-8">
         {days.filter((d) => d.tasks.length > 0).map(({ day, tasks }) => (
           <div key={day}>
-            <p className="text-xs text-[#8E8E93] uppercase tracking-widest mb-3">Day {day}</p>
+            <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Day {day}</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {tasks.map((sub) => (
                 <SubmissionCard key={sub.id} sub={sub} onModerate={handleModerate} moderatingId={moderatingId} />
@@ -229,7 +229,7 @@ export default function AdminMatchDetail() {
         ))}
         {submissions.length === 0 && (
           <div className="empty-state py-16 text-center">
-            <p className="text-[#8E8E93] text-sm">No submissions yet for this connection</p>
+            <p className="text-gray-500 text-sm">No submissions yet for this connection</p>
           </div>
         )}
       </div>

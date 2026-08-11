@@ -20,7 +20,7 @@ export interface UserManagementTableProps {
 function personaColor(persona?: string) {
   if (persona === 'woman') return { ring: 'ring-pink-400/70', dot: 'bg-pink-400', text: 'text-pink-400', bg: 'bg-pink-400/10' };
   if (persona === 'man') return { ring: 'ring-blue-400/70', dot: 'bg-blue-400', text: 'text-blue-400', bg: 'bg-blue-400/10' };
-  return { ring: 'ring-white/10', dot: 'bg-[#8E8E93]', text: 'text-[#8E8E93]', bg: 'bg-white/5' };
+  return { ring: 'ring-white/10', dot: 'bg-gray-500', text: 'text-gray-500', bg: 'bg-white/5' };
 }
 
 export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveClick, onRejectClick, onDeleteClick, approvingId, settingAdminId }: UserManagementTableProps) {
@@ -30,7 +30,7 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
     <div className="overflow-x-auto">
       <table data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'users-table' : undefined} className="w-full text-sm">
         <thead>
-          <tr className="text-[#8E8E93] text-xs uppercase border-b border-white/10">
+          <tr className="text-gray-500 text-xs uppercase border-b border-white/10">
             <th className="text-left py-3 px-2">Name</th>
             <th className="text-left py-3 px-2 hidden md:table-cell">Persona</th>
             <th className="text-left py-3 px-2 hidden lg:table-cell">City</th>
@@ -54,13 +54,13 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
                     {u.photos?.[0] ? (
                       <img src={u.photos[0]} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
                     ) : (
-                      <span className="text-xs text-[#8E8E93]">{u.name?.[0]}</span>
+                      <span className="text-xs text-gray-500">{u.name?.[0]}</span>
                     )}
                     <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-black ${personaColor(u.persona || u.gender).dot}`} />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[#EDEADE] font-medium text-xs truncate">{u.name}</p>
-                    <p className="text-[#8E8E93] text-[10px] truncate">{u.email}</p>
+                    <p className="text-gray-900 font-medium text-xs truncate">{u.name}</p>
+                    <p className="text-gray-500 text-[10px] truncate">{u.email}</p>
                   </div>
                 </div>
               </td>
@@ -69,12 +69,12 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
                   {u.persona || u.gender || '-'}
                 </span>
               </td>
-              <td className="py-3 px-2 text-[#8E8E93] text-xs hidden lg:table-cell">{u.city_auto || u.city || '-'}</td>
-              <td className="py-3 px-2 text-[#8E8E93] text-xs">
+              <td className="py-3 px-2 text-gray-500 text-xs hidden lg:table-cell">{u.city_auto || u.city || '-'}</td>
+              <td className="py-3 px-2 text-gray-500 text-xs">
                 {new Date(u.created_at).toLocaleDateString()}
               </td>
-              <td className="py-3 px-2 text-[#8E8E93] text-xs hidden md:table-cell">{u.connected_count ?? 0}</td>
-              <td className="py-3 px-2 text-[#8E8E93] text-xs hidden md:table-cell">{u.coins ?? 0}</td>
+              <td className="py-3 px-2 text-gray-500 text-xs hidden md:table-cell">{u.connected_count ?? 0}</td>
+              <td className="py-3 px-2 text-gray-500 text-xs hidden md:table-cell">{u.coins ?? 0}</td>
               <td className="py-3 px-2">
                 {u.is_banned ? (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400">Paused</span>
@@ -83,7 +83,7 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
                 ) : u.approval_status === 'rejected' ? (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400">Declined</span>
                 ) : u.is_admin ? (
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-[#C9A961]/10 text-[#C9A961]">Admin</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-blue-600/10 text-blue-600">Admin</span>
                 ) : (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-400">Active</span>
                 )}
@@ -119,7 +119,7 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
                   {u.persona === 'woman' && (
                     <button
                       onClick={() => router.push(`/admin/host-dashboard/${u.id}`)}
-                      className="btn-ghost text-xs p-1.5 text-[#C9A961]"
+                      className="btn-ghost text-xs p-1.5 text-blue-600"
                       title="Woman Dashboard"
                     >
                       <LayoutDashboard className="w-3.5 h-3.5" />

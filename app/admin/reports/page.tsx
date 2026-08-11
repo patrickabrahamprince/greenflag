@@ -78,12 +78,12 @@ export default function AdminReports() {
 
   return (
     <div className="animate-fade-in">
-      <h1 className="text-2xl font-display text-[#EDEADE] mb-6">Reports</h1>
+      <h1 className="text-2xl font-display text-gray-900 mb-6">Reports</h1>
       <ReportTabs activeTab={tab} onTabChange={setTab} />
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
+          <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
         </div>
       ) : reports.length === 0 ? (
         <EmptyReportsState tab={tab} />

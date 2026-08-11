@@ -48,14 +48,14 @@ export default function ProfileRequestsPage() {
   return (
     <div className="animate-fade-in">
       <div className="flex items-center gap-2 mb-6">
-        <UserCog className="w-5 h-5 text-[#C9A961]" />
+        <UserCog className="w-5 h-5 text-blue-600" />
         <h1 className="text-xl font-display text-white">Profile Change Requests</h1>
       </div>
 
       {loading ? (
-        <div className="text-center py-12 text-[#8E8E93] text-sm">Loading...</div>
+        <div className="text-center py-12 text-gray-500 text-sm">Loading...</div>
       ) : requests.length === 0 ? (
-        <div className="text-center py-12 text-[#8E8E93] text-sm">No pending requests.</div>
+        <div className="text-center py-12 text-gray-500 text-sm">No pending requests.</div>
       ) : (
         <div className="space-y-3">
           {requests.map((r) => (
@@ -63,7 +63,7 @@ export default function ProfileRequestsPage() {
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <p className="text-white font-medium text-sm">{requesterName(r)}</p>
-                  <p className="text-[#8E8E93] text-xs">{new Date(r.created_at).toLocaleString()}</p>
+                  <p className="text-gray-500 text-xs">{new Date(r.created_at).toLocaleString()}</p>
                 </div>
                 <div className="flex gap-2">
                   <button
@@ -84,10 +84,10 @@ export default function ProfileRequestsPage() {
                   </button>
                 </div>
               </div>
-              <div className="text-xs text-[#EDEADE]/70 bg-black/30 rounded-lg p-3 space-y-1">
+              <div className="text-xs text-gray-900/70 bg-black/30 rounded-lg p-3 space-y-1">
                 {Object.entries(r.requested_changes).map(([key, value]) => (
                   <div key={key} className="flex gap-2">
-                    <span className="text-[#8E8E93] w-16 shrink-0">{key}:</span>
+                    <span className="text-gray-500 w-16 shrink-0">{key}:</span>
                     <span className="break-all">{Array.isArray(value) ? value.join(', ') : String(value)}</span>
                   </div>
                 ))}

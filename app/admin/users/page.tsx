@@ -175,8 +175,8 @@ export default function AdminUsers() {
   return (
     <div className="animate-fade-in">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-display text-[#EDEADE]">Users</h1>
-        <span className="text-xs text-[#8E8E93]">{total} total</span>
+        <h1 className="text-2xl font-display text-gray-900">Users</h1>
+        <span className="text-xs text-gray-500">{total} total</span>
       </div>
 
       <UserFilterBar
@@ -188,7 +188,7 @@ export default function AdminUsers() {
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
+          <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
         </div>
       ) : (
         <>
@@ -205,8 +205,8 @@ export default function AdminUsers() {
 
           {users.length === 0 && (
             <div className="empty-state py-16">
-              <Search className="w-8 h-8 text-[#8E8E93] mx-auto mb-3" />
-              <p className="text-[#8E8E93] text-sm">No users found</p>
+              <Search className="w-8 h-8 text-gray-500 mx-auto mb-3" />
+              <p className="text-gray-500 text-sm">No users found</p>
             </div>
           )}
 

@@ -86,7 +86,7 @@ export default function AdminQueue() {
     <div className="animate-fade-in">
       <QueueHeader />
       {loading ? (
-        <div className="text-center py-12 text-[#8E8E93] text-sm">Loading...</div>
+        <div className="text-center py-12 text-gray-500 text-sm">Loading...</div>
       ) : items.length === 0 ? (
         <QueueEmptyState />
       ) : (

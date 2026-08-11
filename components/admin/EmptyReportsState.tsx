@@ -8,8 +8,8 @@ export interface EmptyReportsStateProps {
 export function EmptyReportsState({ tab }: EmptyReportsStateProps) {
   return (
     <div className="card py-16 text-center">
-      <Flag className="w-8 h-8 text-[#8E8E93] mx-auto mb-3" />
-      <p className="text-[#8E8E93] text-sm">No {tab} reports</p>
+      <Flag className="w-8 h-8 text-gray-500 mx-auto mb-3" />
+      <p className="text-gray-500 text-sm">No {tab} reports</p>
     </div>
   );
 }

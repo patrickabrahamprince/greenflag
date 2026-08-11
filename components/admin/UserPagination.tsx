@@ -17,7 +17,7 @@ export function UserPagination({ page, total, pageSize, onPageChange }: UserPagi
       >
         Previous
       </button>
-      <span className="text-xs text-[#8E8E93]">
+      <span className="text-xs text-gray-500">
         Page {page + 1} of {Math.ceil(total / pageSize)}
       </span>
       <button

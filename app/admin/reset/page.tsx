@@ -83,8 +83,8 @@ export default function AdminResetTool() {
 
   return (
     <div className="animate-fade-in max-w-lg">
-      <h1 className="text-2xl font-display text-[#EDEADE] mb-1">Master Reset</h1>
-      <p className="text-sm text-[#8E8E93] mb-6">
+      <h1 className="text-2xl font-display text-gray-900 mb-1">Master Reset</h1>
+      <p className="text-sm text-gray-500 mb-6">
         Pick any two profiles and wipe any match, submissions, and like between them --
         useful for replaying the full Standard flow with the same test accounts.
         Coin balances are left untouched; use Credit Coins on the Users page to top up.
@@ -92,12 +92,12 @@ export default function AdminResetTool() {
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
+          <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
         </div>
       ) : (
         <div className="card space-y-4">
           <div>
-            <label className="block text-sm text-[#8E8E93] mb-2">Profile A</label>
+            <label className="block text-sm text-gray-500 mb-2">Profile A</label>
             <select className="input w-full" value={userIdA} onChange={(e) => { setUserIdA(e.target.value); setConfirming(false); }}>
               <option value="">Select a profile...</option>
               {profiles.map((p) => (
@@ -109,7 +109,7 @@ export default function AdminResetTool() {
           </div>
 
           <div>
-            <label className="block text-sm text-[#8E8E93] mb-2">Profile B</label>
+            <label className="block text-sm text-gray-500 mb-2">Profile B</label>
             <select className="input w-full" value={userIdB} onChange={(e) => { setUserIdB(e.target.value); setConfirming(false); }}>
               <option value="">Select a profile...</option>
               {profiles.map((p) => (
@@ -161,7 +161,7 @@ export default function AdminResetTool() {
           <Trash2 className="w-4 h-4" />
           Danger Zone
         </h2>
-        <p className="text-sm text-[#8E8E93] mb-4">
+        <p className="text-sm text-gray-500 mb-4">
           Permanently wipes every non-admin account on the platform: profiles, preferences,
           photos, videos, matches, messages, wallets, and every other trace of their activity.
           Admin accounts are left untouched. There is no undo.
@@ -185,8 +185,8 @@ export default function AdminResetTool() {
                 This cannot be undone.
               </p>
             </div>
-            <label className="block text-sm text-[#8E8E93] mb-2">
-              Type <span className="text-[#EDEADE] font-medium">{NUKE_CONFIRM_PHRASE}</span> to confirm
+            <label className="block text-sm text-gray-500 mb-2">
+              Type <span className="text-gray-900 font-medium">{NUKE_CONFIRM_PHRASE}</span> to confirm
             </label>
             <input
               className="input w-full mb-3"

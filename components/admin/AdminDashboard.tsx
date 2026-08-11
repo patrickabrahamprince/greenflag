@@ -33,26 +33,26 @@ export function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-6 h-6 animate-spin text-[#C9A961]" />
+        <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
       </div>
     );
   }
 
   if (!stats) {
     return (
-      <div className="text-center py-20 text-[#8E8E93] text-sm">Failed to load stats</div>
+      <div className="text-center py-20 text-gray-500 text-sm">Failed to load stats</div>
     );
   }
 
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-3">
-        <KpiCard dataTestId="total-users" label="Total Users" value={stats.totalUsers} icon={Users} accent="text-[#C9A961]" subtitle={`${stats.guests} men / ${stats.hosts} women`} />
+        <KpiCard dataTestId="total-users" label="Total Users" value={stats.totalUsers} icon={Users} accent="text-blue-600" subtitle={`${stats.guests} men / ${stats.hosts} women`} />
         <KpiCard dataTestId="men-count" label="Men" value={genderStats?.men ?? 0} icon={UserRound} accent="text-blue-400" />
         <KpiCard dataTestId="women-count" label="Women" value={genderStats?.women ?? 0} icon={UsersRound} accent="text-pink-400" />
         <KpiCard label="Active Connections" value={stats.activeConnections} icon={Link2} accent="text-green-400" />
         <KpiCard label="Pending Moderation" value={stats.pendingModeration} icon={Shield} accent="text-orange-400" />
-        <KpiCard label="Revenue" value={`₹${(stats.revenue ?? 0).toLocaleString()}`} icon={IndianRupee} accent="text-[#C9A961]" />
+        <KpiCard label="Revenue" value={`₹${(stats.revenue ?? 0).toLocaleString()}`} icon={IndianRupee} accent="text-blue-600" />
         <KpiCard dataTestId="connected-today" label="Connected Today" value={stats.connectedPairsToday} icon={Heart} accent="text-pink-400" />
       </div>
 
