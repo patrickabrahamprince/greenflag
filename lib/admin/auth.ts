@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { TypedSupabaseClient } from '@/lib/supabase/server';
 import type { Json } from '@/types/supabase';
@@ -12,6 +13,23 @@ export interface AdminAuthResult {
 export async function requireAdmin(): Promise<
   { ok: true; data: AdminAuthResult } | { ok: false; response: NextResponse }
 > {
+  const cookieStore = await cookies();
+  const adminSession = cookieStore.get('admin_session')?.value;
+
+  // Check for admin_session cookie (separate admin auth system)
+  if (adminSession) {
+    const supabase = await createServerSupabaseClient();
+    return {
+      ok: true,
+      data: {
+        supabase,
+        adminId: 'admin',
+        adminEmail: process.env.ADMIN_EMAIL || 'admin@greenflag',
+      },
+    };
+  }
+
+  // Fallback to Supabase auth for backwards compatibility
   const supabase = await createServerSupabaseClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) {
