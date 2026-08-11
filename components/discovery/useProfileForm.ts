@@ -129,20 +129,27 @@ export function useProfileForm() {
       return;
     }
 
-    const uploadedUrls: string[] = [];
-    for (let i = 0; i < photoFiles.length; i++) {
-      const file = photoFiles[i];
-      const path = `${authUser.id}/${Date.now()}-${i}.jpg`;
-      const { data, error } = await supabase.storage
-        .from('profile-photos')
-        .upload(path, file, { upsert: true });
-      if (error) {
-        toast.error(`Failed to upload photo: ${error.message}`);
-        setLoading(false);
-        return;
-      }
-      const { data: urlData } = supabase.storage.from('profile-photos').getPublicUrl(data.path);
-      uploadedUrls.push(urlData.publicUrl);
+    // Uploaded in parallel, not one-at-a-time -- see the same fix in
+    // app/(auth)/onboard/profile/photos/page.tsx for why sequential
+    // awaits here made photo uploads feel slow.
+    let uploadedUrls: string[];
+    try {
+      uploadedUrls = await Promise.all(
+        photoFiles.map(async (file, i) => {
+          const path = `${authUser.id}/${Date.now()}-${i}.jpg`;
+          const { data, error } = await supabase.storage
+            .from('profile-photos')
+            .upload(path, file, { upsert: true });
+          if (error) throw error;
+          const { data: urlData } = supabase.storage.from('profile-photos').getPublicUrl(data.path);
+          return urlData.publicUrl;
+        })
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Please try again.';
+      toast.error(`Failed to upload photo: ${message}`);
+      setLoading(false);
+      return;
     }
 
     const allPhotos = [...photos.filter(p => !p.startsWith('blob:')), ...uploadedUrls];

@@ -101,20 +101,30 @@ export default function ProfilePhotosPage() {
       return;
     }
 
-    const uploadedUrls: string[] = [];
-    for (let i = 0; i < photoFiles.length; i++) {
-      const file = photoFiles[i];
-      const path = `${user.id}/${Date.now()}-${i}.jpg`;
-      const { data, error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(path, file, { upsert: true });
-      if (uploadError) {
-        toast.error(`Photo upload failed: ${uploadError.message}`);
-        setLoading(false);
-        return;
-      }
-      const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(data.path);
-      uploadedUrls.push(urlData.publicUrl);
+    // Uploaded in parallel, not one-at-a-time -- with 3 required photos,
+    // sequential awaits meant 3 full network round-trips stacked back to
+    // back, which is what made this step feel slow even after
+    // compressImage() already shrank each file. Promise.all still
+    // preserves photo order in the result regardless of which upload
+    // actually finishes first.
+    let uploadedUrls: string[];
+    try {
+      uploadedUrls = await Promise.all(
+        photoFiles.map(async (file, i) => {
+          const path = `${user.id}/${Date.now()}-${i}.jpg`;
+          const { data, error: uploadError } = await supabase.storage
+            .from('avatars')
+            .upload(path, file, { upsert: true });
+          if (uploadError) throw uploadError;
+          const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(data.path);
+          return urlData.publicUrl;
+        })
+      );
+    } catch (uploadError) {
+      const message = uploadError instanceof Error ? uploadError.message : 'Please try again.';
+      toast.error(`Photo upload failed: ${message}`);
+      setLoading(false);
+      return;
     }
 
     // Authoritative check, not the earlier client-side one -- that runs
