@@ -28,6 +28,15 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  // Public paths and API routes — let through immediately
+  if (
+    PUBLIC_PATHS.some((p) => pathname.startsWith(p)) ||
+    pathname.startsWith('/api') ||
+    pathname.includes('.')
+  ) {
+    return NextResponse.next();
+  }
+
   // Admin routes: check for admin session cookie (separate from main app auth)
   if (pathname.startsWith('/admin')) {
     const adminSession = req.cookies.get('admin_session')?.value;
@@ -35,15 +44,6 @@ export async function middleware(req: NextRequest) {
       const destination = new URL('/admin/login', req.url);
       return NextResponse.redirect(destination);
     }
-    return NextResponse.next();
-  }
-
-  // Public paths and API routes — let through immediately
-  if (
-    PUBLIC_PATHS.some((p) => pathname.startsWith(p)) ||
-    pathname.startsWith('/api') ||
-    pathname.includes('.')
-  ) {
     return NextResponse.next();
   }
 
