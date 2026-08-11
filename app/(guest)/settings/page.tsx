@@ -144,7 +144,7 @@ export default function SettingsPage() {
           <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
         </div>
 
-      <div className="px-4 space-y-6">
+      <div className="space-y-6">
         <div className="card">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -271,7 +271,7 @@ export default function SettingsPage() {
       )}
 
       {showPauseConfirm && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-50 p-6">
           <div className="dialog-card max-w-sm w-full text-center">
             <PauseCircle className="w-12 h-12 text-gold mx-auto mb-4" />
             <h3 className="font-display text-lg text-ink mb-2">Pause your account?</h3>
@@ -299,7 +299,7 @@ export default function SettingsPage() {
       )}
 
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-50 p-6">
           <div className="dialog-card max-w-sm w-full text-center">
             <Trash2 className="w-12 h-12 text-red-500 mx-auto mb-4" />
             <h3 className="font-display text-lg text-ink mb-2">Delete Account?</h3>

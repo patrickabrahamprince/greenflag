@@ -97,7 +97,7 @@ export default function ProfileTeasersPage() {
           flex flow -- flowing after flex-1 content let the button sit
           higher than necessary whenever the content above it was short. */}
       <div
-        className="fixed inset-x-0 z-10 px-6 pt-8 pb-4 bg-gradient-to-t from-base via-base/95 to-transparent"
+        className="fixed inset-x-0 z-10 px-6 pt-8 pb-4"
         style={{ bottom: 'calc(max(1rem, env(safe-area-inset-bottom)) + var(--kb-inset, 0px))' }}
       >
         <button

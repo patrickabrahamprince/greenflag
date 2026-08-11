@@ -1,20 +1,28 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Sparkles } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import confetti from 'canvas-confetti';
 import { createClient } from '@/lib/supabase/client';
 import { usePendingReviewCountdown } from '@/lib/hooks/usePendingReviewCountdown';
 import { ReviewTimerRing } from '@/components/onboarding/ReviewTimerRing';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
+import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 const WELCOME_DISPLAY_MS = 1800;
 
 export default function PendingApprovalPage() {
-  const router = useRouter();
+  const { goTo } = useOnboardingNav();
   const supabase = createClient();
   const { secondsLeft, totalSeconds } = usePendingReviewCountdown();
   const [arrived, setArrived] = useState(false);
+
+  // goTo isn't a stable reference across renders the way useRouter()'s
+  // router is -- depending on it directly would reset this effect (and
+  // its setTimeout) on every re-render while the countdown hook is still
+  // ticking, so the redirect would never actually fire.
+  const goToRef = useRef(goTo);
+  goToRef.current = goTo;
 
   // Latched, not derived fresh every render -- the countdown hook resets
   // secondsLeft back to null the instant approval_status flips away from
@@ -27,14 +35,22 @@ export default function PendingApprovalPage() {
     if (secondsLeft === 0) setArrived(true);
   }, [secondsLeft]);
 
+  // Same locked palette as ConnectedScreen's match confetti -- this is
+  // the other big "you made it" moment in the app, and it had a Sparkles
+  // icon but nothing actually celebrating the approval.
+  useEffect(() => {
+    if (!arrived) return;
+    confetti({ particleCount: 150, spread: 80, colors: ['#D2042D', '#45050C', '#fff'] });
+  }, [arrived]);
+
   // Fully automatic -- no button to tap. A woman always needs her
   // Standard set before Discover means anything for her, so that's where
   // this lands once the review moment has played out.
   useEffect(() => {
     if (!arrived) return;
-    const timer = setTimeout(() => router.push('/standard/builder'), WELCOME_DISPLAY_MS);
+    const timer = setTimeout(() => goToRef.current('/standard/builder'), WELCOME_DISPLAY_MS);
     return () => clearTimeout(timer);
-  }, [arrived, router]);
+  }, [arrived]);
 
   return (
     <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center items-center px-8 text-center bg-base">

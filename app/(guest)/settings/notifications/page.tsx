@@ -115,7 +115,7 @@ export default function NotificationSettingsPage() {
           <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
         </div>
 
-      <div className="px-4 space-y-6">
+      <div className="space-y-6">
         <div className="card flex items-center justify-between gap-3">
           <div>
             <p className="text-sm text-ink font-medium">Push notifications</p>

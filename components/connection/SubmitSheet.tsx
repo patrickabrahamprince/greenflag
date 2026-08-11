@@ -399,7 +399,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
 
   if (showSuccessPopup) {
     return (
-      <div className="fixed inset-0 z-[60] flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.9)' }}>
+      <div className="fixed inset-0 backdrop-blur-sm z-[60] flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.9)' }}>
         <div className="w-full max-w-sm rounded-2xl p-6 text-center animate-scale-in bg-base">
           <div className="w-12 h-12 bg-green-50 border border-green-200 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-xl text-green-600 font-bold">✓</span>
@@ -449,7 +449,7 @@ export function SubmitSheet({ matchId, dayNumber, intention, isLastTaskToday, re
   // disabled app-wide, see capacitor.config.ts) covered the text input at
   // the bottom of the sheet on every question.
   return (
-    <div className="fixed inset-0 z-[60] flex items-end justify-center" style={{ background: 'rgba(0,0,0,0.5)' }}>
+    <div className="fixed inset-0 backdrop-blur-sm z-[60] flex items-end justify-center" style={{ background: 'rgba(0,0,0,0.5)' }}>
       <div
         className="w-full max-w-app rounded-t-none p-5 pb-8 animate-slide-up bg-base"
         style={{ marginBottom: 'var(--kb-inset, 0px)', transition: 'margin-bottom 200ms ease-out' }}

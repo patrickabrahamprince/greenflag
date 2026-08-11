@@ -11,17 +11,6 @@ import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 const BIO_MIN_CHARS = 15;
 
-// Each example pairs a quote with a photo so the intro reads as a mini
-// carousel instead of a static quote card -- both cycle together.
-const BIO_EXAMPLES = [
-  { quote: '"Coffee snob, terrible dancer, great listener."', image: '/onboarding/name.jpg' },
-  { quote: '"Will debate you on the best biryani in town."', image: '/onboarding/interests.jpg' },
-  { quote: '"Currently training for a marathon I\'m dreading."', image: '/onboarding/age.jpg' },
-  { quote: '"Ask me about the time I got lost in Ladakh."', image: '/onboarding/instagram.jpg' },
-  { quote: '"Overly competitive at board games. No regrets."', image: '/onboarding/rules.jpg' },
-  { quote: '"Homemade pasta on weekends, chaos on weekdays."', image: '/onboarding/quiz.jpg' },
-];
-
 // Step 3 of the profile wizard -- About You bio, split out of the old
 // single-page form (see /onboard/profile for the wizard's intent).
 export default function ProfileBioPage() {
@@ -36,8 +25,6 @@ export default function ProfileBioPage() {
 
   const [value, setValue] = useState(bio);
   const [error, setError] = useState('');
-  const [showIntro, setShowIntro] = useState(true);
-  const [exampleIdx, setExampleIdx] = useState(0);
 
   useEffect(() => {
     if (!name) { router.replace('/onboard/name'); return; }
@@ -46,16 +33,6 @@ export default function ProfileBioPage() {
     if (!instagramHandle) { router.replace('/onboard/profile/instagram'); }
     router.prefetch('/onboard/profile/teasers');
   }, []);
-
-  // A cycling example bio isn't just decorative -- it gives someone
-  // staring at a blank text field an actual sense of the tone/length
-  // that works, instead of a static quote icon that (per feedback) read
-  // as "showing nothing".
-  useEffect(() => {
-    if (!showIntro) return;
-    const id = setInterval(() => setExampleIdx((i) => (i + 1) % BIO_EXAMPLES.length), 2400);
-    return () => clearInterval(id);
-  }, [showIntro]);
 
   const handleContinue = () => {
     hapticTap();
@@ -67,51 +44,11 @@ export default function ProfileBioPage() {
     goTo('/onboard/profile/teasers', '/onboarding/teasers.jpg');
   };
 
-  if (showIntro) {
-    return (
-      <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
-      <OnboardingBackground image="/onboarding/bio.jpg" />
-        <button
-          onClick={() => router.push('/onboard/profile/instagram')}
-          className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit"
-        >
-          <ArrowLeft size={24} />
-        </button>
-
-        <div className="flex-1 flex flex-col justify-center items-center max-w-md mx-auto w-full text-center">
-          <StepDots current={4} total={6} />
-
-          {/* No enclosing card anymore -- the photo+quote pair sits
-              directly on the page's own background photo instead of a
-              separate boxed panel. */}
-          <div key={exampleIdx} className="w-20 h-20 rounded-full overflow-hidden mb-5 border border-white/20 shadow-[0_0_30px_-8px_rgba(210,4,45,0.6)] animate-slide-up">
-            <img src={BIO_EXAMPLES[exampleIdx].image} alt="" className="w-full h-full object-cover" />
-          </div>
-          <p key={`${exampleIdx}-quote`} className="font-display text-base text-ink/90 leading-snug animate-slide-up px-6">
-            {BIO_EXAMPLES[exampleIdx].quote}
-          </p>
-          <p className="text-ink/40 text-xs uppercase tracking-widest mt-3 mb-8">Like this, but you</p>
-
-          <h1 className="font-display text-xl text-ink mb-3 whitespace-nowrap">Personality goes a long way</h1>
-          <p className="text-ink/50 text-sm leading-relaxed">It&apos;s your time to shine.</p>
-        </div>
-
-        <button
-          onClick={() => setShowIntro(false)}
-          className="btn-primary w-full py-4 mb-safe-bottom max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
-        >
-          Stand out
-          <ArrowRight className="w-4 h-4" />
-        </button>
-      </div>
-    );
-  }
-
   return (
     <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
       <OnboardingBackground image="/onboarding/bio.jpg" />
       <button
-        onClick={() => setShowIntro(true)}
+        onClick={() => router.push('/onboard/profile/instagram')}
         className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit"
       >
         <ArrowLeft size={24} />
@@ -139,7 +76,7 @@ export default function ProfileBioPage() {
           className={`input resize-none ${error ? 'border-red-500' : ''}`}
         />
         <div className="flex items-center justify-between mt-1">
-          <span className={`text-[10px] ${value.length < BIO_MIN_CHARS ? 'text-amber-400' : 'text-ink/50'}`}>
+          <span className={`text-[10px] ${value.length < BIO_MIN_CHARS ? 'text-white' : 'text-ink/50'}`}>
             {value.length < BIO_MIN_CHARS ? `Min ${BIO_MIN_CHARS} characters` : ''}
           </span>
           <span className="text-xs text-ink/50">{value.length}/200</span>

@@ -58,6 +58,13 @@ module.exports = {
         'gold-dark': '#45050C', // was Electric Violet -> now Wine
         blush: '#D2042D',       // was Pinkish Red -> unified with Crimson (one red family)
         violet: '#45050C',      // was Electric Violet -> now Wine
+        // Never repointed when the rest of the old Dateasy palette was --
+        // every bg-lavender/border-lavender call site (Gift icon button,
+        // interest-picker chip borders, match confetti, profile photo-slot
+        // outlines) has been silently rendering with NO color at all since
+        // that migration, not a wrong color. Wine is the closest surviving
+        // "cool/secondary" tone in the locked palette.
+        lavender: '#45050C',
         surface: '#000000',     // now card (black)
         'surface-light': '#2A1519', // now raised
         border: '#2A1519',      // now raised

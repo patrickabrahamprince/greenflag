@@ -29,7 +29,7 @@ export function PendingReviewBanner() {
 
   if (showVerified) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.7)' }}>
+      <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.7)' }}>
         <div className="w-full max-w-sm bg-base rounded-2xl shadow-2xl p-8 text-center animate-fade-in">
           <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-5 shadow-[0_0_30px_-8px_rgba(210,4,45,0.6)]">
             <BadgeCheck className="w-8 h-8 text-gold" />

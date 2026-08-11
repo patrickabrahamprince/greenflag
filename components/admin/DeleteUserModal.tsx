@@ -23,7 +23,7 @@ export function DeleteUserModal({
   const canDelete = confirmText.trim() === (user.name || '').trim() && confirmText.trim().length > 0;
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-50 p-4">
       <div className="dialog-card max-w-md w-full">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">

@@ -43,6 +43,8 @@ interface OnboardingState {
   bio: string;
   teaserPrompt: string;
   teaserAnswer: string;
+  interestsHave: string[];
+  interestsLookingFor: string[];
   setPersona: (p: 'woman' | 'man') => void;
   setName: (name: string) => void;
   setAge: (age: number) => void;
@@ -50,6 +52,7 @@ interface OnboardingState {
   setInstagram: (handle: string, verified: boolean) => void;
   setBio: (bio: string) => void;
   setTeaser: (prompt: string, answer: string) => void;
+  toggleInterest: (list: 'have' | 'looking', item: string) => void;
   clearOnboarding: () => void;
 }
 
@@ -96,6 +99,8 @@ export const useOnboardingStore = create<OnboardingState>()(
       bio: '',
       teaserPrompt: '',
       teaserAnswer: '',
+      interestsHave: [],
+      interestsLookingFor: [],
       setPersona: (persona) => set({ persona }),
       setName: (name) => set({ name }),
       setAge: (age) => set({ age }),
@@ -103,6 +108,14 @@ export const useOnboardingStore = create<OnboardingState>()(
       setInstagram: (instagramHandle, instagramVerified) => set({ instagramHandle, instagramVerified }),
       setBio: (bio) => set({ bio }),
       setTeaser: (teaserPrompt, teaserAnswer) => set({ teaserPrompt, teaserAnswer }),
+      toggleInterest: (list, item) =>
+        set((state) => {
+          const key = list === 'have' ? 'interestsHave' : 'interestsLookingFor';
+          const current = state[key];
+          return {
+            [key]: current.includes(item) ? current.filter((i) => i !== item) : [...current, item],
+          };
+        }),
       clearOnboarding: () =>
         set({
           persona: null,
@@ -116,13 +129,15 @@ export const useOnboardingStore = create<OnboardingState>()(
           bio: '',
           teaserPrompt: '',
           teaserAnswer: '',
+          interestsHave: [],
+          interestsLookingFor: [],
         }),
     }),
     {
       name: 'gf-onboarding',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => {
-        const { setPersona, setName, setAge, setLocation, setInstagram, setBio, setTeaser, clearOnboarding, ...data } = state;
+        const { setPersona, setName, setAge, setLocation, setInstagram, setBio, setTeaser, toggleInterest, clearOnboarding, ...data } = state;
         return data;
       },
     }

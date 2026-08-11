@@ -19,7 +19,7 @@ export function BottomSheet({ open, onClose, children }: BottomSheetProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center">
-      <div className="absolute inset-0 bg-black/70" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-full max-w-app bg-overlay rounded-t-3xl pb-safe-bottom max-h-[90dvh] overflow-y-auto scrollbar-hide animate-sheet-up">
         <div className="w-10 h-1 rounded-full bg-white/20 mx-auto mt-3" />
         <button

@@ -54,7 +54,7 @@ function DayCompleteModal({ unlocksAt, completedDay, onExplore }: { unlocksAt: s
   const remainingMs = useCountdown(unlocksAt);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.9)' }}>
+    <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.9)' }}>
       <div className="w-full max-w-sm bg-base rounded-2xl shadow-2xl p-8 text-center">
         <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-5">
           <Hourglass className="w-6 h-6 text-gold" />
@@ -77,7 +77,7 @@ function DayCompleteModal({ unlocksAt, completedDay, onExplore }: { unlocksAt: s
 
 function LeaveWarningModal({ onStay, onLeave }: { onStay: () => void; onLeave: () => void }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.6)' }}>
+    <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.6)' }}>
       <div className="w-full max-w-sm bg-base rounded-2xl shadow-2xl p-8 text-center">
         <div className="w-14 h-14 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-5">
           <AlertTriangle className="w-6 h-6 text-red-400" />
@@ -112,7 +112,7 @@ function RejectReasonModal({
   const [reason, setReason] = useState('');
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center p-0" style={{ background: 'rgba(0,0,0,0.6)' }}>
+    <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-end justify-center p-0" style={{ background: 'rgba(0,0,0,0.6)' }}>
       <div className="w-full max-w-app bg-base rounded-t-2xl p-6 pb-8">
         <h3 className="font-display text-xl text-ink mb-1.5">Why are you rejecting this?</h3>
         <p className="text-ink/50 text-xs mb-4">He&apos;ll see this, so he knows where he fell short.</p>

@@ -147,7 +147,7 @@ export function UserActions({ userId, userName, isBanned, isAdmin, approvalStatu
       </div>
 
       {showCreditModal && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-50 p-4">
           <div className="dialog-card max-w-md w-full">
             <h3 className="text-lg font-display text-[#EDEADE] mb-4">Credit Coins</h3>
             <div className="space-y-3 mb-4">
@@ -169,7 +169,7 @@ export function UserActions({ userId, userName, isBanned, isAdmin, approvalStatu
       )}
 
       {showRejectModal && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-50 p-4">
           <div className="dialog-card max-w-md w-full">
             <h3 className="text-lg font-display text-[#EDEADE] mb-4">Reject Application</h3>
             <div className="mb-4">
@@ -190,7 +190,7 @@ export function UserActions({ userId, userName, isBanned, isAdmin, approvalStatu
       )}
 
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-50 p-4">
           <div className="dialog-card max-w-md w-full">
             <h3 className="text-lg font-display text-[#EDEADE] mb-2">Delete User</h3>
             <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 mb-4">

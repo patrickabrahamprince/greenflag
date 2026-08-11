@@ -56,7 +56,7 @@ export function MyStandardsSection({ userId }: { userId: string }) {
 
   if (loading) {
     return (
-      <div className="px-4 mt-6 flex justify-center">
+      <div className="mt-6 flex justify-center">
         <Loader2 className="w-5 h-5 animate-spin text-gold" />
       </div>
     );
@@ -70,7 +70,7 @@ export function MyStandardsSection({ userId }: { userId: string }) {
   })).filter((d) => d.tasks.length > 0);
 
   return (
-    <div className="px-4 mt-8">
+    <div className="mt-8">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-gold" />

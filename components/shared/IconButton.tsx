@@ -21,7 +21,7 @@ interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const VARIANT_CLASSES: Record<IconButtonVariant, string> = {
   glass: 'glass-surface text-ink',
   dark: 'bg-well text-ink',
-  lavender: 'bg-lavender text-ink-dark',
+  lavender: 'bg-lavender text-ink',
   accent: 'bg-[#D2042D] text-white',
 };
 

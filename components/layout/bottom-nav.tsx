@@ -116,7 +116,7 @@ export function BottomNav() {
     </nav>
 
     {pendingHref && (
-      <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60] p-6">
+      <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-[60] p-6">
         <div className="dialog-card max-w-sm w-full text-center">
           <div className="w-14 h-14 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-4">
             <ShieldAlert className="w-6 h-6 text-gold" />

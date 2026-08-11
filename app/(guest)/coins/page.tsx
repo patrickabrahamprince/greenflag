@@ -127,12 +127,12 @@ export default function CoinsPage() {
         <CoinBalance balance={balance} />
 
         {!isNative && (
-          <p className="px-4 mb-3 text-xs text-muted text-center">
+          <p className="mb-3 text-xs text-muted text-center">
             Coins can only be purchased in the GreenFlag iOS app.
           </p>
         )}
 
-        <div className="px-4 space-y-3">
+        <div className="space-y-3">
           {[...PACKAGES, TEST_PACKAGE].map((pkg) => (
             <PackageCard
               key={pkg.appleProductId}

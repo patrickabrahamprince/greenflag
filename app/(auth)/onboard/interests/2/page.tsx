@@ -12,29 +12,28 @@ import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 import { useFinishInterests } from '@/lib/onboarding/useFinishInterests';
 import { StepDots } from '@/components/shared/StepDots';
 
-// Step 1 of 3 -- "What Defines You" used to be one long scroll through
-// every category at once; split across 3 screens (see interests/2 and
-// interests/3) so each one is a manageable slice instead.
-export default function InterestsPage() {
+// Step 2 of 3 -- see app/(auth)/onboard/interests/page.tsx for why this
+// is split across screens.
+export default function InterestsStepTwoPage() {
   const router = useRouter();
   const { goTo } = useOnboardingNav();
   const { interestsHave, toggle } = useInterestsSelection();
   const { loading, finish } = useFinishInterests();
 
   useEffect(() => {
-    router.prefetch('/onboard/interests/2');
+    router.prefetch('/onboard/interests/3');
   }, [router]);
 
   const handleNext = () => {
     hapticTap();
-    goTo('/onboard/interests/2');
+    goTo('/onboard/interests/3');
   };
 
   return (
     <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
       <OnboardingBackground image="/onboarding/interests.jpg" />
       <div className="flex items-center justify-between mb-6">
-        <button onClick={() => router.push('/onboard/quiz')} className="text-ink/40 hover:text-ink active:scale-90 transition-all">
+        <button onClick={() => router.push('/onboard/interests')} className="text-ink/40 hover:text-ink active:scale-90 transition-all">
           <ArrowLeft size={24} />
         </button>
         <button
@@ -47,14 +46,13 @@ export default function InterestsPage() {
       </div>
 
       <div className="flex-1 max-w-md mx-auto w-full space-y-8 pb-safe-bottom">
-        <StepDots current={1} total={3} />
+        <StepDots current={2} total={3} />
 
         <CategorizedInterestPicker title="What Defines You" description="Choose as many as you like"
-          categories={INTEREST_CATEGORIES_STEPS[0]} selected={interestsHave} onToggle={(val) => toggle('have', val)}
+          categories={INTEREST_CATEGORIES_STEPS[1]} selected={interestsHave} onToggle={(val) => toggle('have', val)}
           dataTestIdPrefix={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'interest-have' : undefined} />
 
         <button onClick={handleNext} disabled={loading}
-          data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'submit-onboarding' : undefined}
           className="btn-primary w-full active:scale-[0.98] flex items-center justify-center gap-2">
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
             <>

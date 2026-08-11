@@ -98,6 +98,19 @@ export default function DiscoverPage() {
   const scrollRef = useRef<HTMLDivElement>(null)
   const cardTouchStart = useRef<Record<string, { x: number; y: number }>>({})
 
+  // The confirm/gift/photo-unlock dialogs are `fixed inset-0` overlays,
+  // not children of the snap-scroll feed -- fixed positioning alone
+  // doesn't stop a drag that starts over the overlay from still
+  // scrolling the feed underneath it on mobile Safari/WKWebView. Locking
+  // the feed's own scroll container while any of them is open (instead
+  // of relying on the overlay to block it) is what actually stops that.
+  const anyDialogOpen = !!(confirmProfileId || photoUnlockConfirm || giftPickerProfileId)
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    el.style.overflowY = anyDialogOpen ? 'hidden' : ''
+  }, [anyDialogOpen])
+
   const observer = useRef<IntersectionObserver>()
   const lastProfileRef = useCallback((node: HTMLDivElement) => {
     if (pageLoading) return
@@ -676,7 +689,7 @@ export default function DiscoverPage() {
       </div>
 
       {confirmProfileId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
+        <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
           <div className="w-full max-w-sm bg-overlay rounded-card shadow-2xl p-8 text-center">
             <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <Coins className="w-6 h-6 text-gold" />
@@ -711,7 +724,7 @@ export default function DiscoverPage() {
       )}
 
       {photoUnlockConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
+        <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
           <div className="w-full max-w-sm bg-overlay rounded-card shadow-2xl p-8 text-center">
             <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <Lock className="w-6 h-6 text-gold" />
@@ -745,7 +758,7 @@ export default function DiscoverPage() {
       )}
 
       {giftPickerProfileId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
+        <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
           <div className="w-full max-w-sm bg-overlay rounded-card shadow-2xl p-8 text-center">
             <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <Gift className="w-6 h-6 text-gold" />
@@ -818,7 +831,7 @@ export default function DiscoverPage() {
       )}
 
       {nudgeConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
+        <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
           <div className="w-full max-w-sm bg-overlay rounded-card shadow-2xl p-8 text-center">
             <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <Coins className="w-6 h-6 text-gold" />

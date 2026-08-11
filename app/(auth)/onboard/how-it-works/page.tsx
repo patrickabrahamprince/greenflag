@@ -147,9 +147,9 @@ export default function HowItWorksPage() {
       return;
     }
     if (persona === 'woman') {
-      router.push('/standard/builder');
+      goTo('/standard/builder');
     } else {
-      router.push('/discover');
+      goTo('/discover');
     }
   };
 

@@ -162,7 +162,7 @@ export default function ProfilePage() {
         </div>
       )}
 
-      <div className="space-y-3 px-4">
+      <div className="space-y-3">
         <button onClick={() => { hapticTap(); router.push('/profile/edit'); }} className="btn-primary w-full flex items-center justify-center gap-2">
           <Edit3 className="w-4 h-4" />
           Edit Profile
@@ -176,7 +176,7 @@ export default function ProfilePage() {
 
       {user.persona === 'woman' && <MyStandardsSection userId={user.id} />}
 
-      <div className="px-4 mt-6">
+      <div className="mt-6">
         {/* Closest real analog to the deck's Mindaro subscription card --
             this app's monetization surface is coins, not a subscription
             tier, so the card keeps its real balance/purchase content but
@@ -196,13 +196,13 @@ export default function ProfilePage() {
               </p>
             </div>
           </div>
-          <button onClick={() => { hapticTap(); router.push('/coins'); }} className="btn-primary text-sm py-2.5 px-5 shrink-0">
+          <button onClick={() => { hapticTap(); router.push('/coins'); }} className="btn-primary !min-h-[36px] text-xs px-4 shrink-0">
             Buy
           </button>
         </div>
       </div>
 
-      <div className="px-4 mt-8 pt-6 border-t border-white/[0.06]">
+      <div className="mt-8 pt-6 border-t border-white/[0.06]">
         <button onClick={handleLogout} disabled={loggingOut} className="btn-danger w-full flex items-center justify-center gap-2">
           {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
           Sign Out
