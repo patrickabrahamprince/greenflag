@@ -84,7 +84,7 @@ export default function ProfileRequestsPage() {
                   </button>
                 </div>
               </div>
-              <div className="text-xs text-gray-900/70 bg-black/30 rounded-lg p-3 space-y-1">
+              <div className="text-xs text-gray-900/70 bg-gray-200 rounded-lg p-3 space-y-1">
                 {Object.entries(r.requested_changes).map(([key, value]) => (
                   <div key={key} className="flex gap-2">
                     <span className="text-gray-500 w-16 shrink-0">{key}:</span>

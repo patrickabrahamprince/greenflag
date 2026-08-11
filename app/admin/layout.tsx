@@ -102,7 +102,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (checking || !mounted) {
     return (
-      <div className="min-h-dvh bg-white dark:bg-black flex items-center justify-center">
+      <div className="min-h-dvh bg-white flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
       </div>
     );
@@ -110,7 +110,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div>
-      <div className="min-h-dvh bg-white text-black">
+      <div className="min-h-dvh bg-white text-gray-900">
         <div className="flex h-dvh">
           {/* Desktop Sidebar */}
           <aside className="hidden lg:flex lg:w-80 lg:flex-col lg:border-r lg:border-gray-200/50 lg:bg-white">

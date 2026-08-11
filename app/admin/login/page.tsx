@@ -47,22 +47,22 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-dvh bg-white dark:bg-black flex items-center justify-center px-4">
+    <div className="min-h-dvh bg-white bg-black flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-semibold text-black dark:text-white">Admin</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">GreenFlag Control Panel</p>
+          <h1 className="text-2xl font-semibold text-gray-900 text-white">Admin</h1>
+          <p className="text-sm text-gray-500 text-gray-400 mt-1">GreenFlag Control Panel</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
           {error && (
-            <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 rounded-lg px-4 py-3">
-              <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+            <div className="bg-red-50 bg-red-500/10 border border-red-200 border-red-500/30 rounded-lg px-4 py-3">
+              <p className="text-sm text-red-600 text-red-400">{error}</p>
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-black dark:text-white mb-2">
+            <label className="block text-sm font-medium text-gray-900 text-white mb-2">
               Email
             </label>
             <input
@@ -71,12 +71,12 @@ export default function AdminLoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="pat@greenflag"
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-black text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 border-gray-700 bg-white bg-black text-gray-900 text-white placeholder-gray-500 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-black dark:text-white mb-2">
+            <label className="block text-sm font-medium text-gray-900 text-white mb-2">
               Password
             </label>
             <input
@@ -85,7 +85,7 @@ export default function AdminLoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="••••••••"
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-black text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 border-gray-700 bg-white bg-black text-gray-900 text-white placeholder-gray-500 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
