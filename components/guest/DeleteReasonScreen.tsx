@@ -38,7 +38,7 @@ export function DeleteReasonScreen({ onBack, onContinue }: DeleteReasonScreenPro
         <ArrowLeft size={24} />
       </button>
 
-      <div className="flex-1 min-h-0 overflow-y-auto max-w-md mx-auto w-full">
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-none max-w-md mx-auto w-full">
         <h1 className="font-display text-3xl text-ink mb-2">Why are you leaving?</h1>
         <p className="text-xs font-semibold text-gold mb-6">My selection: {reasons.length}/{MAX_REASONS}</p>
 

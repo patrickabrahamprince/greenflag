@@ -599,7 +599,7 @@ export default function DiscoverPage() {
                       onClick={() => handleBegin(p.id)}
                       disabled={likingId === p.id}
                       aria-label="View Profile"
-                      className="btn-primary flex-1 h-11 flex items-center justify-center gap-1.5"
+                      className="btn-primary flex-1 h-12 flex items-center justify-center gap-1.5"
                     >
                       {likingId === p.id ? (
                         <Loader2 className="w-4 h-4 animate-spin text-white" />
@@ -614,7 +614,7 @@ export default function DiscoverPage() {
                       onClick={() => handleNudge(p.id)}
                       disabled={nudgingId === p.id}
                       aria-label="Nudge"
-                      className="glass-surface flex-1 h-11 rounded-full flex items-center justify-center gap-1.5 active:scale-95 transition-all disabled:opacity-50"
+                      className="glass-surface flex-1 h-12 rounded-full flex items-center justify-center gap-1.5 active:scale-95 transition-all disabled:opacity-50"
                     >
                       {nudgingId === p.id ? (
                         <Loader2 className="w-4 h-4 animate-spin text-white" />

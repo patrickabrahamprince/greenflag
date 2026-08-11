@@ -131,12 +131,14 @@ export const INTEREST_CATEGORIES: InterestCategory[] = [
 ];
 
 // "What Defines You" used to render all 13 categories on one endless
-// scroll during onboarding -- split into 3 roughly-even chunks (by
+// scroll during onboarding -- split into 5 roughly-even chunks (by
 // category count, categories don't subdivide) so each onboarding screen
 // shows a manageable slice instead. Order matches INTEREST_CATEGORIES so
 // picking up where a previous screen left off never skips or repeats one.
 export const INTEREST_CATEGORIES_STEPS: InterestCategory[][] = [
-  INTEREST_CATEGORIES.slice(0, 5),
-  INTEREST_CATEGORIES.slice(5, 9),
-  INTEREST_CATEGORIES.slice(9),
+  INTEREST_CATEGORIES.slice(0, 3),
+  INTEREST_CATEGORIES.slice(3, 6),
+  INTEREST_CATEGORIES.slice(6, 9),
+  INTEREST_CATEGORIES.slice(9, 11),
+  INTEREST_CATEGORIES.slice(11),
 ];

@@ -44,7 +44,7 @@ export function CoinBalance({ balance }: CoinBalanceProps) {
   }, [balance]);
 
   return (
-    <div data-testid="coin-balance" className="flex flex-col items-center py-8">
+    <div data-testid="coin-balance" className="flex flex-col items-center pt-6 pb-10">
       <Coins className="w-10 h-10 text-gold mb-3" />
       <p className={`text-5xl font-display text-gold transition-transform duration-300 ${popped ? 'scale-110' : 'scale-100'}`}>
         {displayed}

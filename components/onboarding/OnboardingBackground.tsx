@@ -34,13 +34,26 @@ export function OnboardingBackground({ image, light }: OnboardingBackgroundProps
   // would otherwise hide the glow completely. Listed first so it paints
   // above the black gradient and actually reads as a warm tint bleeding
   // through the darkened photo.
+  // Lightened from the original 0.55/0.8/0.97 (non-light) and
+  // 0.35/0.65/0.92 (light) passes -- the photos were reading as near-
+  // silhouettes everywhere except the very top of the screen. Still
+  // darkest at the bottom, where the CTA and body copy actually sit.
   const darkGradient = light
-    ? 'linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.65) 55%, rgba(0,0,0,0.92) 100%)'
-    : 'linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.8) 55%, rgba(0,0,0,0.97) 100%)';
+    ? 'linear-gradient(180deg, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.48) 55%, rgba(0,0,0,0.8) 100%)'
+    : 'linear-gradient(180deg, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0.62) 55%, rgba(0,0,0,0.88) 100%)';
   const scrim = `${ONBOARDING_WINE_GLOW}, ${darkGradient}`;
 
+  // `fixed`, not `absolute` -- on a screen with its own inner scroll
+  // container taller than one viewport (Standard Builder's Day N form,
+  // the interests screens), `absolute inset-0` only ever sized itself to
+  // that container's own (viewport-height) box, not its true scrollable
+  // content height. Scrolling past that one screen's worth of height
+  // scrolled the image away too, leaving flat black underneath for the
+  // rest of the content. `fixed` pins it to the real viewport instead,
+  // so it always covers the full screen no matter how tall the
+  // scrollable content is or how far into it you've scrolled.
   return (
-    <div className="absolute inset-0 -z-10 overflow-hidden bg-base">
+    <div className="fixed inset-0 -z-10 overflow-hidden bg-base">
       <img key={image} src={image} alt="" className="w-full h-full object-cover animate-fade-in" />
       <div className="absolute inset-0" style={{ background: scrim }} />
     </div>

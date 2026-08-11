@@ -24,7 +24,7 @@ export function PackageCard({ pkg, displayPrice, purchasing, isPurchasingThis, o
   return (
     <div className="card relative overflow-hidden">
       {pkg.popular && (
-        <span className="absolute top-2 right-2 text-[10px] font-medium text-gold bg-gold/10 px-2 py-0.5 rounded-full">
+        <span className="absolute top-2 right-2 text-[10px] font-semibold text-ink-dark bg-white px-2 py-0.5 rounded-full">
           Most Popular
         </span>
       )}
@@ -56,7 +56,7 @@ export function PackageCard({ pkg, displayPrice, purchasing, isPurchasingThis, o
           icon={<ShoppingCart className="w-3.5 h-3.5" />}
           onClick={onBuy}
           disabled={purchasing}
-          className="text-sm py-2 px-4"
+          className="!min-h-[38px] text-sm px-5"
         >
           Buy
         </LoadingButton>

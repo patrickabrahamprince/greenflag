@@ -231,9 +231,12 @@ export default function StandardBuilderPage() {
   // Advancing to the next day is a state change, not a route change, so
   // the browser has no reason to reset scroll on its own -- without this,
   // finishing Day 1 while scrolled down to Task 3 dropped you into Day 2
-  // already scrolled past its own Task 1.
+  // already scrolled past its own Task 1. This screen scrolls its own
+  // inner div (h-[calc(100dvh-5rem)] overflow-y-auto), not the window --
+  // window.scrollTo() was a no-op here, which is why the reset never
+  // actually happened.
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
   }, [step]);
 
   const currentSlot = slots[step];
