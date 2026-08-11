@@ -51,7 +51,7 @@
 	     server (server.url's cleartext:true in capacitor.config.ts only
 	     covers Android; iOS needs this ATS exception separately). The
 	     shipped App Store build points at the real HTTPS production URL
-	     and never touches this exception -- a blanket
+	     and never touches this exception. A blanket
 	     NSAllowsArbitraryLoads would both weaken security for no reason
 	     and draw extra App Review scrutiny. -->
 	<key>NSAppTransportSecurity</key>
@@ -83,6 +83,8 @@
 	     resolves and the field just sits on "Detecting location...". -->
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>GreenFlag uses your location to suggest your city during profile setup.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>GreenFlag uses your location to find nearby matches and suggest your city during profile setup.</string>
 	<!-- AppLockGate (components/security/AppLockGate.tsx) calls
 	     LocalAuthentication via @aparajita/capacitor-biometric-auth to lock
 	     the app behind Face ID on launch/resume -- iOS crashes outright if

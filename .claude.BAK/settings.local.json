@@ -1,0 +1,112 @@
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://127.0.0.1:8787",
+    "ENABLE_TOOL_SEARCH": "true"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(xargs sed -i '' -e 's/#B8962F/#009624/g' -e 's/#D4AF37/#00C853/g' -e 's/#E8C84A/#33D375/g')",
+      "Bash(npx tsc *)",
+      "Bash(npx next *)",
+      "Bash(supabase migration *)",
+      "Bash(env)",
+      "Bash(awk -F_ '{ts=$1} ts<=\"20261202000000\"{print}')",
+      "Read(//tmp/**)",
+      "Bash(cd /Users/patrickabraham/Documents/GreenFlag *)",
+      "Bash(supabase gen *)",
+      "Bash(awk '/get_matching_profiles:/{c++} c==1{print NR\": \"$0}' types/supabase.ts)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(curl -s -w \"\\\\nHTTP_STATUS:%{http_code}\\\\n\" http://localhost:3000/api/discover)",
+      "Bash(node -e ' *)",
+      "Bash(docker info *)",
+      "Bash(vercel --version)",
+      "Bash(grep -o '\"sha\":\"[a-f0-9]*\"\\\\|\"meta\":{[^}]*}\\\\|githubCommitSha[^,]*')",
+      "Bash(vercel --prod --yes)",
+      "WebFetch(domain:www.lazyweb.com)",
+      "Bash(grep -v \"DiscoverCard.tsx$\")",
+      "Bash(xargs sed -i '' -e 's/#009624/#B89851/g' -e 's/#00C853/#C9A961/g' -e 's/#33D375/#D4B876/g')",
+      "mcp__Claude_in_Chrome__navigate",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(sed -i '' -e 's/text-white mb-1\\\\.5/text-ink mb-1.5/g' -e 's/<X size={12} className=\"text-white\" \\\\/>/<X size={12} className=\"text-ink\" \\\\/>/' components/discovery/PhotoUploadSlots.tsx components/discovery/ProfileFormFields.tsx)",
+      "Bash(sed -i '' 's/text-xl font-display text-white mb-1/font-['\"'\"'Playfair_Display'\"'\"'] text-xl text-ink mb-1/' components/discovery/WhyMePrompts.tsx)",
+      "Bash(grep -v \"EmptyState.tsx$\\\\|DailyLimitReached.tsx$\")",
+      "Bash(sed -i '' \"s/text-sm font-medium text-white mb-1.5/text-sm font-medium text-ink mb-1.5/g\" components/discovery/GuestFieldsSection.tsx components/discovery/HostLocationSection.tsx components/discovery/PhotoUploadSection.tsx)",
+      "Bash(sed -i '' -e 's/'\\\\''border-white\\\\/10 hover:border-gold\\\\/30 cursor-pointer'\\\\''/'\\\\''border-[#E8E6E1] hover:border-gold cursor-pointer'\\\\''/' -e 's/'\\\\''border-white\\\\/10 opacity-50'\\\\''/'\\\\''border-[#E8E6E1] opacity-50'\\\\''/' components/discovery/PhotoUploadSection.tsx)",
+      "Bash(sed -i '' \"s/text-muted hover:text-white/text-muted hover:text-ink/g\" components/discovery/ProfileHeader.tsx components/discovery/InterestsPageHeader.tsx)",
+      "Bash(sed -i '' \"s/text-xl font-display font-semibold text-white text-center mb-6/font-['Playfair_Display'] text-xl text-ink text-center mb-6/\" components/discovery/ProfileHeader.tsx)",
+      "Bash(sed -i '' -e 's/text-sm text-white font-medium\">Location shared/text-sm text-ink font-medium\">Location shared/' -e 's/background: '\\\\''#111111'\\\\'' }}>$/background: '\\\\''#F0EDE9'\\\\'' }}>/' components/guest/LocationPicker.tsx)",
+      "Bash(sed -i '' \"s/<p className=\\\\\"text-white font-medium\\\\\">{pkg.coins} Coins<\\\\/p>/<p className=\\\\\"text-ink font-medium\\\\\">{pkg.coins} Coins<\\\\/p>/\" components/guest/PackageCard.tsx)",
+      "Bash(sed -i '' -e 's/text-sm text-white font-medium\">Voice note recorded/text-sm text-ink font-medium\">Voice note recorded/' -e 's/'\\\\''#111111'\\\\''/'\\\\''#F0EDE9'\\\\''/g' -e 's/'\\\\''1px solid #1E1E1E'\\\\''/'\\\\''1px solid #E8E6E1'\\\\''/' components/guest/VoiceRecorder.tsx)",
+      "Bash(sed -i '' -e 's/'\\\\''#161616'\\\\''/'\\\\''#F0EDE9'\\\\''/g' -e 's/rgba\\(8,8,8,0.7\\)/rgba\\(0,0,0,0.6\\)/' -e 's/text-xs text-white font-thin\">Photo selected/text-xs text-white font-thin\">Photo selected/' -e 's/text-sm text-white font-medium\">Camera/text-sm text-ink font-medium\">Camera/' -e 's/text-sm text-white font-medium\">Gallery/text-sm text-ink font-medium\">Gallery/' components/guest/PhotoUploader.tsx)",
+      "Bash(sed -i '' -e 's/text-lg font-display text-white mb-3/font-['\\\\''Playfair_Display'\\\\''] text-lg text-ink mb-3/' -e 's/<p className=\"text-sm text-white\">{tx.type}<\\\\/p>/<p className=\"text-sm text-ink\">{tx.type}<\\\\/p>/' components/guest/TransactionHistory.tsx)",
+      "Bash(grep -v \"components/discovery/InterestGrid.tsx$\")",
+      "Bash(awk '{print $2}')",
+      "Bash(grep -rln \"\\\\.from\\('connections'\\)\\\\s*$\\\\|\\\\.from\\('connections'\\)\\\\.insert\\\\|\\\\.from\\(\\\\\"connections\\\\\"\" app/ --include=\"*.ts\")",
+      "Bash(xargs grep -n \"wallets'\\).update\\\\|wallets'\\\\\\)\\\\s*$\")",
+      "Bash(git status *)",
+      "Bash(git checkout *)",
+      "Bash(echo \"exit:$?\")",
+      "Bash(pnpm tsc *)",
+      "Bash(git stash *)",
+      "Bash(npm install *)",
+      "Bash(node -e \"console.log\\(require\\('next-pwa/package.json'\\).version\\)\")",
+      "WebFetch(domain:apps.apple.com)",
+      "Bash(supabase projects *)",
+      "Bash(node /private/tmp/claude-501/-Users-patrickabraham-Documents-GreenFlag-Backup-GreenFlag/8e26fa64-ce57-4291-b7fe-583fb08e1410/scratchpad/verify-prod-state.mjs)",
+      "Bash(node _tmp_verify_prod_state.mjs)",
+      "Bash(node _tmp_verify_connections_fix.mjs)",
+      "Bash(git add *)",
+      "Bash(xcodebuild -version)",
+      "Bash(xcrun simctl *)",
+      "Read(//Applications/**)",
+      "Bash(mdfind \"kMDItemKind == 'Application'\")",
+      "Bash(pod --version)",
+      "Bash(ruby --version)",
+      "Bash(npx cap *)",
+      "Bash(sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer)",
+      "Bash(git fetch *)",
+      "Bash(SUPABASE_URL=http://127.0.0.1:55321 SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0 npx tsx scripts/test-matchflow-backend.ts)",
+      "Bash(kill 1633)",
+      "Bash(command -v nvm)",
+      "Read(//Users/patrickabraham/.nvm/versions/**)",
+      "Bash(command -v volta)",
+      "Bash(pkill -9 -f \"next dev\")",
+      "Bash(pkill -9 -f \"npm run dev\")",
+      "Bash(nohup npm run dev)",
+      "Bash(disown)",
+      "Bash(echo \"pid=$!\")",
+      "Bash(kill -9 2738)",
+      "Bash(pkill -9 -f \"start-server.js\")",
+      "Bash(lsof -i :3000 -sTCP:LISTEN)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/patrickabraham/.local/bin/headroom init hook ensure --profile init-greenflag-83cc25bd --marker headroom-init-claude",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/patrickabraham/.local/bin/headroom init hook ensure --profile init-greenflag-83cc25bd --marker headroom-init-claude",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "headroom@headroom-marketplace": true
+  }
+}

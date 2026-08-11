@@ -1,0 +1,1168 @@
+[
+  {
+    "timestamp": 1786383872277,
+    "nodes": 12,
+    "edges": 36,
+    "pageRankSum": 1.0000000000000002,
+    "confidences": [
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5
+    ],
+    "accessCounts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "topPatterns": [
+      {
+        "id": "insight-1786383872266-petr",
+        "summary": "Frequently edited: globals.css (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.2776807006513628,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-7flg",
+        "summary": "Frequently edited: CategorizedInterestPicker.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.15009757926825473,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-nw5i",
+        "summary": "Frequently edited: page.tsx (7x)",
+        "confidence": 0.5,
+        "pageRank": 0.10533158567390453,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6pcs",
+        "summary": "Frequently edited: verify-tmp-screenshot.mjs (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.08207654015677468,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-v8pn",
+        "summary": "Frequently edited: ProfileInfo.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.06769198661523036,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rxus",
+        "summary": "Frequently edited: page.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.05785640098951616,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rq49",
+        "summary": "Frequently edited: page.tsx (10x)",
+        "confidence": 0.5,
+        "pageRank": 0.05067714527411049,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6mqu",
+        "summary": "Frequently edited: profileDetails.ts (4x)",
+        "confidence": 0.5,
+        "pageRank": 0.04518981826399593,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY----deploy-via-vercel-cli--depl-0",
+        "summary": "- [Deploy via Vercel CLI](deploy_vercel_cli.md) — CLI is pre",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-deploy_vercel_cli-----0",
+        "summary": "---",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      }
+    ]
+  },
+  {
+    "timestamp": 1786384084730,
+    "nodes": 12,
+    "edges": 36,
+    "pageRankSum": 1.0000000000000002,
+    "confidences": [
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5
+    ],
+    "accessCounts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "topPatterns": [
+      {
+        "id": "insight-1786383872266-petr",
+        "summary": "Frequently edited: globals.css (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.2776807006513628,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-7flg",
+        "summary": "Frequently edited: CategorizedInterestPicker.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.15009757926825473,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-nw5i",
+        "summary": "Frequently edited: page.tsx (7x)",
+        "confidence": 0.5,
+        "pageRank": 0.10533158567390453,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6pcs",
+        "summary": "Frequently edited: verify-tmp-screenshot.mjs (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.08207654015677468,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-v8pn",
+        "summary": "Frequently edited: ProfileInfo.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.06769198661523036,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rxus",
+        "summary": "Frequently edited: page.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.05785640098951616,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rq49",
+        "summary": "Frequently edited: page.tsx (10x)",
+        "confidence": 0.5,
+        "pageRank": 0.05067714527411049,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6mqu",
+        "summary": "Frequently edited: profileDetails.ts (4x)",
+        "confidence": 0.5,
+        "pageRank": 0.04518981826399593,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY----deploy-via-vercel-cli--depl-0",
+        "summary": "- [Deploy via Vercel CLI](deploy_vercel_cli.md) — CLI is pre",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-deploy_vercel_cli-----0",
+        "summary": "---",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      }
+    ]
+  },
+  {
+    "timestamp": 1786384346209,
+    "nodes": 12,
+    "edges": 36,
+    "pageRankSum": 1.0000000000000002,
+    "confidences": [
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5
+    ],
+    "accessCounts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "topPatterns": [
+      {
+        "id": "insight-1786383872266-petr",
+        "summary": "Frequently edited: globals.css (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.2776807006513628,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-7flg",
+        "summary": "Frequently edited: CategorizedInterestPicker.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.15009757926825473,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-nw5i",
+        "summary": "Frequently edited: page.tsx (7x)",
+        "confidence": 0.5,
+        "pageRank": 0.10533158567390453,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6pcs",
+        "summary": "Frequently edited: verify-tmp-screenshot.mjs (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.08207654015677468,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-v8pn",
+        "summary": "Frequently edited: ProfileInfo.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.06769198661523036,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rxus",
+        "summary": "Frequently edited: page.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.05785640098951616,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rq49",
+        "summary": "Frequently edited: page.tsx (10x)",
+        "confidence": 0.5,
+        "pageRank": 0.05067714527411049,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6mqu",
+        "summary": "Frequently edited: profileDetails.ts (4x)",
+        "confidence": 0.5,
+        "pageRank": 0.04518981826399593,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY----deploy-via-vercel-cli--depl-0",
+        "summary": "- [Deploy via Vercel CLI](deploy_vercel_cli.md) — CLI is pre",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-deploy_vercel_cli-----0",
+        "summary": "---",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      }
+    ]
+  },
+  {
+    "timestamp": 1786384486523,
+    "nodes": 12,
+    "edges": 36,
+    "pageRankSum": 1.0000000000000002,
+    "confidences": [
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5
+    ],
+    "accessCounts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "topPatterns": [
+      {
+        "id": "insight-1786383872266-petr",
+        "summary": "Frequently edited: globals.css (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.2776807006513628,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-7flg",
+        "summary": "Frequently edited: CategorizedInterestPicker.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.15009757926825473,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-nw5i",
+        "summary": "Frequently edited: page.tsx (7x)",
+        "confidence": 0.5,
+        "pageRank": 0.10533158567390453,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6pcs",
+        "summary": "Frequently edited: verify-tmp-screenshot.mjs (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.08207654015677468,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-v8pn",
+        "summary": "Frequently edited: ProfileInfo.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.06769198661523036,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rxus",
+        "summary": "Frequently edited: page.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.05785640098951616,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rq49",
+        "summary": "Frequently edited: page.tsx (10x)",
+        "confidence": 0.5,
+        "pageRank": 0.05067714527411049,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6mqu",
+        "summary": "Frequently edited: profileDetails.ts (4x)",
+        "confidence": 0.5,
+        "pageRank": 0.04518981826399593,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY----deploy-via-vercel-cli--depl-0",
+        "summary": "- [Deploy via Vercel CLI](deploy_vercel_cli.md) — CLI is pre",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-deploy_vercel_cli-----0",
+        "summary": "---",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      }
+    ]
+  },
+  {
+    "timestamp": 1786385345233,
+    "nodes": 12,
+    "edges": 36,
+    "pageRankSum": 1.0000000000000002,
+    "confidences": [
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5
+    ],
+    "accessCounts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "topPatterns": [
+      {
+        "id": "insight-1786383872266-petr",
+        "summary": "Frequently edited: globals.css (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.2776807006513628,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-7flg",
+        "summary": "Frequently edited: CategorizedInterestPicker.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.15009757926825473,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-nw5i",
+        "summary": "Frequently edited: page.tsx (7x)",
+        "confidence": 0.5,
+        "pageRank": 0.10533158567390453,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6pcs",
+        "summary": "Frequently edited: verify-tmp-screenshot.mjs (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.08207654015677468,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-v8pn",
+        "summary": "Frequently edited: ProfileInfo.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.06769198661523036,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rxus",
+        "summary": "Frequently edited: page.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.05785640098951616,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rq49",
+        "summary": "Frequently edited: page.tsx (10x)",
+        "confidence": 0.5,
+        "pageRank": 0.05067714527411049,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6mqu",
+        "summary": "Frequently edited: profileDetails.ts (4x)",
+        "confidence": 0.5,
+        "pageRank": 0.04518981826399593,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY----deploy-via-vercel-cli--depl-0",
+        "summary": "- [Deploy via Vercel CLI](deploy_vercel_cli.md) — CLI is pre",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-deploy_vercel_cli-----0",
+        "summary": "---",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      }
+    ]
+  },
+  {
+    "timestamp": 1786426937117,
+    "nodes": 12,
+    "edges": 36,
+    "pageRankSum": 1.0000000000000002,
+    "confidences": [
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5
+    ],
+    "accessCounts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "topPatterns": [
+      {
+        "id": "insight-1786383872266-petr",
+        "summary": "Frequently edited: globals.css (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.2776807006513628,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-7flg",
+        "summary": "Frequently edited: CategorizedInterestPicker.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.15009757926825473,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-nw5i",
+        "summary": "Frequently edited: page.tsx (7x)",
+        "confidence": 0.5,
+        "pageRank": 0.10533158567390453,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6pcs",
+        "summary": "Frequently edited: verify-tmp-screenshot.mjs (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.08207654015677468,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-v8pn",
+        "summary": "Frequently edited: ProfileInfo.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.06769198661523036,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rxus",
+        "summary": "Frequently edited: page.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.05785640098951616,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rq49",
+        "summary": "Frequently edited: page.tsx (10x)",
+        "confidence": 0.5,
+        "pageRank": 0.05067714527411049,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6mqu",
+        "summary": "Frequently edited: profileDetails.ts (4x)",
+        "confidence": 0.5,
+        "pageRank": 0.04518981826399593,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY----deploy-via-vercel-cli--depl-0",
+        "summary": "- [Deploy via Vercel CLI](deploy_vercel_cli.md) — CLI is pre",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-deploy_vercel_cli-----0",
+        "summary": "---",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      }
+    ]
+  },
+  {
+    "timestamp": 1786428071587,
+    "nodes": 12,
+    "edges": 36,
+    "pageRankSum": 1.0000000000000002,
+    "confidences": [
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5
+    ],
+    "accessCounts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "topPatterns": [
+      {
+        "id": "insight-1786383872266-petr",
+        "summary": "Frequently edited: globals.css (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.2776807006513628,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-7flg",
+        "summary": "Frequently edited: CategorizedInterestPicker.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.15009757926825473,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-nw5i",
+        "summary": "Frequently edited: page.tsx (7x)",
+        "confidence": 0.5,
+        "pageRank": 0.10533158567390453,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6pcs",
+        "summary": "Frequently edited: verify-tmp-screenshot.mjs (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.08207654015677468,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-v8pn",
+        "summary": "Frequently edited: ProfileInfo.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.06769198661523036,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rxus",
+        "summary": "Frequently edited: page.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.05785640098951616,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rq49",
+        "summary": "Frequently edited: page.tsx (10x)",
+        "confidence": 0.5,
+        "pageRank": 0.05067714527411049,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6mqu",
+        "summary": "Frequently edited: profileDetails.ts (4x)",
+        "confidence": 0.5,
+        "pageRank": 0.04518981826399593,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY----deploy-via-vercel-cli--depl-0",
+        "summary": "- [Deploy via Vercel CLI](deploy_vercel_cli.md) — CLI is pre",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-deploy_vercel_cli-----0",
+        "summary": "---",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      }
+    ]
+  },
+  {
+    "timestamp": 1786428930969,
+    "nodes": 12,
+    "edges": 36,
+    "pageRankSum": 1.0000000000000002,
+    "confidences": [
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5
+    ],
+    "accessCounts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "topPatterns": [
+      {
+        "id": "insight-1786383872266-petr",
+        "summary": "Frequently edited: globals.css (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.2776807006513628,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-7flg",
+        "summary": "Frequently edited: CategorizedInterestPicker.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.15009757926825473,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-nw5i",
+        "summary": "Frequently edited: page.tsx (7x)",
+        "confidence": 0.5,
+        "pageRank": 0.10533158567390453,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6pcs",
+        "summary": "Frequently edited: verify-tmp-screenshot.mjs (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.08207654015677468,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-v8pn",
+        "summary": "Frequently edited: ProfileInfo.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.06769198661523036,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rxus",
+        "summary": "Frequently edited: page.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.05785640098951616,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rq49",
+        "summary": "Frequently edited: page.tsx (10x)",
+        "confidence": 0.5,
+        "pageRank": 0.05067714527411049,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6mqu",
+        "summary": "Frequently edited: profileDetails.ts (4x)",
+        "confidence": 0.5,
+        "pageRank": 0.04518981826399593,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY----deploy-via-vercel-cli--depl-0",
+        "summary": "- [Deploy via Vercel CLI](deploy_vercel_cli.md) — CLI is pre",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-deploy_vercel_cli-----0",
+        "summary": "---",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      }
+    ]
+  },
+  {
+    "timestamp": 1786428950652,
+    "nodes": 12,
+    "edges": 36,
+    "pageRankSum": 1.0000000000000002,
+    "confidences": [
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5
+    ],
+    "accessCounts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "topPatterns": [
+      {
+        "id": "insight-1786383872266-petr",
+        "summary": "Frequently edited: globals.css (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.2776807006513628,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-7flg",
+        "summary": "Frequently edited: CategorizedInterestPicker.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.15009757926825473,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-nw5i",
+        "summary": "Frequently edited: page.tsx (7x)",
+        "confidence": 0.5,
+        "pageRank": 0.10533158567390453,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6pcs",
+        "summary": "Frequently edited: verify-tmp-screenshot.mjs (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.08207654015677468,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-v8pn",
+        "summary": "Frequently edited: ProfileInfo.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.06769198661523036,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rxus",
+        "summary": "Frequently edited: page.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.05785640098951616,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rq49",
+        "summary": "Frequently edited: page.tsx (10x)",
+        "confidence": 0.5,
+        "pageRank": 0.05067714527411049,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6mqu",
+        "summary": "Frequently edited: profileDetails.ts (4x)",
+        "confidence": 0.5,
+        "pageRank": 0.04518981826399593,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY----deploy-via-vercel-cli--depl-0",
+        "summary": "- [Deploy via Vercel CLI](deploy_vercel_cli.md) — CLI is pre",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-deploy_vercel_cli-----0",
+        "summary": "---",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      }
+    ]
+  },
+  {
+    "timestamp": 1786429815987,
+    "nodes": 12,
+    "edges": 36,
+    "pageRankSum": 1.0000000000000002,
+    "confidences": [
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5
+    ],
+    "accessCounts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "topPatterns": [
+      {
+        "id": "insight-1786383872266-petr",
+        "summary": "Frequently edited: globals.css (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.2776807006513628,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-7flg",
+        "summary": "Frequently edited: CategorizedInterestPicker.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.15009757926825473,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-nw5i",
+        "summary": "Frequently edited: page.tsx (7x)",
+        "confidence": 0.5,
+        "pageRank": 0.10533158567390453,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6pcs",
+        "summary": "Frequently edited: verify-tmp-screenshot.mjs (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.08207654015677468,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-v8pn",
+        "summary": "Frequently edited: ProfileInfo.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.06769198661523036,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rxus",
+        "summary": "Frequently edited: page.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.05785640098951616,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rq49",
+        "summary": "Frequently edited: page.tsx (10x)",
+        "confidence": 0.5,
+        "pageRank": 0.05067714527411049,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6mqu",
+        "summary": "Frequently edited: profileDetails.ts (4x)",
+        "confidence": 0.5,
+        "pageRank": 0.04518981826399593,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY----deploy-via-vercel-cli--depl-0",
+        "summary": "- [Deploy via Vercel CLI](deploy_vercel_cli.md) — CLI is pre",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-deploy_vercel_cli-----0",
+        "summary": "---",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      }
+    ]
+  },
+  {
+    "timestamp": 1786429995356,
+    "nodes": 12,
+    "edges": 36,
+    "pageRankSum": 1.0000000000000002,
+    "confidences": [
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5
+    ],
+    "accessCounts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "topPatterns": [
+      {
+        "id": "insight-1786383872266-petr",
+        "summary": "Frequently edited: globals.css (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.2776807006513628,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-7flg",
+        "summary": "Frequently edited: CategorizedInterestPicker.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.15009757926825473,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-nw5i",
+        "summary": "Frequently edited: page.tsx (7x)",
+        "confidence": 0.5,
+        "pageRank": 0.10533158567390453,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6pcs",
+        "summary": "Frequently edited: verify-tmp-screenshot.mjs (6x)",
+        "confidence": 0.5,
+        "pageRank": 0.08207654015677468,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-v8pn",
+        "summary": "Frequently edited: ProfileInfo.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.06769198661523036,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rxus",
+        "summary": "Frequently edited: page.tsx (3x)",
+        "confidence": 0.5,
+        "pageRank": 0.05785640098951616,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-rq49",
+        "summary": "Frequently edited: page.tsx (10x)",
+        "confidence": 0.5,
+        "pageRank": 0.05067714527411049,
+        "accessCount": 0
+      },
+      {
+        "id": "insight-1786383872266-6mqu",
+        "summary": "Frequently edited: profileDetails.ts (4x)",
+        "confidence": 0.5,
+        "pageRank": 0.04518981826399593,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-MEMORY----deploy-via-vercel-cli--depl-0",
+        "summary": "- [Deploy via Vercel CLI](deploy_vercel_cli.md) — CLI is pre",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-deploy_vercel_cli-----0",
+        "summary": "---",
+        "confidence": 0.5,
+        "pageRank": 0.04084956077671264,
+        "accessCount": 0
+      }
+    ]
+  }
+]

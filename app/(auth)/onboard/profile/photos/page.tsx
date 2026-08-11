@@ -18,6 +18,15 @@ const REQUIRED_PHOTOS = 3;
 const UPLOAD_TIMEOUT_MS = 15000;
 const MAX_UPLOAD_ATTEMPTS = 3;
 
+// Detect duplicate images by comparing file size and first bytes
+async function getFileSignature(file: File): Promise<string> {
+  const chunk = await file.slice(0, 8192).arrayBuffer();
+  const hashBuffer = await crypto.subtle.digest('SHA-256', chunk);
+  return Array.from(new Uint8Array(hashBuffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
 // A stalled storage upload (flaky mobile connection, a dropped socket)
 // used to just sit there -- no timeout meant the only outcomes were "it
 // eventually finishes" or "the person gives up after 40+ seconds staring
@@ -90,6 +99,24 @@ export default function ProfilePhotosPage() {
     const rawFiles = files.slice(0, remaining);
     setCompressing(true);
     try {
+      // Check for duplicates
+      const newSignatures: string[] = [];
+      for (const file of rawFiles) {
+        const sig = await getFileSignature(file);
+        newSignatures.push(sig);
+      }
+
+      // Detect if any of the new files match existing files
+      const existingSignatures = await Promise.all(photoFiles.map(getFileSignature));
+      const hasDuplicates = newSignatures.some(sig => existingSignatures.includes(sig));
+      const hasDuplicatesWithinNew = new Set(newSignatures).size !== newSignatures.length;
+
+      if (hasDuplicates || hasDuplicatesWithinNew) {
+        setError('You\'ve already added this photo. Please choose a different one.');
+        setCompressing(false);
+        return;
+      }
+
       // Uncompressed phone-camera photos (often 3-10MB each) are why
       // uploading used to feel like it hung -- downscale before it ever
       // touches the network.

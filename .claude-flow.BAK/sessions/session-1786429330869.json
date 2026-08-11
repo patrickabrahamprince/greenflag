@@ -1,0 +1,23 @@
+{
+  "id": "session-1786429330869",
+  "startedAt": "2026-08-11T06:22:10.869Z",
+  "cwd": "/Users/patrickabraham/Documents/GreenFlag_Backup/GreenFlag",
+  "context": {
+    "lastMatchedPatterns": [
+      "insight-1786383872266-petr",
+      "insight-1786383872266-7flg",
+      "insight-1786383872266-nw5i",
+      "mem-design_gradient_lessons-----0",
+      "insight-1786383872266-v8pn"
+    ]
+  },
+  "metrics": {
+    "edits": 0,
+    "commands": 0,
+    "tasks": 0,
+    "errors": 0
+  },
+  "updatedAt": "2026-08-11T06:22:25.966Z",
+  "endedAt": "2026-08-11T06:30:15.988Z",
+  "duration": 485120
+}

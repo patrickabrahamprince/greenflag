@@ -118,15 +118,27 @@ export default function ProfileLocationPage() {
           Helps us show you people nearby.
         </p>
 
-        <input
-          type="text"
-          value={cityValue}
-          onChange={(e) => { setCityValue(e.target.value); setError(''); }}
-          onKeyDown={(e) => { if (e.key === 'Enter') handleContinue(); }}
-          placeholder={gpsDetecting ? 'Detecting location...' : 'Your city'}
-          data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-city' : undefined}
-          className={`input w-full text-lg ${error ? 'border-red-500' : ''}`}
-        />
+        {gpsDetecting ? (
+          <input
+            type="text"
+            disabled
+            value="Detecting location..."
+            placeholder="Detecting location..."
+            className="input w-full text-lg opacity-50 cursor-not-allowed"
+          />
+        ) : (
+          <select
+            value={cityValue}
+            onChange={(e) => { setCityValue(e.target.value); setError(''); }}
+            data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-city' : undefined}
+            className={`input w-full text-lg ${error ? 'border-red-500' : ''}`}
+          >
+            <option value="">Select your city</option>
+            {INDIAN_CITIES.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+        )}
         {gpsDenied && (
           <p className="text-amber-400 text-xs mt-2">
             We couldn&apos;t detect your city — please enter it manually, or{' '}

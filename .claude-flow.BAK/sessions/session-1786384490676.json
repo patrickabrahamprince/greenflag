@@ -1,0 +1,20 @@
+{
+  "id": "session-1786384490676",
+  "startedAt": "2026-08-10T17:54:50.676Z",
+  "cwd": "/Users/patrickabraham/Documents/GreenFlag_Backup/GreenFlag",
+  "context": {
+    "lastMatchedPatterns": [
+      "insight-1786383872266-petr",
+      "insight-1786383872266-7flg"
+    ]
+  },
+  "metrics": {
+    "edits": 0,
+    "commands": 0,
+    "tasks": 0,
+    "errors": 0
+  },
+  "updatedAt": "2026-08-10T17:57:09.808Z",
+  "endedAt": "2026-08-10T18:09:05.235Z",
+  "duration": 854565
+}

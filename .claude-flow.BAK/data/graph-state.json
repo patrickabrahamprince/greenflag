@@ -1,0 +1,323 @@
+{
+  "version": 1,
+  "updatedAt": 1786429995355,
+  "nodeCount": 12,
+  "nodes": {
+    "mem-MEMORY----deploy-via-vercel-cli--depl-0": {
+      "id": "mem-MEMORY----deploy-via-vercel-cli--depl-0",
+      "category": "core",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1786383869356
+    },
+    "mem-deploy_vercel_cli-----0": {
+      "id": "mem-deploy_vercel_cli-----0",
+      "category": "deploy_vercel_cli",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1786383869357
+    },
+    "mem-design_gradient_lessons-----0": {
+      "id": "mem-design_gradient_lessons-----0",
+      "category": "design_gradient_lessons",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1786383869357
+    },
+    "insight-1786383872266-b5yk": {
+      "id": "insight-1786383872266-b5yk",
+      "category": "insights",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1786383872266
+    },
+    "insight-1786383872266-6mqu": {
+      "id": "insight-1786383872266-6mqu",
+      "category": "insights",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1786383872266
+    },
+    "insight-1786383872266-rq49": {
+      "id": "insight-1786383872266-rq49",
+      "category": "insights",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1786383872266
+    },
+    "insight-1786383872266-rxus": {
+      "id": "insight-1786383872266-rxus",
+      "category": "insights",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1786383872266
+    },
+    "insight-1786383872266-v8pn": {
+      "id": "insight-1786383872266-v8pn",
+      "category": "insights",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1786383872266
+    },
+    "insight-1786383872266-6pcs": {
+      "id": "insight-1786383872266-6pcs",
+      "category": "insights",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1786383872266
+    },
+    "insight-1786383872266-nw5i": {
+      "id": "insight-1786383872266-nw5i",
+      "category": "insights",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1786383872266
+    },
+    "insight-1786383872266-7flg": {
+      "id": "insight-1786383872266-7flg",
+      "category": "insights",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1786383872266
+    },
+    "insight-1786383872266-petr": {
+      "id": "insight-1786383872266-petr",
+      "category": "insights",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1786383872266
+    }
+  },
+  "edges": [
+    {
+      "sourceId": "insight-1786383872266-b5yk",
+      "targetId": "insight-1786383872266-6mqu",
+      "type": "similar",
+      "weight": 0.7111111111111111
+    },
+    {
+      "sourceId": "insight-1786383872266-b5yk",
+      "targetId": "insight-1786383872266-rq49",
+      "type": "similar",
+      "weight": 0.7272727272727273
+    },
+    {
+      "sourceId": "insight-1786383872266-b5yk",
+      "targetId": "insight-1786383872266-rxus",
+      "type": "similar",
+      "weight": 0.7710843373493976
+    },
+    {
+      "sourceId": "insight-1786383872266-b5yk",
+      "targetId": "insight-1786383872266-v8pn",
+      "type": "similar",
+      "weight": 0.7032967032967034
+    },
+    {
+      "sourceId": "insight-1786383872266-b5yk",
+      "targetId": "insight-1786383872266-6pcs",
+      "type": "similar",
+      "weight": 0.6808510638297872
+    },
+    {
+      "sourceId": "insight-1786383872266-b5yk",
+      "targetId": "insight-1786383872266-nw5i",
+      "type": "similar",
+      "weight": 0.7272727272727273
+    },
+    {
+      "sourceId": "insight-1786383872266-b5yk",
+      "targetId": "insight-1786383872266-7flg",
+      "type": "similar",
+      "weight": 0.5981308411214953
+    },
+    {
+      "sourceId": "insight-1786383872266-b5yk",
+      "targetId": "insight-1786383872266-petr",
+      "type": "similar",
+      "weight": 0.8
+    },
+    {
+      "sourceId": "insight-1786383872266-6mqu",
+      "targetId": "insight-1786383872266-rq49",
+      "type": "similar",
+      "weight": 0.8181818181818182
+    },
+    {
+      "sourceId": "insight-1786383872266-6mqu",
+      "targetId": "insight-1786383872266-rxus",
+      "type": "similar",
+      "weight": 0.7613636363636364
+    },
+    {
+      "sourceId": "insight-1786383872266-6mqu",
+      "targetId": "insight-1786383872266-v8pn",
+      "type": "similar",
+      "weight": 0.6979166666666666
+    },
+    {
+      "sourceId": "insight-1786383872266-6mqu",
+      "targetId": "insight-1786383872266-6pcs",
+      "type": "similar",
+      "weight": 0.6274509803921569
+    },
+    {
+      "sourceId": "insight-1786383872266-6mqu",
+      "targetId": "insight-1786383872266-nw5i",
+      "type": "similar",
+      "weight": 0.7021276595744681
+    },
+    {
+      "sourceId": "insight-1786383872266-6mqu",
+      "targetId": "insight-1786383872266-7flg",
+      "type": "similar",
+      "weight": 0.5565217391304348
+    },
+    {
+      "sourceId": "insight-1786383872266-6mqu",
+      "targetId": "insight-1786383872266-petr",
+      "type": "similar",
+      "weight": 0.7272727272727273
+    },
+    {
+      "sourceId": "insight-1786383872266-rq49",
+      "targetId": "insight-1786383872266-rxus",
+      "type": "similar",
+      "weight": 0.9367088607594937
+    },
+    {
+      "sourceId": "insight-1786383872266-rq49",
+      "targetId": "insight-1786383872266-v8pn",
+      "type": "similar",
+      "weight": 0.7311827956989247
+    },
+    {
+      "sourceId": "insight-1786383872266-rq49",
+      "targetId": "insight-1786383872266-6pcs",
+      "type": "similar",
+      "weight": 0.64
+    },
+    {
+      "sourceId": "insight-1786383872266-rq49",
+      "targetId": "insight-1786383872266-nw5i",
+      "type": "similar",
+      "weight": 0.7555555555555555
+    },
+    {
+      "sourceId": "insight-1786383872266-rq49",
+      "targetId": "insight-1786383872266-7flg",
+      "type": "similar",
+      "weight": 0.5945945945945946
+    },
+    {
+      "sourceId": "insight-1786383872266-rq49",
+      "targetId": "insight-1786383872266-petr",
+      "type": "similar",
+      "weight": 0.7647058823529411
+    },
+    {
+      "sourceId": "insight-1786383872266-rxus",
+      "targetId": "insight-1786383872266-v8pn",
+      "type": "similar",
+      "weight": 0.7727272727272727
+    },
+    {
+      "sourceId": "insight-1786383872266-rxus",
+      "targetId": "insight-1786383872266-6pcs",
+      "type": "similar",
+      "weight": 0.6736842105263158
+    },
+    {
+      "sourceId": "insight-1786383872266-rxus",
+      "targetId": "insight-1786383872266-nw5i",
+      "type": "similar",
+      "weight": 0.8
+    },
+    {
+      "sourceId": "insight-1786383872266-rxus",
+      "targetId": "insight-1786383872266-7flg",
+      "type": "similar",
+      "weight": 0.6226415094339622
+    },
+    {
+      "sourceId": "insight-1786383872266-rxus",
+      "targetId": "insight-1786383872266-petr",
+      "type": "similar",
+      "weight": 0.8125
+    },
+    {
+      "sourceId": "insight-1786383872266-v8pn",
+      "targetId": "insight-1786383872266-6pcs",
+      "type": "similar",
+      "weight": 0.6213592233009708
+    },
+    {
+      "sourceId": "insight-1786383872266-v8pn",
+      "targetId": "insight-1786383872266-nw5i",
+      "type": "similar",
+      "weight": 0.6770833333333334
+    },
+    {
+      "sourceId": "insight-1786383872266-v8pn",
+      "targetId": "insight-1786383872266-7flg",
+      "type": "similar",
+      "weight": 0.6513761467889908
+    },
+    {
+      "sourceId": "insight-1786383872266-v8pn",
+      "targetId": "insight-1786383872266-petr",
+      "type": "similar",
+      "weight": 0.7191011235955056
+    },
+    {
+      "sourceId": "insight-1786383872266-6pcs",
+      "targetId": "insight-1786383872266-nw5i",
+      "type": "similar",
+      "weight": 0.64
+    },
+    {
+      "sourceId": "insight-1786383872266-6pcs",
+      "targetId": "insight-1786383872266-7flg",
+      "type": "similar",
+      "weight": 0.5508474576271186
+    },
+    {
+      "sourceId": "insight-1786383872266-6pcs",
+      "targetId": "insight-1786383872266-petr",
+      "type": "similar",
+      "weight": 0.6956521739130435
+    },
+    {
+      "sourceId": "insight-1786383872266-nw5i",
+      "targetId": "insight-1786383872266-7flg",
+      "type": "similar",
+      "weight": 0.5803571428571429
+    },
+    {
+      "sourceId": "insight-1786383872266-nw5i",
+      "targetId": "insight-1786383872266-petr",
+      "type": "similar",
+      "weight": 0.7647058823529411
+    },
+    {
+      "sourceId": "insight-1786383872266-7flg",
+      "targetId": "insight-1786383872266-petr",
+      "type": "similar",
+      "weight": 0.6095238095238096
+    }
+  ],
+  "pageRanks": {
+    "mem-MEMORY----deploy-via-vercel-cli--depl-0": 0.04084956077671264,
+    "mem-deploy_vercel_cli-----0": 0.04084956077671264,
+    "mem-design_gradient_lessons-----0": 0.04084956077671264,
+    "insight-1786383872266-b5yk": 0.04084956077671264,
+    "insight-1786383872266-6mqu": 0.04518981826399593,
+    "insight-1786383872266-rq49": 0.05067714527411049,
+    "insight-1786383872266-rxus": 0.05785640098951616,
+    "insight-1786383872266-v8pn": 0.06769198661523036,
+    "insight-1786383872266-6pcs": 0.08207654015677468,
+    "insight-1786383872266-nw5i": 0.10533158567390453,
+    "insight-1786383872266-7flg": 0.15009757926825473,
+    "insight-1786383872266-petr": 0.2776807006513628
+  }
+}
