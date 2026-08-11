@@ -38,6 +38,7 @@ export async function middleware(req: NextRequest) {
   }
 
   // Admin routes: check for admin session cookie (separate from main app auth)
+  // This completely bypasses Supabase auth for admin routes
   if (pathname.startsWith('/admin')) {
     const adminSession = req.cookies.get('admin_session')?.value;
     console.log('MIDDLEWARE ADMIN CHECK:', { pathname, hasAdminSession: !!adminSession });
@@ -46,9 +47,12 @@ export async function middleware(req: NextRequest) {
       const destination = new URL('/admin/login', req.url);
       return NextResponse.redirect(destination);
     }
-    console.log('MIDDLEWARE: Admin session found, allowing access');
+    console.log('MIDDLEWARE: Admin session found, allowing access to admin route');
+    // Return the response without any Supabase checks
     return NextResponse.next();
   }
+
+  // --- Everything below only applies to non-admin routes ---
 
   // Create Supabase SSR client with cookie handling
   let supabaseResponse = NextResponse.next({ request: req });

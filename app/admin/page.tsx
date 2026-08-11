@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 import { Loader2 } from 'lucide-react';
 import { AdminDashboard } from '@/components/admin/AdminDashboard';
 
@@ -12,14 +11,22 @@ export default function AdminPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(async ({ data: { user } }) => {
-      if (!user) { router.push('/login'); return; }
-      const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single();
-      if (!profile?.is_admin) { router.push('/'); return; }
-      setIsAuthorized(true);
-      setLoading(false);
-    });
+    // Verify admin session via API (middleware already checked this)
+    const verifySession = async () => {
+      try {
+        const res = await fetch('/api/admin/verify', { credentials: 'include' });
+        if (res.ok) {
+          setIsAuthorized(true);
+        } else {
+          router.push('/admin/login');
+        }
+      } catch {
+        router.push('/admin/login');
+      } finally {
+        setLoading(false);
+      }
+    };
+    verifySession();
   }, [router]);
 
   if (loading) {
