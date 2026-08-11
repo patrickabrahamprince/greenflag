@@ -52,7 +52,7 @@ export function AdminDashboard() {
         <KpiCard dataTestId="women-count" label="Women" value={genderStats?.women ?? 0} icon={UsersRound} accent="text-pink-400" />
         <KpiCard label="Active Connections" value={stats.activeConnections} icon={Link2} accent="text-green-400" />
         <KpiCard label="Pending Moderation" value={stats.pendingModeration} icon={Shield} accent="text-orange-400" />
-        <KpiCard label="Revenue" value={`₹${stats.revenue.toLocaleString()}`} icon={IndianRupee} accent="text-[#C9A961]" />
+        <KpiCard label="Revenue" value={`₹${(stats.revenue ?? 0).toLocaleString()}`} icon={IndianRupee} accent="text-[#C9A961]" />
         <KpiCard dataTestId="connected-today" label="Connected Today" value={stats.connectedPairsToday} icon={Heart} accent="text-pink-400" />
       </div>
 
