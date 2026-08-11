@@ -57,30 +57,35 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, []);
 
   useEffect(() => {
-    // Skip auth check on login page
+    // Only check auth once on mount, not on every route change
+    // The middleware already guards access to /admin routes
     if (pathname === '/admin/login') {
       setChecking(false);
       return;
     }
 
+    let isMounted = true;
     const checkAuth = async () => {
       try {
-        console.log('Admin layout verifying session for:', pathname);
         const res = await fetch('/api/admin/verify', { credentials: 'include' });
-        console.log('Admin verify response:', { status: res.status, ok: res.ok });
+        if (!isMounted) return;
+
         if (!res.ok) {
-          console.log('Admin session invalid, redirecting to login');
           router.replace('/admin/login');
           return;
         }
         setChecking(false);
       } catch (err) {
-        console.error('Admin auth check error:', err);
+        if (!isMounted) return;
         router.replace('/admin/login');
       }
     };
     checkAuth();
-  }, [router, pathname]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, []); // Empty dependency - only run once on mount
 
   const handleLogout = async () => {
     setLoggingOut(true);
