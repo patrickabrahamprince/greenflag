@@ -10,9 +10,16 @@ export async function POST(req: NextRequest) {
 
     console.log('Admin login attempt:', {
       providedEmail: email,
+      providedEmailLength: email?.length,
       configEmail: adminEmail,
+      configEmailLength: adminEmail?.length,
+      providedPassword: password,
+      providedPasswordLength: password?.length,
+      configPasswordLength: adminPassword?.length,
       emailMatch: email === adminEmail,
       passwordMatch: password === adminPassword,
+      emailTrimMatch: email?.trim() === adminEmail?.trim(),
+      passwordTrimMatch: password?.trim() === adminPassword?.trim(),
     });
 
     if (!adminEmail || !adminPassword) {
@@ -23,8 +30,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (email !== adminEmail || password !== adminPassword) {
-      console.warn('Login failed - invalid credentials');
+    const emailMatches = email?.trim() === adminEmail?.trim();
+    const passwordMatches = password?.trim() === adminPassword?.trim();
+
+    if (!emailMatches || !passwordMatches) {
+      console.warn('Login failed - invalid credentials', {
+        emailMatches,
+        passwordMatches,
+      });
       return NextResponse.json(
         { error: 'Invalid email or password' },
         { status: 401 }
