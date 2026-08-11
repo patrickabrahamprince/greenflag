@@ -13,8 +13,8 @@
    raised/card/overlay). A wine (#45050C) glow now blooms from the
    bottom edge on top of that flat fill -- see --wine-glow-bottom. */
 html, body {
-  background-color: #000000 !important;
-  background-image: var(--wine-glow-bottom) !important;
+  background-color: #FFFFFF !important;
+  background-image: none !important;
   background-repeat: no-repeat !important;
   background-attachment: fixed !important;
 }
@@ -196,20 +196,14 @@ body.min-h-dvh::after {
 
   /* Cards -- card-elevation fill, 24px radius, no border, no shadow. */
   .card {
-    @apply bg-card rounded-card p-5
+    @apply bg-white border border-gray-200 rounded-card p-5
            transition-all duration-300 ease-out;
   }
 
-  /* Confirm/report/block-style modal dialogs -- a subtle brand gradient
-     instead of a flat surface fill, matching the teaser-prompt card's
-     established gold/violet treatment elsewhere in the app. */
+  /* Confirm/report/block-style modal dialogs -- light background with subtle border */
   .dialog-card {
-    @apply border border-gold/20 rounded-2xl p-8
+    @apply border border-gray-200 rounded-2xl p-8 bg-white
            transition-all duration-300 ease-out;
-    /* First stop was only 14% opaque, letting whatever sits behind the
-       dialog (e.g. Settings' own "Danger Zone" icon/text) show through
-       prominently in that corner instead of reading as a solid card. */
-    background: linear-gradient(135deg, rgba(69,5,12,0.55) 0%, rgba(15,10,10,0.98) 60%);
   }
 
   .card-hover {
@@ -312,7 +306,7 @@ body.min-h-dvh::after {
   .hairline {
     height: 1px;
     width: 100%;
-    background: #2A1519;
+    background: #e5e5e5;
   }
 
   /* Floating pill -- now genuinely translucent with a backdrop blur
@@ -379,7 +373,7 @@ body.min-h-dvh::after {
 
   .match-arc-bg {
     fill: none;
-    stroke: #2A1519;
+    stroke: #e5e5e5;
     stroke-width: 2;
   }
 
