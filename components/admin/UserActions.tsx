@@ -149,14 +149,14 @@ export function UserActions({ userId, userName, isBanned, isAdmin, approvalStatu
       {showCreditModal && (
         <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-50 p-4">
           <div className="dialog-card max-w-md w-full">
-            <h3 className="text-lg font-display text-[#EDEADE] mb-4">Credit Coins</h3>
+            <h3 className="text-lg font-display text-gray-900 mb-4">Credit Coins</h3>
             <div className="space-y-3 mb-4">
               <div>
-                <label className="block text-xs text-[#8E8E93] mb-1">Amount</label>
+                <label className="block text-xs text-gray-500 mb-1">Amount</label>
                 <input type="number" className="input w-full" value={creditAmount} onChange={(e) => setCreditAmount(e.target.value)} placeholder="e.g. 100" />
               </div>
               <div>
-                <label className="block text-xs text-[#8E8E93] mb-1">Description</label>
+                <label className="block text-xs text-gray-500 mb-1">Description</label>
                 <input className="input w-full" value={creditDesc} onChange={(e) => setCreditDesc(e.target.value)} placeholder="e.g. Admin credit" />
               </div>
             </div>
@@ -171,9 +171,9 @@ export function UserActions({ userId, userName, isBanned, isAdmin, approvalStatu
       {showRejectModal && (
         <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-50 p-4">
           <div className="dialog-card max-w-md w-full">
-            <h3 className="text-lg font-display text-[#EDEADE] mb-4">Reject Application</h3>
+            <h3 className="text-lg font-display text-gray-900 mb-4">Reject Application</h3>
             <div className="mb-4">
-              <label className="block text-xs text-[#8E8E93] mb-1">Reason *</label>
+              <label className="block text-xs text-gray-500 mb-1">Reason *</label>
               <textarea
                 className="input min-h-[80px] resize-none w-full"
                 placeholder="e.g. Instagram doesn't match photos, incomplete profile..."
@@ -192,17 +192,17 @@ export function UserActions({ userId, userName, isBanned, isAdmin, approvalStatu
       {showDeleteModal && (
         <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-50 p-4">
           <div className="dialog-card max-w-md w-full">
-            <h3 className="text-lg font-display text-[#EDEADE] mb-2">Delete User</h3>
+            <h3 className="text-lg font-display text-gray-900 mb-2">Delete User</h3>
             <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 mb-4">
-              <p className="text-xs text-[#8E8E93] leading-relaxed">
+              <p className="text-xs text-gray-500 leading-relaxed">
                 Permanently removes {userName}&apos;s account, profile, photos, matches,
                 messages, wallet, and transaction history. This cannot be undone.
               </p>
               {isAdmin && <p className="text-xs text-red-400 font-medium mt-2">This account is an admin.</p>}
             </div>
             <div className="mb-4">
-              <label className="block text-sm text-[#8E8E93] mb-2">
-                Type <span className="text-[#EDEADE] font-medium">{userName}</span> to confirm
+              <label className="block text-sm text-gray-500 mb-2">
+                Type <span className="text-gray-900 font-medium">{userName}</span> to confirm
               </label>
               <input
                 className="input w-full"
