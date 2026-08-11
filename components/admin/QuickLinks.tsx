@@ -15,18 +15,18 @@ export function QuickLinks() {
   const router = useRouter();
 
   return (
-    <div className="bg-[#111111] border border-white/[0.06] rounded-2xl p-5">
-      <h2 className="text-sm font-medium text-[#EDEADE] uppercase tracking-wide mb-4">Quick Links</h2>
-      <div className="space-y-1">
+    <div className="bg-white border border-gray-200 rounded-2xl p-6">
+      <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">Quick Links</h2>
+      <div className="space-y-2">
         {LINKS.map((link) => {
           const Icon = link.icon;
           return (
             <button
               key={link.href}
               onClick={() => router.push(link.href)}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-[#8E8E93] hover:text-[#EDEADE] hover:bg-white/[0.03] transition-all"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-all"
             >
-              <Icon className="w-4 h-4" />
+              <Icon className="w-4 h-4 text-gray-400" />
               {link.label}
             </button>
           );
