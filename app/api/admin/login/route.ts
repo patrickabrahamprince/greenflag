@@ -47,11 +47,13 @@ export async function POST(req: NextRequest) {
     const sessionToken = crypto.randomBytes(32).toString('hex');
     const response = NextResponse.json({ success: true });
 
+    // 30-day session for "remember me"
+    const thirtyDaysInSeconds = 60 * 60 * 24 * 30;
     response.cookies.set('admin_session', sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: thirtyDaysInSeconds,
       path: '/',
     });
 

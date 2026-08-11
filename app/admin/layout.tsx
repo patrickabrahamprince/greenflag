@@ -40,6 +40,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     setMounted(true);
   }, []);
 
+  // Refresh admin session every 25 minutes to keep it alive
+  useEffect(() => {
+    const refreshInterval = setInterval(async () => {
+      try {
+        await fetch('/api/admin/refresh', {
+          method: 'POST',
+          credentials: 'include',
+        });
+      } catch (err) {
+        console.error('Session refresh error:', err);
+      }
+    }, 25 * 60 * 1000); // 25 minutes
+
+    return () => clearInterval(refreshInterval);
+  }, []);
+
   useEffect(() => {
     // Skip auth check on login page
     if (pathname === '/admin/login') {

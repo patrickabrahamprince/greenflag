@@ -17,20 +17,30 @@ export default function AdminLoginPage() {
     setError('');
 
     try {
+      console.log('Attempting login with:', { email, password });
       const res = await fetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
+        credentials: 'include',
       });
+
+      console.log('Login response:', { status: res.status, ok: res.ok });
 
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.error || 'Login failed');
       }
 
+      const result = await res.json();
+      console.log('Login successful:', result);
+
+      console.log('Redirecting to /admin');
       router.replace('/admin');
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      const errorMsg = err instanceof Error ? err.message : 'Login failed';
+      console.error('Login error:', errorMsg);
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
