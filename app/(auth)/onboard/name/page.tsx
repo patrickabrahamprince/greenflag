@@ -23,12 +23,8 @@ export default function OnboardNamePage() {
   const [error, setError] = useState('');
   const [continuing, setContinuing] = useState(false);
 
-  // Both possible destinations (woman -> profile, man -> phone) are
-  // prefetched since which one wins depends on persona/async user lookup
-  // resolved in handleContinue below.
   useEffect(() => {
     router.prefetch('/onboard/profile');
-    router.prefetch('/onboard/phone');
   }, [router]);
 
   const handleContinue = async () => {
@@ -39,29 +35,9 @@ export default function OnboardNamePage() {
       return;
     }
     setName(trimmed);
-
-    if (persona === 'woman') {
-      setContinuing(true);
-      goTo('/onboard/profile', '/onboarding/age.jpg');
-      return;
-    }
-
     setContinuing(true);
-
-    // Google/Apple sign-in gives an email but never a phone number --
-    // routing those users to /onboard/phone anyway meant that screen's
-    // own "already has email, no phone needed" check fired a beat after
-    // mount and bounced them straight to /onboard/profile, showing up as
-    // the phone screen flashing on and immediately off. Checking here
-    // first skips the screen entirely instead of visiting and leaving it.
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user?.email && !user.phone) {
-      await supabase.from('profiles').update({ phone_verified: true }).eq('id', user.id);
-      goTo('/onboard/profile', '/onboarding/age.jpg');
-      return;
-    }
-    goTo('/onboard/phone', '/onboarding/phone.jpg');
+    // Both men and women go straight to profile (age) after entering name
+    goTo('/onboard/profile', '/onboarding/age.jpg');
   };
 
   return (
