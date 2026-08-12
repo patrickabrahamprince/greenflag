@@ -17,9 +17,11 @@ import { TransactionHistory } from '@/components/guest/TransactionHistory';
 import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 
 const PACKAGES = [
-  { coins: 500, price: 399, appleProductId: 'com.greenflagapp.app.coins500', popular: true },
-  { coins: 1200, price: 799, appleProductId: 'com.greenflagapp.app.coins1200', best: true },
-  { coins: 2500, price: 1499, appleProductId: 'com.greenflagapp.app.coins2500' },
+  { coins: 500, price: 49, appleProductId: 'com.greenflagapp.app.coins500', popular: true, unlocks: { women: 1, pictures: 10, reveals: 5 } },
+  { coins: 1000, price: 89, appleProductId: 'com.greenflagapp.app.coins1000', unlocks: { women: 2, pictures: 20, reveals: 10 } },
+  { coins: 1500, price: 129, appleProductId: 'com.greenflagapp.app.coins1500', best: true, unlocks: { women: 3, pictures: 30, reveals: 15 } },
+  { coins: 2000, price: 169, appleProductId: 'com.greenflagapp.app.coins2000', unlocks: { women: 4, pictures: 40, reveals: 20 } },
+  { coins: 5000, price: 399, appleProductId: 'com.greenflagapp.app.coins5000', unlocks: { women: 10, pictures: 100, reveals: 50 } },
 ];
 
 // Real-money round-trip check at the smallest possible spend -- confirms

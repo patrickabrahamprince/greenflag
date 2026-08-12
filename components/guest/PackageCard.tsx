@@ -7,13 +7,11 @@ interface Package {
   popular?: boolean;
   best?: boolean;
   test?: boolean;
+  unlocks?: { women?: number; pictures?: number; reveals?: number };
 }
 
 interface PackageCardProps {
   pkg: Package;
-  // Real StoreKit price string (e.g. "₹399.00") once App Store Connect
-  // pricing has loaded -- falls back to the guessed INR figure in
-  // PACKAGES while that's still in flight.
   displayPrice?: string;
   purchasing: boolean;
   isPurchasingThis: boolean;
@@ -38,7 +36,7 @@ export function PackageCard({ pkg, displayPrice, purchasing, isPurchasingThis, o
           Test
         </span>
       )}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           {pkg.coins >= 150 ? (
             <Crown className="w-6 h-6 text-gold" />
@@ -61,6 +59,29 @@ export function PackageCard({ pkg, displayPrice, purchasing, isPurchasingThis, o
           Buy
         </LoadingButton>
       </div>
+
+      {pkg.unlocks && (
+        <div className="border-t border-raised pt-3 mt-3 space-y-1.5 text-xs text-ink/70">
+          {pkg.unlocks.women && (
+            <div className="flex justify-between">
+              <span>Unlock Women Profiles:</span>
+              <span className="text-gold font-semibold">{pkg.unlocks.women}</span>
+            </div>
+          )}
+          {pkg.unlocks.pictures && (
+            <div className="flex justify-between">
+              <span>Photo Unlocks:</span>
+              <span className="text-gold font-semibold">{pkg.unlocks.pictures}</span>
+            </div>
+          )}
+          {pkg.unlocks.reveals && (
+            <div className="flex justify-between">
+              <span>Profile Reveals:</span>
+              <span className="text-gold font-semibold">{pkg.unlocks.reveals}</span>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
