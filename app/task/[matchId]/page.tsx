@@ -17,6 +17,7 @@ import { useScreenshotTarget } from '@/lib/hooks/useScreenshotGuard';
 import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 import { hapticDecision, hapticSuccess, hapticWarning } from '@/lib/haptics';
 import { REVEAL_COST, SPECIAL_SEND_COST, RETRY_COST } from '@/lib/coin-costs';
+import { useAIPrompt } from '@/lib/hooks/useAIPrompt';
 
 const TERMINAL_STATUSES = ['rejected', 'expired_no_submission', 'refunded'];
 
@@ -191,6 +192,9 @@ export default function TaskPage() {
   const [rejecting, setRejecting] = useState(false);
   const [retrying, setRetrying] = useState(false);
   const [insufficientCoinsMessage, setInsufficientCoinsMessage] = useState<string | null>(null);
+  const [aiPrompts, setAiPrompts] = useState<Record<string, string>>({});
+  const [generatingPromptId, setGeneratingPromptId] = useState<string | null>(null);
+  const { generateDayPrompt, loading: aiLoading } = useAIPrompt();
 
   useScreenshotTarget(otherProfile?.id, 'task');
 
@@ -252,6 +256,27 @@ export default function TaskPage() {
       />
     );
   }
+
+  const handleGenerateAIPrompt = async (intention: IntentionRecord) => {
+    setGeneratingPromptId(intention.id);
+    try {
+      const interests = (otherProfile?.id) ? ['shared', 'interests'] : [];
+      const prompt = await generateDayPrompt(
+        matchId,
+        match?.current_day || 1,
+        interests,
+        otherProfile?.name
+      );
+      if (prompt) {
+        setAiPrompts((prev) => ({ ...prev, [intention.id]: prompt }));
+        toast.success('AI suggestion generated');
+      }
+    } catch {
+      toast.error('Failed to generate suggestion');
+    } finally {
+      setGeneratingPromptId(null);
+    }
+  };
 
   const handleRetry = async () => {
     setRetrying(true);
@@ -560,9 +585,28 @@ export default function TaskPage() {
                 {isTaskPendingReview && <span className="text-xs text-gold font-medium">Pending Review ✓</span>}
                 {isTaskPendingSubmission && <span className="text-xs text-ink/40">Pending</span>}
               </div>
-              <p className={`text-sm mb-4 ${hasSubmittedContent ? 'line-through text-ink/40 font-light' : 'text-ink font-normal'}`}>
-                {intentionItem.prompt}
+              <p className={`text-sm mb-3 ${hasSubmittedContent ? 'line-through text-ink/40 font-light' : 'text-ink font-normal'}`}>
+                {aiPrompts[intentionItem.id] || intentionItem.prompt}
               </p>
+              {isTaskPendingSubmission && !hasSubmittedContent && (
+                <button
+                  onClick={() => handleGenerateAIPrompt(intentionItem)}
+                  disabled={generatingPromptId === intentionItem.id || aiLoading}
+                  className="text-xs text-gold hover:text-gold/80 font-semibold mb-3 flex items-center gap-1.5 active:opacity-60 transition-opacity disabled:opacity-50"
+                >
+                  {generatingPromptId === intentionItem.id ? (
+                    <>
+                      <Loader2 size={12} className="animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={12} />
+                      AI Suggestion
+                    </>
+                  )}
+                </button>
+              )}
 
               {isTaskPendingSubmission && !isWoman && (
                 <button

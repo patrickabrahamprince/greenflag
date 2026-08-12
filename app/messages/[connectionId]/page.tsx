@@ -14,6 +14,7 @@ import { MessageInput } from '@/components/chat/MessageInput';
 import { LockedOverlay } from '@/components/chat/LockedOverlay';
 import { EmptyChat } from '@/components/chat/EmptyChat';
 import { UnmatchModal } from '@/components/connection/UnmatchModal';
+import { SmartMessageButton } from '@/components/chat/SmartMessageButton';
 import { useScreenshotTarget } from '@/lib/hooks/useScreenshotGuard';
 import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 import { hapticTap } from '@/lib/haptics';
@@ -30,6 +31,7 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showUnmatchModal, setShowUnmatchModal] = useState(false);
+  const [showSmartMessage, setShowSmartMessage] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const channelRef = useRef<RealtimeChannel | null>(null);
 
@@ -169,7 +171,20 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
           </div>
         </div>
         {!isLocked && (
-          <MessageInput input={input} onInputChange={setInput} onSend={handleSend} sending={sending} />
+          <div className="px-6 pb-safe-bottom space-y-3">
+            {messages.length <= 1 && partnerName && (
+              <SmartMessageButton
+                matchId={connectionId}
+                partnerName={partnerName}
+                partnerInterests={[]}
+                onMessageGenerated={(msg) => {
+                  setInput(msg);
+                  setShowSmartMessage(false);
+                }}
+              />
+            )}
+            <MessageInput input={input} onInputChange={setInput} onSend={handleSend} sending={sending} />
+          </div>
         )}
       </div>
 
