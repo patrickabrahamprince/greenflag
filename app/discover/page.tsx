@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell, ImageOff, ChevronLeft, ChevronRight, Gift, Flag, MapPin } from 'lucide-react'
+import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell, ImageOff, ChevronLeft, ChevronRight, Gift, Flag, MapPin, MoreVertical } from 'lucide-react'
 import { LoadingLogo } from '@/components/shared/LoadingLogo'
 import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
@@ -27,6 +27,7 @@ import { ChevronUp } from 'lucide-react'
 import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow'
 import { DayExplanationModal } from '@/components/shared/DayExplanationModal'
 import { useOnboarding } from '@/lib/hooks/useOnboarding'
+import { BlockReportModal } from '@/components/discover/BlockReportModal'
 import Link from 'next/link'
 
 const PROFILES_CACHE_KEY = 'discover:profiles'
@@ -77,6 +78,8 @@ export default function DiscoverPage() {
   const [checkingAccess, setCheckingAccess] = useState(true)
   const [interestCounts, setInterestCounts] = useState<Record<string, number>>({})
   const [expandedBios, setExpandedBios] = useState<Set<string>>(new Set())
+  const [blockReportModalId, setBlockReportModalId] = useState<string | null>(null)
+  const [blockReportModalName, setBlockReportModalName] = useState('')
   const { nudgingId, nudgeDialog, nudgeConfirm, handleNudge, handleConfirmNudge, cancelNudgeConfirm } =
     useNudge(setInsufficientCoinsMessage)
   const { giftPickerProfileId, sendingGiftType, openGiftPicker, closeGiftPicker, handleSendGift } =
@@ -642,6 +645,13 @@ export default function DiscoverPage() {
                         </>
                       )}
                     </button>
+                    <button
+                      onClick={() => { hapticTap(); setBlockReportModalId(p.id); setBlockReportModalName(p.name) }}
+                      aria-label="More options"
+                      className="glass-surface w-12 h-12 rounded-full flex items-center justify-center active:scale-95 transition-all"
+                    >
+                      <MoreVertical className="w-4 h-4 text-ink" />
+                    </button>
                   </>
                 ) : (
                   <>
@@ -677,6 +687,13 @@ export default function DiscoverPage() {
                       ) : (
                         <Heart className="w-7 h-7 text-ink" fill="currentColor" />
                       )}
+                    </button>
+                    <button
+                      onClick={() => { hapticTap(); setBlockReportModalId(p.id); setBlockReportModalName(p.name) }}
+                      aria-label="More options"
+                      className="glass-surface w-12 h-12 rounded-full flex items-center justify-center active:scale-95 transition-all shrink-0"
+                    >
+                      <MoreVertical className="w-4 h-4 text-ink" />
                     </button>
                   </>
                 )}
@@ -895,6 +912,16 @@ export default function DiscoverPage() {
       {/* Day Explanation Modal */}
       {showDayExplanation && (
         <DayExplanationModal day={showDayExplanation} onClose={() => setShowDayExplanation(null)} />
+      )}
+
+      {/* Block/Report Modal */}
+      {blockReportModalId && (
+        <BlockReportModal
+          profileId={blockReportModalId}
+          profileName={blockReportModalName}
+          isOpen={!!blockReportModalId}
+          onClose={() => setBlockReportModalId(null)}
+        />
       )}
 
       {/* How It Works Link */}

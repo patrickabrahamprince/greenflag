@@ -104,3 +104,37 @@ export async function GET(
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export async function DELETE(
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const supabase = await createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const admin = getAdminClient();
+
+    const { data: match, error: matchErr } = await admin
+      .from('matches')
+      .select('id, user1_id, user2_id')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (matchErr || !match) {
+      return NextResponse.json({ error: 'Match not found' }, { status: 404 });
+    }
+
+    if (match.user1_id !== user.id && match.user2_id !== user.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    await admin.from('matches').delete().eq('id', id);
+
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

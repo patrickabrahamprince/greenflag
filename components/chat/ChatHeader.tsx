@@ -1,21 +1,19 @@
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, MoreVertical } from 'lucide-react';
 
 interface ChatHeaderProps {
   partnerName: string | undefined;
   partnerPhoto: string | undefined;
   backRoute: string;
   isChatUnlocked: boolean;
+  onUnmatch?: () => void;
 }
 
-export function ChatHeader({ partnerName, partnerPhoto, backRoute, isChatUnlocked }: ChatHeaderProps) {
+export function ChatHeader({ partnerName, partnerPhoto, backRoute, isChatUnlocked, onUnmatch }: ChatHeaderProps) {
   const router = useRouter();
   return (
     <div className="px-8 pt-4 pb-0 sticky top-0 z-10 bg-base/80 backdrop-blur-xl">
       <div className="flex items-center gap-3 py-4">
-        {/* Plain icon tap target, not .btn-ghost -- that class now draws a
-            visible Lavender border pill (correct for text CTAs), which
-            reads wrong around a bare back arrow. */}
         <button onClick={() => router.push(backRoute)} aria-label="Back" className="p-2 -ml-2 text-ink active:opacity-60 transition-opacity">
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -34,6 +32,15 @@ export function ChatHeader({ partnerName, partnerPhoto, backRoute, isChatUnlocke
             )}
           </div>
         </div>
+        {onUnmatch && (
+          <button
+            onClick={onUnmatch}
+            aria-label="More options"
+            className="p-2 text-ink/60 hover:text-ink active:opacity-60 transition-opacity"
+          >
+            <MoreVertical className="w-5 h-5" />
+          </button>
+        )}
       </div>
       <div className="hairline" />
     </div>

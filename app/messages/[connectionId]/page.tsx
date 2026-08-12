@@ -13,6 +13,7 @@ import { MessageList } from '@/components/chat/MessageList';
 import { MessageInput } from '@/components/chat/MessageInput';
 import { LockedOverlay } from '@/components/chat/LockedOverlay';
 import { EmptyChat } from '@/components/chat/EmptyChat';
+import { UnmatchModal } from '@/components/connection/UnmatchModal';
 import { useScreenshotTarget } from '@/lib/hooks/useScreenshotGuard';
 import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 import { hapticTap } from '@/lib/haptics';
@@ -28,6 +29,7 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showUnmatchModal, setShowUnmatchModal] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const channelRef = useRef<RealtimeChannel | null>(null);
 
@@ -140,6 +142,7 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
           partnerPhoto={partnerPhoto}
           backRoute={backRoute}
           isChatUnlocked={!!connection?.chat_unlocked}
+          onUnmatch={() => setShowUnmatchModal(true)}
         />
         {connection?.connected && <ConnectedBanner />}
         <div
@@ -169,6 +172,15 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
           <MessageInput input={input} onInputChange={setInput} onSend={handleSend} sending={sending} />
         )}
       </div>
+
+      {connection && (
+        <UnmatchModal
+          matchId={connection.id}
+          partnerName={partnerName || ''}
+          isOpen={showUnmatchModal}
+          onClose={() => setShowUnmatchModal(false)}
+        />
+      )}
     </div>
   );
 }
