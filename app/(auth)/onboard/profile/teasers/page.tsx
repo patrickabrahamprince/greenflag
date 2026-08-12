@@ -96,7 +96,7 @@ export default function ProfileTeasersPage() {
 
     <div
       className={`fixed bottom-0 left-0 right-0 z-10 px-6 py-4 transition-opacity duration-200 ${pickerOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-      style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+      style={{ bottom: 'calc(max(1rem, env(safe-area-inset-bottom)) + var(--kb-inset, 0px))' }}
     >
       <button
         onClick={handleContinue}

@@ -89,8 +89,8 @@ export function CategorizedInterestPicker({
                         isSelected
                           ? 'bg-gold text-ink'
                           : locked
-                          ? 'bg-transparent border border-raised text-ink/30 cursor-not-allowed'
-                          : 'bg-transparent border border-raised text-ink hover:border-raised'
+                          ? 'bg-transparent border border-white/30 text-ink/30 cursor-not-allowed'
+                          : 'bg-transparent border border-white/30 text-ink hover:border-white/40'
                       )}
                     >
                       {item}

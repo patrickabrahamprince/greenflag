@@ -24,5 +24,5 @@ export function SocialProofLine({ className }: { className?: string }) {
     ? `${count}+ Standards completed on Greenflag so far.`
     : QUALITATIVE_FALLBACK;
 
-  return <p className={className}>{text}</p>;
+  return <p className={className ? className : 'text-xs text-ink font-medium leading-relaxed max-w-[280px] mx-auto'}>{text}</p>;
 }

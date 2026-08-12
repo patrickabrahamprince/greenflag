@@ -105,6 +105,12 @@ module.exports = {
       letterSpacing: {
         'widest-xl': '0.25em',
       },
+      boxShadow: {
+        'glow-crimson': '0 0 30px -10px rgba(210,4,45,0.6)',
+        'glow-crimson-sm': '0 0 20px -8px rgba(210,4,45,0.4)',
+        'glow-wine': '0 0 24px -10px rgba(69,5,12,0.7)',
+        'flat-dark': '0 4px 14px rgba(0,0,0,0.4)',
+      },
       animation: {
         // Kept inside the 150-300ms window on purpose -- these fire on
         // every screen/card transition, so anything slower reads as

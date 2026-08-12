@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Bell, Loader2, Pin, ArrowLeftRight } from 'lucide-react';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
@@ -257,6 +257,31 @@ export default function NotificationsPage() {
 
   const unreadCount = notifications.filter((n) => !n.read_at).length;
 
+  // Group notifications by connectionId for same-person stacking
+  const groupedNotifications = useMemo(() => {
+    const groups: Record<string, Notification[]> = {};
+    const ungrouped: Notification[] = [];
+
+    notifications.forEach((notif) => {
+      const connectionId = (notif.data as Record<string, unknown> | null)?.connectionId as string | undefined;
+      if (connectionId) {
+        if (!groups[connectionId]) groups[connectionId] = [];
+        groups[connectionId].push(notif);
+      } else {
+        ungrouped.push(notif);
+      }
+    });
+
+    // Return grouped notifications (each group shows most recent item) + ungrouped
+    const result = Object.entries(groups).map(([_id, items]) => ({
+      ...items[0], // representative = most recent (already sorted)
+      _count: items.length,
+      _all: items,
+    } as Notification & { _count: number; _all: Notification[] }));
+
+    return [...result, ...ungrouped] as (Notification & { _count?: number; _all?: Notification[] })[];
+  }, [notifications]);
+
   if (loading) {
     return (
       <div className="min-h-dvh screen-gradient flex items-center justify-center">
@@ -318,7 +343,7 @@ export default function NotificationsPage() {
           </div>
         ) : (
           <div>
-            {notifications.map((notif) => {
+            {groupedNotifications.map((notif) => {
               const notifType = (notif.data as Record<string, unknown> | null)?.type;
               const isLuxury = notifType === 'day_approved' || notifType === 'media_approved';
               const isExpanded = expandedIds.has(notif.id);
@@ -344,11 +369,16 @@ export default function NotificationsPage() {
                     className="w-full flex items-center gap-3 text-left px-4 py-4 border-b border-border/30 transition-all active:scale-[0.98]"
                   >
                     {party && (
-                      <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 bg-well">
+                      <div className="relative w-9 h-9 rounded-full overflow-hidden shrink-0 bg-well">
                         {party.photo ? (
                           <img src={party.photo} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-ink/30 text-xs">{party.name[0]}</div>
+                        )}
+                        {notif._count && notif._count > 1 && (
+                          <div className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-crimson text-[10px] font-bold text-ink flex items-center justify-center">
+                            {notif._count}
+                          </div>
                         )}
                       </div>
                     )}
@@ -357,9 +387,7 @@ export default function NotificationsPage() {
                       {notif.pinned && (
                         <Pin className="w-3.5 h-3.5 text-gold shrink-0" fill="currentColor" />
                       )}
-                      <p className={`text-base font-semibold flex-1 min-w-0 truncate ${
-                        isLuxury ? 'text-gold' : notif.read_at ? 'text-muted' : 'text-ink'
-                      }`}>
+                      <p className="text-base font-semibold flex-1 min-w-0 truncate text-ink">
                         {displayTitle}
                       </p>
                       {!notif.read_at && (

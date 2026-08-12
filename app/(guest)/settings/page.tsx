@@ -152,7 +152,7 @@ export default function SettingsPage() {
                 <Phone className="w-5 h-5 text-gold" />
               </div>
               <div>
-                <p className="text-sm text-muted">Phone</p>
+                <p className="text-sm text-ink">Phone</p>
                 <p className="text-ink font-medium">{formatPhoneDisplay(phone)}</p>
               </div>
             </div>
@@ -168,7 +168,7 @@ export default function SettingsPage() {
             <div className="w-10 h-10 rounded-full bg-surface-light flex items-center justify-center">
               <Mail className="w-5 h-5 text-gold" />
             </div>
-            <p className="text-sm text-muted">Email</p>
+            <p className="text-sm text-ink">Email</p>
           </div>
           <div className="flex gap-2">
             <input
@@ -192,7 +192,7 @@ export default function SettingsPage() {
             <div className="w-10 h-10 rounded-full bg-surface-light flex items-center justify-center">
               <Shield className="w-5 h-5 text-gold" />
             </div>
-            <p className="text-sm text-muted">Password</p>
+            <p className="text-sm text-ink">Password</p>
           </div>
           <button onClick={handleChangePassword} className="btn-secondary w-full text-sm">
             Change Password
@@ -219,10 +219,10 @@ export default function SettingsPage() {
             </div>
             <div>
               <p className="text-sm text-ink font-medium">Need a break?</p>
-              <p className="text-xs text-muted">Go invisible without losing anything</p>
+              <p className="text-xs text-ink">Go invisible without losing anything</p>
             </div>
           </div>
-          <p className="text-xs text-muted mb-3 leading-relaxed">
+          <p className="text-xs text-ink mb-3 leading-relaxed">
             Pausing signs you out and hides your profile from everyone else. Your matches,
             messages, and coin balance are all still here — just log back in whenever you're ready.
           </p>
@@ -234,14 +234,14 @@ export default function SettingsPage() {
           </button>
         </div>
 
-        <div className="card border-raised/50">
+        <div className="card">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center">
-              <Trash2 className="w-5 h-5 text-gold" />
+            <div className="w-10 h-10 rounded-full bg-surface-light flex items-center justify-center">
+              <Trash2 className="w-5 h-5 text-crimson" />
             </div>
             <div>
               <p className="text-sm text-ink font-medium">Delete Account</p>
-              <p className="text-xs text-muted">Permanently remove all data</p>
+              <p className="text-xs text-ink">Permanently remove all data</p>
             </div>
           </div>
           <button
@@ -252,10 +252,21 @@ export default function SettingsPage() {
           </button>
         </div>
 
-        <button onClick={handleLogout} disabled={loggingOut} className="btn-danger w-full flex items-center justify-center gap-2">
-          {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
-          Sign Out
-        </button>
+
+        <div className="card">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-full bg-surface-light flex items-center justify-center">
+              <LogOut className="w-5 h-5 text-crimson" />
+            </div>
+            <div>
+              <p className="text-sm text-ink font-medium">Sign Out</p>
+            </div>
+          </div>
+          <button onClick={handleLogout} disabled={loggingOut} className="btn-danger w-full flex items-center justify-center gap-2">
+            {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
+            Sign Out
+          </button>
+        </div>
       </div>
 
       {showDeleteReason && (
@@ -275,7 +286,7 @@ export default function SettingsPage() {
           <div className="dialog-card max-w-sm w-full text-center">
             <PauseCircle className="w-12 h-12 text-gold mx-auto mb-4" />
             <h3 className="font-display text-lg text-ink mb-2">Pause your account?</h3>
-            <p className="text-sm text-muted mb-6">
+            <p className="text-sm text-ink mb-6">
               You&apos;ll be signed out and invisible to everyone until you log back in.
               Nothing is deleted — resume anytime.
             </p>
@@ -303,7 +314,7 @@ export default function SettingsPage() {
           <div className="dialog-card max-w-sm w-full text-center">
             <Trash2 className="w-12 h-12 text-red-500 mx-auto mb-4" />
             <h3 className="font-display text-lg text-ink mb-2">Delete Account?</h3>
-            <p className="text-sm text-muted mb-2">
+            <p className="text-sm text-ink mb-2">
               This action cannot be undone. Your profile, matches, messages, and Standards
               will be permanently erased.
             </p>
@@ -312,7 +323,7 @@ export default function SettingsPage() {
                 Your {coinBalance} coin{coinBalance === 1 ? '' : 's'} will be lost and cannot be refunded.
               </p>
             )}
-            <p className="text-xs text-muted mb-6">
+            <p className="text-xs text-ink mb-6">
               Just need space? Consider pausing instead — it&apos;s reversible.
             </p>
             <div className="flex gap-3">

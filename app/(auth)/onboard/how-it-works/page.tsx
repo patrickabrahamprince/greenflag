@@ -156,7 +156,7 @@ export default function HowItWorksPage() {
           ))}
         </div>
 
-        <SocialProofLine className="text-center text-[11px] text-gold/70 font-medium mt-6" />
+        <SocialProofLine className="text-center text-xs text-ink font-medium mt-6 leading-relaxed max-w-[280px] mx-auto" />
 
         <button
           onClick={handleContinue}

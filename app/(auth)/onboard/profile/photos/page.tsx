@@ -283,7 +283,7 @@ export default function ProfilePhotosPage() {
     <div className="w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top">
       <button
         onClick={() => router.push('/onboard/profile/teasers')}
-        className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit"
+        className="text-ink hover:text-ink active:scale-90 transition-all mb-6 w-fit"
       >
         <ArrowLeft size={24} />
       </button>
@@ -292,7 +292,7 @@ export default function ProfilePhotosPage() {
         <StepDots current={6} total={6} />
 
         <h1 className="font-display text-2xl text-ink mb-2">Show your best self</h1>
-        <p className="text-ink/50 text-sm leading-relaxed mb-8">
+        <p className="text-ink text-sm leading-relaxed mb-8">
           Real, recent photos — this is your first impression.
         </p>
 
@@ -305,7 +305,7 @@ export default function ProfilePhotosPage() {
           error={error}
         />
         {compressing && (
-          <p className="text-xs text-ink/40 mt-2 flex items-center gap-1.5">
+          <p className="text-xs text-ink mt-2 flex items-center gap-1.5">
             <Loader2 className="w-3 h-3 animate-spin" /> Optimizing photo...
           </p>
         )}
@@ -338,7 +338,7 @@ export default function ProfilePhotosPage() {
             <Camera size={26} className="text-ink" />
           </div>
           <h2 className="font-display text-xl text-ink mb-2">We want to see your face</h2>
-          <p className="text-ink/60 text-sm leading-relaxed mb-6">
+          <p className="text-ink text-sm leading-relaxed mb-6">
             Add at least one clear photo of your face to help with approval. It would be a shame to hide it!
           </p>
           <button onClick={() => setShowFaceNudge(false)} className="btn-primary w-full py-4">
