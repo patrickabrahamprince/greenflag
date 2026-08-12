@@ -91,7 +91,7 @@ export default function HowItWorksPage() {
   const handleContinue = async () => {
     hapticTap();
     setContinuing(true);
-    goTo('/onboard/phone', '/onboarding/how-it-works.jpg');
+    goTo('/onboard/profile', '/onboarding/age.jpg');
   };
 
   if (loading) {

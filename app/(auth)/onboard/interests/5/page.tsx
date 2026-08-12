@@ -34,10 +34,6 @@ export default function InterestsStepFivePage() {
       nextTestId={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'submit-onboarding' : undefined}
     >
       <div className="space-y-8">
-        <CategorizedInterestPicker title="What Defines You" description="Choose as many as you like"
-          categories={INTEREST_CATEGORIES_STEPS[4]} selected={interestsHave} onToggle={(val) => toggle('have', val)}
-          dataTestIdPrefix={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'interest-have' : undefined} />
-
         <CategorizedInterestPicker title={isWoman ? "What You Value In Him" : "What You Value In Her"} description="Choose as many as you like"
           categories={INTEREST_CATEGORIES} selected={lookingFor} onToggle={(val) => toggle('looking', val)}
           dataTestIdPrefix={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'interest-looking' : undefined} />
