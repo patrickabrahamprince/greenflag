@@ -252,7 +252,7 @@ export default function SettingsPage() {
           </button>
         </div>
 
-        <button onClick={handleLogout} disabled={loggingOut} className="btn-secondary w-full flex items-center justify-center gap-2">
+        <button onClick={handleLogout} disabled={loggingOut} className="btn-danger w-full flex items-center justify-center gap-2">
           {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
           Sign Out
         </button>
