@@ -127,7 +127,7 @@ export default function RulesPage() {
 
   const handleContinue = () => {
     hapticTap();
-    goTo('/onboard/how-it-works', '/onboarding/how-it-works.jpg');
+    goTo('/discover', '/onboarding/hero.jpg');
   };
 
   if (loading) {
