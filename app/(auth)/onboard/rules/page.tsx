@@ -17,6 +17,7 @@ import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
+import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 
 // Streamlined to 3 key rules (was 6)
 const slides = [
