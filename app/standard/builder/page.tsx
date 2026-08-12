@@ -366,7 +366,7 @@ export default function StandardBuilderPage() {
           behind the exact area holding the day's questions. A blurred,
           translucent surface keeps the questions just as readable while
           letting the photo stay visible through it. */}
-      <div className="bg-black/35 backdrop-blur-xl border border-raised rounded-card p-5 mb-8">
+      <div className="bg-black/20 backdrop-blur-sm border border-raised rounded-card p-5 mb-8">
         <span className="text-xs text-ink/40 uppercase tracking-wide">Day {currentSlot.dayNumber}</span>
 
         <div className="space-y-5 mt-3">
