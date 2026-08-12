@@ -43,8 +43,7 @@ export default function HowItWorksPage() {
   const router = useRouter();
   const { goTo } = useOnboardingNav();
   const supabase = createClient();
-  const name = useOnboardingStore((s) => s.name);
-  const photos = useOnboardingStore((s) => s.photos);
+  const bio = useOnboardingStore((s) => s.bio);
   const [loading, setLoading] = useState(false);
   const [continuing, setContinuing] = useState(false);
   const [step, setStep] = useState(0);
@@ -93,8 +92,8 @@ export default function HowItWorksPage() {
   const handleContinue = async () => {
     hapticTap();
     setContinuing(true);
-    // If photos are uploaded, we're past onboarding flow - go to discover
-    if (photos && photos.length > 0) {
+    // If bio is set, we're past onboarding flow - go to discover
+    if (bio) {
       goTo('/discover', '/onboarding/hero.jpg');
     } else {
       // Otherwise, go to name entry
