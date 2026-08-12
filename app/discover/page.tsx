@@ -26,7 +26,6 @@ import { FirstTimeHint } from '@/components/shared/FirstTimeHint'
 import { ChevronUp } from 'lucide-react'
 import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow'
 import { DayExplanationModal } from '@/components/shared/DayExplanationModal'
-import { HelpTooltip } from '@/components/shared/HelpTooltip'
 import { useOnboarding } from '@/lib/hooks/useOnboarding'
 import Link from 'next/link'
 
@@ -330,21 +329,6 @@ export default function DiscoverPage() {
     <div className="relative screen-gradient min-h-dvh max-w-app mx-auto">
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex flex-col pointer-events-none">
         <div className="flex items-center justify-between px-5 pt-safe-top pb-10 bg-gradient-to-b from-black/70 via-black/25 to-transparent">
-          <HelpTooltip
-            title="How to Use This App"
-            content={[
-              'Swipe right (❤️) to like someone',
-              'Swipe left to skip',
-              'Match happens when you both like each other',
-              'Use coins to unlock special features',
-            ]}
-          >
-            <button className="w-6 h-6 text-ink/60 hover:text-ink/80 transition-colors">
-              <svg fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
-            </button>
-          </HelpTooltip>
           <div className="pointer-events-auto">
             <CoinBadge onClick={() => { hapticTap(); router.push('/coins'); }} />
           </div>
@@ -477,12 +461,6 @@ export default function DiscoverPage() {
                           <span className="font-display font-bold text-ink text-xs whitespace-nowrap">
                             {p.match_percentage}%
                           </span>
-                          <HelpTooltip
-                            title="What's this percentage?"
-                            content="How well you match based on your standards and their answers. Higher = better alignment with what you're looking for."
-                          >
-                            <div className="w-3 h-3" />
-                          </HelpTooltip>
                         </div>
                         {persona === 'woman' && !!interestCounts[p.id] && (
                           <span className="glass-surface rounded-full px-3 py-1 text-ink/80 text-[11px] whitespace-nowrap">
