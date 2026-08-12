@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Mic, Camera, Type as TypeIcon, ArrowLeft, Lock, ShieldCheck, Eye, MessageCircle, Sparkles } from 'lucide-react';
+import { Loader2, Mic, Camera, Type as TypeIcon, ArrowLeft, Lock, ShieldCheck, Eye, MessageCircle, Sparkles, X, Plus } from 'lucide-react';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
@@ -154,6 +154,7 @@ export default function StandardBuilderPage() {
   const [step, setStep] = useState(0); // 0 = Day 1, 1 = Day 2, 2 = Day 3
   const [showDayDialog, setShowDayDialog] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
+  const [dayImages, setDayImages] = useState<{ [key: number]: string[] }>({ 1: [], 2: [], 3: [] });
 
   const load = async () => {
     try {
@@ -226,6 +227,32 @@ export default function StandardBuilderPage() {
           : { ...s, tasks: s.tasks.map((t) => (t.taskNumber === taskNumber ? { ...t, prompt: value } : t)) }
       )
     );
+  };
+
+  const handleImageUpload = (dayNumber: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.currentTarget.files;
+    if (!files) return;
+    const newImages = [...(dayImages[dayNumber] || [])];
+    for (let i = 0; i < Math.min(files.length, 3 - newImages.length); i++) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event.target?.result;
+        if (result && typeof result === 'string') {
+          setDayImages((prev) => ({
+            ...prev,
+            [dayNumber]: [...(prev[dayNumber] || []), result],
+          }));
+        }
+      };
+      reader.readAsDataURL(files[i]);
+    }
+  };
+
+  const removeImage = (dayNumber: number, index: number) => {
+    setDayImages((prev) => ({
+      ...prev,
+      [dayNumber]: prev[dayNumber].filter((_, i) => i !== index),
+    }));
   };
 
   // Advancing to the next day is a state change, not a route change, so
@@ -369,7 +396,40 @@ export default function StandardBuilderPage() {
       <div className="bg-black/20 backdrop-blur-sm border border-raised rounded-card p-5 mb-8">
         <span className="text-xs text-ink/40 uppercase tracking-wide">Day {currentSlot.dayNumber}</span>
 
-        <div className="space-y-5 mt-3">
+        {/* Day Pictures Section */}
+        <div className="mt-4 mb-6 pb-4 border-b border-raised">
+          <p className="text-xs font-medium text-ink mb-3">Add up to 3 pictures for Day {currentSlot.dayNumber}</p>
+          <div className="flex flex-wrap gap-2 mb-3">
+            {(dayImages[currentSlot.dayNumber] || []).map((image, idx) => (
+              <div key={idx} className="relative w-20 h-20 rounded-lg overflow-hidden border border-raised">
+                <img src={image} alt={`Day ${currentSlot.dayNumber} pic ${idx + 1}`} className="w-full h-full object-cover" />
+                <button
+                  onClick={() => removeImage(currentSlot.dayNumber, idx)}
+                  className="absolute top-1 right-1 bg-red-500 rounded-full p-1 text-ink hover:bg-red-600 transition-colors"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            ))}
+            {(dayImages[currentSlot.dayNumber] || []).length < 3 && (
+              <label className="w-20 h-20 rounded-lg border-2 border-dashed border-raised flex items-center justify-center cursor-pointer hover:border-gold transition-colors">
+                <Plus size={20} className="text-ink/50" />
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(currentSlot.dayNumber, e)}
+                  className="hidden"
+                />
+              </label>
+            )}
+          </div>
+          <p className="text-[10px] text-ink/40">
+            {(dayImages[currentSlot.dayNumber] || []).length}/3 pictures added
+          </p>
+        </div>
+
+        <div className="space-y-5">
           {currentSlot.tasks.map((task) => {
             const meta = TASK_META.find((m) => m.taskNumber === task.taskNumber)!;
             const Icon = meta.icon;
