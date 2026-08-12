@@ -45,7 +45,8 @@ export default function ProfileTeasersPage() {
   };
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
+    <>
+    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
       <OnboardingBackground image="/onboarding/teasers.jpg" />
       <div className="flex items-center justify-between mb-6">
         <button
@@ -91,44 +92,37 @@ export default function ProfileTeasersPage() {
           />
         )}
       </div>
-
-      {/* Fixed and pinned to the true bottom (rising only by --kb-inset
-          when a keyboard is actually open) instead of following normal
-          flex flow -- flowing after flex-1 content let the button sit
-          higher than necessary whenever the content above it was short.
-          Hidden (not just out-z-indexed) while the prompt picker sheet is
-          open -- the sheet's backdrop is a translucent blur, not opaque,
-          so this solid crimson button was still visibly bleeding through
-          underneath it instead of actually disappearing. */}
-      <div
-        className={`fixed inset-x-0 z-10 px-6 pt-8 pb-4 transition-opacity duration-200 ${pickerOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-        style={{ bottom: 'calc(max(1rem, env(safe-area-inset-bottom)) + var(--kb-inset, 0px))' }}
-      >
-        <button
-          onClick={handleContinue}
-          data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-teasers-continue' : undefined}
-          className="btn-primary w-full py-4 max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
-        >
-          {prompt && answer.trim() ? 'Continue' : 'Skip for now'}
-          <ArrowRight className="w-4 h-4" />
-        </button>
-      </div>
-
-      <BottomSheet open={pickerOpen} onClose={() => setPickerOpen(false)}>
-        <h2 className="font-display text-xl text-ink mb-4">Pick a prompt</h2>
-        <div className="space-y-2 pb-6">
-          {TEASER_PROMPTS.map((p) => (
-            <button
-              key={p}
-              onClick={() => { setPrompt(p); setPickerOpen(false); }}
-              className="w-full flex items-center gap-3 bg-raised border border-raised rounded-xl px-4 py-3.5 text-left text-ink/90 text-sm hover:border-gold/50 active:scale-[0.98] transition-all"
-            >
-              <Quote size={14} className="text-gold shrink-0" />
-              {p}
-            </button>
-          ))}
-        </div>
-      </BottomSheet>
     </div>
+
+    <div
+      className={`fixed bottom-0 left-0 right-0 z-10 px-6 py-4 transition-opacity duration-200 ${pickerOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+      style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+    >
+      <button
+        onClick={handleContinue}
+        data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-teasers-continue' : undefined}
+        className="btn-primary w-full max-w-md mx-auto block py-4 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+      >
+        {prompt && answer.trim() ? 'Continue' : 'Skip for now'}
+        <ArrowRight className="w-4 h-4" />
+      </button>
+    </div>
+
+    <BottomSheet open={pickerOpen} onClose={() => setPickerOpen(false)}>
+      <h2 className="font-display text-xl text-ink mb-4">Pick a prompt</h2>
+      <div className="space-y-2 pb-6">
+        {TEASER_PROMPTS.map((p) => (
+          <button
+            key={p}
+            onClick={() => { setPrompt(p); setPickerOpen(false); }}
+            className="w-full flex items-center gap-3 bg-raised border border-raised rounded-xl px-4 py-3.5 text-left text-ink/90 text-sm hover:border-gold/50 active:scale-[0.98] transition-all"
+          >
+            <Quote size={14} className="text-gold shrink-0" />
+            {p}
+          </button>
+        ))}
+      </div>
+    </BottomSheet>
+    </>
   );
 }

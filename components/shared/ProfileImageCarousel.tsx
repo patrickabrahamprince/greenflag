@@ -79,7 +79,7 @@ export function ProfileImageCarousel({ images, disableLightbox = false }: Profil
           <img
             src={mainImage}
             alt=""
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
             onError={e => { e.currentTarget.src = '/placeholder-avatar.svg' }}
           />
         </div>

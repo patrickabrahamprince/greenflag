@@ -27,7 +27,7 @@ export function useScreenshotGuard() {
 
       toast(
         notifyUserId ? "Screenshot detected — they've been notified." : 'Screenshot detected.',
-        { icon: '📸' }
+        { icon: '📸', duration: 2000, position: 'top-center' }
       );
 
       if (notifyUserId) {
