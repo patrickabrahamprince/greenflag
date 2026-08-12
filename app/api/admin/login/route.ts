@@ -1,67 +1,41 @@
+import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
 
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
 
-    const adminEmail = process.env.ADMIN_EMAIL;
-    const adminPassword = process.env.ADMIN_PASSWORD;
-
-    console.log('Admin login attempt:', {
-      providedEmail: email,
-      providedEmailLength: email?.length,
-      configEmail: adminEmail,
-      configEmailLength: adminEmail?.length,
-      providedPassword: password,
-      providedPasswordLength: password?.length,
-      configPasswordLength: adminPassword?.length,
-      emailMatch: email === adminEmail,
-      passwordMatch: password === adminPassword,
-      emailTrimMatch: email?.trim() === adminEmail?.trim(),
-      passwordTrimMatch: password?.trim() === adminPassword?.trim(),
-    });
-
-    if (!adminEmail || !adminPassword) {
-      console.error('Admin credentials not configured in environment');
-      return NextResponse.json(
-        { error: 'Admin credentials not configured' },
-        { status: 500 }
-      );
+    if (!email || !password) {
+      return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
-    const emailMatches = email?.trim() === adminEmail?.trim();
-    const passwordMatches = password?.trim() === adminPassword?.trim();
+    const supabase = createClient();
 
-    if (!emailMatches || !passwordMatches) {
-      console.warn('Login failed - invalid credentials', {
-        emailMatches,
-        passwordMatches,
-      });
-      return NextResponse.json(
-        { error: 'Invalid email or password' },
-        { status: 401 }
-      );
-    }
-
-    const sessionToken = crypto.randomBytes(32).toString('hex');
-    const response = NextResponse.json({ success: true });
-
-    // 30-day session for "remember me"
-    const thirtyDaysInSeconds = 60 * 60 * 24 * 30;
-    response.cookies.set('admin_session', sessionToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: thirtyDaysInSeconds,
-      path: '/',
+    // Sign in with email/password
+    const { data: { user }, error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
 
-    return response;
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Login failed' },
-      { status: 400 }
-    );
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+    }
+
+    // Check if admin
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError || !profile?.is_admin) {
+      await supabase.auth.signOut();
+      return NextResponse.json({ error: 'Not authorized as admin' }, { status: 403 });
+    }
+
+    return NextResponse.json({ success: true, user });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Login failed';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
