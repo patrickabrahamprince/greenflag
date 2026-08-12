@@ -28,7 +28,6 @@ import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow'
 import { DayExplanationModal } from '@/components/shared/DayExplanationModal'
 import { useOnboarding } from '@/lib/hooks/useOnboarding'
 import { BlockReportModal } from '@/components/discover/BlockReportModal'
-import Link from 'next/link'
 
 const PROFILES_CACHE_KEY = 'discover:profiles'
 const HAS_MORE_CACHE_KEY = 'discover:hasMore'
@@ -924,16 +923,6 @@ export default function DiscoverPage() {
         />
       )}
 
-      {/* How It Works Link */}
-      <Link
-        href="/how-it-works"
-        className="fixed bottom-safe-bottom right-4 z-40 w-12 h-12 bg-blue-500 hover:bg-blue-600 text-ink rounded-full flex items-center justify-center shadow-lg transition-all"
-        title="How it works"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      </Link>
     </div>
   )
 }
