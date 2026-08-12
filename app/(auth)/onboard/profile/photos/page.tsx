@@ -75,6 +75,7 @@ export default function ProfilePhotosPage() {
   const teaserPrompt = useOnboardingStore((s) => s.teaserPrompt);
   const teaserAnswer = useOnboardingStore((s) => s.teaserAnswer);
   const setGlobalUser = useUserStore((s) => s.setUser);
+  const clearOnboarding = useOnboardingStore((s) => s.clearOnboarding);
 
   const [photos, setPhotos] = useState<string[]>([]);
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
@@ -246,6 +247,9 @@ export default function ProfilePhotosPage() {
     });
     setLoading(false);
     if (upsertError) { toast.error(upsertError.message); return; }
+
+    // Clear onboarding store after successful signup
+    clearOnboarding();
 
     // Best-effort, separate from the upsert above on purpose: the
     // teaser_prompt/teaser_answer columns ship in a migration that may not
