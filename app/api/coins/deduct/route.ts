@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     });
 
     if (deductErr || !result) {
-      console.error('deduct_coins RPC error:', deductErr);
+      if (process.env.NODE_ENV === 'development') console.error('deduct_coins RPC error:', deductErr);
       return NextResponse.json({ error: 'Failed to deduct coins', details: deductErr?.message }, { status: 500 });
     }
 
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
       new_balance: (result as Record<string, unknown>).new_balance,
     });
   } catch (error) {
-    console.error('deduct_coins error:', error);
+    if (process.env.NODE_ENV === 'development') console.error('deduct_coins error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

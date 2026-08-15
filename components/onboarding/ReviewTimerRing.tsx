@@ -1,6 +1,6 @@
 'use client';
 
-import { Hourglass } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 interface ReviewTimerRingProps {
   secondsLeft: number;
@@ -37,12 +37,9 @@ export function ReviewTimerRing({ secondsLeft, totalSeconds }: ReviewTimerRingPr
           </linearGradient>
         </defs>
       </svg>
-      <div className="w-20 h-20 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center animate-pulse">
-        <Hourglass className="w-8 h-8 text-gold" />
+      <div className="w-20 h-20 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-gold animate-spin" />
       </div>
-      <span className="absolute -bottom-2 translate-y-full font-display text-2xl text-gold tabular-nums">
-        {secondsLeft}s
-      </span>
     </div>
   );
 }

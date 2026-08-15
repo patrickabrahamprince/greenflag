@@ -61,7 +61,7 @@ export default function PendingApprovalPage() {
           <ReviewTimerRing secondsLeft={secondsLeft ?? totalSeconds} totalSeconds={totalSeconds} />
 
           <h1 className="font-display text-3xl text-ink mb-3 mt-4">
-            Your Profile Is Being Reviewed
+            Verifying Your Profile
           </h1>
           <p className="text-ink/60 text-sm leading-relaxed max-w-sm">
             Greenflag is curated. We review every profile to maintain the standard.
@@ -74,7 +74,7 @@ export default function PendingApprovalPage() {
             <Sparkles className="w-9 h-9 text-gold" />
           </div>
 
-          <h1 className="font-display text-3xl text-ink mb-3">You're In.</h1>
+          <h1 className="font-display text-3xl text-ink mb-3">Verified.</h1>
           <p className="text-ink/60 text-sm leading-relaxed max-w-sm">
             Your profile is approved. Taking you to set your Standard...
           </p>

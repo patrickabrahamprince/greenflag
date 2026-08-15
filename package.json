@@ -12,13 +12,14 @@
     "test:e2e": "playwright test",
     "test:matchflow:backend": "bash scripts/run-matchflow-backend.sh",
     "test:matchflow:e2e": "playwright test tests/e2e/matchflow-happy-path.spec.ts tests/e2e/matchflow-rejection.spec.ts",
-    "test:matchflow": "npm run test:matchflow:backend && npm run test:matchflow:e2e"
+    "test:matchflow": "npm run test:matchflow:backend && npm run test:matchflow:e2e",
+    "seed:reviewers": "npx tsx scripts/seed-app-store-reviewers.ts"
   },
   "dependencies": {
     "@aparajita/capacitor-biometric-auth": "^10.0.0",
     "@apple/app-store-server-library": "^3.1.0",
     "@capacitor/app": "^8.1.1",
-    "@capacitor/cli": "^8.5.0",
+    "@capacitor/cli": "^8.4.2",
     "@capacitor/core": "^8.5.0",
     "@capacitor/geolocation": "^8.2.0",
     "@capacitor/haptics": "^8.0.2",
@@ -44,8 +45,8 @@
     "jose": "^6.2.4",
     "libphonenumber-js": "^1.13.7",
     "lucide-react": "^0.487.0",
-    "next": "^14.2.29",
-    "next-pwa": "^5.6.0",
+    "next": "^16.3.0",
+    "next-pwa": "^2.0.2",
     "next-themes": "^0.4.6",
     "openai": "^7.4.0",
     "react": "^18.3.1",

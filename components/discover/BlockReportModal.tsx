@@ -77,8 +77,8 @@ export function BlockReportModal({ profileId, profileName, isOpen, onClose }: Bl
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-base/80 backdrop-blur-sm z-50 flex items-end">
-      <div className="bg-card w-full rounded-t-2xl p-6 pb-safe-bottom space-y-6 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-base/80 backdrop-blur-sm z-[100] flex items-end">
+      <div className="bg-card w-full rounded-t-2xl p-6 pb-[calc(2rem+env(safe-area-inset-bottom))] space-y-6 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-ink">What's wrong?</h2>
           <button

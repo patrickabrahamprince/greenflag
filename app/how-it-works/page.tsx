@@ -13,35 +13,34 @@ interface Section {
 const SECTIONS: Section[] = [
   {
     icon: <Users className="w-8 h-8" />,
-    title: 'Set Your Standards',
-    description: 'Define what matters to you',
+    title: 'Set Your Standard',
+    description: 'What she defines, he earns',
     points: [
-      'Answer questions about your values, lifestyle, and interests',
-      'Be specific about what you\'re looking for',
-      'Your standards create the foundation for every match',
-      'Update anytime from Settings as you learn more about yourself',
+      'Women define a 3-day Standard — the bar he needs to meet to earn a conversation',
+      'Each day: one thought, one image, one voice',
+      'Men discover curated profiles and complete each day\'s Standard to show real intention',
+      'Standards can be updated anytime before they go live',
     ],
   },
   {
     icon: <Heart className="w-8 h-8" />,
-    title: 'Get Matched',
-    description: 'See people who match your standards',
+    title: 'Discover Profiles',
+    description: 'Curated, not endless',
     points: [
-      'GreenFlag\'s algorithm finds people who align with your values',
-      'Each profile shows compatibility percentage and shared interests',
-      'Swipe right to like someone, left to skip',
-      'Both people must like each other to match',
+      'Men browse curated profiles of women who are active and approved',
+      'Coins unlock a profile, its photos, or a conversation',
+      'Every profile is reviewed before it goes live, to keep things real',
     ],
   },
   {
     icon: <Zap className="w-8 h-8" />,
-    title: 'Day 1, 2, and 3 Flow',
-    description: 'Three stages of genuine connection',
+    title: '3 Days, 3 Intentions',
+    description: 'How a Standard actually works',
     points: [
-      'Day 1 (Initial Match): You matched! See their full profile and decide if you want to message.',
-      'Day 2 (First Exchange): Exchange 1-2 questions to learn about each other\'s values and personality.',
-      'Day 3 (Real Connection): Share something personal (photo, voice note, or deeper question). Chemistry starts here.',
-      'After Day 3, you can unlock video calls and continue however you want.',
+      'He completes all three intentions for a day before she sees anything — no half-effort',
+      'She reviews and decides each day. Reject at any point and the connection ends',
+      'No second attempt on the same day if she says no',
+      'Complete all three days with her approval, and the conversation unlocks',
     ],
   },
   {
@@ -49,7 +48,7 @@ const SECTIONS: Section[] = [
     title: 'Smart Messaging',
     description: 'Built to encourage real conversation',
     points: [
-      'First message is auto-generated based on your shared interests',
+      'A first message can be generated for you based on shared interests',
       'Each day, new conversation prompts help you go deeper',
       'You control the pace — no pressure to rush',
       'Block or report any profile at any time',
@@ -58,13 +57,11 @@ const SECTIONS: Section[] = [
   {
     icon: <Coins className="w-8 h-8" />,
     title: 'Coins System',
-    description: 'Unlock premium features',
+    description: 'Unlock conversations',
     points: [
-      'Earn 10 free coins every week just for using the app',
-      'Use coins to unlock special features like gifts or hidden photos',
-      'Send thoughtful gifts to show you\'re interested',
-      'Premium features help you stand out and connect faster',
-      'Coins are optional — you can use the app for free',
+      'Coins unlock profiles, photos, and conversations — 500 coins unlocks one profile',
+      'Coins are purchased directly in the app through the App Store',
+      'Your coin balance is always visible in the app',
     ],
   },
   {
@@ -72,8 +69,8 @@ const SECTIONS: Section[] = [
     title: 'Safety & Trust',
     description: 'Your security is our priority',
     points: [
-      'All profiles are verified to ensure real people',
-      'Block, report, or unmatch anyone at any time',
+      'All profiles are reviewed before approval to keep the community real',
+      'Block or report anyone at any time',
       'Your photos and personal info are never shared unless you choose to',
       'Never share payment info via messaging',
       'If something feels off, report it immediately',
@@ -137,10 +134,7 @@ export default function HowItWorks() {
         {/* CTA */}
         <div className="mt-12 text-center">
           <p className="text-ink/60 mb-4">Ready to find your match?</p>
-          <Link
-            href="/discover"
-            className="inline-block px-8 py-3 bg-gold hover:bg-gold/90 text-ink font-medium rounded-lg transition-colors"
-          >
+          <Link href="/discover" className="btn-primary inline-flex">
             Start Discovering
           </Link>
         </div>
@@ -151,20 +145,16 @@ export default function HowItWorks() {
           <div className="space-y-4">
             {[
               {
-                q: 'Is GreenFlag really free?',
-                a: 'Yes! You can use GreenFlag completely free. Coins are optional and let you unlock premium features, but you don\'t need them to match and message.',
+                q: 'Is GreenFlag free to join?',
+                a: 'Creating a profile and browsing is free. Coins are required to unlock a profile, its photos, or a conversation — 500 coins unlocks one profile.',
               },
               {
-                q: 'How often do I get matches?',
-                a: 'It depends on how many people match your standards and vice versa. Most users get 1-3 matches per week, but it varies by location and preferences.',
+                q: 'What does a woman actually do on GreenFlag?',
+                a: 'She defines a 3-day Standard — one thought, one image, one voice per day — and reviews what he submits each day before deciding whether the conversation unlocks.',
               },
               {
-                q: 'Can I skip someone and see them later?',
-                a: 'Yes! If you swipe left on someone, they\'ll come back around in about a week.',
-              },
-              {
-                q: 'What if I match with someone I\'m not interested in?',
-                a: 'You can unmatch anytime. Just go to their chat, tap the three dots, and select "Unmatch."',
+                q: 'What if I\'m not interested in someone?',
+                a: 'You can block or report any profile at any time, and reject a Standard submission on any day to end the connection.',
               },
             ].map((faq, idx) => (
               <details

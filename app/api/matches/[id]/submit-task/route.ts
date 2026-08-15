@@ -195,7 +195,7 @@ export async function POST(
       review_deadline: updatedMatch?.review_deadline ?? null,
     });
   } catch (e) {
-    console.error('submit-task error:', e);
+    if (process.env.NODE_ENV === 'development') console.error('submit-task error:', e);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

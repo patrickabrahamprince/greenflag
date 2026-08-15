@@ -26,7 +26,7 @@ export function ReportModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-50 p-6">
+    <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-[100] p-6">
       {/* Native keyboard resize is disabled app-wide (capacitor.config.ts),
           so the viewport never shrinks when the keyboard opens -- without
           this, the textarea + Submit button on a smaller device could end

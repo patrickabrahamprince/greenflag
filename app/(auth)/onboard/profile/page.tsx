@@ -53,11 +53,11 @@ export default function ProfileAgePage() {
         <ArrowLeft size={24} />
       </button>
 
-      <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
+      <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full animate-fade-in">
         <StepDots current={1} total={6} />
 
-        <h1 className="font-display text-3xl text-ink mb-3">How old are you?</h1>
-        <p className="text-ink/50 text-sm leading-relaxed mb-8">
+        <h1 className="font-display text-3xl text-ink mb-3 animate-slide-up">How old are you?</h1>
+        <p className="text-ink/80 text-sm leading-relaxed mb-8 font-medium animate-slide-up" style={{ animationDelay: '50ms' }}>
           Identity is verified separately — this just needs to be accurate.
         </p>
 
@@ -72,9 +72,10 @@ export default function ProfileAgePage() {
           placeholder="Your age"
           autoFocus
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-age' : undefined}
-          className={`input w-full text-lg ${error ? 'border-red-500' : ''}`}
+          className={`input w-full text-lg animate-slide-up transition-all ${error ? 'border-red-500' : ''}`}
+          style={{ animationDelay: '100ms' }}
         />
-        {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
+        {error && <p className="text-red-500 text-xs mt-2 animate-slide-up" style={{ animationDelay: '100ms' }}>{error}</p>}
       </div>
 
       <button

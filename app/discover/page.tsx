@@ -28,6 +28,8 @@ import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow'
 import { DayExplanationModal } from '@/components/shared/DayExplanationModal'
 import { useOnboarding } from '@/lib/hooks/useOnboarding'
 import { BlockReportModal } from '@/components/discover/BlockReportModal'
+import { ProfileCard } from '@/components/discovery/ProfileCard'
+import { ProfilesList } from '@/components/discovery/ProfilesList'
 
 const PROFILES_CACHE_KEY = 'discover:profiles'
 const HAS_MORE_CACHE_KEY = 'discover:hasMore'
@@ -313,8 +315,17 @@ export default function DiscoverPage() {
   }, [matchMoment, router])
 
   if (checkingAccess) {
+    // Plain flat black -- NOT bg-base/screen-gradient, which are actually
+    // identical to each other (both apply the same wine-glow radial via
+    // globals.css) and would look no different here. This screen
+    // immediately follows the onboarding transition overlay (flat
+    // bg-black/40 blur) for a woman without an active Standard, who
+    // bounces straight through to /standard/builder a beat later. The
+    // glow's warm color reads as a visible shift between those two
+    // back-to-back loading moments; true flat black keeps it one
+    // continuous dark screen instead of two different-looking ones.
     return (
-      <div className="min-h-dvh flex items-center justify-center screen-gradient">
+      <div className="min-h-dvh flex items-center justify-center bg-black">
         <LoadingLogo />
       </div>
     )

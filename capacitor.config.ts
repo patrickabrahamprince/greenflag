@@ -12,6 +12,18 @@ import { KeyboardResize } from '@capacitor/keyboard';
 //   CAPACITOR_SERVER_URL=http://localhost:3000 npx cap sync ios
 // (physical devices need the Mac's LAN IP, not localhost, since they
 // don't share the host's network stack the way the Simulator does).
+//
+// REVERTED: briefly pointed this at /login directly to skip the extra
+// middleware round trip '/' costs on cold launch (see git history), but
+// that broke native OAuth -- Google/Apple sign-in started escaping to
+// the system browser instead of completing in-app. Capacitor's own
+// native-bridge/navigation-interception logic evidently keys off
+// server.url more strictly than just "same origin" when it carries a
+// path, and a broken login flow is a far worse problem than a slow cold
+// start. Back to the bare origin; the '/' round-trip cost should be
+// solved server-side (e.g. middleware treating '/' as an instant
+// redirect without the Supabase call) rather than by changing what
+// Capacitor loads on launch.
 const serverUrl = process.env.CAPACITOR_SERVER_URL || 'https://greenflag-dusky.vercel.app';
 
 const config: CapacitorConfig = {
@@ -70,14 +82,12 @@ const config: CapacitorConfig = {
     Keyboard: {
       resize: KeyboardResize.None,
     },
-    // Without this plugin, iOS dismisses the launch screen the instant
-    // the app finishes its native init step -- often well under a
-    // second, before there's been any real chance to register the brand
-    // moment. launchAutoHide + launchShowDuration keeps it on screen for
-    // a fixed, deliberate beat instead.
+    // No deliberate hold -- dismiss as soon as the native init step
+    // finishes instead of forcing a fixed branded delay before login
+    // (Google/Apple buttons) becomes visible.
     SplashScreen: {
-      launchShowDuration: 1800,
       launchAutoHide: true,
+      launchShowDuration: 0,
       backgroundColor: '#0B0614',
     },
   },

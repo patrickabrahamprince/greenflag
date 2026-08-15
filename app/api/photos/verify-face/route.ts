@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 
   const apiKey = process.env.GOOGLE_CLOUD_VISION_API_KEY;
   if (!apiKey) {
-    console.error('GOOGLE_CLOUD_VISION_API_KEY is not set -- face verification is not enforced.');
+    if (process.env.NODE_ENV === 'development') console.error('GOOGLE_CLOUD_VISION_API_KEY is not set -- face verification is not enforced.');
     return NextResponse.json({ verified: false, reason: 'unverifiable' });
   }
 
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     });
 
     if (!res.ok) {
-      console.error('Vision API request failed:', res.status, await res.text().catch(() => ''));
+      if (process.env.NODE_ENV === 'development') console.error('Vision API request failed:', res.status, await res.text().catch(() => ''));
       return NextResponse.json({ verified: false, reason: 'unverifiable' });
     }
 
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ verified: hasFace, reason: hasFace ? 'has-face' : 'no-face-found' });
   } catch (err) {
-    console.error('Vision API call errored:', err);
+    if (process.env.NODE_ENV === 'development') console.error('Vision API call errored:', err);
     return NextResponse.json({ verified: false, reason: 'unverifiable' });
   }
 }

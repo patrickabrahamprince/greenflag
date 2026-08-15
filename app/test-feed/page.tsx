@@ -10,6 +10,8 @@ import { redirect } from 'next/navigation'
 import { SignOutButton } from './sign-out-button'
 
 export default async function TestFeedPage() {
+  if (process.env.NODE_ENV !== 'development') redirect('/discover')
+
   const supabase = await createServerSupabaseClient()
 
   const { data: { user } } = await supabase.auth.getUser()

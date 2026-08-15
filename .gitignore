@@ -16,3 +16,26 @@ tsconfig.tsbuildinfo
 dist/
 .expo/
 ios/App/fastlane/app_store_connect_api_key.json
+
+# iOS/Android build artifacts
+ios/build/
+ios/App/build/
+ios/App/DerivedData/
+ios/**/SourcePackages/
+*.pack
+*.idx
+ios/Pods/
+android/build/
+android/.gradle/
+
+# Node modules
+node_modules/
+
+# Environment files
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+*.swp
+*.swo

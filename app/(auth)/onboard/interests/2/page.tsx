@@ -41,7 +41,7 @@ export default function InterestsStepTwoPage() {
       nextLoading={loading}
       nextLabel="Next"
     >
-      <CategorizedInterestPicker title="What Defines You" description="Choose as many as you like"
+      <CategorizedInterestPicker title="What Defines You" description={`Choose as many as you like — 2 of ${TOTAL_STEPS}`}
         categories={INTEREST_CATEGORIES_STEPS[1]} selected={interestsHave} onToggle={(val) => toggle('have', val)}
         dataTestIdPrefix={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'interest-have' : undefined} />
     </InterestsStepScreen>

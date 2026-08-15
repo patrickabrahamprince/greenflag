@@ -67,7 +67,7 @@ export async function POST(
 
     return NextResponse.json({ success: true });
   } catch (e) {
-    console.error('nudge-retry error:', e);
+    if (process.env.NODE_ENV === 'development') console.error('nudge-retry error:', e);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

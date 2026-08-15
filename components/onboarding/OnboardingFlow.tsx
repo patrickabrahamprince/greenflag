@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ChevronRight, X, Heart, Coins, Zap, Users } from 'lucide-react';
+
+const SWIPE_THRESHOLD_PX = 50;
 
 interface OnboardingStep {
   id: string;
@@ -23,64 +25,64 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
       'Take your time to get to know each person',
     ],
     icon: <Heart className="w-12 h-12" />,
-    color: 'text-red-500',
+    color: 'text-gold',
   },
   {
     id: 'days',
-    title: 'How Day 1, 2, and 3 Works',
-    description: 'Three stages of genuine connection',
+    title: '3 Days, 3 Intentions',
+    description: 'How a Standard actually works',
     details: [
-      'Day 1: Initial Match — You both matched each other. See their profile and decide if you want to message.',
-      'Day 2: First Exchange — Exchange 1-2 questions to learn about each other\'s values and personality.',
-      'Day 3: Real Connection — Share something more personal (photo, voice note, or deeper question). This is where real chemistry happens.',
+      'She sets a Standard: one thought, one image, one voice — for each of 3 days.',
+      'He completes all three intentions for a day before she sees anything. No half-effort.',
+      'She reviews and decides each day. Reject at any point and the connection ends.',
+      'Complete all three days with her approval, and the conversation unlocks.',
     ],
     icon: <Zap className="w-12 h-12" />,
-    color: 'text-yellow-500',
+    color: 'text-gold',
   },
   {
     id: 'coins',
     title: 'Understanding Coins',
-    description: 'How to unlock premium features',
+    description: 'How to unlock conversations',
     details: [
-      'Coins are used to unlock special features like seeing more profiles or sending gifts.',
-      'Free coins: You earn 10 free coins every week just for using the app.',
-      'Premium features: Send gifts, unlock hidden photos, or use power features.',
-      'Your coin balance is always visible in the top-right corner.',
+      'Coins unlock profiles, photos, and conversations — 500 coins unlocks one profile.',
+      'Coins are purchased directly in the app through the App Store.',
+      'Your coin balance is always visible in the top-left corner.',
     ],
     icon: <Coins className="w-12 h-12" />,
-    color: 'text-amber-500',
+    color: 'text-gold',
   },
   {
     id: 'standards',
-    title: 'Set Your Standards',
-    description: 'Define what matters to you',
+    title: 'Set Your Standard',
+    description: 'What she defines, he earns',
     details: [
-      'Your standards are the foundation of every match you get.',
-      'Answer questions about what you\'re looking for — values, lifestyle, interests.',
-      'The more specific you are, the better your matches.',
-      'You can update your standards anytime from Settings.',
+      'Women define a 3-day Standard — the bar he needs to meet to earn a conversation.',
+      'Men discover curated profiles and complete each day\'s Standard to show real intention.',
+      'The more genuine the effort, the stronger the match.',
     ],
     icon: <Users className="w-12 h-12" />,
-    color: 'text-blue-500',
+    color: 'text-gold',
   },
   {
     id: 'messaging',
     title: 'Smart Messaging Flow',
     description: 'Built to encourage real connection',
     details: [
-      'First message is auto-generated based on your shared interests.',
-      'Each day, new conversation prompts help you go deeper.',
-      'Video calls available after Day 2 to speed up connection.',
+      'A first message can be generated for you based on shared interests.',
+      'New conversation prompts help you go deeper each day.',
       'Block or report any profile at any time.',
     ],
     icon: <Heart className="w-12 h-12" />,
-    color: 'text-pink-500',
+    color: 'text-gold',
   },
 ];
 
 export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
 
   const step = ONBOARDING_STEPS[currentStep];
   const isLast = currentStep === ONBOARDING_STEPS.length - 1;
@@ -104,11 +106,40 @@ export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
     onComplete();
   };
 
+  // Ref-tracked (not state -- reading state back on the same line it's
+  // set gives the previous render's value) and gated on the gesture
+  // being more horizontal than vertical, same pattern proven across
+  // SwipeToDismiss/ProfileImageCarousel/SwipeBackGesture -- without that
+  // guard an ordinary vertical scroll can misfire as a swipe.
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.targetTouches[0].clientX;
+    touchStartY.current = e.targetTouches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const startX = touchStartX.current;
+    const startY = touchStartY.current;
+    const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
+    touchStartX.current = null;
+    touchStartY.current = null;
+    if (startX === null || startY === null) return;
+
+    const dx = startX - endX;
+    const dy = startY - endY;
+    if (Math.abs(dx) <= Math.abs(dy)) return;
+    if (dx > SWIPE_THRESHOLD_PX) handleNext(); // swipe left = next
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-card rounded-2xl shadow-xl max-w-md w-full overflow-hidden">
+    <div className="fixed inset-0 bg-black flex items-center justify-center p-4 z-50">
+      <div
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        className="bg-black rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-white/10"
+      >
         {/* Progress bar */}
-        <div className="h-1 bg-raised">
+        <div className="h-1 bg-white/10">
           <div
             className="h-full bg-gold transition-all duration-300"
             style={{ width: `${((currentStep + 1) / ONBOARDING_STEPS.length) * 100}%` }}
@@ -116,11 +147,11 @@ export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
         </div>
 
         {/* Header */}
-        <div className="px-6 pt-6 pb-4 border-b border-raised flex items-start justify-between">
+        <div className="px-6 pt-6 pb-4 border-b border-white/10 flex items-start justify-between">
           <div className={`${step.color}`}>{step.icon}</div>
           <button
             onClick={handleSkip}
-            className="p-1 hover:bg-raised rounded-lg transition-colors"
+            className="p-1 hover:bg-white/10 rounded-lg transition-colors"
           >
             <X className="w-5 h-5 text-ink/60" />
           </button>
@@ -142,25 +173,20 @@ export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-raised border-t border-raised flex gap-3">
+        <div className="px-6 py-4 bg-black border-t border-white/10 flex gap-3">
           <button
             onClick={handleSkip}
-            className="flex-1 px-4 py-2 text-ink/80 text-sm font-medium rounded-lg hover:bg-raised/80 transition-colors"
+            className="btn-secondary flex-1"
           >
             Skip
           </button>
           <button
             onClick={handleNext}
-            className="flex-1 px-4 py-2 bg-gold hover:bg-gold/90 text-ink text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="btn-primary flex-1 flex items-center justify-center gap-2"
           >
             {isLast ? 'Start Matching' : 'Next'}
             <ChevronRight className="w-4 h-4" />
           </button>
-        </div>
-
-        {/* Step indicator */}
-        <div className="px-6 py-3 bg-raised text-center text-xs text-ink/60">
-          Step {currentStep + 1} of {ONBOARDING_STEPS.length}
         </div>
       </div>
     </div>

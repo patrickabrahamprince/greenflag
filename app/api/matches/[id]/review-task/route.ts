@@ -123,7 +123,7 @@ export async function POST(
       next_day_unlocks_at: gateResult?.next_day_unlocks_at ?? null,
     });
   } catch (e) {
-    console.error('review-task error:', e);
+    if (process.env.NODE_ENV === 'development') console.error('review-task error:', e);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

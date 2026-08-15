@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2, Search } from 'lucide-react';
 
@@ -38,6 +39,7 @@ export default function AdminMatchesPage({
     fetch(`/api/admin/users/${id}/matches`)
       .then((r) => r.json())
       .then(setData)
+      .catch((err) => { if (process.env.NODE_ENV === 'development') console.error('Failed to load matches:', err); })
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -84,7 +86,7 @@ export default function AdminMatchesPage({
             <div className="flex items-center gap-3 mb-3">
               <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center overflow-hidden shrink-0">
                 {match.photos?.[0] ? (
-                  <img src={match.photos[0]} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
+                  <Image src={match.photos[0]} alt="" width={48} height={48} className="w-full h-full object-cover" onError={() => {}} />
                 ) : (
                   <span className="text-lg text-gray-500">{match.name?.[0]}</span>
                 )}

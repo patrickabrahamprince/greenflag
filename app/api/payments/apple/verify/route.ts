@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     try {
       decoded = await verifyTransaction(jwsRepresentation);
     } catch (err) {
-      console.error('Apple transaction verification failed:', err);
+      if (process.env.NODE_ENV === 'development') console.error('Apple transaction verification failed:', err);
       return NextResponse.json({ error: 'Could not verify transaction with Apple' }, { status: 400 });
     }
 
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
     });
 
     if (creditErr || !result) {
-      console.error('credit_coins_idempotent_apple RPC error:', creditErr);
+      if (process.env.NODE_ENV === 'development') console.error('credit_coins_idempotent_apple RPC error:', creditErr);
       return NextResponse.json({ error: 'Failed to credit coins' }, { status: 500 });
     }
 
@@ -95,7 +95,7 @@ export async function POST(req: Request) {
       new_balance: (result as { new_balance: number }).new_balance,
     });
   } catch (error) {
-    console.error('Apple purchase verify error:', error);
+    if (process.env.NODE_ENV === 'development') console.error('Apple purchase verify error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

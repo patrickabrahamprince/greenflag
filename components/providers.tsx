@@ -10,8 +10,8 @@ import { clearCache } from '@/lib/pageCache';
 import { PwaRegistrar } from './pwa-registrar';
 import { KeyboardInsetListener } from './keyboard-inset-listener';
 import { useScreenshotGuard } from '@/lib/hooks/useScreenshotGuard';
-import { AppLockGate } from './security/AppLockGate';
 import { NotificationPermissionPrimer } from './shared/NotificationPermissionPrimer';
+import { SwipeableToast } from './shared/SwipeableToast';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const user = useUserStore((s) => s.user);
@@ -101,7 +101,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <PwaRegistrar />
       <KeyboardInsetListener />
       {children}
-      <AppLockGate />
       <NotificationPermissionPrimer />
       <Toaster
         position="bottom-center"
@@ -138,7 +137,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
           success: { iconTheme: { primary: '#D2042D', secondary: '#0F0A0A' } },
           error: { iconTheme: { primary: '#D2042D', secondary: '#0F0A0A' } },
         }}
-      />
+      >
+        {(t) => <SwipeableToast t={t} />}
+      </Toaster>
     </>
   );
 }

@@ -129,10 +129,7 @@ export default function HowItWorksPage() {
         >
           {loopedPoints.map((point) => (
             <div key={point.loopKey} className="w-full shrink-0 snap-center px-1">
-              <div className="text-left bg-black/15 backdrop-blur-sm border border-gold/20 rounded-3xl p-6 min-h-[340px] flex flex-col justify-center">
-                <div className="flex items-center justify-between mb-5">
-                  <span className="text-[10px] font-semibold tracking-widest text-gold uppercase">{point.step}</span>
-                </div>
+              <div className="text-left bg-base rounded-3xl p-6 min-h-[340px] flex flex-col justify-center">
                 <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-4">
                   {point.icon}
                 </div>

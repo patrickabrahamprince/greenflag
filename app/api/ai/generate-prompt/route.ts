@@ -93,7 +93,7 @@ Return ONLY the conversation starter/question. No explanations, no quotes, no fo
       tokens: completion.usage?.total_tokens,
     });
   } catch (error) {
-    console.error('AI prompt generation error:', error);
+    if (process.env.NODE_ENV === 'development') console.error('AI prompt generation error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

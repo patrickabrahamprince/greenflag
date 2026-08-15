@@ -118,7 +118,7 @@ export function UserManagementTable({ users, onSetAdmin, onBanClick, onApproveCl
                   )}
                   {u.persona === 'woman' && (
                     <button
-                      onClick={() => router.push(`/admin/host-dashboard/${u.id}`)}
+                      onClick={() => router.push(`/admin/users/${u.id}`)}
                       className="btn-ghost text-xs p-1.5 text-blue-600"
                       title="Woman Dashboard"
                     >

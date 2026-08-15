@@ -12,13 +12,14 @@ import { useScreenshotTarget } from '@/lib/hooks/useScreenshotGuard';
 
 export default function ViewProfilePage() {
   const params = useParams();
+  const id = Array.isArray(params.id) ? params.id[0] : (params.id || "");
   const {
     user, profile, match, connection, isOwn, loading, connecting,
     showReport, setShowReport,
     reportReason, setReportReason, reportDetails, setReportDetails,
     submittingReport, showBlockConfirm, setShowBlockConfirm, blocking,
     handleMeet, handleReport, handleBlock, router,
-  } = useProfilePage(params.id);
+  } = useProfilePage(id);
 
   useScreenshotTarget(!isOwn ? profile?.id : undefined, 'profile');
 

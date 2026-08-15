@@ -1,9 +1,34 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Privacy() {
+  const router = useRouter();
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push('/login');
+    }
+  };
+
   return (
-    <div className="min-h-dvh bg-cream px-4 py-12">
+    <div className="min-h-dvh bg-cream px-4 pt-safe-top pb-12">
       <div className="mx-auto max-w-2xl space-y-6 text-ink">
+        <div className="pt-4 pb-2">
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-2 text-sm font-medium text-ink/70 hover:text-ink active:scale-95 transition-all"
+            aria-label="Back"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back</span>
+          </button>
+        </div>
+
         <h1 className="font-display text-3xl text-ink">Privacy Policy</h1>
         <p className="text-sm text-muted">Last updated: August 1, 2026</p>
 
@@ -11,7 +36,7 @@ export default function Privacy() {
           <h2 className="font-display text-xl text-ink">1. Information We Collect</h2>
           <p className="text-sm leading-relaxed">
             When you create an account, we collect the information you provide directly: your name,
-            age, phone number, city, bio, and profile photos. We ask for your Instagram handle so our
+            email address, age, phone number, city, bio, and profile photos. We ask for your Instagram handle so our
             team can manually verify you&apos;re a real person before approving your profile — it is
             never shown to other users and is used only for that review.
           </p>
@@ -102,9 +127,14 @@ export default function Privacy() {
           </p>
         </section>
 
-        <p>
-          <Link href="/" className="text-sm text-gold-dark hover:underline">Back to GreenFlag</Link>
-        </p>
+        <div className="pt-6 border-t border-ink/10 flex gap-4">
+          <button onClick={handleBack} className="text-sm text-gold-dark font-medium hover:underline">
+            ← Back
+          </button>
+          <Link href="/terms" className="text-sm text-gold-dark hover:underline">
+            Terms of Service
+          </Link>
+        </div>
       </div>
     </div>
   );

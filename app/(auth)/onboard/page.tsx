@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Crown, Compass, Loader2 } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store';
@@ -27,10 +28,10 @@ export default function OnboardPage() {
 
   return (
     <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center px-4 bg-base">
-      <OnboardingBackground image="/onboarding/choose-path.jpg" />
+      <OnboardingBackground image="/onboarding/hero.jpg" />
       <div className="-mt-2">
       <div className="text-center mb-10">
-        <img src="/logo.png" alt="GreenFlag" className="w-32 h-32 mx-auto mb-3" />
+        <Image src="/logo.png" alt="GreenFlag" width={128} height={128} className="w-32 h-32 mx-auto mb-3" />
         <p className="text-ink/50 text-sm">Choose Your Path</p>
       </div>
 

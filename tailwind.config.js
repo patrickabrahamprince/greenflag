@@ -110,6 +110,10 @@ module.exports = {
         'glow-crimson-sm': '0 0 20px -8px rgba(210,4,45,0.4)',
         'glow-wine': '0 0 24px -10px rgba(69,5,12,0.7)',
         'flat-dark': '0 4px 14px rgba(0,0,0,0.4)',
+        'depth-sm': '0 2px 8px rgba(210,4,45,0.15)',
+        'depth-md': '0 4px 16px rgba(210,4,45,0.2)',
+        'depth-lg': '0 8px 24px rgba(210,4,45,0.25)',
+        'depth-xl': '0 12px 32px rgba(210,4,45,0.3)',
       },
       animation: {
         // Kept inside the 150-300ms window on purpose -- these fire on
@@ -133,6 +137,21 @@ module.exports = {
         'match-card-right': 'matchCardInRight 620ms cubic-bezier(0.34, 1.56, 0.64, 1) 100ms both',
         'match-glow': 'matchGlowPop 620ms cubic-bezier(0.34, 1.56, 0.64, 1) 280ms both',
         'match-text': 'matchTextUp 300ms ease-out 480ms both',
+        'icon-bounce': 'iconBounce 600ms cubic-bezier(0.34, 1.56, 0.64, 1) infinite',
+        'icon-pulse': 'iconPulse 2s ease-in-out infinite',
+        // Mobbin-inspired animations for onboarding focus
+        'icon-glow-pulse': 'iconGlowPulse 3s ease-in-out infinite',
+        'icon-spin': 'iconSpin 6s linear infinite',
+        'icon-scale-pulse': 'iconScalePulse 2.5s ease-in-out infinite',
+        'float-up': 'floatUp 400ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+        // Mobbin-inspired advanced animations
+        'spin-smooth': 'spinSmooth 3s linear infinite',
+        'float-drift': 'floatDrift 6s ease-in-out infinite',
+        'bounce-gentle': 'bounceGentle 2s ease-in-out infinite',
+        'confetti-pop': 'confettiPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'pulse-ring': 'pulseRing 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'slide-in-left': 'slideInLeft 600ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'slide-in-right': 'slideInRight 600ms cubic-bezier(0.34, 1.56, 0.64, 1)',
       },
       keyframes: {
         sheetUp: {
@@ -183,6 +202,61 @@ module.exports = {
         matchTextUp: {
           '0%': { opacity: '0', transform: 'translateY(12px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        iconBounce: {
+          '0%, 100%': { transform: 'translateY(0) scale(1)' },
+          '50%': { transform: 'translateY(-8px) scale(1.1)' },
+        },
+        iconPulse: {
+          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+          '50%': { opacity: '0.7', transform: 'scale(1.05)' },
+        },
+        iconGlowPulse: {
+          '0%, 100%': { filter: 'drop-shadow(0 0 12px rgba(210,4,45,0.4))' },
+          '50%': { filter: 'drop-shadow(0 0 24px rgba(210,4,45,0.7))' },
+        },
+        iconSpin: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+        iconScalePulse: {
+          '0%, 100%': { transform: 'scale(1)', filter: 'drop-shadow(0 0 8px rgba(210,4,45,0.3))' },
+          '50%': { transform: 'scale(1.08)', filter: 'drop-shadow(0 0 20px rgba(210,4,45,0.6))' },
+        },
+        floatUp: {
+          '0%': { opacity: '0', transform: 'translateY(30px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        spinSmooth: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+        floatDrift: {
+          '0%, 100%': { transform: 'translateY(0px) translateX(0px)' },
+          '25%': { transform: 'translateY(-10px) translateX(5px)' },
+          '50%': { transform: 'translateY(-20px) translateX(0px)' },
+          '75%': { transform: 'translateY(-10px) translateX(-5px)' },
+        },
+        bounceGentle: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-8px)' },
+        },
+        confettiPop: {
+          '0%': { opacity: '1', transform: 'translate(0, 0) scale(1)' },
+          '100%': { opacity: '0', transform: 'translate(var(--tx), var(--ty))) scale(0)' },
+        },
+        pulseRing: {
+          '0%': { boxShadow: '0 0 0 0 rgba(210,4,45,0.7)' },
+          '70%': { boxShadow: '0 0 0 20px rgba(210,4,45,0)' },
+          '100%': { boxShadow: '0 0 0 0 rgba(210,4,45,0)' },
+        },
+        slideInLeft: {
+          '0%': { opacity: '0', transform: 'translateX(-40px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+        slideInRight: {
+          '0%': { opacity: '0', transform: 'translateX(40px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
         },
       },
       maxWidth: {

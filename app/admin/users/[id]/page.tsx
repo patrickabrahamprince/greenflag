@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import type { AdminUser } from '@/components/admin/types';
@@ -172,7 +173,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
           <h3 className="text-sm font-medium text-gray-900 mb-3">Photos</h3>
           <div className="flex gap-2 overflow-x-auto pb-2">
             {user.photos.map((photo, i) => (
-              <img key={i} src={photo} alt="" className="w-20 h-20 rounded-xl object-cover shrink-0" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
+              <Image key={i} src={photo} alt="" width={80} height={80} className="w-20 h-20 rounded-xl object-cover shrink-0" onError={() => {}} />
             ))}
           </div>
         </div>

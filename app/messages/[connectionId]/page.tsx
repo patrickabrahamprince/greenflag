@@ -124,9 +124,9 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
         body: JSON.stringify({ match_id: connectionId, content: text }),
       });
       const data = await res.json();
-      if (data.error) console.error('Send failed:', data.error);
+      if (data.error && process.env.NODE_ENV === 'development') console.error('Send failed:', data.error);
     } catch {
-      console.error('Send failed');
+      if (process.env.NODE_ENV === 'development') console.error('Send failed');
     } finally {
       setSending(false);
     }

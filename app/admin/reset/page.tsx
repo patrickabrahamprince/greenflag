@@ -27,6 +27,7 @@ export default function AdminResetTool() {
     fetch('/api/admin/users?page=0')
       .then((r) => r.json())
       .then((d) => setProfiles(d.users || []))
+      .catch((err) => { if (process.env.NODE_ENV === 'development') console.error('Failed to load users:', err); })
       .finally(() => setLoading(false));
   }, []);
 

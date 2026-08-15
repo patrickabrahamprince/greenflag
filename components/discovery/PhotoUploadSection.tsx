@@ -55,9 +55,11 @@ export function PhotoUploadSection({
                 id={`photo-input-${i}`}
                 type="file"
                 accept="image/*"
-                capture="environment"
                 className="hidden"
-                onChange={onUpload}
+                onChange={(e) => {
+                  onUpload(e);
+                  e.target.value = '';
+                }}
               />
             </div>
           );

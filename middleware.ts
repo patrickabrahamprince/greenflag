@@ -6,7 +6,7 @@ const PUBLIC_PATHS = [
   '/login',
   '/admin/login',
   '/auth/callback', '/auth/error',
-  '/terms', '/privacy', '/support',
+  '/terms', '/privacy', '/support', '/how-it-works',
   '/_next', '/favicon', '/sw.js', '/manifest',
 ];
 
@@ -41,19 +41,10 @@ export async function middleware(req: NextRequest) {
   // This completely bypasses Supabase auth for admin routes
   if (pathname.startsWith('/admin')) {
     const adminSession = req.cookies.get('admin_session')?.value;
-    const allCookies = req.cookies.getAll();
-    console.log('MIDDLEWARE ADMIN CHECK:', {
-      pathname,
-      hasAdminSession: !!adminSession,
-      cookieCount: allCookies.length,
-      adminSessionValue: adminSession ? adminSession.substring(0, 10) + '...' : 'NONE',
-    });
     if (!adminSession) {
-      console.log('MIDDLEWARE: No admin session, redirecting to /admin/login');
       const destination = new URL('/admin/login', req.url);
       return NextResponse.redirect(destination);
     }
-    console.log('MIDDLEWARE: Admin session found, allowing access to admin route');
     // Return the response without any Supabase checks
     return NextResponse.next();
   }
@@ -93,11 +84,7 @@ export async function middleware(req: NextRequest) {
   // This caused "Token has expired" errors before the fix
   const { data: { user } } = await supabase.auth.getUser();
 
-  console.log('MIDDLEWARE PATHNAME:', pathname);
-  console.log('MIDDLEWARE USER:', user?.id ?? 'NO USER');
-
   if (!user) {
-    console.log('MIDDLEWARE: No user, redirecting to /login');
     const destination = new URL('/login', req.url);
     return NextResponse.redirect(destination);
   }
@@ -108,8 +95,6 @@ export async function middleware(req: NextRequest) {
     .select('is_admin, onboarding_completed, approval_status, is_active')
     .eq('id', user.id)
     .single();
-
-  console.log('MIDDLEWARE PROFILE:', profile?.onboarding_completed ? 'onboarded' : 'no profile');
 
   // Pausing (Settings -> "Pause my account") sets is_active false and signs
   // the user out -- this is the "resume" side of that: reaching any

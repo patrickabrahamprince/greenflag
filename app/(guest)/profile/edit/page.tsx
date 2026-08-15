@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Loader2, X, Camera, Clock, ChevronRight, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -35,6 +36,7 @@ export default function EditProfilePage() {
     fetch('/api/profile/edit-request')
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => setPendingRequest(data?.pendingRequest || null))
+      .catch((err) => { if (process.env.NODE_ENV === 'development') console.error('Failed to load pending edit request:', err); })
       .finally(() => setCheckingPending(false));
   }, []);
 
@@ -152,20 +154,20 @@ export default function EditProfilePage() {
                 <div
                   className={
                     photos[i]
-                      ? 'aspect-square rounded-tile bg-well flex items-center justify-center overflow-hidden'
-                      : 'aspect-square rounded-tile bg-transparent border-2 border-dashed border-lavender/40 flex items-center justify-center overflow-hidden'
+                      ? 'aspect-square rounded-tile bg-well flex items-center justify-center overflow-hidden cursor-pointer relative group'
+                      : 'aspect-square rounded-tile bg-transparent border-2 border-dashed border-lavender/40 flex items-center justify-center overflow-hidden cursor-pointer hover:border-gold active:scale-95 transition-all'
                   }
-                  onClick={() => !photos[i] && fileInputRefs.current[i]?.click()}
+                  onClick={() => fileInputRefs.current[i]?.click()}
                 >
                   {photos[i] ? (
                     <>
-                      <img src={photos[i]} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
+                      <Image src={photos[i]} alt="" width={120} height={120} className="w-full h-full object-cover" onError={() => {}} />
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleRemovePhoto(i);
                         }}
-                        className="absolute top-1 right-1 w-6 h-6 bg-[#D2042D] rounded-full flex items-center justify-center"
+                        className="absolute top-1 right-1 w-6 h-6 bg-[#D2042D] rounded-full flex items-center justify-center shadow-md active:scale-90"
                       >
                         <X className="w-3 h-3 text-ink" />
                       </button>
@@ -180,9 +182,11 @@ export default function EditProfilePage() {
                   ref={(el) => { fileInputRefs.current[i] = el; }}
                   type="file"
                   accept="image/*"
-                  capture="environment"
                   className="hidden"
-                  onChange={(e) => handlePhotoSelect(i, e.target.files?.[0] || null)}
+                  onChange={(e) => {
+                    handlePhotoSelect(i, e.target.files?.[0] || null);
+                    e.target.value = '';
+                  }}
                 />
               </div>
             ))}

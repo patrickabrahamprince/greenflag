@@ -84,31 +84,33 @@
 - [ ] Dark mode variants
 
 ### 3. App Information
-- [ ] Version: 1.0.0 ✓
-- [ ] Build number: (ready to increment)
-- [ ] Bundle ID: com.greenflag.app
-- [ ] Team ID: (from developer account)
-- [ ] Signing certificates: Generated
-- [ ] Provisioning profiles: Generated
+- [x] Version: 1.0.0 ✓
+- [x] Build number: 11
+- [x] Bundle ID: com.greenflagapp.app
+- [x] Signing certificates: Generated
+- [x] Provisioning profiles: Generated
 
 ### 4. Privacy & Compliance
-- [ ] Privacy Policy URL
-- [ ] Terms & Conditions URL
-- [ ] Support URL/email
-- [ ] Age rating questionnaire complete
-- [ ] GDPR compliance verified
-- [ ] CCPA compliance verified (if applicable)
+- [x] Privacy Policy URL: https://greenflag-dusky.vercel.app/privacy
+- [x] Terms & Conditions URL: https://greenflag-dusky.vercel.app/terms
+- [x] Support URL: https://greenflag-dusky.vercel.app/support
+- [x] Age rating questionnaire complete (17+)
+- [x] GDPR & CCPA compliance verified
 
-### 5. App Review Info
-- [ ] Demo account credentials prepared
-- [ ] Test accounts:
-  - [ ] Woman account (for Day 1-3 flow)
-  - [ ] Man account (for matching)
-- [ ] IAP explanation provided
-- [ ] Onboarding notes included
+### 5. App Review Information (Guideline 2.1 Response)
+- [x] Demo account credentials:
+  - Account 1 (Female): `reviewer-woman@greenflag.app` / `GreenFlag2026!` (Phone: `+15550001111` OTP: `123456`)
+  - Account 2 (Male): `reviewer-man@greenflag.app` / `GreenFlag2026!` (Phone: `+15550002222` OTP: `123456`)
+  - *Note for reviewer: Tap "Having trouble?" on the login screen to access the email/password form.*
+- [x] StoreKit 2 IAP configured: Consumable coin bundles (`com.greenflagapp.app.coins500`, `coins1000`, `coins1500`, `coins2000`, `coins5000`).
+- [x] Testing Matrix documented: iPhone 15 Pro Max (iOS 18.0), iPhone 14 Pro (iOS 17.5), iPhone 13 (iOS 16.7), iPad Pro 12.9" (iPadOS 17.5).
+- [x] External Services declared: Supabase (DB/Auth), Apple StoreKit 2, APNs, OpenAI, OpenStreetMap Nominatim.
+- [x] Regional consistency confirmed: Global feature parity across all storefronts.
+- [x] Complete response document: [docs/APP_STORE_REVIEW_RESPONSE.md](file:///Users/patrickabraham/Documents/GreenFlag_Backup/GreenFlag/docs/APP_STORE_REVIEW_RESPONSE.md)
+- [x] Physical recording storyboard: [docs/SCREEN_RECORDING_WALKTHROUGH_GUIDE.md](file:///Users/patrickabraham/Documents/GreenFlag_Backup/GreenFlag/docs/SCREEN_RECORDING_WALKTHROUGH_GUIDE.md)
 
 ### 6. Release Notes
-Example: "Welcome to GreenFlag! Set your standards and meet your match. Features include daily intention messaging, verified profiles, smart matching, and a community dedicated to genuine connections."
+"Welcome to GreenFlag! Set your standards and meet your match. Features include daily intention messaging, verified profiles, smart matching, and a community dedicated to genuine connections."
 
 ---
 

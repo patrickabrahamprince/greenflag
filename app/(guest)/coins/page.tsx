@@ -24,14 +24,6 @@ const PACKAGES = [
   { coins: 5000, price: 399, appleProductId: 'com.greenflagapp.app.coins5000', unlocks: { women: 10, pictures: 100, reveals: 50 } },
 ];
 
-// Real-money round-trip check at the smallest possible spend -- confirms
-// the whole pipeline (StoreKit purchase -> /api/payments/apple/verify ->
-// credit_coins_idempotent_apple) with an actual charge, not a sandbox
-// simulation. Visible to every account for now (was admin-only) --
-// remove or re-gate this before App Review / public launch, since a
-// real customer or reviewer will otherwise see it too.
-const TEST_PACKAGE = { coins: 5, price: 9, appleProductId: 'com.greenflagapp.app.coinstest', test: true };
-
 interface Transaction {
   id: number;
   type: string;
@@ -58,7 +50,7 @@ export default function CoinsPage() {
       .then(({ products }) => {
         setAppleProducts(Object.fromEntries(products.map((p) => [p.productId, p])));
       })
-      .catch((err) => console.error('Failed to load Apple products:', err));
+      .catch((err) => { if (process.env.NODE_ENV === 'development') console.error('Failed to load Apple products:', err); });
   }, [isNative]);
 
   const load = async () => {
@@ -136,7 +128,7 @@ export default function CoinsPage() {
         )}
 
         <div className="space-y-3">
-          {[...PACKAGES, TEST_PACKAGE].map((pkg) => (
+          {PACKAGES.map((pkg) => (
             <PackageCard
               key={pkg.appleProductId}
               pkg={pkg}

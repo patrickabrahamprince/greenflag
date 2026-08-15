@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Loader2, Heart, Bell, Check, X } from 'lucide-react';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
@@ -97,7 +98,7 @@ function MatchRow({
       <button onClick={() => { hapticTap(); onClick(); }} className="w-full flex items-center gap-3 p-4">
         <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-well">
           {match.otherPhoto ? (
-            <img src={match.otherPhoto} alt="" className="w-full h-full object-cover" />
+            <Image src={match.otherPhoto} alt="" width={48} height={48} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-ink/30 text-xs">?</div>
           )}
@@ -184,6 +185,7 @@ export default function MyConnectionsPage() {
           setCached(MATCHES_CACHE_KEY, data.matches || []);
         }
       })
+      .catch((err) => { if (process.env.NODE_ENV === 'development') console.error('Failed to load matches:', err); })
       .finally(() => setLoading(false));
   };
 
@@ -279,7 +281,7 @@ export default function MyConnectionsPage() {
                   {discoverPreview.map((p) => (
                     <div key={p.id} className="w-11 h-11 rounded-full border-2 border-base overflow-hidden bg-surface-light">
                       {p.photos?.[0] && (
-                        <img src={p.photos[0]} alt="" className="w-full h-full object-cover" />
+                        <Image src={p.photos[0]} alt="" width={44} height={44} className="w-full h-full object-cover" />
                       )}
                     </div>
                   ))}

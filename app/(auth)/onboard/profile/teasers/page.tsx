@@ -46,8 +46,8 @@ export default function ProfileTeasersPage() {
 
   return (
     <>
-    <div className="w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
-      <OnboardingBackground image="/onboarding/teasers.jpg" />
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
+      <OnboardingBackground image="/onboarding/bio.jpg" />
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => router.push('/onboard/profile/bio')}
@@ -63,18 +63,17 @@ export default function ProfileTeasersPage() {
         </button>
       </div>
 
-      <div className="flex-1 flex flex-col max-w-md mx-auto w-full pb-28">
-        <StepDots current={5} total={6} />
-
-        <h1 className="font-display text-2xl text-ink mb-2">Share a fun fact</h1>
-        <p className="text-ink/50 text-sm leading-relaxed mb-8">
+      <div className="flex-1 flex flex-col max-w-md mx-auto w-full pb-28 px-2 animate-fade-in">
+        <h1 className="font-display text-2xl text-ink mb-3 animate-slide-up">Share a fun fact</h1>
+        <p className="text-ink/80 text-sm leading-relaxed mb-8 font-medium animate-slide-up" style={{ animationDelay: '50ms' }}>
           Optional, but it&apos;s a great way to give matches something to react to.
         </p>
 
         <button
           type="button"
           onClick={() => setPickerOpen(true)}
-          className="w-full flex items-center justify-between bg-raised border border-raised rounded-2xl px-5 py-4 text-left active:scale-[0.98] transition-transform"
+          className="w-full flex items-center justify-between bg-raised border border-raised rounded-2xl px-5 py-4 text-left active:scale-[0.98] transition-all hover:border-gold/40 animate-slide-up"
+          style={{ animationDelay: '100ms' }}
         >
           <span className="text-ink font-medium">{prompt || 'Select a prompt'}</span>
           <Plus size={18} className="text-ink/50" />
@@ -88,7 +87,8 @@ export default function ProfileTeasersPage() {
             maxLength={120}
             rows={3}
             autoFocus
-            className="input resize-none mt-3"
+            className="input resize-none mt-3 animate-slide-up"
+            style={{ animationDelay: '150ms' }}
           />
         )}
       </div>

@@ -7,7 +7,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 export type TypedSupabaseClient = SupabaseClient<Database, 'public', 'public', Database['public'], { PostgrestVersion: '12' }>;
 
 export async function createServerSupabaseClient(): Promise<TypedSupabaseClient> {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   return createServerClient<Database>(
     (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\\n/g, '').trim(),

@@ -88,7 +88,7 @@ Return ONLY the message text. No explanations or quotes.
       tokens: completion.usage?.total_tokens,
     });
   } catch (error) {
-    console.error('AI first message generation error:', error);
+    if (process.env.NODE_ENV === 'development') console.error('AI first message generation error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

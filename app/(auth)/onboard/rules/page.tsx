@@ -16,6 +16,7 @@ import { createClient } from '@/lib/supabase/client';
 import { hapticTap } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
+import { useOnboardingStore, useUserStore } from '@/lib/store';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 
@@ -126,9 +127,25 @@ export default function RulesPage() {
     return () => clearInterval(id);
   }, []);
 
-  const handleContinue = () => {
+  const persona = useOnboardingStore((s) => s.persona);
+  const currentUser = useUserStore((s) => s.user);
+
+  const handleContinue = async () => {
     hapticTap();
-    goTo('/discover', '/onboarding/hero.jpg');
+    let isWoman = persona === 'woman' || currentUser?.persona === 'woman';
+    if (!isWoman) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase.from('profiles').select('persona').eq('id', user.id).single();
+        if (profile?.persona === 'woman') isWoman = true;
+      }
+    }
+
+    if (isWoman) {
+      goTo('/standard/builder', '/onboarding/how-it-works.jpg');
+    } else {
+      goTo('/discover', '/onboarding/hero.jpg');
+    }
   };
 
   if (loading) {

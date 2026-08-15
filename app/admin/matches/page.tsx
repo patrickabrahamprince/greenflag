@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Loader2, Eye, Ban, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -32,7 +33,7 @@ function PersonCell({ person }: { person: { name: string; photo: string | null }
     <div className="flex items-center gap-2">
       <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden shrink-0">
         {person.photo ? (
-          <img src={person.photo} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
+          <Image src={person.photo} alt="" width={32} height={32} className="w-full h-full object-cover" onError={() => {}} />
         ) : (
           <span className="text-xs text-gray-500">{person.name?.[0]}</span>
         )}

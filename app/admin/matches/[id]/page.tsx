@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2, Ban, Check, X, Mic, Type as TypeIcon, Camera } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -63,7 +64,7 @@ function SubmissionCard({ sub, onModerate, moderatingId }: { sub: SubmissionDeta
       ) : sub.media_type === 'text' ? (
         <p className="text-gray-900 text-sm italic mb-3">{sub.content ? `"${sub.content}"` : 'No text submitted'}</p>
       ) : sub.media_url ? (
-        <img src={sub.media_url} alt="" className="w-full max-h-64 object-cover rounded-xl mb-3" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
+        <Image src={sub.media_url} alt="" width={500} height={256} className="w-full max-h-64 object-cover rounded-xl mb-3" onError={() => {}} />
       ) : (
         <p className="text-gray-400 text-sm mb-3">Not submitted yet</p>
       )}

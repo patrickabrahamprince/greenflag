@@ -1,4 +1,5 @@
 import { OnboardingTransitionOverlay } from '@/components/onboarding/OnboardingTransitionOverlay';
+import { OnboardingHydrationGate } from '@/components/onboarding/OnboardingHydrationGate';
 
 export default function AuthLayout({
   children,
@@ -15,7 +16,7 @@ export default function AuthLayout({
   // that's supposed to bleed edge-to-edge.
   return (
     <>
-      {children}
+      <OnboardingHydrationGate>{children}</OnboardingHydrationGate>
       <OnboardingTransitionOverlay />
     </>
   );

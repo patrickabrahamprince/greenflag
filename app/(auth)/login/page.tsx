@@ -1,14 +1,15 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Capacitor } from '@capacitor/core'
 import { createClient } from '@/lib/supabase/client'
 import { signInWithGoogleNative, signInWithAppleNative } from '@/lib/native/socialLogin'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Sparkles, Camera } from 'lucide-react'
 import { GoogleButton } from '@/components/ui/GoogleButton'
 import { AppleButton } from '@/components/ui/AppleButton'
 import { TermsGateModal } from '@/components/auth/TermsGateModal'
-import { hasAcceptedTerms, markTermsAccepted } from '@/lib/termsGate'
+import { hasAcceptedTerms, markTermsAccepted, getTermsAcceptedAt } from '@/lib/termsGate'
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground'
 
 export default function LoginPage() {
@@ -26,6 +27,35 @@ export default function LoginPage() {
   // reveal instead of showing by default.
   const [showEmailLogin, setShowEmailLogin] = useState(false)
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null)
+
+  // Restore typed email and password if user returns from Terms / Privacy / etc.
+  useEffect(() => {
+    try {
+      const savedEmail = sessionStorage.getItem('gf_login_email')
+      const savedPassword = sessionStorage.getItem('gf_login_password')
+      const savedShow = sessionStorage.getItem('gf_login_show_form')
+      if (savedEmail) setEmail(savedEmail)
+      if (savedPassword) setPassword(savedPassword)
+      if (savedShow === 'true' || savedEmail || savedPassword) {
+        setShowEmailLogin(true)
+      }
+    } catch {}
+  }, [])
+
+  const handleEmailInput = (val: string) => {
+    setEmail(val)
+    try { sessionStorage.setItem('gf_login_email', val) } catch {}
+  }
+
+  const handlePasswordInput = (val: string) => {
+    setPassword(val)
+    try { sessionStorage.setItem('gf_login_password', val) } catch {}
+  }
+
+  const handleShowEmailToggle = () => {
+    setShowEmailLogin(true)
+    try { sessionStorage.setItem('gf_login_show_form', 'true') } catch {}
+  }
 
   // First sign-in/sign-up action on this device shows a one-time terms
   // gate before running the real handler; every action afterward runs
@@ -55,6 +85,23 @@ export default function LoginPage() {
       router.push('/')
       return
     }
+    // Best-effort, non-blocking -- this column may not exist yet in every
+    // environment (see the accompanying migration), and a write failure
+    // here must never be the reason login itself fails. The localStorage
+    // timestamp survives regardless; this just also ties it to the
+    // account once we have a user id to attach it to.
+    const acceptedAt = getTermsAcceptedAt()
+    if (acceptedAt) {
+      supabase.from('profiles').update({ terms_accepted_at: acceptedAt }).eq('id', user.id).then(({ error }) => {
+        if (error && process.env.NODE_ENV === 'development') console.error('Failed to persist terms_accepted_at:', error.message)
+      })
+    }
+    try {
+      sessionStorage.removeItem('gf_login_email')
+      sessionStorage.removeItem('gf_login_password')
+      sessionStorage.removeItem('gf_login_show_form')
+    } catch {}
+
     const { data: profile } = await supabase.from('profiles').select('is_admin, onboarding_completed').eq('id', user.id).single()
     if (profile?.is_admin) window.location.href = '/admin'
     else if (!profile?.onboarding_completed) window.location.href = '/onboard'
@@ -149,16 +196,19 @@ export default function LoginPage() {
           of the whole block being centered as one unit -- that's what
           actually pins Google/Apple to the bottom of the screen instead
           of just "lower than before". */}
-      <div className="flex-1 flex items-center justify-center">
-        <img
+      <div className="flex-1 flex flex-col items-center justify-center gap-8 animate-fade-in">
+        <Image
           src="/logo.png"
           alt="GreenFlag"
+          width={144}
+          height={144}
           className="w-36 h-36 animate-logo-in"
           style={{ filter: 'drop-shadow(0 12px 28px rgba(0,0,0,0.55)) drop-shadow(0 0 40px rgba(210,4,45,0.25))' }}
         />
+
       </div>
 
-      <div className="w-full max-w-sm mx-auto">
+      <div className="w-full max-w-sm mx-auto animate-slide-up">
         {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
 
         <div className="space-y-3">
@@ -168,15 +218,31 @@ export default function LoginPage() {
 
         {!showEmailLogin ? (
           <button
-            onClick={() => setShowEmailLogin(true)}
+            onClick={handleShowEmailToggle}
             className="block mx-auto mt-8 text-xs text-ink/40 hover:text-ink underline underline-offset-4 decoration-ink/20 hover:decoration-ink/40 transition-colors"
           >
             Having trouble?
           </button>
         ) : (
           <form onSubmit={handleLogin} className="space-y-4 mt-8">
-            <input data-testid="email" type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} required className="input w-full" />
-            <input data-testid="password" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required className="input w-full" />
+            <input
+              data-testid="email"
+              type="email"
+              placeholder="Email Address"
+              value={email}
+              onChange={(e) => handleEmailInput(e.target.value)}
+              required
+              className="input w-full"
+            />
+            <input
+              data-testid="password"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => handlePasswordInput(e.target.value)}
+              required
+              className="input w-full"
+            />
             <button data-testid="login-btn" type="submit" disabled={loading} className="btn-primary w-full">
               {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Sign In'}
             </button>

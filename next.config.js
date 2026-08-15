@@ -1,18 +1,4 @@
-const withPWA = require('next-pwa')({
-  dest: 'public',
-  // Registration is done manually (see components/pwa-registrar.tsx)
-  // instead of next-pwa's auto-injected script, specifically so it can be
-  // skipped inside the Capacitor native app. This same URL is loaded both
-  // by real website visitors (who benefit from PWA caching) and by the
-  // native app's WKWebView (which doesn't -- it has its own update path
-  // via App Store builds, and a caching service worker sitting in front
-  // of every fetch was actively working against fast iteration: fixes
-  // deployed to production could keep showing old behavior on-device
-  // until the SW's cache-fallback strategies caught up).
-  register: false,
-  skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development',
-});
+const withPWA = (config) => config;
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

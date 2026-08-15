@@ -49,7 +49,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           credentials: 'include',
         });
       } catch (err) {
-        console.error('Session refresh error:', err);
+        if (process.env.NODE_ENV === 'development') console.error('Session refresh error:', err);
       }
     }, 25 * 60 * 1000); // 25 minutes
 
@@ -95,7 +95,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         credentials: 'include',
       });
     } catch (err) {
-      console.error('Logout error:', err);
+      if (process.env.NODE_ENV === 'development') console.error('Logout error:', err);
     }
     router.push('/admin/login');
   };

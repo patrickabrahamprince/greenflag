@@ -692,7 +692,7 @@ export default function TaskPage() {
                               preload="metadata"
                               src={matchingSub.media_url}
                               className="w-full h-8"
-                              onError={(e) => console.error('Submission audio failed to load:', matchingSub.media_url, e.currentTarget.error)}
+                              onError={(e) => { if (process.env.NODE_ENV === 'development') console.error('Submission audio failed to load:', matchingSub.media_url, e.currentTarget.error); }}
                             />
                           </div>
                         )

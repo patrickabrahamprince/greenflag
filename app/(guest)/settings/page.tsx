@@ -156,10 +156,12 @@ export default function SettingsPage() {
                 <p className="text-ink font-medium">{formatPhoneDisplay(phone)}</p>
               </div>
             </div>
-            <span className="text-xs text-green-500 bg-green-500/10 px-2 py-1 rounded-full flex items-center gap-1">
-              <CheckCircle className="w-3 h-3" />
-              Verified
-            </span>
+            {phone && (
+              <span className="text-xs text-green-500 bg-green-500/10 px-2 py-1 rounded-full flex items-center gap-1">
+                <CheckCircle className="w-3 h-3" />
+                Verified
+              </span>
+            )}
           </div>
         </div>
 

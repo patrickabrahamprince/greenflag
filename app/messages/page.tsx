@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Heart, Loader2, MessageCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -41,11 +42,13 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
         className="w-12 h-12 rounded-full flex-shrink-0 overflow-hidden flex items-center justify-center bg-well"
       >
         {partnerPhoto ? (
-          <img
+          <Image
             src={partnerPhoto}
             alt=""
+            width={48}
+            height={48}
             className="w-full h-full object-cover"
-            onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }}
+            onError={() => {}}
           />
         ) : (
           <span className="font-display text-sm text-ink/50">
@@ -149,7 +152,7 @@ function InProgressMatches({ userId, supabase }: { userId: string; supabase: Ret
           <div key={p.matchUserId} className="flex items-center gap-3 p-3 bg-card rounded-card">
             <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-well">
               {p.photo ? (
-                <img src={p.photo} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = '/placeholder-avatar.svg'; }} />
+                <Image src={p.photo} alt="" width={40} height={40} className="w-full h-full object-cover" onError={() => {}} />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-ink/30 text-xs">?</div>
               )}

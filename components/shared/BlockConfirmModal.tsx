@@ -14,7 +14,7 @@ export function BlockConfirmModal({ open, name, blocking, onClose, onConfirm }: 
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-50 p-6">
+    <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-[100] p-6">
       <div className="dialog-card max-w-md w-full">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-display text-lg text-ink">Block {name}?</h3>

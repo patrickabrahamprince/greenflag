@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Bell, Loader2, Pin, ArrowLeftRight } from 'lucide-react';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
@@ -371,7 +372,7 @@ export default function NotificationsPage() {
                     {party && (
                       <div className="relative w-9 h-9 rounded-full overflow-hidden shrink-0 bg-well">
                         {party.photo ? (
-                          <img src={party.photo} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                          <Image src={party.photo} alt="" width={36} height={36} className="w-full h-full object-cover" onError={() => {}} />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-ink/30 text-xs">{party.name[0]}</div>
                         )}

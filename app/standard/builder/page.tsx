@@ -8,7 +8,6 @@ import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 import { hapticSuccess } from '@/lib/haptics';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
-import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 
 type IntentionType = 'text' | 'photo' | 'voice';
 
@@ -71,17 +70,17 @@ const DAY_LOCK_DIALOGS: Record<number, { title: string; desc: string; button: st
 const WHY_THIS_WORKS = [
   {
     icon: ShieldCheck,
-    title: 'No Shortcuts',
+    title: 'NO SHORTCUTS',
     desc: 'He must complete all three intentions for a day before you see anything — no half-effort.',
   },
   {
     icon: Eye,
-    title: 'You Decide, Daily',
+    title: 'YOU DECIDE, DAILY',
     desc: 'You review and decide each day. Reject at any point and the connection ends — no second attempt on the same day.',
   },
   {
     icon: MessageCircle,
-    title: 'Earned, Not Given',
+    title: 'EARNED, NOT GIVEN',
     desc: "Complete all three days with your approval, and the conversation unlocks — he's earned it by then.",
   },
 ];
@@ -91,23 +90,23 @@ function StandardIntroScreen({ onContinue }: { onContinue: () => void }) {
     <div className="relative isolate w-full animate-fade-in min-h-dvh screen-gradient px-6 pt-safe-top pb-32 max-w-app mx-auto flex flex-col">
       <OnboardingBackground image="/onboarding/how-it-works.jpg" light />
       <div className="flex-1">
-        <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-6 shadow-[0_0_30px_-8px_rgba(210,4,45,0.6)]">
-          <Sparkles className="w-7 h-7 text-gold" />
+        <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-6 shadow-[0_0_30px_-8px_rgba(210,4,45,0.6)] animate-icon-scale-pulse">
+          <Sparkles className="w-7 h-7 text-gold animate-icon-spin" />
         </div>
-        <h1 className="font-display text-3xl text-ink mb-3">Set Your Standard</h1>
-        <p className="text-ink/60 text-sm leading-relaxed mb-8">
-          Each day: one thought, one image, one voice. He completes all three before you review.
+        <h1 className="font-display text-3xl font-bold text-ink mb-3">Set Your Standard</h1>
+        <p className="text-ink/80 text-sm leading-relaxed mb-8 font-semibold">
+          <span className="font-bold">Each day: one thought, one image, one voice. He completes all three before you review.</span>
         </p>
 
         <div className="space-y-4">
           {WHY_THIS_WORKS.map((point) => (
-            <div key={point.title} className="flex gap-4 bg-well border border-raised rounded-2xl p-4">
-              <div className="w-11 h-11 shrink-0 rounded-full bg-gold/10 flex items-center justify-center">
+            <div key={point.title} className="flex gap-4 bg-well border border-raised rounded-2xl p-4 shadow-depth-md hover:shadow-depth-lg transition-shadow">
+              <div className="w-11 h-11 shrink-0 rounded-full bg-gold/10 flex items-center justify-center shadow-depth-sm">
                 <point.icon className="w-5 h-5 text-gold" />
               </div>
               <div>
-                <h3 className="text-ink font-semibold text-sm mb-1">{point.title}</h3>
-                <p className="text-ink/50 text-xs leading-relaxed font-light">{point.desc}</p>
+                <h3 className="text-ink font-bold text-sm mb-1 tracking-wide">{point.title}</h3>
+                <p className="text-ink/70 text-xs leading-relaxed font-medium">{point.desc}</p>
               </div>
             </div>
           ))}
@@ -216,7 +215,7 @@ export default function StandardBuilderPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser, router]);
 
-  const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(load);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const updateTaskPrompt = (dayNumber: number, taskNumber: number, value: string) => {
     setSlots((prev) =>
@@ -324,23 +323,23 @@ export default function StandardBuilderPage() {
     return <StandardIntroScreen onContinue={() => setShowIntro(false)} />;
   }
 
+  // Swipe-to-change-day was removed entirely -- two rounds of fixing it
+  // (ref-based tracking to kill a stale-closure bug, then a dominant-
+  // direction |dx|>|dy| guard to stop ordinary scrolling from being
+  // misread as a swipe) each caught real cases but the gesture kept
+  // finding new ways to misfire on a screen that's fundamentally a form
+  // with a lot of vertical scrolling. The explicit Continue button and
+  // back arrow already cover day navigation without any ambiguity, so
+  // removing the swipe interpretation is the actual permanent fix rather
+  // than a third round of threshold-tuning.
   const progressPercent = ((step + 1) / slots.length) * 100;
 
   return (
     <div
       ref={scrollRef}
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
       className="relative isolate h-[calc(100dvh-5rem)] overflow-y-auto overscroll-none screen-gradient px-6 pt-safe-top pb-24 max-w-app mx-auto"
     >
       <OnboardingBackground image="/onboarding/quiz-romantic.jpg" light />
-      <div
-        className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
-        style={{ height: pullDistance }}
-      >
-        <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
-      </div>
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => setStep((s) => Math.max(0, s - 1))}
@@ -348,7 +347,6 @@ export default function StandardBuilderPage() {
         >
           <ArrowLeft size={22} />
         </button>
-        <span className="text-xs font-semibold text-ink/50">Day {step + 1} of {slots.length}</span>
         <div className="w-6" />
       </div>
 
@@ -356,8 +354,8 @@ export default function StandardBuilderPage() {
         <div className="bg-gold h-full transition-all duration-300 ease-out" style={{ width: `${progressPercent}%` }} />
       </div>
 
-      <h1 className="font-display text-2xl text-ink mb-2">Set Your Standard</h1>
-      <p className="text-sm text-ink/50 mb-6">
+      <h1 className="font-display text-2xl text-ink mb-2 animate-fade-in">Set Your Standard</h1>
+      <p className="text-sm text-ink/80 mb-6 font-medium animate-slide-up">
         Each day: one thought, one image, one voice. He completes all three before you review.
       </p>
 
@@ -366,10 +364,10 @@ export default function StandardBuilderPage() {
           behind the exact area holding the day's questions. A blurred,
           translucent surface keeps the questions just as readable while
           letting the photo stay visible through it. */}
-      <div className="bg-black/20 backdrop-blur-sm border border-raised rounded-card p-5 mb-8">
-        <span className="text-xs text-ink/40 uppercase tracking-wide">Day {currentSlot.dayNumber}</span>
+      <div className="bg-black/30 backdrop-blur-md border border-gold/20 rounded-card p-7 mb-8 shadow-depth-lg">
+        <span className="text-xs text-ink/70 uppercase tracking-wide font-semibold">Day {currentSlot.dayNumber}</span>
 
-        <div className="space-y-5">
+        <div className="space-y-5 mt-4">
           {currentSlot.tasks.map((task) => {
             const meta = TASK_META.find((m) => m.taskNumber === task.taskNumber)!;
             const Icon = meta.icon;
@@ -445,18 +443,18 @@ export default function StandardBuilderPage() {
       <div style={{ height: 'var(--kb-inset, 0px)' }} />
 
       {showDayDialog && DAY_LOCK_DIALOGS[step] && (
-        <div className="fixed inset-0 backdrop-blur-xl bg-black/80 flex items-center justify-center z-50 p-6">
-          <div className="dialog-card max-w-sm w-full text-center">
+        <div className="fixed inset-0 backdrop-blur-xl bg-black/80 flex items-center justify-center z-50 p-6 animate-fade-in">
+          <div className="dialog-card max-w-sm w-full text-center shadow-depth-xl animate-slide-up">
             <div className="w-14 h-14 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-4">
               <Lock className="w-6 h-6 text-gold" />
             </div>
-            <h3 className="text-xl font-display text-ink mb-2">{DAY_LOCK_DIALOGS[step].title}</h3>
-            <p className="text-base text-ink/60 leading-relaxed mb-6 font-sans">
+            <h3 className="text-xl font-display text-ink mb-2 animate-slide-up" style={{ animationDelay: '100ms' }}>{DAY_LOCK_DIALOGS[step].title}</h3>
+            <p className="text-base text-ink/60 leading-relaxed mb-6 font-sans animate-slide-up" style={{ animationDelay: '150ms' }}>
               {DAY_LOCK_DIALOGS[step].desc}
             </p>
             <button
               onClick={() => { setShowDayDialog(false); setStep((s) => s + 1); }}
-              className="btn-primary w-full py-3"
+              className="btn-primary w-full py-3 active:scale-[0.98] transition-transform"
             >
               {DAY_LOCK_DIALOGS[step].button}
             </button>

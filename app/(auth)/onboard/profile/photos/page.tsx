@@ -18,14 +18,6 @@ const REQUIRED_PHOTOS = 3;
 const UPLOAD_TIMEOUT_MS = 15000;
 const MAX_UPLOAD_ATTEMPTS = 3;
 
-// Detect duplicate images by comparing file size and first bytes
-async function getFileSignature(file: File): Promise<string> {
-  const chunk = await file.slice(0, 8192).arrayBuffer();
-  const hashBuffer = await crypto.subtle.digest('SHA-256', chunk);
-  return Array.from(new Uint8Array(hashBuffer))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-}
 
 // A stalled storage upload (flaky mobile connection, a dropped socket)
 // used to just sit there -- no timeout meant the only outcomes were "it
@@ -96,35 +88,25 @@ export default function ProfilePhotosPage() {
   }, []);
 
   const handlePhotoAdd = async (files: File[]) => {
-    const remaining = 3 - photos.length;
+    const remaining = REQUIRED_PHOTOS - photos.length;
+    if (remaining <= 0) return;
     const rawFiles = files.slice(0, remaining);
+    if (rawFiles.length === 0) return;
     setCompressing(true);
+    setError('');
     try {
-      // Compress first, then check duplicates (hash must match post-compression)
-      const newFiles = await Promise.all(rawFiles.map(compressImage));
-
-      // Check for duplicates AFTER compression
-      const newSignatures: string[] = [];
-      for (const file of newFiles) {
-        const sig = await getFileSignature(file);
-        newSignatures.push(sig);
-      }
-
-      // Detect if any of the new files match existing files
-      const existingSignatures = await Promise.all(photoFiles.map(getFileSignature));
-      const hasDuplicates = newSignatures.some(sig => existingSignatures.includes(sig));
-      const hasDuplicatesWithinNew = new Set(newSignatures).size !== newSignatures.length;
-
-      if (hasDuplicates || hasDuplicatesWithinNew) {
-        setError('You\'ve already added this photo. Please choose a different one.');
-        setCompressing(false);
-        return;
-      }
+      // Compress each file with fallback if compression fails
+      const newFiles = await Promise.all(
+        rawFiles.map((f) => compressImage(f).catch(() => f))
+      );
 
       const previews = newFiles.map((f) => URL.createObjectURL(f));
       setPhotos((prev) => [...prev, ...previews]);
       setPhotoFiles((prev) => [...prev, ...newFiles]);
       setError('');
+    } catch (err) {
+      if (process.env.NODE_ENV === 'development') console.error('Error adding photo:', err);
+      setError('Could not process photo. Please try another image.');
     } finally {
       setCompressing(false);
     }
@@ -229,7 +211,7 @@ export default function ProfilePhotosPage() {
         return;
       }
     } catch (err) {
-      console.error('Face verification request failed:', err);
+      if (process.env.NODE_ENV === 'development') console.error('Face verification request failed:', err);
     }
 
     const { error: upsertError } = await supabase.from('profiles').upsert({
@@ -248,9 +230,6 @@ export default function ProfilePhotosPage() {
     setLoading(false);
     if (upsertError) { toast.error(upsertError.message); return; }
 
-    // Clear onboarding store after successful signup
-    clearOnboarding();
-
     // Best-effort, separate from the upsert above on purpose: the
     // teaser_prompt/teaser_answer columns ship in a migration that may not
     // be applied to every environment yet, and a missing-column error here
@@ -261,7 +240,7 @@ export default function ProfilePhotosPage() {
         teaser_prompt: teaserPrompt,
         teaser_answer: teaserAnswer.trim() || null,
       }).eq('id', user.id).then(({ error: teaserError }) => {
-        if (teaserError) console.error('Teaser save failed:', teaserError.message);
+        if (teaserError && process.env.NODE_ENV === 'development') console.error('Teaser save failed:', teaserError.message);
       });
     }
 
@@ -288,13 +267,12 @@ export default function ProfilePhotosPage() {
         <ArrowLeft size={24} />
       </button>
 
-      <div className="max-w-md mx-auto w-full flex-1 flex flex-col pb-safe-bottom">
-        <StepDots current={6} total={6} />
-
-        <h1 className="font-display text-2xl text-ink mb-2">Show your best self</h1>
-        <p className="text-ink text-sm leading-relaxed mb-8">
+      <div className="max-w-md mx-auto w-full flex-1 flex flex-col pb-safe-bottom px-2 animate-fade-in">
+        <h1 className="font-display text-2xl font-bold text-ink mb-3 animate-slide-up">Show your best self</h1>
+        <p className="text-ink/80 text-sm leading-relaxed font-semibold mb-6 animate-slide-up" style={{ animationDelay: '50ms' }}>
           Real, recent photos — this is your first impression.
         </p>
+
 
         <PhotoUploadSlots
           photos={photos}

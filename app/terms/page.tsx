@@ -1,9 +1,34 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Terms() {
+  const router = useRouter();
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push('/login');
+    }
+  };
+
   return (
-    <div className="min-h-dvh bg-cream px-4 py-12">
+    <div className="min-h-dvh bg-cream px-4 pt-safe-top pb-12">
       <div className="mx-auto max-w-2xl space-y-6 text-ink">
+        <div className="pt-4 pb-2">
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-2 text-sm font-medium text-ink/70 hover:text-ink active:scale-95 transition-all"
+            aria-label="Back"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back</span>
+          </button>
+        </div>
+
         <h1 className="font-display text-3xl text-ink">Terms of Service</h1>
         <p className="text-sm text-muted">Last updated: August 1, 2026</p>
 
@@ -87,9 +112,14 @@ export default function Terms() {
           </p>
         </section>
 
-        <p>
-          <Link href="/" className="text-sm text-gold-dark hover:underline">Back to GreenFlag</Link>
-        </p>
+        <div className="pt-6 border-t border-ink/10 flex gap-4">
+          <button onClick={handleBack} className="text-sm text-gold-dark font-medium hover:underline">
+            ← Back
+          </button>
+          <Link href="/privacy" className="text-sm text-gold-dark hover:underline">
+            Privacy Policy
+          </Link>
+        </div>
       </div>
     </div>
   );

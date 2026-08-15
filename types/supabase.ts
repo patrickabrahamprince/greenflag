@@ -1015,6 +1015,7 @@ export type Database = {
           tastes: string | null
           teaser_answer: string | null
           teaser_prompt: string | null
+          terms_accepted_at: string | null
           verification_status: string | null
           why_me_prompts: string[] | null
           smoking: string | null
@@ -1082,6 +1083,7 @@ export type Database = {
           tastes?: string | null
           teaser_answer?: string | null
           teaser_prompt?: string | null
+          terms_accepted_at?: string | null
           verification_status?: string | null
           why_me_prompts?: string[] | null
           smoking?: string | null
@@ -1149,6 +1151,7 @@ export type Database = {
           tastes?: string | null
           teaser_answer?: string | null
           teaser_prompt?: string | null
+          terms_accepted_at?: string | null
           verification_status?: string | null
           why_me_prompts?: string[] | null
           smoking?: string | null

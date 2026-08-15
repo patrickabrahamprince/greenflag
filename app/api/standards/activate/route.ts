@@ -99,7 +99,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, standardId });
   } catch (e) {
-    console.error('standards/activate error:', e);
+    if (process.env.NODE_ENV === 'development') console.error('standards/activate error:', e);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

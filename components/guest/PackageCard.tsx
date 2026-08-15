@@ -1,4 +1,7 @@
-import { Crown, Zap, ShoppingCart } from 'lucide-react';
+'use client';
+
+import { useState } from 'react';
+import { Crown, Zap, ShoppingCart, ChevronDown } from 'lucide-react';
 import { LoadingButton } from '@/components/shared/LoadingButton';
 
 interface Package {
@@ -19,6 +22,8 @@ interface PackageCardProps {
 }
 
 export function PackageCard({ pkg, displayPrice, purchasing, isPurchasingThis, onBuy }: PackageCardProps) {
+  const [expanded, setExpanded] = useState(false);
+
   return (
     <div className="card relative overflow-hidden">
       {pkg.popular && (
@@ -36,18 +41,27 @@ export function PackageCard({ pkg, displayPrice, purchasing, isPurchasingThis, o
           Test
         </span>
       )}
-      <div className="flex items-center justify-between mb-4">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center justify-between mb-4 hover:opacity-80 transition-opacity active:scale-[0.98]"
+      >
         <div className="flex items-center gap-3">
           {pkg.coins >= 150 ? (
             <Crown className="w-6 h-6 text-gold" />
           ) : (
             <Zap className="w-6 h-6 text-gold" />
           )}
-          <div>
+          <div className="text-left">
             <p className="text-ink font-display font-bold text-lg">{pkg.coins} Coins</p>
             <p className="text-xs text-muted">{displayPrice || `₹${pkg.price}`}</p>
           </div>
         </div>
+        {pkg.unlocks && (
+          <ChevronDown className={`w-4 h-4 text-ink/50 transition-transform ${expanded ? 'rotate-180' : ''}`} />
+        )}
+      </button>
+
+      <div className="flex items-center justify-end mb-4">
         <LoadingButton
           loading={isPurchasingThis}
           loadingLabel="Processing"
@@ -60,8 +74,8 @@ export function PackageCard({ pkg, displayPrice, purchasing, isPurchasingThis, o
         </LoadingButton>
       </div>
 
-      {pkg.unlocks && (
-        <div className="border-t border-raised pt-3 mt-3 space-y-1.5 text-xs text-ink/70">
+      {expanded && pkg.unlocks && (
+        <div className="border-t border-raised pt-3 mt-3 space-y-1.5 text-xs text-ink/70 animate-slide-down">
           {pkg.unlocks.women && (
             <div className="flex justify-between">
               <span>Unlock Women Profiles:</span>

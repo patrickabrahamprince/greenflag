@@ -54,18 +54,18 @@ export default function ProfileInstagramPage() {
         <ArrowLeft size={24} />
       </button>
 
-      <div className="flex-1 flex flex-col max-w-md mx-auto w-full">
+      <div className="flex-1 flex flex-col max-w-md mx-auto w-full animate-fade-in">
         <StepDots current={3} total={6} />
 
-        <h1 className="font-display text-2xl text-ink mb-2">What&apos;s your Instagram?</h1>
-        <p className="text-ink/50 text-sm leading-relaxed mb-8">
+        <h1 className="font-display text-2xl text-ink mb-2 animate-slide-up">What&apos;s your Instagram?</h1>
+        <p className="text-ink/80 text-sm leading-relaxed mb-8 font-medium animate-slide-up" style={{ animationDelay: '50ms' }}>
           Used only to verify you — never shown on your profile.
         </p>
 
-        <label className="block text-sm font-medium text-ink mb-1.5">
+        <label className="block text-sm font-medium text-ink mb-1.5 animate-slide-up" style={{ animationDelay: '100ms' }}>
           Instagram Handle <span className="text-red-400">*</span>
         </label>
-        <div className="relative">
+        <div className="relative animate-slide-up" style={{ animationDelay: '150ms' }}>
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink/60">@</span>
           <input
             type="text"
@@ -73,13 +73,13 @@ export default function ProfileInstagramPage() {
             onChange={(e) => { setHandle(e.target.value.replace(/^@/, '')); setError(''); }}
             placeholder="username"
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-instagram' : undefined}
-            className={`input pl-8 ${error ? 'border-red-500' : ''}`}
+            className={`input pl-8 transition-all ${error ? 'border-red-500' : ''}`}
           />
         </div>
-        <p className="text-ink/50 text-xs mt-1">
+        <p className="text-ink/50 text-xs mt-1 animate-slide-up" style={{ animationDelay: '150ms' }}>
           This will be sent with your profile for identity approval.
         </p>
-        {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+        {error && <p className="text-red-500 text-xs mt-1 animate-slide-up" style={{ animationDelay: '150ms' }}>{error}</p>}
       </div>
 
       <button
