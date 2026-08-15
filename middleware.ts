@@ -37,46 +37,54 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Admin routes: validate admin session token against database
+  // Admin routes: validate admin access via Supabase auth + is_admin flag
   if (pathname.startsWith('/admin')) {
-    const sessionToken = req.cookies.get('admin_session')?.value;
-    if (!sessionToken) {
-      const destination = new URL('/admin/login', req.url);
-      return NextResponse.redirect(destination);
-    }
+    let supabaseResponse = NextResponse.next({ request: req });
 
-    // Validate session token server-side
-    const supabaseResponse = NextResponse.next({ request: req });
     const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\\n/g, '').trim();
-    const key = process.env.SUPABASE_SERVICE_ROLE_KEY || (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').replace(/\\n/g, '').trim();
+    const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').replace(/\\n/g, '').trim();
 
-    if (!url || !key) {
-      console.error('MIDDLEWARE: Missing Supabase config for admin session validation');
+    if (!url || !anonKey) {
       const destination = new URL('/admin/login', req.url);
       return NextResponse.redirect(destination);
     }
 
-    try {
-      const { createServerClient } = await import('@supabase/ssr');
-      const supabase = createServerClient(url, key, {
-        cookies: {
-          getAll() { return req.cookies.getAll(); },
-          setAll() {},
+    // Create Supabase client to validate auth
+    const supabase = createServerClient(url, anonKey, {
+      cookies: {
+        getAll() {
+          return req.cookies.getAll();
         },
-      });
+        setAll(cookiesToSet: { name: string; value: string; options?: CookieOptions }[]) {
+          cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
+          supabaseResponse = NextResponse.next({ request: req });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, {
+              httpOnly: true,
+              sameSite: 'lax' as const,
+              secure: process.env.NODE_ENV === 'production',
+              ...options,
+            })
+          );
+        },
+      },
+    });
 
-      const { data: session } = await supabase
-        .from('admin_sessions')
-        .select('user_id, expires_at')
-        .eq('session_token', sessionToken)
-        .single();
+    const { data: { user } } = await supabase.auth.getUser();
 
-      if (!session || new Date(session.expires_at) < new Date()) {
-        req.cookies.delete('admin_session');
-        const destination = new URL('/admin/login', req.url);
-        return NextResponse.redirect(destination);
-      }
-    } catch {
+    if (!user) {
+      const destination = new URL('/admin/login', req.url);
+      return NextResponse.redirect(destination);
+    }
+
+    // Check if user is admin
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single();
+
+    if (!profile?.is_admin) {
       const destination = new URL('/admin/login', req.url);
       return NextResponse.redirect(destination);
     }
