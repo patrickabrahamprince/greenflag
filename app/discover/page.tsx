@@ -163,7 +163,7 @@ export default function DiscoverPage() {
             .then(res => (res.ok ? res.json() : null))
             .then(sData => {
               if (cancelled) return
-              if (sData && sData.redirect !== '/my-connections') {
+              if (sData && !sData.isActive && (!sData.intentions || sData.intentions.length < 9)) {
                 router.replace('/standard/builder')
                 return // navigating away -- leave checkingAccess true
               }

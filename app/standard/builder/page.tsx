@@ -164,11 +164,6 @@ export default function StandardBuilderPage() {
       }
       const data = await res.json();
 
-      if (data.redirect) {
-        router.replace(data.redirect);
-        return;
-      }
-
       if (Array.isArray(data.intentions) && data.intentions.length > 0) {
         type SavedIntention = { day_number: number; task_number: number; type: IntentionType; prompt: string };
         const byDayTask = new Map(

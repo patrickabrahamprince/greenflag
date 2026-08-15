@@ -7,36 +7,30 @@ export async function GET() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { data: activeStandard } = await supabase
-      .from('standards')
-      .select('id')
-      .eq('woman_id', user.id)
-      .eq('is_active', true)
-      .limit(1)
-      .maybeSingle();
-
-    if (activeStandard) {
-      return NextResponse.json({ redirect: '/my-connections' });
-    }
-
     const { data: standard } = await supabase
       .from('standards')
-      .select('id')
+      .select('id, is_active')
       .eq('woman_id', user.id)
+      .order('is_active', { ascending: false })
       .limit(1)
       .maybeSingle();
 
     if (!standard) {
-      return NextResponse.json({ standardId: null, intentions: [] });
+      return NextResponse.json({ standardId: null, isActive: false, intentions: [] });
     }
 
     const { data: intentions } = await supabase
       .from('intentions')
       .select('day_number, task_number, type, prompt')
       .eq('standard_id', standard.id)
-      .order('day_number');
+      .order('day_number')
+      .order('task_number');
 
-    return NextResponse.json({ standardId: standard.id, intentions: intentions || [] });
+    return NextResponse.json({
+      standardId: standard.id,
+      isActive: !!standard.is_active,
+      intentions: intentions || [],
+    });
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
