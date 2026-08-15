@@ -106,8 +106,8 @@ export async function middleware(req: NextRequest) {
   }
 
   // Auth method agnostic: works for phone OTP, email, magic link, OAuth
-  // Only checks profiles.onboarding_completed for redirect to /onboard
-  if (!profile?.onboarding_completed && !pathname.startsWith('/onboard')) {
+  // Only checks profiles.onboarding_completed for redirect to /onboard (or /standard/builder for women)
+  if (!profile?.onboarding_completed && !pathname.startsWith('/onboard') && pathname !== '/standard/builder') {
     const destination = new URL('/onboard', req.url);
     return NextResponse.redirect(destination);
   }
