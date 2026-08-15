@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { randomBytes } from 'crypto';
 
 export async function POST(req: NextRequest) {
   try {
@@ -33,9 +34,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Not authorized as admin' }, { status: 403 });
     }
 
-    // Set admin session cookie (required by middleware)
+    // Generate opaque session token (not readable/forgeable)
+    const sessionToken = randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
+    // Store session server-side
+    await (supabase as any).from('admin_sessions').insert({
+      session_token: sessionToken,
+      user_id: user.id,
+      expires_at: expiresAt.toISOString(),
+    });
+
+    // Set session cookie (opaque, cannot be forged)
     const response = NextResponse.json({ success: true, user });
-    response.cookies.set('admin_session', JSON.stringify({ userId: user.id, email: user.email }), {
+    response.cookies.set('admin_session', sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

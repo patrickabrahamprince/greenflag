@@ -37,16 +37,51 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Admin routes: check for admin session cookie (separate from main app auth)
-  // This completely bypasses Supabase auth for admin routes
+  // Admin routes: validate admin session token against database
   if (pathname.startsWith('/admin')) {
-    const adminSession = req.cookies.get('admin_session')?.value;
-    if (!adminSession) {
+    const sessionToken = req.cookies.get('admin_session')?.value;
+    if (!sessionToken) {
       const destination = new URL('/admin/login', req.url);
       return NextResponse.redirect(destination);
     }
-    // Return the response without any Supabase checks
-    return NextResponse.next();
+
+    // Validate session token server-side
+    const supabaseResponse = NextResponse.next({ request: req });
+    const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\\n/g, '').trim();
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY || (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').replace(/\\n/g, '').trim();
+
+    if (!url || !key) {
+      console.error('MIDDLEWARE: Missing Supabase config for admin session validation');
+      const destination = new URL('/admin/login', req.url);
+      return NextResponse.redirect(destination);
+    }
+
+    try {
+      const { createServerClient } = await import('@supabase/ssr');
+      const supabase = createServerClient(url, key, {
+        cookies: {
+          getAll() { return req.cookies.getAll(); },
+          setAll() {},
+        },
+      });
+
+      const { data: session } = await supabase
+        .from('admin_sessions')
+        .select('user_id, expires_at')
+        .eq('session_token', sessionToken)
+        .single();
+
+      if (!session || new Date(session.expires_at) < new Date()) {
+        req.cookies.delete('admin_session');
+        const destination = new URL('/admin/login', req.url);
+        return NextResponse.redirect(destination);
+      }
+    } catch {
+      const destination = new URL('/admin/login', req.url);
+      return NextResponse.redirect(destination);
+    }
+
+    return supabaseResponse;
   }
 
   // --- Everything below only applies to non-admin routes ---
