@@ -504,6 +504,14 @@ export function QueueMatchesDashboard() {
   ).length;
   const flagged = matches.reduce((sum, m) => sum + m.submissionCounts.flagged, 0);
 
+  // Dating app insights
+  const completionRate = activeMatches > 0
+    ? Math.round((matches.filter(m => m.status === 'completed').length / matches.length) * 100)
+    : 0;
+  const avgDayProgress = activeMatches > 0
+    ? Math.round(matches.filter(m => !TERMINAL_STATUSES.includes(m.status)).reduce((sum, m) => sum + m.currentDay, 0) / activeMatches)
+    : 0;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -517,8 +525,8 @@ export function QueueMatchesDashboard() {
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard label="Pending Review" value={pendingReview} icon={Shield} gradient="bg-gradient-to-br from-amber-500 to-orange-500" />
         <StatCard label="Active Matches" value={activeMatches} icon={Users} gradient="bg-gradient-to-br from-blue-600 to-indigo-600" />
-        <StatCard label="Completed Today" value={completedToday} icon={Heart} gradient="bg-gradient-to-br from-emerald-500 to-teal-500" trend="+today" />
-        <StatCard label="Flagged Submissions" value={flagged} icon={Ban} gradient="bg-gradient-to-br from-rose-500 to-pink-600" />
+        <StatCard label="Completion Rate" value={`${completionRate}%`} icon={Heart} gradient="bg-gradient-to-br from-emerald-500 to-teal-500" trend={completedToday > 0 ? `+${completedToday}` : undefined} />
+        <StatCard label="Avg Connection Day" value={`${avgDayProgress}/3`} icon={Clock} gradient="bg-gradient-to-br from-purple-500 to-pink-600" />
       </div>
 
       <FilterBar
@@ -531,6 +539,37 @@ export function QueueMatchesDashboard() {
         onRefresh={() => fetchAll()}
         refreshing={refreshing}
       />
+
+      {/* Dating App Insights */}
+      <div className="grid grid-cols-1 gap-4 rounded-2xl border border-gray-100 bg-gradient-to-br from-gray-50 to-white p-6 md:grid-cols-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Connection Quality</p>
+          <p className="mt-2 text-2xl font-bold text-gray-900">
+            {matches.length > 0 ? matches.filter(m => m.submissionCounts.approved > 0).length : 0}/{matches.length}
+          </p>
+          <p className="text-xs text-gray-500">Pairs with approved submissions</p>
+        </div>
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Task Compliance</p>
+          <p className="mt-2 text-2xl font-bold text-gray-900">
+            {matches.length > 0
+              ? Math.round(
+                  (matches.reduce((sum, m) => sum + m.submissionCounts.approved, 0) /
+                    (matches.length * 3)) *
+                    100
+                )
+              : 0}%
+          </p>
+          <p className="text-xs text-gray-500">Overall submission rate (vs 3 tasks/pair)</p>
+        </div>
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Safety Score</p>
+          <p className="mt-2 text-2xl font-bold text-emerald-600">
+            {flagged === 0 ? '✓ Safe' : `⚠ ${flagged} flagged`}
+          </p>
+          <p className="text-xs text-gray-500">Flagged submissions in active matches</p>
+        </div>
+      </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-24">
