@@ -152,7 +152,7 @@ export default function StandardBuilderPage() {
   const [saving, setSaving] = useState(false);
   const [step, setStep] = useState(0); // 0 = Day 1, 1 = Day 2, 2 = Day 3
   const [showDayDialog, setShowDayDialog] = useState(false);
-  const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(false);
 
   const load = async () => {
     try {

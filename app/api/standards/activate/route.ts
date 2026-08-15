@@ -97,6 +97,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Failed to activate standard' }, { status: 500 });
     }
 
+    await supabase
+      .from('profiles')
+      .update({ onboarding_completed: true })
+      .eq('id', user.id);
+
     return NextResponse.json({ success: true, standardId });
   } catch (e) {
     if (process.env.NODE_ENV === 'development') console.error('standards/activate error:', e);
