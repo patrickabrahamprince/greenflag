@@ -33,7 +33,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Not authorized as admin' }, { status: 403 });
     }
 
-    return NextResponse.json({ success: true, user });
+    // Set admin session cookie (required by middleware)
+    const response = NextResponse.json({ success: true, user });
+    response.cookies.set('admin_session', JSON.stringify({ userId: user.id, email: user.email }), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+
+    return response;
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Login failed';
     return NextResponse.json({ error: message }, { status: 500 });
