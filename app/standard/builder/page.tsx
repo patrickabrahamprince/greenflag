@@ -141,7 +141,11 @@ function StandardIntroScreen({ onContinue }: { onContinue: () => void }) {
 function defaultSlots(): DaySlot[] {
   return [1, 2, 3].map((dayNumber) => ({
     dayNumber,
-    tasks: TASK_META.map((m) => ({ taskNumber: m.taskNumber, type: m.type, prompt: '' })),
+    tasks: TASK_META.map((m) => ({
+      taskNumber: m.taskNumber,
+      type: m.type,
+      prompt: PRESETS[`${dayNumber}-${m.taskNumber}`]?.[0] || '',
+    })),
   }));
 }
 
@@ -272,7 +276,16 @@ export default function StandardBuilderPage() {
 
       hapticSuccess();
       toast.success('Your Standard is live!');
-      router.push('/discover');
+
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: freshProf } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+          if (freshProf) setGlobalUser(freshProf as any);
+        }
+      } catch {}
+
+      window.location.href = '/discover';
     } catch {
       toast.error('Network error. Please try again.');
     } finally {
