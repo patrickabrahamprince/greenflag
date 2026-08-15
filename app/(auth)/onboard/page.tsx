@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Crown, Compass, Loader2 } from 'lucide-react';
-import { useOnboardingStore } from '@/lib/store';
+import { useOnboardingStore, useUserStore } from '@/lib/store';
+import { createClient } from '@/lib/supabase/client';
 import { hapticTap } from '@/lib/haptics';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
@@ -12,17 +13,29 @@ import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 export default function OnboardPage() {
   const router = useRouter();
   const { goTo } = useOnboardingNav();
+  const supabase = createClient();
   const setPersona = useOnboardingStore((s) => s.setPersona);
+  const setGlobalUser = useUserStore((s) => s.setUser);
   const [selecting, setSelecting] = useState<'woman' | 'man' | null>(null);
 
   useEffect(() => {
     router.prefetch('/onboard/how-it-works');
   }, [router]);
 
-  const handleSelect = (persona: 'woman' | 'man') => {
+  const handleSelect = async (selectedPersona: 'woman' | 'man') => {
     hapticTap();
-    setSelecting(persona);
-    setPersona(persona);
+    setSelecting(selectedPersona);
+    setPersona(selectedPersona);
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from('profiles').update({ persona: selectedPersona }).eq('id', user.id);
+        const { data: freshProfile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+        if (freshProfile) setGlobalUser(freshProfile as any);
+      }
+    } catch {}
+
     goTo('/onboard/how-it-works', '/onboarding/how-it-works.jpg');
   };
 

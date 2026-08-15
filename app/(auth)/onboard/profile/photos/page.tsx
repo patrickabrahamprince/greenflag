@@ -214,6 +214,9 @@ export default function ProfilePhotosPage() {
       if (process.env.NODE_ENV === 'development') console.error('Face verification request failed:', err);
     }
 
+    const { data: existingProf } = await supabase.from('profiles').select('persona').eq('id', user.id).single();
+    const resolvedPersona = persona || existingProf?.persona || 'woman';
+
     const { error: upsertError } = await supabase.from('profiles').upsert({
       id: user.id,
       name,
@@ -221,11 +224,11 @@ export default function ProfilePhotosPage() {
       city: city.trim(),
       bio: bio.trim() || null,
       photos: uploadedUrls,
-      persona: persona || 'man',
+      persona: resolvedPersona,
       instagram_url: instagramHandle ? `https://instagram.com/${instagramHandle.replace(/^@/, '')}` : null,
       lat,
       lng,
-      onboarding_completed: true,
+      onboarding_completed: resolvedPersona === 'man',
     });
     setLoading(false);
     if (upsertError) { toast.error(upsertError.message); return; }

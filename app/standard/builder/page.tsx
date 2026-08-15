@@ -6,6 +6,7 @@ import { Loader2, Mic, Camera, Type as TypeIcon, ArrowLeft, Lock, ShieldCheck, E
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
+import { createClient } from '@/lib/supabase/client';
 import { hapticSuccess } from '@/lib/haptics';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 
@@ -203,17 +204,30 @@ export default function StandardBuilderPage() {
     }
   };
 
+  const supabase = createClient();
+  const setGlobalUser = useUserStore((s) => s.setUser);
+
   useEffect(() => {
-    if (!currentUser) return;
+    const init = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.replace('/login');
+        return;
+      }
+      const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+      if (profile) {
+        setGlobalUser(profile as any);
+        if (profile.persona === 'man') {
+          router.replace('/discover');
+          return;
+        }
+      }
+      await load();
+    };
 
-    if (currentUser.persona !== 'woman') {
-      router.replace('/discover');
-      return;
-    }
-
-    load();
+    init();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser, router]);
+  }, [router]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
