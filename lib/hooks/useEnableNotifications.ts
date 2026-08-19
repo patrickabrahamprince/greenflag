@@ -81,7 +81,12 @@ export function useEnableNotifications() {
   const enable = useCallback(async (): Promise<boolean> => {
     setLoading(true);
     try {
-      if (Capacitor.isNativePlatform()) {
+      // iOS only -- requestNativePermission ultimately calls
+      // PushNotifications.register(), which throws an uncaught native
+      // exception on Android since no Firebase project is configured
+      // there yet (see useNativePush.ts). Android falls through to the
+      // web VAPID path below instead, same as a browser.
+      if (Capacitor.getPlatform() === 'ios') {
         await requestNativePermission();
         const status = await PushNotifications.checkPermissions();
         if (status.receive === 'granted') {
