@@ -13,3 +13,15 @@ export const APPLE_COIN_PRODUCTS: Record<string, number> = {
 };
 
 export const APPLE_COIN_PRODUCT_IDS = Object.keys(APPLE_COIN_PRODUCTS);
+
+// Single source of truth for coins -> INR price, shared between the coins
+// page (app/(guest)/coins/page.tsx) and the Razorpay create-order route.
+// Must stay in sync with the PACKAGES array in that page -- a mismatch
+// here means Razorpay charges one amount while the page displays another.
+export const COIN_PACKAGE_PRICES: Record<number, number> = {
+  500: 49,
+  1000: 89,
+  1500: 129,
+  2000: 169,
+  5000: 399,
+};
