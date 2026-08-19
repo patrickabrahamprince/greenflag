@@ -11,12 +11,14 @@ import { useScreenshotContextStore } from '@/lib/store';
 // (bridged by ScreenshotDetectorPlugin) only fires after the OS has
 // already captured it. This reacts: warns whoever took it, and -- if the
 // current screen has registered a target via useScreenshotTarget below --
-// notifies the other person. No-ops entirely on web; there is no
-// equivalent browser API at all, so this only does anything inside the
-// native iOS (Capacitor) build.
+// notifies the other person. No-ops entirely on web and Android; there is
+// no equivalent browser API at all, and no Android implementation of
+// ScreenshotDetectorPlugin exists (Capacitor.isNativePlatform() is true on
+// both iOS and Android, so this checks the platform specifically), so this
+// only does anything inside the native iOS build.
 export function useScreenshotGuard() {
   useEffect(() => {
-    if (!Capacitor.isNativePlatform()) return;
+    if (Capacitor.getPlatform() !== 'ios') return;
 
     let removeListener: (() => void) | null = null;
     let cancelled = false;

@@ -39,17 +39,27 @@ async function sha256Hex(value: string): Promise<string> {
 // then hashes it itself to find a match.
 async function ensureInitialized() {
   if (initialized) return;
+  // Android's initialize() validates apple.redirectUrl and rejects the
+  // whole call (breaking Google init too, since it's one shared call) if
+  // it's empty -- Android has no native Sign in with Apple, so it expects
+  // a real web-redirect URL there. Since signInWithAppleNative already
+  // refuses to run on anything but iOS, the plugin is simply never told
+  // about Apple outside of iOS.
   await SocialLogin.initialize({
     google: {
       iOSClientId: GOOGLE_IOS_CLIENT_ID,
       webClientId: GOOGLE_WEB_CLIENT_ID,
       mode: 'online',
     },
-    apple: {
-      // Native Sign in with Apple never leaves the app to redirect
-      // anywhere -- '' is what the plugin's own docs specify for iOS.
-      redirectUrl: '',
-    },
+    ...(Capacitor.getPlatform() === 'ios'
+      ? {
+          apple: {
+            // Native Sign in with Apple never leaves the app to redirect
+            // anywhere -- '' is what the plugin's own docs specify for iOS.
+            redirectUrl: '',
+          },
+        }
+      : {}),
   });
   initialized = true;
 }
