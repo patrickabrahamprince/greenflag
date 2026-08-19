@@ -103,6 +103,18 @@ export default function LoginPage() {
     } catch {}
 
     const { data: profile } = await supabase.from('profiles').select('is_admin, onboarding_completed').eq('id', user.id).single()
+
+    // Android only: the client Supabase calls above already see the new
+    // session (it's held in memory), but the session cookie itself is
+    // written into Android's WebView CookieManager asynchronously. A hard
+    // navigation fired immediately can reach middleware.ts before that
+    // write lands, so middleware sees no cookie, treats the request as
+    // signed out, and bounces it back to a login page -- looks like the
+    // sign-in silently failed. iOS's WKWebView doesn't have this lag.
+    if (Capacitor.getPlatform() === 'android') {
+      await new Promise((resolve) => setTimeout(resolve, 300))
+    }
+
     if (profile?.is_admin) window.location.href = '/admin'
     else if (!profile?.onboarding_completed) window.location.href = '/onboard'
     else window.location.href = '/discover'
