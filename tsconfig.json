@@ -40,6 +40,8 @@
     "supabase",
     "playwright.config.ts",
     "tests/**/*",
-    "scripts/**/*"
+    "scripts/**/*",
+    "**/*.test.ts",
+    "**/*.test.tsx"
   ]
 }
