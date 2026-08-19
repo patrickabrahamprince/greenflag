@@ -37,16 +37,59 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Admin routes: check for admin session cookie (separate from main app auth)
-  // This completely bypasses Supabase auth for admin routes
+  // Admin routes: validate admin access via Supabase auth + is_admin flag
   if (pathname.startsWith('/admin')) {
-    const adminSession = req.cookies.get('admin_session')?.value;
-    if (!adminSession) {
+    let supabaseResponse = NextResponse.next({ request: req });
+
+    const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\\n/g, '').trim();
+    const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').replace(/\\n/g, '').trim();
+
+    if (!url || !anonKey) {
       const destination = new URL('/admin/login', req.url);
       return NextResponse.redirect(destination);
     }
-    // Return the response without any Supabase checks
-    return NextResponse.next();
+
+    // Create Supabase client to validate auth
+    const supabase = createServerClient(url, anonKey, {
+      cookies: {
+        getAll() {
+          return req.cookies.getAll();
+        },
+        setAll(cookiesToSet: { name: string; value: string; options?: CookieOptions }[]) {
+          cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
+          supabaseResponse = NextResponse.next({ request: req });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, {
+              httpOnly: true,
+              sameSite: 'lax' as const,
+              secure: process.env.NODE_ENV === 'production',
+              ...options,
+            })
+          );
+        },
+      },
+    });
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      const destination = new URL('/admin/login', req.url);
+      return NextResponse.redirect(destination);
+    }
+
+    // Check if user is admin
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single();
+
+    if (!profile?.is_admin) {
+      const destination = new URL('/admin/login', req.url);
+      return NextResponse.redirect(destination);
+    }
+
+    return supabaseResponse;
   }
 
   // --- Everything below only applies to non-admin routes ---
