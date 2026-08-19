@@ -40,7 +40,11 @@ export function useNativePush(userId: string | null | undefined) {
   const [needsPrimer, setNeedsPrimer] = useState(false);
 
   useEffect(() => {
-    if (!userId || !Capacitor.isNativePlatform()) return;
+    // iOS only -- see the comment above. Android has no Firebase project
+    // configured yet, so PushNotifications.register() would throw an
+    // uncaught IllegalStateException ("Default FirebaseApp is not
+    // initialized") on the native side and crash the whole app.
+    if (!userId || Capacitor.getPlatform() !== 'ios') return;
 
     let cancelled = false;
 
