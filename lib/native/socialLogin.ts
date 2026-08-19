@@ -79,9 +79,15 @@ export async function signInWithGoogleNative(): Promise<void> {
   // Supabase's hash comparison fails with "nonces mismatched" on every
   // sign-in after the first on a given device. Forcing the prompt makes
   // it always run a real interactive sign-in bound to this nonce.
+  // No explicit scopes: both platforms' plugin code already defaults to
+  // exactly ["email", "profile", "openid"] when this is omitted. Passing
+  // it explicitly is what triggered Android's "You CANNOT use scopes
+  // without modifying the main activity" rejection -- its GoogleProvider
+  // requires MainActivity to opt in to a marker interface for *any*
+  // caller-supplied scopes array, even one identical to its own defaults.
   const { result } = await SocialLogin.login({
     provider: 'google',
-    options: { nonce: hashedNonce, scopes: ['email', 'profile'], forcePrompt: true },
+    options: { nonce: hashedNonce, forcePrompt: true },
   });
 
   if (result.responseType !== 'online' || !result.idToken) {
