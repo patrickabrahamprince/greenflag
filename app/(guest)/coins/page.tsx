@@ -9,6 +9,7 @@ import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { useCoinStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
 import { useAppleIAP } from '@/lib/hooks/useAppleIAP';
+import { useRazorpayIAP } from '@/lib/hooks/useRazorpayIAP';
 import { InAppPurchase, type IAPProduct } from '@/lib/native/inAppPurchase';
 import { APPLE_COIN_PRODUCT_IDS } from '@/lib/iap-products';
 import { CoinBalance } from '@/components/guest/CoinBalance';
@@ -41,6 +42,7 @@ export default function CoinsPage() {
   const supabase = createClient();
 
   const { isNative, purchase: handleApplePurchase, purchasingProductId } = useAppleIAP();
+  const { isAndroid, purchase: handleRazorpayPurchase, purchasingCoins } = useRazorpayIAP();
 
   // Real StoreKit pricing -- fetched once so the card shows what Apple
   // will actually charge instead of the guessed INR figure in PACKAGES.
@@ -121,9 +123,9 @@ export default function CoinsPage() {
 
         <CoinBalance balance={balance} />
 
-        {!isNative && (
+        {!isNative && !isAndroid && (
           <p className="mb-3 text-xs text-muted text-center">
-            Coins can only be purchased in the GreenFlag iOS app.
+            Coins can only be purchased in the GreenFlag app.
           </p>
         )}
 
@@ -133,10 +135,12 @@ export default function CoinsPage() {
               key={pkg.appleProductId}
               pkg={pkg}
               displayPrice={appleProducts[pkg.appleProductId]?.displayPrice}
-              purchasing={!isNative || purchasingProductId !== null}
-              isPurchasingThis={purchasingProductId === pkg.appleProductId}
+              purchasing={isAndroid ? purchasingCoins !== null : (!isNative || purchasingProductId !== null)}
+              isPurchasingThis={isAndroid ? purchasingCoins === pkg.coins : purchasingProductId === pkg.appleProductId}
               onBuy={async () => {
-                const newBalance = await handleApplePurchase(pkg.appleProductId);
+                const newBalance = isAndroid
+                  ? await handleRazorpayPurchase(pkg.coins)
+                  : await handleApplePurchase(pkg.appleProductId);
                 // undefined means cancelled/pending/failed -- only a real
                 // credited purchase gets the celebration.
                 if (newBalance !== undefined) {
