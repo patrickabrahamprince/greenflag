@@ -28,7 +28,7 @@ Only the payment-collection UI changes. Today, the client loads `checkout.razorp
 - `MainActivity.java` itself implements `PaymentResultWithDataListener` (this is Razorpay's own documented/sample-demonstrated pattern — the calling Activity implements the listener directly; the SDK delivers `onPaymentSuccess`/`onPaymentError` callbacks to it without requiring an `onActivityResult` override) and forwards each callback to the registered plugin instance, which resolves/rejects the pending Capacitor call.
 - Gradle dependency: `implementation 'com.razorpay:checkout:1.6.+'` added to `android/app/build.gradle`, plus any manifest/proguard entries Razorpay's SDK requires (documented in their Android Standard SDK integration guide).
 - Plugin registered in `MainActivity.java`'s plugin list (the one existing native-integration touchpoint this app already has for e.g. push notifications).
-- `lib/native/razorpayNativeCheckout.ts` — JS wrapper matching the exact interface of the current `lib/native/razorpayCheckout.ts`: `openRazorpayCheckout(options): Promise<RazorpayCheckoutResult | null>`, returning the same `{ razorpay_payment_id, razorpay_order_id, razorpay_signature }` shape (or `null` on user cancellation) so it's a drop-in swap for the existing web wrapper.
+- `lib/native/razorpayNativeCheckout.ts` — JS wrapper matching the exact interface of the current `lib/native/razorpayCheckout.ts`: `openRazorpayNativeCheckout(options): Promise<RazorpayCheckoutResult | null>`, returning the same `{ razorpay_payment_id, razorpay_order_id, razorpay_signature }` shape (or `null` on user cancellation) so it's a drop-in swap for the existing web wrapper.
 
 **Modified:**
 - `lib/hooks/useRazorpayIAP.ts` — swaps its import from the web wrapper to the native wrapper. No other logic changes; `create-order`/`verify` calls, `purchasingCoins` state, and the return contract are all unchanged.
@@ -42,7 +42,7 @@ Only the payment-collection UI changes. Today, the client loads `checkout.razorp
 1. User taps "Buy" on a coin package.
 2. `useRazorpayIAP.purchase(coins)` calls `POST /api/payments/razorpay/create-order` (unchanged) → gets `{ orderId, amountPaise, keyId }`.
 3. Instead of `openRazorpayCheckout` (web), calls the new native wrapper, which calls the `RazorpayCheckoutPlugin.open()` Capacitor plugin method.
-4. Native Kotlin code launches Razorpay's native Checkout activity with that order ID. Razorpay's SDK renders its own bottom-sheet UI, detects installed UPI apps, and handles the payment.
+4. Native Java code launches Razorpay's native Checkout activity with that order ID. Razorpay's SDK renders its own bottom-sheet UI, detects installed UPI apps, and handles the payment.
 5. On success, the native SDK calls back `onPaymentSuccess` with `razorpay_payment_id` and signature data; the plugin resolves the JS promise with the same shape the web flow used to produce.
 6. `useRazorpayIAP` calls `POST /api/payments/razorpay/verify` exactly as before → coins credited, balance updated.
 7. On failure/cancellation, the plugin rejects/resolves `null`; the hook shows a visible error toast (new) instead of silently resetting.

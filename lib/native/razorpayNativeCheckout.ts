@@ -32,5 +32,11 @@ export async function openRazorpayNativeCheckout(options: {
   // (Checkout.PAYMENT_CANCELED), matching the web flow's ondismiss ->
   // resolve(null) behavior.
   if (!result.razorpay_payment_id) return null;
+  // Defense-in-depth: the native plugin already rejects on incomplete
+  // paymentData, but validate at this boundary too before casting to the
+  // full result type and sending it to /api/payments/razorpay/verify.
+  if (!result.razorpay_order_id || !result.razorpay_signature) {
+    throw new Error('Payment returned incomplete data');
+  }
   return result as RazorpayCheckoutResult;
 }

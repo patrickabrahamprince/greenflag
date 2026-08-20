@@ -40,32 +40,43 @@ public class RazorpayCheckoutPlugin extends Plugin {
             return;
         }
 
+        // Set before dispatching to the UI thread so a stray callback that
+        // arrives fast can't race past a null pendingCall check.
         pendingCall = call;
         call.setKeepAlive(true);
 
-        Checkout checkout = new Checkout();
-        checkout.setKeyID(keyId);
+        // Capacitor dispatches @PluginMethod bodies on a background
+        // CapacitorPlugins HandlerThread, not the Android UI thread (see
+        // Bridge.java's handlerThread/taskHandler). Checkout.open() does UI
+        // work internally (dialogs, WebView) and must run on the UI thread,
+        // matching AppleProvider.java's activity.runOnUiThread(...) pattern.
+        getActivity().runOnUiThread(() -> {
+            try {
+                Checkout checkout = new Checkout();
+                checkout.setKeyID(keyId);
 
-        try {
-            JSONObject options = new JSONObject();
-            options.put("key", keyId);
-            options.put("order_id", orderId);
-            options.put("amount", amountPaise);
-            options.put("currency", "INR");
-            options.put("name", "GreenFlag");
-            if (prefillEmail != null) {
-                JSONObject prefill = new JSONObject();
-                prefill.put("email", prefillEmail);
-                options.put("prefill", prefill);
+                JSONObject options = new JSONObject();
+                options.put("key", keyId);
+                options.put("order_id", orderId);
+                options.put("amount", amountPaise);
+                options.put("currency", "INR");
+                options.put("name", "GreenFlag");
+                if (prefillEmail != null) {
+                    JSONObject prefill = new JSONObject();
+                    prefill.put("email", prefillEmail);
+                    options.put("prefill", prefill);
+                }
+                checkout.open(getActivity(), options);
+            } catch (JSONException e) {
+                pendingCall = null;
+                call.setKeepAlive(false);
+                call.reject("Failed to build Razorpay checkout options: " + e.getMessage());
+            } catch (Exception e) {
+                pendingCall = null;
+                call.setKeepAlive(false);
+                call.reject("Failed to open Razorpay checkout: " + e.getMessage());
             }
-            checkout.open(getActivity(), options);
-        } catch (JSONException e) {
-            pendingCall = null;
-            call.reject("Failed to build Razorpay checkout options: " + e.getMessage());
-        } catch (Exception e) {
-            pendingCall = null;
-            call.reject("Failed to open Razorpay checkout: " + e.getMessage());
-        }
+        });
     }
 
     public void handlePaymentSuccess(String razorpayPaymentId, PaymentData paymentData) {
@@ -73,10 +84,17 @@ public class RazorpayCheckoutPlugin extends Plugin {
         if (call == null) return;
         pendingCall = null;
 
+        if (paymentData == null || paymentData.getOrderId() == null || paymentData.getSignature() == null) {
+            call.setKeepAlive(false);
+            call.reject("Payment succeeded but returned incomplete data; your coins will be credited shortly.");
+            return;
+        }
+
         JSObject result = new JSObject();
         result.put("razorpay_payment_id", razorpayPaymentId);
-        result.put("razorpay_order_id", paymentData != null ? paymentData.getOrderId() : null);
-        result.put("razorpay_signature", paymentData != null ? paymentData.getSignature() : null);
+        result.put("razorpay_order_id", paymentData.getOrderId());
+        result.put("razorpay_signature", paymentData.getSignature());
+        call.setKeepAlive(false);
         call.resolve(result);
     }
 
@@ -84,6 +102,7 @@ public class RazorpayCheckoutPlugin extends Plugin {
         PluginCall call = pendingCall;
         if (call == null) return;
         pendingCall = null;
+        call.setKeepAlive(false);
 
         // Razorpay's SDK uses code 2 for user-cancelled -- resolve an empty
         // result for that (matching the web flow's ondismiss -> resolve(null)
@@ -91,7 +110,18 @@ public class RazorpayCheckoutPlugin extends Plugin {
         if (code == Checkout.PAYMENT_CANCELED) {
             call.resolve(new JSObject());
         } else {
-            call.reject(description != null ? description : "Payment failed");
+            // description is a JSON payload string (e.g.
+            // {"error":{"code":"...","description":"...",...}}), not
+            // human-readable prose -- extract the nested description so the
+            // toast shown to the user (useRazorpayIAP.ts) is legible.
+            String message = "Payment failed";
+            try {
+                JSONObject err = new JSONObject(description).getJSONObject("error");
+                message = err.optString("description", message);
+            } catch (Exception ignored) {
+                if (description != null) message = description;
+            }
+            call.reject(message);
         }
     }
 }

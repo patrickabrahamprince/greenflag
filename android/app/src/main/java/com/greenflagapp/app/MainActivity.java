@@ -26,7 +26,10 @@ public class MainActivity extends BridgeActivity implements PaymentResultWithDat
     }
 
     private RazorpayCheckoutPlugin getRazorpayCheckoutPlugin() {
-        if (getBridge() == null || getBridge().getPlugin("RazorpayCheckout") == null) return null;
-        return (RazorpayCheckoutPlugin) getBridge().getPlugin("RazorpayCheckout").getInstance();
+        com.getcapacitor.Bridge bridge = getBridge();
+        if (bridge == null) return null;
+        com.getcapacitor.PluginHandle handle = bridge.getPlugin("RazorpayCheckout");
+        if (handle == null) return null;
+        return (RazorpayCheckoutPlugin) handle.getInstance();
     }
 }
