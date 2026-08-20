@@ -487,7 +487,11 @@ With the app installed from Task 6, attempt a coin purchase using the current Te
 
 - [ ] **Step 2: Deliberately fail a purchase**
 
-Cancel a purchase partway through. Confirm the new visible error/cancellation handling from Task 5 behaves correctly -- no silent hang, spinner clears.
+Cancel a purchase partway through. Confirm the new visible error/cancellation handling from Task 5 behaves correctly -- no silent hang, spinner clears, and the failure toast shows readable prose (not a raw JSON blob -- this is what the final whole-branch review's fix wave specifically addressed in `RazorpayCheckoutPlugin.java`'s error-parsing).
+
+- [ ] **Step 2a: Process-death during a UPI app-switch (added after final review)**
+
+Start a purchase, let it hand off to a UPI app (or background the app manually right after tapping a UPI option), then force-stop this app from Android's recent-apps/app-info screen, and reopen it. Confirm the coin balance eventually reflects the purchase (the webhook backstop credits server-side even if the client-side confirmation was lost to the process death) and that reopening the app doesn't leave it in a stuck/spinning state. If this reveals the client never recovers gracefully, treat it as a new finding for a follow-up, not a blocker for this plan -- the money-crediting path is already covered by the webhook.
 
 - [ ] **Step 3: Live Mode purchase**
 
