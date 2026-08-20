@@ -42,7 +42,7 @@ export function InterestsStepScreen({
     <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
       <OnboardingBackground image={image} />
       <div className="flex items-center justify-between mt-2 mb-4 shrink-0">
-        <button onClick={onBack} className="text-ink/40 hover:text-ink active:scale-90 transition-all">
+        <button onClick={onBack} className="text-ink/40 hover:text-ink active:scale-90 transition-all p-1 -ml-1">
           <ArrowLeft size={24} />
         </button>
         <button
@@ -64,7 +64,7 @@ export function InterestsStepScreen({
 
       <div
         className="fixed inset-x-0 z-10 px-6 pt-6 pb-4"
-        style={{ bottom: 'calc(max(1rem, env(safe-area-inset-bottom)))' }}
+        style={{ bottom: 'calc(max(1rem, env(safe-area-inset-bottom)) + var(--kb-inset, 0px))' }}
       >
         <button
           onClick={onNext}

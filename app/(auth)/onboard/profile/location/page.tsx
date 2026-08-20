@@ -103,7 +103,7 @@ export default function ProfileLocationPage() {
       <OnboardingBackground image="/onboarding/location.jpg" />
       <button
         onClick={() => router.push('/onboard/profile')}
-        className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit"
+        className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit p-1 -ml-1"
       >
         <ArrowLeft size={24} />
       </button>

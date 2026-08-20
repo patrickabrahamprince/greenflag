@@ -386,6 +386,14 @@ export default function DiscoverPage() {
                   <div
                     className="relative w-full h-full overflow-hidden"
                     onTouchStart={(e) => {
+                      // This card is edge-to-edge (inset-0), so a touch
+                      // starting near the left edge to swipe to the
+                      // previous photo also lands inside
+                      // SwipeBackGesture's edge-swipe zone. Without this,
+                      // that same touch bubbles up and triggers
+                      // router.back() off Discover (a bottom-nav tab)
+                      // instead of just changing the photo.
+                      e.stopPropagation()
                       cardTouchStart.current[p.id] = { x: e.touches[0].clientX, y: e.touches[0].clientY }
                     }}
                     onTouchEnd={(e) => {

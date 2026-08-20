@@ -114,7 +114,14 @@ function RejectReasonModal({
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-end justify-center p-0" style={{ background: 'rgba(0,0,0,0.6)' }}>
-      <div className="w-full max-w-app bg-base rounded-t-2xl p-6 pb-8">
+      {/* Fixed-position overlay, not one of the app's .min-h-dvh screens,
+          so it doesn't get the global --kb-inset handling in globals.css --
+          without this, the keyboard covers the textarea and buttons below
+          it (see components/connection/SubmitSheet.tsx for the same fix). */}
+      <div
+        className="w-full max-w-app bg-base rounded-t-2xl p-6 pb-8"
+        style={{ marginBottom: 'var(--kb-inset, 0px)', transition: 'margin-bottom 200ms ease-out' }}
+      >
         <h3 className="font-display text-xl text-ink mb-1.5">Why are you rejecting this?</h3>
         <p className="text-ink/50 text-xs mb-4">He&apos;ll see this, so he knows where he fell short.</p>
         <div className="flex flex-wrap gap-2 mb-4">

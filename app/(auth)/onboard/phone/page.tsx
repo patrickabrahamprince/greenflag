@@ -161,7 +161,7 @@ export default function PhonePage() {
         <ArrowLeft size={24} />
       </button>
 
-      <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
+      <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full pb-safe-bottom">
         <h1 className="text-2xl font-display font-semibold text-ink mb-2">
           {otpSent ? "Verify Your Number" : "Your Number"}
         </h1>
