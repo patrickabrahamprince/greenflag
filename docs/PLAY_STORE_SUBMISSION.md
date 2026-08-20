@@ -170,7 +170,7 @@ versionName: "1.0"
 (Current values in `android/app/build.gradle` — fine for a first submission. Bump `versionCode` on every subsequent release; Play Console rejects a re-upload with the same versionCode.)
 
 ### Signing
-Release signing is wired up and verified (see `android/app/build.gradle` — reads `android/app/keystore.properties`, gitignored). **Confirm you backed up `android/app/upload-keystore.jks` and `keystore.properties` before uploading anything** — losing them before Play App Signing has custody of your app signing key means you can't publish updates without going through Google's key-reset process.
+Release signing is wired up and verified for real (see `android/app/build.gradle` — reads `android/keystore.properties`, gitignored; the AAB's actual embedded certificate fingerprint was matched against the keystore directly, not just "build succeeded"). **Back up `android/upload-keystore.jks` and `android/keystore.properties`** somewhere durable, off this machine — losing them before Play App Signing has custody of your app signing key means you can't publish updates without going through Google's key-reset process.
 
 ### Build artifact to upload
 ```
@@ -214,13 +214,16 @@ risk — it's a business decision, not a technical gap.
 
 ## Final checklist before you submit
 
-- [ ] `android/app/upload-keystore.jks` and `keystore.properties` backed up somewhere durable, off this machine
-- [ ] Decide on `ACCESS_FINE_LOCATION` — drop it if coarse location suffices (see Data Safety note above)
+- [ ] `android/upload-keystore.jks` and `android/keystore.properties` backed up somewhere durable, off this machine — **deferred, still the one real risk in all of this.** Do it before you lose this machine, doesn't have to block this first upload.
+- [x] `ACCESS_FINE_LOCATION` dropped — only coarse location is requested
 - [x] Screenshots and feature graphic in `docs/play-store-assets/`
-- [ ] 512×512 Play Console app icon exported (separate from the APK's adaptive icon)
+- [x] 512×512 Play Console app icon in `docs/play-store-assets/app_icon_512.png`
 - [ ] Content rating questionnaire submitted in Play Console using the table above
 - [ ] Data Safety form filled in using the table above
-- [ ] Privacy policy and Support URLs opened in a real browser to confirm they work
-- [ ] `versionCode`/`versionName` bumped if this isn't the very first upload
-- [ ] Fresh `bundleRelease` build uploaded (not a stale one from earlier testing)
-- [ ] Aware of and accepting the Payments policy risk above
+- [x] Privacy policy and Support URLs verified live (200 OK): `/privacy`, `/terms`, `/support`
+- [x] `versionCode: 1` / `versionName: "1.0"` — correct for this first upload
+- [x] Release build signed and verified for real, not just "gradle said success" — a path bug meant earlier builds silently fell through to unsigned; fixed, and confirmed by extracting the AAB's actual embedded certificate and matching its SHA1/SHA256 against the keystore directly. Current build:
+      `android/app/build/outputs/bundle/release/app-release.aab` (built 2026-08-21 00:41, 13.3MB)
+- [x] Aware of and accepting the Payments policy risk on Razorpay-only coins, per your decision
+
+**What's left is entirely inside Play Console** (account access I don't have): upload the AAB above, fill in the content rating and Data Safety forms using the tables in this doc, then submit for review. Ask if you want to go through that together step by step.
