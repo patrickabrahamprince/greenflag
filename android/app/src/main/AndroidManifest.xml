@@ -39,6 +39,11 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Coarse only. Location is used purely to reverse-geocode a
+         city name during onboarding (app/(auth)/onboard/profile/location/page.tsx),
+         matched against a fixed list of major Indian cities. No feature
+         needs GPS-precision coordinates, and requesting
+         ACCESS_FINE_LOCATION without a clear need is heavily scrutinized
+         in Play Store review. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 </manifest>
