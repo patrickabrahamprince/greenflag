@@ -28,7 +28,7 @@ export async function POST(req: Request) {
       keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
     });
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') console.error('Razorpay create-order error:', error);
+    console.error('Razorpay create-order error:', error instanceof Error ? error.message : error);
     return NextResponse.json({ error: 'Could not start purchase' }, { status: 500 });
   }
 }
