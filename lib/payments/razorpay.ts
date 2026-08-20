@@ -46,6 +46,13 @@ function getAuthHeader(): string {
   const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY;
   const keySecret = process.env.RAZORPAY_KEY_SECRET;
   if (!keyId || !keySecret) throw new Error('Razorpay credentials are not set');
+  console.error('Razorpay credential shape check:', {
+    keyId,
+    keyIdTrimmedMatches: keyId === keyId.trim(),
+    keySecretLength: keySecret.length,
+    keySecretTrimmedLength: keySecret.trim().length,
+    keySecretHasWhitespace: keySecret !== keySecret.trim(),
+  });
   return 'Basic ' + Buffer.from(`${keyId}:${keySecret}`).toString('base64');
 }
 
