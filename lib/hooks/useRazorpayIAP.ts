@@ -2,7 +2,8 @@
 
 import { useCallback, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
-import { openRazorpayCheckout } from '@/lib/native/razorpayCheckout';
+import toast from 'react-hot-toast';
+import { openRazorpayNativeCheckout } from '@/lib/native/razorpayNativeCheckout';
 import { useCoinStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
 
@@ -11,9 +12,9 @@ import { createClient } from '@/lib/supabase/client';
 // checkout works there too in principle, but that's a separate decision
 // with its own product/pricing-display questions, not bundled in here.
 //
-// Email for Checkout.js's prefill comes from Supabase auth directly
-// (supabase.auth.getUser()), not the app's own useUserStore -- that
-// store holds the `profiles` table row (Profile type), which has no
+// Email for the native checkout's prefill comes from Supabase auth
+// directly (supabase.auth.getUser()), not the app's own useUserStore --
+// that store holds the `profiles` table row (Profile type), which has no
 // email column; email lives on the Supabase auth user, not profiles.
 export function useRazorpayIAP() {
   const [purchasingCoins, setPurchasingCoins] = useState<number | null>(null);
@@ -33,7 +34,7 @@ export function useRazorpayIAP() {
       const supabase = createClient();
       const { data: { user: authUser } } = await supabase.auth.getUser();
 
-      const result = await openRazorpayCheckout({
+      const result = await openRazorpayNativeCheckout({
         keyId: order.keyId,
         orderId: order.orderId,
         amountPaise: order.amountPaise,
@@ -53,6 +54,7 @@ export function useRazorpayIAP() {
       return verifyData.new_balance;
     } catch (err) {
       if (process.env.NODE_ENV === 'development') console.error('Razorpay purchase failed:', err);
+      toast.error(err instanceof Error ? err.message : 'Purchase failed. Please try again.');
       return undefined;
     } finally {
       setPurchasingCoins(null);
