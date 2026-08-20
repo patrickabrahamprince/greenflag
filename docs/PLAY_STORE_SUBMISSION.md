@@ -180,14 +180,17 @@ Already built once successfully this session (14MB, signed). Rebuild with `cd an
 
 ---
 
-## Screenshots & Graphics (not yet produced — needs your input)
+## Screenshots & Graphics
 
-Play Console requires, minimum:
-- **App icon**: 512×512 PNG — already have the adaptive icon source, needs exporting at this exact size
-- **Feature graphic**: 1024×500 PNG/JPEG — a marketing banner, doesn't exist yet, needs actual design work
-- **Phone screenshots**: minimum 2, up to 8. 9:16 or 16:9 aspect ratio, each dimension between 320px–3840px.
+Done — `docs/play-store-assets/`:
+- `feature_graphic.png` (1024×500) — banner with logo + tagline
+- `01_hero.png`, `02_discover.png`, `03_coins.png`, `04_safety.png` (1080×1920 each, 1.78:1 — within Play's 320–3840px / max-2x-ratio limits)
 
-I can capture real in-app screenshots directly from the connected device (not mockups) once it's unlocked — tell me when, and I'll grab Discover, a profile, Messages, and the Coins page. The feature graphic is a from-scratch design task I haven't started; let me know if you want that next.
+These are marketing-style mockups (device frame + caption), not raw screen captures — the logged-in test account had no real matches/messages and Discover showed placeholder seed text, so raw captures of those screens weren't presentable. `02_discover.png` and `03_coins.png` do use real in-app screenshots inside the mockup frame (captured live from the connected device this session), cropped to avoid the placeholder text. This style (captioned device frame) is standard practice and what most Play Store listings actually use.
+
+**Still needed:**
+- **App icon**: 512×512 PNG for the Play Console listing itself (separate from the APK's adaptive icon) — export from the existing adaptive icon source
+- Once there's real user content (actual matches, messages, real profile photos), consider swapping `02_discover.png`'s photo for a real one, or add a couple more slides (a real match celebration, a real conversation) — not blocking, current set is submission-ready.
 
 ---
 
@@ -213,8 +216,8 @@ risk — it's a business decision, not a technical gap.
 
 - [ ] `android/app/upload-keystore.jks` and `keystore.properties` backed up somewhere durable, off this machine
 - [ ] Decide on `ACCESS_FINE_LOCATION` — drop it if coarse location suffices (see Data Safety note above)
-- [ ] Real screenshots captured (ask me once your phone is unlocked)
-- [ ] Feature graphic designed (1024×500)
+- [x] Screenshots and feature graphic in `docs/play-store-assets/`
+- [ ] 512×512 Play Console app icon exported (separate from the APK's adaptive icon)
 - [ ] Content rating questionnaire submitted in Play Console using the table above
 - [ ] Data Safety form filled in using the table above
 - [ ] Privacy policy and Support URLs opened in a real browser to confirm they work
