@@ -57,27 +57,41 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, []);
 
   useEffect(() => {
-    // Only check auth once on mount, not on every route change
-    // The middleware already guards access to /admin routes
-    if (pathname === '/admin/login') {
-      setChecking(false);
-      return;
-    }
-
+    // Only check auth once on mount, not on every route change. The
+    // middleware already guards access to /admin routes -- this is a
+    // second check because it also accepts a Supabase session (Google/
+    // Apple/email) with is_admin set, not just the admin_session cookie,
+    // and middleware's own Supabase check can lag behind on Android (see
+    // the cookie-write race noted in app/(auth)/login/page.tsx).
+    // Reads window.location.pathname rather than the usePathname() value
+    // above -- this effect's closure is fixed at mount time, so a hook
+    // value would go stale across the exact redirect chains this is
+    // meant to handle; the live DOM property never does.
     let isMounted = true;
     const checkAuth = async () => {
       try {
         const res = await fetch('/api/admin/verify', { credentials: 'include' });
         if (!isMounted) return;
 
-        if (!res.ok) {
-          router.replace('/admin/login');
+        if (res.ok) {
+          if (window.location.pathname === '/admin/login') {
+            router.replace('/admin');
+            return;
+          }
+          setChecking(false);
           return;
         }
+
         setChecking(false);
+        if (window.location.pathname !== '/admin/login') {
+          router.replace('/admin/login');
+        }
       } catch (err) {
         if (!isMounted) return;
-        router.replace('/admin/login');
+        setChecking(false);
+        if (window.location.pathname !== '/admin/login') {
+          router.replace('/admin/login');
+        }
       }
     };
     checkAuth();
