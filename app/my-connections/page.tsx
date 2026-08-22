@@ -248,15 +248,17 @@ export default function MyConnectionsPage() {
 
   return (
     <div className="h-[calc(100dvh-5rem)] screen-gradient max-w-app mx-auto flex flex-col">
+      <div className="px-6 pt-safe-top shrink-0">
+        <h1 className="font-display text-title text-ink pt-4 mb-6">Connections</h1>
+      </div>
+
       <div
         ref={scrollRef}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className="flex-1 overflow-y-auto overscroll-none px-6 pt-safe-top pb-24 flex flex-col"
+        className="flex-1 overflow-y-auto overscroll-none px-6 pb-24 flex flex-col"
       >
-        <h1 className="font-display text-title text-ink shrink-0 mb-6 pt-4">Connections</h1>
-
         <div
           className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out shrink-0"
           style={{ height: pullDistance }}
