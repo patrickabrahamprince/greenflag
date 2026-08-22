@@ -47,13 +47,19 @@ body::-webkit-scrollbar,
 
 :root {
   --kb-inset: 0px;
-  /* Wine (#45050C) glow, anchored to the bottom edge of whatever box it's
-     painted on. Sized in percentages of that box's own padding area, so
-     the same variable blooms full-viewport-wide on a screen root and
-     scales down naturally on a small modal/sheet -- no separate variant
-     needed per surface size. Vertical radius (65%) reaches noticeably
-     further up the screen than the original 45% -- still centered on
-     the bottom edge, so only its upper half is ever visible. */
+  /* Wine (#45050C) glow, sized in percentages so the same variable blooms
+     full-viewport-wide on a screen root and scales down naturally on a
+     small modal/sheet -- no separate variant needed per surface size.
+     Vertical radius (65%) reaches noticeably further up the screen than
+     the original 45% -- still centered on the bottom edge, so only its
+     upper half is ever visible. Paired everywhere with
+     background-attachment: fixed -- without it this anchors to the
+     bottom of the *content box*, not the screen, so on anything taller
+     than one viewport (which is most real pages) it only came into view
+     once you'd scrolled all the way to the actual end of the page; the
+     rest of the scroll was flat black. Fixed attachment pins it to the
+     viewport instead, so it's visible behind the nav pill at any scroll
+     position. */
   --wine-glow-bottom: radial-gradient(ellipse 140% 65% at 50% 100%, rgba(69, 5, 12, 0.55) 0%, rgba(69, 5, 12, 0.24) 40%, transparent 78%);
 }
 
@@ -297,6 +303,7 @@ body.min-h-dvh::after {
   .page-container {
     @apply min-h-dvh max-w-app mx-auto px-8 pt-safe-top pb-24 bg-base;
     background-image: var(--wine-glow-bottom);
+    background-attachment: fixed;
   }
 
   /* Shared backdrop for full-screen views -- flat black base fill plus
@@ -304,6 +311,7 @@ body.min-h-dvh::after {
   .screen-gradient {
     @apply bg-base;
     background-image: var(--wine-glow-bottom);
+    background-attachment: fixed;
   }
 
   /* Every direct `bg-base` usage (onboarding screens, error/loading
@@ -311,6 +319,7 @@ body.min-h-dvh::after {
      one definition instead of touching each call site individually. */
   .bg-base {
     background-image: var(--wine-glow-bottom);
+    background-attachment: fixed;
   }
 
   .page-header {
