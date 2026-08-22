@@ -10,8 +10,7 @@
    regardless of how wide the viewport is or where a page's own content
    column ends. Obsidian Velvet is one continuous flat black environment
    -- no radial glow, depth comes from the elevation ramp (well/base/
-   raised/card/overlay). A wine (#45050C) glow now blooms from the
-   bottom edge on top of that flat fill -- see --wine-glow-bottom. */
+   raised/card/overlay) alone. */
 html, body {
   background-color: #000000 !important;
   background-image: none !important;
@@ -47,29 +46,6 @@ body::-webkit-scrollbar,
 
 :root {
   --kb-inset: 0px;
-  /* Wine (#45050C) glow, sized in percentages so the same variable blooms
-     full-viewport-wide on a screen root and scales down naturally on a
-     small modal/sheet -- no separate variant needed per surface size.
-     Vertical radius (65%) reaches noticeably further up the screen than
-     the original 45% -- still centered on the bottom edge, so only its
-     upper half is ever visible. Paired everywhere with
-     background-attachment: fixed -- without it this anchors to the
-     bottom of the *content box*, not the screen, so on anything taller
-     than one viewport (which is most real pages) it only came into view
-     once you'd scrolled all the way to the actual end of the page; the
-     rest of the scroll was flat black. Fixed attachment pins it to the
-     viewport instead, so it's visible behind the nav pill at any scroll
-     position.
-
-     Width used to be 140% -- wider than any phone viewport, so only the
-     flattest part of the ellipse's curve (its near-horizontal center) was
-     ever actually on screen. Before the fix above, that never mattered:
-     the glow only surfaced at the very bottom of tall pages, easy to
-     miss. Now that it's always visible behind the nav pill, that flat
-     top read as a hard-edged rectangular plate rather than a glow. 85%
-     keeps the full curve inside the viewport so it actually looks
-     round. */
-  --wine-glow-bottom: radial-gradient(ellipse 85% 55% at 50% 100%, rgba(69, 5, 12, 0.55) 0%, rgba(69, 5, 12, 0.24) 40%, transparent 78%);
 }
 
 /* Set by components/keyboard-inset-listener.tsx from the native
@@ -117,25 +93,6 @@ body.min-h-dvh::after {
   content: none;
 }
 
-/* The app's one wine glow layer -- every page sits on `body` with
-   nothing opaque in between (see .page-container / .screen-gradient in
-   the components layer), so defining this once here is enough for it to
-   show through everywhere, instead of every page carrying its own copy
-   of the same background. `position: fixed` (not background-attachment:
-   fixed, which Android WebView clips to the element's own box mid-
-   scroll) with no z-index (a `::before` already paints behind body's
-   real children just from being first in generated-content order --
-   Android WebView doesn't reliably keep a *negative* z-index fixed
-   element in its always-composited layer during an actual scroll
-   gesture). Unlayered, like .min-h-dvh above, so it isn't at the mercy
-   of @layer ordering against `bg-base`. */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image: var(--wine-glow-bottom);
-}
 
 @layer base {
   * {
