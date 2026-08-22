@@ -133,6 +133,53 @@ export default function DiscoverPage() {
     if (node) observer.current.observe(node)
   }, [pageLoading, hasMore])
 
+  // Every card (photo, carousel state, bio, gifting/nudge/report buttons --
+  // ~350 lines of JSX each) stayed fully mounted for the whole feed, not
+  // just the one actually visible in the scroll-snap viewport -- fine with
+  // one or two cards, but confirmed via gfxinfo on-device (100%
+  // legacy-janky frames, Slow UI thread and Slow issue draw commands both
+  // newly nonzero, 50th percentile at ~40ms) that a real feed of 15-20+
+  // genuinely bottlenecks on this. content-visibility: auto was tried
+  // first since it needs no render-logic changes, but made no measurable
+  // difference re-tested afterward -- the cost here is React actually
+  // creating/diffing this much JSX per card, which content-visibility
+  // (a paint/layout-only optimization) can't touch. Only cards within
+  // CARD_RENDER_WINDOW of the one actually in view render their real
+  // content below; everything else renders a plain black placeholder of
+  // the same height, so scroll-snap's geometry and scroll position are
+  // unaffected -- swiping back to a "windowed-out" card just remounts it
+  // fresh, same as any other scroll-triggered mount.
+  const CARD_RENDER_WINDOW = 2
+  const [activeCardIndex, setActiveCardIndex] = useState(0)
+  const cardElRefs = useRef<Map<number, HTMLDivElement>>(new Map())
+  const activeCardObserver = useRef<IntersectionObserver | null>(null)
+
+  useEffect(() => {
+    activeCardObserver.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          const idx = Number((entry.target as HTMLElement).dataset.cardIndex)
+          if (!Number.isNaN(idx)) setActiveCardIndex(idx)
+        })
+      },
+      { root: scrollRef.current, threshold: 0.5 }
+    )
+    cardElRefs.current.forEach((el) => activeCardObserver.current?.observe(el))
+    return () => activeCardObserver.current?.disconnect()
+  }, [])
+
+  const registerCardRef = useCallback((index: number, el: HTMLDivElement | null) => {
+    const prev = cardElRefs.current.get(index)
+    if (prev && prev !== el) activeCardObserver.current?.unobserve(prev)
+    if (el) {
+      cardElRefs.current.set(index, el)
+      activeCardObserver.current?.observe(el)
+    } else {
+      cardElRefs.current.delete(index)
+    }
+  }, [])
+
   const fetchedForPage = useRef<Set<number>>(new Set())
 
   useEffect(() => {
@@ -354,33 +401,23 @@ export default function DiscoverPage() {
         className="snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth h-dvh scrollbar-hide"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        {profiles.map((p, i) => (
+        {profiles.map((p, i) => {
+          const isNear = Math.abs(i - activeCardIndex) <= CARD_RENDER_WINDOW
+          return (
           <div
             key={p.id}
-            ref={i === profiles.length - 1 ? lastProfileRef : null}
+            ref={(el) => {
+              registerCardRef(i, el)
+              if (i === profiles.length - 1) lastProfileRef(el as HTMLDivElement)
+            }}
+            data-card-index={i}
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
             className={`snap-start snap-always h-dvh w-full relative overflow-hidden ${prefersReducedMotion ? '' : 'animate-card-enter'}`}
-            // Every card (photo, carousel state, bio, gifting/nudge/report
-            // buttons -- ~350 lines of JSX each) stayed fully laid out and
-            // painted for the entire feed, not just whichever one was
-            // actually visible -- fine with one or two cards, but with a
-            // real feed of 15-20+ that's a lot of simultaneous layout/
-            // paint/compositing work, which showed up as "Slow UI thread"
-            // / "Slow issue draw commands" in gfxinfo while flicking
-            // through a real feed on-device (lazy-loading the <img>
-            // doesn't touch this -- that only defers the image fetch, the
-            // rest of the card's DOM was never the bottleneck it's
-            // solving). content-visibility: auto is the browser's own
-            // primitive for exactly this: skip layout/paint/style for
-            // descendants while off-screen, restore automatically as
-            // scroll-snap brings a card back into view -- no manual
-            // mount/unmount logic, no risk of fighting scroll-snap's own
-            // positioning. contain-intrinsic-size reserves this card's
-            // real box size for while it's skipped, so the feed's total
-            // scrollable height (and every other card's snap position)
-            // stays exactly what it always was.
-            style={{ contentVisibility: 'auto', containIntrinsicSize: '100vw 100dvh' }}
           >
+            {!isNear ? (
+              <div className="absolute inset-0 bg-black" />
+            ) : (
+              <>
             <div className="absolute inset-0 bg-black">
               {(() => {
                 const photos = (p.photos ?? []).filter(Boolean) as string[]
@@ -739,8 +776,11 @@ export default function DiscoverPage() {
                 )}
               </div>
             </div>
+              </>
+            )}
           </div>
-        ))}
+          )
+        })}
         {pageLoading && (
           <div className="snap-start min-h-[100dvh] flex items-center justify-center">
             <Loader2 className="animate-spin text-gold" size={32} />
