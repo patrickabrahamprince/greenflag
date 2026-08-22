@@ -360,6 +360,26 @@ export default function DiscoverPage() {
             ref={i === profiles.length - 1 ? lastProfileRef : null}
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
             className={`snap-start snap-always h-dvh w-full relative overflow-hidden ${prefersReducedMotion ? '' : 'animate-card-enter'}`}
+            // Every card (photo, carousel state, bio, gifting/nudge/report
+            // buttons -- ~350 lines of JSX each) stayed fully laid out and
+            // painted for the entire feed, not just whichever one was
+            // actually visible -- fine with one or two cards, but with a
+            // real feed of 15-20+ that's a lot of simultaneous layout/
+            // paint/compositing work, which showed up as "Slow UI thread"
+            // / "Slow issue draw commands" in gfxinfo while flicking
+            // through a real feed on-device (lazy-loading the <img>
+            // doesn't touch this -- that only defers the image fetch, the
+            // rest of the card's DOM was never the bottleneck it's
+            // solving). content-visibility: auto is the browser's own
+            // primitive for exactly this: skip layout/paint/style for
+            // descendants while off-screen, restore automatically as
+            // scroll-snap brings a card back into view -- no manual
+            // mount/unmount logic, no risk of fighting scroll-snap's own
+            // positioning. contain-intrinsic-size reserves this card's
+            // real box size for while it's skipped, so the feed's total
+            // scrollable height (and every other card's snap position)
+            // stays exactly what it always was.
+            style={{ contentVisibility: 'auto', containIntrinsicSize: '100vw 100dvh' }}
           >
             <div className="absolute inset-0 bg-black">
               {(() => {
