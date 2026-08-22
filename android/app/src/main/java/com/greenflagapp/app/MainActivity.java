@@ -2,6 +2,7 @@ package com.greenflagapp.app;
 
 import android.os.Bundle;
 import android.view.View;
+import androidx.core.splashscreen.SplashScreen;
 import com.getcapacitor.BridgeActivity;
 import com.razorpay.PaymentData;
 import com.razorpay.PaymentResultWithDataListener;
@@ -10,6 +11,15 @@ public class MainActivity extends BridgeActivity implements PaymentResultWithDat
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // Must run before super.onCreate() -- this is what actually
+        // switches the window from the launch theme (Theme.SplashScreen,
+        // which forces black system bars) to postSplashScreenTheme
+        // (styles.xml) once real content is ready. The
+        // core-splashscreen dependency was already present in
+        // build.gradle, but this call -- the actual thing that uses it
+        // -- was never added, so the app ran under the splash theme's
+        // styling permanently instead of just during launch.
+        SplashScreen.installSplashScreen(this);
         registerPlugin(RazorpayCheckoutPlugin.class);
         super.onCreate(savedInstanceState);
 

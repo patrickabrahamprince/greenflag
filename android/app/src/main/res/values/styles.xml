@@ -18,5 +18,13 @@
 
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
         <item name="android:background">@drawable/splash</item>
+        <!-- Without this, nothing ever tells Android to switch away
+             from the splash theme once real content is ready. The app
+             was stuck permanently under Theme.SplashScreen's system-bar
+             styling (forced black), showing as a persistent black strip
+             near the system nav bar on every screen. See MainActivity's
+             installSplashScreen() call, which is what actually triggers
+             this transition. -->
+        <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
     </style>
 </resources>
