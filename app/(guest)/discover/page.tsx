@@ -421,6 +421,8 @@ export default function DiscoverPage() {
                       <img
                         src={src}
                         alt=""
+                        loading={i === 0 ? 'eager' : 'lazy'}
+                        decoding="async"
                         className={`w-full h-full object-cover ${isLocked ? 'blur scale-110' : ''}`}
                         onError={() => src && setFailedPhotoUrls(prev => new Set(prev).add(src))}
                       />
