@@ -311,24 +311,43 @@ body.min-h-dvh::after {
 
   .page-container {
     @apply min-h-dvh max-w-app mx-auto px-8 pt-safe-top pb-24 bg-base;
-    background-image: var(--wine-glow-bottom);
-    background-attachment: fixed;
+    position: relative;
+    isolation: isolate;
   }
 
   /* Shared backdrop for full-screen views -- flat black base fill plus
      the wine glow blooming up from the bottom edge (--wine-glow-bottom). */
   .screen-gradient {
     @apply bg-base;
-    background-image: var(--wine-glow-bottom);
-    background-attachment: fixed;
+    position: relative;
+    isolation: isolate;
   }
 
   /* Every direct `bg-base` usage (onboarding screens, error/loading
      states, modal/sheet cards) gets the same bottom glow automatically --
      one definition instead of touching each call site individually. */
   .bg-base {
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* background-attachment: fixed (the previous approach here) is meant to
+     pin a background to the viewport instead of the element's own box,
+     but on Android WebView it only half-works: mid-scroll, the browser
+     clips the fixed background to the element's rendered bounds instead
+     of the true viewport, so the glow visibly got cut off as soon as you
+     started dragging -- static screenshots (taken between scroll frames)
+     never caught it. A real `position: fixed` layer has no such
+     scroll-repaint special case; it just always covers the viewport. */
+  .page-container::before,
+  .screen-gradient::before,
+  .bg-base::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
     background-image: var(--wine-glow-bottom);
-    background-attachment: fixed;
   }
 
   .page-header {
