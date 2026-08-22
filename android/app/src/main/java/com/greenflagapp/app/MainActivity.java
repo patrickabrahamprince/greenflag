@@ -1,5 +1,6 @@
 package com.greenflagapp.app;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import androidx.core.splashscreen.SplashScreen;
@@ -33,6 +34,15 @@ public class MainActivity extends BridgeActivity implements PaymentResultWithDat
         // anything depends on.
         if (getBridge() != null && getBridge().getWebView() != null) {
             getBridge().getWebView().setOverScrollMode(View.OVER_SCROLL_NEVER);
+        }
+
+        // Even with navigationBarColor already black, Android still draws
+        // a translucent contrast-protection scrim over the system nav bar
+        // by default, which reads as a faint seam between it and our own
+        // black content above it. There's nothing to protect against on a
+        // theme that's black already, so this turns that scrim off.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getWindow().setNavigationBarContrastEnforced(false);
         }
     }
 
