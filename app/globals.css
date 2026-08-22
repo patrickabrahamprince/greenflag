@@ -338,14 +338,26 @@ body.min-h-dvh::after {
      of the true viewport, so the glow visibly got cut off as soon as you
      started dragging -- static screenshots (taken between scroll frames)
      never caught it. A real `position: fixed` layer has no such
-     scroll-repaint special case; it just always covers the viewport. */
+     scroll-repaint special case; it just always covers the viewport.
+
+     No explicit z-index here (previously -1): a `::before` already
+     paints before its element's real children just by being first in
+     generated-content order, which is enough to keep it behind them.
+     Android WebView has a separate, nastier quirk with
+     `position: fixed` + a *negative* z-index specifically -- it isn't
+     reliably kept in the always-composited fixed layer during a scroll
+     gesture, so mid-drag it can go stale or drop out entirely, exposing
+     the native WebView's own background color (capacitor.config.ts's
+     `backgroundColor`, #0B0614 -- normally only ever seen for an instant
+     between the splash screen and the page's first paint) in whatever
+     region it failed to cover -- a visibly different-colored band above
+     or below the wine glow, i.e. exactly the "two halves" split. */
   .page-container::before,
   .screen-gradient::before,
   .bg-base::before {
     content: '';
     position: fixed;
     inset: 0;
-    z-index: -1;
     pointer-events: none;
     background-image: var(--wine-glow-bottom);
   }
