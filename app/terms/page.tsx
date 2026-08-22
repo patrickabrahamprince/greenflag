@@ -18,7 +18,7 @@ export default function Terms() {
   return (
     <div className="min-h-dvh bg-cream px-4 pt-safe-top pb-12">
       <div className="mx-auto max-w-2xl space-y-6 text-ink">
-        <div className="pt-4 pb-2">
+        <div className="pt-4 pb-2 sticky top-safe-top z-10 bg-cream -mx-4 px-4">
           <button
             onClick={handleBack}
             className="flex items-center gap-2 text-sm font-medium text-ink/70 hover:text-ink active:scale-95 transition-all"

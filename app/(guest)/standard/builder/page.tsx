@@ -357,25 +357,28 @@ export default function StandardBuilderPage() {
   const progressPercent = ((step + 1) / slots.length) * 100;
 
   return (
-    <div
-      ref={scrollRef}
-      className="relative isolate h-[calc(100dvh-5rem)] overflow-y-auto overscroll-none screen-gradient px-6 pt-safe-top pb-24 max-w-app mx-auto"
-    >
+    <div className="relative isolate h-[calc(100dvh-5rem)] flex flex-col screen-gradient max-w-app mx-auto">
       <OnboardingBackground image="/onboarding/quiz-romantic.jpg" light />
-      <div className="flex items-center justify-between mb-4">
-        <button
-          onClick={() => setStep((s) => Math.max(0, s - 1))}
-          className={`text-ink/40 hover:text-ink active:scale-90 transition-all p-1 -ml-1 ${step === 0 ? 'invisible' : ''}`}
-        >
-          <ArrowLeft size={22} />
-        </button>
-        <div className="w-6" />
+      <div className="px-6 pt-safe-top shrink-0">
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={() => setStep((s) => Math.max(0, s - 1))}
+            className={`text-ink/40 hover:text-ink active:scale-90 transition-all p-1 -ml-1 ${step === 0 ? 'invisible' : ''}`}
+          >
+            <ArrowLeft size={22} />
+          </button>
+          <div className="w-6" />
+        </div>
+
+        <div className="w-full bg-well h-1 rounded-full mb-6 overflow-hidden">
+          <div className="bg-gold h-full transition-all duration-300 ease-out" style={{ width: `${progressPercent}%` }} />
+        </div>
       </div>
 
-      <div className="w-full bg-well h-1 rounded-full mb-6 overflow-hidden">
-        <div className="bg-gold h-full transition-all duration-300 ease-out" style={{ width: `${progressPercent}%` }} />
-      </div>
-
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto overscroll-none px-6 pb-24"
+      >
       <h1 className="font-display text-2xl text-ink mb-2 animate-fade-in">Set Your Standard</h1>
       <p className="text-sm text-ink/80 mb-6 font-medium animate-slide-up">
         Each day: one thought, one image, one voice. He completes all three before you review.
@@ -483,6 +486,7 @@ export default function StandardBuilderPage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

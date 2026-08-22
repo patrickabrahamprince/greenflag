@@ -82,7 +82,7 @@ export default function HowItWorks() {
   return (
     <div className="min-h-dvh screen-gradient">
       {/* Header */}
-      <div className="sticky top-0 bg-base/80 backdrop-blur-sm border-b border-raised z-40">
+      <div className="sticky top-safe-top bg-base/80 backdrop-blur-sm border-b border-raised z-40">
         <div className="max-w-app mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-xl font-display font-semibold text-ink">How It Works</h1>
           <Link href="/discover" className="text-gold hover:text-gold/90 text-sm font-medium">

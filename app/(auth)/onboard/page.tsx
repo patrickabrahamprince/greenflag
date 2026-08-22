@@ -40,7 +40,7 @@ export default function OnboardPage() {
   };
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center px-4 bg-base">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center px-4 pt-safe-top pb-safe-bottom bg-base">
       <OnboardingBackground image="/onboarding/hero.jpg" />
       <div className="-mt-2">
       <div className="text-center mb-10">

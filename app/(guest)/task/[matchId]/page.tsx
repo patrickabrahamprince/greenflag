@@ -429,25 +429,29 @@ export default function TaskPage() {
   };
 
   return (
-    <div
-      ref={scrollRef}
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
-      className="h-[calc(100dvh-5rem)] overflow-y-auto overscroll-none screen-gradient px-6 pt-safe-top pb-24 max-w-app mx-auto flex flex-col"
-    >
+    <div className="h-[calc(100dvh-5rem)] flex flex-col screen-gradient max-w-app mx-auto">
+      <div className="px-6 pt-safe-top shrink-0">
+        <div className="flex items-center justify-between mb-6">
+          <button onClick={handleBack} className="p-1 -ml-1 text-ink/40 hover:text-ink active:scale-90 transition-all">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <h1 className="font-display text-lg text-ink truncate">{otherProfile.name}</h1>
+          <div className="w-6" />
+        </div>
+      </div>
+
+      <div
+        ref={scrollRef}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        className="flex-1 overflow-y-auto overscroll-none px-6 pb-24"
+      >
       <div
         className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
         style={{ height: pullDistance }}
       >
         <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
-      </div>
-      <div className="flex items-center justify-between mb-6">
-        <button onClick={handleBack} className="p-1 -ml-1 text-ink/40 hover:text-ink active:scale-90 transition-all">
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <h1 className="font-display text-lg text-ink truncate">{otherProfile.name}</h1>
-        <div className="w-6" />
       </div>
 
       <ProgressSegmentBar currentDay={currentDay} total={3} className="mb-6" />
@@ -837,6 +841,7 @@ export default function TaskPage() {
           onDismiss={() => setInsufficientCoinsMessage(null)}
         />
       )}
+      </div>
     </div>
   );
 }

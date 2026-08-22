@@ -12,7 +12,7 @@ interface ChatHeaderProps {
 export function ChatHeader({ partnerName, partnerPhoto, backRoute, isChatUnlocked, onUnmatch }: ChatHeaderProps) {
   const router = useRouter();
   return (
-    <div className="px-8 pt-4 pb-0 sticky top-0 z-10 bg-base/80 backdrop-blur-xl">
+    <div className="px-8 pt-4 pb-0 sticky top-safe-top z-10 bg-base/80 backdrop-blur-xl">
       <div className="flex items-center gap-3 py-4">
         <button onClick={() => router.push(backRoute)} aria-label="Back" className="p-2 -ml-2 text-ink active:opacity-60 transition-opacity">
           <ArrowLeft className="w-5 h-5" />

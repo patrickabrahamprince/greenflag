@@ -137,7 +137,7 @@ export default function ChatPage({ params }: { params: { connectionId: string } 
   }
 
   return (
-    <div className="min-h-dvh flex flex-col screen-gradient">
+    <div className="h-[calc(100dvh-5rem)] flex flex-col screen-gradient">
       <div className="max-w-app mx-auto w-full flex-1 flex flex-col">
         <ChatHeader
           partnerName={partnerName}

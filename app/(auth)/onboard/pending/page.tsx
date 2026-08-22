@@ -53,7 +53,7 @@ export default function PendingApprovalPage() {
   }, [arrived]);
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center items-center px-8 text-center bg-base">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center items-center px-8 pt-safe-top pb-safe-bottom text-center bg-base">
       <OnboardingBackground image="/onboarding/pending.jpg" />
 
       {!arrived ? (

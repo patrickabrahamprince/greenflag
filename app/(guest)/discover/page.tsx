@@ -339,7 +339,7 @@ export default function DiscoverPage() {
   }
 
   return (
-    <div className="relative screen-gradient min-h-dvh max-w-app mx-auto">
+    <div className="relative screen-gradient h-[calc(100dvh-5rem)] max-w-app mx-auto">
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex flex-col pointer-events-none">
         <div className="flex items-center justify-between px-5 pt-safe-top pb-10 bg-gradient-to-b from-black/70 via-black/25 to-transparent">
           <div className="pointer-events-auto">

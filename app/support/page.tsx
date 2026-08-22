@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function Support() {
   return (
-    <div className="min-h-dvh bg-cream px-4 py-12">
+    <div className="min-h-dvh bg-cream px-4 pt-safe-top pb-12">
       <div className="mx-auto max-w-2xl space-y-6 text-ink">
         <h1 className="font-display text-3xl text-ink">Support</h1>
         <p className="text-sm leading-relaxed">
