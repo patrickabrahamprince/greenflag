@@ -163,7 +163,12 @@ export default function LoginPage() {
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code
       if (code !== 'USER_CANCELLED') {
-        setError(err instanceof Error ? err.message : 'Google sign-in failed')
+        // The native plugin's error message is a verbose diagnostic dump
+        // meant for logcat (package/signingSha1/webClientId, troubleshooting
+        // steps), not something to show someone mid-login -- log the real
+        // thing for debugging, show a plain retry prompt on screen.
+        console.error('Google sign-in error:', err)
+        setError('Couldn\'t sign in with Google. Please try again.')
       }
     } finally {
       setGoogleLoading(false)
@@ -193,7 +198,8 @@ export default function LoginPage() {
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code
       if (code !== 'USER_CANCELLED') {
-        setError(err instanceof Error ? err.message : 'Apple sign-in failed')
+        console.error('Apple sign-in error:', err)
+        setError('Couldn\'t sign in with Apple. Please try again.')
       }
     } finally {
       setAppleLoading(false)
