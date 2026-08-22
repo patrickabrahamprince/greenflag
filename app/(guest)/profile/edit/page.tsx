@@ -118,7 +118,7 @@ export default function EditProfilePage() {
 
   return (
     <div className="page-container animate-fade-in">
-      <div className="page-header">
+      <div className="page-header sticky top-safe-top z-10 bg-base -mx-8 px-8">
         <button onClick={() => router.back()} aria-label="Back" className="p-2 -ml-2 text-ink active:opacity-60 transition-opacity">
           <ArrowLeft className="w-5 h-5" />
         </button>
