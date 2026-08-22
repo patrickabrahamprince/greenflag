@@ -68,6 +68,38 @@ export const REVIEWER_ACCOUNTS = [
         'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&auto=format&fit=crop&q=80',
       ],
       bio: 'Passionate about outdoor sports and meaningful conversations.',
+      // The rest of these were blank, which meant the reviewer account's
+      // own View Profile page -- the same one every real user sees --
+      // rendered only name/age/city/bio/interests: every other section
+      // (Basics, Lifestyle, Quiz, Anthem) is written to hide itself
+      // entirely when its data is empty, so a reviewer clicking into this
+      // profile from Discover saw a noticeably sparser page than a
+      // filled-out real one. Values here are drawn from the app's own
+      // fixed option lists (lib/constants/profileDetails.ts) and its real
+      // onboarding quiz questions (app/(auth)/onboard/quiz/page.tsx),
+      // not made up, so this exercises the exact same display code path
+      // a real profile does.
+      job: 'Product Designer',
+      height: '5\' 11"',
+      smoking: 'Non-smoker',
+      drinking: 'Socially',
+      pets: 'Dog',
+      workout: 'Often',
+      zodiac: 'Leo',
+      education_level: 'Undergrad Degree',
+      family_plans: 'Want children',
+      communication_style: 'Big time texter',
+      quiz_answers: {
+        relationship_goal: 'Open, but intentional',
+        love_language: 'Quality time together',
+        first_date: 'A class or experience together',
+        humor_style: 'Playful & witty',
+        ideal_trip: 'Mountains, off-grid',
+      },
+      teaser_prompt: 'The way to my heart is',
+      teaser_answer: 'a home-cooked meal and a long walk after.',
+      anthem_title: 'Sunday Morning',
+      anthem_artist: 'Maroon 5',
       terms_accepted_at: new Date().toISOString(),
     },
     walletBalance: 1500,
@@ -180,6 +212,21 @@ async function main() {
         interests: account.profile.interests,
         photos: account.profile.photos,
         bio: account.profile.bio,
+        job: account.profile.job,
+        height: account.profile.height,
+        smoking: account.profile.smoking,
+        drinking: account.profile.drinking,
+        pets: account.profile.pets,
+        workout: account.profile.workout,
+        zodiac: account.profile.zodiac,
+        education_level: account.profile.education_level,
+        family_plans: account.profile.family_plans,
+        communication_style: account.profile.communication_style,
+        quiz_answers: account.profile.quiz_answers,
+        teaser_prompt: account.profile.teaser_prompt,
+        teaser_answer: account.profile.teaser_answer,
+        anthem_title: account.profile.anthem_title,
+        anthem_artist: account.profile.anthem_artist,
         terms_accepted_at: account.profile.terms_accepted_at,
       },
       { onConflict: 'id' }
