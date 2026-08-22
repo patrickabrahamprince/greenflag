@@ -117,6 +117,26 @@ body.min-h-dvh::after {
   content: none;
 }
 
+/* The app's one wine glow layer -- every page sits on `body` with
+   nothing opaque in between (see .page-container / .screen-gradient in
+   the components layer), so defining this once here is enough for it to
+   show through everywhere, instead of every page carrying its own copy
+   of the same background. `position: fixed` (not background-attachment:
+   fixed, which Android WebView clips to the element's own box mid-
+   scroll) with no z-index (a `::before` already paints behind body's
+   real children just from being first in generated-content order --
+   Android WebView doesn't reliably keep a *negative* z-index fixed
+   element in its always-composited layer during an actual scroll
+   gesture). Unlayered, like .min-h-dvh above, so it isn't at the mercy
+   of @layer ordering against `bg-base`. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--wine-glow-bottom);
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -309,57 +329,19 @@ body.min-h-dvh::after {
     background: rgba(0, 0, 0, 0.8);
   }
 
+  /* Layout utilities only -- deliberately no background here. Every one
+     of these sits directly on `body` with nothing opaque in between, so
+     `body`'s own single glow layer (below) already shows through; giving
+     each page its own copy of the same background was what caused the
+     "two halves" split (a per-page fixed layer and body's fixed layer,
+     both real but subtly inconsistent under Android WebView's fixed+
+     scroll compositing, showing through at different moments). One
+     background, defined once, can't disagree with itself. */
   .page-container {
-    @apply min-h-dvh max-w-app mx-auto px-8 pt-safe-top pb-24 bg-base;
-    position: relative;
-    isolation: isolate;
+    @apply min-h-dvh max-w-app mx-auto px-8 pt-safe-top pb-24;
   }
 
-  /* Shared backdrop for full-screen views -- flat black base fill plus
-     the wine glow blooming up from the bottom edge (--wine-glow-bottom). */
   .screen-gradient {
-    @apply bg-base;
-    position: relative;
-    isolation: isolate;
-  }
-
-  /* Every direct `bg-base` usage (onboarding screens, error/loading
-     states, modal/sheet cards) gets the same bottom glow automatically --
-     one definition instead of touching each call site individually. */
-  .bg-base {
-    position: relative;
-    isolation: isolate;
-  }
-
-  /* background-attachment: fixed (the previous approach here) is meant to
-     pin a background to the viewport instead of the element's own box,
-     but on Android WebView it only half-works: mid-scroll, the browser
-     clips the fixed background to the element's rendered bounds instead
-     of the true viewport, so the glow visibly got cut off as soon as you
-     started dragging -- static screenshots (taken between scroll frames)
-     never caught it. A real `position: fixed` layer has no such
-     scroll-repaint special case; it just always covers the viewport.
-
-     No explicit z-index here (previously -1): a `::before` already
-     paints before its element's real children just by being first in
-     generated-content order, which is enough to keep it behind them.
-     Android WebView has a separate, nastier quirk with
-     `position: fixed` + a *negative* z-index specifically -- it isn't
-     reliably kept in the always-composited fixed layer during a scroll
-     gesture, so mid-drag it can go stale or drop out entirely, exposing
-     the native WebView's own background color (capacitor.config.ts's
-     `backgroundColor`, #0B0614 -- normally only ever seen for an instant
-     between the splash screen and the page's first paint) in whatever
-     region it failed to cover -- a visibly different-colored band above
-     or below the wine glow, i.e. exactly the "two halves" split. */
-  .page-container::before,
-  .screen-gradient::before,
-  .bg-base::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background-image: var(--wine-glow-bottom);
   }
 
   .page-header {
