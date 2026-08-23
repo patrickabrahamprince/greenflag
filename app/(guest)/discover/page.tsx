@@ -672,7 +672,16 @@ export default function DiscoverPage() {
               })()}
               {p.bio && (
                 <div>
-                  <p className="text-gold text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">The Standard</p>
+                  {/* This header used to read "The Standard" on every card,
+                      directly above the bio -- but a Standard is a woman's
+                      3-day set of intentions (standards.woman_id), not a bio,
+                      and men never have one at all. So on a man's card the
+                      label was simply wrong, and on any card it attached the
+                      one word naming this app's core mechanic to its most
+                      generic field. App Review's own 4.3(b) screenshot (Aug
+                      18) shows exactly that: "THE STANDARD" over "Passionate
+                      about outdoor sports and meaningful conversations." */}
+                  <p className="text-gold text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">About</p>
                   <p
                     className={`text-ink/80 text-base leading-relaxed max-w-md font-light whitespace-pre-line ${expandedBios.has(p.id) ? '' : 'line-clamp-3'}`}
                   >
@@ -688,6 +697,24 @@ export default function DiscoverPage() {
                   )}
                 </div>
               )}
+
+              {/* The single line on this screen that says the app isn't
+                  swipe-to-chat. Everything else on a card (photo, age,
+                  interests, a heart, a chat tab) reads as a generic dating
+                  app, which is what App Store review saw before rejecting
+                  under 4.3(b) -- their attached screenshot is this exact
+                  screen. The 3-day gate was only discoverable a tap deeper,
+                  so it never entered the first impression. Worded per
+                  persona: she is told what he must do, he is told what he
+                  must do. */}
+              <div className="flex items-center gap-2 pt-1">
+                <Lock className="w-3.5 h-3.5 text-gold shrink-0" />
+                <p className="text-gold/90 text-xs font-medium leading-snug">
+                  {persona === 'woman'
+                    ? 'Chat stays locked until he completes your 3-Day Standard'
+                    : 'Chat stays locked until you complete her 3-Day Standard'}
+                </p>
+              </div>
 
               <div className={persona === 'woman' ? 'flex items-center gap-4 pt-2 shrink-0' : 'flex items-center justify-center gap-4 pt-2 shrink-0'}>
                 {persona === 'woman' ? (
