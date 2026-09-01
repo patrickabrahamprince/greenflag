@@ -13,7 +13,8 @@
     "test:matchflow:backend": "bash scripts/run-matchflow-backend.sh",
     "test:matchflow:e2e": "playwright test tests/e2e/matchflow-happy-path.spec.ts tests/e2e/matchflow-rejection.spec.ts",
     "test:matchflow": "npm run test:matchflow:backend && npm run test:matchflow:e2e",
-    "seed:reviewers": "npx tsx scripts/seed-app-store-reviewers.ts"
+    "seed:reviewers": "npx tsx scripts/seed-app-store-reviewers.ts",
+    "seed:testers": "npx tsx scripts/seed-app-store-reviewers.ts --group=testers"
   },
   "dependencies": {
     "@aparajita/capacitor-biometric-auth": "^10.0.0",
