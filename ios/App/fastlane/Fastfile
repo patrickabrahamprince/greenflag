@@ -13,7 +13,7 @@ platform :ios do
 
     # Build for TestFlight
     build_app(
-      workspace: "App.xcworkspace",
+      project: "App.xcodeproj",
       scheme: "App",
       configuration: "Release",
       derived_data_path: "build",
