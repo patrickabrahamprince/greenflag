@@ -1,0 +1,10 @@
+ios
+android
+node_modules
+.git
+.next
+docs
+tests
+scripts
+coverage
+.vscode
