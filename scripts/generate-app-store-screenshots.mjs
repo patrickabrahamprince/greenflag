@@ -27,8 +27,8 @@ const CSS_RESET = `
   -webkit-font-smoothing: antialiased;
 }
 body {
-  width: 1290px;
-  height: 2796px;
+  width: 1284px;
+  height: 2778px;
   background: radial-gradient(circle at 50% 10%, #171d1a 0%, #0a0e0c 50%, #050706 100%);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
   color: #FFFFFF;
@@ -837,7 +837,7 @@ async function generateScreenshots() {
   });
 
   const context = await browser.newContext({
-    viewport: { width: 1290, height: 2796 },
+    viewport: { width: 1284, height: 2778 },
     deviceScaleFactor: 1,
   });
 
