@@ -38,7 +38,7 @@ export function ProfileCompletion({ user }: ProfileCompletionProps) {
     },
     !detailsComplete && {
       label: 'Add your details',
-      desc: 'Lifestyle & basics help you stand out and match better.',
+      desc: 'Lifestyle & basics help you stand out and connect with compatible people.',
     },
   ].filter((item): item is { label: string; desc: string } => !!item);
 

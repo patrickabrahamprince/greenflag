@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Loader2, Heart, Bell, Check, X } from 'lucide-react';
+import { Loader2, Flag, Bell, Check, X } from 'lucide-react';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import toast from 'react-hot-toast';
 import { ProgressSegmentBar } from '@/components/connection/ProgressSegmentBar';
@@ -269,7 +269,7 @@ export default function MyConnectionsPage() {
         {matches.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
             <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5">
-              <Heart className="w-6 h-6 text-gold" />
+              <Flag className="w-6 h-6 text-gold" fill="currentColor" />
             </div>
             <h2 className="font-display text-xl text-ink mb-2">No Connections Yet</h2>
             <p className="text-ink/50 text-sm">Discover someone to begin an introduction.</p>

@@ -13,17 +13,17 @@ GreenFlag
 
 ### Subtitle
 ```
-Set Your Standards. Meet Your Match.
+Values-First Relationships
 ```
 
 ### App Description (Promotional Text)
 ```
-GreenFlag is an intentional dating app built around personal standards and genuine connection. Define your values, match with compatible singles, and engage in a structured 3-Day Intention Exchange that builds real chemistry before unlimited messaging unlocks. Verified profiles, smart matching, and built-in safety features help you find meaningful relationships—not just dates.
+GreenFlag is an intentional relationship and compatibility platform built around personal standards and meaningful connection. Define your core values, discover compatible people through genuine standard alignment, and engage in a structured 3-Day Intention Protocol that cultivates authentic communication before open messaging unlocks. Verified profiles, guided prompts, and built-in safety features help you build lasting, values-aligned partnerships.
 ```
 
 ### Keywords (comma-separated, no quotes)
 ```
-dating, relationships, singles, standards, matching, social, connection
+relationships, compatibility, intentional communication, standards, values, mindful connection, relationship health, personal values
 ```
 
 ### Support URL
@@ -59,11 +59,11 @@ com.greenflagapp.app
 ```
 12
 ```
-(Change to 12 for resubmission)
+(Current build ready in Xcode is 12)
 
 ### Category
 ```
-Lifestyle > Social Networking
+Lifestyle > Personal Growth (or Lifestyle > Social Networking)
 ```
 
 ### Content Rating / Age Restriction
@@ -93,7 +93,7 @@ Explain: All profiles verified before visibility, users can report/block, admin 
 ```
 ✓ YES
 ```
-Explain: Dating application with messaging features
+Explain: Relationship compatibility and communication platform with structured messaging features
 
 **Question: Does your app include mature or adult content?**
 ```
@@ -185,30 +185,22 @@ IMPORTANT: Tap "Having trouble?" below the Apple/Google buttons on the login scr
 ---
 
 ## 📸 SCREENSHOTS SECTION
+Use the prepared architectural concept screenshots from `docs/ios-store-assets/` (at 1290 x 2796 px, Apple auto-scales down for all iPhones):
 
-### Required Screenshot Sizes
+1. **Screenshot 1 (`01_hero.png`)**:
+   - Headline: "Define your standards. Then meet your match."
+   - Focus: Intentional values-first relationships, not superficial swiping.
+2. **Screenshot 2 (`02_standards.png`)**:
+   - Headline: "Set your standards before you swipe"
+   - Focus: Visual diagram of the standards-first mechanic.
+3. **Screenshot 3 (`03_intention_exchange.png`)**:
+   - Headline: "3-Day Intention Protocol"
+   - Focus: Day 1 → Day 2 → Day 3 → Chat progression (chat stays locked until both complete daily prompts).
+4. **Screenshot 4 (`04_verified.png`)**:
+   - Headline: "Verified & Safe Community"
+   - Focus: Face ID privacy lock and active profile verification.
 
-#### iPhone 6.7-inch (5.5-inch and larger displays)
-- **Size**: 1242 x 2688 pixels
-- **Show**: Discover page with swiping cards
-- **Text Overlay**: "Swipe to find compatible matches"
-
-#### iPhone 6.1-inch (standard)
-- **Size**: 1170 x 2532 pixels
-- **Show**: Match celebration screen
-- **Text Overlay**: "It's a Match! Chat to connect"
-
-#### iPhone 5.5-inch or smaller (if supporting)
-- **Size**: 750 x 1334 pixels
-- **Show**: Messaging screen
-- **Text Overlay**: "Real conversations after meaningful intentions"
-
-#### iPad Pro 12.9-inch (if supporting iPad)
-- **Size**: 2048 x 2732 pixels
-- **Show**: Full Discover page
-- **Text Overlay**: "Available on iPad too"
-
-**Tip**: Use current app screenshots. Don't use mockups or demo images.
+Do NOT upload screenshots with captions saying "Swipe to match" or "It's a Match!". Leading with the intentional connection diagrams above prevents 4.3(b) automated rejections.
 
 ---
 
@@ -308,13 +300,13 @@ Prepare this version for submission (do NOT select automatic release)
 
 ### Release Notes
 ```
-Welcome to GreenFlag! Set your standards and meet your match. Features include daily intention messaging, verified profiles, smart matching, and a community dedicated to genuine connections.
+Welcome to GreenFlag! Define your standards and cultivate genuine, values-aligned connections. Features include a structured 3-Day Intention Protocol, verified profiles, compatibility alignment, and mindful communication.
 
 Version 1.0.0 includes:
-- Discover swiping with compatibility breakdown
-- 3-Day Intention Exchange system
-- Verified profile profiles
-- In-App Messaging
+- Standards-based discovery with compatibility alignment breakdown
+- 3-Day Intention Exchange protocol before chat unlocks
+- Verified profile system
+- Intentional messaging flow
 - Coins Store (In-App Purchases)
 - Face ID App Lock
 - Account Pause & Deletion

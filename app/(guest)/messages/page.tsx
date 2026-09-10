@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Heart, Loader2, MessageCircle } from 'lucide-react';
+import { Bell, Loader2, MessageCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
@@ -166,7 +166,7 @@ function InProgressMatches({ userId, supabase }: { userId: string; supabase: Ret
               {sendingId === p.matchUserId ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
               ) : (
-                <Heart className="w-3.5 h-3.5" />
+                <Bell className="w-3.5 h-3.5" />
               )}
               {(hintedUntil[p.matchUserId] ?? 0) > now ? 'Nudged' : 'Nudge'}
             </button>

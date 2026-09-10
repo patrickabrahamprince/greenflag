@@ -1,6 +1,6 @@
 'use client';
 
-import { Heart, Coins, Users, MessageCircle, Zap, Shield } from 'lucide-react';
+import { Flag, Coins, Users, MessageCircle, Zap, Shield } from 'lucide-react';
 import Link from 'next/link';
 
 interface Section {
@@ -23,7 +23,7 @@ const SECTIONS: Section[] = [
     ],
   },
   {
-    icon: <Heart className="w-8 h-8" />,
+    icon: <Flag className="w-8 h-8 text-gold" />,
     title: 'Discover Profiles',
     description: 'Curated, not endless',
     points: [
@@ -95,7 +95,7 @@ export default function HowItWorks() {
       <div className="max-w-2xl mx-auto px-4 py-8 pb-24">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-display font-bold text-ink mb-3">
-            Set your standards. Meet your match.
+            Set your standards. Build genuine connection.
           </h2>
           <p className="text-ink/60">
             GreenFlag makes it easy to find people who share your values
@@ -133,7 +133,7 @@ export default function HowItWorks() {
 
         {/* CTA */}
         <div className="mt-12 text-center">
-          <p className="text-ink/60 mb-4">Ready to find your match?</p>
+          <p className="text-ink/60 mb-4">Ready to connect intentionally?</p>
           <Link href="/discover" className="btn-primary inline-flex">
             Start Discovering
           </Link>

@@ -1,126 +1,141 @@
 {
-  "identifier" : "FBA48514-E6CC-4970-8AAE-A672AC1C1D58",
-  "nonRenewingSubscriptions" : [],
-  "products" : [
+  "identifier": "FBA48514-E6CC-4970-8AAE-A672AC1C1D58",
+  "nonRenewingSubscriptions": [],
+  "products": [
     {
-      "displayPrice" : "399",
-      "familyShareable" : false,
-      "internalID" : "B95B515D-FFC9-476D-B2E4-6E5800A30242",
-      "localizations" : [
+      "displayPrice": "49",
+      "familyShareable": false,
+      "internalID": "B95B515D-FFC9-476D-B2E4-6E5800A30242",
+      "localizations": [
         {
-          "description" : "500 coins for GreenFlag",
-          "displayName" : "500 Coins",
-          "locale" : "en_US"
+          "description": "500 coins for GreenFlag",
+          "displayName": "500 Coins",
+          "locale": "en_US"
         }
       ],
-      "productID" : "com.greenflagapp.app.coins500",
-      "referenceName" : "500 Coins",
-      "type" : "Consumable"
+      "productID": "com.greenflagapp.app.coins500",
+      "referenceName": "500 Coins",
+      "type": "Consumable"
     },
     {
-      "displayPrice" : "799",
-      "familyShareable" : false,
-      "internalID" : "10BBEAAA-C521-4BE2-BC1F-F9D4E4E1B61B",
-      "localizations" : [
+      "displayPrice": "89",
+      "familyShareable": false,
+      "internalID": "3151A62D-A9B1-4316-AEF0-500840465908",
+      "localizations": [
         {
-          "description" : "1200 coins for GreenFlag",
-          "displayName" : "1200 Coins",
-          "locale" : "en_US"
+          "description": "1000 coins for GreenFlag",
+          "displayName": "1000 Coins",
+          "locale": "en_US"
         }
       ],
-      "productID" : "com.greenflagapp.app.coins1200",
-      "referenceName" : "1200 Coins",
-      "type" : "Consumable"
+      "productID": "com.greenflagapp.app.coins1000",
+      "referenceName": "1000 Coins",
+      "type": "Consumable"
     },
     {
-      "displayPrice" : "1499",
-      "familyShareable" : false,
-      "internalID" : "58842A35-9D70-4E0F-B931-7D1949F80B7E",
-      "localizations" : [
+      "displayPrice": "129",
+      "familyShareable": false,
+      "internalID": "C7EBC28D-2226-4F98-A728-97A2CE042902",
+      "localizations": [
         {
-          "description" : "2500 coins for GreenFlag",
-          "displayName" : "2500 Coins",
-          "locale" : "en_US"
+          "description": "1500 coins for GreenFlag",
+          "displayName": "1500 Coins",
+          "locale": "en_US"
         }
       ],
-      "productID" : "com.greenflagapp.app.coins2500",
-      "referenceName" : "2500 Coins",
-      "type" : "Consumable"
+      "productID": "com.greenflagapp.app.coins1500",
+      "referenceName": "1500 Coins",
+      "type": "Consumable"
     },
     {
-      "displayPrice" : "5",
-      "familyShareable" : false,
-      "internalID" : "3F90BF45-AB9E-4B0E-A26A-16BAE8F9A38A",
-      "localizations" : [
+      "displayPrice": "169",
+      "familyShareable": false,
+      "internalID": "F4CA35FE-B9E6-4985-81A4-55D9D34A591E",
+      "localizations": [
         {
-          "description" : "Admin-only real-money test purchase",
-          "displayName" : "Test 5 Coins",
-          "locale" : "en_US"
+          "description": "2000 coins for GreenFlag",
+          "displayName": "2000 Coins",
+          "locale": "en_US"
         }
       ],
-      "productID" : "com.greenflagapp.app.coinstest",
-      "referenceName" : "Test 5 Coins",
-      "type" : "Consumable"
+      "productID": "com.greenflagapp.app.coins2000",
+      "referenceName": "2000 Coins",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "399",
+      "familyShareable": false,
+      "internalID": "3A28ED9C-634F-4174-9886-6266F312ED66",
+      "localizations": [
+        {
+          "description": "5000 coins for GreenFlag",
+          "displayName": "5000 Coins",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.greenflagapp.app.coins5000",
+      "referenceName": "5000 Coins",
+      "type": "Consumable"
     }
   ],
-  "settings" : {
-    "_applicationInternalID" : "0",
-    "_developerTeamID" : "",
-    "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 0,
-    "_locale" : "en_IN",
-    "_storefront" : "IND",
-    "_storeKitErrors" : [
+  "settings": {
+    "_applicationInternalID": "0",
+    "_developerTeamID": "",
+    "_failTransactionsEnabled": false,
+    "_lastSynchronizedDate": 0,
+    "_locale": "en_IN",
+    "_storefront": "IND",
+    "_storeKitErrors": [
       {
-        "current" : null,
-        "enabled" : false,
-        "name" : "Load Products"
+        "current": null,
+        "enabled": false,
+        "name": "Load Products"
       },
       {
-        "current" : null,
-        "enabled" : false,
-        "name" : "Purchase"
+        "current": null,
+        "enabled": false,
+        "name": "Purchase"
       },
       {
-        "current" : null,
-        "enabled" : false,
-        "name" : "Verification"
+        "current": null,
+        "enabled": false,
+        "name": "Verification"
       },
       {
-        "current" : null,
-        "enabled" : false,
-        "name" : "App Store Sync"
+        "current": null,
+        "enabled": false,
+        "name": "App Store Sync"
       },
       {
-        "current" : null,
-        "enabled" : false,
-        "name" : "Subscription Status"
+        "current": null,
+        "enabled": false,
+        "name": "Subscription Status"
       },
       {
-        "current" : null,
-        "enabled" : false,
-        "name" : "App Transaction"
+        "current": null,
+        "enabled": false,
+        "name": "App Transaction"
       },
       {
-        "current" : null,
-        "enabled" : false,
-        "name" : "Manage Subscriptions Sheet"
+        "current": null,
+        "enabled": false,
+        "name": "Manage Subscriptions Sheet"
       },
       {
-        "current" : null,
-        "enabled" : false,
-        "name" : "Refund Request Sheet"
+        "current": null,
+        "enabled": false,
+        "name": "Refund Request Sheet"
       },
       {
-        "current" : null,
-        "enabled" : false,
-        "name" : "Offer Code Redeem Sheet"
+        "current": null,
+        "enabled": false,
+        "name": "Offer Code Redeem Sheet"
       }
     ]
   },
-  "subscriptionGroups" : [],
-  "version" : {
-    "major" : 3,
-    "minor" : 0
+  "subscriptionGroups": [],
+  "version": {
+    "major": 3,
+    "minor": 0
   }
 }

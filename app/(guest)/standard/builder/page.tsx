@@ -46,10 +46,10 @@ const PRESETS: Record<string, string[]> = {
   '1-3': ['Tell me about your day', 'What\'s your favorite song and why?', 'Describe yourself in 30 seconds'],
   '2-1': ['What are you looking for in a partner?', 'Share a childhood memory', 'What\'s your love language?'],
   '2-2': ['Show me doing something you love', 'A photo with friends or family', 'Your favorite place in the city'],
-  '2-3': ['What does a perfect date look like to you?', 'Tell me a fun fact about yourself', 'What are you passionate about?'],
+  '2-3': ['What does an ideal day look like to you?', 'Tell me a fun fact about yourself', 'What are you passionate about?'],
   '3-1': ['Why should I give you a chance?', 'What makes you a green flag?', 'Describe your ideal relationship'],
   '3-2': ['A candid, unfiltered photo', 'Show me your hobby in action', "A photo that represents 'you'"],
-  '3-3': ["Tell me why we'd be a good match", "What's a promise you'd make to a partner?", 'Say something that shows your personality'],
+  '3-3': ["Tell me why our values align", "What's a promise you'd make to a partner?", 'Say something that shows your personality'],
 };
 
 // Copy for the "locked" dialog shown after finishing a day, keyed by the

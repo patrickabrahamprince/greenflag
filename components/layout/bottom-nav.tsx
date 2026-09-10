@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Compass, Heart, User, MessageSquare, Bell, ShieldAlert } from 'lucide-react';
+import { Compass, Flag, User, MessageSquare, Bell, ShieldAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUserStore, useNotificationStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
@@ -12,7 +12,7 @@ import { PendingReviewBanner } from '@/components/PendingReviewBanner';
 
 const manTabs = [
   { name: 'Discover', href: '/discover', icon: Compass },
-  { name: 'Connections', href: '/my-connections', icon: Heart },
+  { name: 'Connections', href: '/my-connections', icon: Flag },
   { name: 'Chat', href: '/messages', icon: MessageSquare },
   { name: 'Alerts', href: '/notifications', icon: Bell },
   { name: 'Profile', href: '/profile', icon: User },
@@ -20,7 +20,7 @@ const manTabs = [
 
 const womanTabs = [
   { name: 'Discover', href: '/discover', icon: Compass },
-  { name: 'Connections', href: '/my-connections', icon: Heart },
+  { name: 'Connections', href: '/my-connections', icon: Flag },
   { name: 'Chat', href: '/messages', icon: MessageSquare },
   { name: 'Alerts', href: '/notifications', icon: Bell },
   { name: 'Profile', href: '/profile', icon: User },

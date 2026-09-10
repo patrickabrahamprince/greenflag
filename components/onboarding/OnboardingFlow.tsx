@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { ChevronRight, X, Heart, Coins, Zap, Users } from 'lucide-react';
+import { ChevronRight, X, Flag, Coins, Zap, Users, MessageCircle } from 'lucide-react';
 
 const SWIPE_THRESHOLD_PX = 50;
 
@@ -18,13 +18,13 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
   {
     id: 'welcome',
     title: 'Welcome to GreenFlag',
-    description: 'Set your standards. Meet your match.',
+    description: 'Set your standards. Build genuine connection.',
     details: [
-      'GreenFlag matches you based on your standards and values',
-      'Every match is real and thoughtful',
-      'Take your time to get to know each person',
+      'GreenFlag connects you based on your standards and values',
+      'Every connection is intentional and verified',
+      'Take your time to build real compatibility',
     ],
-    icon: <Heart className="w-12 h-12" />,
+    icon: <Flag className="w-12 h-12" fill="currentColor" />,
     color: 'text-gold',
   },
   {
@@ -59,7 +59,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
     details: [
       'Women define a 3-day Standard — the bar he needs to meet to earn a conversation.',
       'Men discover curated profiles and complete each day\'s Standard to show real intention.',
-      'The more genuine the effort, the stronger the match.',
+      'The more genuine the effort, the stronger the connection.',
     ],
     icon: <Users className="w-12 h-12" />,
     color: 'text-gold',
@@ -73,7 +73,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
       'New conversation prompts help you go deeper each day.',
       'Block or report any profile at any time.',
     ],
-    icon: <Heart className="w-12 h-12" />,
+    icon: <MessageCircle className="w-12 h-12" />,
     color: 'text-gold',
   },
 ];
@@ -86,7 +86,6 @@ export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
 
   const step = ONBOARDING_STEPS[currentStep];
   const isLast = currentStep === ONBOARDING_STEPS.length - 1;
-  const isComplete = completedSteps.size === ONBOARDING_STEPS.length;
 
   const handleNext = () => {
     const newCompleted = new Set(completedSteps);
@@ -106,11 +105,6 @@ export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
     onComplete();
   };
 
-  // Ref-tracked (not state -- reading state back on the same line it's
-  // set gives the previous render's value) and gated on the gesture
-  // being more horizontal than vertical, same pattern proven across
-  // SwipeToDismiss/ProfileImageCarousel/SwipeBackGesture -- without that
-  // guard an ordinary vertical scroll can misfire as a swipe.
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.targetTouches[0].clientX;
     touchStartY.current = e.targetTouches[0].clientY;
@@ -128,7 +122,7 @@ export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
     const dx = startX - endX;
     const dy = startY - endY;
     if (Math.abs(dx) <= Math.abs(dy)) return;
-    if (dx > SWIPE_THRESHOLD_PX) handleNext(); // swipe left = next
+    if (dx > SWIPE_THRESHOLD_PX) handleNext();
   };
 
   return (
@@ -184,7 +178,7 @@ export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
             onClick={handleNext}
             className="btn-primary flex-1 flex items-center justify-center gap-2"
           >
-            {isLast ? 'Start Matching' : 'Next'}
+            {isLast ? 'Get Started' : 'Next'}
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>

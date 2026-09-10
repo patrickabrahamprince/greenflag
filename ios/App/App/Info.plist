@@ -28,8 +28,14 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
+	<!-- Reads the Xcode build setting rather than a hardcoded literal.
+	     This was pinned to "12" directly, which silently won over
+	     CURRENT_PROJECT_VERSION -- bumping the build number in Xcode
+	     did nothing and the next upload would collide with the build
+	     already in review. CURRENT_PROJECT_VERSION is now the single
+	     source of truth, set to 12 to match what actually shipped. -->
 	<key>CFBundleVersion</key>
-	<string>12</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

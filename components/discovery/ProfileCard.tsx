@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Lock, Instagram, Briefcase, Ruler, Heart, ChevronLeft, ChevronRight, MapPin, ImageOff, Flag, MoreVertical } from 'lucide-react';
+import { Lock, Instagram, Briefcase, Ruler, ChevronLeft, ChevronRight, MapPin, ImageOff, Flag, MoreVertical } from 'lucide-react';
 import { hapticTap } from '@/lib/haptics';
 
 interface DiscoverProfile {
@@ -255,7 +255,7 @@ export function ProfileCard({
         )}
         {p.bio && (
           <div>
-            <p className="text-gold text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">The Standard</p>
+            <p className="text-gold text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">About</p>
             <p
               className={`text-ink/80 text-base leading-relaxed max-w-md font-light whitespace-pre-line ${expandedBios.has(p.id) ? '' : 'line-clamp-3'}`}
             >
@@ -281,7 +281,7 @@ export function ProfileCard({
                 className="btn-primary flex-1 h-12 flex items-center justify-center gap-1.5"
               >
                 <>
-                  <Heart className="w-4 h-4 text-ink" />
+                  <Flag className="w-4 h-4 text-ink" fill="currentColor" />
                   <span className="text-ink text-xs uppercase tracking-wide font-display font-bold">View Profile</span>
                 </>
               </button>
@@ -300,8 +300,8 @@ export function ProfileCard({
                 className="btn-primary flex-1 h-12 flex items-center justify-center gap-1.5"
               >
                 <>
-                  <Heart className="w-4 h-4 text-ink" />
-                  <span className="text-ink text-xs uppercase tracking-wide font-display font-bold">Make My Move</span>
+                  <Flag className="w-4 h-4 text-ink" fill="currentColor" />
+                  <span className="text-ink text-xs uppercase tracking-wide font-display font-bold">Meet Her Standard</span>
                 </>
               </button>
               <button

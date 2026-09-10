@@ -59,7 +59,7 @@ Return ONLY the conversation starter/question. No explanations, no quotes, no fo
       messages: [
         {
           role: 'system',
-          content: 'You are a dating app assistant that generates friendly, genuine conversation starters.',
+          content: 'You are an intentional communication assistant that generates friendly, thoughtful conversation starters.',
         },
         {
           role: 'user',

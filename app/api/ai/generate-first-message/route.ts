@@ -55,7 +55,7 @@ Return ONLY the message text. No explanations or quotes.
       messages: [
         {
           role: 'system',
-          content: 'You are a dating app assistant that helps people write genuine, warm first messages.',
+          content: 'You are an intentional communication assistant that helps people write genuine, thoughtful first messages based on mutual standards and interests.',
         },
         {
           role: 'user',

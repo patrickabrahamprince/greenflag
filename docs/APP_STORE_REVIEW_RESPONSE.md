@@ -57,23 +57,26 @@ GreenFlag was thoroughly tested on both physical hardware and simulators across 
 
 ---
 
-### 3. App Description, Functions, Target Audience & Value Proposition
+### 3. App Description, Functions, Target Audience & Value Proposition (Guideline 4.3(b) Differentiation)
 
-- **App Purpose & Functions**:
-  GreenFlag is an intentional dating and relationship application built around personal standards and mutual compatibility. Unlike superficial swiping apps, GreenFlag empowers users to define clear, authentic expectations (their "Standards") and engage in a structured **3-Day Intention Exchange** upon matching. 
-  - *Day 1*: Initial values and lifestyle thought-sharing.
-  - *Day 2*: Meaningful question exchanges and optional voice/photo prompts.
-  - *Day 3*: Deeper personal connection prompts.
-  - *Post Day 3*: Unlocks open messaging and video call capabilities.
+- **App Purpose & Core Differentiators**:
+  GreenFlag is an intentional relationship compatibility and communication platform built around personal standards and mutual alignment. Unlike superficial swipe dating apps, GreenFlag explicitly prevents unguided, rapid-swipe interactions and instant-messaging ghosting loops:
+  - **Standards Before Browsing**: Users define their non-negotiable personal standards and core values first.
+  - **Chat Gated by 3-Day Intention Protocol**: Upon mutual interest, unlimited messaging is strictly locked. Users must synchronously complete a 3-day guided exchange:
+    - *Day 1*: Initial values and lifestyle philosophy sharing.
+    - *Day 2*: Meaningful prompt exchanges with voice notes and reflections.
+    - *Day 3*: Deeper personal connection and future alignment.
+    - *Post Day 3*: Unlocks open messaging only after mutual completion.
+  - **Anti-Burnout Architecture**: Throttled pacing and verified profiles protect users from cognitive overload and superficial swiping fatigue.
 
 - **Target Audience**:
-  Singles (17+) seeking meaningful, committed, values-aligned relationships who experience dating app burnout from ghosting, superficial matching, and lack of alignment.
+  Adults (17+) seeking meaningful, values-aligned relationships who experience burnout from superficial swipe mechanics, unguided small talk, and ghosting.
 
 - **Problem Solved**:
-  Traditional dating apps encourage rapid, unmindful swiping that often leads to ghosting and mismatched expectations. GreenFlag solves this by putting personal standards first, slowing down initial conversations into guided daily steps, and fostering genuine chemistry before open chat begins.
+  Mainstream dating apps encourage compulsive, photo-first swiping that dehumanizes users and results in widespread ghosting. GreenFlag solves this by putting personal standards first, eliminating instantaneous unguided chat, and providing a structured daily protocol to determine compatibility before messaging opens.
 
 - **Value Provided**:
-  Saves users time and emotional energy by filtering for real compatibility, verified profiles, respectful communication, and transparent intentions.
+  Fosters emotional safety, verified authenticity, transparent standards, and respectful communication through intentional pacing.
 
 ---
 

@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const DELETE_REASONS = [
   'Too many notifications', 'Taking a break', 'Found someone', 'Fake profiles',
-  'Not enough matches', 'Privacy concerns', 'Too expensive', 'Other',
+  'Not enough aligned connections', 'Privacy concerns', 'Too expensive', 'Other',
 ];
 
 const MAX_REASONS = 3;

@@ -14,18 +14,18 @@ interface DayExplanation {
 const DAY_EXPLANATIONS: Record<1 | 2 | 3, DayExplanation> = {
   1: {
     day: 1,
-    title: 'Day 1: Initial Match',
-    description: 'You both matched each other! This is where it starts.',
+    title: 'Day 1: Mutual Alignment',
+    description: 'You connected based on shared standards! This is where the journey starts.',
     whatToExpect: [
-      'See their full profile and all their photos',
-      'Read their bio and interests',
-      'View your match percentage and why you matched',
-      'Decide if you want to say hello',
+      'See their full profile, bio, and personal standards',
+      'Review shared values and lifestyle priorities',
+      'View your alignment score and compatibility breakdown',
+      'Begin your first intentional exchange',
     ],
     tips: [
-      'Take a moment to check out their whole profile',
-      'Look for things you have in common',
-      'If interested, send that first message!',
+      'Take time to review their full profile and values',
+      'Focus on genuine shared standards',
+      'Answer the day’s prompt with authenticity and depth',
     ],
   },
   2: {

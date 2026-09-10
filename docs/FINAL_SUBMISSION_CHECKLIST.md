@@ -32,11 +32,11 @@
 
 ### 4. App Store Listing (Fill in App Store Connect)
 - [ ] **App Name**: GreenFlag
-- [ ] **Subtitle**: Set Your Standards. Meet Your Match.
-- [ ] **Description**: (Use the one from APP_STORE_FINAL_SUBMISSION.md section 3)
-- [ ] **Keywords**: dating, relationships, standards, matching, social, single
-- [ ] **Category**: Lifestyle → Social Networking
-- [ ] **Content Rating**: 17+ (dating features, some mature content)
+- [ ] **Subtitle**: Values-First Relationships
+- [ ] **Description**: (Use the updated version from APP_STORE_CONNECT_COPY_PASTE.md)
+- [ ] **Keywords**: relationships, compatibility, intentional communication, standards, values, mindful connection, relationship health, personal values
+- [ ] **Category**: Lifestyle → Personal Growth (or Lifestyle → Social Networking)
+- [ ] **Content Rating**: 17+ (relationship communication, mature content)
 - [ ] **Age Restriction**: 17+
 
 ### 5. Privacy & Legal (Fill in App Store Connect)
@@ -45,13 +45,13 @@
 - [ ] **Support URL**: https://greenflag-dusky.vercel.app/support
 - [ ] **Delete Account URL**: https://greenflag-dusky.vercel.app/settings (in-app)
 - [ ] Privacy Policy: Covers all data collection ✓
-- [ ] Terms: Include coin refund policy, dating-specific terms ✓
+- [ ] Terms: Include coin refund policy, relationship terms ✓
 
 ### 6. Age Rating Questionnaire (Fill in App Store Connect)
 Complete the questionnaire answering:
-- [ ] Contains user-generated content? **YES** (profiles, photos, messages)
+- [ ] Contains user-generated content? **YES** (profiles, photos, messages, intentions)
 - [ ] Content moderation system? **YES** (reporting, blocking, admin review)
-- [ ] Dating/romantic content? **YES** (dating app core feature)
+- [ ] Dating/romantic content? **YES** (relationship communication features)
 - [ ] Mature sexual content? **NO** (user-generated may violate terms)
 - [ ] Profanity/crude humor? **INFREQUENT** (user-generated, moderated)
 - [ ] Alcohol/tobacco? **NO**
@@ -63,25 +63,14 @@ Complete the questionnaire answering:
 - [ ] Requires login? **YES**
 
 ### 7. App Store Screenshots (Fill in App Store Connect)
-Need to create for each device size (can use your own screenshots or generate):
+Upload the 4 prepared architectural concept screenshots from `docs/ios-store-assets/` (at 1290 x 2796 px, Apple auto-scales down for all screen sizes):
 
-**Required Sizes**:
-- [ ] iPhone 6.7" (landscape optional)
-- [ ] iPhone 6.1" (required - most important)
-- [ ] iPad Pro 12.9" (required if supporting iPad)
+1. **`01_hero.png`**: "Define your standards. Then meet your match." (Intentional relationships framing)
+2. **`02_standards.png`**: "Set your standards before you swipe" (Standards-first compatibility engine)
+3. **`03_intention_exchange.png`**: "3-Day Intention Protocol" (Day 1 → Day 2 → Day 3 → Chat progression)
+4. **`04_verified.png`**: "Verified & Safe Community" (Face ID & verified profiles)
 
-**Content for Screenshots** (show these screens):
-1. Discover page (swiping)
-2. Standards/Compatibility view
-3. 3-Day Intention flow
-4. Messaging
-5. Coins store (IAP showcase)
-
-**Tips**:
-- Use actual app screenshots (not mockups)
-- Add text overlays explaining key features
-- Show the app in action, not just login screen
-- Use consistent branding
+*(Do NOT upload screenshots showing swipe arrows or "It's a Match!" to avoid triggering 4.3(b) saturated category rejections)*
 
 ### 8. In-App Purchases (StoreKit 2)
 - [ ] All 5 coin packages configured in App Store Connect

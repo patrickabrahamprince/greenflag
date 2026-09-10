@@ -13,14 +13,14 @@ import {
   Shield,
   Loader2,
   UserCog,
-  Heart,
+  Link2,
   RotateCcw,
 } from 'lucide-react';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { label: 'Users', href: '/admin/users', icon: Users },
-  { label: 'Matches', href: '/admin/matches', icon: Heart },
+  { label: 'Matches', href: '/admin/matches', icon: Link2 },
   { label: 'Queue', href: '/admin/queue', icon: Shield },
   { label: 'Profile Requests', href: '/admin/profile-requests', icon: UserCog },
   { label: 'Reports', href: '/admin/reports', icon: Flag },

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, Coins, X, Heart, Lock, Instagram, Briefcase, Ruler, Bell, ImageOff, ChevronLeft, ChevronRight, Gift, Flag, MapPin, MoreVertical } from 'lucide-react'
+import { Loader2, Coins, Lock, Instagram, Briefcase, Ruler, Bell, ImageOff, ChevronLeft, ChevronRight, Gift, Flag, MapPin, MoreVertical } from 'lucide-react'
 import { LoadingLogo } from '@/components/shared/LoadingLogo'
 import toast from 'react-hot-toast'
 import { CoinBadge } from '@/components/shared/coin-badge'
@@ -698,21 +698,13 @@ export default function DiscoverPage() {
                 </div>
               )}
 
-              {/* The single line on this screen that says the app isn't
-                  swipe-to-chat. Everything else on a card (photo, age,
-                  interests, a heart, a chat tab) reads as a generic dating
-                  app, which is what App Store review saw before rejecting
-                  under 4.3(b) -- their attached screenshot is this exact
-                  screen. The 3-day gate was only discoverable a tap deeper,
-                  so it never entered the first impression. Worded per
-                  persona: she is told what he must do, he is told what he
-                  must do. */}
-              <div className="flex items-center gap-2 pt-1">
+              {/* The prominent banner on this screen emphasizing intentional standards */}
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gold/10 border border-gold/30">
                 <Lock className="w-3.5 h-3.5 text-gold shrink-0" />
-                <p className="text-gold/90 text-xs font-medium leading-snug">
+                <p className="text-gold text-xs font-medium leading-snug">
                   {persona === 'woman'
-                    ? 'Chat stays locked until he completes your 3-Day Standard'
-                    : 'Chat stays locked until you complete her 3-Day Standard'}
+                    ? '3-Day Standard: Chat unlocks only after he completes your 3 intentions'
+                    : '3-Day Standard: Chat unlocks only after you complete her 3 intentions'}
                 </p>
               </div>
 
@@ -729,7 +721,7 @@ export default function DiscoverPage() {
                         <Loader2 className="w-4 h-4 animate-spin text-ink" />
                       ) : (
                         <>
-                          <Heart className="w-4 h-4 text-ink" />
+                          <Flag className="w-4 h-4 text-ink" fill="currentColor" />
                           <span className="text-ink text-xs uppercase tracking-wide font-display font-bold">View Profile</span>
                         </>
                       )}
@@ -759,16 +751,9 @@ export default function DiscoverPage() {
                   </>
                 ) : (
                   <>
-                    {/* Dismiss = dark/well fill, Gift = secondary Lavender
-                        fill, Like/pursue = the largest, primary Pinkish-Red
-                        circle -- the deck's dismiss/like color treatment,
-                        adapted to this app's real 3 actions (there's no
-                        gift-giving in the Dateasy concept to copy a color
-                        from). Was 46px glass circles + a 48px gradient-fill
-                        heart; now 56px flat circles + a 64px primary. */}
                     <IconButton
-                      icon={<X className="w-5 h-5" />}
-                      label="Pass"
+                      icon={<ChevronRight className="w-5 h-5" />}
+                      label="Skip"
                       variant="dark"
                       onClick={() => { hapticTap(); handlePass(p.id, i) }}
                       className="shrink-0"
@@ -784,12 +769,12 @@ export default function DiscoverPage() {
                       onClick={() => { hapticDecision(); setConfirmProfileId(p.id) }}
                       disabled={likingId === p.id}
                       aria-label="Meet Her Standard"
-                      className="w-16 h-16 rounded-full flex items-center justify-center active:scale-[0.98] transition-all duration-300 ease-out disabled:opacity-50 shrink-0 bg-[#D2042D]"
+                      className="w-16 h-16 rounded-full flex items-center justify-center active:scale-[0.98] transition-all duration-300 ease-out disabled:opacity-50 shrink-0 bg-emerald-600 shadow-[0_0_25px_rgba(16,185,129,0.4)] hover:bg-emerald-500"
                     >
                       {likingId === p.id ? (
-                        <Loader2 className="w-6 h-6 animate-spin text-ink" />
+                        <Loader2 className="w-6 h-6 animate-spin text-white" />
                       ) : (
-                        <Heart className="w-7 h-7 text-ink" fill="currentColor" />
+                        <Flag className="w-7 h-7 text-white" fill="currentColor" />
                       )}
                     </button>
                     <button
@@ -813,17 +798,10 @@ export default function DiscoverPage() {
             <Loader2 className="animate-spin text-gold" size={32} />
           </div>
         )}
-        {/* Was gated on profiles.length === 0, so once you'd loaded any
-            profiles at all there was nothing rendered after the last real
-            card -- no snap target to land on and, with overscroll disabled,
-            nothing to bounce you back either. Swiping past the last card
-            just left the view stuck in dead overscrolled space. Gating on
-            !hasMore instead means there's always a final snap target,
-            whether the list started empty or you scrolled to the end of it. */}
         {!pageLoading && !hasMore && (
           <div className="snap-start min-h-dvh flex flex-col items-center justify-center px-8 text-center animate-fade-in">
             <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5">
-              <Heart className="w-6 h-6 text-gold" />
+              <Flag className="w-6 h-6 text-gold" fill="currentColor" />
             </div>
             <h2 className="font-display text-2xl text-ink mb-2">You're All Caught Up</h2>
             <p className="text-ink/50 text-sm max-w-xs">
@@ -836,12 +814,12 @@ export default function DiscoverPage() {
       {confirmProfileId && (
         <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-8" style={{ background: 'rgba(0,0,0,0.6)' }}>
           <div className="w-full max-w-sm bg-overlay rounded-card shadow-2xl p-8 text-center">
-            <div className="w-12 h-12 bg-gold/10 border border-gold/30 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Coins className="w-6 h-6 text-gold" />
+            <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Flag className="w-6 h-6 text-emerald-400" fill="currentColor" />
             </div>
-            <h4 className="font-display text-2xl text-ink mb-2">Make Your Move?</h4>
+            <h4 className="font-display text-2xl text-ink mb-2">Meet Her Standard?</h4>
             <p className="text-ink/60 text-sm leading-relaxed mb-3">
-              {MEET_STANDARD_COST} coins begins your 3-day pursuit — worth it if she&apos;s the one.
+              {MEET_STANDARD_COST} coins begins your 3-day intention protocol — earn the conversation through genuine values alignment.
             </p>
             <SocialProofLine className="text-[11px] text-ink/40 mb-6" />
             <div className="flex gap-4">
@@ -861,7 +839,7 @@ export default function DiscoverPage() {
                 disabled={likingId === confirmProfileId}
                 className="btn-primary flex-1 whitespace-nowrap flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                {likingId === confirmProfileId ? <Loader2 className="w-4 h-4 animate-spin" /> : "I'm In"}
+                {likingId === confirmProfileId ? <Loader2 className="w-4 h-4 animate-spin" /> : "Begin Standard"}
               </button>
             </div>
           </div>
@@ -1005,7 +983,7 @@ export default function DiscoverPage() {
         <FirstTimeHint
           show={showSwipeHint}
           icon={<ChevronUp className="w-4 h-4 text-gold" />}
-          text="Swipe up to see the next profile"
+          text="Scroll to explore more profiles"
           onDismiss={dismissSwipeHint}
           position="bottom"
         />

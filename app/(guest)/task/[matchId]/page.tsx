@@ -24,7 +24,7 @@ const TERMINAL_STATUSES = ['rejected', 'expired_no_submission', 'refunded'];
 const REJECT_REASON_CHIPS = [
   "Didn't follow instructions",
   'Effort felt low',
-  'Not a match after all',
+  'Not aligned after all',
 ];
 
 interface MatchData {
@@ -246,7 +246,7 @@ export default function TaskPage() {
   if (error || !match || !otherProfile) {
     return (
       <div className="min-h-dvh flex flex-col items-center justify-center screen-gradient px-8 text-center">
-        <p className="text-ink/60 text-sm mb-6">{error || 'Match not found'}</p>
+        <p className="text-ink/60 text-sm mb-6">{error || 'Connection not found'}</p>
         <button onClick={() => router.push('/discover')} className="btn-primary">
           Back to Discover
         </button>
@@ -361,7 +361,7 @@ export default function TaskPage() {
       }
       if (decision === 'reject') {
         setRejectTarget(null);
-        toast.success('Match ended.');
+        toast.success('Connection ended.');
       } else if (data.chat_unlocked) {
         toast.success('All three days complete — your conversation is unlocked!');
       } else if (data.day_advanced && data.next_day_unlocks_at) {

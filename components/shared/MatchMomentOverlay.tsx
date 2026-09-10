@@ -95,7 +95,7 @@ export function MatchMomentOverlay({ open, myPhoto, theirPhoto, onContinue }: Ma
         </div>
         <div
           className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full flex items-center justify-center bg-gold ${glowAnim}`}
-          style={{ boxShadow: '0 0 40px 10px rgba(210, 4, 45, 0.5)' }}
+          style={{ boxShadow: '0 0 40px 10px rgba(16, 185, 129, 0.4)' }}
         >
           <Flag className="w-7 h-7 text-ink" fill="currentColor" />
         </div>

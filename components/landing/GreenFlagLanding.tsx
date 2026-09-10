@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
-  Heart,
+  Flag,
   ShieldCheck,
   Sparkles,
   BadgeCheck,
@@ -48,7 +48,7 @@ const FEATURES = [
       'Built-in check-ins, one-tap location sharing on dates, and 24/7 moderation mean you can focus on the connection, not the risk.',
   },
   {
-    icon: Heart,
+    icon: Flag,
     title: 'Green Flag Score',
     description:
       'A transparent trust signal on every profile, built from verified behavior — not vanity metrics — so healthy relationships start on the right foot.',
@@ -77,7 +77,7 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      'Finally a dating app that filters for red flags instead of just faces. The Green Flag Score genuinely changed how I vet matches.',
+      'Finally a platform that filters for red flags instead of just faces. The Green Flag Score genuinely changed how I vet compatibility.',
     name: 'Arjun M.',
     role: 'Matched in Bangalore',
     rating: 5,
@@ -173,7 +173,7 @@ function Nav() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg bg-gold flex items-center justify-center">
-            <Heart className="h-5 w-5 text-ink fill-ink" />
+            <Flag className="h-5 w-5 text-ink fill-ink" />
           </div>
           <span className="text-lg font-semibold tracking-tight text-ink">GreenFlag</span>
         </Link>
@@ -246,7 +246,7 @@ function Hero() {
         <div className="mb-6 flex justify-center animate-fade-in">
           <SectionBadge>
             <Sparkles className="h-3.5 w-3.5" />
-            Dating, without the guesswork
+            Connection, without the guesswork
           </SectionBadge>
         </div>
 
@@ -260,7 +260,7 @@ function Hero() {
 
         <p className="mx-auto mt-6 max-w-xl text-base text-ink/60 md:text-lg">
           GreenFlag verifies every profile, filters for genuine compatibility, and keeps you
-          safe from the first message to the first date — so you can stop swiping and start
+          safe from the first intention to the first conversation — so you can stop swiping and start
           connecting.
         </p>
 
@@ -324,10 +324,10 @@ function Features() {
         <div className="mx-auto max-w-2xl text-center">
           <SectionBadge>Built different</SectionBadge>
           <h2 className="mt-6 text-3xl font-semibold tracking-tight text-ink md:text-4xl">
-            Everything you need to date with confidence
+            Everything you need to connect with confidence
           </h2>
           <p className="mt-4 text-ink/60">
-            We rebuilt dating from the ground up around three things every good match needs:
+            We rebuilt relationship discovery from the ground up around three things every good connection needs:
             genuine compatibility, verified trust, and real safety.
           </p>
         </div>
@@ -541,12 +541,12 @@ function Footer() {
           <div>
             <Link href="/" className="flex items-center gap-2">
               <div className="h-7 w-7 rounded-lg bg-gold flex items-center justify-center">
-                <Heart className="h-4 w-4 text-ink fill-ink" />
+                <Flag className="h-4 w-4 text-ink fill-ink" />
               </div>
               <span className="text-lg font-semibold text-ink">GreenFlag</span>
             </Link>
             <p className="mt-4 max-w-xs text-sm text-ink/50">
-              Dating that starts with trust. Verified profiles, real safety, genuine
+              Relationships that start with trust. Verified profiles, real standards, genuine
               connections.
             </p>
             <div className="mt-6 flex gap-3">
