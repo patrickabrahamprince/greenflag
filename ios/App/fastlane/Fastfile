@@ -27,8 +27,7 @@ platform :ios do
         }
       },
       skip_package_ipa: false,
-      skip_package_pkg: true,
-      destination_uses_legacy_signing_settings: false
+      skip_package_pkg: true
     )
 
     # Upload to TestFlight
