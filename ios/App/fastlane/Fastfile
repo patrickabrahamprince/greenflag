@@ -5,6 +5,14 @@ platform :ios do
   lane :beta do
     setup_ci if is_ci
 
+    api_key = app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
+      key_content: ENV["APP_STORE_CONNECT_PRIVATE_KEY"],
+      is_key_content_base64: false,
+      in_house: false
+    )
+
     # Increment build number
     increment_build_number(
       build_number: ENV["GITHUB_RUN_NUMBER"] || Time.now.to_i.to_s,
@@ -19,12 +27,10 @@ platform :ios do
       derived_data_path: "build",
       destination: "generic/platform=iOS",
       export_method: "app-store",
+      xcargs: "-allowProvisioningUpdates",
       export_options: {
         signingStyle: "automatic",
-        teamID: ENV["APPLE_TEAM_ID"],
-        provisioningProfiles: {
-          "com.greenflagapp.app" => "match AppStore com.greenflagapp.app"
-        }
+        teamID: ENV["APPLE_TEAM_ID"]
       },
       skip_package_ipa: false,
       skip_package_pkg: true
@@ -32,7 +38,7 @@ platform :ios do
 
     # Upload to TestFlight
     upload_to_testflight(
-      api_key_path: "fastlane/app_store_connect_api_key.json",
+      api_key: api_key,
       skip_waiting_for_build_processing: true,
       skip_submission: true
     )
