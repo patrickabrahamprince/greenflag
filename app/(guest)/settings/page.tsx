@@ -38,6 +38,7 @@ export default function SettingsPage() {
   const [showDeleteReason, setShowDeleteReason] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showPauseConfirm, setShowPauseConfirm] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [pausing, setPausing] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -264,7 +265,11 @@ export default function SettingsPage() {
               <p className="text-sm text-ink font-medium">Sign Out</p>
             </div>
           </div>
-          <button onClick={handleLogout} disabled={loggingOut} className="btn-danger w-full flex items-center justify-center gap-2">
+          <button
+            onClick={() => setShowLogoutConfirm(true)}
+            disabled={loggingOut}
+            className="btn-danger w-full flex items-center justify-center gap-2"
+          >
             {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
             Sign Out
           </button>
@@ -341,6 +346,36 @@ export default function SettingsPage() {
                 className="btn-danger flex-1 text-sm"
               >
                 {updating ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-50 p-6">
+          <div className="dialog-card max-w-sm w-full text-center">
+            <LogOut className="w-12 h-12 text-crimson mx-auto mb-4" />
+            <h3 className="font-display text-lg text-ink mb-2">Sign out?</h3>
+            <p className="text-sm text-ink mb-6">
+              Are you sure you want to sign out? You will need to log back in to access your matches and messages.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                className="btn-secondary flex-1 text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowLogoutConfirm(false);
+                  handleLogout();
+                }}
+                disabled={loggingOut}
+                className="btn-danger flex-1 text-sm flex items-center justify-center gap-2"
+              >
+                {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Sign Out'}
               </button>
             </div>
           </div>

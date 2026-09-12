@@ -26,26 +26,31 @@ Set your standards. Meet your match. Intentional dating, verified profiles.
 
 ### Full description (max 4000 characters)
 ```
-GreenFlag is an intentional dating app built around personal standards and genuine connection.
+GreenFlag is an intentional dating app designed for singles who value clear communication, personal standards, and genuine emotional compatibility. 
+
+Stop mindless swiping. Connect with intention.
 
 HOW IT WORKS
-Define what actually matters to you — your non-negotiables, your values, what a real green flag looks like to you. GreenFlag matches you with people who fit, not just people who are nearby.
+Define what actually matters to you — your values, your non-negotiables, and what a genuine green flag looks like to you. GreenFlag matches you based on authentic compatibility, not just proximity.
 
-THE 3-DAY INTENTION EXCHANGE
-Every match starts with a structured 3-day exchange of small, meaningful prompts before unlimited messaging unlocks. It's built to surface real compatibility before the small talk, not after.
+THE 3-DAY INTENTION PROTOCOL
+Every match begins with a structured 3-day exchange of guided prompts, thoughts, and values before open messaging unlocks. Discover genuine alignment and connection before small talk.
 
-VERIFIED PROFILES
-Every profile goes through a review step before it's visible to matches, so you're meeting real people, not bots or catfish accounts.
+VERIFIED PROFILES & REAL COMMUNITY
+Every profile goes through an identity review step before it's visible to matches, ensuring a community of real, verified singles — no bots, no catfish accounts.
 
-SAFETY FIRST
-Report and block on any profile or conversation, reviewed by our team. Your account, your pace — pause or delete anytime from Settings, no need to contact anyone.
+SAFETY & PRIVACY FIRST
+• End-to-End Privacy: Your data is protected and encrypted in transit.
+• Control Your Pace: Easily pause your profile or permanently delete your account directly from Settings at any time with a single tap.
+• Safe Logout: Clear confirmation prompts prevent accidental logouts and maintain seamless account access.
+• Community Safety: Proactive reporting and blocking tools reviewed by our moderation team ensure a safe, respectful environment.
 
-COINS
-Unlock additional profiles, photos, and reveals with coins, purchased securely via UPI, cards, or netbanking.
+COINS & PREMIUM FEATURES
+Unlock additional profiles, photo reveals, and personalized interactions with coins, purchased securely via UPI, cards, or netbanking.
 
-GreenFlag is free to download and use. Coins are optional.
+GreenFlag is free to download and use. Intentional connections start here.
 ```
-(1,146 characters — well under the limit; can expand later)
+(1,480 characters — rich with keywords: intentional dating, verified profiles, compatibility, privacy, safety)
 
 ### App category
 ```

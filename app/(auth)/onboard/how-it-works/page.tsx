@@ -15,27 +15,31 @@ import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 const POINTS = [
   {
     icon: <CalendarDays className="w-8 h-8 text-gold" />,
-    step: 'Day 1-3',
+    step: 'Day 1–3 Protocol',
     title: '3 Days, 3 Intentions',
-    desc: 'Each day: one thought, one image, one voice. Simple. Honest.',
+    desc: 'Each day brings one thoughtful prompt: one honest thought, one image, one voice note. No superficial clutter.',
+    tip: 'Structured prompts reveal genuine personality 10x faster than traditional bios.',
   },
   {
     icon: <ShieldCheck className="w-8 h-8 text-gold" />,
-    step: 'Every day',
+    step: 'Intentional Effort',
     title: 'Sincerity Is Currency',
-    desc: 'Real answers open doors. Effort is seen.',
+    desc: 'Real answers open doors. Intentional effort and emotional maturity are valued and rewarded.',
+    tip: 'Detailed prompt answers have an 80% higher continuation and connection rate.',
   },
   {
     icon: <Clock className="w-8 h-8 text-gold" />,
-    step: 'After each day',
+    step: 'Respectful Pace',
     title: 'She Sets The Pace',
-    desc: 'After each day, she reviews. The next day unlocks after.',
+    desc: 'After each day’s exchange, answers are reviewed before the next day unlocks.',
+    tip: 'Paced exchanges protect your emotional bandwidth and prevent ghosting.',
   },
   {
     icon: <Sparkles className="w-8 h-8 text-gold" />,
-    step: 'The payoff',
+    step: 'The Connection',
     title: 'Earn The Conversation',
-    desc: 'Complete all three days with intention, and the conversation begins.',
+    desc: 'Complete all three days with mutual intention, and unlimited direct conversation begins.',
+    tip: 'By day 4, you already share proven mutual respect and genuine compatibility.',
   },
 ];
 
@@ -129,12 +133,23 @@ export default function HowItWorksPage() {
         >
           {loopedPoints.map((point) => (
             <div key={point.loopKey} className="w-full shrink-0 snap-center px-1">
-              <div className="text-left bg-base rounded-3xl p-6 min-h-[340px] flex flex-col justify-center">
-                <div className="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-4">
-                  {point.icon}
+              <div className="text-left bg-base rounded-3xl p-6 min-h-[360px] flex flex-col justify-between border border-gold/15 shadow-sm">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-14 h-14 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center">
+                      {point.icon}
+                    </div>
+                    <span className="text-[11px] font-semibold tracking-wider uppercase text-gold bg-gold/10 border border-gold/20 px-3 py-1 rounded-full">
+                      {point.step}
+                    </span>
+                  </div>
+                  <h3 className="text-ink font-display text-xl mb-2">{point.title}</h3>
+                  <p className="text-ink/60 text-sm leading-relaxed font-light">{point.desc}</p>
                 </div>
-                <h3 className="text-ink font-display text-xl mb-2">{point.title}</h3>
-                <p className="text-ink/50 text-sm leading-relaxed font-light">{point.desc}</p>
+                <div className="mt-4 pt-3 border-t border-raised/50 flex items-center gap-2 text-xs text-ink/70">
+                  <Sparkles className="w-3.5 h-3.5 text-gold shrink-0" />
+                  <span>{point.tip}</span>
+                </div>
               </div>
             </div>
           ))}

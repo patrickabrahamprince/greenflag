@@ -20,6 +20,7 @@ export default function ProfilePage() {
   const clearUser = useUserStore((s) => s.clearUser);
   const setBalance = useCoinStore((s) => s.setBalance);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   // Profile reads entirely from the global stores (populated once by
   // Providers on app load) rather than fetching its own data, so
@@ -208,11 +209,45 @@ export default function ProfilePage() {
       </div>
 
       <div className="mt-8 pt-6 border-t border-raised/50">
-        <button onClick={handleLogout} disabled={loggingOut} className="btn-danger w-full flex items-center justify-center gap-2">
+        <button
+          onClick={() => { hapticTap(); setShowLogoutConfirm(true); }}
+          disabled={loggingOut}
+          className="btn-danger w-full flex items-center justify-center gap-2"
+        >
           {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
           Sign Out
         </button>
       </div>
+
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-50 p-6">
+          <div className="dialog-card max-w-sm w-full text-center">
+            <LogOut className="w-12 h-12 text-crimson mx-auto mb-4" />
+            <h3 className="font-display text-lg text-ink mb-2">Sign out?</h3>
+            <p className="text-sm text-ink mb-6">
+              Are you sure you want to sign out? You will need to log back in to access your matches and messages.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                className="btn-secondary flex-1 text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowLogoutConfirm(false);
+                  handleLogout();
+                }}
+                disabled={loggingOut}
+                className="btn-danger flex-1 text-sm flex items-center justify-center gap-2"
+              >
+                {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Sign Out'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );
