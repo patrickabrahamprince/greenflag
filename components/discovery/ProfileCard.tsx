@@ -23,7 +23,9 @@ interface DiscoverProfile {
   match_percentage?: number;
   match_reasons?: string[];
   photosUnlocked?: boolean;
+  active_trip?: { destination: string; start_date: string; vibe: string; id: string };
 }
+
 
 interface ProfileCardProps {
   profile: DiscoverProfile;
@@ -205,7 +207,15 @@ export function ProfileCard({
               </a>
             )}
           </div>
+          {p.active_trip && (
+            <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-semibold shadow-[0_0_12px_rgba(16,185,129,0.25)]">
+              <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
+              <span>{p.active_trip.destination} • {p.active_trip.start_date}</span>
+              <span className="text-[9px] bg-emerald-500 text-black px-1.5 py-0.5 rounded-full font-bold uppercase ml-0.5">Trip</span>
+            </div>
+          )}
         </div>
+
         {(p.job || p.height) && (
           <div className="flex items-center gap-4 flex-wrap">
             {p.job && (

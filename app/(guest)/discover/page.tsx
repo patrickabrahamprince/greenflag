@@ -53,7 +53,9 @@ interface DiscoverProfile {
   match_percentage?: number
   match_reasons?: string[]
   photosUnlocked?: boolean
+  active_trip?: { destination: string; start_date: string; vibe: string; id: string }
 }
+
 
 export default function DiscoverPage() {
   const [profiles, setProfiles] = useState<DiscoverProfile[]>(() => getCached(PROFILES_CACHE_KEY) ?? [])

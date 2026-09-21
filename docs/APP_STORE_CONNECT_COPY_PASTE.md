@@ -13,17 +13,17 @@ GreenFlag
 
 ### Subtitle
 ```
-Values-First Relationships
+Travel Together & Connect
 ```
 
 ### App Description (Promotional Text)
 ```
-GreenFlag is an intentional relationship and compatibility platform built around personal standards and meaningful connection. Define your core values, discover compatible people through genuine standard alignment, and engage in a structured 3-Day Intention Protocol that cultivates authentic communication before open messaging unlocks. Verified profiles, guided prompts, and built-in safety features help you build lasting, values-aligned partnerships.
+Don't just match. Go somewhere together. GreenFlag is a travel companion and intentional connection platform. Discover verified travel buddies, plan weekend getaways (Coorg, Gokarna, Hampi, and more), split rides and homestays safely, and connect through shared destinations, matching dates, and aligned personal standards. Built-in female-only trip filters and host approval gates ensure a safe, purposeful experience.
 ```
 
 ### Keywords (comma-separated, no quotes)
 ```
-relationships, compatibility, intentional communication, standards, values, mindful connection, relationship health, personal values
+travel companion, weekend trips, travel buddy, solo travel, road trips, ride split, intentional connection, values, compatibility
 ```
 
 ### Support URL
@@ -63,8 +63,10 @@ com.greenflagapp.app
 
 ### Category
 ```
-Lifestyle > Personal Growth (or Lifestyle > Social Networking)
+Primary: Travel
+Secondary: Social Networking
 ```
+
 
 ### Content Rating / Age Restriction
 ```
@@ -300,20 +302,22 @@ Prepare this version for submission (do NOT select automatic release)
 
 ### Release Notes
 ```
-Welcome to GreenFlag! Define your standards and cultivate genuine, values-aligned connections. Features include a structured 3-Day Intention Protocol, verified profiles, compatibility alignment, and mindful communication.
+Welcome to GreenFlag: Trips & Companions! Don't just match. Go somewhere together.
 
 Version 1.0.0 includes:
+- Greenflag Trips: Browse and post weekend travel plans (Coorg, Gokarna, Hampi, Chikmagalur, and more)
+- Split rides and stays safely with verified travel companions
+- Female-Only trip toggle for added safety
+- Host Approval Gate: No uninvited messages before host acceptance
 - Standards-based discovery with compatibility alignment breakdown
-- 3-Day Intention Exchange protocol before chat unlocks
-- Verified profile system
-- Intentional messaging flow
+- 3-Day Intention Exchange protocol before open chat unlocks
+- Verified profile system & Biometric Face ID App Lock
 - Coins Store (In-App Purchases)
-- Face ID App Lock
-- Account Pause & Deletion
-- Content Reporting & Blocking
+- Instant Content Reporting & Account Management
 
 We're excited to launch and look forward to your review!
 ```
+
 
 ---
 

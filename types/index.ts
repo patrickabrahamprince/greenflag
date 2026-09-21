@@ -113,3 +113,50 @@ export interface ModQueueItem {
   status: 'pending' | 'approved' | 'rejected';
   created_at: string;
 }
+
+export type TripVibe = 'Chill' | 'Trek' | 'Backpacking' | 'Party' | 'Roadtrip' | 'Workcation';
+
+export interface TripHost {
+  id: string;
+  name: string;
+  age?: number | null;
+  city?: string | null;
+  photos?: string[] | null;
+  persona?: string;
+  blur_key?: string | null;
+  verified?: boolean;
+}
+
+export interface Trip {
+  id: string;
+  host_id: string;
+  destination: string;
+  state?: string;
+  start_date: string;
+  end_date: string;
+  vibe: TripVibe;
+  budget_per_day: number;
+  spots_available: number;
+  spots_total: number;
+  female_only: boolean;
+  description: string;
+  stay_type?: string;
+  transport_type?: string;
+  status: 'active' | 'completed' | 'cancelled';
+  created_at: string;
+  host?: TripHost;
+  user_request_status?: 'pending' | 'accepted' | 'declined' | null;
+  requests_count?: number;
+}
+
+export interface TripRequest {
+  id: string;
+  trip_id: string;
+  applicant_id: string;
+  status: 'pending' | 'accepted' | 'declined';
+  intro_note?: string;
+  created_at: string;
+  applicant?: TripHost;
+  trip?: Trip;
+}
+

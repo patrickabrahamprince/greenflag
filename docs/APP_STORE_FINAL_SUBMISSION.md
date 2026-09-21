@@ -82,54 +82,40 @@ All devices tested show:
 ## 3. APP DESCRIPTION, FUNCTIONS, TARGET AUDIENCE & VALUE PROPOSITION
 
 **App Name**: GreenFlag  
-**Subtitle**: Set Your Standards. Meet Your Match.
+**Subtitle**: Travel Together & Connect  
 
 **Core Purpose**:
-GreenFlag is an intentional dating application that prioritizes personal standards and meaningful connection over superficial swiping. The app centers on a unique 3-Day Intention Exchange system where users answer guided, thoughtful prompts before unlocking open messaging.
+GreenFlag is a travel companion and intentional connection platform that helps people coordinate weekend getaways and build meaningful relationships around shared travel destinations and personal standards. Users can browse and post weekend trips, split rides and homestays safely, and complete a 3-Day Intention Exchange before open chat unlocks.
 
 **Key Functions**:
-1. **Standards Definition**: Users set 3 personal daily intentions/standards during onboarding that form the basis of the matching algorithm
-2. **Verified Profiles**: Profile verification via Instagram handle inspection (manual review by team)
-3. **Smart Discovery**: Browse compatible profiles based on standards alignment and quiz answers
-4. **3-Day Intention Flow**: Matched users exchange daily conversation starters/prompts
+1. **Trips & Travel Companions**: Browse and post weekend travel plans (Coorg, Gokarna, Hampi, Chikmagalur, and more), split rides/stays, and match on matching destinations and dates
+2. **Female-Only Trip Safety**: Verified female hosts can designate trips visible only to verified women
+3. **Host Approval Gate**: Unsolicited direct messages are blocked until the trip host explicitly approves a join request
+4. **Standards Definition**: Users set personal standards and core values that form the basis of the compatibility algorithm
+5. **Verified Profiles**: Identity and profile verification
+6. **Smart Discovery**: Browse compatible profiles with active travel destination badges
+7. **3-Day Intention Flow**: Matched users exchange daily guided conversation prompts:
    - Day 1: Values and lifestyle thoughts
    - Day 2: Meaningful questions with optional voice/photo responses
    - Day 3: Deeper personal connection prompts
    - Post-Day 3: Unlimited messaging unlocked
-5. **Coins System**: Optional in-app purchases for additional features and messaging unlocks
-6. **Messaging**: Direct messaging with reporting, blocking, and safety features
-7. **Account Management**: Pause account (reversible), delete account (irreversible), full data export
-8. **Safety Features**: 
-   - Report/block profiles for inappropriate behavior
-   - Face ID app lock for privacy
-   - Automatic content moderation flags
+8. **Coins System**: In-app purchases for coin packages (StoreKit 2)
+9. **Account Management**: Pause account (reversible), delete account (irreversible), full data purge
+10. **Safety & Reporting**: Instant profile/trip reporting and blocking, biometric Face ID app lock
 
 **Target Audience**:
-- Singles aged 17+
-- Seeking committed, values-aligned relationships
-- Tired of superficial dating app experiences and ghosting
-- Willing to invest time in deeper compatibility discovery
+- Adults (17+) seeking verified travel companions and committed, values-aligned relationships
+- Tired of superficial dating app experiences, ghosting, and unguided small talk
+- Eager for real-world travel, weekend road trips, and shared adventures
 
 **Problem Solved**:
-Traditional dating apps encourage rapid, mindless swiping leading to:
-- High ghosting rates
-- Mismatched expectations
-- Emotional exhaustion
-- Lack of genuine compatibility
-
-GreenFlag solves this by:
-- Putting personal standards first
-- Slowing down initial conversations into meaningful daily exchanges
-- Building genuine chemistry before open chat
-- Filtering for values alignment upfront
-- Providing verified profiles and safety tools
+Traditional swipe dating apps encourage rapid, mindless swiping leading to ghosting, awkward small talk, and lack of real-world offline context. GreenFlag solves this by providing concrete travel utility (trips, ride splits, destination matching) paired with standards-based communication and host approval safety gates.
 
 **Value Provided**:
+- **Real Offline Context**: Start conversations around real travel plans (*"Let's split a cab to Coorg"*)
+- **Physical & Emotional Safety**: Female-only trip toggles, host approval gates, and verified profiles
 - **Save Time**: Filter for real compatibility upfront, not after dozens of messages
-- **Emotional Energy**: Structured prompts prevent awkward first conversations and small talk
-- **Genuine Connections**: Verified profiles and intentions-based matching reduce flaking
-- **Safety First**: Built-in reporting, blocking, and Face ID privacy lock
-- **Transparent Intentions**: Everyone is here for the same thing: meaningful connection
+- **Intentional Pacing**: Structured prompts prevent small talk burnout
 
 ---
 
@@ -148,13 +134,15 @@ Status:             Onboarding complete, profile photos uploaded, 3-day Standard
 ```
 
 **Features Available**:
-- Browse male profiles in Discover
+- Browse and post weekend getaways in the **Trips** tab (`/trips`)
+- Filter trips by destination and test **Female-Only** safety toggle
+- Send and review trip join requests
+- Browse male profiles in Discover (with active trip badges)
 - View compatibility breakdown and Standards
-- Send matches/likes
-- Receive and respond to intentions (Day 1, 2, 3 prompts)
-- Purchase coins from Coins Store
-- Message matched users (after 3-day flow)
+- Send matches/likes and complete guided intentions
+- Purchase coins from Coins Store (StoreKit 2 sandbox)
 - Access Settings, pause/delete account
+
 
 ### Demo Account 2 — Male User (For Matching)
 ```

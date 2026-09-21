@@ -60,7 +60,9 @@ GreenFlag was thoroughly tested on both physical hardware and simulators across 
 ### 3. App Description, Functions, Target Audience & Value Proposition (Guideline 4.3(b) Differentiation)
 
 - **App Purpose & Core Differentiators**:
-  GreenFlag is an intentional relationship compatibility and communication platform built around personal standards and mutual alignment. Unlike superficial swipe dating apps, GreenFlag explicitly prevents unguided, rapid-swipe interactions and instant-messaging ghosting loops:
+  GreenFlag is a travel companion and intentional relationship platform built around shared travel destinations and mutual standards alignment. Unlike superficial swipe dating apps, GreenFlag explicitly provides concrete, real-world utility:
+  - **Trips & Travel Companions**: Users coordinate weekend getaways (Coorg, Gokarna, Hampi, Chikmagalur, Ooty, Pondicherry), split rides (e.g. bike/car split) and homestays safely, matching on same destination + matching dates rather than superficial face swiping.
+  - **Safety-First Architecture**: Built-in **Female-Only Trip** toggles and **Host Approval Gates** prevent unsolicited direct messaging (no accept = no chat).
   - **Standards Before Browsing**: Users define their non-negotiable personal standards and core values first.
   - **Chat Gated by 3-Day Intention Protocol**: Upon mutual interest, unlimited messaging is strictly locked. Users must synchronously complete a 3-day guided exchange:
     - *Day 1*: Initial values and lifestyle philosophy sharing.
@@ -70,13 +72,13 @@ GreenFlag was thoroughly tested on both physical hardware and simulators across 
   - **Anti-Burnout Architecture**: Throttled pacing and verified profiles protect users from cognitive overload and superficial swiping fatigue.
 
 - **Target Audience**:
-  Adults (17+) seeking meaningful, values-aligned relationships who experience burnout from superficial swipe mechanics, unguided small talk, and ghosting.
+  Adults (17+) seeking verified travel companions and meaningful, values-aligned relationships who experience burnout from superficial swipe mechanics, unguided small talk, and ghosting.
 
 - **Problem Solved**:
-  Mainstream dating apps encourage compulsive, photo-first swiping that dehumanizes users and results in widespread ghosting. GreenFlag solves this by putting personal standards first, eliminating instantaneous unguided chat, and providing a structured daily protocol to determine compatibility before messaging opens.
+  Mainstream dating apps encourage compulsive, photo-first swiping with no offline context. GreenFlag solves this by combining travel companion coordination (real itineraries, ride splits) with personal standards, eliminating instantaneous unguided chat, and providing safe host approval gates.
 
 - **Value Provided**:
-  Fosters emotional safety, verified authenticity, transparent standards, and respectful communication through intentional pacing.
+  Fosters real-world adventure, physical and emotional safety, verified authenticity, transparent standards, and respectful communication through intentional pacing.
 
 ---
 
@@ -102,21 +104,27 @@ The reviewer can test the full functionality using the pre-configured demo crede
 1. **Launch App**: Open the GreenFlag app on your device.
 2. **Access Sign-In Form**: On the main login screen, tap the **"Having trouble?"** link located beneath the Apple/Google buttons to reveal the email and password fields.
 3. **Log In**: Enter the credentials for Demo Account 1 (`reviewer-woman@greenflag.app` / `GreenFlag2026!`).
-4. **Explore Discover & Standards**:
-   - View potential matches in **Discover**.
+4. **Explore Trips & Companions**:
+   - Tap the **Trips** tab in the bottom bar (`/trips`).
+   - Filter trips by destination (e.g. Coorg, Gokarna) and vibe, or test the **Female-Only** toggle.
+   - Tap `+ New Trip`, select a destination and weekend, and post a trip.
+   - Tap on any existing trip to view the itinerary and test **Request to Join**.
+5. **Explore Discover & Standards**:
+   - View potential matches in **Discover**. Notice the active trip badges (e.g. `📍 Coorg • 28 Sep`) on user cards.
    - Tap on profiles to inspect compatibility breakdown and standards.
-5. **Test In-App Purchases (StoreKit 2)**:
+6. **Test In-App Purchases (StoreKit 2)**:
    - Navigate to the **Coins Store** (tap the coin balance badge or go to `/coins`).
    - Select any coin tier (e.g. 500 Coins for $0.49 / ₹49, 1500 Coins for $1.49 / ₹129).
    - Authorize with your App Store Sandbox Apple ID to verify instant coin crediting.
-6. **Test Content Reporting & Safety**:
+7. **Test Content Reporting & Safety**:
    - Open any profile card or message thread.
    - Tap the **Options / Report** button.
    - Select a report reason (e.g. "Inappropriate content") and submit. Observe immediate confirmation and blocking.
-7. **Test Account Deletion**:
+8. **Test Account Deletion**:
    - Go to **Settings** (`/settings`).
    - Tap **Delete Account**.
    - Select a departure reason, confirm deletion, and observe permanent account purge and clean redirection to the login screen.
+
 
 ---
 
