@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Capacitor } from '@capacitor/core'
 import { createClient } from '@/lib/supabase/client'
 import { signInWithGoogleNative, signInWithAppleNative } from '@/lib/native/socialLogin'
-import { Loader2, Sparkles, Camera } from 'lucide-react'
+import { Loader2, Sparkles, Camera, Mail } from 'lucide-react'
 import { GoogleButton } from '@/components/ui/GoogleButton'
 import { AppleButton } from '@/components/ui/AppleButton'
 import { TermsGateModal } from '@/components/auth/TermsGateModal'
@@ -232,17 +232,28 @@ export default function LoginPage() {
         <div className="space-y-3">
           <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />
           <AppleButton onClick={handleAppleLogin} loading={appleLoading} />
+
+          {!showEmailLogin && (
+            <button
+              type="button"
+              onClick={handleShowEmailToggle}
+              className="w-full flex items-center justify-center gap-3 bg-white/10 hover:bg-white/15 text-ink font-medium py-3 px-4 rounded-xl border border-white/10 transition-colors"
+            >
+              <Mail className="w-5 h-5 text-ink/70" />
+              Continue with Email
+            </button>
+          )}
         </div>
 
         {!showEmailLogin ? (
           <button
             onClick={handleShowEmailToggle}
-            className="block mx-auto mt-8 text-xs text-ink/40 hover:text-ink underline underline-offset-4 decoration-ink/20 hover:decoration-ink/40 transition-colors"
+            className="block mx-auto mt-6 text-xs text-ink/40 hover:text-ink underline underline-offset-4 decoration-ink/20 hover:decoration-ink/40 transition-colors"
           >
             Having trouble?
           </button>
         ) : (
-          <form onSubmit={handleLogin} className="space-y-4 mt-8">
+          <form onSubmit={handleLogin} className="space-y-4 mt-6 animate-fade-in">
             <input
               data-testid="email"
               type="email"
@@ -263,6 +274,13 @@ export default function LoginPage() {
             />
             <button data-testid="login-btn" type="submit" disabled={loading} className="btn-primary w-full">
               {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Sign In'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowEmailLogin(false)}
+              className="block mx-auto text-xs text-ink/40 hover:text-ink transition-colors pt-2"
+            >
+              Back to all options
             </button>
           </form>
         )}
