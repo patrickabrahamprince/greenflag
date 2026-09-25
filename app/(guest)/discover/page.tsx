@@ -206,22 +206,7 @@ export default function DiscoverPage() {
         // hydrated at mount) for a beat before the redirect landed.
         // checkingAccess holds the real feed fetch and render off entirely
         // until this settles, so pressing back into Discover from Standard
-        // Builder can't flash a misleading card or empty state.
-        if (data?.persona === 'woman') {
-          fetch('/api/standards/standard-builder')
-            .then(res => (res.ok ? res.json() : null))
-            .then(sData => {
-              if (cancelled) return
-              if (sData && !sData.isActive && (!sData.intentions || sData.intentions.length < 9)) {
-                router.replace('/standard/builder')
-                return // navigating away -- leave checkingAccess true
-              }
-              setCheckingAccess(false)
-            })
-            .catch(() => { if (!cancelled) setCheckingAccess(false) })
-        } else {
-          setCheckingAccess(false)
-        }
+        setCheckingAccess(false)
       }, () => { if (!cancelled) setCheckingAccess(false) })
     }).catch(() => { if (!cancelled) setCheckingAccess(false) })
     return () => { cancelled = true }
@@ -320,12 +305,8 @@ export default function DiscoverPage() {
     if (likingId) return
     setLikingId(profileId)
     try {
-      if (persona === 'woman') {
-        hapticTap()
-        router.push(`/profile/${profileId}`)
-        return
-      }
-      const theirPhoto = profiles.find(p => p.id === profileId)?.photos?.[0] ?? null
+      const theirProfile = profiles.find(p => p.id === profileId)
+      const theirPhoto = theirProfile?.photos?.[0] ?? null
       const res = await fetch('/api/likes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -333,21 +314,17 @@ export default function DiscoverPage() {
       })
       if (!res.ok) {
         const err = await res.json()
-        if (err.error === 'insufficient_funds') {
-          setInsufficientCoinsMessage('You need more coins to meet her Standard. Top up to keep going.')
-          return
-        }
-        throw new Error(err.error || 'Failed to like profile')
+        throw new Error(err.error || 'Failed to connect')
       }
       const { matchId } = await res.json()
-      deductCoins(MEET_STANDARD_COST)
       setProfiles(prev => {
         const next = prev.filter(p => p.id !== profileId)
         setCached(PROFILES_CACHE_KEY, next)
         return next
       })
       hapticSuccess()
-      setMatchMoment({ theirPhoto, nextPath: matchId ? `/task/${matchId}` : null })
+      toast.success(`Connected with ${theirProfile?.name || 'traveler'}!`, { icon: '✈️' })
+      setMatchMoment({ theirPhoto, nextPath: matchId ? `/messages` : '/messages' })
     } catch (e: any) {
       toast.error(e.message)
     } finally {

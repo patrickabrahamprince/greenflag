@@ -114,7 +114,20 @@ export interface ModQueueItem {
   created_at: string;
 }
 
-export type TripVibe = 'Chill' | 'Trek' | 'Backpacking' | 'Party' | 'Roadtrip' | 'Workcation';
+export type TripVibe =
+  | 'Chill'
+  | 'Trek'
+  | 'Backpacking'
+  | 'Party'
+  | 'Roadtrip'
+  | 'Workcation'
+  | 'Beach'
+  | 'Camping'
+  | 'Foodie'
+  | 'Festival'
+  | 'Heritage'
+  | 'Adventure'
+  | 'Daytrip';
 
 export interface TripHost {
   id: string;

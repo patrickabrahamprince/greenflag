@@ -48,7 +48,7 @@ export default function PendingApprovalPage() {
   // this lands once the review moment has played out.
   useEffect(() => {
     if (!arrived) return;
-    const timer = setTimeout(() => goToRef.current('/standard/builder'), WELCOME_DISPLAY_MS);
+    const timer = setTimeout(() => goToRef.current('/trips'), WELCOME_DISPLAY_MS);
     return () => clearTimeout(timer);
   }, [arrived]);
 
@@ -64,19 +64,19 @@ export default function PendingApprovalPage() {
             Verifying Your Profile
           </h1>
           <p className="text-ink/60 text-sm leading-relaxed max-w-sm">
-            Greenflag is curated. We review every profile to maintain the standard.
+            GreenFlag is a trusted travel community. We verify profiles to keep trips safe and authentic.
             Hang tight — this only takes a moment.
           </p>
         </>
       ) : (
         <div className="animate-fade-in">
-          <div className="w-20 h-20 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_-8px_rgba(210,4,45,0.6)]">
-            <Sparkles className="w-9 h-9 text-gold" />
+          <div className="w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_-8px_rgba(16,185,129,0.6)]">
+            <Sparkles className="w-9 h-9 text-emerald-400" />
           </div>
 
           <h1 className="font-display text-3xl text-ink mb-3">Verified.</h1>
           <p className="text-ink/60 text-sm leading-relaxed max-w-sm">
-            Your profile is approved. Taking you to set your Standard...
+            Your traveler profile is approved. Taking you to explore trips...
           </p>
         </div>
       )}

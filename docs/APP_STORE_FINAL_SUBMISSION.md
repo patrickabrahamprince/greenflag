@@ -82,40 +82,36 @@ All devices tested show:
 ## 3. APP DESCRIPTION, FUNCTIONS, TARGET AUDIENCE & VALUE PROPOSITION
 
 **App Name**: GreenFlag  
-**Subtitle**: Travel Together & Connect  
+**Subtitle**: Meet New People for Trips  
 
 **Core Purpose**:
-GreenFlag is a travel companion and intentional connection platform that helps people coordinate weekend getaways and build meaningful relationships around shared travel destinations and personal standards. Users can browse and post weekend trips, split rides and homestays safely, and complete a 3-Day Intention Exchange before open chat unlocks.
+GreenFlag is dedicated to meeting new people for trips. It helps travelers discover weekend getaways, connect with verified companions, coordinate road trips, and explore destinations together safely. Users can browse and post trips, split homestays and transport, and message directly once a host approves their request or mutual travel connection is made.
 
 **Key Functions**:
-1. **Trips & Travel Companions**: Browse and post weekend travel plans (Coorg, Gokarna, Hampi, Chikmagalur, and more), split rides/stays, and match on matching destinations and dates
-2. **Female-Only Trip Safety**: Verified female hosts can designate trips visible only to verified women
+1. **Trips & Travel Companions**: Browse and post weekend travel plans (Coorg, Gokarna, Hampi, Chikmagalur, and more), split rides/stays, and match on destinations and travel dates
+2. **Female-Only Trip Safety**: Verified female hosts can designate trips visible only to verified women travelers
 3. **Host Approval Gate**: Unsolicited direct messages are blocked until the trip host explicitly approves a join request
-4. **Standards Definition**: Users set personal standards and core values that form the basis of the compatibility algorithm
-5. **Verified Profiles**: Identity and profile verification
-6. **Smart Discovery**: Browse compatible profiles with active travel destination badges
-7. **3-Day Intention Flow**: Matched users exchange daily guided conversation prompts:
-   - Day 1: Values and lifestyle thoughts
-   - Day 2: Meaningful questions with optional voice/photo responses
-   - Day 3: Deeper personal connection prompts
-   - Post-Day 3: Unlimited messaging unlocked
+4. **Travel Vibe & Archetypes**: Users showcase their travel style (The Route Captain, The Slow Wanderer, The Wild Explorer, The Roadtrip Spark)
+5. **Verified Profiles**: Phone and identity verification for community safety
+6. **Smart Discovery**: Browse compatible travel companions with active destination and trip badges
+7. **Direct Messaging & Trip Requests**: Connect directly to coordinate trip logistics, transport, packing lists, and departure times once requests are accepted
 8. **Coins System**: In-app purchases for coin packages (StoreKit 2)
 9. **Account Management**: Pause account (reversible), delete account (irreversible), full data purge
 10. **Safety & Reporting**: Instant profile/trip reporting and blocking, biometric Face ID app lock
 
 **Target Audience**:
-- Adults (17+) seeking verified travel companions and committed, values-aligned relationships
-- Tired of superficial dating app experiences, ghosting, and unguided small talk
-- Eager for real-world travel, weekend road trips, and shared adventures
+- Adults (17+) seeking to meet new people for weekend trips, road trips, and shared getaways
+- Solo travelers looking for verified, reliable travel companions
+- Friends and weekend travelers seeking to split stays, vehicle rentals, and adventure itineraries
 
 **Problem Solved**:
-Traditional swipe dating apps encourage rapid, mindless swiping leading to ghosting, awkward small talk, and lack of real-world offline context. GreenFlag solves this by providing concrete travel utility (trips, ride splits, destination matching) paired with standards-based communication and host approval safety gates.
+Planning trips alone is expensive, and meeting reliable travel companions on random forums lacks safety and accountability. GreenFlag provides dedicated trip creation, verified traveler profiles, female-only safety filters, and direct coordination to meet new people for trips seamlessly.
 
 **Value Provided**:
-- **Real Offline Context**: Start conversations around real travel plans (*"Let's split a cab to Coorg"*)
+- **Meet New People for Trips**: Turn travel ideas into real group getaways (*"Let's split a cab to Coorg"*)
 - **Physical & Emotional Safety**: Female-only trip toggles, host approval gates, and verified profiles
-- **Save Time**: Filter for real compatibility upfront, not after dozens of messages
-- **Intentional Pacing**: Structured prompts prevent small talk burnout
+- **Save Time & Costs**: Coordinate homestays, fuel, and rental splits easily
+- **Shared Adventure Vibes**: Connect based on real travel styles and pace
 
 ---
 
@@ -226,7 +222,7 @@ Currently English-only. International language support can be added in future ve
 ## 7. REGULATORY STATUS & THIRD-PARTY INTELLECTUAL PROPERTY
 
 **Regulatory Status**:
-GreenFlag is an independent social discovery and lifestyle dating application. It does not operate in:
+GreenFlag is an independent social discovery and travel application for meeting new people for trips. It does not operate in:
 - ❌ Regulated financial services
 - ❌ Cryptocurrency or blockchain
 - ❌ Gambling

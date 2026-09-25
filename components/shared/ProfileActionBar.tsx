@@ -34,30 +34,23 @@ export function ProfileActionBar({
       ) : hasConnection ? (
         <button
           onClick={onContinue}
-          className="w-full h-14 rounded-pill bg-gold text-ink font-medium active:scale-95 transition-all duration-200"
+          className="w-full h-14 rounded-pill bg-emerald-500 hover:bg-emerald-400 text-black font-bold active:scale-95 transition-all duration-200"
         >
-          Continue to Tasks
-        </button>
-      ) : isGuest ? (
-        <button
-          onClick={onMeet}
-          disabled={connecting}
-          className="w-full h-14 rounded-pill bg-gold text-ink font-medium active:scale-95 transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
-        >
-          {connecting ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" /> Starting...
-            </>
-          ) : (
-            'Meet Her Standard'
-          )}
+          Open Chat
         </button>
       ) : (
         <button
-          disabled
-          className="w-full h-14 rounded-pill border border-raised bg-well text-ink/40 font-medium cursor-not-allowed"
+          onClick={onMeet}
+          disabled={connecting}
+          className="w-full h-14 rounded-pill bg-emerald-500 hover:bg-emerald-400 text-black font-bold active:scale-95 transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
         >
-          Awaiting Application
+          {connecting ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" /> Connecting...
+            </>
+          ) : (
+            'Meet for Trips'
+          )}
         </button>
       )}
     </div>

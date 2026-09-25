@@ -22,15 +22,15 @@ A full screen recording captured on a physical iPhone (iPhone 15 Pro running iOS
   1. **App Launch & Welcome**: Cold start on physical device demonstrating splash screen and initial entry.
   2. **Authentication Flow**: Login using provided demo credentials via the "Having trouble?" login toggle, as well as demonstration of Apple Sign-In and Google Sign-In options.
   3. **Core Feature Navigation**:
-     - Exploring the **Discover** feed and profile cards.
-     - Reviewing a user's **Standards** and compatibility breakdown.
-     - Mutual connection and match celebration.
-     - The **3-Day Intention Flow** (guided daily communication prompts before unlimited messaging unlocks).
+     - Exploring the **Trips** feed (`/trips`) with road trips, beach getaways, and mountain treks.
+     - Reviewing a trip and sending a join request with an intro note.
+     - Creating a new trip with destination, travel vibe, transport split, and daily budget.
+     - Browsing the **Meet People** tab (`/discover`) and connecting directly with "Meet for Trips".
+     - Instant trip coordination chat in **Messages** (`/messages`).
   4. **Device Permissions & Prompts**:
      - **Location**: System permission prompt triggered for city auto-detection during profile setup.
-     - **Camera & Photos**: Permission prompt for profile photo upload and daily photo intentions.
-     - **Microphone**: Permission prompt for recording 15-second voice intentions.
-     - **Notifications**: Push notification permission request for daily intention alerts and match updates.
+     - **Camera & Photos**: Permission prompt for profile photo and trip photo uploads.
+     - **Notifications**: Push notification permission request for trip request updates and new messages.
      - **Face ID / Biometrics**: Demonstration of in-app privacy lock.
   5. **In-App Purchases (StoreKit 2)**: Navigation to the **Coins Store**, selecting consumable coin packages (500, 1000, 1500, 2000, 5000 coins), showing StoreKit sandbox purchase sheet, and transaction confirmation.
   6. **User Safety, UGC Reporting & Blocking**:
@@ -57,28 +57,24 @@ GreenFlag was thoroughly tested on both physical hardware and simulators across 
 
 ---
 
-### 3. App Description, Functions, Target Audience & Value Proposition (Guideline 4.3(b) Differentiation)
+### 3. App Description, Functions, Target Audience & Value Proposition (Guideline 4.3 Differentiation)
 
 - **App Purpose & Core Differentiators**:
-  GreenFlag is a travel companion and intentional relationship platform built around shared travel destinations and mutual standards alignment. Unlike superficial swipe dating apps, GreenFlag explicitly provides concrete, real-world utility:
-  - **Trips & Travel Companions**: Users coordinate weekend getaways (Coorg, Gokarna, Hampi, Chikmagalur, Ooty, Pondicherry), split rides (e.g. bike/car split) and homestays safely, matching on same destination + matching dates rather than superficial face swiping.
-  - **Safety-First Architecture**: Built-in **Female-Only Trip** toggles and **Host Approval Gates** prevent unsolicited direct messaging (no accept = no chat).
-  - **Standards Before Browsing**: Users define their non-negotiable personal standards and core values first.
-  - **Chat Gated by 3-Day Intention Protocol**: Upon mutual interest, unlimited messaging is strictly locked. Users must synchronously complete a 3-day guided exchange:
-    - *Day 1*: Initial values and lifestyle philosophy sharing.
-    - *Day 2*: Meaningful prompt exchanges with voice notes and reflections.
-    - *Day 3*: Deeper personal connection and future alignment.
-    - *Post Day 3*: Unlocks open messaging only after mutual completion.
-  - **Anti-Burnout Architecture**: Throttled pacing and verified profiles protect users from cognitive overload and superficial swiping fatigue.
+  GreenFlag is built specifically for meeting new people for trips and real-world weekend adventures:
+  - **Trips & Weekend Plans**: Users coordinate weekend getaways (Coorg, Gokarna, Hampi, Chikmagalur, Ooty, Pondicherry), split rides (bike/carpooling) and homestays safely, matching on shared destination + matching dates.
+  - **Meet People for Trips**: Discover fellow travelers nearby or heading to the same destinations, matching on travel styles (Trekking, Road trips, Backpacking, Cafe hopping).
+  - **Safety-First Architecture**: Built-in **Female-Only Trip** toggles and **Host Approval Gates** ensure travelers only connect with verified companions they feel safe traveling with.
+  - **Direct Coordination & Instant Chat**: Request to join open trips with an intro note. Once approved by the host, chat unlocks immediately for itinerary coordination and logistics.
+  - **No Superficial Swiping**: Unlike generic swipe apps, all interactions are rooted in actionable travel plans, transparent daily budgets, and verified identity.
 
 - **Target Audience**:
-  Adults (17+) seeking verified travel companions and meaningful, values-aligned relationships who experience burnout from superficial swipe mechanics, unguided small talk, and ghosting.
+  People looking to meet new companions for weekend trips, road trips, and outdoor travel.
 
 - **Problem Solved**:
-  Mainstream dating apps encourage compulsive, photo-first swiping with no offline context. GreenFlag solves this by combining travel companion coordination (real itineraries, ride splits) with personal standards, eliminating instantaneous unguided chat, and providing safe host approval gates.
+  People want to travel and take weekend getaways, but lack friends available for the same dates and destinations. GreenFlag solves this by facilitating meeting new people specifically for trips, with transparent budgets and host approval safety gates.
 
 - **Value Provided**:
-  Fosters real-world adventure, physical and emotional safety, verified authenticity, transparent standards, and respectful communication through intentional pacing.
+  Meeting verified, trustworthy new people for shared trips, cost-effective ride/stay splitting, and genuine real-world friendships.
 
 ---
 
@@ -86,32 +82,32 @@ GreenFlag was thoroughly tested on both physical hardware and simulators across 
 
 The reviewer can test the full functionality using the pre-configured demo credentials below:
 
-#### Demo Account 1 — Female User (Has Active Standards & Coin Balance)
+#### Demo Account 1 — Female User (Has Active Trips & Coin Balance)
 - **Email**: `reviewer-woman@greenflag.app`
 - **Password**: `GreenFlag2026!`
 - **Phone (Fallback OTP)**: `+15550001111` (Static OTP: `123456`)
 - **Initial Coin Balance**: 1,500 Coins
-- **State**: Onboarding completed, profile photos uploaded, 3-day Standards active.
+- **State**: Onboarding completed, profile photos uploaded, active trips posted, ready for review.
 
-#### Demo Account 2 — Male User (For Matching & Discovery)
+#### Demo Account 2 — Male User (For Trip Join Requests & Connect)
 - **Email**: `reviewer-man@greenflag.app`
 - **Password**: `GreenFlag2026!`
 - **Phone (Fallback OTP)**: `+15550002222` (Static OTP: `123456`)
 - **Initial Coin Balance**: 1,500 Coins
-- **State**: Onboarding completed, profile photos uploaded, ready for discovery.
+- **State**: Onboarding completed, profile photos uploaded, ready for trip discovery.
 
 #### Step-by-Step Review Guide:
 1. **Launch App**: Open the GreenFlag app on your device.
-2. **Access Sign-In Form**: On the main login screen, tap the **"Having trouble?"** link located beneath the Apple/Google buttons to reveal the email and password fields.
+2. **Access Sign-In Form**: On the main login screen, tap **"Continue with Email"** (or tap "Having trouble?") to reveal the email and password fields.
 3. **Log In**: Enter the credentials for Demo Account 1 (`reviewer-woman@greenflag.app` / `GreenFlag2026!`).
 4. **Explore Trips & Companions**:
    - Tap the **Trips** tab in the bottom bar (`/trips`).
-   - Filter trips by destination (e.g. Coorg, Gokarna) and vibe, or test the **Female-Only** toggle.
-   - Tap `+ New Trip`, select a destination and weekend, and post a trip.
+   - Filter trips by destination (e.g. Goa, Coorg, Gokarna) and vibe, or test the **Female-Only** safety toggle.
+   - Tap `+ New Trip`, select a destination, dates, and transport split to post a trip.
    - Tap on any existing trip to view the itinerary and test **Request to Join**.
-5. **Explore Discover & Standards**:
-   - View potential matches in **Discover**. Notice the active trip badges (e.g. `📍 Coorg • 28 Sep`) on user cards.
-   - Tap on profiles to inspect compatibility breakdown and standards.
+5. **Explore Meet People & Connect**:
+   - Tap the **Meet People** tab (`/discover`). Notice active trip badges (e.g. `📍 Coorg • 28 Sep`) on traveler cards.
+   - Tap on profiles to inspect travel vibes, bucket list prompts, and tap **"Meet for Trips"** to connect directly.
 6. **Test In-App Purchases (StoreKit 2)**:
    - Navigate to the **Coins Store** (tap the coin balance badge or go to `/coins`).
    - Select any coin tier (e.g. 500 Coins for $0.49 / ₹49, 1500 Coins for $1.49 / ₹129).
@@ -162,7 +158,7 @@ GreenFlag relies on industry-standard, secure infrastructure to deliver its feat
 
 ### 7. Regulatory Status & Third-Party Intellectual Property
 
-- **Regulatory Status**: GreenFlag is an independent social discovery and lifestyle dating application. It does not operate in regulated financial, cryptocurrency, gambling, pharmaceutical, or medical industries.
+- **Regulatory Status**: GreenFlag is an independent social discovery and travel companion application for meeting new people for trips. It does not operate in regulated financial, cryptocurrency, gambling, pharmaceutical, or medical industries.
 - **Third-Party Content & Licensing**: GreenFlag does not incorporate protected third-party intellectual property, proprietary audio/video catalogs, or copyrighted materials. All UI assets, branding, and proprietary algorithms are owned by the developer. All user-generated content is governed by our Terms of Service and subject to in-app reporting, automatic moderation, and immediate administrative takedown.
 - **Legal Documentation**:
   - *Privacy Policy*: `https://greenflag-dusky.vercel.app/privacy`

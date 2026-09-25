@@ -15,19 +15,27 @@ interface CreateTripModalProps {
 }
 
 const VIBE_OPTIONS: { label: TripVibe; icon: string }[] = [
+  { label: 'Roadtrip', icon: '🚗' },
   { label: 'Trek', icon: '🥾' },
-  { label: 'Chill', icon: '☕' },
-  { label: 'Roadtrip', icon: '🏍️' },
+  { label: 'Beach', icon: '🏖️' },
+  { label: 'Foodie', icon: '☕' },
+  { label: 'Camping', icon: '⛺' },
   { label: 'Backpacking', icon: '🎒' },
-  { label: 'Party', icon: '🎉' },
+  { label: 'Chill', icon: '🌅' },
+  { label: 'Adventure', icon: '🧗' },
+  { label: 'Festival', icon: '🎸' },
+  { label: 'Heritage', icon: '🏛️' },
   { label: 'Workcation', icon: '💻' },
+  { label: 'Daytrip', icon: '🗺️' },
 ];
 
 const TRANSPORT_OPTIONS = [
-  'Royal Enfield / Bike Split',
   'Self-Drive Car / SUV Split',
+  'Bike / Royal Enfield Ride',
+  'Carpool / Cab Share',
   'Overnight Train / Bus Buddy',
-  'Flight / Rental Split',
+  'Flight & Rental Split',
+  'Public Transit / Walk & Explore',
 ];
 
 export function CreateTripModal({

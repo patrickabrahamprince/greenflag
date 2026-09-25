@@ -34,87 +34,84 @@ const QUESTION_IMAGES = [
 // four archetypes below while actually being fun to answer.
 const QUIZ_QUESTIONS: Question[] = [
   {
-    id: 'relationship_goal',
-    question: "What's the real reason you're here?",
-    options: ['Ready to settle down', 'Marriage-minded', 'Open, but intentional', 'Chasing a spark'],
+    id: 'travel_style',
+    question: "What's your go-to travel style?",
+    options: ['Off-grid treks & mountain camping', 'Boutique homestays & cafe hopping', 'Scenic road trips & coastal drives', 'Backpacking & social hostels'],
   },
   {
-    id: 'love_language',
-    question: 'How do you feel most loved?',
-    options: ['Quality time together', 'Thoughtful words', 'Considerate actions', 'Physical presence'],
+    id: 'weekend_escape',
+    question: 'Your ideal 3-day weekend getaway?',
+    options: ['Trek up a mist-covered peak (Coorg/Wayanad)', 'Lazy beach sunsets & seafood (Gokarna/Goa)', 'Exploring ancient ruins & bouldering (Hampi)', 'Coffee plantations & scenic viewpoints (Chikmagalur)'],
   },
   {
-    id: 'first_date',
-    question: 'Your dream first date?',
-    options: ['A quiet coffee walk', 'Cocktails, low light', 'A class or experience together', 'An intimate dinner'],
+    id: 'travel_pace',
+    question: 'How do you like your travel days?',
+    options: ['Sunrise starts & action-packed itineraries', 'Slow mornings with coffee, go with the flow', 'Curated road trip stops & scenic overlooks', 'Late-night bonfires & good music'],
   },
   {
-    id: 'humor_style',
-    question: 'Be honest -- your humor is...',
-    options: ['Dry & understated', 'Playful & witty', 'Sharp & clever', 'Dark & dry'],
+    id: 'travel_essential',
+    question: "What's always in your travel bag?",
+    options: ['Hiking boots & a reusable water bottle', 'A camera & a good book', 'Offline maps & a road trip playlist', 'A hammock & travel board games'],
   },
   {
-    id: 'ideal_trip',
-    question: 'If you disappeared tomorrow, where\'d you be?',
-    options: ['Private beach', 'Old European city', 'Mountains, off-grid', 'Culinary capital'],
+    id: 'dream_companion',
+    question: 'What makes the best travel buddy?',
+    options: ['Always down for an adventure', 'Chill, considerate & easygoing', 'Great navigator or reliable driver', 'Fun conversationalist & storyteller'],
   },
 ];
 
-// Deterministic, not real psychology -- a lightweight "aha" reveal after
-// the quiz instead of the answers just disappearing into storage with no
-// payoff. Each option maps to one of four traits; whichever trait shows
-// up most across the 5 answers picks the archetype shown back.
+// Lightweight "aha" reveal calculating the user's travel personality
 type Trait = 'Grounded' | 'Romantic' | 'Adventurous' | 'Playful';
 
 const TRAIT_MAP: Record<string, Record<string, Trait>> = {
-  relationship_goal: {
-    'Ready to settle down': 'Grounded',
-    'Marriage-minded': 'Grounded',
-    'Open, but intentional': 'Romantic',
-    'Chasing a spark': 'Adventurous',
+  travel_style: {
+    'Off-grid treks & mountain camping': 'Adventurous',
+    'Boutique homestays & cafe hopping': 'Romantic',
+    'Scenic road trips & coastal drives': 'Grounded',
+    'Backpacking & social hostels': 'Playful',
   },
-  love_language: {
-    'Quality time together': 'Romantic',
-    'Thoughtful words': 'Romantic',
-    'Considerate actions': 'Grounded',
-    'Physical presence': 'Adventurous',
+  weekend_escape: {
+    'Trek up a mist-covered peak (Coorg/Wayanad)': 'Adventurous',
+    'Lazy beach sunsets & seafood (Gokarna/Goa)': 'Romantic',
+    'Exploring ancient ruins & bouldering (Hampi)': 'Grounded',
+    'Coffee plantations & scenic viewpoints (Chikmagalur)': 'Playful',
   },
-  first_date: {
-    'A quiet coffee walk': 'Grounded',
-    'Cocktails, low light': 'Playful',
-    'A class or experience together': 'Adventurous',
-    'An intimate dinner': 'Romantic',
+  travel_pace: {
+    'Sunrise starts & action-packed itineraries': 'Adventurous',
+    'Slow mornings with coffee, go with the flow': 'Romantic',
+    'Curated road trip stops & scenic overlooks': 'Grounded',
+    'Late-night bonfires & good music': 'Playful',
   },
-  humor_style: {
-    'Dry & understated': 'Grounded',
-    'Playful & witty': 'Playful',
-    'Sharp & clever': 'Adventurous',
-    'Dark & dry': 'Romantic',
+  travel_essential: {
+    'Hiking boots & a reusable water bottle': 'Adventurous',
+    'A camera & a good book': 'Romantic',
+    'Offline maps & a road trip playlist': 'Grounded',
+    'A hammock & travel board games': 'Playful',
   },
-  ideal_trip: {
-    'Private beach': 'Romantic',
-    'Old European city': 'Romantic',
-    'Mountains, off-grid': 'Adventurous',
-    'Culinary capital': 'Playful',
+  dream_companion: {
+    'Always down for an adventure': 'Adventurous',
+    'Chill, considerate & easygoing': 'Romantic',
+    'Great navigator or reliable driver': 'Grounded',
+    'Fun conversationalist & storyteller': 'Playful',
   },
 };
 
 const ARCHETYPES: Record<Trait, { title: string; description: string }> = {
   Grounded: {
-    title: 'The Steady One',
-    description: "You know what you want, and you're not in a rush to fake it. Stability reads as strength on you.",
+    title: 'The Route Captain',
+    description: "Prepared, dependable, and observant. You map out scenic detours, keep the crew safe, and make sure every road trip is smooth and unforgettable.",
   },
   Romantic: {
-    title: 'The Old Soul',
-    description: 'You lead with feeling. Sincerity is your love language, and you notice when someone else means it too.',
+    title: 'The Slow Wanderer',
+    description: 'You travel for the soul. Sunset viewpoints, quiet cafe mornings, boutique stays, and meaningful conversations under the open sky.',
   },
   Adventurous: {
-    title: 'The Explorer',
-    description: "You want a partner in motion, not just in comfort — someone who says yes to the unplanned.",
+    title: 'The Wild Explorer',
+    description: "Full throttle, spontaneous, and bold. You say yes to summits, river crossings, and uncharted trails that turn into epic stories.",
   },
   Playful: {
-    title: 'The Spark',
-    description: 'Lightness is your currency. You connect through humor first, and depth follows once it feels safe.',
+    title: 'The Roadtrip Spark',
+    description: 'High energy, laughter, and great vibes. You bring the playlists, gather people around the bonfire, and make every mile memorable.',
   },
 };
 

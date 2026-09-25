@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Lock, Instagram, Briefcase, Ruler, ChevronLeft, ChevronRight, MapPin, ImageOff, Flag, MoreVertical } from 'lucide-react';
+import { Lock, Instagram, Briefcase, Ruler, ChevronLeft, ChevronRight, MapPin, ImageOff, Flag, MoreVertical, Compass } from 'lucide-react';
 import { hapticTap } from '@/lib/haptics';
 
 interface DiscoverProfile {
@@ -70,8 +70,8 @@ export function ProfileCard({
   const total = photos.length;
   const idx = total > 0 ? ((cardPhotoIdx[p.id] ?? 0) % total + total) % total : 0;
   const src = photos[idx];
-  const isPhotosUnlocked = persona === 'woman' || !!p.photosUnlocked || unlockedPhotoIds.has(p.id);
-  const isLocked = idx > 0 && !isPhotosUnlocked;
+  const isPhotosUnlocked = true;
+  const isLocked = false;
 
   const goTo = (nextIdx: number) => {
     if (total <= 1) return;
@@ -252,7 +252,7 @@ export function ProfileCard({
         </div>
         {lookingFor.length > 0 && (
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-ink/40 text-xs font-semibold uppercase tracking-wide leading-none">Values</span>
+            <span className="text-emerald-400 text-xs font-semibold uppercase tracking-wide leading-none">Travel Vibe</span>
             {lookingFor.map((interest: string) => (
               <span
                 key={interest}
@@ -265,7 +265,7 @@ export function ProfileCard({
         )}
         {p.bio && (
           <div>
-            <p className="text-gold text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">About</p>
+            <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">About</p>
             <p
               className={`text-ink/80 text-base leading-relaxed max-w-md font-light whitespace-pre-line ${expandedBios.has(p.id) ? '' : 'line-clamp-3'}`}
             >
@@ -274,7 +274,7 @@ export function ProfileCard({
             {p.bio.length > 120 && (
               <button
                 onClick={() => onBioToggle(p.id)}
-                className="text-gold text-xs font-medium mt-1"
+                className="text-emerald-400 text-xs font-medium mt-1"
               >
                 {expandedBios.has(p.id) ? 'Show less' : '...more'}
               </button>
@@ -282,47 +282,22 @@ export function ProfileCard({
           </div>
         )}
 
-        <div className={persona === 'woman' ? 'flex items-center gap-4 pt-2 shrink-0' : 'flex items-center justify-center gap-4 pt-2 shrink-0'}>
-          {persona === 'woman' ? (
-            <>
-              <button
-                onClick={() => onBegin(p.id)}
-                aria-label="View Profile"
-                className="btn-primary flex-1 h-12 flex items-center justify-center gap-1.5"
-              >
-                <>
-                  <Flag className="w-4 h-4 text-ink" fill="currentColor" />
-                  <span className="text-ink text-xs uppercase tracking-wide font-display font-bold">View Profile</span>
-                </>
-              </button>
-              <button
-                onClick={() => onMoreOptions(p.id)}
-                aria-label="More options"
-                className="w-12 h-12 rounded-full glass-surface flex items-center justify-center flex-shrink-0"
-              >
-                <MoreVertical className="w-4 h-4 text-ink" />
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => onBegin(p.id)}
-                className="btn-primary flex-1 h-12 flex items-center justify-center gap-1.5"
-              >
-                <>
-                  <Flag className="w-4 h-4 text-ink" fill="currentColor" />
-                  <span className="text-ink text-xs uppercase tracking-wide font-display font-bold">Meet Her Standard</span>
-                </>
-              </button>
-              <button
-                onClick={() => onGift(p.id)}
-                aria-label="Send gift"
-                className="w-12 h-12 rounded-full glass-surface flex items-center justify-center flex-shrink-0"
-              >
-                <span className="text-base">🎁</span>
-              </button>
-            </>
-          )}
+        <div className="flex items-center gap-3 pt-2 shrink-0">
+          <button
+            onClick={() => onBegin(p.id)}
+            aria-label="Meet for Trips"
+            className="flex-1 h-12 rounded-xl flex items-center justify-center gap-2 font-bold bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-black shadow-[0_4px_16px_rgba(16,185,129,0.3)] transition-all"
+          >
+            <Compass className="w-4 h-4" />
+            <span className="text-xs uppercase tracking-wide font-display font-bold">Meet for Trips</span>
+          </button>
+          <button
+            onClick={() => onMoreOptions(p.id)}
+            aria-label="More options"
+            className="w-12 h-12 rounded-full glass-surface flex items-center justify-center flex-shrink-0 hover:bg-white/10 active:scale-95 transition-transform"
+          >
+            <MoreVertical className="w-4 h-4 text-ink" />
+          </button>
         </div>
       </div>
     </div>

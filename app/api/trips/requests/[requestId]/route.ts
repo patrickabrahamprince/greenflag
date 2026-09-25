@@ -52,11 +52,35 @@ export async function PATCH(
           .single();
 
         if (!updateError && updated) {
-          if (status === 'accepted' && request.trip?.spots_available > 0) {
-            await admin
-              .from('trips')
-              .update({ spots_available: request.trip.spots_available - 1 })
-              .eq('id', request.trip_id);
+          if (status === 'accepted') {
+            if (request.trip?.spots_available > 0) {
+              await admin
+                .from('trips')
+                .update({ spots_available: request.trip.spots_available - 1 })
+                .eq('id', request.trip_id);
+            }
+
+            try {
+              const u1 = user.id < request.applicant_id ? user.id : request.applicant_id;
+              const u2 = user.id < request.applicant_id ? request.applicant_id : user.id;
+              await admin.from('matches').upsert({
+                user1_id: u1,
+                user2_id: u2,
+                chat_unlocked: true,
+                status: 'completed',
+              }, { onConflict: 'user1_id,user2_id' });
+
+              await admin.from('notifications').insert({
+                user_id: request.applicant_id,
+                title: 'Trip Request Accepted! 🎉',
+                body: `You are in for ${request.trip?.destination || 'the trip'}! Chat is now unlocked to coordinate details.`,
+                type: 'trip',
+                link: '/messages',
+                read: false,
+              });
+            } catch (matchErr) {
+              console.error('Error unlocking trip chat:', matchErr);
+            }
           }
 
           return NextResponse.json({ success: true, request: updated });

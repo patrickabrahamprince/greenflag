@@ -43,9 +43,10 @@ export default function OnboardPage() {
     <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center px-4 pt-safe-top pb-safe-bottom bg-base">
       <OnboardingBackground image="/onboarding/hero.jpg" />
       <div className="-mt-2">
-      <div className="text-center mb-10">
-        <Image src="/logo.png" alt="GreenFlag" width={128} height={128} className="w-32 h-32 mx-auto mb-3" />
-        <p className="text-ink/50 text-sm">Choose Your Path</p>
+      <div className="text-center mb-8">
+        <Image src="/logo.png" alt="GreenFlag" width={112} height={112} className="w-24 h-24 mx-auto mb-2" />
+        <h1 className="font-display text-2xl font-bold text-ink">Welcome to GreenFlag</h1>
+        <p className="text-emerald-400 text-xs font-semibold tracking-wider uppercase mt-1">Set up your travel profile</p>
       </div>
 
       <div className="space-y-4">
@@ -53,23 +54,26 @@ export default function OnboardPage() {
           onClick={() => handleSelect('woman')}
           disabled={selecting !== null}
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'persona-woman' : undefined}
-          className="w-full h-56 rounded-xl bg-gradient-to-br from-gold/10 to-gold/5 border border-gold/30 hover:border-gold transition-all duration-300 relative overflow-hidden group active:scale-[0.98] disabled:opacity-60"
+          className="w-full h-52 rounded-2xl bg-gradient-to-br from-emerald-500/15 via-white/[0.04] to-transparent border border-emerald-500/30 hover:border-emerald-400 transition-all duration-300 relative overflow-hidden group active:scale-[0.98] disabled:opacity-60 text-left p-6 flex flex-col justify-between"
         >
           {selecting === 'woman' ? (
             <div className="relative z-10 h-full flex items-center justify-center">
-              <Loader2 className="w-8 h-8 text-gold animate-spin" />
+              <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
             </div>
           ) : (
-            <div className="relative z-10 h-full flex flex-col items-center justify-center gap-3">
-              <span className="font-display text-3xl font-bold text-ink">
-                Woman
-              </span>
-              <div className="w-12 h-12 rounded-full bg-gold/15 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Crown className="w-6 h-6 text-gold" />
+            <div className="relative z-10 h-full flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <span className="font-display text-2xl font-bold text-ink">Woman Traveler</span>
+                <div className="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                  <Compass className="w-5 h-5" />
+                </div>
               </div>
-              <span className="text-sm text-ink/60 max-w-[260px] leading-relaxed">
-                Define your 3-day Standard. He earns his way to you.
-              </span>
+              <p className="text-xs text-ink/70 leading-relaxed max-w-[280px]">
+                Host and join co-ed adventures + get access to verified female-only travel buddy circles and road trips.
+              </p>
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-400">
+                <span>🛡️ Safe travel community verified</span>
+              </div>
             </div>
           )}
         </button>
@@ -78,23 +82,26 @@ export default function OnboardPage() {
           onClick={() => handleSelect('man')}
           disabled={selecting !== null}
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'persona-man' : undefined}
-          className="w-full h-56 rounded-xl bg-gradient-to-br from-gold/10 to-gold/5 border border-gold/30 hover:border-gold transition-all duration-300 relative overflow-hidden group active:scale-[0.98] disabled:opacity-60"
+          className="w-full h-52 rounded-2xl bg-gradient-to-br from-sky-500/15 via-white/[0.04] to-transparent border border-sky-500/30 hover:border-sky-400 transition-all duration-300 relative overflow-hidden group active:scale-[0.98] disabled:opacity-60 text-left p-6 flex flex-col justify-between"
         >
           {selecting === 'man' ? (
             <div className="relative z-10 h-full flex items-center justify-center">
-              <Loader2 className="w-8 h-8 text-gold animate-spin" />
+              <Loader2 className="w-8 h-8 text-sky-400 animate-spin" />
             </div>
           ) : (
-            <div className="relative z-10 h-full flex flex-col items-center justify-center gap-3">
-              <span className="font-display text-3xl font-bold text-ink">
-                Man
-              </span>
-              <div className="w-12 h-12 rounded-full bg-gold/15 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Compass className="w-6 h-6 text-gold" />
+            <div className="relative z-10 h-full flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <span className="font-display text-2xl font-bold text-ink">Man Traveler</span>
+                <div className="w-10 h-10 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center">
+                  <Compass className="w-5 h-5" />
+                </div>
               </div>
-              <span className="text-sm text-ink/60 max-w-[260px] leading-relaxed">
-                Discover curated profiles. Show intention. Earn the conversation.
-              </span>
+              <p className="text-xs text-ink/70 leading-relaxed max-w-[280px]">
+                Explore upcoming trips, connect with fellow travel buddies, organize weekend treks, and split stays safely.
+              </p>
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-sky-400">
+                <span>🎒 Weekend getaways & road trips</span>
+              </div>
             </div>
           )}
         </button>

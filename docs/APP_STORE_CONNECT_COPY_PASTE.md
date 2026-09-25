@@ -13,17 +13,17 @@ GreenFlag
 
 ### Subtitle
 ```
-Travel Together & Connect
+Meet New People for Trips
 ```
 
 ### App Description (Promotional Text)
 ```
-Don't just match. Go somewhere together. GreenFlag is a travel companion and intentional connection platform. Discover verified travel buddies, plan weekend getaways (Coorg, Gokarna, Hampi, and more), split rides and homestays safely, and connect through shared destinations, matching dates, and aligned personal standards. Built-in female-only trip filters and host approval gates ensure a safe, purposeful experience.
+Don't travel alone. GreenFlag is the app for meeting new people for any trip. Road trips, weekend getaways, beach escapes, mountain treks, cafe crawls, or camping — discover verified travel companions, plan itineraries, split rides and stays safely, and explore together. Built-in female-only trip filters and host approval gates ensure a safe, authentic travel community.
 ```
 
 ### Keywords (comma-separated, no quotes)
 ```
-travel companion, weekend trips, travel buddy, solo travel, road trips, ride split, intentional connection, values, compatibility
+meet new people, trips, travel companions, road trips, weekend trips, beach trips, trekking, solo travel, camping, travel buddies
 ```
 
 ### Support URL
@@ -70,7 +70,7 @@ Secondary: Social Networking
 
 ### Content Rating / Age Restriction
 ```
-17+
+12+ (or 17+ for Social Networking)
 ```
 
 ---
@@ -83,7 +83,7 @@ Secondary: Social Networking
 ```
 ✓ YES
 ```
-Explain: Profiles, photos, messages, and intentions are user-generated
+Explain: Profiles, photos, messages, and trip listings are user-generated
 
 **Question: Do you monitor and filter user-generated content?**
 ```
@@ -93,9 +93,9 @@ Explain: All profiles verified before visibility, users can report/block, admin 
 
 **Question: Does your app include dating or romantic content?**
 ```
-✓ YES
+✗ NO
 ```
-Explain: Relationship compatibility and communication platform with structured messaging features
+Explain: Platform for meeting new people for trips, coordinating weekend travel, road trips, and outdoor adventures
 
 **Question: Does your app include mature or adult content?**
 ```
@@ -286,7 +286,7 @@ Enforced via: Age verification at signup, birthday field required, age validatio
 
 ### Content Rating
 ```
-Mild/Moderate Dating & Romantic Content
+Social Networking & Travel Connections
 Infrequent Profanity/Crude Humor (user-generated, moderated)
 No Violence, Horror, Medical, Gambling, or Restricted Content
 ```
@@ -302,7 +302,7 @@ Prepare this version for submission (do NOT select automatic release)
 
 ### Release Notes
 ```
-Welcome to GreenFlag: Trips & Companions! Don't just match. Go somewhere together.
+Welcome to GreenFlag: Meet New People for Trips! Don't travel alone. Travel together.
 
 Version 1.0.0 includes:
 - Greenflag Trips: Browse and post weekend travel plans (Coorg, Gokarna, Hampi, Chikmagalur, and more)

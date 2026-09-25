@@ -77,7 +77,7 @@ export default function ViewProfilePage() {
           isGuest={user?.persona === 'man'}
           connecting={connecting}
           onEdit={() => router.push('/profile')}
-          onContinue={() => connection && router.push(`/task/${connection.id}`)}
+          onContinue={() => connection && router.push('/messages')}
           onMeet={handleMeet}
         />
       </div>

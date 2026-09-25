@@ -20,7 +20,7 @@ describe('MatchMomentOverlay', () => {
     render(
       <MatchMomentOverlay open={true} myPhoto={null} theirPhoto={null} onContinue={onContinue} />
     );
-    expect(screen.getByText("You've Met Her Standard")).toBeInTheDocument();
+    expect(screen.getByText("You're Connected for Trips!")).toBeInTheDocument();
     screen.getByText('Tap to continue').click();
     expect(onContinue).toHaveBeenCalledOnce();
   });

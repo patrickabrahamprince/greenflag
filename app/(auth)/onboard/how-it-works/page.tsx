@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CalendarDays, ShieldCheck, Clock, Sparkles, Loader2 } from 'lucide-react';
+import { Plane, Users, MessageCircle, ShieldCheck, Sparkles, Loader2 } from 'lucide-react';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useOnboardingStore } from '@/lib/store';
@@ -14,32 +14,32 @@ import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 const POINTS = [
   {
-    icon: <CalendarDays className="w-8 h-8 text-gold" />,
-    step: 'Day 1–3 Protocol',
-    title: '3 Days, 3 Intentions',
-    desc: 'Each day brings one thoughtful prompt: one honest thought, one image, one voice note. No superficial clutter.',
-    tip: 'Structured prompts reveal genuine personality 10x faster than traditional bios.',
+    icon: <Plane className="w-8 h-8 text-emerald-400" />,
+    step: 'Discover & Host',
+    title: 'Any Trip or Adventure',
+    desc: 'Road trips, mountain treks, beach getaways, cafe crawls, or camping — browse open trips or post your own with split costs.',
+    tip: 'Choose between co-ed trips and verified female-only travel buddy circles.',
   },
   {
-    icon: <ShieldCheck className="w-8 h-8 text-gold" />,
-    step: 'Intentional Effort',
-    title: 'Sincerity Is Currency',
-    desc: 'Real answers open doors. Intentional effort and emotional maturity are valued and rewarded.',
-    tip: 'Detailed prompt answers have an 80% higher continuation and connection rate.',
+    icon: <Users className="w-8 h-8 text-emerald-400" />,
+    step: 'Meet People for Trips',
+    title: 'Explore Together',
+    desc: 'Connect with people who share your travel pace, dream destinations, and adventure vibes.',
+    tip: 'Connect directly with travelers heading to your favorite spots.',
   },
   {
-    icon: <Clock className="w-8 h-8 text-gold" />,
-    step: 'Respectful Pace',
-    title: 'She Sets The Pace',
-    desc: 'After each day’s exchange, answers are reviewed before the next day unlocks.',
-    tip: 'Paced exchanges protect your emotional bandwidth and prevent ghosting.',
+    icon: <MessageCircle className="w-8 h-8 text-emerald-400" />,
+    step: 'Request & Coordinate',
+    title: 'Direct Chat Unlocks',
+    desc: 'Send a quick intro note to join an adventure. Once accepted, chat unlocks immediately to plan rides and stays.',
+    tip: 'No endless swiping games — real connections around real travel plans.',
   },
   {
-    icon: <Sparkles className="w-8 h-8 text-gold" />,
-    step: 'The Connection',
-    title: 'Earn The Conversation',
-    desc: 'Complete all three days with mutual intention, and unlimited direct conversation begins.',
-    tip: 'By day 4, you already share proven mutual respect and genuine compatibility.',
+    icon: <ShieldCheck className="w-8 h-8 text-emerald-400" />,
+    step: 'Safe Community',
+    title: 'Verified & Accountable',
+    desc: 'Host approval gates, profile verifications, and community reporting keep every road trip safe and respectful.',
+    tip: 'Mutual confirmation ensures trust and accountability on every trip.',
   },
 ];
 
@@ -98,7 +98,7 @@ export default function HowItWorksPage() {
     setContinuing(true);
     // If bio is set, we're past onboarding flow - go to discover
     if (bio) {
-      goTo('/discover', '/onboarding/hero.jpg');
+      goTo('/trips', '/onboarding/hero.jpg');
     } else {
       // Otherwise, go to name entry
       goTo('/onboard/name', '/onboarding/name.jpg');
@@ -119,7 +119,7 @@ export default function HowItWorksPage() {
       <div className="max-w-md mx-auto w-full flex-1 flex flex-col justify-center pb-safe-bottom">
         <div className="text-center mb-8">
           <h1 className="font-display text-2xl font-semibold text-ink mb-2">How Greenflag Works</h1>
-          <p className="text-ink/50 text-sm">Three days. One real connection.</p>
+          <p className="text-ink/50 text-sm">Meet new people. Explore the world together.</p>
         </div>
 
         {/* Swipeable carousel (matches the House Rules screen) instead of

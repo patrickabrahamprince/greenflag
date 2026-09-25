@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { Settings, LogOut, Edit3, Coins, Loader2, BadgeCheck, MapPin, Cake } from 'lucide-react';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { ProfileImageCarousel } from '@/components/shared/ProfileImageCarousel';
-import { MyStandardsSection } from '@/components/profile/MyStandardsSection';
 import { ProfileCompletion } from '@/components/profile/ProfileCompletion';
 import { createClient } from '@/lib/supabase/client';
 import { useUserStore, useCoinStore } from '@/lib/store';
@@ -180,29 +179,43 @@ export default function ProfilePage() {
         </button>
       </div>
 
-      {user.persona === 'woman' && <MyStandardsSection userId={user.id} />}
+      {/* Travel Hub Card */}
+      <div className="mt-5 p-5 rounded-2xl bg-card border border-emerald-500/20 shadow-sm flex items-center justify-between">
+        <div>
+          <h3 className="font-display text-sm font-bold text-ink flex items-center gap-1.5">
+            <span>✈️</span>
+            <span>GreenFlag Trips</span>
+          </h3>
+          <p className="text-xs text-ink/60 mt-1 max-w-[200px]">
+            Plan weekend getaways, host trips, and meet new people for trips.
+          </p>
+        </div>
+        <button
+          onClick={() => {
+            hapticTap();
+            router.push('/trips');
+          }}
+          className="px-3.5 py-1.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold transition-all shrink-0"
+        >
+          View Trips
+        </button>
+      </div>
 
       <div className="mt-6">
-        {/* Closest real analog to the deck's Mindaro subscription card --
-            this app's monetization surface is coins, not a subscription
-            tier, so the card keeps its real balance/purchase content but
-            picks up the same on-palette accent treatment. */}
         <div
-          className="rounded-card border border-gold/20 p-5 flex items-center justify-between shadow-[0_12px_32px_-16px_rgba(210,4,45,0.3)]"
-          style={{ background: 'linear-gradient(135deg, rgba(210,4,45,0.16) 0%, rgba(15,10,10,0.9) 60%)' }}
+          className="rounded-card border border-emerald-500/20 p-5 flex items-center justify-between shadow-[0_12px_32px_-16px_rgba(16,185,129,0.3)]"
+          style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(15,10,10,0.9) 60%)' }}
         >
           <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-full bg-gold/15 border border-gold/30 flex items-center justify-center shrink-0">
-              <Coins className="w-5 h-5 text-gold" />
+            <div className="w-11 h-11 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0">
+              <Coins className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
               <p className="text-2xl font-display font-semibold text-ink leading-none">{balance}</p>
-              <p className="text-xs text-muted mt-1">
-                {user.persona === 'woman' ? 'Coins · for nudges & reveals' : 'Coins · spend to connect'}
-              </p>
+              <p className="text-xs text-muted mt-1">Coins · for travel perks & boosts</p>
             </div>
           </div>
-          <button onClick={() => { hapticTap(); router.push('/coins'); }} className="btn-primary !min-h-[36px] text-xs px-4 shrink-0">
+          <button onClick={() => { hapticTap(); router.push('/coins'); }} className="btn-primary !min-h-[36px] text-xs px-4 shrink-0 font-bold bg-emerald-500 hover:bg-emerald-400 text-black border-none">
             Buy
           </button>
         </div>

@@ -3,12 +3,15 @@ import { Trip, TripRequest } from '@/types';
 
 export const POPULAR_DESTINATIONS = [
   { name: 'Coorg', state: 'Karnataka', tag: 'Coffee & Treks', distance: '240 km from Bangalore', image: 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Gokarna', state: 'Karnataka', tag: 'Beaches & Cliff Hikes', distance: '480 km from Bangalore', image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Chikmagalur', state: 'Karnataka', tag: 'Mullayanagiri Peak', distance: '245 km from Bangalore', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Goa', state: 'Goa', tag: 'Beaches, Sunsets & Music', distance: '550 km from Bangalore', image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Gokarna', state: 'Karnataka', tag: 'Cliff Hikes & Beach Shacks', distance: '480 km from Bangalore', image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Chikmagalur', state: 'Karnataka', tag: 'Peak Treks & Estates', distance: '245 km from Bangalore', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Rishikesh', state: 'Uttarakhand', tag: 'River Rafting & Camping', distance: 'Fly to Dehradun', image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80' },
   { name: 'Hampi', state: 'Karnataka', tag: 'Boulder Sunsets & Ruins', distance: '340 km from Bangalore', image: 'https://images.unsplash.com/photo-1600100397608-f010f443b740?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Ooty', state: 'Tamil Nadu', tag: 'Nilgiri Tea Estates', distance: '270 km from Bangalore', image: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=800&q=80' },
   { name: 'Pondicherry', state: 'Tamil Nadu', tag: 'French Colony & Cafes', distance: '310 km from Bangalore', image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Wayanad', state: 'Kerala', tag: 'Waterfalls & Caves', distance: '275 km from Bangalore', image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Manali', state: 'Himachal Pradesh', tag: 'Mountain Passes & Snow', distance: 'Fly to Kullu', image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Wayanad', state: 'Kerala', tag: 'Rainforests & Waterfalls', distance: '275 km from Bangalore', image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Ooty', state: 'Tamil Nadu', tag: 'Nilgiri Tea Estates', distance: '270 km from Bangalore', image: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=800&q=80' },
 ];
 
 export const INITIAL_CURATED_TRIPS: Trip[] = [
@@ -41,6 +44,34 @@ export const INITIAL_CURATED_TRIPS: Trip[] = [
     requests_count: 2
   },
   {
+    id: 'seed-trip-goa',
+    host_id: 'seed-host-tanya',
+    destination: 'Goa',
+    state: 'Goa',
+    start_date: '2026-10-02',
+    end_date: '2026-10-06',
+    vibe: 'Beach',
+    budget_per_day: 2200,
+    spots_available: 2,
+    spots_total: 4,
+    female_only: false,
+    stay_type: 'North Goa Pool Villa',
+    transport_type: 'Self-Drive Thar Split',
+    description: 'Weekend beach escape to Vagator & Morjim! Sunset shack dinners, live music sessions, cafe hopping, and beach lounging. Splitting a rented private villa with a pool.',
+    status: 'active',
+    created_at: new Date(Date.now() - 3600 * 1000 * 6).toISOString(),
+    host: {
+      id: 'seed-host-tanya',
+      name: 'Tanya Sen',
+      age: 26,
+      city: 'Bangalore (Koramangala)',
+      persona: 'woman',
+      verified: true,
+      photos: ['https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80']
+    },
+    requests_count: 4
+  },
+  {
     id: 'seed-trip-2',
     host_id: 'seed-host-rohit',
     destination: 'Gokarna',
@@ -69,6 +100,34 @@ export const INITIAL_CURATED_TRIPS: Trip[] = [
     requests_count: 3
   },
   {
+    id: 'seed-trip-rishikesh',
+    host_id: 'seed-host-vikram',
+    destination: 'Rishikesh',
+    state: 'Uttarakhand',
+    start_date: '2026-10-08',
+    end_date: '2026-10-12',
+    vibe: 'Camping',
+    budget_per_day: 1600,
+    spots_available: 2,
+    spots_total: 4,
+    female_only: false,
+    stay_type: 'Riverside Dome Camps',
+    transport_type: 'Overnight Volvo & Shared Cab',
+    description: 'Grade 4 white water rafting (Marine Drive to Rishikesh), cliff jumping, evening Ganga aarti, and cafe hopping at Beatles Ashram. Campfire & stargazing by the river.',
+    status: 'active',
+    created_at: new Date(Date.now() - 3600 * 1000 * 15).toISOString(),
+    host: {
+      id: 'seed-host-vikram',
+      name: 'Vikram Joshi',
+      age: 28,
+      city: 'Delhi / NCR',
+      persona: 'man',
+      verified: true,
+      photos: ['https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80']
+    },
+    requests_count: 2
+  },
+  {
     id: 'seed-trip-3',
     host_id: 'seed-host-sneha',
     destination: 'Hampi',
@@ -93,6 +152,34 @@ export const INITIAL_CURATED_TRIPS: Trip[] = [
       persona: 'woman',
       verified: true,
       photos: ['https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80']
+    },
+    requests_count: 1
+  },
+  {
+    id: 'seed-trip-pondy',
+    host_id: 'seed-host-meera',
+    destination: 'Pondicherry',
+    state: 'Tamil Nadu',
+    start_date: '2026-10-10',
+    end_date: '2026-10-11',
+    vibe: 'Foodie',
+    budget_per_day: 1500,
+    spots_available: 2,
+    spots_total: 3,
+    female_only: false,
+    stay_type: 'Heritage French Guesthouse',
+    transport_type: 'Weekend Carpool Split',
+    description: 'Food & cafe walk through White Town! French bakeries, authentic sourdough croissants, cycling along the promenade, and an early morning surf lesson at Serenity Beach.',
+    status: 'active',
+    created_at: new Date(Date.now() - 3600 * 1000 * 20).toISOString(),
+    host: {
+      id: 'seed-host-meera',
+      name: 'Meera Nair',
+      age: 23,
+      city: 'Bangalore (Whitefield)',
+      persona: 'woman',
+      verified: true,
+      photos: ['https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80']
     },
     requests_count: 1
   },

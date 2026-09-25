@@ -27,14 +27,34 @@ export async function POST(req: Request) {
 
     if (data.match_id) {
       try {
+        const { createClient } = await import('@supabase/supabase-js');
+        const admin = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+
+        // Immediately unlock direct chat for travel buddies
+        await admin.from('matches').update({
+          chat_unlocked: true,
+          status: 'completed',
+        }).eq('id', data.match_id);
+
         const { data: senderProfile } = await supabase
           .from('profiles')
           .select('name')
           .eq('id', user.id)
           .single();
-        await notifyWomanOfStandardBegin(supabase, to_user_id, senderProfile?.name || 'Someone', data.match_id);
-      } catch {
-        // Safe catch for notification failure
+
+        await admin.from('notifications').insert({
+          user_id: to_user_id,
+          title: 'New Travel Buddy! ✈️',
+          body: `${senderProfile?.name || 'A traveler'} connected with you! Start chatting to plan trips.`,
+          type: 'connection',
+          link: '/messages',
+          read: false,
+        });
+      } catch (notifyErr) {
+        console.error('Error auto-unlocking travel buddy chat:', notifyErr);
       }
     }
 

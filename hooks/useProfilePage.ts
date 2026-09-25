@@ -71,9 +71,9 @@ export function useProfilePage(id: string | string[]) {
       const { matchId } = await res.json();
       hapticSuccess();
       if (matchId) {
-        router.push(`/task/${matchId}`);
+        router.push('/messages');
       } else {
-        toast.success("You've met her Standard");
+        toast.success('Connected to meet for trips!', { icon: '✈️' });
         router.back();
       }
     } catch (e) {

@@ -143,7 +143,7 @@ export default function TripsPage() {
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             </h1>
           </div>
-          <p className="text-xs text-white/60 font-medium">Don&apos;t just match. Go somewhere together.</p>
+          <p className="text-xs text-white/60 font-medium">Meet new people for any trip. Never travel alone.</p>
         </div>
 
         <div className="flex items-center gap-2.5">
@@ -205,6 +205,20 @@ export default function TripsPage() {
       {activeTab === 'explore' && (
         <div className="space-y-4">
           
+          {/* Travel Hero Banner */}
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-emerald-500/5 to-transparent border border-emerald-500/25 relative overflow-hidden">
+            <div className="flex items-center gap-2 text-emerald-400 text-[11px] font-bold uppercase tracking-wider mb-1">
+              <span>✈️</span>
+              <span>Any Trip • Any Vibe</span>
+            </div>
+            <h2 className="text-base font-display font-bold text-white mb-1">
+              Meet New People for Any Adventure
+            </h2>
+            <p className="text-xs text-white/70 leading-relaxed">
+              Road trips, beach escapes, mountain treks, cafe crawls, or camping — connect with verified travelers and go together.
+            </p>
+          </div>
+
           {/* Quick Destination Filter Chips */}
           <div className="overflow-x-auto scrollbar-none flex items-center gap-2 pb-1">
             <button
@@ -244,7 +258,7 @@ export default function TripsPage() {
           {/* Vibe & Safety Sub-filters */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
-              {['all', 'Trek', 'Chill', 'Roadtrip', 'Backpacking'].map((vibe) => (
+              {['all', 'Roadtrip', 'Trek', 'Beach', 'Foodie', 'Camping', 'Backpacking', 'Chill', 'Adventure'].map((vibe) => (
                 <button
                   key={vibe}
                   onClick={() => {

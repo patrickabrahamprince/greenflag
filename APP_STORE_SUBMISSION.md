@@ -68,11 +68,11 @@
 
 ### 1. App Store Listing
 - [ ] App name: "GreenFlag"
-- [ ] Subtitle: "Set Your Standards. Meet Your Match."
-- [ ] Description written
-- [ ] Keywords added: dating, standards, matching, relationships, social
-- [ ] Category: Lifestyle (Social Networking)
-- [ ] Content rating: 17+ (dating features)
+- [ ] Subtitle: "Meet New People for Trips"
+- [ ] Description written (Meeting New People for Weekend Trips & Getaways)
+- [ ] Keywords added: meet new people, trips, weekend trips, travel companions, road trip, solo travel, ride split, homestay, trip partners
+- [ ] Category: Travel (Primary), Social Networking (Secondary)
+- [ ] Content rating: 12+ (or 17+ for Social Networking)
 
 ### 2. App Assets
 - [ ] App icon (1024x1024px, no transparency)
@@ -110,7 +110,7 @@
 - [x] Physical recording storyboard: [docs/SCREEN_RECORDING_WALKTHROUGH_GUIDE.md](file:///Users/patrickabraham/Documents/GreenFlag_Backup/GreenFlag/docs/SCREEN_RECORDING_WALKTHROUGH_GUIDE.md)
 
 ### 6. Release Notes
-"Welcome to GreenFlag! Set your standards and meet your match. Features include daily intention messaging, verified profiles, smart matching, and a community dedicated to genuine connections."
+"Welcome to GreenFlag: Meet new people for trips! Discover verified travel companions, organize weekend trips (Coorg, Gokarna, Hampi, and more), split rides and homestays safely, and explore together."
 
 ---
 

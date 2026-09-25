@@ -101,8 +101,8 @@ export function MatchMomentOverlay({ open, myPhoto, theirPhoto, onContinue }: Ma
         </div>
       </div>
       <div className={`relative z-10 text-center ${textAnim}`}>
-        <h1 className="font-display text-display text-ink leading-tight mb-2">You&apos;ve Met Her Standard</h1>
-        <p className="text-ink/70 text-sm">Your connection is on its way</p>
+        <h1 className="font-display text-display text-ink leading-tight mb-2">You&apos;re Connected for Trips!</h1>
+        <p className="text-ink/70 text-sm">Your travel connection is ready — plan your next adventure together</p>
       </div>
       <p className="relative z-10 text-ink/40 text-xs mt-10 uppercase tracking-wide">Tap to continue</p>
     </div>

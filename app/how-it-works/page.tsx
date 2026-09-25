@@ -13,67 +13,68 @@ interface Section {
 const SECTIONS: Section[] = [
   {
     icon: <Users className="w-8 h-8" />,
-    title: 'Set Your Standard',
-    description: 'What she defines, he earns',
+    title: 'Discover & Host Any Trip',
+    description: 'Road trips, weekend getaways, treks, beaches, and city escapes',
     points: [
-      'Women define a 3-day Standard — the bar he needs to meet to earn a conversation',
-      'Each day: one thought, one image, one voice',
-      'Men discover curated profiles and complete each day\'s Standard to show real intention',
-      'Standards can be updated anytime before they go live',
+      'Browse trips to Goa, Coorg, Gokarna, Rishikesh, Manali, Pondicherry, and beyond',
+      'Host any trip: road trips, mountain treks, beach getaways, cafe crawls, or camping',
+      'Choose between co-ed trips and verified female-only travel groups',
+      'Set available spots, transport splits (bike, car, flight, train), and stay preferences',
     ],
   },
   {
-    icon: <Flag className="w-8 h-8 text-gold" />,
-    title: 'Discover Profiles',
-    description: 'Curated, not endless',
+    icon: <Flag className="w-8 h-8 text-emerald-400" />,
+    title: 'Meet New People for Trips',
+    description: 'Find companions for any adventure',
     points: [
-      'Men browse curated profiles of women who are active and approved',
-      'Coins unlock a profile, its photos, or a conversation',
-      'Every profile is reviewed before it goes live, to keep things real',
+      'Discover fellow explorers nearby or heading to the same destination',
+      'Match on any travel vibe: Road trips, Treks, Beach, Foodie, Camping, Backpacking',
+      'View verified profiles, travel photos, and travel bucket lists',
+      'Connect directly to meet for trips with a single tap',
     ],
   },
   {
     icon: <Zap className="w-8 h-8" />,
-    title: '3 Days, 3 Intentions',
-    description: 'How a Standard actually works',
+    title: 'Instant Trip Requests & Chat',
+    description: 'Effortless coordination without friction',
     points: [
-      'He completes all three intentions for a day before she sees anything — no half-effort',
-      'She reviews and decides each day. Reject at any point and the connection ends',
-      'No second attempt on the same day if she says no',
-      'Complete all three days with her approval, and the conversation unlocks',
+      'Apply to join any open trip with a friendly intro note',
+      'Hosts review requests and approve travelers to join the crew',
+      'Once accepted, direct 1-on-1 and group chat unlocks immediately',
+      'Coordinate departure times, carpooling, and homestays smoothly',
     ],
   },
   {
     icon: <MessageCircle className="w-8 h-8" />,
-    title: 'Smart Messaging',
-    description: 'Built to encourage real conversation',
+    title: 'Direct Messaging',
+    description: 'Stay connected before and after the trip',
     points: [
-      'A first message can be generated for you based on shared interests',
-      'Each day, new conversation prompts help you go deeper',
-      'You control the pace — no pressure to rush',
-      'Block or report any profile at any time',
+      'Chat directly with your travel companions',
+      'Share packing tips, itinerary ideas, and meeting locations',
+      'Stay friends and plan your next reunion adventure',
+      'Block or report any profile anytime with instant safety moderation',
     ],
   },
   {
     icon: <Coins className="w-8 h-8" />,
-    title: 'Coins System',
-    description: 'Unlock conversations',
+    title: 'Fair & Transparent Travel',
+    description: 'Split costs and support the community',
     points: [
-      'Coins unlock profiles, photos, and conversations — 500 coins unlocks one profile',
-      'Coins are purchased directly in the app through the App Store',
-      'Your coin balance is always visible in the app',
+      'Transparent daily budget expectations on every posted trip',
+      'Easily split fuel, vehicle rentals, and homestay costs with your group',
+      'Coins enable premium travel features and verified traveler status',
+      'No hidden subscription fees — pay only for what you use',
     ],
   },
   {
     icon: <Shield className="w-8 h-8" />,
-    title: 'Safety & Trust',
-    description: 'Your security is our priority',
+    title: 'Safety & Trust on the Road',
+    description: 'Your security is always top priority',
     points: [
-      'All profiles are reviewed before approval to keep the community real',
-      'Block or report anyone at any time',
-      'Your photos and personal info are never shared unless you choose to',
-      'Never share payment info via messaging',
-      'If something feels off, report it immediately',
+      'Phone verification and profile checks keep the community genuine',
+      'Female-only trip filters ensure safe, comfortable journeys for women travelers',
+      'Hosts have full control over who joins their trips',
+      'Zero tolerance for misconduct, discrimination, or harassment',
     ],
   },
 ];
@@ -84,9 +85,9 @@ export default function HowItWorks() {
       {/* Header */}
       <div className="sticky top-safe-top bg-base/80 backdrop-blur-sm border-b border-raised z-40">
         <div className="max-w-app mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-display font-semibold text-ink">How It Works</h1>
-          <Link href="/discover" className="text-gold hover:text-gold/90 text-sm font-medium">
-            Back
+          <h1 className="text-xl font-display font-semibold text-ink">How GreenFlag Works</h1>
+          <Link href="/trips" className="text-emerald-400 hover:text-emerald-300 text-sm font-medium">
+            Explore Trips
           </Link>
         </div>
       </div>
@@ -95,10 +96,10 @@ export default function HowItWorks() {
       <div className="max-w-2xl mx-auto px-4 py-8 pb-24">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-display font-bold text-ink mb-3">
-            Set your standards. Build genuine connection.
+            The Easiest Way to Meet New People for Trips
           </h2>
           <p className="text-ink/60">
-            GreenFlag makes it easy to find people who share your values
+            GreenFlag connects verified travelers for weekend getaways, road trips, and shared adventures. Never travel alone again.
           </p>
         </div>
 
@@ -133,28 +134,28 @@ export default function HowItWorks() {
 
         {/* CTA */}
         <div className="mt-12 text-center">
-          <p className="text-ink/60 mb-4">Ready to connect intentionally?</p>
-          <Link href="/discover" className="btn-primary inline-flex">
-            Start Discovering
+          <p className="text-ink/60 mb-4">Ready to meet new people for your next trip?</p>
+          <Link href="/trips" className="btn-primary inline-flex">
+            Explore Trips
           </Link>
         </div>
 
         {/* FAQ */}
         <div className="mt-16 pt-12 border-t border-raised">
-          <h3 className="text-2xl font-display font-bold text-ink mb-6">Questions?</h3>
+          <h3 className="text-2xl font-display font-bold text-ink mb-6">Frequently Asked Questions</h3>
           <div className="space-y-4">
             {[
               {
-                q: 'Is GreenFlag free to join?',
-                a: 'Creating a profile and browsing is free. Coins are required to unlock a profile, its photos, or a conversation — 500 coins unlocks one profile.',
+                q: 'How do I meet new people for trips?',
+                a: 'Browse open trips or host your own. You can filter by destination, travel style, and dates to find compatible travel companions heading your way.',
               },
               {
-                q: 'What does a woman actually do on GreenFlag?',
-                a: 'She defines a 3-day Standard — one thought, one image, one voice per day — and reviews what he submits each day before deciding whether the conversation unlocks.',
+                q: 'How do trip requests work?',
+                a: 'Send a request with an intro note. Once the host accepts your request, direct chat unlocks so you can coordinate itinerary, gear, and travel details.',
               },
               {
-                q: 'What if I\'m not interested in someone?',
-                a: 'You can block or report any profile at any time, and reject a Standard submission on any day to end the connection.',
+                q: 'Is it safe to travel with people I meet here?',
+                a: 'Safety is our top priority. We verify profiles with phone numbers and identity checks. Hosts have complete control over who joins, and you can report or block anyone at any time.',
               },
             ].map((faq, idx) => (
               <details

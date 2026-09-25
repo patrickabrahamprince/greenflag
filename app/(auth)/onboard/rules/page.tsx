@@ -20,25 +20,24 @@ import { useOnboardingStore, useUserStore } from '@/lib/store';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 
-// Streamlined to 3 key rules (was 6)
 const slides = [
   {
     id: 0,
-    title: 'Respect Is Standard',
-    desc: 'Every profile is treated with regard. No exceptions.',
-    icon: <ShieldCheck className="w-10 h-10 text-gold" />,
+    title: 'Respect & Inclusivity',
+    desc: 'Every traveler is treated with dignity. Friendly, welcoming journeys for all.',
+    icon: <ShieldCheck className="w-10 h-10 text-emerald-400" />,
   },
   {
     id: 1,
-    title: 'Keep It Intentional',
-    desc: 'Show up genuinely. No spam, no mass messages.',
-    icon: <Flame className="w-10 h-10 text-gold" />,
+    title: 'Reliability & Trust',
+    desc: 'Be dependable with trip commitments, meetup points, and shared budgets.',
+    icon: <Flame className="w-10 h-10 text-emerald-400" />,
   },
   {
     id: 2,
-    title: 'Discretion First',
-    desc: 'Share personal details only when you feel safe to.',
-    icon: <MessageCircle className="w-10 h-10 text-gold" />,
+    title: 'Safety First',
+    desc: 'Honor personal boundaries, travel verified, and report uncomfortable behavior instantly.',
+    icon: <MessageCircle className="w-10 h-10 text-emerald-400" />,
   },
 ];
 
@@ -141,11 +140,7 @@ export default function RulesPage() {
       }
     }
 
-    if (isWoman) {
-      goTo('/standard/builder', '/onboarding/how-it-works.jpg');
-    } else {
-      goTo('/discover', '/onboarding/hero.jpg');
-    }
+    goTo('/trips', '/onboarding/hero.jpg');
   };
 
   if (loading) {

@@ -149,8 +149,8 @@ export async function middleware(req: NextRequest) {
   }
 
   // Auth method agnostic: works for phone OTP, email, magic link, OAuth
-  // Only checks profiles.onboarding_completed for redirect to /onboard (or /standard/builder for women)
-  if (!profile?.onboarding_completed && !pathname.startsWith('/onboard') && pathname !== '/standard/builder') {
+  // Only checks profiles.onboarding_completed for redirect to /onboard
+  if (!profile?.onboarding_completed && !pathname.startsWith('/onboard')) {
     const destination = new URL('/onboard', req.url);
     return NextResponse.redirect(destination);
   }
@@ -169,19 +169,9 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(destination);
   }
 
-  // The native app's WKWebView always loads the bare root URL on a fresh
-  // launch (capacitor.config.ts's server.url has no path), and "/" is
-  // just a static marketing splash with a "Sign In" link -- it has no
-  // idea a session already exists. Without this, someone who's already
-  // fully authenticated (session valid, onboarded, approved -- every
-  // other gate above already passed) lands on that dead-end splash and
-  // has to manually click through to /login and re-authenticate, even
-  // though nothing about their session actually expired. This is what
-  // made Face ID unlock feel pointless: it correctly confirmed identity,
-  // then dropped them right back at a page that asks them to sign in
-  // again anyway.
+  // Authenticated user landing on "/" redirects directly to the Trips feed
   if (pathname === '/') {
-    const destination = new URL('/discover', req.url);
+    const destination = new URL('/trips', req.url);
     return NextResponse.redirect(destination);
   }
 

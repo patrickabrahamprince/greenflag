@@ -117,7 +117,7 @@ export default function LoginPage() {
 
     if (profile?.is_admin) window.location.href = '/admin'
     else if (!profile?.onboarding_completed) window.location.href = '/onboard'
-    else window.location.href = '/discover'
+    else window.location.href = '/trips'
   }
 
   // Google/Apple both go through withTermsGate (see handleGoogleLogin/
@@ -220,10 +220,13 @@ export default function LoginPage() {
           alt="GreenFlag"
           width={144}
           height={144}
-          className="w-36 h-36 animate-logo-in"
-          style={{ filter: 'drop-shadow(0 12px 28px rgba(0,0,0,0.55)) drop-shadow(0 0 40px rgba(210,4,45,0.25))' }}
+          className="w-32 h-32 animate-logo-in"
+          style={{ filter: 'drop-shadow(0 12px 28px rgba(0,0,0,0.55)) drop-shadow(0 0 40px rgba(16,185,129,0.25))' }}
         />
-
+        <div className="text-center -mt-4">
+          <h1 className="font-display text-2xl font-bold text-ink">GreenFlag</h1>
+          <p className="text-xs text-emerald-400 font-semibold tracking-wider uppercase mt-1">Meet New People for Trips</p>
+        </div>
       </div>
 
       <div className="w-full max-w-sm mx-auto animate-slide-up">

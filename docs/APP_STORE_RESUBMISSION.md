@@ -14,35 +14,37 @@ Full text already drafted and ready to send — see the conversation, or reconst
 
 ## Step 2: Updated screenshots
 
-`docs/ios-store-assets/` — 4 screenshots at Apple's exact required 6.9" resolution (1290×2796, verified against current spec, Apple will auto-scale down for smaller iPhones):
+`docs/ios-store-assets/` — 4 screenshots at Apple's required Pro Max resolution (1284×2778, Apple auto-scales down for all iPhones):
 
-1. `01_hero.png` — "Define your standards. Then meet your match." / "Not another swipe app — intentional dating, done differently."
-2. `02_standards.png` — visual diagram of the standards-first mechanic ("Set your standards before you swipe")
-3. `03_intention_exchange.png` — Day 1 → Day 2 → Day 3 → Chat progression diagram (the exact mechanic Apple's rejection said wasn't differentiated)
-4. `04_verified.png` — verified-profile-pipeline messaging
+1. `01_hero.png` — "Any Trip. Meet Your Crew." (Road trips, beach escapes, mountain treks, cafe crawls, or camping)
+2. `02_standards.png` — "Post Your Trip. Pick Your Travel Vibe." (Destination, departure dates, transport split, budget)
+3. `03_intention_exchange.png` — "Instant Chat. Plan The Journey." (Direct 1-on-1 and group chat once trip request is accepted)
+4. `04_verified.png` — "Safe Travel Community. Verified Profiles." (Phone verification, host approval gates & female-only trips)
 
-These are concept/diagram screenshots, not raw UI captures — deliberate, since the goal is making the *mechanic* differentiation unmistakable at a glance, which a raw screenshot of a chat screen wouldn't necessarily convey. Upload these in this order so the differentiation leads.
+Upload these 4 PNGs in order to App Store Connect.
 
 ## Step 3: Updated description
 
-Replace the current App Store description with (leads harder with "not another swipe app" framing than the original, to match the new screenshots and the Resolution Center reply):
+Replace the current App Store description with:
 
 ```
-GreenFlag isn't another swipe app — it's intentional dating, built around personal standards and a structured path to real connection.
+Don't travel alone. GreenFlag is the app for meeting new people for any trip. Road trips, weekend getaways, beach escapes, mountain treks, cafe crawls, or camping — discover verified travel companions, plan itineraries, split rides and stays safely, and explore together. Built-in female-only trip filters and host approval gates ensure a safe, authentic travel community.
 
-NOT PHOTOS FIRST — STANDARDS FIRST
-Before you ever see a potential match, you define your own standards: the specific, non-negotiable qualities you're actually looking for. Matches are surfaced against what you defined, not a photo feed to swipe through.
+ANY TRIP, ANY VIBE
+Browse open trips or post your own. Whether it's a weekend road trip to Coorg, a beach getaway in Goa, cliff hiking in Gokarna, or camping by the river in Rishikesh — find verified companions heading to your dream destinations.
 
-3 DAYS BEFORE UNLIMITED MESSAGING
-Every match starts with a structured 3-day exchange — small, specific prompts each day that both people complete together. Unlimited messaging only opens up after that exchange, not the moment you match. It's built to surface real compatibility before the small talk.
+HOST APPROVAL & DIRECT CHAT
+No endless swiping. Send a quick intro request to join an open trip. Once the host reviews and approves your request, direct chat unlocks immediately so you can coordinate packing lists, departure times, and homestays.
 
-VERIFIED, NOT JUST REPORTED
-Every profile goes through a review step before it's visible to anyone else — an active moderation process, not just a report button added after the fact.
+FEMALE-ONLY TRAVEL SAFETY
+Verified female travelers can host and discover trips designated strictly for women, providing complete peace of mind on every journey.
 
-SAFETY FIRST
-Report and block on any profile or conversation, reviewed by our team. Your account, your pace — pause or delete anytime from Settings.
+FAIR & TRANSPARENT COST SPLITS
+Every trip features transparent daily budget expectations and transport splits (self-drive SUV, Royal Enfield ride, carpooling, train, or flight).
 
-COINS
+COMMUNITY SAFETY
+Phone verification, profile moderation, zero tolerance for harassment, and instant reporting/blocking keep our travel community safe and respectful.
+```
 Unlock additional profiles, photos, and reveals with coins — entirely optional, GreenFlag is free to download and use.
 ```
 
