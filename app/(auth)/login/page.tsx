@@ -163,12 +163,9 @@ export default function LoginPage() {
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code
       if (code !== 'USER_CANCELLED') {
-        // The native plugin's error message is a verbose diagnostic dump
-        // meant for logcat (package/signingSha1/webClientId, troubleshooting
-        // steps), not something to show someone mid-login -- log the real
-        // thing for debugging, show a plain retry prompt on screen.
         console.error('Google sign-in error:', err)
-        setError('Couldn\'t sign in with Google. Please try again.')
+        setError('Google sign-in is temporarily unavailable. You can sign in with your email below.')
+        setShowEmailLogin(true)
       }
     } finally {
       setGoogleLoading(false)
@@ -234,7 +231,9 @@ export default function LoginPage() {
 
         <div className="space-y-3">
           <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />
-          <AppleButton onClick={handleAppleLogin} loading={appleLoading} />
+          {Capacitor.getPlatform() !== 'android' && (
+            <AppleButton onClick={handleAppleLogin} loading={appleLoading} />
+          )}
 
           {!showEmailLogin && (
             <button

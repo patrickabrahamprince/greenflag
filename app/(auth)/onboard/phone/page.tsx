@@ -243,7 +243,9 @@ export default function PhonePage() {
 
         <div className="space-y-3">
           <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />
-          <AppleButton onClick={handleAppleLogin} loading={appleLoading} />
+          {Capacitor.getPlatform() !== 'android' && (
+            <AppleButton onClick={handleAppleLogin} loading={appleLoading} />
+          )}
         </div>
       </div>
     </div>
