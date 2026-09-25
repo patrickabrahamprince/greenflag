@@ -187,22 +187,22 @@ IMPORTANT: Tap "Having trouble?" below the Apple/Google buttons on the login scr
 ---
 
 ## 📸 SCREENSHOTS SECTION
-Use the prepared architectural concept screenshots from `docs/ios-store-assets/` (at 1290 x 2796 px, Apple auto-scales down for all iPhones):
+Use the newly generated high-resolution screenshots from `docs/ios-store-assets/` (at 1284 x 2778 px, Apple auto-scales down for all iPhones):
 
 1. **Screenshot 1 (`01_hero.png`)**:
-   - Headline: "Define your standards. Then meet your match."
-   - Focus: Intentional values-first relationships, not superficial swiping.
+   - Headline: "Any Trip. Meet Your Crew."
+   - Focus: Trips Feed (Goa beach escapes, Coorg treks, transport splits, budget estimates).
 2. **Screenshot 2 (`02_standards.png`)**:
-   - Headline: "Set your standards before you swipe"
-   - Focus: Visual diagram of the standards-first mechanic.
+   - Headline: "Post Your Trip. Pick Your Travel Vibe."
+   - Focus: Trip creation (Destination chips, travel vibes: road trip, beach, trek, camping, transport splits).
 3. **Screenshot 3 (`03_intention_exchange.png`)**:
-   - Headline: "3-Day Intention Protocol"
-   - Focus: Day 1 → Day 2 → Day 3 → Chat progression (chat stays locked until both complete daily prompts).
+   - Headline: "Instant Chat. Plan The Journey."
+   - Focus: Direct 1-on-1 and group chat unlocked on host approval for trip logistics.
 4. **Screenshot 4 (`04_verified.png`)**:
-   - Headline: "Verified & Safe Community"
-   - Focus: Face ID privacy lock and active profile verification.
+   - Headline: "Safe Community. Verified Profiles."
+   - Focus: Verified travelers, host approval gates & female-only trips.
 
-Do NOT upload screenshots with captions saying "Swipe to match" or "It's a Match!". Leading with the intentional connection diagrams above prevents 4.3(b) automated rejections.
+These 4 screenshots have already been generated and are saved in `docs/ios-store-assets/`. Upload them in this order.
 
 ---
 
