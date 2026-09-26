@@ -23,7 +23,7 @@ const cabinetGrotesk = localFont({
 
 export const metadata: Metadata = {
   title: 'GreenFlag',
-  description: 'Set your standards. Meet your match.',
+  description: 'Meet New People for Real Trips & Weekend Getaways.',
 }
 
 export const viewport: Viewport = {
