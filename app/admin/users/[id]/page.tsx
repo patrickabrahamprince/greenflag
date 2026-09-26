@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import type { AdminUser } from '@/components/admin/types';
 import { UserProfileHeader } from '@/components/admin/UserProfileHeader';
@@ -35,8 +35,9 @@ interface UserData {
   connections: UserConn[];
 }
 
-export default function UserDetailPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default function UserDetailPage() {
+  const routeParams = useParams();
+  const id = Array.isArray(routeParams.id) ? routeParams.id[0] : (routeParams.id as string);
   const router = useRouter();
   const [data, setData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);

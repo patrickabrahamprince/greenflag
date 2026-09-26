@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Loader2, Search } from 'lucide-react';
 
 interface MatchProfile {
@@ -25,12 +25,9 @@ interface MatchesData {
   total: number;
 }
 
-export default function AdminMatchesPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const { id } = params;
+export default function AdminMatchesPage() {
+  const routeParams = useParams();
+  const id = Array.isArray(routeParams.id) ? routeParams.id[0] : (routeParams.id as string);
   const router = useRouter();
   const [data, setData] = useState<MatchesData | null>(null);
   const [loading, setLoading] = useState(true);

@@ -83,6 +83,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
       Promise.all([
         App.addListener('resume', () => { supabase.auth.startAutoRefresh(); }),
         App.addListener('pause', () => { supabase.auth.stopAutoRefresh(); }),
+        App.addListener('backButton', ({ canGoBack }) => {
+          const rootPaths = ['/trips', '/discover', '/messages', '/profile', '/login'];
+          const currentPath = window.location.pathname;
+          if (rootPaths.includes(currentPath)) {
+            App.exitApp();
+          } else if (canGoBack || window.history.length > 1) {
+            window.history.back();
+          } else {
+            window.location.href = '/trips';
+          }
+        }),
       ]).then((handles) => {
         if (mounted) listenerHandles = handles;
         else handles.forEach((h) => h.remove());

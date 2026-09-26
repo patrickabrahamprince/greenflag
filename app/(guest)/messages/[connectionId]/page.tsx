@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { ChatSkeleton } from '@/components/chat/ChatSkeleton';
 import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
@@ -20,8 +20,9 @@ import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 import { hapticTap } from '@/lib/haptics';
 import { Loader2 } from 'lucide-react';
 
-export default function ChatPage({ params }: { params: { connectionId: string } }) {
-  const { connectionId } = params;
+export default function ChatPage() {
+  const routeParams = useParams();
+  const connectionId = Array.isArray(routeParams.connectionId) ? routeParams.connectionId[0] : (routeParams.connectionId as string);
   const router = useRouter();
   const user = useUserStore((s) => s.user);
   const supabase = createClient();

@@ -26,6 +26,7 @@ export default function LoginPage() {
   // which can't drive a real OAuth picker) behind a "Having trouble?"
   // reveal instead of showing by default.
   const [showEmailLogin, setShowEmailLogin] = useState(false)
+  const [isSignUp, setIsSignUp] = useState(false)
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null)
 
   // Restore typed email and password if user returns from Terms / Privacy / etc.
@@ -132,11 +133,27 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) throw error
-      await redirectAfterAuth()
+      if (isSignUp) {
+        const { data, error } = await supabase.auth.signUp({ email, password })
+        if (error) throw error
+        if (data?.session) {
+          await redirectAfterAuth()
+        } else if (data?.user) {
+          setError('Account created! Please check your email to confirm or sign in.')
+          setIsSignUp(false)
+        }
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password })
+        if (error) {
+          if (error.message.toLowerCase().includes('invalid login credentials')) {
+            throw new Error('Invalid email or password. New user? Click "Create Account" below.')
+          }
+          throw error
+        }
+        await redirectAfterAuth()
+      }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Login failed')
+      setError(err instanceof Error ? err.message : 'Authentication failed')
     } finally {
       setLoading(false)
     }
@@ -256,6 +273,23 @@ export default function LoginPage() {
           </button>
         ) : (
           <form onSubmit={handleLogin} className="space-y-4 mt-6 animate-fade-in">
+            <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 mb-2">
+              <button
+                type="button"
+                onClick={() => { setIsSignUp(false); setError(''); }}
+                className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors ${!isSignUp ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-ink/60 hover:text-ink'}`}
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => { setIsSignUp(true); setError(''); }}
+                className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors ${isSignUp ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-ink/60 hover:text-ink'}`}
+              >
+                Create Account
+              </button>
+            </div>
+
             <input
               data-testid="email"
               type="email"
@@ -268,18 +302,19 @@ export default function LoginPage() {
             <input
               data-testid="password"
               type="password"
-              placeholder="Password"
+              placeholder={isSignUp ? 'Create Password (min 6 chars)' : 'Password'}
               value={password}
               onChange={(e) => handlePasswordInput(e.target.value)}
               required
+              minLength={6}
               className="input w-full"
             />
             <button data-testid="login-btn" type="submit" disabled={loading} className="btn-primary w-full">
-              {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Sign In'}
+              {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : isSignUp ? 'Create Account' : 'Sign In'}
             </button>
             <button
               type="button"
-              onClick={() => setShowEmailLogin(false)}
+              onClick={() => { setShowEmailLogin(false); setError(''); }}
               className="block mx-auto text-xs text-ink/40 hover:text-ink transition-colors pt-2"
             >
               Back to all options
