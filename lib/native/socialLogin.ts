@@ -13,8 +13,8 @@ import { createClient } from '@/lib/supabase/client';
 // account picker, then hands that to Supabase's signInWithIdToken, which
 // verifies it and issues a normal Supabase session -- same end result,
 // actually native UX.
-const GOOGLE_IOS_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_IOS_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-const GOOGLE_WEB_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+const GOOGLE_IOS_CLIENT_ID = (process.env.NEXT_PUBLIC_GOOGLE_IOS_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '').replace(/\\n/g, '').trim();
+const GOOGLE_WEB_CLIENT_ID = (process.env.NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '').replace(/\\n/g, '').trim();
 
 let initialized = false;
 
