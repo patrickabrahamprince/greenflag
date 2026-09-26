@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       orderId: order.id,
       amountPaise: order.amount,
-      keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
+      keyId: (process.env.NEXT_PUBLIC_RAZORPAY_KEY || '').replace(/\\n/g, '').trim(),
     });
   } catch (error) {
     console.error('Razorpay create-order error:', error instanceof Error ? error.message : error);

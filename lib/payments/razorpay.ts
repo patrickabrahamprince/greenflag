@@ -14,7 +14,7 @@ function timingSafeHexEqual(a: string, b: string): boolean {
 // with the account's key secret.
 export function verifyPaymentSignature(orderId: string, paymentId: string, signature: string): boolean {
   if (!signature) return false;
-  const secret = process.env.RAZORPAY_KEY_SECRET;
+  const secret = (process.env.RAZORPAY_KEY_SECRET || '').replace(/\\n/g, '').trim();
   if (!secret) throw new Error('RAZORPAY_KEY_SECRET is not set');
   const expected = crypto.createHmac('sha256', secret).update(`${orderId}|${paymentId}`).digest('hex');
   try {
@@ -43,8 +43,8 @@ export function verifyWebhookSignature(rawBody: string, signature: string): bool
 }
 
 function getAuthHeader(): string {
-  const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY;
-  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  const keyId = (process.env.NEXT_PUBLIC_RAZORPAY_KEY || '').replace(/\\n/g, '').trim();
+  const keySecret = (process.env.RAZORPAY_KEY_SECRET || '').replace(/\\n/g, '').trim();
   if (!keyId || !keySecret) throw new Error('Razorpay credentials are not set');
   return 'Basic ' + Buffer.from(`${keyId}:${keySecret}`).toString('base64');
 }

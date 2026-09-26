@@ -41,19 +41,18 @@ export default function CoinsPage() {
   const [appleProducts, setAppleProducts] = useState<Record<string, IAPProduct>>({});
   const supabase = createClient();
 
-  const { isNative, purchase: handleApplePurchase, purchasingProductId } = useAppleIAP();
-  const { isAndroid, purchase: handleRazorpayPurchase, purchasingCoins } = useRazorpayIAP();
+  const { isNative: isIosNative, purchase: handleApplePurchase, purchasingProductId } = useAppleIAP();
+  const { purchase: handleRazorpayPurchase, purchasingCoins } = useRazorpayIAP();
 
-  // Real StoreKit pricing -- fetched once so the card shows what Apple
-  // will actually charge instead of the guessed INR figure in PACKAGES.
+  // Real StoreKit pricing on native iOS
   useEffect(() => {
-    if (!isNative) return;
+    if (!isIosNative) return;
     InAppPurchase.getProducts({ productIds: APPLE_COIN_PRODUCT_IDS })
       .then(({ products }) => {
         setAppleProducts(Object.fromEntries(products.map((p) => [p.productId, p])));
       })
       .catch((err) => { if (process.env.NODE_ENV === 'development') console.error('Failed to load Apple products:', err); });
-  }, [isNative]);
+  }, [isIosNative]);
 
   const load = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -71,14 +70,9 @@ export default function CoinsPage() {
     if (wallet) {
       setBalance((wallet as { balance: number }).balance);
     } else if (walletError) {
-      // Previously silently no-op'd here, leaving the balance display at
-      // whatever stale value was already in the store with no indication
-      // it might be wrong.
       toast.error('Could not load your coin balance. Pull to refresh.');
     }
 
-    // coin_transactions (not transactions -- confirmed empty on
-    // production) is what add_coins/deduct_coins actually write to.
     const { data: txData } = await supabase
       .from('coin_transactions')
       .select('*')
@@ -132,28 +126,20 @@ export default function CoinsPage() {
 
         <CoinBalance balance={balance} />
 
-        {!isNative && !isAndroid && (
-          <p className="mb-3 text-xs text-muted text-center">
-            Coins can only be purchased in the GreenFlag app.
-          </p>
-        )}
-
         <div className="space-y-3">
           {PACKAGES.map((pkg) => (
             <PackageCard
               key={pkg.appleProductId}
               pkg={pkg}
               displayPrice={appleProducts[pkg.appleProductId]?.displayPrice}
-              purchasing={isAndroid ? purchasingCoins !== null : (!isNative || purchasingProductId !== null)}
-              isPurchasingThis={isAndroid ? purchasingCoins === pkg.coins : purchasingProductId === pkg.appleProductId}
+              purchasing={isIosNative ? purchasingProductId !== null : purchasingCoins !== null}
+              isPurchasingThis={isIosNative ? purchasingProductId === pkg.appleProductId : purchasingCoins === pkg.coins}
               onBuy={async () => {
-                const newBalance = isAndroid
-                  ? await handleRazorpayPurchase(pkg.coins)
-                  : await handleApplePurchase(pkg.appleProductId);
-                // undefined means cancelled/pending/failed -- only a real
-                // credited purchase gets the celebration.
+                const newBalance = isIosNative
+                  ? await handleApplePurchase(pkg.appleProductId)
+                  : await handleRazorpayPurchase(pkg.coins);
                 if (newBalance !== undefined) {
-                  confetti({ particleCount: 120, spread: 75, origin: { y: 0.3 }, colors: ['#D2042D', '#45050C', '#fff'] });
+                  confetti({ particleCount: 120, spread: 75, origin: { y: 0.3 }, colors: ['#10b981', '#34d399', '#fff'] });
                 }
               }}
             />
