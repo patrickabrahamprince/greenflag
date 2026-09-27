@@ -209,11 +209,14 @@ export function CreateTripModal({
       }}
       className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/70 backdrop-blur-md animate-fade-in"
     >
-      <div className="bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-lg w-full h-[88dvh] max-h-[88dvh] flex flex-col min-h-0 overflow-hidden shadow-2xl">
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-lg w-full h-[88dvh] max-h-[88dvh] flex flex-col min-h-0 overflow-hidden shadow-2xl"
+      >
         
-        {/* Header with Step Progress */}
-        <div className="px-6 pt-5 pb-4 border-b border-slate-200 bg-slate-50 shrink-0">
-          <div className="flex items-center justify-between mb-3">
+        {/* Header with Clickable Step Tabs */}
+        <div className="px-6 pt-5 pb-3 border-b border-slate-200 bg-slate-50 shrink-0">
+          <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               {step > 1 && (
                 <button
@@ -232,7 +235,7 @@ export function CreateTripModal({
                   Step {step} of 4
                 </span>
                 <h2 className="text-base font-extrabold text-slate-900 leading-tight">
-                  {step === 1 && 'Where & Vibe'}
+                  {step === 1 && 'Where & What Vibe'}
                   {step === 2 && 'When & Companions'}
                   {step === 3 && 'Details & Budget'}
                   {step === 4 && 'Preview & Post'}
@@ -250,15 +253,32 @@ export function CreateTripModal({
             </button>
           </div>
 
-          {/* 4 Step Progress Indicators */}
-          <div className="grid grid-cols-4 gap-1.5">
-            {[1, 2, 3, 4].map((s) => (
-              <div
-                key={s}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  s <= step ? 'bg-emerald-600' : 'bg-slate-200'
-                }`}
-              />
+          {/* 4 Clickable Step Progress Tabs */}
+          <div className="grid grid-cols-4 gap-2 pt-1">
+            {[
+              { num: 1, label: '1. Vibe' },
+              { num: 2, label: '2. Date' },
+              { num: 3, label: '3. Details' },
+              { num: 4, label: '4. Post' },
+            ].map((s) => (
+              <button
+                key={s.num}
+                type="button"
+                onClick={() => {
+                  hapticTap();
+                  setStep(s.num as 1 | 2 | 3 | 4);
+                }}
+                className="flex flex-col gap-1 text-left cursor-pointer group py-1"
+              >
+                <div
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    s.num <= step ? 'bg-emerald-600' : 'bg-slate-200 group-hover:bg-slate-300'
+                  }`}
+                />
+                <span className={`text-[10px] font-bold transition-colors ${s.num === step ? 'text-emerald-700' : 'text-slate-400'}`}>
+                  {s.label}
+                </span>
+              </button>
             ))}
           </div>
         </div>
