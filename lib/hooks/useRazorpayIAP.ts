@@ -40,17 +40,32 @@ export function useRazorpayIAP() {
       const { data: { user: authUser } } = await supabase.auth.getUser();
 
       let result: RazorpayCheckoutResult | null = null;
+      let userDismissed = false;
 
       // 1. Native Android Checkout when running inside native Android container
       if (isAndroid && Capacitor.isNativePlatform()) {
-        result = await openRazorpayNativeCheckout({
-          keyId: order.keyId,
-          orderId: order.orderId,
-          amountPaise: order.amountPaise,
-          prefillEmail: authUser?.email,
-        });
-      } else {
-        // 2. Web Razorpay Modal (for Web / Mobile Browser preview)
+        try {
+          result = await openRazorpayNativeCheckout({
+            keyId: order.keyId,
+            orderId: order.orderId,
+            amountPaise: order.amountPaise,
+            prefillEmail: authUser?.email,
+          });
+          if (result === null) {
+            userDismissed = true;
+          }
+        } catch (nativeErr) {
+          console.warn('Native Razorpay unavailable, falling back to Web Checkout:', nativeErr);
+          result = null;
+        }
+      }
+
+      if (userDismissed) {
+        return undefined;
+      }
+
+      // 2. Web Razorpay Modal (for Web / fallback if native plugin is not present)
+      if (!result) {
         const loaded = await loadRazorpayScript();
         if (!loaded) throw new Error('Could not load payment checkout. Please check your internet connection.');
 

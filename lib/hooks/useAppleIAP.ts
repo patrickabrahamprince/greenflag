@@ -13,7 +13,7 @@ import { hapticSuccess } from '@/lib/haptics';
 // anyway. Coins are iOS-app-only; there's no web purchase path.
 export function useAppleIAP() {
   const [purchasingProductId, setPurchasingProductId] = useState<string | null>(null);
-  const isNative = Capacitor.isNativePlatform();
+  const isNative = Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios';
 
   // A transaction can succeed in StoreKit but never make it to our server
   // (app killed, lost network) before finishTransaction() is called. Those
