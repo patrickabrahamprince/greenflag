@@ -143,11 +143,11 @@ export default function TripsPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 flex items-center gap-1.5">
-              <span>Trips</span>
+              <span>Plans & Hangouts</span>
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             </h1>
           </div>
-          <p className="text-xs text-slate-600 font-medium">Meet new people for any trip. Never travel alone.</p>
+          <p className="text-xs text-slate-600 font-medium">Evening hangouts, day trips, coffee, or weekend getaways.</p>
         </div>
 
         <div className="flex items-center gap-2.5">
@@ -170,7 +170,7 @@ export default function TripsPage() {
             className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs rounded-full flex items-center gap-1.5 shadow-sm transition-all"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>New Trip</span>
+            <span>New Plan</span>
           </button>
         </div>
       </header>
@@ -188,7 +188,7 @@ export default function TripsPage() {
               : 'text-slate-800 hover:text-slate-950 font-bold'
           }`}
         >
-          Explore Trips
+          Explore Plans
         </button>
         <button
           onClick={() => {
@@ -201,7 +201,7 @@ export default function TripsPage() {
               : 'text-slate-800 hover:text-slate-950 font-bold'
           }`}
         >
-          My Trips & Requests
+          My Plans & Requests
         </button>
       </div>
 
@@ -209,15 +209,15 @@ export default function TripsPage() {
       {activeTab === 'explore' && (
         <div className="space-y-4">
           
-          {/* Where are you travelling? - Post a Trip Card */}
+          {/* What are you planning? - Post Card */}
           <div className="p-4 rounded-3xl bg-white border border-slate-200/90 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-xl shrink-0">
-                ✈️
+                ✨
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900">Where are you travelling?</h3>
-                <p className="text-xs text-slate-600">Post your destination, dates & meet companions.</p>
+                <h3 className="text-sm font-bold text-slate-900">What are you planning?</h3>
+                <p className="text-xs text-slate-600">Café hangout, day trip, sunrise drive, or weekend getaway.</p>
               </div>
             </div>
             <button
@@ -228,7 +228,7 @@ export default function TripsPage() {
               className="btn-primary !min-h-[40px] px-5 text-xs font-bold shrink-0 flex items-center justify-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
-              <span>Post a Trip</span>
+              <span>Post a Plan</span>
             </button>
           </div>
 
@@ -239,7 +239,7 @@ export default function TripsPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by city or trip plan (e.g. Goa, Manali, Trek)..."
+              placeholder="Search by spot, café, or plan (e.g. Indiranagar, Nandi Hills, Goa)..."
               className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 shadow-sm"
             />
           </div>

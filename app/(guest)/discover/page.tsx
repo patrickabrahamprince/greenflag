@@ -369,9 +369,8 @@ export default function DiscoverPage() {
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex flex-col pointer-events-none">
         <div className="flex items-center justify-between px-5 pt-safe-top pb-8 bg-gradient-to-b from-black/80 via-black/40 to-transparent">
           <div className="pointer-events-auto flex items-center gap-2">
-            <span className="font-display font-extrabold text-lg text-white tracking-tight flex items-center gap-1.5 drop-shadow-md">
-              <span className="text-emerald-400">🌿</span>
-              <span>GreenFlag</span>
+            <span className="font-display font-extrabold text-lg text-white tracking-tight drop-shadow-md">
+              GreenFlag
             </span>
             <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-950/70 border border-emerald-500/40 backdrop-blur-md shadow-sm">
               Standard

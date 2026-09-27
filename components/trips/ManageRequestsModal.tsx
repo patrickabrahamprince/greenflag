@@ -60,14 +60,14 @@ export function ManageRequestsModal({
           onClose();
         }
       }}
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/70 backdrop-blur-md animate-fade-in"
     >
-      <div className="bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-lg w-full max-h-[85dvh] flex flex-col min-h-0 overflow-hidden shadow-2xl">
+      <div className="bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-lg w-full h-[88dvh] max-h-[88dvh] flex flex-col min-h-0 overflow-hidden shadow-2xl">
         
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50 shrink-0">
           <div>
-            <h3 className="text-base font-bold text-ink">Manage Join Requests</h3>
+            <h3 className="text-base font-bold text-slate-900">Manage Join Requests</h3>
             <p className="text-xs text-slate-500">{trip.destination} • {trip.spots_available} spots remaining</p>
           </div>
           <button
@@ -75,7 +75,7 @@ export function ManageRequestsModal({
               hapticTap();
               onClose();
             }}
-            className="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 flex items-center justify-center text-ink/70 hover:text-ink transition-colors"
+            className="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 flex items-center justify-center text-slate-700 hover:text-slate-900 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -83,7 +83,7 @@ export function ManageRequestsModal({
 
         {/* Requests List */}
         <div 
-          className="p-6 overflow-y-auto overscroll-contain touch-pan-y space-y-4 flex-1 min-h-0"
+          className="p-6 overflow-y-auto overscroll-contain touch-pan-y space-y-4 flex-1 min-h-0 pb-16"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {requests.length === 0 ? (

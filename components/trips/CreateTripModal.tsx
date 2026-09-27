@@ -15,27 +15,27 @@ interface CreateTripModalProps {
 }
 
 const VIBE_OPTIONS: { label: TripVibe; icon: string }[] = [
+  { label: 'Chill', icon: '☕' },
+  { label: 'Foodie', icon: '🍕' },
+  { label: 'Daytrip', icon: '🗺️' },
   { label: 'Roadtrip', icon: '🚗' },
   { label: 'Trek', icon: '🥾' },
   { label: 'Beach', icon: '🏖️' },
-  { label: 'Foodie', icon: '☕' },
   { label: 'Camping', icon: '⛺' },
-  { label: 'Backpacking', icon: '🎒' },
-  { label: 'Chill', icon: '🌅' },
-  { label: 'Adventure', icon: '🧗' },
   { label: 'Festival', icon: '🎸' },
+  { label: 'Adventure', icon: '🧗' },
   { label: 'Heritage', icon: '🏛️' },
   { label: 'Workcation', icon: '💻' },
-  { label: 'Daytrip', icon: '🗺️' },
+  { label: 'Backpacking', icon: '🎒' },
 ];
 
 const TRANSPORT_OPTIONS = [
-  'Self-Drive Car / SUV Split',
+  'Meet at Venue / Café',
+  'Self-Drive Car / Carpool Split',
   'Bike / Royal Enfield Ride',
-  'Carpool / Cab Share',
+  'Cab / Auto Share',
   'Overnight Train / Bus Buddy',
-  'Flight & Rental Split',
-  'Public Transit / Walk & Explore',
+  'Flight & Stay Split',
 ];
 
 export function CreateTripModal({
@@ -44,13 +44,13 @@ export function CreateTripModal({
   onTripCreated,
   currentUserPersona = 'woman',
 }: CreateTripModalProps) {
-  const [destination, setDestination] = useState('Coorg');
+  const [destination, setDestination] = useState('Indiranagar (Café / Hangout)');
   const [customDestination, setCustomDestination] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [vibe, setVibe] = useState<TripVibe>('Trek');
+  const [vibe, setVibe] = useState<TripVibe>('Chill');
   const [transportType, setTransportType] = useState(TRANSPORT_OPTIONS[0]);
-  const [budgetPerDay, setBudgetPerDay] = useState(1500);
+  const [budgetPerDay, setBudgetPerDay] = useState(500);
   const [spotsTotal, setSpotsTotal] = useState(1);
   const [femaleOnly, setFemaleOnly] = useState(false);
   const [description, setDescription] = useState('');
@@ -84,17 +84,17 @@ export function CreateTripModal({
     const finalDestination = destination === 'custom' ? customDestination.trim() : destination;
 
     if (!finalDestination) {
-      toast.error('Please specify a destination.');
+      toast.error('Please specify a destination or hangout spot.');
       hapticWarning();
       return;
     }
     if (!startDate || !endDate) {
-      toast.error('Please pick trip departure & return dates.');
+      toast.error('Please pick dates for your plan.');
       hapticWarning();
       return;
     }
     if (!description.trim()) {
-      toast.error('Please write a quick 1-2 sentence trip plan.');
+      toast.error('Please write a quick 1-2 sentence plan.');
       hapticWarning();
       return;
     }
@@ -120,21 +120,31 @@ export function CreateTripModal({
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to create trip');
+        throw new Error(data.error || 'Failed to create plan');
       }
 
       hapticSuccess();
-      toast.success('Trip posted! It is now live on the Trips Feed & Discover card.');
+      toast.success('Plan posted! Live on the feed instantly.');
       onTripCreated(data.trip);
       onClose();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error creating trip';
+      const msg = err instanceof Error ? err.message : 'Error creating plan';
       toast.error(msg);
       hapticWarning();
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const QUICK_SPOTS = [
+    'Indiranagar (Café / Hangout)',
+    'Koramangala (Food / Social)',
+    'Nandi Hills (Sunrise Drive)',
+    'Bannerghatta (Day Out)',
+    'Coorg (Weekend Stay)',
+    'Goa (Beach Trip)',
+    'Gokarna (Trek)',
+  ];
 
   return (
     <div 
@@ -144,9 +154,9 @@ export function CreateTripModal({
           onClose();
         }
       }}
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/70 backdrop-blur-md animate-fade-in"
     >
-      <div className="bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-lg w-full max-h-[90dvh] flex flex-col min-h-0 overflow-hidden shadow-2xl">
+      <div className="bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-lg w-full h-[90dvh] max-h-[90dvh] flex flex-col min-h-0 overflow-hidden shadow-2xl">
         
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50 shrink-0">
@@ -155,8 +165,8 @@ export function CreateTripModal({
               <Sparkles className="w-4 h-4 text-emerald-600" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-ink tracking-tight">Create a Trip</h2>
-              <p className="text-xs text-ink/60">30 seconds • Meet companions for your next plan</p>
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight">Post a Plan or Hangout</h2>
+              <p className="text-xs text-slate-500">30 seconds • Evening café, day trip, drive or getaway</p>
             </div>
           </div>
           <button
@@ -164,7 +174,7 @@ export function CreateTripModal({
               hapticTap();
               onClose();
             }}
-            className="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 flex items-center justify-center text-ink/70 hover:text-ink transition-colors"
+            className="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 flex items-center justify-center text-slate-700 hover:text-slate-900 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -173,30 +183,30 @@ export function CreateTripModal({
         {/* Form Body */}
         <form 
           onSubmit={handleSubmit} 
-          className="overflow-y-auto overscroll-contain touch-pan-y px-6 py-5 space-y-5 flex-1 min-h-0"
+          className="overflow-y-auto overscroll-contain touch-pan-y px-6 py-5 space-y-5 flex-1 min-h-0 pb-16"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           
           {/* Step 1: Destination */}
           <div>
             <label className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2 flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5" /> Destination
+              <MapPin className="w-3.5 h-3.5" /> Where or What Plan?
             </label>
             <div className="flex flex-wrap gap-2 mb-2.5">
-              {POPULAR_DESTINATIONS.slice(0, 6).map((dest) => {
-                const isSelected = destination === dest.name;
+              {QUICK_SPOTS.map((destName) => {
+                const isSelected = destination === destName;
                 return (
                   <button
-                    key={dest.name}
+                    key={destName}
                     type="button"
-                    onClick={() => handleSelectPopularDest(dest.name)}
+                    onClick={() => handleSelectPopularDest(destName)}
                     className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
                       isSelected
                         ? 'bg-emerald-600 text-white shadow-sm'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
                     }`}
                   >
-                    {dest.name}
+                    {destName}
                   </button>
                 );
               })}
@@ -212,7 +222,7 @@ export function CreateTripModal({
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
                 }`}
               >
-                + Custom City
+                + Custom Location / Plan
               </button>
             </div>
 
@@ -221,8 +231,8 @@ export function CreateTripModal({
                 type="text"
                 value={customDestination}
                 onChange={(e) => setCustomDestination(e.target.value)}
-                placeholder="Enter destination (e.g. Spiti Valley, Munnar, Varkala)"
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-ink placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-600 transition-colors"
+                placeholder="Enter spot (e.g. Third Wave Coffee, Nandi Hills, Pondicherry)..."
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-600 transition-colors"
                 autoFocus
               />
             )}

@@ -58,12 +58,12 @@ export function TripDetailsModal({
           onClose();
         }
       }}
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/70 backdrop-blur-md animate-fade-in"
     >
-      <div className="bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-lg w-full max-h-[90dvh] flex flex-col min-h-0 overflow-hidden shadow-2xl">
+      <div className="bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-lg w-full h-[88dvh] max-h-[88dvh] flex flex-col min-h-0 overflow-hidden shadow-2xl">
         
         {/* Destination Hero Banner */}
-        <div className="relative h-44 sm:h-52 w-full shrink-0">
+        <div className="relative h-40 sm:h-48 w-full shrink-0">
           <Image
             src={heroImage}
             alt={trip.destination}
@@ -89,13 +89,13 @@ export function TripDetailsModal({
               className="px-3.5 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center gap-1.5 text-xs text-white font-semibold active:scale-95"
             >
               <Share2 className="w-3.5 h-3.5" />
-              <span>Share Trip</span>
+              <span>Share Plan</span>
             </button>
           </div>
 
           {/* Banner Badges */}
-          <div className="absolute bottom-4 left-6 right-6">
-            <div className="flex flex-wrap gap-2 mb-1.5">
+          <div className="absolute bottom-3 left-5 right-5">
+            <div className="flex flex-wrap gap-2 mb-1">
               <span className="px-2.5 py-0.5 rounded-full bg-emerald-600 text-white text-[11px] font-bold">
                 {trip.vibe}
               </span>
@@ -105,38 +105,38 @@ export function TripDetailsModal({
                 </span>
               )}
             </div>
-            <h2 className="text-2xl font-extrabold text-white tracking-tight drop-shadow-md">{trip.destination}</h2>
-            <p className="text-xs text-white/90 font-medium">{popularDest?.distance || trip.state || 'Weekend Getaway'}</p>
+            <h2 className="text-xl font-extrabold text-white tracking-tight drop-shadow-md">{trip.destination}</h2>
+            <p className="text-xs text-white/90 font-medium">{popularDest?.distance || trip.state || 'Hangout & Trip Plan'}</p>
           </div>
         </div>
 
         {/* Scrollable details */}
         <div 
-          className="p-6 overflow-y-auto overscroll-contain touch-pan-y space-y-5 flex-1 min-h-0"
+          className="p-5 overflow-y-auto overscroll-contain touch-pan-y space-y-4 flex-1 min-h-0"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           
           {/* Key Metrics Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl">
               <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1 mb-1">
-                <Calendar className="w-3 h-3 text-emerald-600" /> Dates
+                <Calendar className="w-3 h-3 text-emerald-600" /> When
               </div>
-              <div className="text-xs font-bold text-ink truncate">{trip.start_date}</div>
+              <div className="text-xs font-bold text-slate-900 truncate">{trip.start_date}</div>
             </div>
 
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl">
               <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1 mb-1">
-                <DollarSign className="w-3 h-3 text-emerald-600" /> Budget
+                <DollarSign className="w-3 h-3 text-emerald-600" /> Approx Budget
               </div>
-              <div className="text-xs font-bold text-ink">₹{trip.budget_per_day}/day</div>
+              <div className="text-xs font-bold text-slate-900">₹{trip.budget_per_day}</div>
             </div>
 
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl">
               <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1 mb-1">
-                <Bike className="w-3 h-3 text-emerald-600" /> Transport
+                <Bike className="w-3 h-3 text-emerald-600" /> Mode / Type
               </div>
-              <div className="text-xs font-bold text-ink truncate">{trip.transport_type || 'Ride Split'}</div>
+              <div className="text-xs font-bold text-slate-900 truncate">{trip.transport_type || 'Ride Split'}</div>
             </div>
 
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl">
@@ -150,9 +150,9 @@ export function TripDetailsModal({
           </div>
 
           {/* Host Card */}
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between">
+          <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-emerald-500/40 bg-slate-200 shrink-0">
+              <div className="relative w-11 h-11 rounded-full overflow-hidden border-2 border-emerald-500/40 bg-slate-200 shrink-0">
                 {trip.host?.photos?.[0] ? (
                   <Image
                     src={trip.host.photos[0]}
@@ -169,11 +169,11 @@ export function TripDetailsModal({
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-bold text-ink">{trip.host?.name}</span>
+                  <span className="text-sm font-bold text-slate-900">{trip.host?.name}</span>
                   {trip.host?.age && <span className="text-xs text-slate-500 font-medium">• {trip.host.age}</span>}
                 </div>
                 <div className="text-[11px] text-emerald-700 font-bold flex items-center gap-1">
-                  <Sparkles className="w-3 h-3" /> Greenflag Verified Host
+                  <Sparkles className="w-3 h-3" /> Verified Host
                 </div>
                 <div className="text-[10px] text-slate-500 font-medium">{trip.host?.city || 'Bangalore'}</div>
               </div>
@@ -189,51 +189,50 @@ export function TripDetailsModal({
           {/* Itinerary / Description */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
-              Trip Plan & Notes
+              Plan & Details
             </h4>
-            <p className="text-xs text-ink/80 leading-relaxed bg-slate-50 p-4 rounded-2xl border border-slate-200 whitespace-pre-line">
+            <p className="text-xs text-slate-800 leading-relaxed bg-slate-50 p-3.5 rounded-2xl border border-slate-200 whitespace-pre-line">
               {trip.description}
             </p>
           </div>
 
           {/* Safety rules */}
-          <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl">
+          <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl">
             <h4 className="text-xs font-bold text-emerald-800 mb-1 flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5" /> Greenflag Travel Safety
+              <Shield className="w-3.5 h-3.5" /> Safety & Accountability
             </h4>
-            <ul className="text-[11px] text-emerald-900/80 space-y-1 font-medium">
-              <li>• Host approval required before chat unlocks (no unsolicited spam).</li>
-              <li>• Recommend verified homestays & hostels for overnight stops.</li>
-              <li>• Mutual confirmation keeps both travelers safe and accountable.</li>
+            <ul className="text-[11px] text-emerald-900/80 space-y-0.5 font-medium">
+              <li>• Host approval required before chat unlocks (no spam).</li>
+              <li>• Mutual confirmation keeps everyone safe and accountable.</li>
             </ul>
           </div>
         </div>
 
         {/* Bottom CTA Bar */}
-        <div className="p-4 border-t border-slate-200 bg-slate-50">
+        <div className="p-4 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-slate-200 bg-slate-50 shrink-0">
           {isHost ? (
             <button
               onClick={() => {
                 hapticTap();
                 onManageClick(trip);
               }}
-              className="w-full py-3.5 px-4 bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm"
+              className="w-full py-3 px-4 bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm"
             >
               <Users className="w-4 h-4 text-emerald-400" />
               <span>Manage Requests ({trip.requests_count || 0})</span>
             </button>
           ) : trip.user_request_status === 'pending' ? (
-            <div className="w-full py-3.5 px-4 bg-amber-50 border border-amber-200 text-amber-900 font-bold text-xs rounded-xl text-center">
+            <div className="w-full py-3 px-4 bg-amber-50 border border-amber-200 text-amber-900 font-bold text-xs rounded-xl text-center">
               Request Sent • Waiting for Host Review
             </div>
           ) : trip.user_request_status === 'accepted' ? (
-            <div className="w-full py-3.5 px-4 bg-emerald-50 border border-emerald-200 text-emerald-900 font-bold text-xs rounded-xl text-center flex items-center justify-center gap-1.5">
+            <div className="w-full py-3 px-4 bg-emerald-50 border border-emerald-200 text-emerald-900 font-bold text-xs rounded-xl text-center flex items-center justify-center gap-1.5">
               <Check className="w-4 h-4 text-emerald-600" />
               <span>Request Accepted • Chat Unlocked</span>
             </div>
           ) : trip.spots_available === 0 ? (
-            <div className="w-full py-3.5 px-4 bg-slate-100 text-slate-500 font-bold text-xs rounded-xl text-center">
-              Trip is Fully Booked
+            <div className="w-full py-3 px-4 bg-slate-100 text-slate-500 font-bold text-xs rounded-xl text-center">
+              Plan is Full
             </div>
           ) : (
             <button
@@ -244,7 +243,7 @@ export function TripDetailsModal({
               className="btn-primary w-full !rounded-xl text-sm"
             >
               <Users className="w-4 h-4" />
-              <span>Request to Join Trip ({trip.spots_available} spot left)</span>
+              <span>Request to Join ({trip.spots_available} spot left)</span>
             </button>
           )}
         </div>

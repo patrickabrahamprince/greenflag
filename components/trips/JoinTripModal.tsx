@@ -60,13 +60,21 @@ export function JoinTripModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-md animate-fade-in">
+    <div 
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          hapticTap();
+          onClose();
+        }
+      }}
+      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/70 backdrop-blur-md animate-fade-in"
+    >
       <div className="bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-md w-full overflow-hidden shadow-2xl">
         
         {/* Top Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
           <div>
-            <h3 className="text-base font-bold text-ink">Request to Join Trip</h3>
+            <h3 className="text-base font-bold text-slate-900">Request to Join</h3>
             <p className="text-xs text-slate-500">{trip.destination} • {trip.vibe}</p>
           </div>
           <button
@@ -74,14 +82,14 @@ export function JoinTripModal({
               hapticTap();
               onClose();
             }}
-            className="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 flex items-center justify-center text-ink/70 hover:text-ink transition-colors"
+            className="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 flex items-center justify-center text-slate-700 hover:text-slate-900 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Content */}
-        <form onSubmit={handleSendRequest} className="p-6 space-y-4">
+        <form onSubmit={handleSendRequest} className="p-6 space-y-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
           
           {/* Host & Trip Snapshot */}
           <div className="flex items-center gap-3.5 p-3.5 bg-slate-50 border border-slate-200 rounded-2xl">
