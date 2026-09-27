@@ -209,23 +209,31 @@ export default function TripsPage() {
       {activeTab === 'explore' && (
         <div className="space-y-4">
           
-          {/* What are you planning? - Post Card */}
-          <div className="p-4 rounded-3xl bg-white border border-slate-200/90 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          {/* What are you planning? - Entire Card is Clickable */}
+          <div 
+            onClick={() => {
+              hapticTap();
+              setIsCreateOpen(true);
+            }}
+            className="p-4 rounded-3xl bg-white border border-slate-200/90 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer hover:border-emerald-500/50 transition-all active:scale-[0.98] group"
+          >
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-xl shrink-0">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
                 ✨
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900">What are you planning?</h3>
+                <h3 className="text-sm font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">What are you planning?</h3>
                 <p className="text-xs text-slate-600">Café hangout, day trip, sunrise drive, or weekend getaway.</p>
               </div>
             </div>
             <button
-              onClick={() => {
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
                 hapticTap();
                 setIsCreateOpen(true);
               }}
-              className="btn-primary !min-h-[40px] px-5 text-xs font-bold shrink-0 flex items-center justify-center gap-1.5"
+              className="btn-primary !min-h-[40px] px-5 text-xs font-bold shrink-0 flex items-center justify-center gap-1.5 pointer-events-auto"
             >
               <Plus className="w-4 h-4" />
               <span>Post a Plan</span>
