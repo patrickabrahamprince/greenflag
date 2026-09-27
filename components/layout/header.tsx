@@ -25,13 +25,13 @@ export function Header({
 }: HeaderProps) {
   const router = useRouter();
   return (
-    <div className={cn('relative flex items-center justify-between h-16 px-6 bg-base/60 backdrop-blur-2xl border-b border-white/[0.08] sticky top-0 z-40', className)}>
+    <div className={cn('relative flex items-center justify-between h-16 px-6 bg-white/90 backdrop-blur-2xl border-b border-slate-200 sticky top-0 z-40', className)}>
       <div className="flex items-center gap-3">
         {showBack && <BackButton />}
         <div className="flex flex-col">
-          <h1 className="font-display font-bold text-xl text-white tracking-tight">{title}</h1>
+          <h1 className="font-display font-bold text-xl text-slate-900 tracking-tight">{title}</h1>
           {subtitle && (
-            <p className="text-[10px] uppercase tracking-widest font-semibold text-emerald">{subtitle}</p>
+            <p className="text-[10px] uppercase tracking-widest font-semibold text-emerald-700">{subtitle}</p>
           )}
         </div>
       </div>

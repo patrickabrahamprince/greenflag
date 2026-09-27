@@ -15,27 +15,10 @@ export default function ProfilePage() {
   const router = useRouter();
   const user = useUserStore((s) => s.user);
   const balance = useCoinStore((s) => s.balance);
-  const setUser = useUserStore((s) => s.setUser);
   const clearUser = useUserStore((s) => s.clearUser);
   const setBalance = useCoinStore((s) => s.setBalance);
   const [loggingOut, setLoggingOut] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-
-  // Profile reads entirely from the global stores (populated once by
-  // Providers on app load) rather than fetching its own data, so
-  // "refresh" here means re-pulling the same two rows Providers fetched
-  // and re-populating those stores, not a local reload.
-  const refresh = async () => {
-    const supabase = createClient();
-    const { data: { user: authUser } } = await supabase.auth.getUser();
-    if (!authUser) return;
-    const { data: profile } = await supabase.from('profiles').select('*').eq('id', authUser.id).single();
-    if (profile) setUser(profile as any);
-    const { data: wallet } = await supabase.from('wallets').select('balance').eq('user_id', authUser.id).single();
-    if (wallet) setBalance(wallet.balance);
-  };
-
-  const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(refresh);
 
   const handleLogout = async () => {
     hapticTap();
@@ -56,29 +39,17 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-dvh screen-gradient flex flex-col">
+    <div className="min-h-screen screen-gradient text-slate-900 pb-48 max-w-app mx-auto px-6 pt-safe-top">
       {/* Settings Header */}
-      <div className="max-w-app mx-auto w-full px-6 pt-safe-top shrink-0">
-        <div className="flex items-center justify-end mb-2">
-          <button onClick={() => { hapticTap(); router.push('/settings'); }} aria-label="Settings" className="p-2 text-ink active:opacity-60 transition-opacity">
-            <Settings className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
-
-      <div
-        ref={scrollRef}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
-        className="flex-1 overflow-y-auto overscroll-none max-w-app mx-auto w-full px-6 pb-48 animate-fade-in"
-      >
-        <div
-          className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
-          style={{ height: pullDistance }}
+      <div className="flex items-center justify-end py-2">
+        <button 
+          onClick={() => { hapticTap(); router.push('/settings'); }} 
+          aria-label="Settings" 
+          className="p-2 text-slate-700 hover:text-slate-900 active:opacity-60 transition-opacity"
         >
-          <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
-        </div>
+          <Settings className="w-5 h-5" />
+        </button>
+      </div>
 
       <div className="relative w-full aspect-[3/4] mb-5 rounded-photo overflow-hidden shadow-lg border border-slate-200/80">
         <ProfileImageCarousel images={user.photos ?? []} disableLightbox />
@@ -245,7 +216,6 @@ export default function ProfilePage() {
           </div>
         </div>
       )}
-      </div>
     </div>
   );
 }

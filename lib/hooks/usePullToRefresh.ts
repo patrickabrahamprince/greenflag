@@ -25,38 +25,55 @@ export function usePullToRefresh<T extends HTMLElement = HTMLDivElement>(
   const edge = options?.edge ?? 'top';
   const scrollRef = useRef<T>(null);
   const touchStartY = useRef<number | null>(null);
+  const touchStartX = useRef<number | null>(null);
   const pulling = useRef(false);
   const [pullDistance, setPullDistance] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 
   function isAtArmedEdge(): boolean {
     const el = scrollRef.current;
-    if (!el) return true;
-    if (edge === 'top') return el.scrollTop <= 0;
-    return el.scrollHeight - el.scrollTop - el.clientHeight <= 1;
+    if (!el) return false;
+    if (edge === 'top') return el.scrollTop <= 2;
+    return el.scrollHeight - el.scrollTop - el.clientHeight <= 2;
   }
 
   function onTouchStart(e: React.TouchEvent) {
-    if (!isAtArmedEdge()) return;
+    if (!isAtArmedEdge() || refreshing) return;
     touchStartY.current = e.touches[0].clientY;
-    pulling.current = true;
+    touchStartX.current = e.touches[0].clientX;
+    pulling.current = false;
   }
 
   function onTouchMove(e: React.TouchEvent) {
-    if (!pulling.current || touchStartY.current === null) return;
-    const delta = e.touches[0].clientY - touchStartY.current;
-    if (delta > 0 && isAtArmedEdge()) {
-      setPullDistance(Math.min(delta * 0.5, 90));
-    } else {
+    if (touchStartY.current === null || touchStartX.current === null || refreshing) return;
+    const deltaY = e.touches[0].clientY - touchStartY.current;
+    const deltaX = Math.abs(e.touches[0].clientX - touchStartX.current);
+
+    // If horizontal movement is dominant, let horizontal gestures win
+    if (deltaX > Math.abs(deltaY)) {
+      touchStartY.current = null;
+      touchStartX.current = null;
       pulling.current = false;
+      return;
+    }
+
+    if (deltaY > 15 && isAtArmedEdge()) {
+      pulling.current = true;
+      setPullDistance(Math.min((deltaY - 15) * 0.45, 80));
+    } else if (deltaY <= 0) {
+      pulling.current = false;
+      if (pullDistance !== 0) setPullDistance(0);
     }
   }
 
   async function onTouchEnd() {
-    if (!pulling.current) return;
+    const wasPulling = pulling.current;
+    const dist = pullDistance;
     pulling.current = false;
     touchStartY.current = null;
-    if (pullDistance > 60) {
+    touchStartX.current = null;
+
+    if (wasPulling && dist > 55) {
       setRefreshing(true);
       try {
         await onRefresh();
