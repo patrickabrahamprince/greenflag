@@ -33,13 +33,13 @@ import { hapticTap, hapticSuccess } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 
 const VIBE_FILTERS = [
-  { id: 'all', label: 'All Plans', icon: '✨' },
-  { id: 'Chill', label: 'Café & Chill', icon: '☕' },
-  { id: 'Foodie', label: 'Food & Drinks', icon: '🍕' },
-  { id: 'Daytrip', label: 'Day Drives', icon: '🌅' },
-  { id: 'Roadtrip', label: 'Weekend Getaways', icon: '🚗' },
-  { id: 'Trek', label: 'Treks & Hikes', icon: '🥾' },
-  { id: 'Beach', label: 'Beach Trips', icon: '🏖️' },
+  { id: 'all', label: 'All Plans', icon: '✨', bg: 'bg-amber-100 text-amber-900 border-amber-300', active: 'bg-[#1D3B2A] text-white' },
+  { id: 'Chill', label: 'Café & Chill', icon: '☕', bg: 'bg-orange-100 text-orange-900 border-orange-200', active: 'bg-orange-600 text-white' },
+  { id: 'Foodie', label: 'Food & Drinks', icon: '🍕', bg: 'bg-rose-100 text-rose-900 border-rose-200', active: 'bg-rose-600 text-white' },
+  { id: 'Daytrip', label: 'Day Drives', icon: '🌅', bg: 'bg-amber-100 text-amber-900 border-amber-200', active: 'bg-amber-600 text-white' },
+  { id: 'Roadtrip', label: 'Weekend Trips', icon: '🚗', bg: 'bg-emerald-100 text-emerald-900 border-emerald-200', active: 'bg-emerald-700 text-white' },
+  { id: 'Trek', label: 'Treks & Hikes', icon: '🥾', bg: 'bg-teal-100 text-teal-900 border-teal-200', active: 'bg-teal-700 text-white' },
+  { id: 'Beach', label: 'Beach Days', icon: '🏖️', bg: 'bg-cyan-100 text-cyan-900 border-cyan-200', active: 'bg-cyan-700 text-white' },
 ];
 
 export default function TripsPage() {
@@ -269,7 +269,7 @@ export default function TripsPage() {
           </button>
 
           {/* Quick Filter Horizontal Scrollbar with Organic Pills from Swipe Anims.fig */}
-          <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide">
+          <div className="flex gap-2.5 overflow-x-auto pb-1.5 -mx-4 px-4 scrollbar-hide">
             {VIBE_FILTERS.map((f) => {
               const isSelected = selectedFilter === f.id;
               return (
@@ -280,13 +280,13 @@ export default function TripsPage() {
                     hapticTap();
                     setSelectedFilter(f.id);
                   }}
-                  className={`px-4 py-2 rounded-full text-xs font-extrabold whitespace-nowrap shrink-0 transition-all cursor-pointer select-none active:scale-95 flex items-center gap-1.5 shadow-[0_2px_8px_rgba(45,36,30,0.03)] ${
+                  className={`px-4 py-2 rounded-full text-xs font-extrabold whitespace-nowrap shrink-0 transition-all cursor-pointer select-none active:scale-95 flex items-center gap-2 border shadow-sm ${
                     isSelected
-                      ? 'bg-[#1D3B2A] text-white shadow-md scale-105'
-                      : 'bg-white text-[#382A21]/75 border border-stone-200/80 hover:bg-stone-50 hover:text-[#382A21]'
+                      ? `${f.active} shadow-md scale-105 border-transparent`
+                      : `${f.bg} hover:brightness-95`
                   }`}
                 >
-                  <span>{f.icon}</span>
+                  <span className="text-sm">{f.icon}</span>
                   <span>{f.label}</span>
                 </button>
               );
@@ -359,11 +359,19 @@ export default function TripsPage() {
 
                       {/* Top Badges */}
                       <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                        <span className="px-3 py-1 rounded-full bg-[#FAF9F6]/90 backdrop-blur-md text-[#1D3B2A] text-[10px] font-extrabold shadow-sm border border-white/40">
+                        <span className={`px-3 py-1 rounded-full backdrop-blur-md text-[10px] font-black shadow-md border border-white/50 ${
+                          trip.vibe === 'Chill' ? 'bg-orange-500 text-white shadow-orange-500/30' :
+                          trip.vibe === 'Foodie' ? 'bg-rose-500 text-white shadow-rose-500/30' :
+                          trip.vibe === 'Daytrip' ? 'bg-amber-500 text-white shadow-amber-500/30' :
+                          trip.vibe === 'Beach' ? 'bg-cyan-500 text-white shadow-cyan-500/30' :
+                          trip.vibe === 'Trek' ? 'bg-teal-600 text-white shadow-teal-600/30' :
+                          trip.vibe === 'Roadtrip' ? 'bg-emerald-600 text-white shadow-emerald-600/30' :
+                          'bg-[#1D3B2A] text-white'
+                        }`}>
                           {trip.vibe}
                         </span>
                         {trip.female_only && (
-                          <span className="px-3 py-1 rounded-full bg-[#8B72FF] backdrop-blur-md text-white text-[10px] font-extrabold flex items-center gap-1 shadow-sm">
+                          <span className="px-3 py-1 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 backdrop-blur-md text-white text-[10px] font-black flex items-center gap-1 shadow-md">
                             <Shield className="w-3 h-3" /> Female-Only
                           </span>
                         )}

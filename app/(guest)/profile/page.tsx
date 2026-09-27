@@ -99,17 +99,29 @@ export default function ProfilePage() {
 
         {!!user.interests_have?.length && (
           <div className="mt-5 w-full">
-            <p className="text-[10px] uppercase font-bold tracking-widest text-[#382A21]/50 mb-2.5 text-center">Interests</p>
-            <div className="flex flex-wrap justify-center gap-1.5">
-              {user.interests_have.map((tag) => (
-                <button
-                  key={tag}
-                  onClick={hapticTap}
-                  className="px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#1D3B2A] bg-[#1D3B2A]/10 border border-[#1D3B2A]/20 active:scale-95 transition-transform"
-                >
-                  {tag}
-                </button>
-              ))}
+            <p className="text-[10px] uppercase font-bold tracking-widest text-[#382A21]/50 mb-2.5 text-center">Interests & Vibe</p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {user.interests_have.map((tag, i) => {
+                const tagColors = [
+                  'bg-orange-100 text-orange-950 border-orange-200',
+                  'bg-purple-100 text-purple-950 border-purple-200',
+                  'bg-emerald-100 text-emerald-950 border-emerald-200',
+                  'bg-amber-100 text-amber-950 border-amber-200',
+                  'bg-cyan-100 text-cyan-950 border-cyan-200',
+                  'bg-rose-100 text-rose-950 border-rose-200',
+                ];
+                const colorClass = tagColors[i % tagColors.length];
+
+                return (
+                  <button
+                    key={tag}
+                    onClick={hapticTap}
+                    className={`px-4 py-1.5 rounded-full text-xs font-bold border shadow-sm active:scale-95 transition-all ${colorClass}`}
+                  >
+                    {tag}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
@@ -117,34 +129,34 @@ export default function ProfilePage() {
 
       {user.teaser_prompt && user.teaser_answer && (
         <div
-          className="mb-6 p-5 rounded-[24px] border border-stone-200/80 shadow-[0_4px_16px_rgba(45,36,30,0.04)] bg-white"
+          className="mb-6 p-5 rounded-[28px] border border-stone-200/80 shadow-[0_4px_16px_rgba(45,36,30,0.04)] bg-white"
         >
-          <p className="text-[10px] uppercase font-bold tracking-widest text-[#1D3B2A] mb-1.5">{user.teaser_prompt}</p>
-          <p className="font-display font-bold text-lg text-[#382A21] leading-snug">{user.teaser_answer}</p>
+          <p className="text-[10px] uppercase font-extrabold tracking-widest text-[#1D3B2A] mb-1.5">{user.teaser_prompt}</p>
+          <p className="font-display font-extrabold text-lg text-[#382A21] leading-snug">{user.teaser_answer}</p>
         </div>
       )}
 
       <div className="space-y-3">
-        <button onClick={() => { hapticTap(); router.push('/profile/edit'); }} className="w-full h-12 bg-[#1D3B2A] hover:bg-[#2D5A3F] active:scale-95 text-white font-bold rounded-full flex items-center justify-center gap-2 shadow-md transition-all">
+        <button onClick={() => { hapticTap(); router.push('/profile/edit'); }} className="w-full h-13 bg-[#1D3B2A] hover:bg-[#2D5A3F] active:scale-95 text-white font-extrabold rounded-full flex items-center justify-center gap-2 shadow-md transition-all">
           <Edit3 className="w-4 h-4" />
           Edit Profile
         </button>
 
-        <button onClick={() => { hapticTap(); router.push('/settings'); }} className="w-full h-12 bg-white border border-stone-200/80 hover:bg-stone-50 active:scale-95 text-[#382A21] font-bold rounded-full flex items-center justify-center gap-2 shadow-sm transition-all">
+        <button onClick={() => { hapticTap(); router.push('/settings'); }} className="w-full h-13 bg-white border border-stone-200/80 hover:bg-stone-50 active:scale-95 text-[#382A21] font-extrabold rounded-full flex items-center justify-center gap-2 shadow-sm transition-all">
           <Settings className="w-4 h-4" />
           Settings
         </button>
       </div>
 
-      {/* Travel Hub Card */}
-      <div className="mt-5 p-5 rounded-[28px] border border-stone-200/80 shadow-[0_4px_16px_rgba(45,36,30,0.04)] flex items-center justify-between bg-white">
+      {/* Travel Hub Card - Radiant Emerald */}
+      <div className="mt-5 p-5 rounded-[32px] bg-gradient-to-r from-[#1D3B2A] via-[#2D5A3F] to-[#1D3B2A] text-white shadow-[0_8px_24px_rgba(29,59,42,0.35)] flex items-center justify-between border border-white/20">
         <div>
-          <h3 className="font-display text-sm font-bold text-[#382A21] flex items-center gap-1.5">
+          <h3 className="font-display text-sm font-extrabold text-white flex items-center gap-1.5">
             <span>✈️</span>
-            <span>GreenFlag Trips</span>
+            <span>GreenFlag Trips & Hangouts</span>
           </h3>
-          <p className="text-xs text-[#382A21]/60 mt-1 max-w-[200px] leading-relaxed">
-            Plan weekend getaways, host trips, and meet new people.
+          <p className="text-xs text-white/80 mt-1 max-w-[210px] leading-relaxed font-medium">
+            Plan weekend getaways, host hangouts, and meet companions.
           </p>
         </div>
         <button
@@ -152,25 +164,25 @@ export default function ProfilePage() {
             hapticTap();
             router.push('/trips');
           }}
-          className="px-4 py-2 rounded-full bg-[#1D3B2A] hover:bg-[#2D5A3F] text-white text-xs font-bold transition-all shrink-0 shadow-sm"
+          className="px-4 py-2 rounded-full bg-[#FAF9F6] hover:bg-white text-[#1D3B2A] text-xs font-black transition-all shrink-0 shadow-md active:scale-95"
         >
           View Trips
         </button>
       </div>
 
-      {/* Coin Balance Card */}
+      {/* Coin Balance Card - Radiant Sunburst */}
       <div className="mt-5">
-        <div className="p-5 rounded-[28px] border border-amber-200/80 flex items-center justify-between shadow-[0_4px_16px_rgba(245,158,11,0.08)] bg-gradient-to-br from-amber-50/60 via-white to-white">
+        <div className="p-5 rounded-[32px] border border-amber-300 flex items-center justify-between shadow-[0_8px_24px_rgba(245,158,11,0.15)] bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 text-stone-950">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0">
-              <Coins className="w-6 h-6 text-amber-600" />
+            <div className="w-12 h-12 rounded-2xl bg-white/30 backdrop-blur-md border border-white/40 flex items-center justify-center shrink-0 shadow-sm">
+              <Coins className="w-6 h-6 text-stone-950" />
             </div>
             <div>
-              <p className="text-2xl font-display font-bold text-[#382A21] leading-none">{balance.toLocaleString()}</p>
-              <p className="text-xs text-[#382A21]/50 mt-1 font-medium">Available Coins</p>
+              <p className="text-2xl font-display font-black text-stone-950 leading-none">{balance.toLocaleString()}</p>
+              <p className="text-xs text-stone-900/80 mt-1 font-bold">Available Coins</p>
             </div>
           </div>
-          <button onClick={() => { hapticTap(); router.push('/coins'); }} className="px-5 py-2.5 rounded-full bg-amber-500 hover:bg-amber-600 text-white text-xs shrink-0 font-bold shadow-sm transition-all active:scale-95">
+          <button onClick={() => { hapticTap(); router.push('/coins'); }} className="px-5 py-2.5 rounded-full bg-stone-950 hover:bg-stone-800 text-white text-xs shrink-0 font-black shadow-md transition-all active:scale-95">
             Get Coins
           </button>
         </div>

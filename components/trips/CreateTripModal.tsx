@@ -34,28 +34,28 @@ interface CreateTripModalProps {
 
 // 1. Organic Bubble Cloud Tags (Matched to reference design)
 const VIBE_BUBBLES = [
-  { label: 'Chill' as TripVibe, icon: '☕', name: 'Café & Chill', activeBg: 'bg-[#79A871] text-white' },
-  { label: 'Foodie' as TripVibe, icon: '🍕', name: 'Food & Brewery', activeBg: 'bg-[#F07A38] text-white' },
-  { label: 'Daytrip' as TripVibe, icon: '🌅', name: 'Sunrise Drive', activeBg: 'bg-[#F59E0B] text-white' },
-  { label: 'Roadtrip' as TripVibe, icon: '🚗', name: 'Weekend Getaway', activeBg: 'bg-[#3B82F6] text-white' },
-  { label: 'Trek' as TripVibe, icon: '🥾', name: 'Trek & Nature', activeBg: 'bg-[#2E7D32] text-white' },
-  { label: 'Beach' as TripVibe, icon: '🏖️', name: 'Beach & Waves', activeBg: 'bg-[#0D9488] text-white' },
-  { label: 'Festival' as TripVibe, icon: '🎸', name: 'Live Gig & Music', activeBg: 'bg-[#8B72FF] text-white' },
-  { label: 'Workcation' as TripVibe, icon: '💻', name: 'Workcation', activeBg: 'bg-[#64748B] text-white' },
+  { label: 'Chill' as TripVibe, icon: '☕', name: 'Café & Chill', idleBg: 'bg-orange-50 text-orange-950 border-orange-200/80', activeBg: 'bg-orange-500 text-white border-transparent' },
+  { label: 'Foodie' as TripVibe, icon: '🍕', name: 'Food & Brewery', idleBg: 'bg-rose-50 text-rose-950 border-rose-200/80', activeBg: 'bg-rose-500 text-white border-transparent' },
+  { label: 'Daytrip' as TripVibe, icon: '🌅', name: 'Sunrise Drive', idleBg: 'bg-amber-50 text-amber-950 border-amber-200/80', activeBg: 'bg-amber-500 text-white border-transparent' },
+  { label: 'Roadtrip' as TripVibe, icon: '🚗', name: 'Weekend Getaway', idleBg: 'bg-blue-50 text-blue-950 border-blue-200/80', activeBg: 'bg-blue-600 text-white border-transparent' },
+  { label: 'Trek' as TripVibe, icon: '🥾', name: 'Trek & Nature', idleBg: 'bg-emerald-50 text-emerald-950 border-emerald-200/80', activeBg: 'bg-emerald-600 text-white border-transparent' },
+  { label: 'Beach' as TripVibe, icon: '🏖️', name: 'Beach & Waves', idleBg: 'bg-cyan-50 text-cyan-950 border-cyan-200/80', activeBg: 'bg-cyan-600 text-white border-transparent' },
+  { label: 'Festival' as TripVibe, icon: '🎸', name: 'Live Gig & Music', idleBg: 'bg-purple-50 text-purple-950 border-purple-200/80', activeBg: 'bg-purple-600 text-white border-transparent' },
+  { label: 'Workcation' as TripVibe, icon: '💻', name: 'Workcation', idleBg: 'bg-indigo-50 text-indigo-950 border-indigo-200/80', activeBg: 'bg-indigo-600 text-white border-transparent' },
 ];
 
 // 2. Spot Style Cloud Tags
 const SPOT_CLOUD_TAGS = [
-  { id: 'cozy_cafe', label: 'Cozy Specialty Café', icon: '☕', activeBg: 'bg-[#79A871] text-white' },
-  { id: 'rooftop', label: 'Rooftop Sunset View', icon: '🌇', activeBg: 'bg-[#F07A38] text-white' },
-  { id: 'lively_bar', label: 'Craft Brewery / Bar', icon: '🍻', activeBg: 'bg-[#F59E0B] text-white' },
-  { id: 'fine_dine', label: 'Dinner / Fine Dine', icon: '🍽️', activeBg: 'bg-[#382A21] text-white' },
-  { id: 'scenic_drive', label: 'Scenic Highway Drive', icon: '🛣️', activeBg: 'bg-[#3B82F6] text-white' },
-  { id: 'viewpoint', label: 'Mountain Viewpoint', icon: '⛰️', activeBg: 'bg-[#2E7D32] text-white' },
-  { id: 'picnic_park', label: 'Botanical Park Picnic', icon: '🌿', activeBg: 'bg-[#0D9488] text-white' },
-  { id: 'street_food', label: 'Street Food Crawl', icon: '🌮', activeBg: 'bg-[#E11D48] text-white' },
-  { id: 'homestay', label: 'Cozy Villa / Homestay', icon: '🏡', activeBg: 'bg-[#8B72FF] text-white' },
-  { id: 'beach_shack', label: 'Beachside Shack', icon: '🏖️', activeBg: 'bg-[#065F46] text-white' },
+  { id: 'cozy_cafe', label: 'Cozy Specialty Café', icon: '☕', idleBg: 'bg-orange-50 text-orange-950 border-orange-200/80', activeBg: 'bg-orange-500 text-white border-transparent' },
+  { id: 'rooftop', label: 'Rooftop Sunset View', icon: '🌇', idleBg: 'bg-amber-50 text-amber-950 border-amber-200/80', activeBg: 'bg-amber-500 text-white border-transparent' },
+  { id: 'lively_bar', label: 'Craft Brewery / Bar', icon: '🍻', idleBg: 'bg-yellow-50 text-yellow-950 border-yellow-200/80', activeBg: 'bg-yellow-500 text-white border-transparent' },
+  { id: 'fine_dine', label: 'Dinner / Fine Dine', icon: '🍽️', idleBg: 'bg-stone-50 text-stone-900 border-stone-200/80', activeBg: 'bg-[#1D3B2A] text-white border-transparent' },
+  { id: 'scenic_drive', label: 'Scenic Highway Drive', icon: '🛣️', idleBg: 'bg-blue-50 text-blue-950 border-blue-200/80', activeBg: 'bg-blue-600 text-white border-transparent' },
+  { id: 'viewpoint', label: 'Mountain Viewpoint', icon: '⛰️', idleBg: 'bg-emerald-50 text-emerald-950 border-emerald-200/80', activeBg: 'bg-emerald-600 text-white border-transparent' },
+  { id: 'picnic_park', label: 'Botanical Park Picnic', icon: '🌿', idleBg: 'bg-teal-50 text-teal-950 border-teal-200/80', activeBg: 'bg-teal-600 text-white border-transparent' },
+  { id: 'street_food', label: 'Street Food Crawl', icon: '🌮', idleBg: 'bg-rose-50 text-rose-950 border-rose-200/80', activeBg: 'bg-rose-500 text-white border-transparent' },
+  { id: 'homestay', label: 'Cozy Villa / Homestay', icon: '🏡', idleBg: 'bg-purple-50 text-purple-950 border-purple-200/80', activeBg: 'bg-purple-600 text-white border-transparent' },
+  { id: 'beach_shack', label: 'Beachside Shack', icon: '🏖️', idleBg: 'bg-cyan-50 text-cyan-950 border-cyan-200/80', activeBg: 'bg-cyan-600 text-white border-transparent' },
 ];
 
 // Time Wave Slider Steps (Index 0 to 6)
@@ -288,10 +288,10 @@ export function CreateTripModal({
                         hapticTap();
                         setVibe(cat.label);
                       }}
-                      className={`px-4 py-2.5 rounded-full text-xs sm:text-sm font-extrabold transition-all duration-200 cursor-pointer select-none active:scale-95 flex items-center gap-2 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border ${
+                      className={`px-4 py-2.5 rounded-full text-xs sm:text-sm font-extrabold transition-all duration-200 cursor-pointer select-none active:scale-95 flex items-center gap-2 shadow-sm border ${
                         isSelected
-                          ? `${cat.activeBg} border-transparent shadow-md scale-105`
-                          : 'bg-white text-[#382A21] border-[#EDE8E0] hover:border-[#D5CDBD]'
+                          ? `${cat.activeBg} shadow-md scale-105`
+                          : `${cat.idleBg} hover:brightness-95`
                       }`}
                     >
                       <span className="text-base">{cat.icon}</span>
@@ -304,9 +304,9 @@ export function CreateTripModal({
               {/* Selected Summary Pill Row */}
               <div className="flex items-center justify-center gap-2 pt-4 text-xs text-[#8C827A] font-medium">
                 <span>Selected:</span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFECE6] text-[#382A21] font-bold text-xs">
+                <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-100 text-emerald-950 font-extrabold text-xs border border-emerald-200">
                   <span>{vibe}</span>
-                  <span className="text-[10px] text-[#8C827A]">✕</span>
+                  <span className="text-[10px] text-emerald-700 font-bold">✕</span>
                 </span>
               </div>
             </div>
@@ -316,7 +316,7 @@ export function CreateTripModal({
               <button
                 type="button"
                 onClick={handleNext}
-                className="w-full h-14 rounded-full bg-[#382A21] hover:bg-[#2A1F18] text-white font-black text-base flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-all cursor-pointer"
+                className="w-full h-14 rounded-full bg-[#1D3B2A] hover:bg-[#2D5A3F] text-white font-extrabold text-base flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-all cursor-pointer"
               >
                 <span>Continue</span>
                 <span>→</span>
@@ -361,10 +361,10 @@ export function CreateTripModal({
                         hapticTap();
                         setSpotStyle(spot.label);
                       }}
-                      className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer select-none active:scale-95 flex items-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border ${
+                      className={`px-4 py-2.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer select-none active:scale-95 flex items-center gap-1.5 shadow-sm border ${
                         isSelected
-                          ? '!bg-[#382A21] !text-white !border-[#382A21] shadow-md scale-105'
-                          : 'bg-white text-[#382A21] border-[#EDE8E0] hover:border-[#D5CDBD]'
+                          ? `${spot.activeBg} shadow-md scale-105`
+                          : `${spot.idleBg} hover:brightness-95`
                       }`}
                     >
                       <span className="text-base">{spot.icon}</span>

@@ -233,16 +233,25 @@ export function ProfileCard({
           </div>
         )}
         <div className={persona === 'woman' ? 'flex flex-wrap gap-1.5' : 'flex flex-wrap gap-2'}>
-          {shownInterests.map((interest: string) => {
+          {shownInterests.map((interest: string, i: number) => {
             const isMatched = Array.isArray(p.match_reasons) && p.match_reasons.includes(interest);
-            const sizeClass = persona === 'woman' ? 'px-2.5 py-1 text-xs' : 'px-4 py-2 text-sm';
+            const sizeClass = persona === 'woman' ? 'px-3 py-1 text-xs' : 'px-3.5 py-1.5 text-xs';
+            const colors = [
+              'bg-orange-500/20 text-orange-200 border-orange-400/40',
+              'bg-purple-500/20 text-purple-200 border-purple-400/40',
+              'bg-emerald-500/20 text-emerald-200 border-emerald-400/40',
+              'bg-cyan-500/20 text-cyan-200 border-cyan-400/40',
+              'bg-amber-500/20 text-amber-200 border-amber-400/40',
+            ];
+            const colorClass = colors[i % colors.length];
+
             return (
               <span
                 key={interest}
                 className={
                   (isMatched
-                    ? `${sizeClass} rounded-full bg-gold text-ink font-medium shadow-[0_2px_10px_rgba(210,4,45,0.4)] leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-[0_4px_16px_rgba(210,4,45,0.6)] active:scale-95`
-                    : `glass-surface ${sizeClass} rounded-full text-ink font-medium leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:bg-raised/5 active:scale-95`)
+                    ? `${sizeClass} rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-stone-950 font-black shadow-[0_4px_16px_rgba(245,158,11,0.4)] leading-none cursor-pointer transition-all duration-200 hover:scale-110 active:scale-95 border border-white/50`
+                    : `${sizeClass} rounded-full ${colorClass} backdrop-blur-md font-bold leading-none cursor-pointer transition-all duration-200 hover:scale-110 border active:scale-95`)
                 }
               >
                 {interest}
@@ -252,11 +261,11 @@ export function ProfileCard({
         </div>
         {lookingFor.length > 0 && (
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-emerald-400 text-xs font-semibold uppercase tracking-wide leading-none">Travel Vibe</span>
+            <span className="text-emerald-400 text-xs font-black uppercase tracking-wider leading-none">Travel Vibe</span>
             {lookingFor.map((interest: string) => (
               <span
                 key={interest}
-                className="px-2.5 py-1 text-xs rounded-full border border-raised text-ink/70 font-medium leading-none"
+                className="px-3 py-1 text-xs rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold leading-none"
               >
                 {interest}
               </span>
@@ -265,16 +274,16 @@ export function ProfileCard({
         )}
         {p.bio && (
           <div>
-            <p className="text-emerald-400 text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">About</p>
+            <p className="text-emerald-400 text-xs font-black uppercase tracking-wider mb-1.5 leading-none">About</p>
             <p
-              className={`text-ink/80 text-base leading-relaxed max-w-md font-light whitespace-pre-line ${expandedBios.has(p.id) ? '' : 'line-clamp-3'}`}
+              className={`text-white/90 text-sm sm:text-base leading-relaxed max-w-md font-light whitespace-pre-line ${expandedBios.has(p.id) ? '' : 'line-clamp-3'}`}
             >
               {p.bio}
             </p>
             {p.bio.length > 120 && (
               <button
                 onClick={() => onBioToggle(p.id)}
-                className="text-emerald-400 text-xs font-medium mt-1"
+                className="text-emerald-300 text-xs font-bold mt-1"
               >
                 {expandedBios.has(p.id) ? 'Show less' : '...more'}
               </button>
@@ -290,10 +299,10 @@ export function ProfileCard({
               onBegin(p.id);
             }}
             aria-label="Meet for Trips"
-            className="flex-1 h-12 rounded-xl flex items-center justify-center gap-2 font-bold bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-black shadow-[0_4px_16px_rgba(16,185,129,0.3)] transition-all duration-150 transform-gpu"
+            className="flex-1 h-14 rounded-full flex items-center justify-center gap-2 font-black bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:brightness-110 active:scale-95 text-white shadow-[0_8px_24px_rgba(16,185,129,0.4)] transition-all duration-150 transform-gpu border border-white/30"
           >
-            <Compass className="w-4 h-4" />
-            <span className="text-xs uppercase tracking-wide font-display font-bold">Meet for Trips</span>
+            <Compass className="w-5 h-5 text-white" />
+            <span className="text-sm uppercase tracking-wider font-extrabold">Meet for Trips</span>
           </button>
           <button
             type="button"
@@ -302,9 +311,9 @@ export function ProfileCard({
               onMoreOptions(p.id);
             }}
             aria-label="More options"
-            className="w-12 h-12 rounded-full glass-surface flex items-center justify-center flex-shrink-0 hover:bg-white/10 active:scale-95 transition-all duration-150 transform-gpu"
+            className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center flex-shrink-0 hover:bg-black/60 active:scale-95 transition-all duration-150 transform-gpu text-white"
           >
-            <MoreVertical className="w-4 h-4 text-ink" />
+            <MoreVertical className="w-5 h-5 text-white" />
           </button>
         </div>
       </div>
