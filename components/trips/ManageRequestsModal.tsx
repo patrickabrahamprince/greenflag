@@ -53,21 +53,21 @@ export function ManageRequestsModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-md animate-fade-in">
-      <div className="bg-[#121216] border border-white/10 rounded-t-3xl sm:rounded-3xl max-w-lg w-full max-h-[85dvh] flex flex-col overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-md animate-fade-in">
+      <div className="bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-lg w-full max-h-[85dvh] flex flex-col overflow-hidden shadow-2xl">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-[#16161c]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
           <div>
-            <h3 className="text-base font-bold text-white">Manage Join Requests</h3>
-            <p className="text-xs text-white/50">{trip.destination} • {trip.spots_available} spots remaining</p>
+            <h3 className="text-base font-bold text-ink">Manage Join Requests</h3>
+            <p className="text-xs text-slate-500">{trip.destination} • {trip.spots_available} spots remaining</p>
           </div>
           <button
             onClick={() => {
               hapticTap();
               onClose();
             }}
-            className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 hover:text-white"
+            className="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 flex items-center justify-center text-ink/70 hover:text-ink transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -77,9 +77,9 @@ export function ManageRequestsModal({
         <div className="p-6 overflow-y-auto space-y-4 flex-1">
           {requests.length === 0 ? (
             <div className="text-center py-10">
-              <UserCheck className="w-10 h-10 text-white/20 mx-auto mb-2" />
-              <p className="text-sm font-medium text-white/70">No join requests yet</p>
-              <p className="text-xs text-white/40 mt-1">
+              <UserCheck className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+              <p className="text-sm font-bold text-ink">No join requests yet</p>
+              <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
                 Your trip is live on the Trips feed. When travelers apply, their requests appear here.
               </p>
             </div>
@@ -89,11 +89,11 @@ export function ManageRequestsModal({
               return (
                 <div
                   key={req.id}
-                  className="p-4 bg-black/40 border border-white/10 rounded-2xl space-y-3"
+                  className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="relative w-10 h-10 rounded-full overflow-hidden border border-white/10 bg-neutral-800 shrink-0">
+                      <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-emerald-500/30 bg-slate-200 shrink-0">
                         {req.applicant?.photos?.[0] ? (
                           <Image
                             src={req.applicant.photos[0]}
@@ -103,29 +103,29 @@ export function ManageRequestsModal({
                             className="object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-emerald-400 font-bold text-xs">
+                          <div className="w-full h-full flex items-center justify-center text-emerald-700 font-bold text-xs">
                             {req.applicant?.name?.charAt(0) || 'A'}
                           </div>
                         )}
                       </div>
                       <div>
                         <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-bold text-white">{req.applicant?.name}</span>
+                          <span className="text-xs font-bold text-ink">{req.applicant?.name}</span>
                           {req.applicant?.age && (
-                            <span className="text-[11px] text-white/50">• {req.applicant.age}</span>
+                            <span className="text-[11px] text-slate-500">• {req.applicant.age}</span>
                           )}
                         </div>
-                        <div className="text-[10px] text-white/50">{req.applicant?.city || 'Bangalore'}</div>
+                        <div className="text-[10px] text-slate-500">{req.applicant?.city || 'Bangalore'}</div>
                       </div>
                     </div>
 
                     <span
-                      className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                      className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
                         req.status === 'accepted'
-                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
                           : req.status === 'declined'
-                          ? 'bg-red-500/20 text-red-300 border border-red-500/30'
-                          : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                          ? 'bg-red-100 text-red-800 border border-red-200'
+                          : 'bg-amber-100 text-amber-800 border border-amber-200'
                       }`}
                     >
                       {req.status}
@@ -133,7 +133,7 @@ export function ManageRequestsModal({
                   </div>
 
                   {req.intro_note && (
-                    <div className="p-3 bg-white/5 rounded-xl border border-white/5 text-xs text-white/80 leading-relaxed italic">
+                    <div className="p-3 bg-white rounded-xl border border-slate-200 text-xs text-slate-700 leading-relaxed italic">
                       &quot;{req.intro_note}&quot;
                     </div>
                   )}
@@ -143,10 +143,10 @@ export function ManageRequestsModal({
                       <button
                         onClick={() => handleAction(req.id, 'accepted')}
                         disabled={isUpdating}
-                        className="flex-1 py-2 px-3 bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-black font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all disabled:opacity-50"
+                        className="flex-1 py-2 px-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all disabled:opacity-50 shadow-sm"
                       >
                         {isUpdating ? (
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
                         ) : (
                           <>
                             <Check className="w-3.5 h-3.5" />
@@ -157,7 +157,7 @@ export function ManageRequestsModal({
                       <button
                         onClick={() => handleAction(req.id, 'declined')}
                         disabled={isUpdating}
-                        className="py-2 px-3 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white font-medium text-xs rounded-xl border border-white/10 flex items-center justify-center gap-1 transition-all disabled:opacity-50"
+                        className="py-2 px-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs rounded-xl border border-slate-300 flex items-center justify-center gap-1 transition-all disabled:opacity-50"
                       >
                         <Ban className="w-3.5 h-3.5" />
                         <span>Decline</span>

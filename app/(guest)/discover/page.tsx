@@ -558,7 +558,7 @@ export default function DiscoverPage() {
                 legible against whatever's in the shot. */}
             <div className="absolute inset-x-0 bottom-0 h-4/5 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none" />
 
-            <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2.5 px-6 pb-28 pt-8 z-10">
+            <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2.5 px-6 pb-[calc(5.5rem+env(safe-area-inset-bottom,1.5rem))] pt-8 z-10">
               <div>
                 <h1 className="font-display text-title text-white leading-none drop-shadow-sm">
                   {p.name}{p.age ? `, ${p.age}` : ''}

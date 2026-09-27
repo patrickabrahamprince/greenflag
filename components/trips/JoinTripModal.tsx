@@ -60,21 +60,21 @@ export function JoinTripModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-md animate-fade-in">
-      <div className="bg-[#121216] border border-white/10 rounded-t-3xl sm:rounded-3xl max-w-md w-full overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-md animate-fade-in">
+      <div className="bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-md w-full overflow-hidden shadow-2xl">
         
         {/* Top Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-[#16161c]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
           <div>
-            <h3 className="text-base font-bold text-white">Request to Join Trip</h3>
-            <p className="text-xs text-white/50">{trip.destination} • {trip.vibe}</p>
+            <h3 className="text-base font-bold text-ink">Request to Join Trip</h3>
+            <p className="text-xs text-slate-500">{trip.destination} • {trip.vibe}</p>
           </div>
           <button
             onClick={() => {
               hapticTap();
               onClose();
             }}
-            className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 hover:text-white"
+            className="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 flex items-center justify-center text-ink/70 hover:text-ink transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -84,8 +84,8 @@ export function JoinTripModal({
         <form onSubmit={handleSendRequest} className="p-6 space-y-4">
           
           {/* Host & Trip Snapshot */}
-          <div className="flex items-center gap-3.5 p-3.5 bg-black/40 border border-white/10 rounded-2xl">
-            <div className="relative w-12 h-12 rounded-full overflow-hidden border border-emerald-500/40 bg-neutral-800 shrink-0">
+          <div className="flex items-center gap-3.5 p-3.5 bg-slate-50 border border-slate-200 rounded-2xl">
+            <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-emerald-500/40 bg-slate-200 shrink-0">
               {trip.host?.photos?.[0] ? (
                 <Image
                   src={trip.host.photos[0]}
@@ -95,38 +95,38 @@ export function JoinTripModal({
                   className="object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-emerald-400 font-bold">
+                <div className="w-full h-full flex items-center justify-center text-emerald-700 font-bold">
                   {trip.host?.name?.charAt(0) || 'H'}
                 </div>
               )}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="text-sm font-semibold text-white truncate">{trip.host?.name}</span>
+                <span className="text-sm font-bold text-ink truncate">{trip.host?.name}</span>
                 {trip.host?.age && (
-                  <span className="text-xs text-white/50">• {trip.host.age}</span>
+                  <span className="text-xs text-slate-500 font-medium">• {trip.host.age}</span>
                 )}
               </div>
-              <p className="text-xs text-emerald-400 truncate">
+              <p className="text-xs text-emerald-700 font-bold truncate">
                 {trip.destination} • {trip.start_date}
               </p>
-              <p className="text-[11px] text-white/50">
+              <p className="text-[11px] text-slate-500 font-medium">
                 {trip.spots_available} spot{trip.spots_available !== 1 ? 's' : ''} left • ₹{trip.budget_per_day}/day
               </p>
             </div>
           </div>
 
           {/* Safety Banner */}
-          <div className="flex items-start gap-2.5 p-3 bg-emerald-950/25 border border-emerald-500/20 rounded-xl">
-            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-            <p className="text-[11px] text-emerald-200/90 leading-relaxed">
+          <div className="flex items-start gap-2.5 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+            <p className="text-[11px] text-emerald-900/90 leading-relaxed font-medium">
               <strong>Greenflag Safe Companion Rule:</strong> The host reviews your profile and standards first. Only when the host accepts does chat open.
             </p>
           </div>
 
           {/* Intro Message Note */}
           <div>
-            <label className="text-xs font-semibold uppercase tracking-wider text-white/70 mb-1.5 block">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 block">
               Intro Note to {trip.host?.name || 'Host'}
             </label>
             <textarea
@@ -134,7 +134,7 @@ export function JoinTripModal({
               value={introNote}
               onChange={(e) => setIntroNote(e.target.value)}
               placeholder="e.g. Hey! I'm free that weekend and love trekking. I have my own helmet and happy to split fuel/homestay equally."
-              className="w-full px-3.5 py-2.5 bg-black/50 border border-white/15 rounded-xl text-xs text-white placeholder-white/40 focus:outline-none focus:border-emerald-500 leading-relaxed"
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-ink placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-600 leading-relaxed"
               autoFocus
             />
           </div>
@@ -143,16 +143,16 @@ export function JoinTripModal({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 px-4 bg-emerald-500 hover:bg-emerald-400 active:scale-[0.99] text-black font-bold text-xs rounded-xl shadow-[0_4px_16px_rgba(16,185,129,0.3)] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            className="btn-primary w-full !rounded-xl text-sm"
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
                 <span>Sending Request...</span>
               </>
             ) : (
               <>
-                <Send className="w-3.5 h-3.5" />
+                <Send className="w-3.5 h-3.5 text-white" />
                 <span>Submit Join Request</span>
               </>
             )}

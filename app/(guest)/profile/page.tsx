@@ -56,15 +56,9 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="h-[calc(100dvh-5rem)] screen-gradient flex flex-col">
-      {/* Plain icon tap target, not .btn-ghost -- that class is now a
-          bordered Lavender pill (correct for text CTAs), which reads
-          wrong around a bare gear icon. Matches the round icon-button
-          convention the deck uses for profile-screen chrome.
-          Fixed above the scroll area (not inside it) so it stays
-          reachable regardless of scroll position, matching every other
-          tab's header. */}
-      <div className="max-w-app mx-auto w-full px-8 pt-safe-top shrink-0">
+    <div className="min-h-dvh screen-gradient flex flex-col">
+      {/* Settings Header */}
+      <div className="max-w-app mx-auto w-full px-6 pt-safe-top shrink-0">
         <div className="flex items-center justify-end mb-2">
           <button onClick={() => { hapticTap(); router.push('/settings'); }} aria-label="Settings" className="p-2 text-ink active:opacity-60 transition-opacity">
             <Settings className="w-5 h-5" />
@@ -77,7 +71,7 @@ export default function ProfilePage() {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className="flex-1 overflow-y-auto overscroll-none max-w-app mx-auto w-full px-6 pb-36 animate-fade-in"
+        className="flex-1 overflow-y-auto overscroll-none max-w-app mx-auto w-full px-6 pb-48 animate-fade-in"
       >
         <div
           className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
