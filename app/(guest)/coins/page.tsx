@@ -8,6 +8,7 @@ import confetti from 'canvas-confetti';
 import { LoadingLogo } from '@/components/shared/LoadingLogo';
 import { useCoinStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
+import { Capacitor } from '@capacitor/core';
 import { useAppleIAP } from '@/lib/hooks/useAppleIAP';
 import { useRazorpayIAP } from '@/lib/hooks/useRazorpayIAP';
 import { InAppPurchase, type IAPProduct } from '@/lib/native/inAppPurchase';
@@ -41,7 +42,8 @@ export default function CoinsPage() {
   const [appleProducts, setAppleProducts] = useState<Record<string, IAPProduct>>({});
   const supabase = createClient();
 
-  const { isNative: isIosNative, purchase: handleApplePurchase, purchasingProductId } = useAppleIAP();
+  const isIosNative = Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios';
+  const { purchase: handleApplePurchase, purchasingProductId } = useAppleIAP();
   const { purchase: handleRazorpayPurchase, purchasingCoins } = useRazorpayIAP();
 
   // Real StoreKit pricing on native iOS
