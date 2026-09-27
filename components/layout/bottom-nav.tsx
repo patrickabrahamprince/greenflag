@@ -17,7 +17,7 @@ export function BottomNav() {
   ];
 
   return (
-    <nav className="fixed bottom-3 inset-x-3 z-50 max-w-[390px] mx-auto pointer-events-auto">
+    <nav className="fixed bottom-3 inset-x-3 z-50 max-w-md mx-auto pointer-events-auto pb-[env(safe-area-inset-bottom)]">
       <div className="bg-black/90 backdrop-blur-2xl rounded-[24px] p-1.5 flex justify-between shadow-[0_16px_40px_-12px_rgba(0,0,0,0.5)] border border-white/10">
         {tabs.map((tab) => {
           const isActive =
