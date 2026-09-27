@@ -101,7 +101,7 @@ export default function ProfilePage() {
           <div className="mt-5 w-full">
             <p className="text-[10px] uppercase font-bold tracking-widest text-[#382A21]/50 mb-2.5 text-center">Interests & Vibe</p>
             <div className="flex flex-wrap justify-center gap-2">
-              {user.interests_have.map((tag, i) => {
+              {user.interests_have.map((tag: string, i: number) => {
                 const tagColors = [
                   'bg-orange-100 text-orange-950 border-orange-200',
                   'bg-purple-100 text-purple-950 border-purple-200',
