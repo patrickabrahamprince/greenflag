@@ -220,19 +220,19 @@ export default function TripsPage() {
           </div>
 
           {/* Quick Destination Filter Chips */}
-          <div className="overflow-x-auto scrollbar-none flex items-center gap-2 pb-1">
+          <div className="overflow-x-auto scrollbar-none flex items-center gap-2 pb-1.5">
             <button
               onClick={() => {
                 hapticTap();
                 setSelectedDestination('all');
               }}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                 selectedDestination === 'all'
-                  ? 'bg-ink text-white font-semibold'
-                  : 'bg-white border border-black/[0.08] text-ink/70 hover:bg-well'
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'bg-white border border-slate-200 text-ink/70 hover:bg-slate-50'
               }`}
             >
-              All Destinations
+              ✨ All Escapes
             </button>
             {POPULAR_DESTINATIONS.map((dest) => {
               const isSelected = selectedDestination.toLowerCase() === dest.name.toLowerCase();
@@ -243,13 +243,14 @@ export default function TripsPage() {
                     hapticTap();
                     setSelectedDestination(isSelected ? 'all' : dest.name.toLowerCase());
                   }}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
                     isSelected
-                      ? 'bg-emerald-600 text-white font-semibold shadow-sm'
-                      : 'bg-white border border-black/[0.08] text-ink/70 hover:bg-well'
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'bg-white border border-slate-200 text-ink/70 hover:bg-slate-50'
                   }`}
                 >
-                  {dest.name}
+                  <span>📍</span>
+                  <span>{dest.name}</span>
                 </button>
               );
             })}
@@ -258,20 +259,30 @@ export default function TripsPage() {
           {/* Vibe & Safety Sub-filters */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
-              {['all', 'Roadtrip', 'Trek', 'Beach', 'Foodie', 'Camping', 'Backpacking', 'Chill', 'Adventure'].map((vibe) => (
+              {[
+                { name: 'all', label: 'All Vibes', icon: '✨' },
+                { name: 'Roadtrip', label: 'Road Trip', icon: '🚗' },
+                { name: 'Trek', label: 'Trek', icon: '🏔' },
+                { name: 'Beach', label: 'Beach', icon: '🏖' },
+                { name: 'Foodie', label: 'Foodie', icon: '🍸' },
+                { name: 'Camping', label: 'Camping', icon: '🏕' },
+                { name: 'Chill', label: 'Chill', icon: '🌿' },
+                { name: 'Adventure', label: 'Adventure', icon: '⚡️' },
+              ].map((vibe) => (
                 <button
-                  key={vibe}
+                  key={vibe.name}
                   onClick={() => {
                     hapticTap();
-                    setSelectedVibe(vibe);
+                    setSelectedVibe(vibe.name);
                   }}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
-                    selectedVibe === vibe
-                      ? 'bg-ink text-white font-semibold'
-                      : 'bg-white border border-black/[0.08] text-ink/60 hover:text-ink'
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1 transition-all ${
+                    selectedVibe === vibe.name
+                      ? 'bg-slate-900 text-white shadow-sm'
+                      : 'bg-white border border-slate-200 text-ink/70 hover:text-ink hover:bg-slate-50'
                   }`}
                 >
-                  {vibe === 'all' ? 'All Vibes' : vibe}
+                  <span>{vibe.icon}</span>
+                  <span>{vibe.label}</span>
                 </button>
               ))}
             </div>
@@ -281,14 +292,14 @@ export default function TripsPage() {
                 hapticTap();
                 setFemaleOnlyFilter((prev) => !prev);
               }}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shrink-0 transition-all ${
                 femaleOnlyFilter
-                  ? 'bg-purple-100 border border-purple-300 text-purple-800'
-                  : 'bg-white text-ink/70 hover:text-ink border border-black/[0.08]'
+                  ? 'bg-purple-600 text-white shadow-sm'
+                  : 'bg-white text-purple-700 hover:bg-purple-50 border border-purple-200'
               }`}
             >
-              <Shield className="w-3 h-3" />
-              <span>Female-Only</span>
+              <Shield className="w-3.5 h-3.5" />
+              <span>Women Only</span>
             </button>
           </div>
 

@@ -367,7 +367,16 @@ export default function DiscoverPage() {
   return (
     <div className="relative screen-gradient h-[calc(100dvh-5rem)] max-w-app mx-auto">
       <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-app flex flex-col pointer-events-none">
-        <div className="flex items-center justify-between px-5 pt-safe-top pb-10 bg-gradient-to-b from-black/70 via-black/25 to-transparent">
+        <div className="flex items-center justify-between px-5 pt-safe-top pb-8 bg-gradient-to-b from-black/80 via-black/40 to-transparent">
+          <div className="pointer-events-auto flex items-center gap-2">
+            <span className="font-display font-extrabold text-lg text-white tracking-tight flex items-center gap-1.5 drop-shadow-md">
+              <span className="text-emerald-400">🌿</span>
+              <span>GreenFlag</span>
+            </span>
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-950/70 border border-emerald-500/40 backdrop-blur-md shadow-sm">
+              Standard
+            </span>
+          </div>
           <div className="pointer-events-auto">
             <CoinBadge onClick={() => { hapticTap(); router.push('/coins'); }} />
           </div>
@@ -477,15 +486,12 @@ export default function DiscoverPage() {
 
                     {total > 1 && (
                       <>
-                        {/* Story-style segmented progress bar, one segment per
-                            photo -- the deck's own photo-position indicator.
-                            Purely additive on top of the existing swipe/tap
-                            chevron navigation below; doesn't replace it. */}
-                        <div className="absolute top-safe-top inset-x-3 z-10 flex gap-1 pt-3">
+                        {/* Story-style segmented progress bar */}
+                        <div className="absolute top-safe-top inset-x-4 z-20 flex gap-1.5 pt-14">
                           {photos.map((_, segIdx) => (
-                            <div key={segIdx} className="flex-1 h-1 rounded-full bg-ink/20 shadow-[0_0_2px_rgba(0,0,0,0.5)] overflow-hidden">
+                            <div key={segIdx} className="flex-1 h-1 rounded-full bg-white/30 backdrop-blur-sm overflow-hidden shadow-sm">
                               <div
-                                className="h-full bg-gold rounded-full transition-all duration-200"
+                                className="h-full bg-white rounded-full transition-all duration-300"
                                 style={{ width: segIdx <= idx ? '100%' : '0%' }}
                               />
                             </div>
@@ -494,40 +500,43 @@ export default function DiscoverPage() {
                         <button
                           onClick={(e) => { e.stopPropagation(); hapticTap(); goTo(idx - 1) }}
                           aria-label="Previous photo"
-                          className="absolute left-2 top-[38%] -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center"
+                          className="absolute left-3 top-[42%] -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/40 border border-white/20 backdrop-blur-md flex items-center justify-center text-white active:scale-90 transition-transform shadow-lg"
                         >
-                          <ChevronLeft className="w-5 h-5 text-ink" />
+                          <ChevronLeft className="w-5 h-5 text-white" />
                         </button>
                         <button
                           onClick={(e) => { e.stopPropagation(); hapticTap(); goTo(idx + 1) }}
                           aria-label="Next photo"
-                          className="absolute right-2 top-[38%] -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center"
+                          className="absolute right-3 top-[42%] -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/40 border border-white/20 backdrop-blur-md flex items-center justify-center text-white active:scale-90 transition-transform shadow-lg"
                         >
-                          <ChevronRight className="w-5 h-5 text-ink" />
+                          <ChevronRight className="w-5 h-5 text-white" />
                         </button>
                       </>
                     )}
 
-                    {/* Compatibility badge -- solid Crimson pill, white
-                        glyph + percentage, top-right per the design system
-                        (previously a translucent glass pill, top-left).
-                        Crimson is dark/saturated -- unlike Mindaro, this
-                        needs white text/icon, not dark. */}
-                    {typeof p.match_percentage === 'number' && (
-                      <div className="absolute top-safe-top right-3 mt-8 z-10 flex flex-col items-end gap-1">
-                        <div className="bg-gold flex items-center gap-1 rounded-pill pl-2 pr-2.5 py-1">
-                          <Flag className="w-3 h-3 text-ink" fill="currentColor" />
-                          <span className="font-display font-bold text-ink text-xs whitespace-nowrap">
-                            {p.match_percentage}%
-                          </span>
-                        </div>
-                        {persona === 'woman' && !!interestCounts[p.id] && (
-                          <span className="glass-surface rounded-full px-3 py-1 text-ink/80 text-[11px] whitespace-nowrap">
-                            Intention from {interestCounts[p.id]} {interestCounts[p.id] === 1 ? 'person' : 'people'}
+                    {/* Verified & Compatibility badges */}
+                    <div className="absolute top-safe-top inset-x-4 mt-20 z-10 flex items-center justify-between pointer-events-none">
+                      <div className="flex items-center gap-1.5">
+                        <span className="badge-dark">
+                          <span className="text-emerald-400">✨</span>
+                          <span>Verified</span>
+                        </span>
+                        {p.active_trip && (
+                          <span className="badge-gold">
+                            <span>✈️</span>
+                            <span className="truncate max-w-[120px]">{p.active_trip.destination}</span>
                           </span>
                         )}
                       </div>
-                    )}
+                      {typeof p.match_percentage === 'number' && (
+                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600/90 border border-emerald-400/50 backdrop-blur-md text-white shadow-glow-emerald">
+                          <Flag className="w-3 h-3 text-white" fill="currentColor" />
+                          <span className="font-display font-extrabold text-xs">
+                            {p.match_percentage}% Match
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )
               })()}
@@ -703,38 +712,38 @@ export default function DiscoverPage() {
                   </>
                 ) : (
                   <>
-                    <IconButton
-                      icon={<ChevronRight className="w-5 h-5 text-white" />}
-                      label="Skip"
-                      variant="dark"
+                    <button
                       onClick={() => { hapticTap(); handlePass(p.id, i) }}
-                      className="shrink-0 !w-11 !h-11 bg-white/20 border border-white/30 text-white"
-                    />
-                    <IconButton
-                      icon={<Gift className="w-5 h-5 text-white" />}
-                      label="Send Gift"
-                      variant="lavender"
+                      aria-label="Skip"
+                      className="w-12 h-12 rounded-full bg-black/40 border border-white/20 text-white backdrop-blur-xl flex items-center justify-center active:scale-90 transition-all hover:border-rose-400/50 hover:text-rose-300 shadow-lg shrink-0"
+                    >
+                      <ChevronRight className="w-5 h-5 text-white" />
+                    </button>
+                    <button
                       onClick={() => { hapticTap(); openGiftPicker(p.id) }}
-                      className="shrink-0 !w-11 !h-11 bg-purple-500/40 border border-purple-300/50 text-white"
-                    />
+                      aria-label="Send Gift"
+                      className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500/90 to-amber-400/90 border border-amber-200/60 text-white backdrop-blur-xl flex items-center justify-center active:scale-90 transition-all shadow-[0_4px_20px_rgba(245,158,11,0.35)] shrink-0"
+                    >
+                      <Gift className="w-5 h-5 text-white" />
+                    </button>
                     <button
                       onClick={() => { hapticDecision(); setConfirmProfileId(p.id) }}
                       disabled={likingId === p.id}
                       aria-label="Meet Her Standard"
-                      className="w-14 h-14 rounded-full flex items-center justify-center active:scale-[0.95] transition-all duration-200 ease-out disabled:opacity-50 shrink-0 bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:bg-emerald-400"
+                      className="w-16 h-16 rounded-full flex items-center justify-center active:scale-[0.92] transition-all duration-200 ease-out disabled:opacity-50 shrink-0 bg-gradient-to-tr from-emerald-600 via-emerald-500 to-teal-400 text-white shadow-[0_8px_30px_rgba(16,185,129,0.55)] border-2 border-white/40 hover:scale-105"
                     >
                       {likingId === p.id ? (
-                        <Loader2 className="w-5 h-5 animate-spin text-black" />
+                        <Loader2 className="w-6 h-6 animate-spin text-white" />
                       ) : (
-                        <Flag className="w-6 h-6 text-black" fill="currentColor" />
+                        <Flag className="w-7 h-7 text-white" fill="currentColor" />
                       )}
                     </button>
                     <button
                       onClick={() => { hapticTap(); setBlockReportModalId(p.id); setBlockReportModalName(p.name) }}
                       aria-label="More options"
-                      className="bg-white/20 border border-white/30 text-white backdrop-blur-md w-11 h-11 rounded-full flex items-center justify-center active:scale-95 transition-all shrink-0"
+                      className="w-12 h-12 rounded-full bg-black/40 border border-white/20 text-white backdrop-blur-xl flex items-center justify-center active:scale-90 transition-all hover:border-white/40 shadow-lg shrink-0"
                     >
-                      <MoreVertical className="w-4 h-4 text-white" />
+                      <MoreVertical className="w-5 h-5 text-white" />
                     </button>
                   </>
                 )}

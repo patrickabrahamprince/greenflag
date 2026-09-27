@@ -36,40 +36,45 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
   return (
     <button
       onClick={() => { hapticTap(); router.push(`/messages/${conv.id}`); }}
-      className="w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors bg-card rounded-card"
+      className="w-full flex items-center gap-3.5 px-4 py-3.5 text-left transition-all bg-white border border-slate-200/80 rounded-2xl shadow-sm hover:border-emerald-300 hover:shadow-md active:scale-[0.98]"
     >
-      <div
-        className="w-12 h-12 rounded-full flex-shrink-0 overflow-hidden flex items-center justify-center bg-well"
-      >
-        {partnerPhoto ? (
-          <Image
-            src={partnerPhoto}
-            alt=""
-            width={48}
-            height={48}
-            className="w-full h-full object-cover"
-            onError={() => {}}
-          />
-        ) : (
-          <span className="font-display text-sm text-ink/50">
-            {conv.partner?.name?.[0] ?? '?'}
-          </span>
-        )}
+      <div className="relative w-13 h-13 rounded-full flex-shrink-0">
+        <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-slate-100 border-2 border-emerald-500/30">
+          {partnerPhoto ? (
+            <Image
+              src={partnerPhoto}
+              alt=""
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+              onError={() => {}}
+            />
+          ) : (
+            <span className="font-display font-bold text-sm text-emerald-700">
+              {conv.partner?.name?.[0] ?? '?'}
+            </span>
+          )}
+        </div>
+        <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white shadow-sm" />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-0.5">
-          <span className="font-display text-sm text-ink truncate">
+          <span className="font-display font-bold text-sm text-ink truncate">
             {conv.partner?.name}
           </span>
           {conv.last_message && (
-            <span className="text-caption text-ink/50 flex-shrink-0 ml-2">
+            <span className="text-[11px] font-medium text-ink/50 flex-shrink-0 ml-2">
               {conv.last_message.created_at ? new Date(conv.last_message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
             </span>
           )}
         </div>
-        {conv.last_message && (
-          <p className="text-label text-ink/50 truncate">
+        {conv.last_message ? (
+          <p className="text-xs text-ink/60 truncate font-normal">
             {conv.last_message.content}
+          </p>
+        ) : (
+          <p className="text-xs text-emerald-600 font-medium truncate flex items-center gap-1">
+            <span>✨</span> Standard complete! Say hello
           </p>
         )}
       </div>
