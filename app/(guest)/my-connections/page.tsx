@@ -85,25 +85,25 @@ export default function MyConnectionsPage() {
   }
 
   return (
-    <div className="h-[calc(100dvh-5rem)] screen-gradient max-w-app mx-auto flex flex-col">
+    <div className="h-[calc(100dvh-5rem)] bg-[#FAF9F6] max-w-app mx-auto flex flex-col">
       {/* Top Header */}
       <div className="px-6 pt-safe-top shrink-0">
-        <div className="pt-4 mb-4">
-          <h1 className="font-display text-2xl text-ink font-bold">My Trips & Connections</h1>
-          <p className="text-xs text-ink/60 mt-0.5">Manage your travel connections and trip plans</p>
+        <div className="pt-5 mb-4">
+          <h1 className="font-display text-2xl text-[#382A21] font-extrabold tracking-tight">My Trips & Connections</h1>
+          <p className="text-xs text-[#382A21]/60 mt-0.5 font-medium">Manage your travel connections and trip plans</p>
         </div>
 
         {/* Tab switcher */}
-        <div className="flex gap-2 p-1 bg-white/5 rounded-xl mb-4 border border-white/5">
+        <div className="flex gap-2 p-1.5 bg-stone-200/60 rounded-full mb-4 border border-stone-200">
           <button
             onClick={() => {
               hapticTap();
               setActiveTab('buddies');
             }}
-            className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-2 text-xs font-bold rounded-full transition-all flex items-center justify-center gap-1.5 ${
               activeTab === 'buddies'
-                ? 'bg-emerald-500 text-black shadow-sm'
-                : 'text-ink/60 hover:text-ink'
+                ? 'bg-[#1D3B2A] text-white shadow-sm'
+                : 'text-[#382A21]/60 hover:text-[#382A21]'
             }`}
           >
             <Users className="w-3.5 h-3.5" />
@@ -114,10 +114,10 @@ export default function MyConnectionsPage() {
               hapticTap();
               setActiveTab('trips');
             }}
-            className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-2 text-xs font-bold rounded-full transition-all flex items-center justify-center gap-1.5 ${
               activeTab === 'trips'
-                ? 'bg-emerald-500 text-black shadow-sm'
-                : 'text-ink/60 hover:text-ink'
+                ? 'bg-[#1D3B2A] text-white shadow-sm'
+                : 'text-[#382A21]/60 hover:text-[#382A21]'
             }`}
           >
             <Plane className="w-3.5 h-3.5" />
@@ -138,7 +138,7 @@ export default function MyConnectionsPage() {
           className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out shrink-0"
           style={{ height: pullDistance }}
         >
-          <Loader2 className={`w-5 h-5 text-emerald-400 ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
+          <Loader2 className={`w-5 h-5 text-[#1D3B2A] ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
         </div>
 
         {/* TAB 1: TRAVEL CONNECTIONS */}
@@ -146,11 +146,11 @@ export default function MyConnectionsPage() {
           <div className="space-y-3">
             {matches.length === 0 ? (
               <div className="flex-1 flex flex-col items-center justify-center text-center px-4 py-16">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4">
-                  <Compass className="w-8 h-8 text-emerald-400" />
+                <div className="w-16 h-16 rounded-full bg-[#1D3B2A]/10 border border-[#1D3B2A]/20 flex items-center justify-center mb-4 shadow-sm">
+                  <Compass className="w-8 h-8 text-[#1D3B2A]" />
                 </div>
-                <h2 className="font-display text-lg text-ink font-bold mb-1.5">No People for Trips Yet</h2>
-                <p className="text-ink/60 text-xs max-w-xs mb-6 leading-relaxed">
+                <h2 className="font-display text-lg text-[#382A21] font-bold mb-1.5">No People for Trips Yet</h2>
+                <p className="text-[#382A21]/60 text-xs max-w-xs mb-6 leading-relaxed">
                   Discover travelers heading to your favorite destinations and connect with a single tap.
                 </p>
                 <button
@@ -158,7 +158,7 @@ export default function MyConnectionsPage() {
                     hapticTap();
                     router.push('/discover');
                   }}
-                  className="btn-primary text-xs py-2.5 px-6 font-bold flex items-center gap-2"
+                  className="bg-[#1D3B2A] text-white text-xs py-3 px-6 rounded-full font-bold flex items-center gap-2 shadow-md hover:bg-[#2D5A3F] active:scale-95 transition-all"
                 >
                   <Users className="w-3.5 h-3.5" />
                   <span>Meet People for Trips</span>
@@ -168,9 +168,9 @@ export default function MyConnectionsPage() {
               matches.map((m) => (
                 <div
                   key={m.id}
-                  className="w-full flex items-center gap-3.5 p-3.5 bg-card/80 border border-white/5 rounded-2xl transition-colors hover:border-emerald-500/30"
+                  className="w-full flex items-center gap-3.5 p-4 bg-white border border-stone-200/80 rounded-[24px] transition-all hover:border-[#1D3B2A]/30 shadow-[0_4px_16px_rgba(45,36,30,0.04)]"
                 >
-                  <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-well border border-white/10">
+                  <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-stone-100 border border-stone-200">
                     {m.otherPhoto ? (
                       <Image
                         src={m.otherPhoto}
@@ -180,13 +180,13 @@ export default function MyConnectionsPage() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-ink/30 text-xs">?</div>
+                      <div className="w-full h-full flex items-center justify-center text-stone-400 text-xs">?</div>
                     )}
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <p className="font-display text-sm font-bold text-ink truncate">{m.otherName}</p>
-                    <p className="text-[11px] text-emerald-400 font-medium flex items-center gap-1 mt-0.5">
+                    <p className="font-display text-sm font-bold text-[#382A21] truncate">{m.otherName}</p>
+                    <p className="text-[11px] text-[#1D3B2A] font-semibold flex items-center gap-1 mt-0.5">
                       <span>✈️</span> Travel Companion
                     </p>
                   </div>
@@ -196,7 +196,7 @@ export default function MyConnectionsPage() {
                       hapticTap();
                       router.push('/messages');
                     }}
-                    className="px-3.5 py-1.5 rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 active:scale-95 text-emerald-400 text-xs font-bold flex items-center gap-1.5 border border-emerald-500/30 transition-all shrink-0"
+                    className="px-4 py-2 rounded-full bg-[#1D3B2A] hover:bg-[#2D5A3F] active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all shrink-0"
                   >
                     <MessageSquare className="w-3.5 h-3.5" />
                     <span>Message</span>
@@ -213,21 +213,21 @@ export default function MyConnectionsPage() {
             {/* Hosted Trips */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-xs font-bold uppercase tracking-wider text-ink/60">Trips You&apos;re Hosting</h2>
+                <h2 className="text-xs font-bold uppercase tracking-wider text-[#382A21]/70">Trips You&apos;re Hosting</h2>
                 <button
                   onClick={() => {
                     hapticTap();
                     router.push('/trips');
                   }}
-                  className="text-xs text-emerald-400 font-semibold hover:underline"
+                  className="text-xs text-[#1D3B2A] font-bold hover:underline"
                 >
                   + New Trip
                 </button>
               </div>
 
               {hostedTrips.length === 0 ? (
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 text-center">
-                  <p className="text-xs text-ink/50">You aren&apos;t hosting any trips yet.</p>
+                <div className="p-5 rounded-[24px] bg-white border border-stone-200/80 text-center shadow-sm">
+                  <p className="text-xs text-[#382A21]/60">You aren&apos;t hosting any trips yet.</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -238,30 +238,30 @@ export default function MyConnectionsPage() {
                         hapticTap();
                         router.push('/trips');
                       }}
-                      className="p-4 rounded-xl bg-card/80 border border-white/5 hover:border-emerald-500/30 transition-all cursor-pointer"
+                      className="p-5 rounded-[28px] bg-white border border-stone-200/80 hover:border-[#1D3B2A]/40 transition-all cursor-pointer shadow-[0_4px_16px_rgba(45,36,30,0.04)]"
                     >
                       <div className="flex items-start justify-between">
                         <div>
-                          <div className="flex items-center gap-1.5 text-ink font-bold text-sm">
-                            <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                          <div className="flex items-center gap-1.5 text-[#382A21] font-extrabold text-sm">
+                            <MapPin className="w-3.5 h-3.5 text-[#1D3B2A] shrink-0" />
                             <span>{trip.destination}</span>
                           </div>
-                          <p className="text-[11px] text-ink/60 mt-1 flex items-center gap-1">
-                            <Calendar className="w-3 h-3 text-ink/40" />
+                          <p className="text-[11px] text-[#382A21]/60 mt-1 flex items-center gap-1 font-medium">
+                            <Calendar className="w-3 h-3 text-[#382A21]/40" />
                             <span>
                               {trip.start_date} → {trip.end_date}
                             </span>
                           </p>
                         </div>
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-[#1D3B2A]/10 text-[#1D3B2A] border border-[#1D3B2A]/20">
                           {trip.vibe}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/5 text-[11px] text-ink/70">
+                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-stone-100 text-[11px] text-[#382A21]/70 font-medium">
                         <span>
                           {trip.spots_available} of {trip.spots_total} spots left
                         </span>
-                        <span className="text-emerald-400 font-semibold">Manage Requests →</span>
+                        <span className="text-[#1D3B2A] font-bold">Manage Requests →</span>
                       </div>
                     </div>
                   ))}
@@ -271,17 +271,17 @@ export default function MyConnectionsPage() {
 
             {/* Requested Trips */}
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-wider text-ink/60 mb-3">Trips You Applied To</h2>
+              <h2 className="text-xs font-bold uppercase tracking-wider text-[#382A21]/70 mb-3">Trips You Applied To</h2>
 
               {myRequests.length === 0 ? (
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 text-center">
-                  <p className="text-xs text-ink/50">No pending trip applications.</p>
+                <div className="p-5 rounded-[24px] bg-white border border-stone-200/80 text-center shadow-sm">
+                  <p className="text-xs text-[#382A21]/60">No pending trip applications.</p>
                   <button
                     onClick={() => {
                       hapticTap();
                       router.push('/trips');
                     }}
-                    className="mt-2 text-xs text-emerald-400 font-semibold hover:underline"
+                    className="mt-2 text-xs text-[#1D3B2A] font-bold hover:underline"
                   >
                     Browse Weekend Trips →
                   </button>
@@ -293,16 +293,16 @@ export default function MyConnectionsPage() {
                     return (
                       <div
                         key={req.id}
-                        className="p-4 rounded-xl bg-card/80 border border-white/5 flex flex-col gap-2"
+                        className="p-5 rounded-[28px] bg-white border border-stone-200/80 flex flex-col gap-2 shadow-[0_4px_16px_rgba(45,36,30,0.04)]"
                       >
                         <div className="flex items-start justify-between">
                           <div>
-                            <div className="flex items-center gap-1.5 text-ink font-bold text-sm">
-                              <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                            <div className="flex items-center gap-1.5 text-[#382A21] font-extrabold text-sm">
+                              <MapPin className="w-3.5 h-3.5 text-[#1D3B2A] shrink-0" />
                               <span>{trip?.destination || 'Weekend Trip'}</span>
                             </div>
-                            <p className="text-[11px] text-ink/60 mt-1 flex items-center gap-1">
-                              <Calendar className="w-3 h-3 text-ink/40" />
+                            <p className="text-[11px] text-[#382A21]/60 mt-1 flex items-center gap-1 font-medium">
+                              <Calendar className="w-3 h-3 text-[#382A21]/40" />
                               <span>
                                 {trip?.start_date} → {trip?.end_date}
                               </span>
@@ -311,17 +311,17 @@ export default function MyConnectionsPage() {
 
                           {/* Status Badge */}
                           {req.status === 'accepted' ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
                               <CheckCircle2 className="w-3 h-3" />
                               <span>Approved</span>
                             </span>
                           ) : req.status === 'declined' ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-500/20 text-red-300 border border-red-500/30">
+                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-bold bg-red-100 text-red-800 border border-red-200">
                               <XCircle className="w-3 h-3" />
                               <span>Declined</span>
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-200">
                               <Clock className="w-3 h-3" />
                               <span>Pending</span>
                             </span>
@@ -329,14 +329,14 @@ export default function MyConnectionsPage() {
                         </div>
 
                         {req.status === 'accepted' && (
-                          <div className="mt-2 pt-2 border-t border-white/5 flex items-center justify-between">
-                            <span className="text-[11px] text-emerald-400 font-medium">You are in! Chat with your host</span>
+                          <div className="mt-2 pt-2 border-t border-stone-100 flex items-center justify-between">
+                            <span className="text-[11px] text-[#1D3B2A] font-semibold">You are in! Chat with your host</span>
                             <button
                               onClick={() => {
                                 hapticTap();
                                 router.push('/messages');
                               }}
-                              className="px-3 py-1 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold rounded-full transition-all"
+                              className="px-4 py-1.5 bg-[#1D3B2A] hover:bg-[#2D5A3F] text-white text-xs font-bold rounded-full transition-all shadow-sm"
                             >
                               Open Chat
                             </button>

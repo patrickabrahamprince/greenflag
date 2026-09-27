@@ -36,10 +36,10 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
   return (
     <button
       onClick={() => { hapticTap(); router.push(`/messages/${conv.id}`); }}
-      className="w-full flex items-center gap-3.5 px-4 py-3.5 text-left transition-all bg-white border border-slate-200/80 rounded-2xl shadow-sm hover:border-emerald-300 hover:shadow-md active:scale-[0.98]"
+      className="w-full flex items-center gap-3.5 px-4 py-3.5 text-left transition-all bg-white border border-stone-200/80 rounded-[24px] shadow-[0_4px_16px_rgba(45,36,30,0.04)] hover:border-[#1D3B2A]/30 hover:shadow-md active:scale-[0.98]"
     >
-      <div className="relative w-13 h-13 rounded-full flex-shrink-0">
-        <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-slate-100 border-2 border-emerald-500/30">
+      <div className="relative w-12 h-12 rounded-full flex-shrink-0">
+        <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-stone-100 border border-stone-200">
           {partnerPhoto ? (
             <Image
               src={partnerPhoto}
@@ -50,31 +50,31 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
               onError={() => {}}
             />
           ) : (
-            <span className="font-display font-bold text-sm text-emerald-700">
+            <span className="font-display font-bold text-sm text-[#1D3B2A]">
               {conv.partner?.name?.[0] ?? '?'}
             </span>
           )}
         </div>
-        <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white shadow-sm" />
+        <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#1D3B2A] border-2 border-white shadow-sm" />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-0.5">
-          <span className="font-display font-bold text-sm text-ink truncate">
+          <span className="font-display font-bold text-sm text-[#382A21] truncate">
             {conv.partner?.name}
           </span>
           {conv.last_message && (
-            <span className="text-[11px] font-medium text-ink/50 flex-shrink-0 ml-2">
+            <span className="text-[11px] font-medium text-[#382A21]/50 flex-shrink-0 ml-2">
               {conv.last_message.created_at ? new Date(conv.last_message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
             </span>
           )}
         </div>
         {conv.last_message ? (
-          <p className="text-xs text-ink/60 truncate font-normal">
+          <p className="text-xs text-[#382A21]/60 truncate font-normal">
             {conv.last_message.content}
           </p>
         ) : (
-          <p className="text-xs text-emerald-600 font-medium truncate flex items-center gap-1">
-            <span>✨</span> Standard complete! Say hello
+          <p className="text-xs text-[#1D3B2A] font-semibold truncate flex items-center gap-1">
+            <span>✨</span> Travel connection ready! Say hello
           </p>
         )}
       </div>
@@ -354,13 +354,9 @@ export default function MessagesListPage() {
   if (!user) return null;
 
   return (
-    <div className="h-[calc(100dvh-5rem)] flex flex-col screen-gradient">
+    <div className="h-[calc(100dvh-5rem)] flex flex-col bg-[#FAF9F6]">
       <div className="max-w-app mx-auto w-full flex-1 flex flex-col pt-safe-top">
-        {/* This screen had no visible title at all before -- the deck's
-            "Chat" header is a real, additive fix, not just decoration.
-            The deck also shows a round search button here; skipped since
-            there's no chat-search feature in this app to wire it to. */}
-        <h1 className="font-display text-title text-ink px-6 pb-2">Chat</h1>
+        <h1 className="font-display text-2xl font-extrabold text-[#382A21] px-6 pt-5 pb-3">Chat</h1>
         <ChatList userId={user.id} supabase={supabase} persona={user.persona} />
       </div>
     </div>
