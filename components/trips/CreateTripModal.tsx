@@ -23,7 +23,11 @@ import {
   Sun,
   Sunset,
   Moon,
-  Coffee
+  Coffee,
+  Heart,
+  Flame,
+  HelpCircle,
+  Edit3
 } from 'lucide-react';
 import { TripVibe, Trip } from '@/types';
 import { POPULAR_DESTINATIONS } from '@/lib/trips-data';
@@ -37,51 +41,48 @@ interface CreateTripModalProps {
   currentUserPersona?: string;
 }
 
-interface VibeChoice {
-  label: TripVibe;
-  icon: string;
-  name: string;
-  desc: string;
-}
-
-const VIBE_CATEGORIES: VibeChoice[] = [
-  { label: 'Chill', icon: '☕', name: 'Café & Chill', desc: 'Coffee, work, casual conversation' },
-  { label: 'Foodie', icon: '🍕', name: 'Food & Drinks', desc: 'Dinner, brewery, street food crawl' },
-  { label: 'Daytrip', icon: '🌅', name: 'Day Trip / Drive', desc: 'Sunrise spot, viewpoint, picnic' },
-  { label: 'Trek', icon: '🥾', name: 'Trek & Nature', desc: 'Hiking, hill climb, nature walk' },
-  { label: 'Roadtrip', icon: '🚗', name: 'Weekend Roadtrip', desc: 'Getaway, ride split, homestay' },
-  { label: 'Beach', icon: '🏖️', name: 'Beach & Coastal', desc: 'Sea, beach shacks, sunset' },
-  { label: 'Festival', icon: '🎸', name: 'Concert & Events', desc: 'Music fest, standup, show' },
-  { label: 'Workcation', icon: '💻', name: 'Workcation', desc: 'Remote work with scenic views' },
+// 1. Activity Vibes
+const VIBE_CATEGORIES = [
+  { label: 'Chill' as TripVibe, icon: '☕', name: 'Café & Chill', desc: 'Coffee, work, relaxed catchup' },
+  { label: 'Foodie' as TripVibe, icon: '🍕', name: 'Food & Drinks', desc: 'Dinner, brewery, food crawl' },
+  { label: 'Daytrip' as TripVibe, icon: '🌅', name: 'Day Trip / Drive', desc: 'Sunrise spot, viewpoint, picnic' },
+  { label: 'Roadtrip' as TripVibe, icon: '🚗', name: 'Weekend Getaway', desc: 'Outstation roadtrip, homestay' },
+  { label: 'Trek' as TripVibe, icon: '🥾', name: 'Trek & Nature', desc: 'Hills, nature trail, hike' },
+  { label: 'Beach' as TripVibe, icon: '🏖️', name: 'Beach & Coastal', desc: 'Ocean, beach shacks, sunset' },
+  { label: 'Festival' as TripVibe, icon: '🎸', name: 'Concert & Events', desc: 'Live gig, standup comedy, art' },
+  { label: 'Workcation' as TripVibe, icon: '💻', name: 'Workcation', desc: 'Scenic work session with wifi' },
 ];
 
+// 2. Spot Styles (User chooses the vibe/style of the spot!)
+const SPOT_STYLES = [
+  { id: 'cozy_cafe', label: 'Cozy Specialty Café', icon: '☕' },
+  { id: 'rooftop', label: 'Rooftop & Sunset Views', icon: '🌇' },
+  { id: 'lively_bar', label: 'Lively Bar / Brewery', icon: '🍻' },
+  { id: 'fine_dine', label: 'Dinner / Fine Dine', icon: '🍽️' },
+  { id: 'scenic_drive', label: 'Scenic Drive & Highway', icon: '🛣️' },
+  { id: 'viewpoint', label: 'Mountain Viewpoint', icon: '⛰️' },
+  { id: 'outdoor_nature', label: 'Park / Botanical Picnic', icon: '🌿' },
+  { id: 'street_food', label: 'Street Food & Night Crawl', icon: '🌮' },
+  { id: 'resort_stay', label: 'Homestay / Cozy Villa', icon: '🏡' },
+  { id: 'beach_shack', label: 'Beachside Shack', icon: '🏖️' },
+];
+
+// 3. Time Presets + Custom Time
+const TIME_PRESETS = [
+  { label: 'Morning (8:00 AM - 11:00 AM)', icon: '🌅' },
+  { label: 'Afternoon (1:00 PM - 4:00 PM)', icon: '☀️' },
+  { label: 'Evening (5:30 PM - 8:30 PM)', icon: '🌇' },
+  { label: 'Night Out (9:00 PM onwards)', icon: '🌙' },
+  { label: 'Flexible / Anytime', icon: '⚡' },
+];
+
+// 4. Commute Format
 const TRANSPORT_CHOICES = [
-  { label: 'Meet at Venue / Café', icon: '📍', desc: 'Meet directly at spot' },
-  { label: 'Self-Drive Car / Carpool', icon: '🚗', desc: 'Split fuel & tolls' },
-  { label: 'Bike / Two-Wheeler', icon: '🏍️', desc: 'Ride companion' },
-  { label: 'Cab / Auto Share', icon: '🚕', desc: 'Split Uber/Ola fare' },
-  { label: 'Train / Bus Buddy', icon: '🚆', desc: 'Overnight journey' },
-];
-
-const POPULAR_SPOTS = [
-  { name: 'Indiranagar', tag: 'Café & Social', icon: '☕' },
-  { name: 'Koramangala', tag: 'Food & Nightlife', icon: '🍕' },
-  { name: 'Church Street', tag: 'Walk & Coffee', icon: '🎨' },
-  { name: 'HSR Layout', tag: 'Eateries & Work', icon: '💻' },
-  { name: 'Nandi Hills', tag: 'Sunrise Drive', icon: '🌅' },
-  { name: 'Bannerghatta', tag: 'Day Outing', icon: '🌿' },
-  { name: 'Coorg', tag: 'Weekend Getaway', icon: '⛰️' },
-  { name: 'Gokarna', tag: 'Beach & Trek', icon: '🏖️' },
-  { name: 'Goa', tag: 'Coastal Escape', icon: '🌴' },
-  { name: 'Pondicherry', tag: 'Heritage Walk', icon: '🥐' },
-];
-
-const TIME_SLOTS = [
-  { id: 'evening', label: 'Evening', time: '5:00 PM - 9:00 PM', icon: '🌇' },
-  { id: 'morning', label: 'Morning / Sunrise', time: '6:00 AM - 10:30 AM', icon: '🌅' },
-  { id: 'afternoon', label: 'Afternoon / Lunch', time: '12:00 PM - 3:30 PM', icon: '☀️' },
-  { id: 'night', label: 'Night Out', time: '9:00 PM - Late', icon: '🌙' },
-  { id: 'flexible', label: 'Flexible / Anytime', time: 'Coordinate with companion', icon: '⚡' },
+  { label: 'Meet at Venue / Spot', icon: '📍', desc: 'Meet directly at the location' },
+  { label: 'Carpool / Fuel Split', icon: '🚗', desc: 'Ride together, share fuel & tolls' },
+  { label: 'Bike / Two-Wheeler Buddy', icon: '🏍️', desc: 'Ride companion' },
+  { label: 'Cab / Auto Share', icon: '🚕', desc: 'Split Uber / Ola fare' },
+  { label: 'Train / Bus Buddy', icon: '🚆', desc: 'Travel together by train or bus' },
 ];
 
 export function CreateTripModal({
@@ -90,29 +91,40 @@ export function CreateTripModal({
   onTripCreated,
   currentUserPersona = 'woman',
 }: CreateTripModalProps) {
-  // 5 Distinct Steps: 1. Vibe -> 2. Spot -> 3. Dates & Time -> 4. Format & Budget -> 5. Post
+  // Bumble Questionnaire: 5 clean question screens
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
 
-  // Form Fields
+  // Form State
   const [vibe, setVibe] = useState<TripVibe>('Chill');
-  const [destination, setDestination] = useState('Indiranagar');
-  const [customDestination, setCustomDestination] = useState('');
+  const [spotStyle, setSpotStyle] = useState('Cozy Specialty Café');
+  const [locationName, setLocationName] = useState('');
   
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [meetTime, setMeetTime] = useState('Evening (5:00 PM - 9:00 PM)');
+  const [meetTime, setMeetTime] = useState('Evening (5:30 PM - 8:30 PM)');
+  const [customTime, setCustomTime] = useState('');
+  
   const [spotsTotal, setSpotsTotal] = useState(1);
   const [femaleOnly, setFemaleOnly] = useState(false);
-
   const [transportType, setTransportType] = useState(TRANSPORT_CHOICES[0].label);
-  const [budgetPerDay, setBudgetPerDay] = useState(500);
-  const [description, setDescription] = useState('');
+
+  // Any Money / Budget
+  const [budgetAmount, setBudgetAmount] = useState<string>('500');
+  const [budgetType, setBudgetType] = useState<'custom' | 'split' | 'free' | 'treat'>('custom');
   
+  const [description, setDescription] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
 
-  const resolvedDestination = destination === 'custom' ? customDestination.trim() : destination;
+  // Final destination label combination
+  const resolvedDestination = locationName.trim()
+    ? `${locationName.trim()} (${spotStyle})`
+    : spotStyle;
+
+  const resolvedTime = customTime.trim() ? customTime.trim() : meetTime;
+
+  const resolvedBudgetNumber = budgetType === 'free' ? 0 : Number(budgetAmount) || 0;
 
   // Quick Date Helpers
   const setQuickDate = (type: 'today' | 'tomorrow' | 'this_weekend' | 'next_weekend') => {
@@ -141,25 +153,20 @@ export function CreateTripModal({
     }
   };
 
-  // Step Nav Validations
-  const goToStep2 = () => {
+  // Nav Step Handlers
+  const handleNextFromStep1 = () => {
     hapticTap();
     setStep(2);
   };
 
-  const goToStep3 = () => {
-    if (!resolvedDestination) {
-      toast.error('Please choose or enter a location.');
-      hapticWarning();
-      return;
-    }
+  const handleNextFromStep2 = () => {
     hapticTap();
     setStep(3);
   };
 
-  const goToStep4 = () => {
+  const handleNextFromStep3 = () => {
     if (!startDate) {
-      toast.error('Please select when you want to meet.');
+      toast.error('Please pick a date for your plan.');
       hapticWarning();
       return;
     }
@@ -170,12 +177,7 @@ export function CreateTripModal({
     setStep(4);
   };
 
-  const goToStep5 = () => {
-    if (!description.trim()) {
-      toast.error('Please write a quick 1-2 sentence description.');
-      hapticWarning();
-      return;
-    }
+  const handleNextFromStep4 = () => {
     hapticTap();
     setStep(5);
   };
@@ -183,7 +185,17 @@ export function CreateTripModal({
   const handleFinalSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const formattedDescription = `${description.trim()}\n\n⏰ Meet Time: ${meetTime}`;
+      const budgetNote = budgetType === 'free' 
+        ? 'Free / No spend' 
+        : budgetType === 'split' 
+        ? 'Split 50-50' 
+        : budgetType === 'treat' 
+        ? 'My treat' 
+        : `₹${resolvedBudgetNumber}`;
+
+      const fullDescription = description.trim() 
+        ? `${description.trim()}\n\n⏰ Time: ${resolvedTime} • 💰 Budget: ${budgetNote}`
+        : `Looking forward to meeting up for ${vibe.toLowerCase()} hangout!\n\n⏰ Time: ${resolvedTime} • 💰 Budget: ${budgetNote}`;
 
       const res = await fetch('/api/trips', {
         method: 'POST',
@@ -194,11 +206,11 @@ export function CreateTripModal({
           end_date: endDate || startDate,
           vibe,
           transport_type: transportType,
-          budget_per_day: budgetPerDay,
+          budget_per_day: resolvedBudgetNumber,
           spots_available: spotsTotal,
           spots_total: spotsTotal,
           female_only: femaleOnly,
-          description: formattedDescription,
+          description: fullDescription,
         }),
       });
 
@@ -208,7 +220,7 @@ export function CreateTripModal({
       }
 
       hapticSuccess();
-      toast.success('Plan published! Live on the feed now.');
+      toast.success('Your plan is live!');
       onTripCreated(data.trip);
       setStep(1);
       onClose();
@@ -221,14 +233,6 @@ export function CreateTripModal({
     }
   };
 
-  const STEP_TITLES: Record<number, { title: string; subtitle: string }> = {
-    1: { title: 'What is the Vibe?', subtitle: 'Choose what you want to do' },
-    2: { title: 'Pick Spot / Area', subtitle: 'Where do you want to meet?' },
-    3: { title: 'Date, Time & Size', subtitle: 'When & group size' },
-    4: { title: 'Format & Budget', subtitle: 'Commute & spend' },
-    5: { title: 'Review & Publish', subtitle: 'Live plan preview' },
-  };
-
   return (
     <div 
       onClick={(e) => {
@@ -237,17 +241,17 @@ export function CreateTripModal({
           onClose();
         }
       }}
-      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in"
     >
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-lg w-full h-[92dvh] max-h-[92dvh] flex flex-col min-h-0 overflow-hidden shadow-2xl animate-sheet-up"
+        className="bg-white border border-slate-200 rounded-t-[32px] sm:rounded-3xl max-w-lg w-full h-[92dvh] max-h-[92dvh] flex flex-col min-h-0 overflow-hidden shadow-2xl animate-sheet-up"
       >
         
-        {/* Top Header with High Contrast Step Indicator */}
-        <div className="px-5 pt-4 pb-3 border-b border-slate-200 bg-slate-50 shrink-0">
-          <div className="flex items-center justify-between mb-2.5">
-            <div className="flex items-center gap-2">
+        {/* Top Bumble-Style Segmented Progress Bar */}
+        <div className="px-6 pt-5 pb-3 bg-white shrink-0">
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-8">
               {step > 1 && (
                 <button
                   type="button"
@@ -255,81 +259,59 @@ export function CreateTripModal({
                     hapticTap();
                     setStep((s) => (s - 1) as 1 | 2 | 3 | 4);
                   }}
-                  className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-900 active:scale-90 transition-transform cursor-pointer touch-manipulation shadow-sm"
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-900 active:scale-90 transition-transform cursor-pointer"
                 >
                   <ArrowLeft className="w-4 h-4" />
                 </button>
               )}
-              <div>
-                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300">
-                  Step {step} of 5
-                </span>
-                <h2 className="text-base font-black text-slate-950 leading-tight mt-0.5">
-                  {STEP_TITLES[step].title}
-                </h2>
-              </div>
             </div>
-            <button
-              type="button"
-              onClick={() => {
-                hapticTap();
-                onClose();
-              }}
-              className="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 active:scale-90 flex items-center justify-center text-slate-900 transition-all cursor-pointer touch-manipulation"
-            >
-              <X className="w-4 h-4" />
-            </button>
+
+            <div className="text-center">
+              <span className="text-[11px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300">
+                Question {step} of 5
+              </span>
+            </div>
+
+            <div className="w-8 flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  hapticTap();
+                  onClose();
+                }}
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-900 active:scale-90 transition-transform cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
-          {/* 5 High Contrast Clickable Step Tabs */}
-          <div className="grid grid-cols-5 gap-1.5 pt-1">
-            {[
-              { num: 1, label: '1. Vibe' },
-              { num: 2, label: '2. Spot' },
-              { num: 3, label: '3. Time' },
-              { num: 4, label: '4. Format' },
-              { num: 5, label: '5. Post' },
-            ].map((s) => {
-              const isActive = s.num === step;
-              const isPast = s.num < step;
-              return (
-                <button
-                  key={s.num}
-                  type="button"
-                  onClick={() => {
-                    hapticTap();
-                    setStep(s.num as 1 | 2 | 3 | 4 | 5);
-                  }}
-                  className={`py-1.5 px-1 rounded-xl text-center cursor-pointer select-none touch-manipulation transition-all active:scale-95 ${
-                    isActive
-                      ? '!bg-slate-950 !text-white font-black shadow-md border border-slate-950'
-                      : isPast
-                      ? '!bg-emerald-100 !text-emerald-900 font-bold border border-emerald-300'
-                      : '!bg-slate-200 !text-slate-700 font-semibold'
-                  }`}
-                >
-                  <div className="text-[10px] leading-tight truncate">
-                    {s.label}
-                  </div>
-                </button>
-              );
-            })}
+          {/* Bumble Segmented Pill Bar */}
+          <div className="grid grid-cols-5 gap-1.5">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div
+                key={i}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  i <= step ? 'bg-slate-950' : 'bg-slate-200'
+                }`}
+              />
+            ))}
           </div>
         </div>
 
-        {/* STEP 1: Activity & Vibe */}
+        {/* QUESTION 1: Activity Vibe */}
         {step === 1 && (
-          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-5 space-y-4 animate-fade-in">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase tracking-wider text-slate-900">
-                1. What do you want to do?
-              </span>
-              <span className="text-[11px] text-emerald-800 font-extrabold flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-emerald-600" /> Tap to choose
-              </span>
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 py-4 space-y-4 animate-fade-in">
+            <div>
+              <h2 className="text-2xl font-black text-slate-950 tracking-tight">
+                What are you in the mood for?
+              </h2>
+              <p className="text-xs text-slate-600 font-semibold mt-1">
+                Choose the main vibe of your plan.
+              </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2.5 pt-1">
               {VIBE_CATEGORIES.map((cat) => {
                 const isSelected = vibe === cat.label;
                 return (
@@ -340,23 +322,23 @@ export function CreateTripModal({
                       hapticTap();
                       setVibe(cat.label);
                     }}
-                    className={`p-4 rounded-2xl border text-left transition-all cursor-pointer select-none touch-manipulation active:scale-95 relative flex flex-col justify-between min-h-[108px] ${
+                    className={`p-4 rounded-2xl border text-left transition-all cursor-pointer select-none active:scale-95 relative flex flex-col justify-between min-h-[105px] ${
                       isSelected
-                        ? '!border-emerald-600 !bg-emerald-50 ring-2 ring-emerald-500 shadow-md transform-gpu -translate-y-0.5'
-                        : '!border-slate-200 !bg-white hover:!bg-slate-50 text-slate-900 shadow-sm'
+                        ? '!border-slate-950 !bg-slate-950 !text-white shadow-md transform-gpu -translate-y-0.5'
+                        : '!border-slate-200 !bg-slate-50 hover:!bg-slate-100 !text-slate-950 shadow-sm'
                     }`}
                   >
                     {isSelected && (
-                      <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full !bg-emerald-600 flex items-center justify-center text-white shadow-sm">
+                      <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center text-white shadow-sm">
                         <Check className="w-3 h-3 stroke-[3]" />
                       </div>
                     )}
                     <div className="text-2xl mb-1">{cat.icon}</div>
                     <div>
-                      <div className="text-xs font-black text-slate-950">
+                      <div className={`text-xs font-black ${isSelected ? '!text-white' : '!text-slate-950'}`}>
                         {cat.name}
                       </div>
-                      <div className="text-[10px] text-slate-600 line-clamp-1 mt-0.5 font-semibold">
+                      <div className={`text-[10px] font-medium line-clamp-1 mt-0.5 ${isSelected ? '!text-slate-300' : '!text-slate-500'}`}>
                         {cat.desc}
                       </div>
                     </div>
@@ -367,181 +349,184 @@ export function CreateTripModal({
           </div>
         )}
 
-        {/* STEP 2: Spot & Location */}
+        {/* QUESTION 2: Spot Style & Location (No fixed location list — pure style & open search!) */}
         {step === 2 && (
-          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-5 space-y-4 animate-fade-in">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase tracking-wider text-slate-900">
-                2. Popular Hotspots & Neighborhoods
-              </span>
-              <span className="text-[11px] text-emerald-800 font-extrabold">Select spot</span>
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 py-4 space-y-4 animate-fade-in">
+            <div>
+              <h2 className="text-2xl font-black text-slate-950 tracking-tight">
+                What style of spot?
+              </h2>
+              <p className="text-xs text-slate-600 font-semibold mt-1">
+                Pick the venue style, and optionally type the exact place or neighborhood.
+              </p>
             </div>
 
-            {/* Grid of Visual Location Cards with Rock-Solid Contrast */}
-            <div className="grid grid-cols-2 gap-2.5">
-              {POPULAR_SPOTS.map((spot) => {
-                const isSelected = destination === spot.name;
+            {/* Spot Style Pills */}
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              {SPOT_STYLES.map((style) => {
+                const isSelected = spotStyle === style.label;
                 return (
                   <button
-                    key={spot.name}
+                    key={style.id}
                     type="button"
                     onClick={() => {
                       hapticTap();
-                      setDestination(spot.name);
-                      setCustomDestination('');
+                      setSpotStyle(style.label);
                     }}
-                    className={`p-3 rounded-2xl border text-left transition-all cursor-pointer select-none touch-manipulation active:scale-95 relative flex items-center gap-3 ${
+                    className={`p-3 rounded-2xl border text-left transition-all cursor-pointer select-none active:scale-95 flex items-center gap-2.5 ${
                       isSelected
-                        ? '!border-slate-950 !bg-slate-950 !text-white shadow-md ring-2 ring-slate-900'
-                        : '!border-slate-200 !bg-slate-50 hover:!bg-slate-100 text-slate-900 shadow-sm'
+                        ? '!border-slate-950 !bg-slate-950 !text-white shadow-md'
+                        : '!border-slate-200 !bg-slate-50 hover:!bg-slate-100 !text-slate-950 shadow-sm'
                     }`}
                   >
-                    <span className="text-xl shrink-0">{spot.icon}</span>
-                    <div className="min-w-0">
-                      <div className={`text-xs font-black truncate ${isSelected ? '!text-white' : '!text-slate-950'}`}>
-                        {spot.name}
-                      </div>
-                      <div className={`text-[10px] font-bold truncate ${isSelected ? '!text-slate-300' : '!text-slate-500'}`}>
-                        {spot.tag}
-                      </div>
-                    </div>
+                    <span className="text-xl shrink-0">{style.icon}</span>
+                    <span className={`text-xs font-black leading-tight ${isSelected ? '!text-white' : '!text-slate-950'}`}>
+                      {style.label}
+                    </span>
                   </button>
                 );
               })}
             </div>
 
-            {/* Custom Location Input */}
+            {/* Optional Specific Spot / Area Input */}
             <div className="pt-2 border-t border-slate-200">
               <label className="text-xs font-black text-slate-900 mb-1.5 block">
-                Or enter any custom café / neighborhood:
+                Have a specific spot or area in mind? (Optional)
               </label>
               <div className="relative">
                 <MapPin className="w-4 h-4 text-emerald-600 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  value={customDestination}
-                  onChange={(e) => {
-                    setCustomDestination(e.target.value);
-                    setDestination('custom');
-                  }}
-                  onFocus={() => setDestination('custom')}
-                  placeholder="e.g. Third Wave Coffee Sadashivnagar, Cubbon Park..."
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-900 font-bold placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 shadow-sm"
+                  value={locationName}
+                  onChange={(e) => setLocationName(e.target.value)}
+                  placeholder="e.g. Blue Tokai Koramangala, Nandi Hills, Church St..."
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-900 font-bold placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-950 shadow-sm"
                 />
               </div>
             </div>
           </div>
         )}
 
-        {/* STEP 3: Dates, Time & Group Size */}
+        {/* QUESTION 3: Date, Free Custom Time & Group Size */}
         {step === 3 && (
-          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-5 space-y-4 animate-fade-in">
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 py-4 space-y-4 animate-fade-in">
+            <div>
+              <h2 className="text-2xl font-black text-slate-950 tracking-tight">
+                When are you free?
+              </h2>
+              <p className="text-xs text-slate-600 font-semibold mt-1">
+                Choose the date and set any custom time you want.
+              </p>
+            </div>
+
             {/* Quick Date Presets */}
             <div>
-              <label className="text-xs font-black uppercase tracking-wider text-slate-900 mb-2 block">
-                1. When are you free?
-              </label>
-              <div className="grid grid-cols-2 gap-2 mb-2.5">
+              <span className="text-xs font-black uppercase tracking-wider text-slate-900 mb-2 block">
+                1. Date
+              </span>
+              <div className="grid grid-cols-2 gap-2 mb-2">
                 <button
                   type="button"
                   onClick={() => setQuickDate('today')}
-                  className="py-2.5 px-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-xs font-black text-slate-900 text-center active:scale-95 transition-transform"
+                  className="py-2.5 px-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-xs font-black text-slate-900 text-center active:scale-95"
                 >
                   🌇 Today
                 </button>
                 <button
                   type="button"
                   onClick={() => setQuickDate('tomorrow')}
-                  className="py-2.5 px-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-xs font-black text-slate-900 text-center active:scale-95 transition-transform"
+                  className="py-2.5 px-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-xs font-black text-slate-900 text-center active:scale-95"
                 >
                   ⚡ Tomorrow
                 </button>
                 <button
                   type="button"
                   onClick={() => setQuickDate('this_weekend')}
-                  className="py-2.5 px-3 bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 rounded-xl text-xs font-black text-emerald-950 text-center active:scale-95 transition-transform"
+                  className="py-2.5 px-3 bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 rounded-xl text-xs font-black text-emerald-950 text-center active:scale-95"
                 >
                   🎉 This Weekend
                 </button>
                 <button
                   type="button"
                   onClick={() => setQuickDate('next_weekend')}
-                  className="py-2.5 px-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-xs font-black text-slate-900 text-center active:scale-95 transition-transform"
+                  className="py-2.5 px-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-xs font-black text-slate-900 text-center active:scale-95"
                 >
                   📅 Next Weekend
                 </button>
               </div>
 
-              {/* Exact Dates */}
-              <div className="grid grid-cols-2 gap-2.5">
+              {/* Exact Date Picker */}
+              <div className="grid grid-cols-2 gap-2 mt-2">
                 <div>
-                  <span className="text-[11px] font-bold text-slate-700 mb-1 block">Start / Meet Date</span>
+                  <span className="text-[10px] font-bold text-slate-600 mb-0.5 block">Start Date</span>
                   <input
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-bold focus:outline-none focus:bg-white focus:border-emerald-600"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-bold focus:outline-none focus:bg-white focus:border-slate-950"
                   />
                 </div>
                 <div>
-                  <span className="text-[11px] font-bold text-slate-700 mb-1 block">End Date (Optional)</span>
+                  <span className="text-[10px] font-bold text-slate-600 mb-0.5 block">End Date (Optional)</span>
                   <input
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-bold focus:outline-none focus:bg-white focus:border-emerald-600"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-bold focus:outline-none focus:bg-white focus:border-slate-950"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Meeting Time Selector (NEW!) */}
+            {/* Time: Free Custom Time + Presets */}
             <div className="pt-2 border-t border-slate-200">
-              <label className="text-xs font-black uppercase tracking-wider text-slate-900 mb-2 block flex items-center justify-between">
-                <span>2. Preferred Time of Day</span>
-                <span className="text-[10px] text-emerald-800 font-bold">Tap to pick</span>
-              </label>
+              <span className="text-xs font-black uppercase tracking-wider text-slate-900 mb-2 block">
+                2. Time (Pick preset or enter any time)
+              </span>
               
-              <div className="space-y-1.5">
-                {TIME_SLOTS.map((slot) => {
-                  const isSelected = meetTime.startsWith(slot.label);
+              <div className="flex flex-wrap gap-1.5 mb-2.5">
+                {TIME_PRESETS.map((t) => {
+                  const isSelected = meetTime === t.label && !customTime.trim();
                   return (
                     <button
-                      key={slot.id}
+                      key={t.label}
                       type="button"
                       onClick={() => {
                         hapticTap();
-                        setMeetTime(`${slot.label} (${slot.time})`);
+                        setMeetTime(t.label);
+                        setCustomTime('');
                       }}
-                      className={`w-full p-2.5 rounded-xl border flex items-center justify-between text-left transition-all cursor-pointer active:scale-98 ${
+                      className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer active:scale-95 flex items-center gap-1.5 ${
                         isSelected
-                          ? '!border-slate-950 !bg-slate-950 !text-white shadow-sm'
-                          : '!border-slate-200 !bg-slate-50 hover:!bg-slate-100 text-slate-900'
+                          ? '!bg-slate-950 !text-white shadow-sm'
+                          : '!bg-slate-100 !text-slate-800 hover:!bg-slate-200 border border-slate-200'
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <span className="text-lg">{slot.icon}</span>
-                        <div>
-                          <div className={`text-xs font-black ${isSelected ? '!text-white' : '!text-slate-950'}`}>
-                            {slot.label}
-                          </div>
-                          <div className={`text-[10px] font-semibold ${isSelected ? '!text-slate-300' : '!text-slate-500'}`}>
-                            {slot.time}
-                          </div>
-                        </div>
-                      </div>
-                      {isSelected && <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />}
+                      <span>{t.icon}</span>
+                      <span>{t.label}</span>
                     </button>
                   );
                 })}
               </div>
+
+              {/* Free-form custom time input */}
+              <div className="relative">
+                <Clock className="w-4 h-4 text-emerald-600 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={customTime}
+                  onChange={(e) => setCustomTime(e.target.value)}
+                  placeholder="Or enter any custom time (e.g. 6:30 PM, Sunset 5:45 PM)..."
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-bold placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-950"
+                />
+              </div>
             </div>
 
-            {/* Spots / Companions */}
+            {/* Companions Count */}
             <div className="pt-2 border-t border-slate-200">
-              <label className="text-xs font-black uppercase tracking-wider text-slate-900 mb-2 block">
-                3. How many companions are you looking for?
-              </label>
+              <span className="text-xs font-black uppercase tracking-wider text-slate-900 mb-2 block">
+                3. Looking for how many companions?
+              </span>
               <div className="flex gap-2">
                 {[1, 2, 3, 4].map((num) => {
                   const isSelected = spotsTotal === num;
@@ -553,7 +538,7 @@ export function CreateTripModal({
                         hapticTap();
                         setSpotsTotal(num);
                       }}
-                      className={`flex-1 py-3 rounded-2xl border text-center text-xs transition-all cursor-pointer active:scale-95 ${
+                      className={`flex-1 py-2.5 rounded-2xl border text-center text-xs transition-all cursor-pointer active:scale-95 ${
                         isSelected
                           ? '!border-slate-950 !bg-slate-950 !text-white font-black shadow-md'
                           : '!border-slate-200 !bg-slate-100 !text-slate-900 hover:!bg-slate-200 font-bold'
@@ -565,15 +550,120 @@ export function CreateTripModal({
                 })}
               </div>
             </div>
+          </div>
+        )}
 
-            {/* Female Only Toggle */}
+        {/* QUESTION 4: Commute & ANY Money / Budget */}
+        {step === 4 && (
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 py-4 space-y-4 animate-fade-in">
+            <div>
+              <h2 className="text-2xl font-black text-slate-950 tracking-tight">
+                Commute & Budget
+              </h2>
+              <p className="text-xs text-slate-600 font-semibold mt-1">
+                Set how you will get there and enter any custom budget.
+              </p>
+            </div>
+
+            {/* Commute */}
+            <div>
+              <span className="text-xs font-black uppercase tracking-wider text-slate-900 mb-2 block">
+                1. How will you meet / travel?
+              </span>
+              <div className="space-y-1.5">
+                {TRANSPORT_CHOICES.map((t) => {
+                  const isSelected = transportType === t.label;
+                  return (
+                    <button
+                      key={t.label}
+                      type="button"
+                      onClick={() => {
+                        hapticTap();
+                        setTransportType(t.label);
+                      }}
+                      className={`w-full p-2.5 rounded-2xl border flex items-center justify-between text-left transition-all cursor-pointer active:scale-98 ${
+                        isSelected
+                          ? '!border-slate-950 !bg-slate-950 !text-white shadow-sm'
+                          : '!border-slate-200 !bg-slate-50 hover:!bg-slate-100 !text-slate-900'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-xl">{t.icon}</span>
+                        <div>
+                          <div className={`text-xs font-black ${isSelected ? '!text-white' : '!text-slate-950'}`}>
+                            {t.label}
+                          </div>
+                          <div className={`text-[10px] font-medium ${isSelected ? '!text-slate-300' : '!text-slate-500'}`}>
+                            {t.desc}
+                          </div>
+                        </div>
+                      </div>
+                      {isSelected && <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Budget: ANY Money / Custom spend */}
+            <div className="pt-2 border-t border-slate-200">
+              <span className="text-xs font-black uppercase tracking-wider text-slate-900 mb-2 block">
+                2. Budget / Spend (Enter any amount)
+              </span>
+
+              {/* Budget Style Quick Chips */}
+              <div className="grid grid-cols-4 gap-1.5 mb-2.5">
+                {[
+                  { id: 'custom', label: 'Custom ₹' },
+                  { id: 'split', label: 'Split 50-50' },
+                  { id: 'free', label: 'Free (₹0)' },
+                  { id: 'treat', label: 'My treat' },
+                ].map((b) => (
+                  <button
+                    key={b.id}
+                    type="button"
+                    onClick={() => {
+                      hapticTap();
+                      setBudgetType(b.id as 'custom' | 'split' | 'free' | 'treat');
+                      if (b.id === 'free') setBudgetAmount('0');
+                    }}
+                    className={`py-2 px-1 rounded-xl text-center text-xs font-black transition-all cursor-pointer active:scale-95 ${
+                      budgetType === b.id
+                        ? '!bg-slate-950 !text-white shadow-sm'
+                        : '!bg-slate-100 !text-slate-800 hover:!bg-slate-200 border border-slate-200'
+                    }`}
+                  >
+                    {b.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Free-form Amount Input (Allows typing ANY money) */}
+              <div className="relative">
+                <span className="text-sm font-black text-slate-600 absolute left-3.5 top-1/2 -translate-y-1/2">
+                  ₹
+                </span>
+                <input
+                  type="number"
+                  value={budgetAmount}
+                  onChange={(e) => {
+                    setBudgetAmount(e.target.value);
+                    setBudgetType('custom');
+                  }}
+                  placeholder="Enter any amount (e.g. 250, 1500, 5000)..."
+                  className="w-full pl-8 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-900 font-bold focus:outline-none focus:bg-white focus:border-slate-950"
+                />
+              </div>
+            </div>
+
+            {/* Female Only Option */}
             {currentUserPersona === 'woman' && (
               <div className="p-3.5 bg-purple-50 border border-purple-200 rounded-2xl flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <Shield className="w-5 h-5 text-purple-600 shrink-0" />
                   <div>
                     <div className="text-xs font-black text-purple-950">Female-Only Plan</div>
-                    <div className="text-[10px] text-purple-700 font-semibold">Only verified women can view and request to join.</div>
+                    <div className="text-[10px] text-purple-700 font-semibold">Only verified women can see and request.</div>
                   </div>
                 </div>
                 <input
@@ -590,153 +680,73 @@ export function CreateTripModal({
           </div>
         )}
 
-        {/* STEP 4: Format & Budget */}
-        {step === 4 && (
-          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-5 space-y-4 animate-fade-in">
-            {/* Format / Transport Mode */}
+        {/* QUESTION 5: Note & Live Preview */}
+        {step === 5 && (
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 py-4 space-y-4 animate-fade-in">
             <div>
-              <label className="text-xs font-black uppercase tracking-wider text-slate-900 mb-2 block">
-                1. Meeting / Commute Format
-              </label>
-              <div className="space-y-1.5">
-                {TRANSPORT_CHOICES.map((t) => {
-                  const isSelected = transportType === t.label;
-                  return (
-                    <button
-                      key={t.label}
-                      type="button"
-                      onClick={() => {
-                        hapticTap();
-                        setTransportType(t.label);
-                      }}
-                      className={`w-full p-2.5 rounded-2xl border flex items-center justify-between text-left transition-all cursor-pointer active:scale-98 ${
-                        isSelected
-                          ? '!border-slate-950 !bg-slate-950 !text-white shadow-sm'
-                          : '!border-slate-200 !bg-slate-50 hover:!bg-slate-100 text-slate-900'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-xl">{t.icon}</span>
-                        <div>
-                          <div className={`text-xs font-black ${isSelected ? '!text-white' : '!text-slate-950'}`}>
-                            {t.label}
-                          </div>
-                          <div className={`text-[10px] font-semibold ${isSelected ? '!text-slate-300' : '!text-slate-500'}`}>{t.desc}</div>
-                        </div>
-                      </div>
-                      {isSelected && <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />}
-                    </button>
-                  );
-                })}
-              </div>
+              <h2 className="text-2xl font-black text-slate-950 tracking-tight">
+                Add a quick note & review
+              </h2>
+              <p className="text-xs text-slate-600 font-semibold mt-1">
+                Tell companions a sentence or two about what to expect.
+              </p>
             </div>
 
-            {/* Budget */}
-            <div className="pt-2 border-t border-slate-200">
-              <label className="text-xs font-black uppercase tracking-wider text-slate-900 mb-2 block">
-                2. Estimated Spend (per person)
-              </label>
-              <div className="grid grid-cols-4 gap-2 mb-2">
-                {[0, 500, 1500, 3000].map((amt) => {
-                  const isSelected = budgetPerDay === amt;
-                  return (
-                    <button
-                      key={amt}
-                      type="button"
-                      onClick={() => {
-                        hapticTap();
-                        setBudgetPerDay(amt);
-                      }}
-                      className={`py-2 rounded-xl border text-xs font-black transition-all cursor-pointer active:scale-95 ${
-                        isSelected
-                          ? '!bg-slate-950 !text-white !border-slate-950 shadow-sm'
-                          : '!bg-slate-100 !text-slate-900 !border-slate-200 hover:!bg-slate-200'
-                      }`}
-                    >
-                      {amt === 0 ? 'Free' : `₹${amt}`}
-                    </button>
-                  );
-                })}
-              </div>
-              <input
-                type="number"
-                value={budgetPerDay}
-                onChange={(e) => setBudgetPerDay(Number(e.target.value))}
-                placeholder="Custom amount (₹)"
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-bold focus:outline-none focus:bg-white focus:border-emerald-600"
-              />
-            </div>
-
-            {/* Description */}
-            <div className="pt-2 border-t border-slate-200">
-              <label className="text-xs font-black uppercase tracking-wider text-slate-900 mb-1.5 block">
-                3. Short Plan Note
-              </label>
+            {/* Short Note */}
+            <div>
               <textarea
                 rows={3}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="e.g. Grabbing cold brews at Blue Tokai, then exploring Church Street art shops. Easygoing vibes!"
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-semibold placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-600 leading-relaxed shadow-sm"
+                placeholder="e.g. Grabbing specialty coffees, checking out art prints, and having great conversation. Easygoing vibes!"
+                className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-900 font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-950 leading-relaxed shadow-sm"
               />
             </div>
-          </div>
-        )}
 
-        {/* STEP 5: Live Review & Instant Publish */}
-        {step === 5 && (
-          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-5 space-y-4 animate-fade-in">
-            <div className="text-center mb-1">
-              <span className="inline-block p-3 rounded-full bg-emerald-100 text-emerald-700 mb-2 shadow-sm animate-icon-bounce">
-                <Sparkles className="w-6 h-6" />
+            {/* Live Bumble Card Preview */}
+            <div>
+              <span className="text-xs font-black uppercase tracking-wider text-slate-900 mb-2 block">
+                Live Card Preview
               </span>
-              <h3 className="text-base font-black text-slate-950">Ready to go live!</h3>
-              <p className="text-xs text-slate-600 font-medium">Here is your plan card as it will appear on the feed:</p>
-            </div>
-
-            {/* Card Preview */}
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-md space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="px-2.5 py-0.5 rounded-full !bg-emerald-600 text-white text-[10px] font-black shadow-sm">
-                  {vibe}
-                </span>
-                {femaleOnly && (
-                  <span className="px-2 py-0.5 rounded-full !bg-purple-600 text-white text-[10px] font-bold flex items-center gap-1">
-                    <Shield className="w-2.5 h-2.5" /> Female-Only
+              <div className="p-4 rounded-3xl bg-white border-2 border-slate-200 shadow-md space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="px-3 py-1 rounded-full !bg-emerald-600 text-white text-[11px] font-black shadow-sm">
+                    {vibe}
                   </span>
-                )}
-                <span className="text-xs font-black text-emerald-800">
-                  {spotsTotal} spot{spotsTotal !== 1 ? 's' : ''} left
-                </span>
+                  {femaleOnly && (
+                    <span className="px-2.5 py-0.5 rounded-full !bg-purple-600 text-white text-[10px] font-bold flex items-center gap-1">
+                      <Shield className="w-2.5 h-2.5" /> Female-Only
+                    </span>
+                  )}
+                  <span className="text-xs font-black text-emerald-800">
+                    {spotsTotal} spot{spotsTotal !== 1 ? 's' : ''} left
+                  </span>
+                </div>
+
+                <div>
+                  <h4 className="text-lg font-black text-slate-950">{resolvedDestination}</h4>
+                  <p className="text-xs text-slate-700 font-bold mt-0.5">
+                    {startDate || 'Upcoming Date'} • ⏰ {resolvedTime} • ₹{resolvedBudgetNumber}/person
+                  </p>
+                </div>
+
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 text-xs text-slate-800 font-medium leading-relaxed">
+                  {description.trim() || 'Excited to hang out and meet new people!'}
+                </div>
               </div>
-
-              <div>
-                <h4 className="text-base font-black text-slate-950">{resolvedDestination}</h4>
-                <p className="text-xs text-slate-700 font-bold mt-0.5">
-                  {startDate || 'Upcoming'} • ⏰ {meetTime} • {transportType} • ₹{budgetPerDay}/person
-                </p>
-              </div>
-
-              <p className="text-xs text-slate-900 bg-slate-50 p-3 rounded-xl border border-slate-200 leading-relaxed font-semibold">
-                {description}
-              </p>
-            </div>
-
-            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-[11px] text-emerald-950 font-semibold">
-              🔒 <strong>Safe Approval Flow</strong>: When companions request to join, you review their profiles and accept before chat unlocks.
             </div>
           </div>
         )}
 
-        {/* Bottom Action Footer */}
-        <div className="p-4 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-slate-200 bg-slate-50 shrink-0">
+        {/* Sticky Bottom Action Button */}
+        <div className="p-5 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-slate-200 bg-white shrink-0">
           {step === 1 && (
             <button
               type="button"
-              onClick={goToStep2}
-              className="btn-primary w-full !rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer touch-manipulation shadow-md"
+              onClick={handleNextFromStep1}
+              className="btn-primary w-full !rounded-2xl text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md"
             >
-              <span>Next: Pick Location & Spot</span>
+              <span>Continue to Spot Style</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           )}
@@ -744,10 +754,10 @@ export function CreateTripModal({
           {step === 2 && (
             <button
               type="button"
-              onClick={goToStep3}
-              className="btn-primary w-full !rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer touch-manipulation shadow-md"
+              onClick={handleNextFromStep2}
+              className="btn-primary w-full !rounded-2xl text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md"
             >
-              <span>Next: Date, Time & Companions</span>
+              <span>Continue to Date & Time</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           )}
@@ -755,10 +765,10 @@ export function CreateTripModal({
           {step === 3 && (
             <button
               type="button"
-              onClick={goToStep4}
-              className="btn-primary w-full !rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer touch-manipulation shadow-md"
+              onClick={handleNextFromStep3}
+              className="btn-primary w-full !rounded-2xl text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md"
             >
-              <span>Next: Format & Budget</span>
+              <span>Continue to Budget & Commute</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           )}
@@ -766,10 +776,10 @@ export function CreateTripModal({
           {step === 4 && (
             <button
               type="button"
-              onClick={goToStep5}
-              className="btn-primary w-full !rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer touch-manipulation shadow-md"
+              onClick={handleNextFromStep4}
+              className="btn-primary w-full !rounded-2xl text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md"
             >
-              <span>Next: Review Plan Preview</span>
+              <span>Preview & Note</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           )}
@@ -779,7 +789,7 @@ export function CreateTripModal({
               type="button"
               disabled={isSubmitting}
               onClick={handleFinalSubmit}
-              className="btn-primary w-full !rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer touch-manipulation shadow-lg"
+              className="btn-primary w-full !rounded-2xl text-sm flex items-center justify-center gap-2 cursor-pointer shadow-lg"
             >
               {isSubmitting ? (
                 <>
