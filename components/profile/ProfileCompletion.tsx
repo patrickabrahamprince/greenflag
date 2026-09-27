@@ -47,24 +47,25 @@ export function ProfileCompletion({ user }: ProfileCompletionProps) {
   const goToDetails = () => { hapticTap(); router.push('/profile/edit/details'); };
 
   return (
-    <div className="w-full mt-2 mb-6">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="flex-1 h-1.5 rounded-full bg-raised/10 overflow-hidden">
-          <div className="h-full bg-gold rounded-full transition-all duration-500" style={{ width: `${percent}%` }} />
-        </div>
-        <span className="text-xs font-semibold text-gold shrink-0">{percent}%</span>
+    <div className="w-full mt-4 mb-6 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+      <div className="flex items-center justify-between gap-3 mb-2">
+        <span className="text-xs font-bold text-ink">Profile Strength</span>
+        <span className="text-xs font-bold text-emerald">{percent}%</span>
       </div>
-      <p className="text-xs text-ink/50 mb-4">Complete your profile to be seen by more people!</p>
+      <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden mb-2">
+        <div className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full transition-all duration-500" style={{ width: `${percent}%` }} />
+      </div>
+      <p className="text-xs text-ink/60 mb-3.5">Complete your profile to unlock more high-quality matches!</p>
       <div className="space-y-2">
         {items.map((item) => (
           <button
             key={item.label}
             onClick={goToDetails}
-            className="w-full flex items-center gap-3 bg-raised/5 border border-raised rounded-2xl px-4 py-4 text-left active:scale-[0.98] transition-transform"
+            className="w-full flex items-center justify-between gap-3 bg-slate-50 hover:bg-slate-100/80 border border-slate-200/70 rounded-xl px-3.5 py-3 text-left active:scale-[0.98] transition-all"
           >
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-ink font-medium">{item.label}</p>
-              <p className="text-xs text-ink/50 mt-0.5">{item.desc}</p>
+              <p className="text-xs font-bold text-ink">{item.label}</p>
+              <p className="text-[11px] text-ink/60 mt-0.5 leading-snug">{item.desc}</p>
             </div>
             <ChevronRight className="w-4 h-4 text-ink/40 shrink-0" />
           </button>

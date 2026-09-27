@@ -544,31 +544,20 @@ export default function DiscoverPage() {
                 maskImage: 'linear-gradient(to top, black 35%, transparent 100%)',
               }}
             />
-
             {/* Bottom scrim: photo is full-bleed behind this, so the info
                 block needs a gradient underlay for the white text to stay
                 legible against whatever's in the shot. */}
-            <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black via-black/75 to-transparent pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 h-4/5 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none" />
 
-            {/* The card now runs the full screen height (photo extends all
-                the way down, with the floating glass nav sitting on top of
-                it) instead of leaving a dead reserved strip below the card
-                for the nav -- pb-32 clears the nav's real footprint (its
-                own height plus env(safe-area-inset-bottom)) from the true
-                bottom of the screen. */}
-            <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 px-6 pb-32 pt-10">
+            <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2.5 px-6 pb-28 pt-8 z-10">
               <div>
-                {/* Name + age on one line, location on its own line below
-                    with a pin glyph -- matches the deck's card typography
-                    (was name/age-and-city stacked as two differently-styled
-                    lines with no location icon). */}
-                <h1 className="font-display text-title text-ink leading-none">
+                <h1 className="font-display text-title text-white leading-none drop-shadow-sm">
                   {p.name}{p.age ? `, ${p.age}` : ''}
                 </h1>
-                <div className="flex items-center gap-3 mt-2 flex-wrap">
+                <div className="flex items-center gap-3 mt-1.5 flex-wrap">
                   {p.city_auto && (
-                    <p className="flex items-center gap-1 font-sans text-label text-ink/70 leading-none">
-                      <MapPin className="w-3.5 h-3.5 shrink-0" />
+                    <p className="flex items-center gap-1 font-sans text-label text-white/80 leading-none">
+                      <MapPin className="w-3.5 h-3.5 shrink-0 text-emerald-400" />
                       {p.city_auto}
                     </p>
                   )}
@@ -576,7 +565,7 @@ export default function DiscoverPage() {
                     <a
                       href={p.instagram_url.startsWith('http') ? p.instagram_url : `https://instagram.com/${p.instagram_url}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="flex items-center gap-1 text-xs text-gold font-medium leading-none"
+                      className="flex items-center gap-1 text-xs text-amber-300 font-medium leading-none"
                     >
                       <Instagram className="w-3.5 h-3.5" />
                       {p.instagram_url.replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '') || 'Instagram'}
@@ -587,23 +576,20 @@ export default function DiscoverPage() {
               {(p.job || p.height) && (
                 <div className="flex items-center gap-4 flex-wrap">
                   {p.job && (
-                    <span className="flex items-center gap-1.5 text-sm text-ink/70 font-medium leading-none">
-                      <Briefcase className="w-3.5 h-3.5 text-ink/40 shrink-0" />
+                    <span className="flex items-center gap-1.5 text-xs text-white/80 font-medium leading-none">
+                      <Briefcase className="w-3.5 h-3.5 text-white/50 shrink-0" />
                       {p.job}
                     </span>
                   )}
                   {p.height && (
-                    <span className="flex items-center gap-1.5 text-sm text-ink/70 font-medium leading-none">
-                      <Ruler className="w-3.5 h-3.5 text-ink/40 shrink-0" />
+                    <span className="flex items-center gap-1.5 text-xs text-white/80 font-medium leading-none">
+                      <Ruler className="w-3.5 h-3.5 text-white/50 shrink-0" />
                       {p.height}
                     </span>
                   )}
                 </div>
               )}
               {(() => {
-                // Card shows at most 5 tags total, not 5 "have" + 3
-                // "values" -- have-interests get priority, values only
-                // fill whatever room is left under that cap.
                 const MAX_CARD_TAGS = 5
                 const shownInterests = (p.interests_have?.length ? p.interests_have : p.interests ?? []).slice(0, MAX_CARD_TAGS)
                 const lookingFor = (p.interests_looking_for?.length ? p.interests_looking_for : p.looking_for_interests ?? [])
@@ -611,21 +597,17 @@ export default function DiscoverPage() {
                   .slice(0, Math.max(0, MAX_CARD_TAGS - shownInterests.length))
                 return (
                   <>
-                    <div className={persona === 'woman' ? 'flex flex-wrap gap-1.5' : 'flex flex-wrap gap-2'}>
+                    <div className={persona === 'woman' ? 'flex flex-wrap gap-1.5' : 'flex flex-wrap gap-1.5'}>
                       {shownInterests.map((interest: string) => {
                         const isMatched = Array.isArray(p.match_reasons) && p.match_reasons.includes(interest);
-                        const sizeClass = persona === 'woman' ? 'px-2.5 py-1 text-xs' : 'px-4 py-2 text-sm';
+                        const sizeClass = 'px-3 py-1 text-xs';
                         return (
                           <span
                             key={interest}
                             className={
                               (isMatched
-                                // Solid Crimson fill needs white text --
-                                // Crimson is dark/saturated (unlike
-                                // Dateasy's light Mindaro, which needed
-                                // dark text here instead).
-                                ? `${sizeClass} rounded-full bg-gold text-ink font-medium shadow-[0_2px_10px_rgba(210,4,45,0.4)] leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-[0_4px_16px_rgba(210,4,45,0.6)] active:scale-95`
-                                : `glass-surface ${sizeClass} rounded-full text-ink font-medium leading-none cursor-pointer transition-all duration-200 hover:scale-110 hover:bg-raised/5 active:scale-95`)
+                                ? `${sizeClass} rounded-full bg-emerald-500 text-black font-bold shadow-sm leading-none`
+                                : `backdrop-blur-md bg-white/20 border border-white/30 ${sizeClass} rounded-full text-white font-medium leading-none`)
                             }
                           >
                             {interest}
@@ -635,11 +617,11 @@ export default function DiscoverPage() {
                     </div>
                     {lookingFor.length > 0 && (
                       <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="text-ink/40 text-xs font-semibold uppercase tracking-wide leading-none">Values</span>
+                        <span className="text-emerald-300 text-[11px] font-semibold uppercase tracking-wide leading-none">Looking for:</span>
                         {lookingFor.map((interest: string) => (
                           <span
                             key={interest}
-                            className="px-2.5 py-1 text-xs rounded-full border border-raised text-ink/70 font-medium leading-none"
+                            className="px-2.5 py-0.5 text-xs rounded-full border border-white/20 text-white/80 font-medium leading-none bg-black/30"
                           >
                             {interest}
                           </span>
@@ -651,25 +633,16 @@ export default function DiscoverPage() {
               })()}
               {p.bio && (
                 <div>
-                  {/* This header used to read "The Standard" on every card,
-                      directly above the bio -- but a Standard is a woman's
-                      3-day set of intentions (standards.woman_id), not a bio,
-                      and men never have one at all. So on a man's card the
-                      label was simply wrong, and on any card it attached the
-                      one word naming this app's core mechanic to its most
-                      generic field. App Review's own 4.3(b) screenshot (Aug
-                      18) shows exactly that: "THE STANDARD" over "Passionate
-                      about outdoor sports and meaningful conversations." */}
-                  <p className="text-gold text-xs font-semibold uppercase tracking-wide mb-1.5 leading-none">About</p>
+                  <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-wider mb-1 leading-none">About</p>
                   <p
-                    className={`text-ink/80 text-base leading-relaxed max-w-md font-light whitespace-pre-line ${expandedBios.has(p.id) ? '' : 'line-clamp-3'}`}
+                    className={`text-white/90 text-sm leading-relaxed max-w-md font-normal whitespace-pre-line drop-shadow-sm ${expandedBios.has(p.id) ? '' : 'line-clamp-2'}`}
                   >
                     {p.bio}
                   </p>
-                  {p.bio.length > 120 && (
+                  {p.bio.length > 100 && (
                     <button
                       onClick={() => toggleBioExpanded(p.id)}
-                      className="text-gold text-xs font-medium mt-1"
+                      className="text-emerald-400 text-xs font-semibold mt-0.5"
                     >
                       {expandedBios.has(p.id) ? 'Show less' : '...more'}
                     </button>
@@ -677,31 +650,31 @@ export default function DiscoverPage() {
                 </div>
               )}
 
-              {/* The prominent banner on this screen emphasizing intentional standards */}
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gold/10 border border-gold/30">
-                <Lock className="w-3.5 h-3.5 text-gold shrink-0" />
-                <p className="text-gold text-xs font-medium leading-snug">
+              {/* Standards Banner */}
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/70 border border-emerald-500/40 backdrop-blur-md self-start">
+                <Lock className="w-3 h-3 text-emerald-400 shrink-0" />
+                <p className="text-emerald-200 text-[11px] font-medium leading-tight">
                   {persona === 'woman'
-                    ? '3-Day Standard: Chat unlocks only after he completes your 3 intentions'
-                    : '3-Day Standard: Chat unlocks only after you complete her 3 intentions'}
+                    ? 'Chat unlocks after he completes your 3 intentions'
+                    : 'Chat unlocks after you complete her 3 intentions'}
                 </p>
               </div>
 
-              <div className={persona === 'woman' ? 'flex items-center gap-4 pt-2 shrink-0' : 'flex items-center justify-center gap-4 pt-2 shrink-0'}>
+              <div className="flex items-center justify-center gap-3 pt-1 shrink-0">
                 {persona === 'woman' ? (
                   <>
                     <button
                       onClick={() => handleBegin(p.id)}
                       disabled={likingId === p.id}
                       aria-label="View Profile"
-                      className="btn-primary flex-1 h-12 flex items-center justify-center gap-1.5"
+                      className="btn-primary flex-1 h-11 flex items-center justify-center gap-1.5 text-xs font-bold"
                     >
                       {likingId === p.id ? (
-                        <Loader2 className="w-4 h-4 animate-spin text-ink" />
+                        <Loader2 className="w-4 h-4 animate-spin text-white" />
                       ) : (
                         <>
-                          <Flag className="w-4 h-4 text-ink" fill="currentColor" />
-                          <span className="text-ink text-xs uppercase tracking-wide font-display font-bold">View Profile</span>
+                          <Flag className="w-4 h-4 text-white" fill="currentColor" />
+                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">View Profile</span>
                         </>
                       )}
                     </button>
@@ -709,59 +682,59 @@ export default function DiscoverPage() {
                       onClick={() => handleNudge(p.id)}
                       disabled={nudgingId === p.id}
                       aria-label="Nudge"
-                      className="glass-surface flex-1 h-12 rounded-full flex items-center justify-center gap-1.5 active:scale-95 transition-all disabled:opacity-50"
+                      className="bg-white/20 border border-white/30 text-white backdrop-blur-md flex-1 h-11 rounded-full flex items-center justify-center gap-1.5 active:scale-95 transition-all disabled:opacity-50 text-xs font-bold"
                     >
                       {nudgingId === p.id ? (
-                        <Loader2 className="w-4 h-4 animate-spin text-ink" />
+                        <Loader2 className="w-4 h-4 animate-spin text-white" />
                       ) : (
                         <>
-                          <Bell className="w-4 h-4 text-ink" />
-                          <span className="text-ink text-xs uppercase tracking-wide font-display font-bold">Nudge</span>
+                          <Bell className="w-4 h-4 text-white" />
+                          <span className="text-white text-xs uppercase tracking-wide font-display font-bold">Nudge</span>
                         </>
                       )}
                     </button>
                     <button
                       onClick={() => { hapticTap(); setBlockReportModalId(p.id); setBlockReportModalName(p.name) }}
                       aria-label="More options"
-                      className="glass-surface w-12 h-12 rounded-full flex items-center justify-center active:scale-95 transition-all"
+                      className="bg-white/20 border border-white/30 text-white backdrop-blur-md w-11 h-11 rounded-full flex items-center justify-center active:scale-95 transition-all"
                     >
-                      <MoreVertical className="w-4 h-4 text-ink" />
+                      <MoreVertical className="w-4 h-4 text-white" />
                     </button>
                   </>
                 ) : (
                   <>
                     <IconButton
-                      icon={<ChevronRight className="w-5 h-5" />}
+                      icon={<ChevronRight className="w-5 h-5 text-white" />}
                       label="Skip"
                       variant="dark"
                       onClick={() => { hapticTap(); handlePass(p.id, i) }}
-                      className="shrink-0"
+                      className="shrink-0 !w-11 !h-11 bg-white/20 border border-white/30 text-white"
                     />
                     <IconButton
-                      icon={<Gift className="w-5 h-5" />}
+                      icon={<Gift className="w-5 h-5 text-white" />}
                       label="Send Gift"
                       variant="lavender"
                       onClick={() => { hapticTap(); openGiftPicker(p.id) }}
-                      className="shrink-0"
+                      className="shrink-0 !w-11 !h-11 bg-purple-500/40 border border-purple-300/50 text-white"
                     />
                     <button
                       onClick={() => { hapticDecision(); setConfirmProfileId(p.id) }}
                       disabled={likingId === p.id}
                       aria-label="Meet Her Standard"
-                      className="w-16 h-16 rounded-full flex items-center justify-center active:scale-[0.98] transition-all duration-300 ease-out disabled:opacity-50 shrink-0 bg-emerald-600 shadow-[0_0_25px_rgba(16,185,129,0.4)] hover:bg-emerald-500"
+                      className="w-14 h-14 rounded-full flex items-center justify-center active:scale-[0.95] transition-all duration-200 ease-out disabled:opacity-50 shrink-0 bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:bg-emerald-400"
                     >
                       {likingId === p.id ? (
-                        <Loader2 className="w-6 h-6 animate-spin text-white" />
+                        <Loader2 className="w-5 h-5 animate-spin text-black" />
                       ) : (
-                        <Flag className="w-7 h-7 text-white" fill="currentColor" />
+                        <Flag className="w-6 h-6 text-black" fill="currentColor" />
                       )}
                     </button>
                     <button
                       onClick={() => { hapticTap(); setBlockReportModalId(p.id); setBlockReportModalName(p.name) }}
                       aria-label="More options"
-                      className="glass-surface w-12 h-12 rounded-full flex items-center justify-center active:scale-95 transition-all shrink-0"
+                      className="bg-white/20 border border-white/30 text-white backdrop-blur-md w-11 h-11 rounded-full flex items-center justify-center active:scale-95 transition-all shrink-0"
                     >
-                      <MoreVertical className="w-4 h-4 text-ink" />
+                      <MoreVertical className="w-4 h-4 text-white" />
                     </button>
                   </>
                 )}
