@@ -12,10 +12,11 @@
    -- no radial glow, depth comes from the elevation ramp (well/base/
    raised/card/overlay) alone. */
 html, body {
-  background-color: #080511 !important;
-  background-image: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.05) 0%, transparent 40%) !important;
+  background-color: #F8FAFC !important;
+  background-image: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.06) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(241, 245, 249, 0.8) 0%, transparent 40%) !important;
   background-repeat: no-repeat !important;
   background-attachment: fixed !important;
+  color: #0F172A !important;
 }
 /* Without this, iOS Safari's rubber-band bounce at the top/bottom of a
    normal document-scroll page visually drags `position: fixed` elements
@@ -71,7 +72,7 @@ body.min-h-dvh::after {
   }
 
   ::selection {
-    @apply bg-emerald/30 text-ink;
+    @apply bg-emerald/20 text-ink;
   }
 
   .font-display {
@@ -100,48 +101,48 @@ body.min-h-dvh::after {
 
   .btn-primary:hover {
     background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
-    box-shadow: 0 6px 28px -2px rgba(16, 185, 129, 0.6);
+    box-shadow: 0 6px 28px -2px rgba(16, 185, 129, 0.4);
   }
 
-  /* Secondary: Frosted dark glass with crisp border */
+  /* Secondary: Frosted clean light glass with crisp border */
   .btn-secondary {
-    @apply relative text-white font-medium rounded-pill px-5 py-2.5
+    @apply relative text-ink font-medium rounded-pill px-5 py-2.5
            flex items-center justify-center gap-2
-           text-sm backdrop-blur-xl shadow-flat-dark
+           text-sm shadow-sm
            transition-all duration-200 ease-out transform-gpu
            active:scale-[0.96]
            disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100;
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: #FFFFFF;
+    border: 1px solid rgba(15, 23, 42, 0.1);
     will-change: transform;
   }
 
   .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.25);
+    background: #F8FAFC;
+    border-color: rgba(15, 23, 42, 0.2);
   }
 
   /* Tertiary / Ghost: Translucent glass border */
   .btn-ghost {
     @apply text-ink font-display font-medium rounded-pill px-6
            min-h-[44px] flex items-center justify-center
-           text-label border border-white/20
+           text-label border border-black/10
            transition-all duration-200 ease-out transform-gpu
            active:scale-[0.97]
            disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(15, 23, 42, 0.03);
     will-change: transform;
   }
 
   .btn-ghost:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.35);
+    background: rgba(15, 23, 42, 0.06);
+    border-color: rgba(15, 23, 42, 0.2);
   }
 
   .btn-danger {
     @apply relative text-white font-display font-bold rounded-pill px-8
            min-h-[52px] flex items-center justify-center gap-2
-           text-label shadow-flat-dark
+           text-label shadow-sm
            transition-all duration-200 ease-out transform-gpu
            active:scale-[0.97]
            disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100;
@@ -154,18 +155,18 @@ body.min-h-dvh::after {
     background: linear-gradient(135deg, #F87171 0%, #DC2626 100%);
   }
 
-  /* Cards -- Luxury frosted glass with subtle depth and border glow */
+  /* Cards -- Luxury frosted clean white with subtle depth and border */
   .card {
-    @apply bg-card/90 border border-white/10 rounded-2xl p-6
-           backdrop-blur-xl shadow-glass-card
+    @apply bg-white border border-black/[0.08] rounded-2xl p-6
+           shadow-sm
            transition-all duration-200 ease-out transform-gpu;
     will-change: transform, border-color, box-shadow;
   }
 
-  /* Confirm/report/block-style modal dialogs -- Ultra-luxury glassmorphism */
+  /* Confirm/report/block-style modal dialogs -- Ultra-luxury light glassmorphism */
   .dialog-card {
-    @apply border border-white/15 rounded-3xl p-8 bg-card/95
-           shadow-2xl backdrop-blur-2xl
+    @apply border border-black/[0.08] rounded-3xl p-8 bg-white
+           shadow-2xl
            transition-all duration-200 ease-out transform-gpu;
     will-change: transform, opacity;
   }
@@ -176,10 +177,10 @@ body.min-h-dvh::after {
 
   .input {
     @apply w-full rounded-2xl px-4 py-3.5
-           text-ink placeholder:text-ink/35 bg-well/90
-           border border-white/10 backdrop-blur-md
+           text-ink placeholder:text-ink/40 bg-well
+           border border-black/[0.08]
            transition-all duration-200 ease-out
-           focus:outline-none focus:border-emerald focus:ring-2 focus:ring-emerald/25;
+           focus:outline-none focus:border-emerald focus:bg-white focus:ring-2 focus:ring-emerald/20;
   }
 
   /* Hide number input spinners */
@@ -203,25 +204,22 @@ body.min-h-dvh::after {
   }
 
   /* Chrome/Safari force a yellow background on autofilled inputs unless
-     the inset box-shadow trick below overrides it -- transition-delay is
-     the standard way to fight the UA's own autofill styles instead of the
-     background color, since -webkit-text-fill-color/box-shadow apply
-     immediately but the browser re-asserts its style on a slight delay. */
+     the inset box-shadow trick below overrides it */
   .input:-webkit-autofill,
   .input:-webkit-autofill:hover,
   .input:-webkit-autofill:focus {
-    -webkit-text-fill-color: #F5F5DC;
-    -webkit-box-shadow: 0 0 0px 1000px #1a1a2e inset;
-    box-shadow: 0 0 0px 1000px #1a1a2e inset;
+    -webkit-text-fill-color: #0F172A;
+    -webkit-box-shadow: 0 0 0px 1000px #F1F5F9 inset;
+    box-shadow: 0 0 0px 1000px #F1F5F9 inset;
     transition: background-color 9999s ease-in-out 0s;
   }
 
   .input-error {
-    @apply border-[#D2042D] focus:border-[#D2042D];
+    @apply border-[#EF4444] focus:border-[#EF4444];
   }
 
   .text-gradient {
-    background: linear-gradient(135deg, #D2042D 0%, #FFFFFF 60%, #45050C 100%);
+    background: linear-gradient(135deg, #059669 0%, #0F172A 60%, #064E3B 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -237,17 +235,9 @@ body.min-h-dvh::after {
 
   .blur-bg {
     @apply backdrop-blur-xl;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(255, 255, 255, 0.85);
   }
 
-  /* Layout utilities only -- deliberately no background here. Every one
-     of these sits directly on `body` with nothing opaque in between, so
-     `body`'s own single glow layer (below) already shows through; giving
-     each page its own copy of the same background was what caused the
-     "two halves" split (a per-page fixed layer and body's fixed layer,
-     both real but subtly inconsistent under Android WebView's fixed+
-     scroll compositing, showing through at different moments). One
-     background, defined once, can't disagree with itself. */
   .page-container {
     @apply min-h-dvh max-w-app mx-auto px-8 pt-safe-top pb-24;
   }
@@ -278,16 +268,16 @@ body.min-h-dvh::after {
   .hairline {
     height: 1px;
     width: 100%;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(15, 23, 42, 0.08);
   }
 
   /* Floating luxury pill with frosted glass and subtle emerald border highlight */
   .nav-glass {
-    background: rgba(14, 10, 26, 0.75);
+    background: rgba(255, 255, 255, 0.90);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.7), 0 0 20px -4px rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.12), 0 2px 8px -2px rgba(16, 185, 129, 0.1);
   }
 
   /* Rotating emerald comet ring around the active tab disc */
@@ -317,14 +307,12 @@ body.min-h-dvh::after {
   }
 
   .glass-surface {
-    @apply backdrop-blur-2xl border border-white/10;
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
-      rgba(14, 10, 24, 0.75);
+    @apply backdrop-blur-2xl border border-black/[0.08];
+    background: rgba(255, 255, 255, 0.88);
   }
 
   .gold-border-left {
-    border-left: 2px solid #10B981;
+    border-left: 2px solid #059669;
   }
 
   .match-arc {
@@ -339,13 +327,13 @@ body.min-h-dvh::after {
 
   .match-arc-bg {
     fill: none;
-    stroke: rgba(255, 255, 255, 0.1);
+    stroke: rgba(15, 23, 42, 0.1);
     stroke-width: 2;
   }
 
   .match-arc-fill {
     fill: none;
-    stroke: #10B981;
+    stroke: #059669;
     stroke-width: 2;
     stroke-linecap: round;
     transition: stroke-dashoffset 1s ease-out;

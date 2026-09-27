@@ -8,37 +8,37 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // --- GreenFlag Luxury Emerald & Obsidian Velvet design system tokens ---
+        // --- GreenFlag Luxury Emerald & Clean Light Pearlescent design system tokens ---
         // Palette
-        crimson: '#10B981',     // GreenFlag emerald primary
-        wine: '#064E3B',        // Deep emerald wine
-        'rose-tint': '#FFFFFF',
-        // Elevation ramp: deep obsidian velvet environment, frosted glass depth
-        well: '#0D0818',
-        base: '#080511',
-        raised: '#1A132B',
-        card: '#120D22',
-        overlay: '#090612',
-        'ink-dark': '#080511',
+        crimson: '#059669',     // GreenFlag emerald primary
+        wine: '#064E3B',        // Deep emerald accent
+        'rose-tint': '#0F172A',
+        // Elevation ramp: luxury clean light environment, frosted glass depth
+        well: '#F1F5F9',
+        base: '#F8FAFC',
+        raised: '#FFFFFF',
+        card: '#FFFFFF',
+        overlay: '#0F172A',
+        'ink-dark': '#020617',
 
         // --- Core & legacy token mappings ---
-        cream: '#080511',
-        ink: '#FFFFFF',
-        black: '#0D0818',
-        'black-deep': '#06040C',
-        gold: '#F59E0B',        // Radiant Amber/Gold for coins and badges
-        'gold-light': '#FDE047',
+        cream: '#F8FAFC',
+        ink: '#0F172A',
+        black: '#0F172A',
+        'black-deep': '#020617',
+        gold: '#D97706',        // Warm Amber/Gold for coins and badges
+        'gold-light': '#F59E0B',
         'gold-dark': '#B45309',
-        emerald: '#10B981',
-        'emerald-glow': '#34D399',
-        blush: '#10B981',
+        emerald: '#059669',
+        'emerald-glow': '#10B981',
+        blush: '#059669',
         violet: '#6366F1',
         lavender: '#8B5CF6',
-        surface: '#120D22',
-        'surface-light': '#1A132B',
-        border: 'rgba(255, 255, 255, 0.1)',
-        muted: 'rgba(255, 255, 255, 0.65)',
-        indigo: '#10B981',
+        surface: '#FFFFFF',
+        'surface-light': '#F1F5F9',
+        border: 'rgba(15, 23, 42, 0.08)',
+        muted: 'rgba(15, 23, 42, 0.60)',
+        indigo: '#059669',
       },
       fontFamily: {
         // Apple SF Pro for admin panel
@@ -72,18 +72,18 @@ module.exports = {
         'widest-xl': '0.25em',
       },
       boxShadow: {
-        'glow-crimson': '0 4px 24px -2px rgba(16,185,129,0.45)',
-        'glow-crimson-sm': '0 2px 14px -2px rgba(16,185,129,0.3)',
-        'glow-emerald': '0 4px 24px -2px rgba(16,185,129,0.45)',
-        'glow-emerald-lg': '0 8px 32px -4px rgba(16,185,129,0.6)',
-        'glow-gold': '0 4px 20px -2px rgba(245,158,11,0.4)',
-        'glow-wine': '0 0 24px -10px rgba(6,78,59,0.7)',
-        'flat-dark': '0 4px 14px rgba(0,0,0,0.4)',
-        'depth-sm': '0 2px 10px rgba(0,0,0,0.3)',
-        'depth-md': '0 4px 20px rgba(0,0,0,0.4)',
-        'depth-lg': '0 8px 30px rgba(0,0,0,0.5)',
-        'depth-xl': '0 12px 40px rgba(0,0,0,0.6)',
-        'glass-card': '0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 1px 0 0 rgba(255, 255, 255, 0.08)',
+        'glow-crimson': '0 4px 20px -2px rgba(5,150,105,0.3)',
+        'glow-crimson-sm': '0 2px 12px -2px rgba(5,150,105,0.2)',
+        'glow-emerald': '0 4px 20px -2px rgba(5,150,105,0.3)',
+        'glow-emerald-lg': '0 8px 30px -4px rgba(5,150,105,0.4)',
+        'glow-gold': '0 4px 20px -2px rgba(217,119,6,0.3)',
+        'glow-wine': '0 0 20px -10px rgba(6,78,59,0.4)',
+        'flat-dark': '0 2px 8px rgba(15,23,42,0.08)',
+        'depth-sm': '0 1px 3px rgba(15,23,42,0.06)',
+        'depth-md': '0 4px 14px rgba(15,23,42,0.08)',
+        'depth-lg': '0 8px 24px rgba(15,23,42,0.1)',
+        'depth-xl': '0 12px 36px rgba(15,23,42,0.12)',
+        'glass-card': '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.04), inset 0 1px 0 0 rgba(255, 255, 255, 0.8)',
       },
       animation: {
         'fade-in': 'fadeIn 200ms cubic-bezier(0.16, 1, 0.3, 1)',

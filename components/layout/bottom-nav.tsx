@@ -62,8 +62,8 @@ export function BottomNav() {
                     className={cn(
                       'flex items-center justify-center rounded-2xl transition-all duration-300',
                       active
-                        ? 'w-10 h-10 bg-emerald/20 border border-emerald/40 text-emerald shadow-glow-emerald'
-                        : 'w-9 h-9 text-white/40 hover:text-white/80 hover:bg-white/5'
+                        ? 'w-10 h-10 bg-emerald/15 border border-emerald/30 text-emerald shadow-sm'
+                        : 'w-9 h-9 text-ink/40 hover:text-ink/80 hover:bg-black/5'
                     )}
                   >
                     <tab.icon
@@ -72,7 +72,7 @@ export function BottomNav() {
                     />
                   </div>
                   {isMessages && unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 min-w-[18px] h-4.5 px-1 bg-emerald text-black font-extrabold text-[10px] rounded-full flex items-center justify-center shadow-glow-emerald border border-white/30 animate-pulse">
+                    <span className="absolute -top-1 -right-1 min-w-[18px] h-4.5 px-1 bg-emerald text-white font-extrabold text-[10px] rounded-full flex items-center justify-center shadow-sm border border-white animate-pulse">
                       {unreadCount > 99 ? '99+' : unreadCount}
                     </span>
                   )}
@@ -80,7 +80,7 @@ export function BottomNav() {
                 <span
                   className={cn(
                     'text-[10px] tracking-tight mt-1 transition-colors duration-200 font-medium',
-                    active ? 'text-emerald font-bold' : 'text-white/40 group-hover:text-white/70'
+                    active ? 'text-emerald font-bold' : 'text-ink/45 group-hover:text-ink/75'
                   )}
                 >
                   {tab.name}

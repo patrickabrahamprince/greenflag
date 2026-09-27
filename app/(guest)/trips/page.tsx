@@ -132,28 +132,28 @@ export default function TripsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white pb-28 max-w-app mx-auto px-4 pt-4">
+    <div className="min-h-screen screen-gradient text-ink pb-28 max-w-app mx-auto px-4 pt-4">
       
       {/* Top Header */}
-      <header className="flex items-center justify-between py-2 border-b border-white/5 mb-4">
+      <header className="flex items-center justify-between py-2 border-b border-black/[0.06] mb-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-black tracking-tight text-white flex items-center gap-1.5">
+            <h1 className="text-2xl font-black tracking-tight text-ink flex items-center gap-1.5">
               <span>Trips</span>
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             </h1>
           </div>
-          <p className="text-xs text-white/60 font-medium">Meet new people for any trip. Never travel alone.</p>
+          <p className="text-xs text-ink/60 font-medium">Meet new people for any trip. Never travel alone.</p>
         </div>
 
         <div className="flex items-center gap-2.5">
           <Link
             href="/notifications"
-            className="relative w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/70 transition-colors"
+            className="relative w-9 h-9 rounded-full bg-well hover:bg-black/5 flex items-center justify-center text-ink/70 transition-colors"
           >
             <Bell className="w-4 h-4" />
             {unreadCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[15px] h-3.5 px-1 bg-emerald-500 rounded-full flex items-center justify-center text-[9px] font-bold text-black">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[15px] h-3.5 px-1 bg-emerald-500 rounded-full flex items-center justify-center text-[9px] font-bold text-white">
                 {unreadCount > 99 ? '99+' : unreadCount}
               </span>
             )}
@@ -163,7 +163,7 @@ export default function TripsPage() {
               hapticTap();
               setIsCreateOpen(true);
             }}
-            className="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-black font-bold text-xs rounded-full flex items-center gap-1.5 shadow-[0_2px_12px_rgba(16,185,129,0.3)] transition-all"
+            className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-xs rounded-full flex items-center gap-1.5 shadow-sm transition-all"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>New Trip</span>
@@ -172,7 +172,7 @@ export default function TripsPage() {
       </header>
 
       {/* Tabs: Explore vs My Trips */}
-      <div className="flex gap-2 p-1 bg-white/5 rounded-2xl mb-4">
+      <div className="flex gap-2 p-1 bg-well rounded-2xl mb-4">
         <button
           onClick={() => {
             hapticTap();
@@ -180,8 +180,8 @@ export default function TripsPage() {
           }}
           className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
             activeTab === 'explore'
-              ? 'bg-emerald-500 text-black shadow-sm'
-              : 'text-white/60 hover:text-white'
+              ? 'bg-emerald-600 text-white shadow-sm'
+              : 'text-ink/60 hover:text-ink'
           }`}
         >
           Explore Trips
@@ -193,8 +193,8 @@ export default function TripsPage() {
           }}
           className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
             activeTab === 'my-trips'
-              ? 'bg-emerald-500 text-black shadow-sm'
-              : 'text-white/60 hover:text-white'
+              ? 'bg-emerald-600 text-white shadow-sm'
+              : 'text-ink/60 hover:text-ink'
           }`}
         >
           My Trips & Requests
@@ -206,15 +206,15 @@ export default function TripsPage() {
         <div className="space-y-4">
           
           {/* Travel Hero Banner */}
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-emerald-500/5 to-transparent border border-emerald-500/25 relative overflow-hidden">
-            <div className="flex items-center gap-2 text-emerald-400 text-[11px] font-bold uppercase tracking-wider mb-1">
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent border border-emerald-500/20 relative overflow-hidden">
+            <div className="flex items-center gap-2 text-emerald-700 text-[11px] font-bold uppercase tracking-wider mb-1">
               <span>✈️</span>
               <span>Any Trip • Any Vibe</span>
             </div>
-            <h2 className="text-base font-display font-bold text-white mb-1">
+            <h2 className="text-base font-display font-bold text-ink mb-1">
               Meet New People for Any Adventure
             </h2>
-            <p className="text-xs text-white/70 leading-relaxed">
+            <p className="text-xs text-ink/70 leading-relaxed">
               Road trips, beach escapes, mountain treks, cafe crawls, or camping — connect with verified travelers and go together.
             </p>
           </div>
@@ -228,8 +228,8 @@ export default function TripsPage() {
               }}
               className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
                 selectedDestination === 'all'
-                  ? 'bg-white text-black font-semibold'
-                  : 'bg-white/5 text-white/70 hover:bg-white/10'
+                  ? 'bg-ink text-white font-semibold'
+                  : 'bg-white border border-black/[0.08] text-ink/70 hover:bg-well'
               }`}
             >
               All Destinations
@@ -245,8 +245,8 @@ export default function TripsPage() {
                   }}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
                     isSelected
-                      ? 'bg-emerald-500 text-black font-semibold shadow-[0_0_12px_rgba(16,185,129,0.3)]'
-                      : 'bg-white/5 text-white/70 hover:bg-white/10'
+                      ? 'bg-emerald-600 text-white font-semibold shadow-sm'
+                      : 'bg-white border border-black/[0.08] text-ink/70 hover:bg-well'
                   }`}
                 >
                   {dest.name}
@@ -267,8 +267,8 @@ export default function TripsPage() {
                   }}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
                     selectedVibe === vibe
-                      ? 'bg-white/20 text-white font-semibold'
-                      : 'bg-white/5 text-white/50 hover:text-white/80'
+                      ? 'bg-ink text-white font-semibold'
+                      : 'bg-white border border-black/[0.08] text-ink/60 hover:text-ink'
                   }`}
                 >
                   {vibe === 'all' ? 'All Vibes' : vibe}
@@ -283,8 +283,8 @@ export default function TripsPage() {
               }}
               className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold flex items-center gap-1 shrink-0 transition-all ${
                 femaleOnlyFilter
-                  ? 'bg-purple-500/25 border border-purple-400/50 text-purple-300'
-                  : 'bg-white/5 text-white/60 hover:text-white border border-white/5'
+                  ? 'bg-purple-100 border border-purple-300 text-purple-800'
+                  : 'bg-white text-ink/70 hover:text-ink border border-black/[0.08]'
               }`}
             >
               <Shield className="w-3 h-3" />
@@ -295,14 +295,14 @@ export default function TripsPage() {
           {/* Trips Feed Cards */}
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-3">
-              <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
-              <p className="text-xs text-white/50">Finding weekend companions...</p>
+              <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
+              <p className="text-xs text-ink/50">Finding weekend companions...</p>
             </div>
           ) : trips.length === 0 ? (
-            <div className="text-center py-16 bg-white/[0.02] border border-white/5 rounded-3xl p-6">
-              <Compass className="w-12 h-12 text-white/20 mx-auto mb-3" />
-              <h3 className="text-base font-bold text-white">No trips found</h3>
-              <p className="text-xs text-white/50 mt-1 max-w-xs mx-auto">
+            <div className="text-center py-16 bg-white border border-black/[0.08] rounded-3xl p-6 shadow-sm">
+              <Compass className="w-12 h-12 text-ink/20 mx-auto mb-3" />
+              <h3 className="text-base font-bold text-ink">No trips found</h3>
+              <p className="text-xs text-ink/50 mt-1 max-w-xs mx-auto">
                 No trips match your filters. Be the first to post a trip for this destination!
               </p>
               <button
@@ -310,7 +310,7 @@ export default function TripsPage() {
                   hapticTap();
                   setIsCreateOpen(true);
                 }}
-                className="mt-4 px-4 py-2 bg-emerald-500 text-black font-bold text-xs rounded-xl shadow-md"
+                className="mt-4 px-4 py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-sm hover:bg-emerald-500"
               >
                 + Create Trip
               </button>
@@ -330,7 +330,7 @@ export default function TripsPage() {
                       hapticTap();
                       setSelectedTripDetails(trip);
                     }}
-                    className="card !p-0 overflow-hidden cursor-pointer transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] transform-gpu shadow-lg group border-white/10 hover:border-emerald/40"
+                    className="card !p-0 overflow-hidden cursor-pointer transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] transform-gpu shadow-sm group border-black/[0.08] hover:border-emerald/40 bg-white"
                   >
                     {/* Card Hero Image */}
                     <div className="relative h-36 w-full overflow-hidden">
@@ -341,15 +341,15 @@ export default function TripsPage() {
                         sizes="400px"
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#121216] via-transparent to-black/50" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40" />
 
                       {/* Top Badges */}
                       <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/90 backdrop-blur-sm text-black text-[10px] font-black">
+                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-600 backdrop-blur-sm text-white text-[10px] font-black">
                           {trip.vibe}
                         </span>
                         {trip.female_only && (
-                          <span className="px-2 py-0.5 rounded-full bg-purple-600/90 backdrop-blur-sm text-white text-[10px] font-bold flex items-center gap-1">
+                          <span className="px-2 py-0.5 rounded-full bg-purple-600 backdrop-blur-sm text-white text-[10px] font-bold flex items-center gap-1">
                             <Shield className="w-2.5 h-2.5" /> Female-Only
                           </span>
                         )}
@@ -360,18 +360,18 @@ export default function TripsPage() {
                         <h3 className="text-xl font-black text-white drop-shadow-md">
                           {trip.destination}
                         </h3>
-                        <p className="text-[11px] text-white/80 font-medium">
+                        <p className="text-[11px] text-white/90 font-medium">
                           {trip.start_date} • {trip.transport_type || 'Ride Split'}
                         </p>
                       </div>
                     </div>
 
                     {/* Card Details */}
-                    <div className="p-4 space-y-3">
+                    <div className="p-4 space-y-3 bg-white">
                       {/* Host & Spots Row */}
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2.5">
-                          <div className="relative w-8 h-8 rounded-full overflow-hidden border border-emerald-500/40 bg-neutral-800 shrink-0">
+                          <div className="relative w-8 h-8 rounded-full overflow-hidden border border-emerald-500/40 bg-well shrink-0">
                             {trip.host?.photos?.[0] ? (
                               <Image
                                 src={trip.host.photos[0]}
@@ -381,38 +381,38 @@ export default function TripsPage() {
                                 className="object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-emerald-400 font-bold text-xs">
+                              <div className="w-full h-full flex items-center justify-center text-emerald-700 font-bold text-xs">
                                 {trip.host?.name?.charAt(0) || 'H'}
                               </div>
                             )}
                           </div>
                           <div>
-                            <div className="text-xs font-bold text-white leading-tight">
+                            <div className="text-xs font-bold text-ink leading-tight">
                               {trip.host?.name}
                             </div>
-                            <div className="text-[10px] text-white/50">
+                            <div className="text-[10px] text-ink/50">
                               {trip.host?.city || 'Bangalore'}
                             </div>
                           </div>
                         </div>
 
                         <div className="text-right">
-                          <div className="text-xs font-extrabold text-emerald-400">
+                          <div className="text-xs font-extrabold text-emerald-700">
                             {trip.spots_available} spot{trip.spots_available !== 1 ? 's' : ''} left
                           </div>
-                          <div className="text-[10px] text-white/50">₹{trip.budget_per_day}/day</div>
+                          <div className="text-[10px] text-ink/50">₹{trip.budget_per_day}/day</div>
                         </div>
                       </div>
 
                       {/* Description Preview */}
-                      <p className="text-xs text-white/70 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-ink/70 line-clamp-2 leading-relaxed">
                         {trip.description}
                       </p>
 
                       {/* Bottom Action */}
-                      <div className="pt-1 flex items-center justify-between border-t border-white/5">
-                        <span className="text-[11px] text-white/40">Safe • Approval required</span>
-                        <span className="text-xs font-bold text-emerald-400 group-hover:text-emerald-300 flex items-center gap-1">
+                      <div className="pt-2 flex items-center justify-between border-t border-black/[0.06]">
+                        <span className="text-[11px] text-ink/50">Safe • Approval required</span>
+                        <span className="text-xs font-bold text-emerald-700 group-hover:text-emerald-800 flex items-center gap-1">
                           <span>View Plan</span>
                           <span>&rarr;</span>
                         </span>

@@ -57,7 +57,7 @@ export function CoinBalance({ balance }: CoinBalanceProps) {
           {displayed.toLocaleString()}
         </p>
       </div>
-      <p className="text-xs font-medium text-white/50 uppercase tracking-widest mt-1">Available Coins</p>
+      <p className="text-xs font-semibold text-ink/50 uppercase tracking-widest mt-1">Available Coins</p>
     </div>
   );
 }

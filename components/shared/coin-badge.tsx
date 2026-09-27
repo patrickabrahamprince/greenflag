@@ -16,17 +16,17 @@ export function CoinBadge({ onClick, className }: CoinBadgeProps) {
     <button
       onClick={onClick}
       className={cn(
-        'group relative flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-display font-bold text-white',
-        'bg-white/[0.08] hover:bg-white/[0.14] border border-white/15 backdrop-blur-xl',
-        'shadow-[0_2px_12px_rgba(0,0,0,0.4)] hover:shadow-glow-gold hover:border-gold/40',
+        'group relative flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-display font-bold text-ink',
+        'bg-white hover:bg-well border border-black/[0.08] backdrop-blur-xl',
+        'shadow-sm hover:border-gold/40',
         'transition-all duration-200 active:scale-95',
         className
       )}
     >
-      <div className="w-4 h-4 rounded-full bg-gold/20 flex items-center justify-center text-gold">
-        <Coins className="w-2.5 h-2.5 text-gold" />
+      <div className="w-4 h-4 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+        <Coins className="w-2.5 h-2.5 text-amber-600" />
       </div>
-      <span className="tracking-tight text-white font-mono">{balance.toLocaleString()}</span>
+      <span className="tracking-tight text-ink font-mono">{balance.toLocaleString()}</span>
     </button>
   );
 }
