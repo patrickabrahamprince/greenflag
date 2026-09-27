@@ -330,7 +330,7 @@ export default function TripsPage() {
                       hapticTap();
                       setSelectedTripDetails(trip);
                     }}
-                    className="bg-[#121216] border border-white/10 hover:border-emerald-500/30 rounded-3xl overflow-hidden cursor-pointer transition-all duration-200 hover:-translate-y-0.5 shadow-lg group"
+                    className="card !p-0 overflow-hidden cursor-pointer transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] transform-gpu shadow-lg group border-white/10 hover:border-emerald/40"
                   >
                     {/* Card Hero Image */}
                     <div className="relative h-36 w-full overflow-hidden">

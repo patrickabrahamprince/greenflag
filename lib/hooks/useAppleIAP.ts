@@ -104,5 +104,41 @@ export function useAppleIAP() {
     }
   }, [verifyAndCredit]);
 
-  return { isNative, purchase, purchasingProductId };
+  const restorePurchases = useCallback(async () => {
+    if (!isNative) {
+      toast.success('Your balance is up to date.');
+      return;
+    }
+    const toastId = toast.loading('Checking purchases with Apple...');
+    try {
+      const { transactions } = await InAppPurchase.getUnfinishedTransactions();
+      if (!transactions || transactions.length === 0) {
+        toast.dismiss(toastId);
+        toast.success('All purchases are up to date.');
+        return;
+      }
+      let recovered = 0;
+      for (const t of transactions) {
+        try {
+          await verifyAndCredit(t);
+          recovered++;
+        } catch (e) {
+          console.error('Failed to verify transaction:', e);
+        }
+      }
+      toast.dismiss(toastId);
+      if (recovered > 0) {
+        hapticSuccess();
+        toast.success(`Restored ${recovered} pending purchase${recovered > 1 ? 's' : ''}!`);
+      } else {
+        toast.success('All purchases are up to date.');
+      }
+    } catch (err) {
+      toast.dismiss(toastId);
+      toast.error('Could not restore purchases right now.');
+      console.error('Restore purchases failed:', err);
+    }
+  }, [isNative, verifyAndCredit]);
+
+  return { isNative, purchase, purchasingProductId, restorePurchases };
 }

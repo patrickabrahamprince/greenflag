@@ -284,17 +284,25 @@ export function ProfileCard({
 
         <div className="flex items-center gap-3 pt-2 shrink-0">
           <button
-            onClick={() => onBegin(p.id)}
+            type="button"
+            onClick={() => {
+              hapticTap();
+              onBegin(p.id);
+            }}
             aria-label="Meet for Trips"
-            className="flex-1 h-12 rounded-xl flex items-center justify-center gap-2 font-bold bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-black shadow-[0_4px_16px_rgba(16,185,129,0.3)] transition-all"
+            className="flex-1 h-12 rounded-xl flex items-center justify-center gap-2 font-bold bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-black shadow-[0_4px_16px_rgba(16,185,129,0.3)] transition-all duration-150 transform-gpu"
           >
             <Compass className="w-4 h-4" />
             <span className="text-xs uppercase tracking-wide font-display font-bold">Meet for Trips</span>
           </button>
           <button
-            onClick={() => onMoreOptions(p.id)}
+            type="button"
+            onClick={() => {
+              hapticTap();
+              onMoreOptions(p.id);
+            }}
             aria-label="More options"
-            className="w-12 h-12 rounded-full glass-surface flex items-center justify-center flex-shrink-0 hover:bg-white/10 active:scale-95 transition-transform"
+            className="w-12 h-12 rounded-full glass-surface flex items-center justify-center flex-shrink-0 hover:bg-white/10 active:scale-95 transition-all duration-150 transform-gpu"
           >
             <MoreVertical className="w-4 h-4 text-ink" />
           </button>
