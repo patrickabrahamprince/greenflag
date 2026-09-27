@@ -221,30 +221,34 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative isolate min-h-dvh flex flex-col p-6 pt-safe-top pb-safe-bottom bg-base">
-      <OnboardingBackground image="/onboarding/hero.jpg" light />
+    <div className="relative isolate min-h-dvh flex flex-col p-6 pt-safe-top pb-safe-bottom bg-[#FAF9F6] text-[#382A21]">
+      <OnboardingBackground />
 
-      {/* Logo centers in whatever space is left above the buttons instead
-          of the whole block being centered as one unit -- that's what
-          actually pins Google/Apple to the bottom of the screen instead
-          of just "lower than before". */}
-      <div className="flex-1 flex flex-col items-center justify-center gap-8 animate-fade-in">
-        <Image
-          src="/logo.png"
-          alt="GreenFlag"
-          width={144}
-          height={144}
-          className="w-32 h-32 animate-logo-in"
-          style={{ filter: 'drop-shadow(0 12px 28px rgba(0,0,0,0.55)) drop-shadow(0 0 40px rgba(16,185,129,0.25))' }}
-        />
-        <div className="text-center -mt-4">
-          <h1 className="font-display text-2xl font-bold text-ink">GreenFlag</h1>
-          <p className="text-xs text-emerald-400 font-semibold tracking-wider uppercase mt-1">Meet New People for Trips</p>
+      <div className="flex-1 flex flex-col items-center justify-center gap-6 animate-fade-in">
+        <div className="w-28 h-28 bg-white p-3 rounded-[32px] shadow-md border border-stone-200/90 flex items-center justify-center">
+          <Image
+            src="/logo.png"
+            alt="GreenFlag"
+            width={96}
+            height={96}
+            className="w-full h-full object-contain animate-logo-in"
+            priority
+          />
+        </div>
+        <div className="text-center">
+          <h1 className="font-display text-3xl font-black text-[#382A21] tracking-tight">GreenFlag</h1>
+          <p className="text-xs text-emerald-800 font-extrabold tracking-wider uppercase mt-1 bg-emerald-100/90 px-3 py-1 rounded-full border border-emerald-200 inline-block">
+            Meet People • Travel Together • Date on the Way
+          </p>
         </div>
       </div>
 
       <div className="w-full max-w-sm mx-auto animate-slide-up">
-        {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-2xl text-center mb-4 shadow-xs">
+            {error}
+          </div>
+        )}
 
         <div className="space-y-3">
           <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />
@@ -256,10 +260,10 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={handleShowEmailToggle}
-              className="w-full flex items-center justify-center gap-3 bg-white/10 hover:bg-white/15 text-ink font-medium py-3 px-4 rounded-xl border border-white/10 transition-colors"
+              className="w-full flex items-center justify-center gap-2.5 bg-white hover:bg-stone-50 text-[#382A21] font-bold text-xs py-3.5 px-4 rounded-full border border-stone-200 shadow-xs transition-all active:scale-95"
             >
-              <Mail className="w-5 h-5 text-ink/70" />
-              Continue with Email
+              <Mail className="w-4 h-4 text-stone-500" />
+              <span>Continue with Email</span>
             </button>
           )}
         </div>
@@ -267,24 +271,24 @@ export default function LoginPage() {
         {!showEmailLogin ? (
           <button
             onClick={handleShowEmailToggle}
-            className="block mx-auto mt-6 text-xs text-ink/40 hover:text-ink underline underline-offset-4 decoration-ink/20 hover:decoration-ink/40 transition-colors"
+            className="block mx-auto mt-6 text-xs text-stone-500 hover:text-[#382A21] font-semibold underline underline-offset-4 transition-colors"
           >
-            Having trouble?
+            Having trouble? Email Sign In
           </button>
         ) : (
-          <form onSubmit={handleLogin} className="space-y-4 mt-6 animate-fade-in">
-            <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 mb-2">
+          <form onSubmit={handleLogin} className="space-y-3.5 mt-5 p-5 bg-white border border-stone-200/90 rounded-[28px] shadow-sm animate-fade-in">
+            <div className="flex bg-stone-100 p-1 rounded-full border border-stone-200 mb-2">
               <button
                 type="button"
                 onClick={() => { setIsSignUp(false); setError(''); }}
-                className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors ${!isSignUp ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-ink/60 hover:text-ink'}`}
+                className={`flex-1 py-1.5 text-xs font-extrabold rounded-full transition-all ${!isSignUp ? 'bg-[#1D3B2A] text-white shadow-xs' : 'text-stone-500 hover:text-stone-800'}`}
               >
                 Sign In
               </button>
               <button
                 type="button"
                 onClick={() => { setIsSignUp(true); setError(''); }}
-                className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors ${isSignUp ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-ink/60 hover:text-ink'}`}
+                className={`flex-1 py-1.5 text-xs font-extrabold rounded-full transition-all ${isSignUp ? 'bg-[#1D3B2A] text-white shadow-xs' : 'text-stone-500 hover:text-stone-800'}`}
               >
                 Create Account
               </button>
@@ -297,7 +301,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => handleEmailInput(e.target.value)}
               required
-              className="input w-full"
+              className="w-full p-3 bg-stone-50 border border-stone-200 rounded-[18px] text-xs font-bold text-[#382A21] focus:outline-none focus:border-[#1D3B2A]"
             />
             <input
               data-testid="password"
@@ -307,15 +311,15 @@ export default function LoginPage() {
               onChange={(e) => handlePasswordInput(e.target.value)}
               required
               minLength={6}
-              className="input w-full"
+              className="w-full p-3 bg-stone-50 border border-stone-200 rounded-[18px] text-xs font-bold text-[#382A21] focus:outline-none focus:border-[#1D3B2A]"
             />
-            <button data-testid="login-btn" type="submit" disabled={loading} className="btn-primary w-full">
+            <button data-testid="login-btn" type="submit" disabled={loading} className="w-full py-3.5 bg-[#1D3B2A] hover:bg-[#2D5A3F] text-white font-extrabold text-xs rounded-full shadow-md active:scale-95 transition-all">
               {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : isSignUp ? 'Create Account' : 'Sign In'}
             </button>
             <button
               type="button"
               onClick={() => { setShowEmailLogin(false); setError(''); }}
-              className="block mx-auto text-xs text-ink/40 hover:text-ink transition-colors pt-2"
+              className="block mx-auto text-xs text-stone-500 hover:text-[#382A21] font-semibold transition-colors pt-1"
             >
               Back to all options
             </button>
