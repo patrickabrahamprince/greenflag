@@ -24,20 +24,32 @@ const slides = [
   {
     id: 0,
     title: 'Respect & Inclusivity',
-    desc: 'Every traveler is treated with dignity. Friendly, welcoming journeys for all.',
-    icon: <ShieldCheck className="w-10 h-10 text-emerald-400" />,
+    desc: 'Every traveler is treated with dignity. Kind, welcoming, judgment-free journeys for everyone.',
+    icon: <ShieldCheck className="w-10 h-10 text-rose-600" />,
+    badge: 'Core Value',
+    badgeColor: 'bg-rose-100 text-rose-800 border-rose-200',
+    iconBg: 'bg-rose-500/15 border-rose-200',
+    cardBorder: 'border-rose-200/90 bg-gradient-to-br from-rose-50/95 via-white to-amber-50/70',
   },
   {
     id: 1,
     title: 'Reliability & Trust',
-    desc: 'Be dependable with trip commitments, meetup points, and shared budgets.',
-    icon: <Flame className="w-10 h-10 text-emerald-400" />,
+    desc: 'Be dependable with trip commitments, meetup points, vehicle arrangements, and shared budgets.',
+    icon: <Flame className="w-10 h-10 text-emerald-700" />,
+    badge: 'Commitment',
+    badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    iconBg: 'bg-emerald-500/15 border-emerald-200',
+    cardBorder: 'border-emerald-200/90 bg-gradient-to-br from-emerald-50/95 via-white to-teal-50/70',
   },
   {
     id: 2,
     title: 'Safety First',
-    desc: 'Honor personal boundaries, travel verified, and report uncomfortable behavior instantly.',
-    icon: <MessageCircle className="w-10 h-10 text-emerald-400" />,
+    desc: 'Honor personal boundaries, travel with verified members, and report any uncomfortable behavior instantly.',
+    icon: <MessageCircle className="w-10 h-10 text-cyan-700" />,
+    badge: 'Zero Tolerance',
+    badgeColor: 'bg-cyan-100 text-cyan-800 border-cyan-200',
+    iconBg: 'bg-cyan-500/15 border-cyan-200',
+    cardBorder: 'border-cyan-200/90 bg-gradient-to-br from-cyan-50/95 via-white to-sky-50/70',
   },
 ];
 
@@ -50,19 +62,10 @@ export default function RulesPage() {
   const trackRef = useRef<HTMLDivElement>(null);
   const settleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Renders 3 copies of the slide list back to back and starts scrolled
-  // into the middle copy, so swiping either direction always has real
-  // content to land on instead of stopping dead at slide 0 or the last
-  // slide. Once a swipe settles, handleScroll snaps (instantly, no
-  // animation) back into the middle copy at the equivalent slide -- the
-  // user never sees the seam, and the buffer never runs out no matter how
-  // many times they keep swiping the same direction.
   const loopedSlides = [0, 1, 2].flatMap((loop) =>
     slides.map((slide) => ({ ...slide, loopKey: `${loop}-${slide.id}` }))
   );
 
-  // Persona/approval routing now lives in the how-it-works screen this
-  // leads to -- this just confirms there's still a live session.
   useEffect(() => {
     const checkSession = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -77,8 +80,6 @@ export default function RulesPage() {
     router.prefetch('/onboard/how-it-works');
   }, [supabase, router]);
 
-  // Start centered in the middle copy so the first swipe in either
-  // direction already has a neighboring copy to land on.
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
@@ -109,11 +110,6 @@ export default function RulesPage() {
     track.scrollTo({ left: (base + index) * track.clientWidth, behavior: 'smooth' });
   };
 
-  // Auto-advances so the rules actually get seen instead of sitting on
-  // slide 1 waiting for a swipe -- still fully swipeable manually at any
-  // point, this just keeps things moving on their own too. Always steps
-  // forward by one real slide (never wraps backward visually) so it stays
-  // consistent with the infinite-swipe behavior above.
   useEffect(() => {
     const id = setInterval(() => {
       const track = trackRef.current;
@@ -122,7 +118,7 @@ export default function RulesPage() {
       const next = current + 1;
       track.scrollTo({ left: next * track.clientWidth, behavior: 'smooth' });
       setActiveSlide(((next % slides.length) + slides.length) % slides.length);
-    }, 3200);
+    }, 3800);
     return () => clearInterval(id);
   }, []);
 
@@ -131,90 +127,76 @@ export default function RulesPage() {
 
   const handleContinue = async () => {
     hapticTap();
-    let isWoman = persona === 'woman' || currentUser?.persona === 'woman';
-    if (!isWoman) {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase.from('profiles').select('persona').eq('id', user.id).single();
-        if (profile?.persona === 'woman') isWoman = true;
-      }
-    }
-
     goTo('/trips', '/onboarding/hero.jpg');
   };
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex items-center justify-center screen-gradient">
+      <div className="min-h-dvh flex items-center justify-center bg-[#FAF9F6]">
         <LoadingLogo />
       </div>
     );
   }
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-5 pt-safe-top pb-safe-bottom bg-[#FAF9F6]">
       <OnboardingBackground image="/onboarding/rules.jpg" />
-      <div className="max-w-md mx-auto w-full flex flex-col pb-safe-bottom flex-1">
-        {/* Header */}
-        <div className="mb-6">
-          <button
-            onClick={() => router.back()}
-            className="text-ink/40 hover:text-ink active:scale-90 transition-all p-1 -ml-1 w-fit"
-          >
-            <ArrowLeft size={24} />
-          </button>
+      <div className="max-w-md mx-auto w-full flex flex-col flex-1 justify-center">
+        <div className="text-center mb-6">
+          <h1 className="font-display text-3xl font-extrabold text-[#382A21] mb-1.5">Community Code</h1>
+          <p className="text-stone-600 text-sm font-medium">How we keep adventures safe and fun for everyone</p>
         </div>
 
-        {/* Carousel + dots + CTA center as one group instead of the
-            button being pinned flush to the bottom edge. */}
-        <div className="flex-1 flex flex-col justify-center">
+        <div className="flex flex-col justify-center">
           <div
             ref={trackRef}
             onScroll={handleScroll}
-            className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar -mx-4 px-4"
+            className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar -mx-2 px-2"
             style={{ scrollbarWidth: 'none' }}
           >
             {loopedSlides.map((slide) => (
               <div key={slide.loopKey} className="w-full shrink-0 snap-center px-1">
-                <div
-                  className="flex flex-col items-center text-center px-6 py-10 border border-gold/20 rounded-[2rem] min-h-[380px] justify-center shadow-[0_0_40px_-16px_rgba(210,4,45,0.35)]"
-                  style={{ background: 'linear-gradient(160deg, rgba(210,4,45,0.08) 0%, rgba(15,10,10,0.5) 55%)' }}
-                >
-                  <div className="w-24 h-24 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-7 shadow-[0_0_24px_-6px_rgba(210,4,45,0.5)]">
+                <div className={`flex flex-col items-center text-center px-7 py-9 rounded-[32px] min-h-[350px] justify-between border-2 shadow-sm ${slide.cardBorder}`}>
+                  <div className="w-full flex justify-end">
+                    <span className={`text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border ${slide.badgeColor}`}>
+                      {slide.badge}
+                    </span>
+                  </div>
+                  <div className={`w-20 h-20 rounded-3xl border flex items-center justify-center shadow-xs ${slide.iconBg}`}>
                     {slide.icon}
                   </div>
-                  <h2 className="text-2xl font-display font-semibold text-ink mb-4">
-                    {slide.title}
-                  </h2>
-                  <p className="text-ink/50 text-sm italic leading-relaxed max-w-[300px] font-light">
-                    {slide.desc}
-                  </p>
+                  <div>
+                    <h2 className="text-2xl font-display font-extrabold text-[#382A21] mb-2.5">
+                      {slide.title}
+                    </h2>
+                    <p className="text-stone-700 text-sm leading-relaxed font-medium max-w-[280px]">
+                      {slide.desc}
+                    </p>
+                  </div>
+                  <div className="w-6 h-1 rounded-full bg-stone-300/60" />
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Dot pagination -- tap a dot to jump, or swipe the carousel */}
-          <div className="flex items-center justify-center gap-2 mt-5 mb-8">
+          <div className="flex items-center justify-center gap-2 mt-5 mb-6">
             {slides.map((slide, i) => (
               <button
                 key={slide.id}
-                onClick={() => scrollToSlide(i)}
+                onClick={() => { hapticTap(); scrollToSlide(i); }}
                 aria-label={`Go to rule ${i + 1}`}
                 className={`rounded-full transition-all duration-300 ${
-                  i === activeSlide ? 'w-6 h-1.5 bg-gold shadow-[0_0_10px_-1px_rgba(210,4,45,0.8)]' : 'w-1.5 h-1.5 bg-raised'
+                  i === activeSlide ? 'w-7 h-2 bg-[#1D3B2A] shadow-xs' : 'w-2 h-2 bg-stone-300'
                 }`}
               />
             ))}
           </div>
 
-          {/* Single button -- swipe through as many or as few rules as you
-              like, one tap moves on regardless of which slide you're on. */}
           <button
             onClick={handleContinue}
-            className="btn-primary w-full py-4 font-semibold text-sm active:scale-95 transition-transform shadow-[0_0_30px_-10px_rgba(210,4,45,0.6)]"
+            className="btn-primary w-full py-4 font-bold text-sm active:scale-95 transition-transform shadow-lg"
           >
-            Agree & Continue
+            Agree & Enter GreenFlag
           </button>
         </div>
       </div>

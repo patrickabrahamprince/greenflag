@@ -212,7 +212,7 @@ export default function QuizPage() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex items-center justify-center screen-gradient">
+      <div className="min-h-dvh flex items-center justify-center bg-[#FAF9F6]">
         <LoadingLogo />
       </div>
     );
@@ -220,23 +220,23 @@ export default function QuizPage() {
 
   if (reveal) {
     return (
-      <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center px-6 bg-base text-center">
+      <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center px-5 bg-[#FAF9F6] text-center">
         <OnboardingBackground image={reveal.image} />
-        <div className="max-w-sm mx-auto w-full">
-          <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_-8px_rgba(210,4,45,0.5)]">
-            <Sparkles className="w-7 h-7 text-gold" />
+        <div className="max-w-sm mx-auto w-full bg-white/95 backdrop-blur-md border border-stone-200/90 rounded-[36px] p-8 shadow-md">
+          <div className="w-20 h-20 rounded-3xl bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto mb-5 shadow-sm">
+            <Sparkles className="w-10 h-10 text-emerald-700" />
           </div>
-          <p className="text-ink/50 text-xs uppercase tracking-widest mb-3">
-            {name ? `${name}, based on your answers` : 'Based on your answers'}
-          </p>
-          <h1 className="font-display text-3xl text-ink mb-4">{reveal.title}</h1>
-          <p className="text-ink/60 text-sm leading-relaxed mb-10">{reveal.description}</p>
+          <span className="text-emerald-800 font-bold text-xs uppercase tracking-widest bg-emerald-100/90 px-3.5 py-1 rounded-full inline-block mb-3">
+            {name ? `${name}'s Travel Archetype` : 'Your Travel Archetype'}
+          </span>
+          <h1 className="font-display text-3xl font-extrabold text-[#382A21] mb-3">{reveal.title}</h1>
+          <p className="text-stone-600 text-sm leading-relaxed mb-8 font-medium">{reveal.description}</p>
           <button
             onClick={() => goTo('/onboard/interests', '/onboarding/interests.jpg')}
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'quiz-reveal-continue' : undefined}
-            className="btn-primary w-full py-4 font-semibold text-sm active:scale-95 transition-transform"
+            className="btn-primary w-full py-4 font-bold text-sm active:scale-95 transition-transform shadow-lg"
           >
-            Continue
+            Continue to Interests
           </button>
         </div>
       </div>
@@ -248,67 +248,65 @@ export default function QuizPage() {
   const currentAnswer = answers[currentQuestion.id];
   const isLastQuestion = currentIdx === QUIZ_QUESTIONS.length - 1;
   const encouragement = isLastQuestion
-    ? 'Last one — make it count.'
+    ? 'Last one — your travel style is almost mapped.'
     : progressPercent >= 75
-    ? 'Almost there.'
+    ? 'Almost there!'
     : progressPercent >= 50
     ? "You're more than halfway."
     : progressPercent >= 25
-    ? 'This shapes who you meet.'
-    : "There's no wrong answer — just be honest.";
+    ? 'This helps us suggest tailored trips.'
+    : "There's no wrong answer — just pick what sounds fun.";
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-5 pt-safe-top pb-safe-bottom bg-[#FAF9F6]">
       <OnboardingBackground image={QUESTION_IMAGES[currentIdx] || '/onboarding/quiz.jpg'} />
-      <div className="max-w-md mx-auto w-full flex flex-col pb-safe-bottom">
-        <div>
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <button
-              onClick={handleBack}
-              className="text-ink/40 hover:text-ink active:scale-90 transition-all p-1 -ml-1"
-            >
-              <ArrowLeft size={24} />
-            </button>
-            <span className="text-xs font-semibold text-ink/50">
-              {currentIdx + 1} of {QUIZ_QUESTIONS.length}
-            </span>
-            <div className="w-6" /> {/* spacer */}
-          </div>
+      
+      <div className="max-w-md mx-auto w-full flex items-center justify-between mb-2">
+        <button
+          onClick={handleBack}
+          className="text-[#382A21] bg-white/80 hover:bg-white border border-stone-200/80 shadow-xs active:scale-90 transition-all p-2.5 rounded-full"
+        >
+          <ArrowLeft size={20} />
+        </button>
+        <span className="text-xs font-bold text-emerald-800 bg-emerald-100/90 px-3 py-1 rounded-full shadow-2xs">
+          Question {currentIdx + 1} of {QUIZ_QUESTIONS.length}
+        </span>
+      </div>
 
-          {/* Progress Bar */}
-          <div className="w-full bg-well h-1 rounded-full mb-10 overflow-hidden">
-            <div
-              className="bg-gold h-full transition-all duration-300 ease-out"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
+      <div className="max-w-md mx-auto w-full mb-4">
+        {/* Progress Bar */}
+        <div className="w-full bg-stone-200/80 h-2 rounded-full overflow-hidden shadow-inner">
+          <div
+            className="bg-[#1D3B2A] h-full transition-all duration-300 ease-out rounded-full"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+      </div>
 
-          {/* Question Card */}
-          <div className="mb-8">
-            <h2 className="text-xl font-display font-medium text-ink mb-2 leading-snug">
-              {currentQuestion.question}
-            </h2>
-            <p className="text-ink/50 text-xs">Choose what feels most like you</p>
-          </div>
+      <div className="max-w-md mx-auto w-full flex-1 flex flex-col justify-center pb-4">
+        <div className="bg-white/90 backdrop-blur-md border border-stone-200/90 rounded-[32px] p-6 shadow-sm mb-4">
+          <h2 className="text-2xl font-display font-extrabold text-[#382A21] mb-1.5 leading-snug">
+            {currentQuestion.question}
+          </h2>
+          <p className="text-stone-500 text-xs font-medium mb-5">Choose what matches your vibe</p>
 
           {/* Options Grid */}
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {currentQuestion.options.map((option, optionIdx) => {
               const isSelected = currentAnswer === option;
               return (
                 <button
                   key={option}
-                  onClick={() => handleOptionSelect(option)}
+                  onClick={() => { hapticTap(); handleOptionSelect(option); }}
                   data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? `quiz-option-${optionIdx}` : undefined}
-                  className={`w-full py-4 px-5 rounded-tile text-left text-sm transition-all duration-200 flex items-center justify-between border-2 ${
+                  className={`w-full py-4 px-4 rounded-2xl text-left text-sm transition-all duration-200 flex items-center justify-between border-2 ${
                     isSelected
-                      ? 'bg-gold/10 border-gold text-ink font-medium scale-[1.02] shadow-[0_0_20px_-6px_rgba(210,4,45,0.4)]'
-                      : 'bg-well border-transparent text-ink/70 hover:border-ink/20 active:scale-[0.98]'
+                      ? 'bg-[#1D3B2A] border-[#1D3B2A] text-white font-bold shadow-md scale-[1.01]'
+                      : 'bg-stone-50/80 border-stone-200/90 text-[#382A21] font-semibold hover:border-emerald-400 active:scale-[0.98]'
                   }`}
                 >
-                  <span>{option}</span>
-                  {isSelected && <CheckCircle2 className="w-4 h-4 text-gold" />}
+                  <span className="pr-2">{option}</span>
+                  {isSelected && <CheckCircle2 className="w-5 h-5 text-white shrink-0" />}
                 </button>
               );
             })}
@@ -320,22 +318,22 @@ export default function QuizPage() {
           onClick={handleNext}
           disabled={saving || !currentAnswer}
           data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'quiz-next' : undefined}
-          className="btn-primary w-full py-3.5 mt-8 font-semibold text-sm active:scale-95 transition-transform flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:scale-100"
+          className="btn-primary w-full py-4 font-bold text-sm active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-lg disabled:opacity-40"
         >
           {saving ? (
-            <Loader2 className="w-4 h-4 animate-spin text-ink" />
+            <Loader2 className="w-5 h-5 animate-spin text-white" />
           ) : currentIdx === QUIZ_QUESTIONS.length - 1 ? (
             <>
-              Complete <CheckCircle2 size={16} />
+              Complete Quiz <CheckCircle2 size={18} />
             </>
           ) : (
             <>
-              Next <ArrowRight size={16} />
+              Next Question <ArrowRight size={18} />
             </>
           )}
         </button>
 
-        <p className="text-center text-xs text-gold/70 font-medium mt-4 animate-fade-in" key={currentIdx}>
+        <p className="text-center text-xs text-stone-500 font-semibold mt-3 animate-fade-in" key={currentIdx}>
           {encouragement}
         </p>
       </div>

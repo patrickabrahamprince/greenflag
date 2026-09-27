@@ -39,16 +39,20 @@ export function InterestsStepScreen({
   children,
 }: InterestsStepScreenProps) {
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-[#FAF9F6]">
       <OnboardingBackground image={image} />
-      <div className="flex items-center justify-between mt-2 mb-4 shrink-0">
-        <button onClick={onBack} className="text-ink/40 hover:text-ink active:scale-90 transition-all p-1 -ml-1">
-          <ArrowLeft size={24} />
+      
+      <div className="flex items-center justify-between mt-2 mb-4 shrink-0 max-w-md mx-auto w-full">
+        <button
+          onClick={onBack}
+          className="text-[#382A21] bg-white/80 hover:bg-white border border-stone-200/80 shadow-xs active:scale-90 transition-all p-2 rounded-full"
+        >
+          <ArrowLeft size={20} />
         </button>
         <button
           onClick={onSkip}
           disabled={skipLoading}
-          className="px-3 py-2 -mr-3 text-sm font-semibold tracking-widest uppercase text-gold/80 hover:text-gold active:scale-90 transition-all"
+          className="px-3.5 py-1.5 rounded-full bg-white/80 border border-stone-200/80 shadow-xs text-xs font-bold tracking-wider uppercase text-stone-600 hover:text-[#382A21] active:scale-90 transition-all"
         >
           Skip
         </button>
@@ -58,19 +62,19 @@ export function InterestsStepScreen({
         <StepDots current={step} total={total} />
       </div>
 
-      <div className="flex-1 overflow-y-auto overscroll-none max-w-md mx-auto w-full pb-28">
+      <div className="flex-1 overflow-y-auto overscroll-none max-w-md mx-auto w-full pb-32">
         {children}
       </div>
 
       <div
-        className="fixed inset-x-0 z-10 px-6 pt-6 pb-4"
-        style={{ bottom: 'calc(max(1rem, env(safe-area-inset-bottom)) + var(--kb-inset, 0px))' }}
+        className="fixed inset-x-0 z-20 px-6 pt-4 pb-6 bg-gradient-to-t from-[#FAF9F6] via-[#FAF9F6]/95 to-transparent pointer-events-auto"
+        style={{ bottom: 'calc(max(0.5rem, env(safe-area-inset-bottom)) + var(--kb-inset, 0px))' }}
       >
         <button
           onClick={onNext}
           disabled={nextLoading}
           data-testid={nextTestId}
-          className="btn-primary w-full max-w-md mx-auto active:scale-[0.98] flex items-center justify-center gap-2"
+          className="btn-primary w-full max-w-md mx-auto active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg"
         >
           {nextLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
             <>

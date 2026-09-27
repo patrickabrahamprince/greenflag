@@ -53,33 +53,34 @@ export default function PendingApprovalPage() {
   }, [arrived]);
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center items-center px-8 pt-safe-top pb-safe-bottom text-center bg-base">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center items-center px-5 pt-safe-top pb-safe-bottom text-center bg-[#FAF9F6]">
       <OnboardingBackground image="/onboarding/pending.jpg" />
 
-      {!arrived ? (
-        <>
-          <ReviewTimerRing secondsLeft={secondsLeft ?? totalSeconds} totalSeconds={totalSeconds} />
+      <div className="max-w-sm mx-auto w-full bg-white/95 backdrop-blur-md border border-stone-200/90 rounded-[36px] p-8 shadow-md">
+        {!arrived ? (
+          <div className="flex flex-col items-center">
+            <ReviewTimerRing secondsLeft={secondsLeft ?? totalSeconds} totalSeconds={totalSeconds} />
 
-          <h1 className="font-display text-3xl text-ink mb-3 mt-4">
-            Verifying Your Profile
-          </h1>
-          <p className="text-ink/60 text-sm leading-relaxed max-w-sm">
-            GreenFlag is a trusted travel community. We verify profiles to keep trips safe and authentic.
-            Hang tight — this only takes a moment.
-          </p>
-        </>
-      ) : (
-        <div className="animate-fade-in">
-          <div className="w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_-8px_rgba(16,185,129,0.6)]">
-            <Sparkles className="w-9 h-9 text-emerald-400" />
+            <h1 className="font-display text-3xl font-extrabold text-[#382A21] mb-2">
+              Verifying Your Profile
+            </h1>
+            <p className="text-stone-600 text-sm leading-relaxed font-medium">
+              GreenFlag is a trusted travel community. We review profiles to keep adventures safe and authentic. Hang tight!
+            </p>
           </div>
+        ) : (
+          <div className="animate-fade-in flex flex-col items-center">
+            <div className="w-20 h-20 rounded-3xl bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto mb-5 shadow-sm">
+              <Sparkles className="w-10 h-10 text-emerald-700" />
+            </div>
 
-          <h1 className="font-display text-3xl text-ink mb-3">Verified.</h1>
-          <p className="text-ink/60 text-sm leading-relaxed max-w-sm">
-            Your traveler profile is approved. Taking you to explore trips...
-          </p>
-        </div>
-      )}
+            <h1 className="font-display text-3xl font-extrabold text-[#382A21] mb-2">You&apos;re Verified!</h1>
+            <p className="text-stone-600 text-sm leading-relaxed font-medium">
+              Welcome to the community. Taking you to explore upcoming trips and road trips...
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

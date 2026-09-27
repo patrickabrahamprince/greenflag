@@ -17,10 +17,35 @@ interface CategorizedInterestPickerProps {
   dataTestIdPrefix?: string;
 }
 
-// How many pills a category shows before "Show more" -- matches the
-// reference taxonomy's own collapse point (two rows on a phone-width
-// screen), not an arbitrary number.
-const COLLAPSED_COUNT = 7;
+const COLLAPSED_COUNT = 8;
+
+// Curated playful color palette mapping for category pills
+const CATEGORY_STYLES: Record<string, { unselected: string; selected: string }> = {
+  default: {
+    unselected: 'bg-white/90 border-stone-200/90 text-[#382A21] hover:border-emerald-500 shadow-2xs',
+    selected: 'bg-[#1D3B2A] text-white border-[#1D3B2A] shadow-md shadow-emerald-950/15 ring-2 ring-emerald-600/20',
+  },
+  'Travel & Trips': {
+    unselected: 'bg-cyan-50/70 border-cyan-200/80 text-cyan-950 hover:border-cyan-500 shadow-2xs',
+    selected: 'bg-cyan-600 text-white border-cyan-600 shadow-md shadow-cyan-600/25 ring-2 ring-cyan-400/30',
+  },
+  'Outdoors & Trekking': {
+    unselected: 'bg-emerald-50/70 border-emerald-200/80 text-emerald-950 hover:border-emerald-500 shadow-2xs',
+    selected: 'bg-[#1D3B2A] text-white border-[#1D3B2A] shadow-md shadow-emerald-900/25 ring-2 ring-emerald-500/30',
+  },
+  'Food & Cafes': {
+    unselected: 'bg-orange-50/70 border-orange-200/80 text-orange-950 hover:border-orange-500 shadow-2xs',
+    selected: 'bg-orange-600 text-white border-orange-600 shadow-md shadow-orange-500/25 ring-2 ring-orange-300/30',
+  },
+  'Nightlife & Social': {
+    unselected: 'bg-purple-50/70 border-purple-200/80 text-purple-950 hover:border-purple-500 shadow-2xs',
+    selected: 'bg-purple-600 text-white border-purple-600 shadow-md shadow-purple-600/25 ring-2 ring-purple-400/30',
+  },
+  'Wellness & Lifestyle': {
+    unselected: 'bg-amber-50/70 border-amber-200/80 text-amber-950 hover:border-amber-500 shadow-2xs',
+    selected: 'bg-amber-600 text-white border-amber-600 shadow-md shadow-amber-500/25 ring-2 ring-amber-400/30',
+  },
+};
 
 export function CategorizedInterestPicker({
   title,
@@ -50,27 +75,34 @@ export function CategorizedInterestPicker({
   };
 
   return (
-    <div className="my-4">
+    <div className="my-2">
       <div className="flex items-baseline justify-between mb-1.5">
-        <h2 className="font-display text-base text-ink">{title}</h2>
-        <span className="text-xs font-semibold text-gold">
+        <h2 className="font-display text-lg font-bold text-[#382A21]">{title}</h2>
+        <span className="text-xs font-bold text-emerald-800 bg-emerald-100/90 px-3 py-1 rounded-full shadow-2xs">
           {max ? `${selected.length}/${max}` : `${selected.length} selected`}
         </span>
       </div>
-      {description && <p className="text-xs text-ink/50 mb-2.5">{description}</p>}
+      {description && <p className="text-xs font-medium text-stone-500 mb-4">{description}</p>}
 
-      <div className="space-y-5">
+      <div className="space-y-6">
         {categories.map(({ category, items }) => {
           const isExpanded = expanded.has(category);
           const visible = isExpanded ? items : items.slice(0, COLLAPSED_COUNT);
           const hasMore = items.length > COLLAPSED_COUNT;
+          const style = CATEGORY_STYLES[category] || CATEGORY_STYLES.default;
 
           return (
-            <div key={category}>
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-ink/40 mb-2">
-                {category}
-              </h3>
-              <div className="flex flex-wrap gap-1.5">
+            <div key={category} className="bg-white/80 backdrop-blur-sm border border-stone-200/80 rounded-2xl p-4 shadow-2xs">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#382A21]/70">
+                  {category}
+                </h3>
+                <span className="text-[11px] font-semibold text-stone-400">
+                  {items.filter((i) => selected.includes(i)).length > 0 &&
+                    `${items.filter((i) => selected.includes(i)).length} active`}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2">
                 {visible.map((item) => {
                   const isSelected = selected.includes(item);
                   const locked = !isSelected && !!max && selected.length >= max;
@@ -85,15 +117,15 @@ export function CategorizedInterestPicker({
                           : undefined
                       }
                       className={cn(
-                        'px-3 py-1.5 rounded-pill text-xs font-medium transition-all active:scale-90',
+                        'px-3.5 py-2 rounded-full text-xs font-medium border transition-all duration-150 transform active:scale-95 cursor-pointer',
                         isSelected
-                          ? 'bg-gold text-ink'
+                          ? `${style.selected} font-bold scale-[1.02]`
                           : locked
-                          ? 'bg-transparent border border-white/30 text-ink/30 cursor-not-allowed'
-                          : 'bg-transparent border border-white/30 text-ink hover:border-white/40'
+                          ? 'bg-stone-100/80 border-stone-200 text-stone-400 cursor-not-allowed opacity-50'
+                          : `${style.unselected}`
                       )}
                     >
-                      {item}
+                      {isSelected ? `✓ ${item}` : item}
                     </button>
                   );
                 })}
@@ -102,12 +134,10 @@ export function CategorizedInterestPicker({
                 <button
                   type="button"
                   onClick={() => toggleCategory(category)}
-                  className="w-full flex items-center gap-3 mt-3 text-xs font-semibold text-ink/50 hover:text-ink/80 transition-colors"
+                  className="w-full flex items-center justify-center gap-1.5 mt-3 pt-2 border-t border-stone-100 text-xs font-bold text-emerald-800 hover:text-emerald-950 transition-colors"
                 >
-                  <span className="flex-1 h-px bg-raised/10" />
-                  {isExpanded ? 'Show less' : 'Show more'}
+                  {isExpanded ? 'Show less' : `Show all ${items.length} options`}
                   {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                  <span className="flex-1 h-px bg-raised/10" />
                 </button>
               )}
             </div>

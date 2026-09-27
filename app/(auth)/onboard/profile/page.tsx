@@ -44,44 +44,75 @@ export default function ProfileAgePage() {
   };
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-5 pt-safe-top pb-safe-bottom bg-[#FAF9F6]">
       <OnboardingBackground image="/onboarding/age.jpg" />
-      <button
-        onClick={() => router.push('/onboard/name')}
-        className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit p-1 -ml-1"
-      >
-        <ArrowLeft size={24} />
-      </button>
+      
+      <div className="max-w-md mx-auto w-full flex items-center justify-between mb-2">
+        <button
+          onClick={() => router.push('/onboard/name')}
+          className="text-[#382A21] bg-white/80 hover:bg-white border border-stone-200/80 shadow-xs active:scale-90 transition-all p-2.5 rounded-full"
+        >
+          <ArrowLeft size={20} />
+        </button>
+      </div>
+
+      <div className="max-w-md mx-auto w-full">
+        <StepDots current={1} total={6} />
+      </div>
 
       <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full animate-fade-in">
-        <StepDots current={1} total={6} />
+        <div className="bg-white/90 backdrop-blur-md border border-stone-200/90 rounded-[32px] p-7 shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center mb-4 font-bold text-xl">
+            🎂
+          </div>
+          <h1 className="font-display text-3xl font-extrabold text-[#382A21] mb-2">How old are you?</h1>
+          <p className="text-stone-600 text-sm leading-relaxed mb-6 font-medium">
+            Identity is verified separately — this ensures you match with travel buddies in your age bracket.
+          </p>
 
-        <h1 className="font-display text-3xl text-ink mb-3 animate-slide-up">How old are you?</h1>
-        <p className="text-ink/80 text-sm leading-relaxed mb-8 font-medium animate-slide-up" style={{ animationDelay: '50ms' }}>
-          Identity is verified separately — this just needs to be accurate.
-        </p>
+          <input
+            type="number"
+            inputMode="numeric"
+            min={MIN_AGE}
+            max={MAX_AGE}
+            value={value}
+            onChange={(e) => { setValue(e.target.value); setError(''); }}
+            onKeyDown={(e) => { if (e.key === 'Enter') handleContinue(); }}
+            placeholder="e.g. 25"
+            autoFocus
+            data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-age' : undefined}
+            className={`w-full rounded-2xl px-5 py-4 text-2xl font-bold text-[#382A21] placeholder:text-stone-400 bg-stone-50 border-2 transition-all duration-200 focus:outline-none focus:bg-white focus:border-[#1D3B2A] focus:ring-4 focus:ring-emerald-500/10 ${
+              error ? 'border-red-500 bg-red-50/30' : 'border-stone-200'
+            }`}
+          />
+          {error && <p className="text-red-600 text-xs font-semibold mt-2">{error}</p>}
 
-        <input
-          type="number"
-          inputMode="numeric"
-          min={MIN_AGE}
-          max={MAX_AGE}
-          value={value}
-          onChange={(e) => { setValue(e.target.value); setError(''); }}
-          onKeyDown={(e) => { if (e.key === 'Enter') handleContinue(); }}
-          placeholder="Your age"
-          autoFocus
-          data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-age' : undefined}
-          className={`input w-full text-lg animate-slide-up transition-all ${error ? 'border-red-500' : ''}`}
-          style={{ animationDelay: '100ms' }}
-        />
-        {error && <p className="text-red-500 text-xs mt-2 animate-slide-up" style={{ animationDelay: '100ms' }}>{error}</p>}
+          <div className="mt-5 pt-4 border-t border-stone-100">
+            <span className="text-xs font-bold text-stone-400 uppercase tracking-wider block mb-2">Quick Pick</span>
+            <div className="flex flex-wrap gap-2">
+              {[21, 23, 25, 27, 29, 32].map((quickAge) => (
+                <button
+                  key={quickAge}
+                  type="button"
+                  onClick={() => { hapticTap(); setValue(String(quickAge)); setError(''); }}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 ${
+                    value === String(quickAge)
+                      ? 'bg-[#1D3B2A] text-white shadow-xs'
+                      : 'bg-stone-100 text-[#382A21] hover:bg-stone-200'
+                  }`}
+                >
+                  {quickAge}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       <button
         onClick={handleContinue}
         data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-age-continue' : undefined}
-        className="btn-primary w-full py-4 mb-safe-bottom max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+        className="btn-primary w-full py-4 max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-lg"
       >
         Continue
         <ArrowRight className="w-4 h-4" />

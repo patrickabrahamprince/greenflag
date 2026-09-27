@@ -45,49 +45,84 @@ export default function ProfileBioPage() {
   };
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-5 pt-safe-top pb-safe-bottom bg-[#FAF9F6]">
       <OnboardingBackground image="/onboarding/bio.jpg" />
-      <button
-        onClick={() => router.push('/onboard/profile/instagram')}
-        className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit p-1 -ml-1"
-      >
-        <ArrowLeft size={24} />
-      </button>
+      
+      <div className="max-w-md mx-auto w-full flex items-center justify-between mb-2">
+        <button
+          onClick={() => router.push('/onboard/profile/instagram')}
+          className="text-[#382A21] bg-white/80 hover:bg-white border border-stone-200/80 shadow-xs active:scale-90 transition-all p-2.5 rounded-full"
+        >
+          <ArrowLeft size={20} />
+        </button>
+      </div>
 
-      <div className="flex-1 flex flex-col max-w-md mx-auto w-full">
+      <div className="max-w-md mx-auto w-full">
         <StepDots current={4} total={6} />
+      </div>
 
-        <h1 className="font-display text-2xl text-ink mb-2">A few words about you</h1>
-        <p className="text-ink/50 text-sm leading-relaxed mb-8">
-          This is what she&apos;ll read first — make it real.
-        </p>
+      <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full animate-fade-in">
+        <div className="bg-white/90 backdrop-blur-md border border-stone-200/90 rounded-[32px] p-7 shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-orange-100 text-orange-800 flex items-center justify-center mb-4 font-bold text-xl">
+            ✍️
+          </div>
+          <h1 className="font-display text-3xl font-extrabold text-[#382A21] mb-2">A few words about you</h1>
+          <p className="text-stone-600 text-sm leading-relaxed mb-6 font-medium">
+            This is what fellow travelers read on your card — what gets you excited to travel?
+          </p>
 
-        <label className="block text-sm font-medium text-ink mb-1.5">
-          About You <span className="text-red-400">*</span>
-        </label>
-        <textarea
-          value={value}
-          onChange={(e) => { setValue(e.target.value); setError(''); }}
-          placeholder={`A few words that define you... (at least ${BIO_MIN_CHARS} characters)`}
-          maxLength={200}
-          rows={5}
-          autoFocus
-          data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-bio' : undefined}
-          className={`input resize-none ${error ? 'border-red-500' : ''}`}
-        />
-        <div className="flex items-center justify-between mt-1">
-          <span className={`text-[10px] ${value.length < BIO_MIN_CHARS ? 'text-ink' : 'text-ink/50'}`}>
-            {value.length < BIO_MIN_CHARS ? `Min ${BIO_MIN_CHARS} characters` : ''}
-          </span>
-          <span className="text-xs text-ink/50">{value.length}/200</span>
+          <label className="block text-xs font-bold text-[#382A21]/70 uppercase tracking-wider mb-2">
+            Bio <span className="text-rose-500">*</span>
+          </label>
+          <textarea
+            value={value}
+            onChange={(e) => { setValue(e.target.value); setError(''); }}
+            placeholder={`Always ready for a spontaneous weekend road trip. Love mountain treks, cozy cafe mornings, and discovering hidden beaches...`}
+            maxLength={200}
+            rows={4}
+            autoFocus
+            data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-bio' : undefined}
+            className={`w-full rounded-2xl p-4 text-base font-medium text-[#382A21] placeholder:text-stone-400 bg-stone-50 border-2 transition-all duration-200 resize-none focus:outline-none focus:bg-white focus:border-[#1D3B2A] focus:ring-4 focus:ring-emerald-500/10 ${
+              error ? 'border-red-500 bg-red-50/30' : 'border-stone-200'
+            }`}
+          />
+          <div className="flex items-center justify-between mt-1.5 px-1">
+            <span className={`text-[11px] font-bold ${value.length < BIO_MIN_CHARS ? 'text-amber-700' : 'text-emerald-700'}`}>
+              {value.length < BIO_MIN_CHARS ? `Min ${BIO_MIN_CHARS} characters (${value.length}/${BIO_MIN_CHARS})` : '✓ Looks good!'}
+            </span>
+            <span className="text-xs text-stone-400 font-semibold">{value.length}/200</span>
+          </div>
+          {error && <p className="text-red-600 text-xs font-semibold mt-1">{error}</p>}
+
+          <div className="mt-5 pt-4 border-t border-stone-100">
+            <span className="text-xs font-bold text-stone-400 uppercase tracking-wider block mb-2">Tap to Add Vibe</span>
+            <div className="flex flex-wrap gap-1.5">
+              {['Mountain hikes 🏔️', 'Road tripper 🚗', 'Cafe runs ☕', 'Beach sunsets 🌅', 'Hostel vibes 🎒', 'Campfire music 🎸'].map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => {
+                    hapticTap();
+                    const next = value ? `${value.trim()} ${tag}` : tag;
+                    if (next.length <= 200) {
+                      setValue(next);
+                      setError('');
+                    }
+                  }}
+                  className="px-3 py-1 rounded-full text-xs font-semibold bg-stone-100 hover:bg-emerald-100 hover:text-emerald-900 text-[#382A21] transition-all active:scale-95"
+                >
+                  + {tag}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-        {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
       </div>
 
       <button
         onClick={handleContinue}
         data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-bio-continue' : undefined}
-        className="btn-primary w-full py-4 mb-safe-bottom max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+        className="btn-primary w-full py-4 max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-lg"
       >
         Continue
         <ArrowRight className="w-4 h-4" />

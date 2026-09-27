@@ -28,34 +28,28 @@ interface OnboardingBackgroundProps {
 const ONBOARDING_WINE_GLOW =
   'radial-gradient(ellipse 150% 65% at 50% 100%, rgba(69, 5, 12, 0.85) 0%, rgba(69, 5, 12, 0.5) 40%, transparent 78%)';
 
-export function OnboardingBackground({ image, light }: OnboardingBackgroundProps) {
-  // The wine glow lives on this scrim div rather than the wrapper's own
-  // bg-base -- the full-bleed <img> below sits on top of the wrapper and
-  // would otherwise hide the glow completely. Listed first so it paints
-  // above the black gradient and actually reads as a warm tint bleeding
-  // through the darkened photo.
-  // Lightened from the original 0.55/0.8/0.97 (non-light) and
-  // 0.35/0.65/0.92 (light) passes -- the photos were reading as near-
-  // silhouettes everywhere except the very top of the screen. Still
-  // darkest at the bottom, where the CTA and body copy actually sit.
-  const darkGradient = light
-    ? 'linear-gradient(180deg, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.48) 55%, rgba(0,0,0,0.8) 100%)'
-    : 'linear-gradient(180deg, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0.62) 55%, rgba(0,0,0,0.88) 100%)';
-  const scrim = `${ONBOARDING_WINE_GLOW}, ${darkGradient}`;
-
-  // `fixed`, not `absolute` -- on a screen with its own inner scroll
-  // container taller than one viewport (Standard Builder's Day N form,
-  // the interests screens), `absolute inset-0` only ever sized itself to
-  // that container's own (viewport-height) box, not its true scrollable
-  // content height. Scrolling past that one screen's worth of height
-  // scrolled the image away too, leaving flat black underneath for the
-  // rest of the content. `fixed` pins it to the real viewport instead,
-  // so it always covers the full screen no matter how tall the
-  // scrollable content is or how far into it you've scrolled.
+export function OnboardingBackground({ image }: OnboardingBackgroundProps) {
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-base">
-      <img key={image} src={image} alt="" className="w-full h-full object-cover animate-fade-in" />
-      <div className="absolute inset-0" style={{ background: scrim }} />
+    <div className="fixed inset-0 -z-10 overflow-hidden bg-[#FAF9F6]">
+      {image && (
+        <img
+          key={image}
+          src={image}
+          alt=""
+          className="w-full h-full object-cover object-top opacity-30 animate-fade-in filter saturate-125"
+        />
+      )}
+      {/* Porcelain ambient gradient wash */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(250, 249, 246, 0.4) 0%, rgba(250, 249, 246, 0.85) 45%, #FAF9F6 100%)',
+        }}
+      />
+      {/* Warm ambient emerald & amber glow spots */}
+      <div className="absolute -top-20 -left-20 w-80 h-80 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 -right-20 w-80 h-80 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
     </div>
   );
 }

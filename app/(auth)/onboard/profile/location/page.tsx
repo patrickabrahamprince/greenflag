@@ -99,69 +99,107 @@ export default function ProfileLocationPage() {
   };
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-5 pt-safe-top pb-safe-bottom bg-[#FAF9F6]">
       <OnboardingBackground image="/onboarding/location.jpg" />
-      <button
-        onClick={() => router.push('/onboard/profile')}
-        className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit p-1 -ml-1"
-      >
-        <ArrowLeft size={24} />
-      </button>
+      
+      <div className="max-w-md mx-auto w-full flex items-center justify-between mb-2">
+        <button
+          onClick={() => router.push('/onboard/profile')}
+          className="text-[#382A21] bg-white/80 hover:bg-white border border-stone-200/80 shadow-xs active:scale-90 transition-all p-2.5 rounded-full"
+        >
+          <ArrowLeft size={20} />
+        </button>
+      </div>
+
+      <div className="max-w-md mx-auto w-full">
+        <StepDots current={2} total={6} />
+      </div>
 
       <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
-        <StepDots current={2} total={6} />
-
-        <h1 className="font-display text-2xl text-ink mb-3">
-          Where are you{gpsDetecting ? ' (detecting...)' : ''}?
-        </h1>
-        <p className="text-ink/50 text-sm leading-relaxed mb-8">
-          Helps us show you people nearby.
-        </p>
-
-        {gpsDetecting ? (
-          <div className="input w-full text-lg opacity-50 bg-well/50 border border-gold/20 rounded-lg px-4 py-3 flex items-center gap-2">
-            <div className="w-4 h-4 rounded-full border-2 border-gold border-r-transparent animate-spin" />
-            <span>Detecting location...</span>
+        <div className="bg-white/90 backdrop-blur-md border border-stone-200/90 rounded-[32px] p-7 shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-teal-100 text-teal-800 flex items-center justify-center mb-4 font-bold text-xl">
+            📍
           </div>
-        ) : cityValue && !gpsDenied ? (
-          <div className="input w-full text-lg bg-well/50 border border-gold/40 rounded-lg px-4 py-3 flex items-center justify-between">
-            <span className="text-ink">{cityValue}</span>
-            <button
-              type="button"
-              onClick={detectLocation}
-              className="text-gold text-xs hover:text-gold/80 transition-colors"
-            >
-              Detect again
-            </button>
-          </div>
-        ) : (
-          <select
-            value={cityValue}
-            onChange={(e) => { setCityValue(e.target.value); setError(''); }}
-            data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-city' : undefined}
-            className={`input w-full text-lg ${error ? 'border-red-500' : ''}`}
-          >
-            <option value="">Select your city</option>
-            {INDIAN_CITIES.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-        )}
-        {gpsDenied && (
-          <p className="text-amber-400 text-xs mt-2">
-            We couldn&apos;t detect your city — please enter it manually, or{' '}
-            <button type="button" onClick={detectLocation} className="underline underline-offset-2 hover:text-amber-300 transition-colors duration-200">
-              try again
-            </button>.
+          <h1 className="font-display text-3xl font-extrabold text-[#382A21] mb-2">
+            Where are you based?
+          </h1>
+          <p className="text-stone-600 text-sm leading-relaxed mb-6 font-medium">
+            Helps us match you with road trips and travel buddies starting nearby.
           </p>
-        )}
-        {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
+
+          {gpsDetecting ? (
+            <div className="w-full text-base bg-emerald-50/80 border-2 border-emerald-300 rounded-2xl px-5 py-4 flex items-center gap-3 text-emerald-950 font-semibold shadow-xs animate-pulse">
+              <div className="w-5 h-5 rounded-full border-2 border-emerald-700 border-r-transparent animate-spin" />
+              <span>Detecting your city...</span>
+            </div>
+          ) : cityValue && !gpsDenied ? (
+            <div className="w-full bg-emerald-50/80 border-2 border-emerald-300/80 rounded-2xl px-5 py-4 flex items-center justify-between shadow-xs">
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-bold text-[#382A21]">{cityValue}</span>
+                <span className="text-xs bg-emerald-200/80 text-emerald-800 font-bold px-2 py-0.5 rounded-full">✓ Found</span>
+              </div>
+              <button
+                type="button"
+                onClick={detectLocation}
+                className="text-emerald-800 text-xs font-bold hover:underline"
+              >
+                Change
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <select
+                value={cityValue}
+                onChange={(e) => { setCityValue(e.target.value); setError(''); }}
+                data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-city' : undefined}
+                className={`w-full rounded-2xl px-5 py-4 text-lg font-bold text-[#382A21] bg-stone-50 border-2 transition-all duration-200 focus:outline-none focus:bg-white focus:border-[#1D3B2A] focus:ring-4 focus:ring-emerald-500/10 ${
+                  error ? 'border-red-500 bg-red-50/30' : 'border-stone-200'
+                }`}
+              >
+                <option value="">Select your city</option>
+                {INDIAN_CITIES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {gpsDenied && (
+            <p className="text-stone-500 text-xs mt-3">
+              Couldn&apos;t auto-detect city — pick from below or{' '}
+              <button type="button" onClick={detectLocation} className="text-emerald-800 font-bold underline">
+                retry GPS
+              </button>.
+            </p>
+          )}
+          {error && <p className="text-red-600 text-xs font-semibold mt-2">{error}</p>}
+
+          <div className="mt-5 pt-4 border-t border-stone-100">
+            <span className="text-xs font-bold text-stone-400 uppercase tracking-wider block mb-2.5">Popular Hubs</span>
+            <div className="flex flex-wrap gap-2">
+              {['Bangalore', 'Mumbai', 'Delhi', 'Goa', 'Pune', 'Hyderabad', 'Jaipur', 'Manali'].map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => { hapticTap(); setCityValue(c); setError(''); }}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 ${
+                    cityValue === c
+                      ? 'bg-[#1D3B2A] text-white shadow-xs'
+                      : 'bg-stone-100 text-[#382A21] hover:bg-stone-200'
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       <button
         onClick={handleContinue}
         data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-location-continue' : undefined}
-        className="btn-primary w-full py-4 mb-safe-bottom max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+        className="btn-primary w-full py-4 max-w-md mx-auto flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-lg"
       >
         Continue
         <ArrowRight className="w-4 h-4" />

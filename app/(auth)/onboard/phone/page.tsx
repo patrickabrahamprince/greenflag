@@ -145,107 +145,115 @@ export default function PhonePage() {
 
   if (skipping) {
     return (
-      <div className="w-full animate-fade-in min-h-dvh flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-ink/50" />
+      <div className="w-full animate-fade-in min-h-dvh flex items-center justify-center bg-[#FAF9F6]">
+        <Loader2 className="w-8 h-8 animate-spin text-emerald-800" />
       </div>
     );
   }
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-base">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-5 pt-safe-top pb-safe-bottom bg-[#FAF9F6]">
       <OnboardingBackground image="/onboarding/phone.jpg" />
-      <button
-        onClick={() => router.push('/onboard/name')}
-        className="text-ink/40 hover:text-ink active:scale-90 transition-all mb-6 w-fit"
-      >
-        <ArrowLeft size={24} />
-      </button>
-
-      <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full pb-safe-bottom overflow-y-auto overscroll-none">
-        <h1 className="text-2xl font-display font-semibold text-ink mb-2">
-          {otpSent ? "Verify Your Number" : "Your Number"}
-        </h1>
-        <p className="text-ink/50 text-sm mb-8">
-          {otpSent
-            ? `A code was sent to ${phone}`
-            : "We'll send a discreet verification code"}
-        </p>
-
-        {!otpSent ? (
-          <div className="space-y-4">
-            <PhoneInput value={phone} onChange={handlePhoneChange} error={error} />
-            <button
-              onClick={handleSendOtp}
-              disabled={!phone || loading}
-              className="btn-primary w-full active:scale-[0.98] flex items-center justify-center gap-2"
-            >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Send Code'}
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-xs text-ink/50 font-thin mb-1.5 tracking-wide">
-                Verification Code
-              </label>
-              <input
-                type="text"
-                inputMode="numeric"
-                maxLength={6}
-                value={otp}
-                onChange={(e) => {
-                  const cleaned = e.target.value.replace(/\D/g, '').slice(0, 6);
-                  setOtp(cleaned);
-                  setError('');
-                }}
-                placeholder="000000"
-                className="input text-center text-2xl tracking-[0.5em] font-mono"
-                autoFocus
-              />
-              {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
-            </div>
-            <button
-              onClick={handleVerifyOtp}
-              disabled={otp.length !== 6 || loading}
-              className="btn-primary w-full active:scale-[0.98] flex items-center justify-center gap-2"
-            >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Verify'}
-            </button>
-            <button
-              onClick={handleSendOtp}
-              disabled={loading}
-              className="w-full text-center text-sm text-ink/40 hover:text-ink active:scale-90 transition-all"
-            >
-              Resend Code
-            </button>
-          </div>
-        )}
-
+      
+      <div className="max-w-md mx-auto w-full flex items-center justify-between mb-4">
         <button
-          onClick={handleSkip}
-          disabled={skipping}
-          className="mt-6 w-full text-sm text-ink/50 underline underline-offset-4 decoration-ink/20 hover:text-ink hover:decoration-ink/40 transition-colors disabled:opacity-50"
+          onClick={() => router.push('/onboard/name')}
+          className="text-[#382A21] bg-white/80 hover:bg-white border border-stone-200/80 shadow-xs active:scale-90 transition-all p-2.5 rounded-full"
         >
-          Maybe Later
+          <ArrowLeft size={20} />
         </button>
+      </div>
 
-        {userEmail && (
-          <p className="text-xs text-ink/40 mt-2 text-center">
-            Signed in as {userEmail}. You can add your number later in Settings.
+      <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full overflow-y-auto overscroll-none pb-4">
+        <div className="bg-white/90 backdrop-blur-md border border-stone-200/90 rounded-[32px] p-7 shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-cyan-100 text-cyan-800 flex items-center justify-center mb-4 font-bold text-xl">
+            📱
+          </div>
+          <h1 className="text-3xl font-display font-extrabold text-[#382A21] mb-2">
+            {otpSent ? "Verify Your Number" : "Your Phone Number"}
+          </h1>
+          <p className="text-stone-600 text-sm font-medium mb-6">
+            {otpSent
+              ? `A 6-digit code was sent to ${phone}`
+              : "We'll send a quick verification code"}
           </p>
-        )}
 
-        <div className="flex items-center gap-3 my-6">
-          <div className="flex-1 h-px bg-raised" />
-          <span className="text-ink/50 text-xs">or</span>
-          <div className="flex-1 h-px bg-raised" />
-        </div>
-
-        <div className="space-y-3">
-          <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />
-          {Capacitor.getPlatform() !== 'android' && (
-            <AppleButton onClick={handleAppleLogin} loading={appleLoading} />
+          {!otpSent ? (
+            <div className="space-y-4">
+              <PhoneInput value={phone} onChange={handlePhoneChange} error={error} />
+              <button
+                onClick={handleSendOtp}
+                disabled={!phone || loading}
+                className="btn-primary w-full active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg"
+              >
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Send Code'}
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs text-[#382A21]/70 font-bold mb-1.5 tracking-wider uppercase">
+                  Verification Code
+                </label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) => {
+                    const cleaned = e.target.value.replace(/\D/g, '').slice(0, 6);
+                    setOtp(cleaned);
+                    setError('');
+                  }}
+                  placeholder="000000"
+                  className="w-full text-center text-3xl tracking-[0.4em] font-mono font-bold bg-stone-50 border-2 border-stone-200 focus:border-[#1D3B2A] focus:bg-white rounded-2xl py-3 text-[#382A21] transition-all"
+                  autoFocus
+                />
+                {error && <p className="text-red-600 text-xs font-semibold mt-1.5">{error}</p>}
+              </div>
+              <button
+                onClick={handleVerifyOtp}
+                disabled={otp.length !== 6 || loading}
+                className="btn-primary w-full active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg"
+              >
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Verify'}
+              </button>
+              <button
+                onClick={handleSendOtp}
+                disabled={loading}
+                className="w-full text-center text-xs font-bold text-emerald-800 hover:text-emerald-950 active:scale-90 transition-all pt-1"
+              >
+                Resend Code
+              </button>
+            </div>
           )}
+
+          <button
+            onClick={handleSkip}
+            disabled={skipping}
+            className="mt-5 w-full text-xs font-bold text-stone-500 hover:text-[#382A21] tracking-wider uppercase transition-colors disabled:opacity-50 text-center"
+          >
+            Maybe Later
+          </button>
+
+          {userEmail && (
+            <p className="text-xs text-stone-400 mt-3 text-center font-medium">
+              Signed in as {userEmail}
+            </p>
+          )}
+
+          <div className="flex items-center gap-3 my-5">
+            <div className="flex-1 h-px bg-stone-200" />
+            <span className="text-stone-400 text-xs font-bold uppercase">or continue with</span>
+            <div className="flex-1 h-px bg-stone-200" />
+          </div>
+
+          <div className="space-y-3">
+            <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />
+            {Capacitor.getPlatform() !== 'android' && (
+              <AppleButton onClick={handleAppleLogin} loading={appleLoading} />
+            )}
+          </div>
         </div>
       </div>
     </div>

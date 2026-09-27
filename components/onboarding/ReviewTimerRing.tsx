@@ -17,14 +17,14 @@ export function ReviewTimerRing({ secondsLeft, totalSeconds }: ReviewTimerRingPr
   return (
     <div className="relative w-32 h-32 flex items-center justify-center mb-6">
       <svg className="absolute inset-0 -rotate-90" width="128" height="128" viewBox="0 0 128 128">
-        <circle cx="64" cy="64" r={RADIUS} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="5" />
+        <circle cx="64" cy="64" r={RADIUS} fill="none" stroke="rgba(0,0,0,0.08)" strokeWidth="6" />
         <circle
           cx="64"
           cy="64"
           r={RADIUS}
           fill="none"
           stroke="url(#reviewRingGradient)"
-          strokeWidth="5"
+          strokeWidth="6"
           strokeLinecap="round"
           strokeDasharray={CIRCUMFERENCE}
           strokeDashoffset={offset}
@@ -32,13 +32,13 @@ export function ReviewTimerRing({ secondsLeft, totalSeconds }: ReviewTimerRingPr
         />
         <defs>
           <linearGradient id="reviewRingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#D2042D" />
-            <stop offset="100%" stopColor="#FFFFFF" />
+            <stop offset="0%" stopColor="#1D3B2A" />
+            <stop offset="100%" stopColor="#10B981" />
           </linearGradient>
         </defs>
       </svg>
-      <div className="w-20 h-20 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-gold animate-spin" />
+      <div className="w-20 h-20 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center shadow-xs">
+        <Loader2 className="w-8 h-8 text-emerald-800 animate-spin" />
       </div>
     </div>
   );

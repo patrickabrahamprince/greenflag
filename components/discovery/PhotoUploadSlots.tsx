@@ -66,10 +66,10 @@ export function PhotoUploadSlots({
         onClick={() => {
           if (!photo && photos.length < maxPhotos) inputRef.current?.click();
         }}
-        className={`rounded-xl border-2 border-dashed flex items-center justify-center relative overflow-hidden transition-all duration-300 ${className} ${
+        className={`rounded-2xl border-2 flex items-center justify-center relative overflow-hidden transition-all duration-300 ${className} ${
           photo
-            ? 'border-transparent'
-            : 'border-raised hover:border-gold active:scale-95 cursor-pointer'
+            ? 'border-transparent shadow-sm'
+            : 'border-dashed border-stone-300 bg-white/70 hover:border-[#1D3B2A] hover:bg-emerald-50/30 active:scale-95 cursor-pointer shadow-xs'
         } ${draggedIdx === i ? 'opacity-50' : ''}`}
       >
         {photo ? (
@@ -80,24 +80,27 @@ export function PhotoUploadSlots({
               className="w-full h-full object-cover"
             />
             {isPrimary && (
-              <div className="absolute top-2 left-2 px-2 py-1 bg-gold/90 rounded-full text-xs font-medium text-black">
+              <div className="absolute top-2.5 left-2.5 px-2.5 py-1 bg-[#1D3B2A] text-white rounded-full text-[11px] font-bold shadow-md tracking-wide">
                 Primary
               </div>
             )}
             {photo && (
-              <div className="absolute bottom-2 left-2 opacity-60 hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing">
-                <GripVertical size={16} className="text-ink" />
+              <div className="absolute bottom-2.5 left-2.5 p-1 bg-black/40 backdrop-blur-sm rounded-md opacity-80 hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing">
+                <GripVertical size={16} className="text-white" />
               </div>
             )}
             <button
               onClick={(e) => { e.stopPropagation(); onRemove(i); }}
-              className="absolute top-1.5 right-1.5 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80 active:scale-90 transition-all"
+              className="absolute top-2.5 right-2.5 w-7 h-7 bg-black/70 hover:bg-black text-white rounded-full flex items-center justify-center active:scale-90 transition-all shadow-md"
             >
-              <X size={12} className="text-ink" />
+              <X size={14} className="text-white" />
             </button>
           </>
         ) : (
-          <Upload size={20} className="text-ink/50" />
+          <div className="flex flex-col items-center gap-1.5 text-stone-400 group-hover:text-emerald-700">
+            <Upload size={22} className="text-stone-400" />
+            <span className="text-[11px] font-semibold text-stone-500">{i === 0 ? 'Cover Photo' : `Photo ${i + 1}`}</span>
+          </div>
         )}
       </div>
     );
@@ -105,13 +108,20 @@ export function PhotoUploadSlots({
 
   return (
     <div>
-      <label className="block text-sm font-medium text-ink mb-1.5">
-        Photos <span className="text-ink/50 font-normal">({maxPhotos} max - drag to reorder)</span>
-      </label>
-      <p className="text-xs text-gold/70 mb-3">💡 Your largest photo becomes your primary. Drag photos to reorder.</p>
-      <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2 mb-4">
-        <p className="text-xs text-red-400">⚠️ Keep photos respectful. Inappropriate photos will result in immediate removal and account ban.</p>
+      <div className="flex items-center justify-between mb-2">
+        <label className="text-sm font-bold text-[#382A21]">
+          Photos <span className="text-stone-500 font-normal">({photos.length}/{maxPhotos})</span>
+        </label>
+        <span className="text-xs font-semibold text-emerald-700 bg-emerald-100/80 px-2.5 py-0.5 rounded-full">
+          {maxPhotos - photos.length > 0 ? `${maxPhotos - photos.length} needed` : 'Ready'}
+        </span>
       </div>
+      
+      <div className="bg-amber-50/80 border border-amber-200/80 rounded-xl px-3 py-2 mb-4 flex items-center gap-2">
+        <Lightbulb className="w-4 h-4 text-amber-600 shrink-0" />
+        <p className="text-xs text-amber-900 font-medium leading-tight">First photo is your main card. Drag photos to reorder anytime.</p>
+      </div>
+
       {maxPhotos === 3 ? (
         <div className="grid grid-cols-2 grid-rows-2 gap-3 h-64">
           {renderSlot(0, 'row-span-2')}
@@ -132,22 +142,24 @@ export function PhotoUploadSlots({
         data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'photo-upload' : undefined}
         onChange={handleChange}
       />
-      <p className="text-xs text-ink/50 mt-1.5">{photos.length}/{maxPhotos} added</p>
-      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+      {error && <p className="text-red-600 font-medium text-xs mt-2">{error}</p>}
+      
       <button
         type="button"
         onClick={() => setShowTips((v) => !v)}
-        className="flex items-center gap-1.5 text-xs font-medium text-gold mt-3 active:scale-95 transition-transform"
+        className="flex items-center gap-1.5 text-xs font-semibold text-emerald-800 mt-4 active:scale-95 transition-transform"
       >
-        <Lightbulb size={14} />
-        How to choose the perfect picture
+        <Lightbulb size={14} className="text-emerald-700" />
+        How to choose great travel photos
       </button>
       {showTips && (
-        <ul className="mt-2 space-y-1.5 list-disc list-inside">
-          {PHOTO_TIPS.map((tip) => (
-            <li key={tip} className="text-xs text-ink/50 leading-relaxed">{tip}</li>
-          ))}
-        </ul>
+        <div className="mt-2.5 p-3.5 bg-white border border-stone-200 rounded-2xl shadow-xs">
+          <ul className="space-y-1.5 list-disc list-inside">
+            {PHOTO_TIPS.map((tip) => (
+              <li key={tip} className="text-xs text-stone-600 leading-relaxed">{tip}</li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );
