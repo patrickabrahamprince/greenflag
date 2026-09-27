@@ -50,15 +50,6 @@ body::-webkit-scrollbar,
 .min-h-dvh {
   min-height: 100dvh !important;
 }
-.min-h-dvh::after {
-  content: '';
-  display: block;
-  flex-shrink: 0;
-  height: var(--kb-inset, 0px);
-}
-body.min-h-dvh::after {
-  content: none;
-}
 
 @layer base {
   * {

@@ -122,17 +122,9 @@ export function PhotoUploadSlots({
         <p className="text-xs text-amber-900 font-medium leading-tight">First photo is your main card. Drag photos to reorder anytime.</p>
       </div>
 
-      {maxPhotos === 3 ? (
-        <div className="grid grid-cols-2 grid-rows-2 gap-3 h-64">
-          {renderSlot(0, 'row-span-2')}
-          {renderSlot(1, '')}
-          {renderSlot(2, '')}
-        </div>
-      ) : (
-        <div className="grid grid-cols-3 gap-3">
-          {Array.from({ length: maxPhotos }).map((_, i) => renderSlot(i, 'aspect-square'))}
-        </div>
-      )}
+      <div className="grid grid-cols-3 gap-3">
+        {Array.from({ length: maxPhotos }).map((_, i) => renderSlot(i, 'aspect-[3/4]'))}
+      </div>
       <input
         ref={inputRef}
         type="file"
