@@ -8,71 +8,37 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // --- Obsidian Velvet design system tokens (source of truth) ---
+        // --- GreenFlag Luxury Emerald & Obsidian Velvet design system tokens ---
         // Palette
-        crimson: '#D2042D',
-        wine: '#45050C',
-        // Was a soft blush pink (#F0BCC5) -- now pure white. Still a
-        // light fill, so the contrast direction (dark text on top) is
-        // unchanged; only the hue moved.
+        crimson: '#10B981',     // GreenFlag emerald primary
+        wine: '#064E3B',        // Deep emerald wine
         'rose-tint': '#FFFFFF',
-        // Elevation ramp: black environment, depth is a step up this ramp
-        // -- never a shadow, never a gradient. `card` and `base` are now
-        // the same value (both pure black) -- cards read as part of the
-        // same black field instead of a lighter surface. The bottom nav
-        // is the one deliberate exception (#1A1A1A, hardcoded on
-        // .nav-glass in globals.css, not this token) so it still reads as
-        // a distinct floating layer against a now-identical card/base.
-        well: '#0F0A0A',
-        base: '#000000',
-        raised: '#2A1519',
-        card: '#000000',
-        // Was #241014 -- read as a lighter reddish-brown against the rest
-        // of the now-black app on the Terms sheet and every other
-        // BottomSheet-based surface (login options, permission primers,
-        // profile-detail pickers). Darkened toward the same black
-        // environment while keeping a faint wine undertone.
-        overlay: '#150A0C',
-        // Crimson is dark/saturated -- fills using it need WHITE text
-        // (use text-ink, already white). rose-tint (now white) is a
-        // light fill and needs dark text -- that's what ink-dark is for,
-        // now pure black to match.
-        'ink-dark': '#000000',
+        // Elevation ramp: deep obsidian velvet environment, frosted glass depth
+        well: '#0D0818',
+        base: '#080511',
+        raised: '#1A132B',
+        card: '#120D22',
+        overlay: '#090612',
+        'ink-dark': '#080511',
 
-        // --- Legacy token names, repointed to the new palette ---
-        // Kept so existing call sites across the app (bg-cream, text-ink,
-        // bg-gold, etc.) keep working without editing each one -- same
-        // trick the Dateasy migration used. IMPORTANT DIFFERENCE from that
-        // migration: Mindaro (the previous `gold`) was a LIGHT fill, so
-        // every bg-gold call site was paired with text-ink-dark. Crimson
-        // is a DARK, saturated fill -- the opposite contrast need. Every
-        // bg-gold + text-ink-dark pairing from the Dateasy pass has been
-        // swept file-by-file to text-ink (white) alongside this token
-        // change; see the accompanying commit for the list.
-        cream: '#000000',       // was Persian Indigo bg -> now Neutral black
-        ink: '#FFFFFF',         // unchanged -- primary text stays white
-        black: '#0F0A0A',       // now well (recessed)
-        'black-deep': '#0F0A0A',// now well (recessed)
-        gold: '#D2042D',        // was Mindaro (light) -> now Crimson (dark) -- contrast flips
-        'gold-light': '#D2042D',
-        'gold-dark': '#45050C', // was Electric Violet -> now Wine
-        blush: '#D2042D',       // was Pinkish Red -> unified with Crimson (one red family)
-        violet: '#45050C',      // was Electric Violet -> now Wine
-        // Never repointed when the rest of the old Dateasy palette was --
-        // every bg-lavender/border-lavender call site (Gift icon button,
-        // interest-picker chip borders, match confetti, profile photo-slot
-        // outlines) has been silently rendering with NO color at all since
-        // that migration, not a wrong color. Wine is the closest surviving
-        // "cool/secondary" tone in the locked palette.
-        lavender: '#45050C',
-        surface: '#000000',     // dark background
-        'surface-light': '#2A1519', // slightly lighter dark (same as raised)
-        border: '#4a4a6a',      // dark border color
-        muted: '#FFFFFF99',     // unchanged -- 60% white
-        // bottom-nav.tsx's active-tab disc (dark disc on the light pill,
-        // was Persian Indigo) -- kept as its own token since "well"/"base"
-        // read ambiguously in that file; same near-black as base.
-        indigo: '#000000',
+        // --- Core & legacy token mappings ---
+        cream: '#080511',
+        ink: '#FFFFFF',
+        black: '#0D0818',
+        'black-deep': '#06040C',
+        gold: '#F59E0B',        // Radiant Amber/Gold for coins and badges
+        'gold-light': '#FDE047',
+        'gold-dark': '#B45309',
+        emerald: '#10B981',
+        'emerald-glow': '#34D399',
+        blush: '#10B981',
+        violet: '#6366F1',
+        lavender: '#8B5CF6',
+        surface: '#120D22',
+        'surface-light': '#1A132B',
+        border: 'rgba(255, 255, 255, 0.1)',
+        muted: 'rgba(255, 255, 255, 0.65)',
+        indigo: '#10B981',
       },
       fontFamily: {
         // Apple SF Pro for admin panel
@@ -106,14 +72,18 @@ module.exports = {
         'widest-xl': '0.25em',
       },
       boxShadow: {
-        'glow-crimson': '0 0 30px -10px rgba(210,4,45,0.6)',
-        'glow-crimson-sm': '0 0 20px -8px rgba(210,4,45,0.4)',
-        'glow-wine': '0 0 24px -10px rgba(69,5,12,0.7)',
+        'glow-crimson': '0 4px 24px -2px rgba(16,185,129,0.45)',
+        'glow-crimson-sm': '0 2px 14px -2px rgba(16,185,129,0.3)',
+        'glow-emerald': '0 4px 24px -2px rgba(16,185,129,0.45)',
+        'glow-emerald-lg': '0 8px 32px -4px rgba(16,185,129,0.6)',
+        'glow-gold': '0 4px 20px -2px rgba(245,158,11,0.4)',
+        'glow-wine': '0 0 24px -10px rgba(6,78,59,0.7)',
         'flat-dark': '0 4px 14px rgba(0,0,0,0.4)',
-        'depth-sm': '0 2px 8px rgba(210,4,45,0.15)',
-        'depth-md': '0 4px 16px rgba(210,4,45,0.2)',
-        'depth-lg': '0 8px 24px rgba(210,4,45,0.25)',
-        'depth-xl': '0 12px 32px rgba(210,4,45,0.3)',
+        'depth-sm': '0 2px 10px rgba(0,0,0,0.3)',
+        'depth-md': '0 4px 20px rgba(0,0,0,0.4)',
+        'depth-lg': '0 8px 30px rgba(0,0,0,0.5)',
+        'depth-xl': '0 12px 40px rgba(0,0,0,0.6)',
+        'glass-card': '0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 1px 0 0 rgba(255, 255, 255, 0.08)',
       },
       animation: {
         // Kept inside the 150-300ms window on purpose -- these fire on

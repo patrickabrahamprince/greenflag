@@ -12,8 +12,8 @@
    -- no radial glow, depth comes from the elevation ramp (well/base/
    raised/card/overlay) alone. */
 html, body {
-  background-color: #000000 !important;
-  background-image: none !important;
+  background-color: #080511 !important;
+  background-image: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.05) 0%, transparent 40%) !important;
   background-repeat: no-repeat !important;
   background-attachment: fixed !important;
 }
@@ -48,28 +48,6 @@ body::-webkit-scrollbar,
   --kb-inset: 0px;
 }
 
-/* Set by components/keyboard-inset-listener.tsx from the native
-   keyboardWillShow height (Keyboard resize mode is 'none' -- see
-   capacitor.config.ts for why). `dvh` on WebKit does not respond to the
-   on-screen keyboard at all, only to the toolbar collapsing, so every one
-   of this app's min-h-dvh screens would otherwise stay full-height and
-   let the keyboard cover a bottom-pinned Continue button.
-
-   This used to shrink min-height by --kb-inset directly, which raised
-   the button correctly but also shrank the container shorter than the
-   real viewport -- exposing whatever's behind it (html/body's #0B0614,
-   picked for splash-screen matching) instead of the page's own black
-   background, which showed up as a mismatched dark patch where the
-   keyboard used to be. Instead, the container now always stays exactly
-   full-height, and a flex-item spacer (::after) absorbs --kb-inset at
-   the end of the flex column -- same effect on the button's position
-   (every one of these screens is `flex flex-col`, so a fixed-height
-   trailing sibling displaces the CTA upward by the same amount), but the
-   container itself never shrinks, so its own background always covers
-   the full screen. Deliberately NOT inside @layer utilities: unlayered
-   rules always win over Tailwind's own layered utilities regardless of
-   source order, so this overrides every existing min-h-dvh usage across
-   the app without touching any of those files. */
 .min-h-dvh {
   min-height: 100dvh !important;
 }
@@ -79,20 +57,9 @@ body::-webkit-scrollbar,
   flex-shrink: 0;
   height: var(--kb-inset, 0px);
 }
-/* body also carries .min-h-dvh (just for background-color coverage, see
-   layout.tsx), not because it's one of the flex-column screens this
-   spacer trick targets. Without this override, focusing any text field
-   anywhere sets --kb-inset globally, and since that only resets on an
-   actual route change (not when the keyboard closes -- see
-   keyboard-inset-listener.tsx), staying on the same route after typing
-   (e.g. submitting a task's text answer without navigating away) left a
-   real chunk of extra, unstyled space sitting on body itself, right
-   above the fixed nav -- filled with body's own #000000 base color,
-   read as a stray solid-color layer obstructing whatever was under it. */
 body.min-h-dvh::after {
   content: none;
 }
-
 
 @layer base {
   * {
@@ -104,14 +71,9 @@ body.min-h-dvh::after {
   }
 
   ::selection {
-    @apply bg-gold/20 text-ink;
+    @apply bg-emerald/30 text-ink;
   }
 
-  /* Display type defaults (Sora): tight leading + small consistent tracking,
-     matching the structural principles Bumble applies to their headline
-     scale -- line-height closes in as size grows, letter-spacing stays a
-     small positive value rather than 0 or negative. Per-element overrides
-     (leading-*, tracking-*) still win since these are base-layer defaults. */
   .font-display {
     letter-spacing: 0.005em;
     font-weight: 600;
@@ -123,109 +85,95 @@ body.min-h-dvh::after {
 }
 
 @layer components {
-  /* Primary: Mindaro fill, dark text, pill, flat -- no gradient, no glow,
-     no animated border ring. Sized with padding + a minimum tap height,
-     not a fixed width/height -- callers (flex-1, inline px-8 py-3, etc.)
-     already size themselves across ~60 call sites, and baking in w-full
-     or a fixed h-14 here would silently override every one of them. */
-  /* Crimson is a dark, saturated fill -- unlike Dateasy's light Mindaro,
-     this needs WHITE text (text-ink), not dark. */
+  /* Primary: Radiant Emerald Gradient with vibrant glow and luxury bevel */
   .btn-primary {
-    @apply relative text-ink font-display font-bold rounded-pill px-8
+    @apply relative text-white font-display font-bold rounded-pill px-8
            min-h-[52px] flex items-center justify-center
-           text-label shadow-glow-crimson
+           text-label shadow-glow-emerald
            transition-all duration-200 ease-out
-           active:scale-[0.98]
-           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
-    /* Darker than the crimson accent (#D2042D, still used for icons/
-       badges/pills) -- hover lightens back up to that same crimson
-       instead of a brand-new hover color. */
-    background: #B8032A;
+           active:scale-[0.97]
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
   .btn-primary:hover {
-    background: #D2042D;
+    background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
+    box-shadow: 0 6px 28px -2px rgba(16, 185, 129, 0.6);
   }
 
-  /* Secondary: white fill, dark text, pill -- rose-tint is now pure
-     white, but stays a light fill needing dark text either way. */
+  /* Secondary: Frosted dark glass with crisp border */
   .btn-secondary {
-    @apply relative text-gray-900 font-medium rounded-pill px-4 py-2.5
+    @apply relative text-white font-medium rounded-pill px-5 py-2.5
            flex items-center justify-center gap-2
-           text-sm shadow-flat-dark
+           text-sm backdrop-blur-xl shadow-flat-dark
            transition-all duration-200 ease-out
-           active:scale-[0.95]
-           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
-    background: #F5F5F5;
-    border: 1px solid #E5E5E5;
+           active:scale-[0.96]
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.15);
   }
 
   .btn-secondary:hover {
-    background: #EFEFEF;
-    border-color: #D9D9D9;
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
   }
 
-  /* Tertiary: transparent, 1px white border, white text, pill. */
+  /* Tertiary / Ghost: Translucent glass border */
   .btn-ghost {
     @apply text-ink font-display font-medium rounded-pill px-6
            min-h-[44px] flex items-center justify-center
-           text-label border shadow-glow-crimson-sm
+           text-label border border-white/20
            transition-all duration-200 ease-out
-           active:scale-[0.98]
-           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
-    border-color: #FFFFFF;
+           active:scale-[0.97]
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100;
+    background: rgba(255, 255, 255, 0.03);
   }
 
   .btn-ghost:hover {
     background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.35);
   }
 
   .btn-danger {
-    @apply relative text-ink font-display font-bold rounded-pill px-8
+    @apply relative text-white font-display font-bold rounded-pill px-8
            min-h-[52px] flex items-center justify-center gap-2
-           text-label shadow-glow-wine
+           text-label shadow-flat-dark
            transition-all duration-200 ease-out
-           active:scale-[0.98]
-           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
-    background: #45050C;
+           active:scale-[0.97]
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100;
+    background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
   }
 
   .btn-danger:hover {
-    background: #D2042D;
+    background: linear-gradient(135deg, #F87171 0%, #DC2626 100%);
   }
 
-  /* Cards -- Apple-style with subtle shadow and refined border */
+  /* Cards -- Luxury frosted glass with subtle depth and border glow */
   .card {
-    @apply bg-card border border-raised rounded-2xl p-6
-           shadow-sm hover:shadow-md
+    @apply bg-card/90 border border-white/10 rounded-2xl p-6
+           backdrop-blur-xl shadow-glass-card
            transition-all duration-300 ease-out;
   }
 
-  /* Confirm/report/block-style modal dialogs -- Apple-style glassmorphism */
+  /* Confirm/report/block-style modal dialogs -- Ultra-luxury glassmorphism */
   .dialog-card {
-    @apply border border-raised rounded-2xl p-8 bg-card
-           shadow-lg backdrop-blur-sm
+    @apply border border-white/15 rounded-3xl p-8 bg-card/95
+           shadow-2xl backdrop-blur-2xl
            transition-all duration-300 ease-out;
   }
 
   .card-hover {
-    @apply card hover:border-gold;
+    @apply card hover:border-emerald/50 hover:shadow-glow-emerald;
   }
 
-  /* Filled well, no border at rest, Mindaro border on focus, per the
-     design system -- was an underline-only field (transparent bg, bottom
-     border only). The deck also puts the field's label as a caption
-     inside the field itself rather than floating above the box; that
-     would mean restructuring every label+input pairing across the app
-     (many files), so it's deliberately not done here -- this fixes the
-     field's own container styling only, which is safe as a single
-     shared-class change. */
   .input {
-    @apply w-full rounded-tile px-4 py-3
-           text-ink placeholder:text-ink/40 bg-well
-           border-2 border-transparent
+    @apply w-full rounded-2xl px-4 py-3.5
+           text-ink placeholder:text-ink/35 bg-well/90
+           border border-white/10 backdrop-blur-md
            transition-all duration-200 ease-out
-           focus:outline-none focus:border-gold;
+           focus:outline-none focus:border-emerald focus:ring-2 focus:ring-emerald/25;
   }
 
   /* Hide number input spinners */
@@ -245,7 +193,7 @@ body.min-h-dvh::after {
            text-gray-900 placeholder:text-gray-400 bg-gray-50
            border border-gray-200
            transition-all duration-200 ease-out
-           focus:outline-none focus:bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-200;
+           focus:outline-none focus:bg-white focus:border-emerald focus:ring-1 focus:ring-emerald/20;
   }
 
   /* Chrome/Safari force a yellow background on autofilled inputs unless
@@ -324,25 +272,19 @@ body.min-h-dvh::after {
   .hairline {
     height: 1px;
     width: 100%;
-    background: #4a4a6a;
+    background: rgba(255, 255, 255, 0.08);
   }
 
-  /* Floating pill -- now genuinely translucent with a backdrop blur
-     (true "glass", living up to the class name) instead of the flat
-     opaque fill this used to be. Still its own shade rather than the
-     card/base token (both pure black) so it reads as a distinct layer;
-     the blur is what keeps it legible over whatever scrolls underneath
-     now that it's no longer a solid color. */
+  /* Floating luxury pill with frosted glass and subtle emerald border highlight */
   .nav-glass {
-    background: rgba(18, 18, 18, 0.35);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(14, 10, 26, 0.75);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.7), 0 0 20px -4px rgba(16, 185, 129, 0.15);
   }
 
-  /* Rotating "comet" ring around the active tab's disc -- a thin arc of
-     crimson light circling continuously, layered via ::before so it sits
-     independent of the disc's own fill/icon. Masked to a ring (not a
-     filled circle) with a radial-gradient mask. */
+  /* Rotating emerald comet ring around the active tab disc */
   .nav-active-ring {
     position: relative;
   }
@@ -351,8 +293,8 @@ body.min-h-dvh::after {
     position: absolute;
     inset: -3px;
     border-radius: 9999px;
-    background: conic-gradient(from 0deg, transparent 0%, #D2042D 12%, transparent 28%);
-    animation: nav-ring-spin 2.4s linear infinite;
+    background: conic-gradient(from 0deg, transparent 0%, #10B981 15%, #34D399 25%, transparent 35%);
+    animation: nav-ring-spin 2.2s linear infinite;
     -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
     mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
     pointer-events: none;
@@ -369,14 +311,14 @@ body.min-h-dvh::after {
   }
 
   .glass-surface {
-    @apply backdrop-blur-xl border border-raised;
+    @apply backdrop-blur-2xl border border-white/10;
     background:
       linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
-      rgba(10, 5, 5, 0.6);
+      rgba(14, 10, 24, 0.75);
   }
 
   .gold-border-left {
-    border-left: 2px solid #D2042D;
+    border-left: 2px solid #10B981;
   }
 
   .match-arc {
@@ -391,20 +333,20 @@ body.min-h-dvh::after {
 
   .match-arc-bg {
     fill: none;
-    stroke: #4a4a6a;
+    stroke: rgba(255, 255, 255, 0.1);
     stroke-width: 2;
   }
 
   .match-arc-fill {
     fill: none;
-    stroke: #D2042D;
+    stroke: #10B981;
     stroke-width: 2;
     stroke-linecap: round;
     transition: stroke-dashoffset 1s ease-out;
   }
 
   .match-arc-text {
-    @apply absolute inset-0 flex items-center justify-center text-xs font-bold text-gold;
+    @apply absolute inset-0 flex items-center justify-center text-xs font-bold text-emerald;
   }
 }
 

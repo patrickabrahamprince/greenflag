@@ -25,21 +25,24 @@ export function Header({
 }: HeaderProps) {
   const router = useRouter();
   return (
-    <div className={cn('relative flex items-center justify-center h-16 px-8 bg-base/80 backdrop-blur-xl border-b border-raised', className)}>
-      {showBack && <BackButton />}
-      <div className="flex flex-col items-center">
-        <h1 className="font-display text-2xl text-ink tracking-tight">{title}</h1>
-        {subtitle && (
-          <p className="text-[10px] uppercase tracking-widest text-ink/40">{subtitle}</p>
+    <div className={cn('relative flex items-center justify-between h-16 px-6 bg-base/60 backdrop-blur-2xl border-b border-white/[0.08] sticky top-0 z-40', className)}>
+      <div className="flex items-center gap-3">
+        {showBack && <BackButton />}
+        <div className="flex flex-col">
+          <h1 className="font-display font-bold text-xl text-white tracking-tight">{title}</h1>
+          {subtitle && (
+            <p className="text-[10px] uppercase tracking-widest font-semibold text-emerald">{subtitle}</p>
+          )}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        {rightElement}
+        {showBalance && !rightElement && (
+          <CoinBadge onClick={() => router.push('/coins')} />
         )}
       </div>
-      {rightElement ? (
-        <div className="absolute right-4 top-1/2 -translate-y-1/2">{rightElement}</div>
-      ) : showBalance ? (
-        <div className="absolute right-4 top-1/2 -translate-y-1/2">
-          <CoinBadge onClick={() => router.push('/coins')} />
-        </div>
-      ) : null}
     </div>
   );
 }
+

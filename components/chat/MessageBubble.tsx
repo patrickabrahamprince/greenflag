@@ -9,22 +9,20 @@ interface MessageBubbleProps {
 export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
   return (
     <div className={cn('flex', isOwn ? 'justify-end' : 'justify-start')}>
-      {/* Outgoing = Crimson + white text, incoming = card + white text --
-          Crimson is dark/saturated, unlike Dateasy's light Mindaro which
-          needed dark text here instead. The corner nearest the author
-          (bottom-right for outgoing, bottom-left for incoming) tucks to a
-          smaller radius. */}
       <div
         className={cn(
-          'max-w-[80%] rounded-2xl px-5 py-3 animate-fade-in',
-          isOwn ? 'bg-gold text-ink ml-auto rounded-br-md' : 'bg-card text-ink rounded-bl-md'
+          'max-w-[78%] rounded-2xl px-4.5 py-3 shadow-md animate-fade-in transition-all',
+          isOwn
+            ? 'bg-gradient-to-br from-emerald to-emerald-600 text-white ml-auto rounded-br-sm shadow-glow-emerald border border-emerald-400/30'
+            : 'bg-white/[0.07] border border-white/10 text-white rounded-bl-sm backdrop-blur-xl'
         )}
       >
-        <p className="text-sm leading-relaxed">{message.content}</p>
-        <p className={cn('text-[10px] mt-1 text-right', isOwn ? 'text-ink/60' : 'text-ink/40')}>
+        <p className="text-[14px] leading-relaxed break-words">{message.content}</p>
+        <p className={cn('text-[10px] mt-1.5 text-right font-medium', isOwn ? 'text-white/70' : 'text-white/40')}>
           {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </p>
       </div>
     </div>
   );
 }
+

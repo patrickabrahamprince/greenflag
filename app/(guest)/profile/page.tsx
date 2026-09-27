@@ -86,36 +86,36 @@ export default function ProfilePage() {
           <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
         </div>
 
-      <div className="relative w-full aspect-[3/4] mb-5 rounded-photo overflow-hidden shadow-[0_20px_60px_-20px_rgba(69,5,12,0.35)]">
+      <div className="relative w-full aspect-[3/4] mb-5 rounded-photo overflow-hidden shadow-glass-card border border-white/10">
         <ProfileImageCarousel images={user.photos ?? []} disableLightbox />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />
         {user.phone_verified && (
-          <div className="absolute top-3 left-3 flex items-center gap-1 bg-black/50 backdrop-blur-md rounded-full pl-1.5 pr-2.5 py-1 animate-fade-in">
-            <BadgeCheck className="w-3.5 h-3.5 text-gold" />
-            <span className="text-[10px] font-semibold text-ink tracking-wide">Verified</span>
+          <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/60 border border-emerald/30 backdrop-blur-md rounded-full pl-2 pr-3 py-1 shadow-glow-emerald">
+            <BadgeCheck className="w-3.5 h-3.5 text-emerald" />
+            <span className="text-[10px] font-bold text-white tracking-wider uppercase">Verified</span>
           </div>
         )}
         <button
           onClick={() => { hapticTap(); router.push('/profile/edit'); }}
-          className="absolute bottom-3 right-3 w-10 h-10 rounded-full bg-black/50 backdrop-blur-md border border-raised flex items-center justify-center active:scale-90 transition-transform"
+          className="absolute bottom-3 right-3 w-11 h-11 rounded-full bg-black/60 backdrop-blur-xl border border-white/20 text-white flex items-center justify-center active:scale-90 transition-transform shadow-lg hover:border-emerald"
         >
-          <Edit3 className="w-4 h-4 text-ink" />
+          <Edit3 className="w-4 h-4 text-emerald" />
         </button>
       </div>
 
       <div className="flex flex-col items-center pb-6">
-        <h2 className="text-2xl font-display text-ink">{user.name}</h2>
+        <h2 className="text-2xl font-display font-bold text-white tracking-tight">{user.name}</h2>
 
         <div className="flex items-center gap-2 mt-2.5">
           {!!user.age && (
-            <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium text-ink/70 bg-raised border border-raised">
-              <Cake className="w-3 h-3" />
+            <span className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium text-white/80 bg-white/5 border border-white/10 backdrop-blur-md">
+              <Cake className="w-3 h-3 text-emerald" />
               {user.age}
             </span>
           )}
           {!!user.city && (
-            <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium text-ink/70 bg-raised border border-raised">
-              <MapPin className="w-3 h-3" />
+            <span className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium text-white/80 bg-white/5 border border-white/10 backdrop-blur-md">
+              <MapPin className="w-3 h-3 text-emerald" />
               {user.city}
             </span>
           )}
@@ -124,13 +124,9 @@ export default function ProfilePage() {
         <ProfileCompletion user={user} />
 
         {user.bio && (
-          <div className="mt-5 w-full rounded-card bg-card p-6">
-            <p className="text-[10px] uppercase tracking-widest text-ink/40 mb-1.5">About</p>
-            <p className={
-              user.persona === 'woman'
-                ? 'italic text-ink/80 leading-relaxed text-sm'
-                : 'text-ink/80 text-sm leading-relaxed'
-            }>
+          <div className="mt-5 w-full card border-white/10 p-5">
+            <p className="text-[10px] uppercase font-bold tracking-widest text-emerald mb-1.5">About</p>
+            <p className="text-white/80 text-sm leading-relaxed">
               {user.bio}
             </p>
           </div>
@@ -138,13 +134,13 @@ export default function ProfilePage() {
 
         {!!user.interests_have?.length && (
           <div className="mt-5 w-full">
-            <p className="text-[10px] uppercase tracking-widest text-ink/40 mb-2 text-center">Interests</p>
+            <p className="text-[10px] uppercase font-bold tracking-widest text-white/40 mb-2 text-center">Interests</p>
             <div className="flex flex-wrap justify-center gap-1.5">
               {user.interests_have.map((tag) => (
                 <button
                   key={tag}
                   onClick={hapticTap}
-                  className="px-3 py-1 rounded-full text-[11px] font-medium text-gold bg-gold/10 border border-gold/20 active:scale-90 transition-transform"
+                  className="px-3.5 py-1 rounded-full text-xs font-semibold text-emerald bg-emerald/10 border border-emerald/25 backdrop-blur-md active:scale-90 transition-transform"
                 >
                   {tag}
                 </button>
@@ -154,16 +150,12 @@ export default function ProfilePage() {
         )}
       </div>
 
-      {/* Hinge-style prompt card -- the teaser Q&A collected during
-          onboarding was never actually shown anywhere on the profile
-          itself until now. */}
       {user.teaser_prompt && user.teaser_answer && (
         <div
-          className="mb-6 rounded-card border border-gold/20 p-6 shadow-[0_12px_32px_-16px_rgba(69,5,12,0.4)]"
-          style={{ background: 'linear-gradient(135deg, rgba(210,4,45,0.12) 0%, rgba(15,10,10,0.9) 60%)' }}
+          className="mb-6 card border-emerald/25 p-5 shadow-glow-emerald bg-gradient-to-br from-emerald/10 via-card to-card"
         >
-          <p className="text-[10px] uppercase tracking-widest text-gold/70 mb-2">{user.teaser_prompt}</p>
-          <p className="font-display text-lg text-ink leading-snug">{user.teaser_answer}</p>
+          <p className="text-[10px] uppercase font-bold tracking-widest text-emerald mb-1.5">{user.teaser_prompt}</p>
+          <p className="font-display font-bold text-lg text-white leading-snug">{user.teaser_answer}</p>
         </div>
       )}
 
@@ -180,13 +172,13 @@ export default function ProfilePage() {
       </div>
 
       {/* Travel Hub Card */}
-      <div className="mt-5 p-5 rounded-2xl bg-card border border-emerald-500/20 shadow-sm flex items-center justify-between">
+      <div className="mt-5 p-5 card border-emerald/30 shadow-glow-emerald flex items-center justify-between bg-gradient-to-br from-emerald/15 via-card to-card">
         <div>
-          <h3 className="font-display text-sm font-bold text-ink flex items-center gap-1.5">
+          <h3 className="font-display text-sm font-bold text-white flex items-center gap-1.5">
             <span>✈️</span>
             <span>GreenFlag Trips</span>
           </h3>
-          <p className="text-xs text-ink/60 mt-1 max-w-[200px]">
+          <p className="text-xs text-white/60 mt-1 max-w-[200px]">
             Plan weekend getaways, host trips, and meet new people for trips.
           </p>
         </div>
@@ -195,33 +187,31 @@ export default function ProfilePage() {
             hapticTap();
             router.push('/trips');
           }}
-          className="px-3.5 py-1.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold transition-all shrink-0"
+          className="px-4 py-2 rounded-full bg-emerald hover:bg-emerald-400 text-black text-xs font-bold transition-all shrink-0 shadow-glow-emerald"
         >
           View Trips
         </button>
       </div>
 
-      <div className="mt-6">
-        <div
-          className="rounded-card border border-emerald-500/20 p-5 flex items-center justify-between shadow-[0_12px_32px_-16px_rgba(16,185,129,0.3)]"
-          style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(15,10,10,0.9) 60%)' }}
-        >
+      {/* Coin Balance Card */}
+      <div className="mt-5">
+        <div className="card border-gold/30 p-5 flex items-center justify-between shadow-glow-gold bg-gradient-to-br from-gold/15 via-card to-card">
           <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0">
-              <Coins className="w-5 h-5 text-emerald-400" />
+            <div className="w-12 h-12 rounded-2xl bg-gold/20 border border-gold/30 flex items-center justify-center shrink-0">
+              <Coins className="w-6 h-6 text-gold" />
             </div>
             <div>
-              <p className="text-2xl font-display font-semibold text-ink leading-none">{balance}</p>
-              <p className="text-xs text-muted mt-1">Coins · for travel perks & boosts</p>
+              <p className="text-2xl font-display font-bold text-white leading-none">{balance.toLocaleString()}</p>
+              <p className="text-xs text-white/50 mt-1">Available Coins</p>
             </div>
           </div>
-          <button onClick={() => { hapticTap(); router.push('/coins'); }} className="btn-primary !min-h-[36px] text-xs px-4 shrink-0 font-bold bg-emerald-500 hover:bg-emerald-400 text-black border-none">
-            Buy
+          <button onClick={() => { hapticTap(); router.push('/coins'); }} className="btn-primary !min-h-[38px] text-xs px-5 shrink-0 font-bold">
+            Get Coins
           </button>
         </div>
       </div>
 
-      <div className="mt-8 pt-6 border-t border-raised/50">
+      <div className="mt-8 pt-6 border-t border-white/10">
         <button
           onClick={() => { hapticTap(); setShowLogoutConfirm(true); }}
           disabled={loggingOut}
@@ -233,11 +223,11 @@ export default function ProfilePage() {
       </div>
 
       {showLogoutConfirm && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-black/80 flex items-center justify-center z-50 p-6">
+        <div className="fixed inset-0 backdrop-blur-xl bg-black/80 flex items-center justify-center z-50 p-6 animate-fade-in">
           <div className="dialog-card max-w-sm w-full text-center">
-            <LogOut className="w-12 h-12 text-crimson mx-auto mb-4" />
-            <h3 className="font-display text-lg text-ink mb-2">Sign out?</h3>
-            <p className="text-sm text-ink mb-6">
+            <LogOut className="w-12 h-12 text-rose-500 mx-auto mb-4" />
+            <h3 className="font-display font-bold text-xl text-white mb-2">Sign out?</h3>
+            <p className="text-sm text-white/60 mb-6">
               Are you sure you want to sign out? You will need to log back in to access your matches and messages.
             </p>
             <div className="flex gap-3">

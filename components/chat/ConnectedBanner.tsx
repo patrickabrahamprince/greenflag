@@ -1,12 +1,13 @@
+import { Sparkles } from 'lucide-react';
+
 export function ConnectedBanner() {
   return (
-    <div
-      className="mx-4 mb-2 rounded-xl px-4 py-3 flex items-center gap-2 animate-slide-down"
-      style={{ background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.15)' }}
-    >
-      <span className="text-sm text-gold font-medium font-display italic">
-        You&apos;re Connected. The conversation is open.
+    <div className="mx-4 mb-3 rounded-2xl px-4 py-2.5 flex items-center justify-center gap-2 bg-emerald/10 border border-emerald/25 shadow-glow-emerald backdrop-blur-xl animate-slide-down">
+      <Sparkles className="w-4 h-4 text-emerald shrink-0" />
+      <span className="text-xs text-emerald font-semibold font-display tracking-wide text-center">
+        You&apos;re Connected. Say hello and plan your next meet!
       </span>
     </div>
   );
 }
+
