@@ -100,10 +100,12 @@ export default function HowItWorksPage() {
     track.scrollTo({ left: (base + index) * track.clientWidth, behavior: 'smooth' });
   };
 
+  const currentUser = useUserStore((s) => s.user);
+
   const handleContinue = async () => {
     hapticTap();
     setContinuing(true);
-    if (bio) {
+    if (currentUser?.onboarding_completed) {
       goTo('/trips', '/onboarding/hero.jpg');
     } else {
       goTo('/onboard/name', '/onboarding/name.jpg');

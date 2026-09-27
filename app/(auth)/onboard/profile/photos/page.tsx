@@ -229,7 +229,7 @@ export default function ProfilePhotosPage() {
       instagram_url: instagramHandle ? `https://instagram.com/${instagramHandle.replace(/^@/, '')}` : null,
       lat,
       lng,
-      onboarding_completed: resolvedPersona === 'man',
+      onboarding_completed: true,
     });
     setLoading(false);
     if (upsertError) { toast.error(upsertError.message); return; }

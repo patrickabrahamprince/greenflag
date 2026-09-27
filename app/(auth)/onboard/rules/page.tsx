@@ -124,9 +124,28 @@ export default function RulesPage() {
 
   const persona = useOnboardingStore((s) => s.persona);
   const currentUser = useUserStore((s) => s.user);
+  const setGlobalUser = useUserStore((s) => s.setUser);
 
   const handleContinue = async () => {
     hapticTap();
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from('profiles').update({
+          onboarding_completed: true,
+          approval_status: 'approved',
+          review_started_at: new Date().toISOString(),
+        }).eq('id', user.id);
+
+        const { data: freshProfile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+        if (freshProfile) setGlobalUser(freshProfile as any);
+      }
+    } catch (err) {
+      if (process.env.NODE_ENV === 'development') console.error('Error completing onboarding:', err);
+    }
+    setLoading(false);
+    toast.success('Welcome to GreenFlag!');
     goTo('/trips', '/onboarding/hero.jpg');
   };
 

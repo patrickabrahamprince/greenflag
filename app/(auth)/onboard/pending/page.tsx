@@ -8,6 +8,7 @@ import { usePendingReviewCountdown } from '@/lib/hooks/usePendingReviewCountdown
 import { ReviewTimerRing } from '@/components/onboarding/ReviewTimerRing';
 import { OnboardingBackground } from '@/components/onboarding/OnboardingBackground';
 import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
+import { useUserStore } from '@/lib/store';
 
 const WELCOME_DISPLAY_MS = 1800;
 
@@ -48,7 +49,20 @@ export default function PendingApprovalPage() {
   // this lands once the review moment has played out.
   useEffect(() => {
     if (!arrived) return;
-    const timer = setTimeout(() => goToRef.current('/trips'), WELCOME_DISPLAY_MS);
+    const timer = setTimeout(async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await supabase.from('profiles').update({
+            onboarding_completed: true,
+            approval_status: 'approved',
+          }).eq('id', user.id);
+          const { data: freshProfile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+          if (freshProfile) useUserStore.getState().setUser(freshProfile as any);
+        }
+      } catch {}
+      goToRef.current('/trips');
+    }, WELCOME_DISPLAY_MS);
     return () => clearTimeout(timer);
   }, [arrived]);
 
