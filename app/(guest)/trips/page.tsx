@@ -37,17 +37,15 @@ export default function TripsPage() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Filters
-  const [selectedDestination, setSelectedDestination] = useState('all');
-  const [selectedVibe, setSelectedVibe] = useState('all');
-  const [femaleOnlyFilter, setFemaleOnlyFilter] = useState(false);
+  // Search query
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // My Trips state
+  // My Trips & Requests State
   const [hostedTrips, setHostedTrips] = useState<Trip[]>([]);
   const [myRequests, setMyRequests] = useState<TripRequest[]>([]);
   const [loadingMyTrips, setLoadingMyTrips] = useState(false);
 
-  // Modals
+  // Modal States
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedTripDetails, setSelectedTripDetails] = useState<Trip | null>(null);
   const [selectedTripForJoin, setSelectedTripForJoin] = useState<Trip | null>(null);
@@ -58,12 +56,7 @@ export default function TripsPage() {
   const fetchTrips = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams();
-      if (selectedDestination !== 'all') params.append('destination', selectedDestination);
-      if (selectedVibe !== 'all') params.append('vibe', selectedVibe);
-      if (femaleOnlyFilter) params.append('female_only', 'true');
-
-      const res = await fetch(`/api/trips?${params.toString()}`);
+      const res = await fetch('/api/trips');
       const data = await res.json();
       if (res.ok && data.trips) {
         setTrips(data.trips);
@@ -73,7 +66,7 @@ export default function TripsPage() {
     } finally {
       setLoading(false);
     }
-  }, [selectedDestination, selectedVibe, femaleOnlyFilter]);
+  }, []);
 
   // Fetch My Trips & Requests
   const fetchMyTrips = useCallback(async () => {
@@ -131,6 +124,17 @@ export default function TripsPage() {
     fetchMyTrips();
   };
 
+  const filteredTrips = trips.filter((t) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      t.destination?.toLowerCase().includes(q) ||
+      t.vibe?.toLowerCase().includes(q) ||
+      t.description?.toLowerCase().includes(q) ||
+      t.host?.name?.toLowerCase().includes(q)
+    );
+  });
+
   return (
     <div className="min-h-screen screen-gradient text-ink pb-44 max-w-app mx-auto px-4 pt-safe-top">
       
@@ -138,22 +142,22 @@ export default function TripsPage() {
       <header className="flex items-center justify-between py-2 border-b border-slate-200/80 mb-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-black tracking-tight text-ink flex items-center gap-1.5">
+            <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 flex items-center gap-1.5">
               <span>Trips</span>
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             </h1>
           </div>
-          <p className="text-xs text-ink/60 font-medium">Meet new people for any trip. Never travel alone.</p>
+          <p className="text-xs text-slate-600 font-medium">Meet new people for any trip. Never travel alone.</p>
         </div>
 
         <div className="flex items-center gap-2.5">
           <Link
             href="/notifications"
-            className="relative w-9 h-9 rounded-full bg-well hover:bg-black/5 flex items-center justify-center text-ink/70 transition-colors"
+            className="relative w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition-colors"
           >
             <Bell className="w-4 h-4" />
             {unreadCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[15px] h-3.5 px-1 bg-emerald-500 rounded-full flex items-center justify-center text-[9px] font-bold text-white">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[15px] h-3.5 px-1 bg-emerald-600 rounded-full flex items-center justify-center text-[9px] font-bold text-white">
                 {unreadCount > 99 ? '99+' : unreadCount}
               </span>
             )}
@@ -163,7 +167,7 @@ export default function TripsPage() {
               hapticTap();
               setIsCreateOpen(true);
             }}
-            className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-xs rounded-full flex items-center gap-1.5 shadow-sm transition-all"
+            className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs rounded-full flex items-center gap-1.5 shadow-sm transition-all"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>New Trip</span>
@@ -172,16 +176,16 @@ export default function TripsPage() {
       </header>
 
       {/* Tabs: Explore vs My Trips */}
-      <div className="flex gap-2 p-1 bg-well rounded-2xl mb-4">
+      <div className="flex gap-2 p-1.5 bg-slate-200/80 rounded-2xl mb-4">
         <button
           onClick={() => {
             hapticTap();
             setActiveTab('explore');
           }}
-          className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+          className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all ${
             activeTab === 'explore'
-              ? 'bg-emerald-600 text-white shadow-sm'
-              : 'text-ink/60 hover:text-ink'
+              ? 'bg-slate-900 text-white shadow-sm'
+              : 'text-slate-800 hover:text-slate-950 font-bold'
           }`}
         >
           Explore Trips
@@ -191,10 +195,10 @@ export default function TripsPage() {
             hapticTap();
             setActiveTab('my-trips');
           }}
-          className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+          className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all ${
             activeTab === 'my-trips'
-              ? 'bg-emerald-600 text-white shadow-sm'
-              : 'text-ink/60 hover:text-ink'
+              ? 'bg-slate-900 text-white shadow-sm'
+              : 'text-slate-800 hover:text-slate-950 font-bold'
           }`}
         >
           My Trips & Requests
@@ -205,102 +209,39 @@ export default function TripsPage() {
       {activeTab === 'explore' && (
         <div className="space-y-4">
           
-          {/* Travel Hero Banner */}
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent border border-emerald-500/20 relative overflow-hidden">
-            <div className="flex items-center gap-2 text-emerald-700 text-[11px] font-bold uppercase tracking-wider mb-1">
-              <span>✈️</span>
-              <span>Any Trip • Any Vibe</span>
+          {/* Where are you travelling? - Post a Trip Card */}
+          <div className="p-4 rounded-3xl bg-white border border-slate-200/90 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-xl shrink-0">
+                ✈️
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">Where are you travelling?</h3>
+                <p className="text-xs text-slate-600">Post your destination, dates & meet companions.</p>
+              </div>
             </div>
-            <h2 className="text-base font-display font-bold text-ink mb-1">
-              Meet New People for Any Adventure
-            </h2>
-            <p className="text-xs text-ink/70 leading-relaxed">
-              Road trips, beach escapes, mountain treks, cafe crawls, or camping — connect with verified travelers and go together.
-            </p>
-          </div>
-
-          {/* Quick Destination Filter Chips */}
-          <div className="overflow-x-auto scrollbar-none flex items-center gap-2 pb-1.5">
             <button
               onClick={() => {
                 hapticTap();
-                setSelectedDestination('all');
+                setIsCreateOpen(true);
               }}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-                selectedDestination === 'all'
-                  ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'bg-white border border-slate-200 text-ink/70 hover:bg-slate-50'
-              }`}
+              className="btn-primary !min-h-[40px] px-5 text-xs font-bold shrink-0 flex items-center justify-center gap-1.5"
             >
-              ✨ All Escapes
+              <Plus className="w-4 h-4" />
+              <span>Post a Trip</span>
             </button>
-            {POPULAR_DESTINATIONS.map((dest) => {
-              const isSelected = selectedDestination.toLowerCase() === dest.name.toLowerCase();
-              return (
-                <button
-                  key={dest.name}
-                  onClick={() => {
-                    hapticTap();
-                    setSelectedDestination(isSelected ? 'all' : dest.name.toLowerCase());
-                  }}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-                    isSelected
-                      ? 'bg-emerald-600 text-white shadow-sm'
-                      : 'bg-white border border-slate-200 text-ink/70 hover:bg-slate-50'
-                  }`}
-                >
-                  <span>📍</span>
-                  <span>{dest.name}</span>
-                </button>
-              );
-            })}
           </div>
 
-          {/* Vibe & Safety Sub-filters */}
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
-              {[
-                { name: 'all', label: 'All Vibes', icon: '✨' },
-                { name: 'Roadtrip', label: 'Road Trip', icon: '🚗' },
-                { name: 'Trek', label: 'Trek', icon: '🏔' },
-                { name: 'Beach', label: 'Beach', icon: '🏖' },
-                { name: 'Foodie', label: 'Foodie', icon: '🍸' },
-                { name: 'Camping', label: 'Camping', icon: '🏕' },
-                { name: 'Chill', label: 'Chill', icon: '🌿' },
-                { name: 'Adventure', label: 'Adventure', icon: '⚡️' },
-              ].map((vibe) => (
-                <button
-                  key={vibe.name}
-                  onClick={() => {
-                    hapticTap();
-                    setSelectedVibe(vibe.name);
-                  }}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1 transition-all ${
-                    selectedVibe === vibe.name
-                      ? 'bg-slate-900 text-white shadow-sm'
-                      : 'bg-white border border-slate-200 text-ink/70 hover:text-ink hover:bg-slate-50'
-                  }`}
-                >
-                  <span>{vibe.icon}</span>
-                  <span>{vibe.label}</span>
-                </button>
-              ))}
-            </div>
-
-            <button
-              onClick={() => {
-                hapticTap();
-                setFemaleOnlyFilter((prev) => !prev);
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shrink-0 transition-all ${
-                femaleOnlyFilter
-                  ? 'bg-purple-600 text-white shadow-sm'
-                  : 'bg-white text-purple-700 hover:bg-purple-50 border border-purple-200'
-              }`}
-            >
-              <Shield className="w-3.5 h-3.5" />
-              <span>Women Only</span>
-            </button>
+          {/* Search bar */}
+          <div className="relative">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by city or trip plan (e.g. Goa, Manali, Trek)..."
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 shadow-sm"
+            />
           </div>
 
           {/* Trips Feed Cards */}
@@ -309,12 +250,12 @@ export default function TripsPage() {
               <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
               <p className="text-xs text-ink/50">Finding weekend companions...</p>
             </div>
-          ) : trips.length === 0 ? (
+          ) : filteredTrips.length === 0 ? (
             <div className="text-center py-16 bg-white border border-black/[0.08] rounded-3xl p-6 shadow-sm">
               <Compass className="w-12 h-12 text-ink/20 mx-auto mb-3" />
               <h3 className="text-base font-bold text-ink">No trips found</h3>
               <p className="text-xs text-ink/50 mt-1 max-w-xs mx-auto">
-                No trips match your filters. Be the first to post a trip for this destination!
+                No trips match your search. Be the first to post a trip for this destination!
               </p>
               <button
                 onClick={() => {
@@ -323,12 +264,12 @@ export default function TripsPage() {
                 }}
                 className="mt-4 px-4 py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-sm hover:bg-emerald-500"
               >
-                + Create Trip
+                + Post a Trip
               </button>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {trips.map((trip) => {
+              {filteredTrips.map((trip) => {
                 const popularDest = POPULAR_DESTINATIONS.find(
                   (d) => d.name.toLowerCase() === trip.destination.toLowerCase()
                 );
