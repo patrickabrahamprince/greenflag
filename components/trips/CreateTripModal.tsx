@@ -137,11 +137,19 @@ export function CreateTripModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-md animate-fade-in">
-      <div className="bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-lg w-full max-h-[90dvh] flex flex-col overflow-hidden shadow-2xl">
+    <div 
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          hapticTap();
+          onClose();
+        }
+      }}
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-md animate-fade-in"
+    >
+      <div className="bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-lg w-full max-h-[90dvh] flex flex-col min-h-0 overflow-hidden shadow-2xl">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50 shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full bg-emerald-100 border border-emerald-200 flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-emerald-600" />
@@ -163,7 +171,11 @@ export function CreateTripModal({
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="overflow-y-auto px-6 py-5 space-y-5">
+        <form 
+          onSubmit={handleSubmit} 
+          className="overflow-y-auto overscroll-contain touch-pan-y px-6 py-5 space-y-5 flex-1 min-h-0"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
           
           {/* Step 1: Destination */}
           <div>
