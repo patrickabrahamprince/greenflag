@@ -1,410 +1,279 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
 import { 
-  ShieldCheck, 
+  Check, 
+  Info, 
+  Shield, 
+  Sparkles, 
   Star, 
   Award, 
-  MapPin, 
-  Users, 
-  Heart, 
-  Lock, 
-  Sparkles, 
-  Share2, 
-  AlertCircle, 
-  ChevronRight, 
-  Check, 
-  Flame, 
-  Zap, 
-  Settings, 
-  Camera, 
-  PhoneCall, 
-  UserCheck, 
-  ExternalLink 
+  Users 
 } from 'lucide-react';
-import { useUserStore } from '@/lib/store';
-import { ProSubscriptionModal } from '@/components/shared/ProSubscriptionModal';
 import { hapticTap, hapticSuccess } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 
-export default function PassportProfilePage() {
-  const user = useUserStore((s) => s.user);
-  
-  const [activeTab, setActiveTab] = useState<'passport' | 'circles' | 'safety'>('passport');
-  const [isProModalOpen, setIsProModalOpen] = useState(false);
-  const [liveLocationShared, setLiveLocationShared] = useState(false);
-
-  const passportPhotos = [
-    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80',
-  ];
-
-  const handleShareLiveLocation = () => {
-    hapticSuccess();
-    setLiveLocationShared(true);
-    toast.success('Live GPS coordinates securely shared with your emergency contact!');
-  };
+export default function PassportPage() {
+  const [showScoreInfo, setShowScoreInfo] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] text-[#382A21] pb-32 max-w-app mx-auto px-4 pt-safe-top">
+    <div className="min-h-screen w-full bg-[#faf8f5] flex items-center justify-center p-2 md:p-8 font-[Inter] relative overflow-hidden text-black">
       
-      {/* Top Header */}
-      <header className="flex items-center justify-between py-4">
-        <div>
-          <h1 className="font-display text-2xl font-black tracking-tight text-[#382A21]">
-            Passport & Safety
-          </h1>
-          <p className="text-xs text-stone-500 font-medium mt-0.5">
-            Verified Green Score, Badges & Emergency Circles
-          </p>
-        </div>
+      {/* Background Dots */}
+      <div
+        className="absolute inset-0 opacity-[0.04] pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(#000 1px, transparent 1px)',
+          backgroundSize: '22px 22px',
+        }}
+      />
+      <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-gradient-to-br from-emerald-200 via-teal-200 to-cyan-200 rounded-full blur-[80px] opacity-60 pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-[600px] h-[600px] bg-gradient-to-br from-rose-200 via-orange-200 to-amber-200 rounded-full blur-[80px] opacity-60 pointer-events-none" />
 
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              hapticTap();
-              setIsProModalOpen(true);
-            }}
-            className="px-3.5 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold text-xs rounded-full shadow-md flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>PRO ₹249</span>
-          </button>
+      {/* Main Phone Frame */}
+      <div className="relative w-full max-w-[390px] h-[820px] bg-black rounded-[56px] p-[10px] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3),0_30px_60px_-30px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.1)]">
+        
+        {/* Dynamic Island */}
+        <div className="absolute top-[18px] left-1/2 -translate-x-1/2 w-[100px] h-[6px] bg-[#1a1a1a] rounded-full z-20" />
+        <div className="absolute top-[10px] left-1/2 -translate-x-1/2 w-[10px] h-[10px] bg-[#1a1a1a] rounded-full translate-x-[-70px] z-20" />
 
-          <Link
-            href="/settings"
-            className="w-9 h-9 rounded-full bg-white border border-stone-200/90 flex items-center justify-center text-stone-700 hover:bg-stone-50 shadow-xs"
-          >
-            <Settings className="w-4 h-4" />
-          </Link>
-        </div>
-      </header>
-
-      {/* Tabs */}
-      <div className="flex gap-2 p-1.5 bg-stone-200/70 rounded-full mb-4 border border-stone-200">
-        {[
-          { id: 'passport', label: 'My Passport (4.8★)' },
-          { id: 'circles', label: 'Sparks & Circles' },
-          { id: 'safety', label: 'Safety Center (SOS)' },
-        ].map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            onClick={() => {
-              hapticTap();
-              setActiveTab(t.id as unknown as typeof activeTab);
-            }}
-            className={`flex-1 py-2 text-xs font-extrabold rounded-full transition-all cursor-pointer ${
-              activeTab === t.id
-                ? 'bg-[#1D3B2A] text-white shadow-xs'
-                : 'text-stone-600 hover:text-[#382A21]'
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {/* ================= SCREEN 4A: PASSPORT & GREEN SCORE ================= */}
-      {activeTab === 'passport' && (
-        <div className="space-y-4">
+        <div className="relative w-full h-full bg-[#fffefc] rounded-[44px] overflow-hidden flex flex-col">
           
-          {/* Main Passport Card */}
-          <div className="p-5 bg-gradient-to-br from-[#1D3B2A] via-[#244633] to-[#1D3B2A] text-white rounded-[32px] shadow-xl border border-white/10 space-y-4 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-48 h-48 bg-[#79A871]/20 rounded-full blur-3xl pointer-events-none" />
-
-            <div className="flex items-center gap-4 relative z-10">
-              <div className="relative w-18 h-18 rounded-full overflow-hidden border-2 border-[#79A871] shadow-md shrink-0">
-                <Image
-                  src={passportPhotos[0]}
-                  alt="Profile"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="font-display font-extrabold text-lg text-white">
-                    {user?.name || 'Verified Traveler'}
-                  </h2>
-                  <span className="p-1 rounded-full bg-emerald-400 text-[#1D3B2A]">
-                    <Check className="w-3 h-3 stroke-[3]" />
-                  </span>
-                </div>
-                <p className="text-xs text-stone-200 font-medium mt-0.5">
-                  Bangalore, Karnataka • Joined 2024
-                </p>
-                
-                {/* Digilocker Badges */}
-                <div className="flex items-center gap-1.5 mt-2">
-                  <span className="text-[10px] font-black uppercase tracking-wider bg-white/20 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/30 text-white flex items-center gap-1">
-                    <UserCheck className="w-3 h-3" /> Govt ID Verified
-                  </span>
-                  <span className="text-[10px] font-black uppercase tracking-wider bg-white/20 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/30 text-white">
-                    Face Matched ✓
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Circular Green Score Ring + Stats */}
-            <div className="grid grid-cols-3 gap-2 pt-3 border-t border-white/15 text-center relative z-10">
-              <div className="bg-white/10 backdrop-blur-md p-2.5 rounded-[20px] border border-white/15">
-                <div className="font-display font-black text-lg text-[#79A871] flex items-center justify-center gap-1">
-                  <Star className="w-4 h-4 fill-[#79A871]" /> 4.8
-                </div>
-                <div className="text-[10px] font-bold text-stone-300">Green Score</div>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-md p-2.5 rounded-[20px] border border-white/15">
-                <div className="font-display font-black text-lg text-white">5</div>
-                <div className="text-[10px] font-bold text-stone-300">Hosted</div>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-md p-2.5 rounded-[20px] border border-white/15">
-                <div className="font-display font-black text-lg text-white">12</div>
-                <div className="text-[10px] font-bold text-stone-300">Joined</div>
+          {/* Status Bar */}
+          <div className="h-[44px] flex items-center justify-between px-8 text-[15px] font-semibold tracking-tight z-10 shrink-0 bg-white/80 backdrop-blur-xl">
+            <span>9:41</span>
+            <div className="flex gap-1 items-center">
+              <div className="w-6 h-3 border border-black/30 rounded-[3px] p-[1px]">
+                <div className="w-4 h-full bg-black rounded-[1px]" />
               </div>
             </div>
           </div>
 
-          {/* Badges Earned */}
-          <div className="p-4 bg-white border border-stone-200/90 rounded-[28px] shadow-xs space-y-3">
-            <h3 className="font-black text-xs uppercase tracking-wider text-[#382A21]/70">
-              Community Badges & Trust
-            </h3>
+          {/* Main Passport Content */}
+          <div className="flex-1 overflow-y-auto scrollbar-none">
+            <div className="px-5 pt-3 pb-24">
+              
+              {/* Hero Passport Card */}
+              <div className="relative rounded-[24px] bg-black text-white p-5 overflow-hidden shadow-xl">
+                <div className="absolute -right-12 -top-12 w-40 h-40 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full blur-[20px] opacity-60 pointer-events-none" />
+                <div className="absolute -left-12 -bottom-12 w-40 h-40 bg-gradient-to-br from-rose-400 to-orange-400 rounded-full blur-[24px] opacity-50 pointer-events-none" />
 
-            <div className="grid grid-cols-2 gap-2.5">
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-[20px] flex items-center gap-2.5">
-                <span className="text-xl">⏱️</span>
-                <div>
-                  <div className="text-xs font-extrabold text-amber-950">On-Time 10x</div>
-                  <div className="text-[10px] text-amber-800">Never delayed a group</div>
+                {/* Avatar & Badges */}
+                <div className="relative flex gap-4">
+                  <div className="relative w-20 h-20 shrink-0">
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500" />
+                    <div className="absolute inset-[3px] rounded-full bg-black flex items-center justify-center font-bold text-[24px]">
+                      A
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white text-black text-[11px] font-bold flex items-center justify-center border-2 border-black">
+                      12
+                    </div>
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="font-[800] text-[20px] leading-none truncate">
+                      Aarav · Level 12 Explorer
+                    </div>
+                    <div className="text-[12px] opacity-70 mt-1.5 truncate">
+                      Bangalore · 18 trips · Member since 2023
+                    </div>
+                    <div className="mt-2.5 flex gap-1.5 flex-wrap">
+                      {['On-Time 10x', 'Top Host', 'Photo Pro'].map((b) => (
+                        <span
+                          key={b}
+                          className="text-[10px] px-2 py-1 rounded-full bg-white/15 border border-white/15 font-medium"
+                        >
+                          {b}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
+
+                {/* Green Score Circular SVG Ring */}
+                <div className="relative mt-5 flex items-center gap-4">
+                  <div className="w-16 h-16 relative shrink-0">
+                    <svg className="w-16 h-16 -rotate-90">
+                      <circle
+                        cx="32"
+                        cy="32"
+                        r="26"
+                        stroke="rgba(255,255,255,0.15)"
+                        strokeWidth="5"
+                        fill="none"
+                      />
+                      <circle
+                        cx="32"
+                        cy="32"
+                        r="26"
+                        stroke="url(#g)"
+                        strokeWidth="5"
+                        fill="none"
+                        strokeDasharray="159.74 163"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+
+                    <defs>
+                      <linearGradient id="g" x1="0" x2="1">
+                        <stop offset="0%" stopColor="#34d399" />
+                        <stop offset="100%" stopColor="#14b8a6" />
+                      </linearGradient>
+                    </defs>
+
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="font-[800] text-[18px] leading-none">4.9</span>
+                      <span className="text-[9px] tracking-widest opacity-60 font-bold">GREEN</span>
+                    </div>
+                  </div>
+
+                  <div className="text-[12px] leading-relaxed opacity-80 flex-1">
+                    Green Score reflects trust. Yours is{' '}
+                    <span className="text-white font-bold">top 5% in Bangalore</span>. Keep it up!
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowScoreInfo(!showScoreInfo)}
+                    className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center cursor-pointer shrink-0"
+                  >
+                    <Info className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {showScoreInfo && (
+                  <div className="mt-3 p-3 rounded-2xl bg-white text-black text-[12px] leading-relaxed animate-fade-in">
+                    Green Score = On-time + Verified + Positive ratings + Safety compliance. High score unlocks Getaway hosting.
+                  </div>
+                )}
               </div>
 
-              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-[20px] flex items-center gap-2.5">
-                <span className="text-xl">🛡️</span>
-                <div>
-                  <div className="text-xs font-extrabold text-emerald-950">Safe Companion 15x</div>
-                  <div className="text-[10px] text-emerald-800">100% 5★ safety score</div>
-                </div>
+              {/* Verification Badges */}
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                {[
+                  { k: 'Face Verified', icon: '👌' },
+                  { k: 'Govt ID', icon: '🪪' },
+                ].map((v) => (
+                  <div
+                    key={v.k}
+                    className="rounded-2xl bg-white border border-black/10 p-3.5 flex items-center gap-2.5 shadow-sm"
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-[18px]">
+                      {v.icon}
+                    </div>
+                    <div>
+                      <div className="font-bold text-[12px]">{v.k}</div>
+                      <div className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
+                        <Check className="w-3 h-3 stroke-[3]" />
+                        <span>Verified</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              <div className="p-3 bg-blue-50 border border-blue-200 rounded-[20px] flex items-center gap-2.5">
-                <span className="text-xl">⛰️</span>
-                <div>
-                  <div className="text-xs font-extrabold text-blue-950">Trek Leader</div>
-                  <div className="text-[10px] text-blue-800">Led 3+ sunrise hikes</div>
-                </div>
+              {/* Stats Grid */}
+              <div className="mt-4 grid grid-cols-3 gap-2.5">
+                {[
+                  { v: '18', l: 'Trips', grad: 'from-amber-300 to-orange-400' },
+                  { v: '4.9', l: 'Avg Rating', grad: 'from-emerald-400 to-teal-500' },
+                  { v: '92%', l: 'On-Time', grad: 'from-violet-400 to-fuchsia-500' },
+                ].map((stat) => (
+                  <div key={stat.l} className="rounded-2xl bg-white border border-black/10 p-3 text-center">
+                    <div
+                      className={`inline-flex w-8 h-8 rounded-full bg-gradient-to-br ${stat.grad} text-white font-bold items-center justify-center text-[13px] shadow`}
+                    >
+                      {stat.v}
+                    </div>
+                    <div className="text-[11px] font-bold mt-1.5 text-black/60">{stat.l}</div>
+                  </div>
+                ))}
               </div>
 
-              <div className="p-3 bg-purple-50 border border-purple-200 rounded-[20px] flex items-center gap-2.5">
-                <span className="text-xl">✨</span>
-                <div>
-                  <div className="text-xs font-extrabold text-purple-950">High Energy</div>
-                  <div className="text-[10px] text-purple-800">Top voted trip vibe</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Trip Photos Gallery */}
-          <div className="p-4 bg-white border border-stone-200/90 rounded-[28px] shadow-xs space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="font-black text-xs uppercase tracking-wider text-[#382A21]/70">
-                Verified Trip Photos ({passportPhotos.length})
-              </h3>
-              <button
-                type="button"
-                onClick={() => toast.success('Upload photo from completed trip')}
-                className="text-xs font-bold text-[#1D3B2A] hover:underline"
-              >
-                + Add Photo
-              </button>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2">
-              {passportPhotos.map((img, i) => (
-                <div key={i} className="relative h-28 rounded-[18px] overflow-hidden border border-stone-200 shadow-xs">
-                  <Image src={img} alt="Trip" fill className="object-cover" />
-                </div>
-              ))}
-            </div>
-          </div>
-
-        </div>
-      )}
-
-      {/* ================= SCREEN 4B: CIRCLES & SPARKS ================= */}
-      {activeTab === 'circles' && (
-        <div className="space-y-4">
-          
-          {/* Women-Only Circle Eligibility */}
-          <div className="p-5 bg-gradient-to-br from-purple-600/10 via-pink-600/10 to-purple-600/5 border-2 border-purple-400/70 rounded-[28px] space-y-3 shadow-xs">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center text-lg shadow-sm">
+              {/* Women-Only Circles Card */}
+              <div className="mt-4 rounded-[20px] bg-gradient-to-br from-rose-50 via-pink-50 to-violet-50 border border-rose-100 p-4 flex gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white shadow text-xl shrink-0">
                   👩
                 </div>
-                <div>
-                  <h3 className="font-display font-extrabold text-sm text-purple-950">
-                    Women-Only Travel Circle
-                  </h3>
-                  <p className="text-[11px] font-semibold text-purple-800">
-                    Govt ID Verified Safe Haven
-                  </p>
+                <div className="flex-1">
+                  <div className="font-bold text-[13px]">Women-Only Circles 👩‍🦽</div>
+                  <div className="text-[11px] text-black/60 mt-1 leading-relaxed">
+                    Curated small groups, women hosts, extra safety layers. Join Bangalore Circle (24 members).
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      hapticSuccess();
+                      toast.success('Joined Bangalore Women-Only Circle!');
+                    }}
+                    className="mt-2 h-8 px-3 rounded-full bg-black text-white text-[11px] font-bold cursor-pointer active:scale-95 transition-transform"
+                  >
+                    Explore Circle
+                  </button>
                 </div>
               </div>
 
-              <span className="text-[10px] font-black uppercase px-2.5 py-1 bg-purple-200 text-purple-900 rounded-full border border-purple-300">
-                Eligible ✓
-              </span>
-            </div>
+              {/* My Sparks Section */}
+              <div className="mt-4 rounded-[20px] bg-white border border-black/10 p-4">
+                <div className="flex justify-between items-center">
+                  <div className="font-bold text-[14px]">My Sparks ✨</div>
+                  <span className="text-[10px] px-2 py-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-white font-bold">
+                    PRO
+                  </span>
+                </div>
 
-            <p className="text-xs text-purple-950/80 font-medium leading-relaxed">
-              Access female-only group getaways, private safety chat boards, and verified women hosts across India.
-            </p>
+                <div className="mt-3 flex gap-2.5">
+                  {[1, 2, 3].map((num) => (
+                    <div
+                      key={num}
+                      className="w-[88px] rounded-2xl bg-[#faf8f5] border border-black/5 p-2 text-center relative overflow-hidden"
+                    >
+                      <div className="w-12 h-12 rounded-full mx-auto bg-gradient-to-br from-rose-300 to-pink-400 blur-[2px]" />
+                      <div className="mt-2 h-2 w-10 mx-auto bg-black/10 rounded-full blur-[1px]" />
+                      <div className="mt-1 h-1.5 w-6 mx-auto bg-black/10 rounded-full blur-[1px]" />
+                      <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex items-center justify-center">
+                        <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-black text-white">
+                          PRO
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Safety Center Card */}
+              <div className="mt-4 rounded-[20px] bg-black text-white p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                  <Shield className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-bold text-[13px]">Safety Center</div>
+                  <div className="text-[11px] opacity-70">
+                    Live location share, SOS, public meet spots
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    hapticSuccess();
+                    toast.success('Live GPS coordinates shared with emergency contact!');
+                  }}
+                  className="h-9 px-4 rounded-full bg-white text-black font-bold text-[12px] cursor-pointer active:scale-95 transition-transform shrink-0"
+                >
+                  Share Live
+                </button>
+              </div>
+
+            </div>
           </div>
 
-          {/* My Secret Sparks */}
-          <div className="p-4 bg-white border border-stone-200/90 rounded-[28px] shadow-xs space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="font-black text-xs uppercase tracking-wider text-[#382A21]/70 flex items-center gap-1.5">
-                <Heart className="w-4 h-4 text-pink-600 fill-pink-600" /> My Sparks (Mutual & Pending)
-              </h3>
-              <span className="text-[10px] font-extrabold text-pink-700 bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">
-                2 Sparks
-              </span>
-            </div>
-
-            {/* Mutual Spark Card */}
-            <div className="p-3.5 bg-pink-50/70 border border-pink-200 rounded-[22px] flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="relative w-11 h-11 rounded-full overflow-hidden border-2 border-pink-500">
-                  <Image
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-                    alt="Spark"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <div className="text-xs font-extrabold text-[#382A21] flex items-center gap-1">
-                    <span>Ananya Sharma</span>
-                    <span className="text-pink-600">💖 Mutual Spark</span>
-                  </div>
-                  <div className="text-[10px] text-pink-800 font-bold">
-                    Level 2 Day Date Unlocked!
-                  </div>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => toast.success('Starting Level 2 Day Date plan with Ananya')}
-                className="px-3 py-1.5 bg-pink-600 hover:bg-pink-700 text-white rounded-full text-xs font-bold shadow-xs active:scale-95"
-              >
-                Plan Day Date
-              </button>
-            </div>
-
-            {/* Blurred Spark (PRO Tier Upsell) */}
-            <div className="p-3.5 bg-stone-100/90 border border-stone-200 rounded-[22px] flex items-center justify-between relative overflow-hidden">
-              <div className="flex items-center gap-3 filter blur-[3px]">
-                <div className="w-11 h-11 rounded-full bg-stone-300" />
-                <div>
-                  <div className="text-xs font-bold text-stone-700">Someone sparked you!</div>
-                  <div className="text-[10px] text-stone-500">After Indiranagar Hangout</div>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => {
-                  hapticTap();
-                  setIsProModalOpen(true);
-                }}
-                className="relative z-10 px-3 py-1.5 bg-[#1D3B2A] text-white rounded-full text-xs font-extrabold shadow-sm flex items-center gap-1 active:scale-95 cursor-pointer"
-              >
-                <Lock className="w-3 h-3" />
-                <span>Unlock with PRO</span>
-              </button>
-            </div>
+          {/* Home Indicator Bar */}
+          <div className="h-6 flex items-center justify-center shrink-0 bg-white">
+            <div className="w-32 h-1 rounded-full bg-black" />
           </div>
 
         </div>
-      )}
-
-      {/* ================= SCREEN 4C: SAFETY CENTER & SOS ================= */}
-      {activeTab === 'safety' && (
-        <div className="space-y-4">
-          
-          {/* Live Location Share to Friend */}
-          <div className="p-5 bg-white border border-stone-200/90 rounded-[28px] shadow-xs space-y-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-lg">
-                📍
-              </div>
-              <div>
-                <h3 className="font-display font-extrabold text-sm text-[#382A21]">
-                  Live Location Share to Emergency Contact
-                </h3>
-                <p className="text-[11px] text-stone-500 font-medium">
-                  Continuous GPS share during active trips
-                </p>
-              </div>
-            </div>
-
-            <p className="text-xs text-stone-600 font-medium">
-              Share real-time coordinates, battery level, and host details with your trusted contact before meeting.
-            </p>
-
-            <button
-              type="button"
-              onClick={handleShareLiveLocation}
-              disabled={liveLocationShared}
-              className={`w-full py-3 rounded-full text-xs font-extrabold shadow-md flex items-center justify-center gap-1.5 transition-all ${
-                liveLocationShared
-                  ? 'bg-emerald-800 text-white'
-                  : 'bg-[#1D3B2A] hover:bg-[#2D5A3F] text-white active:scale-95'
-              }`}
-            >
-              <Share2 className="w-4 h-4" />
-              <span>{liveLocationShared ? 'Live Location Active & Shared ✓' : 'Share Live Location (1-Tap)'}</span>
-            </button>
-          </div>
-
-          {/* Emergency 24/7 Helpline */}
-          <div className="p-5 bg-red-50/70 border border-red-200 rounded-[28px] space-y-3 shadow-xs">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-red-900 font-extrabold text-sm">
-                <PhoneCall className="w-4 h-4 text-red-600" />
-                <span>National Emergency Services</span>
-              </div>
-              <span className="text-xs font-black text-red-700 bg-red-100 px-2.5 py-0.5 rounded-full border border-red-200">
-                112 / 1091
-              </span>
-            </div>
-            <p className="text-xs text-red-900/80 font-medium">
-              Direct hotline for women&apos;s helpline (1091) and national emergency (112).
-            </p>
-          </div>
-
-        </div>
-      )}
-
-      {/* Pro Modal */}
-      <ProSubscriptionModal
-        isOpen={isProModalOpen}
-        onClose={() => setIsProModalOpen(false)}
-      />
-
+      </div>
     </div>
   );
 }

@@ -51,6 +51,25 @@ body::-webkit-scrollbar,
   min-height: 100dvh !important;
 }
 
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes fall {
+  0% { transform: translateY(-10%) rotate(0deg); }
+  100% { transform: translateY(120vh) rotate(720deg); }
+}
+
+@keyframes dash {
+  to { stroke-dashoffset: -8; }
+}
+
 @layer base {
   * {
     @apply border-border;
