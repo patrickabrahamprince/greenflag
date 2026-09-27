@@ -1,24 +1,24 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { ChatHeader } from '@/components/chat/ChatHeader';
 import { ChatSkeleton } from '@/components/chat/ChatSkeleton';
+import { ConnectedBanner } from '@/components/chat/ConnectedBanner';
+import { EmptyChat } from '@/components/chat/EmptyChat';
+import { LockedOverlay } from '@/components/chat/LockedOverlay';
+import { MessageInput } from '@/components/chat/MessageInput';
+import { MessageList } from '@/components/chat/MessageList';
+import { SmartMessageButton } from '@/components/chat/SmartMessageButton';
+import type { ConnectionData, Message } from '@/components/chat/types';
+import { UnmatchModal } from '@/components/connection/UnmatchModal';
+import { hapticTap } from '@/lib/haptics';
+import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
+import { useScreenshotTarget } from '@/lib/hooks/useScreenshotGuard';
 import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
 import type { RealtimeChannel } from '@supabase/supabase-js';
-import type { Message, ConnectionData } from '@/components/chat/types';
-import { ChatHeader } from '@/components/chat/ChatHeader';
-import { ConnectedBanner } from '@/components/chat/ConnectedBanner';
-import { MessageList } from '@/components/chat/MessageList';
-import { MessageInput } from '@/components/chat/MessageInput';
-import { LockedOverlay } from '@/components/chat/LockedOverlay';
-import { EmptyChat } from '@/components/chat/EmptyChat';
-import { UnmatchModal } from '@/components/connection/UnmatchModal';
-import { SmartMessageButton } from '@/components/chat/SmartMessageButton';
-import { useScreenshotTarget } from '@/lib/hooks/useScreenshotGuard';
-import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
-import { hapticTap } from '@/lib/haptics';
 import { Loader2 } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 
 export default function ChatPage() {
   const routeParams = useParams();

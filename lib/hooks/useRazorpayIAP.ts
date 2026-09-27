@@ -41,23 +41,16 @@ export function useRazorpayIAP() {
 
       let result: RazorpayCheckoutResult | null = null;
 
-      // 1. Try Native Android Checkout if running inside native Android container
+      // 1. Native Android Checkout when running inside native Android container
       if (isAndroid && Capacitor.isNativePlatform()) {
-        try {
-          result = await openRazorpayNativeCheckout({
-            keyId: order.keyId,
-            orderId: order.orderId,
-            amountPaise: order.amountPaise,
-            prefillEmail: authUser?.email,
-          });
-        } catch (nativeErr) {
-          console.warn('Native Razorpay unavailable, falling back to Web Checkout:', nativeErr);
-          result = null;
-        }
-      }
-
-      // 2. Fallback to Web Razorpay Modal (works on Web, Android WebView, Mobile Browsers)
-      if (!result) {
+        result = await openRazorpayNativeCheckout({
+          keyId: order.keyId,
+          orderId: order.orderId,
+          amountPaise: order.amountPaise,
+          prefillEmail: authUser?.email,
+        });
+      } else {
+        // 2. Web Razorpay Modal (for Web / Mobile Browser preview)
         const loaded = await loadRazorpayScript();
         if (!loaded) throw new Error('Could not load payment checkout. Please check your internet connection.');
 

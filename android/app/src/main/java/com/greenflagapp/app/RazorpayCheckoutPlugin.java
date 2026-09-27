@@ -27,6 +27,7 @@ import org.json.JSONObject;
 public class RazorpayCheckoutPlugin extends Plugin {
 
     private PluginCall pendingCall;
+    private String currentOrderId;
 
     @PluginMethod
     public void open(PluginCall call) {
@@ -40,8 +41,7 @@ public class RazorpayCheckoutPlugin extends Plugin {
             return;
         }
 
-        // Set before dispatching to the UI thread so a stray callback that
-        // arrives fast can't race past a null pendingCall check.
+        currentOrderId = orderId;
         pendingCall = call;
         call.setKeepAlive(true);
 
@@ -61,9 +61,9 @@ public class RazorpayCheckoutPlugin extends Plugin {
                 options.put("amount", amountPaise);
                 options.put("currency", "INR");
                 options.put("name", "GreenFlag");
-                if (prefillEmail != null) {
+                if (prefillEmail != null && !prefillEmail.trim().isEmpty()) {
                     JSONObject prefill = new JSONObject();
-                    prefill.put("email", prefillEmail);
+                    prefill.put("email", prefillEmail.trim());
                     options.put("prefill", prefill);
                 }
                 checkout.open(getActivity(), options);
@@ -84,7 +84,12 @@ public class RazorpayCheckoutPlugin extends Plugin {
         if (call == null) return;
         pendingCall = null;
 
-        if (paymentData == null || paymentData.getOrderId() == null || paymentData.getSignature() == null) {
+        String orderId = (paymentData != null && paymentData.getOrderId() != null && !paymentData.getOrderId().trim().isEmpty())
+                ? paymentData.getOrderId()
+                : currentOrderId;
+        String signature = (paymentData != null) ? paymentData.getSignature() : null;
+
+        if (orderId == null || signature == null || razorpayPaymentId == null) {
             call.setKeepAlive(false);
             call.reject("Payment succeeded but returned incomplete data; your coins will be credited shortly.");
             return;
@@ -92,8 +97,8 @@ public class RazorpayCheckoutPlugin extends Plugin {
 
         JSObject result = new JSObject();
         result.put("razorpay_payment_id", razorpayPaymentId);
-        result.put("razorpay_order_id", paymentData.getOrderId());
-        result.put("razorpay_signature", paymentData.getSignature());
+        result.put("razorpay_order_id", orderId);
+        result.put("razorpay_signature", signature);
         call.setKeepAlive(false);
         call.resolve(result);
     }

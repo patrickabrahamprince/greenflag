@@ -19,3 +19,19 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Razorpay SDK Proguard Rules
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context);
+}
+-keep class com.razorpay.** {*;}
+-dontwarn com.razorpay.**
+-dontwarn com.google.android.gms.auth.api.phone.**
+-keepclasseswithmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+-keep class * implements com.razorpay.PaymentResultWithDataListener {*;}
+-keep class * implements com.razorpay.PaymentResultListener {*;}
+-keep class com.greenflagapp.app.RazorpayCheckoutPlugin {*;}
