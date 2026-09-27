@@ -215,8 +215,8 @@ export function CreateTripModal({
       >
         
         {/* Header with Clickable Step Tabs */}
-        <div className="px-6 pt-5 pb-3 border-b border-slate-200 bg-slate-50 shrink-0">
-          <div className="flex items-center justify-between mb-2">
+        <div className="px-5 pt-4 pb-3 border-b border-slate-200 bg-slate-50 shrink-0">
+          <div className="flex items-center justify-between mb-2.5">
             <div className="flex items-center gap-2">
               {step > 1 && (
                 <button
@@ -225,13 +225,13 @@ export function CreateTripModal({
                     hapticTap();
                     setStep((s) => (s - 1) as 1 | 2 | 3);
                   }}
-                  className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-700 active:scale-90 transition-transform"
+                  className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-700 active:scale-90 transition-transform cursor-pointer touch-manipulation"
                 >
                   <ArrowLeft className="w-4 h-4" />
                 </button>
               )}
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700">
                   Step {step} of 4
                 </span>
                 <h2 className="text-base font-extrabold text-slate-900 leading-tight">
@@ -243,18 +243,19 @@ export function CreateTripModal({
               </div>
             </div>
             <button
+              type="button"
               onClick={() => {
                 hapticTap();
                 onClose();
               }}
-              className="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 flex items-center justify-center text-slate-700 transition-colors"
+              className="w-8 h-8 rounded-full bg-slate-200/80 hover:bg-slate-300 active:scale-90 flex items-center justify-center text-slate-700 transition-all cursor-pointer touch-manipulation"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {/* 4 Clickable Step Progress Tabs */}
-          <div className="grid grid-cols-4 gap-2 pt-1">
+          <div className="grid grid-cols-4 gap-1.5 pt-1">
             {[
               { num: 1, label: '1. Vibe' },
               { num: 2, label: '2. Date' },
@@ -268,16 +269,17 @@ export function CreateTripModal({
                   hapticTap();
                   setStep(s.num as 1 | 2 | 3 | 4);
                 }}
-                className="flex flex-col gap-1 text-left cursor-pointer group py-1"
+                className={`py-1.5 px-2 rounded-xl text-center cursor-pointer select-none touch-manipulation transition-all active:scale-95 ${
+                  s.num === step
+                    ? 'bg-emerald-600 text-white font-black shadow-sm'
+                    : s.num < step
+                    ? 'bg-emerald-100/70 text-emerald-800 font-bold'
+                    : 'bg-slate-200/70 text-slate-600 font-medium'
+                }`}
               >
-                <div
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
-                    s.num <= step ? 'bg-emerald-600' : 'bg-slate-200 group-hover:bg-slate-300'
-                  }`}
-                />
-                <span className={`text-[10px] font-bold transition-colors ${s.num === step ? 'text-emerald-700' : 'text-slate-400'}`}>
+                <div className="text-[11px] leading-tight whitespace-nowrap">
                   {s.label}
-                </span>
+                </div>
               </button>
             ))}
           </div>
@@ -285,13 +287,17 @@ export function CreateTripModal({
 
         {/* STEP 1: Destination & Vibe */}
         {step === 1 && (
-          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-6 space-y-5">
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-5 sm:p-6 space-y-5">
             {/* Vibe Selection */}
             <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2.5 block">
-                1. What are you planning?
-              </label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-black uppercase tracking-wider text-slate-800">
+                  1. What are you planning?
+                </label>
+                <span className="text-[11px] text-emerald-700 font-bold">Tap any to select</span>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-2.5">
                 {VIBE_CATEGORIES.map((cat) => {
                   const isSelected = vibe === cat.label;
                   return (
@@ -302,17 +308,22 @@ export function CreateTripModal({
                         hapticTap();
                         setVibe(cat.label);
                       }}
-                      className={`p-3 rounded-2xl border text-left transition-all ${
+                      className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer select-none touch-manipulation active:scale-95 relative ${
                         isSelected
-                          ? 'border-emerald-600 bg-emerald-50 shadow-sm'
-                          : 'border-slate-200 bg-white hover:bg-slate-50'
+                          ? 'border-emerald-600 bg-emerald-50 ring-2 ring-emerald-500 shadow-sm'
+                          : 'border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300'
                       }`}
                     >
-                      <div className="text-xl mb-1">{cat.icon}</div>
-                      <div className={`text-xs font-bold ${isSelected ? 'text-emerald-900' : 'text-slate-900'}`}>
+                      {isSelected && (
+                        <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-emerald-600 flex items-center justify-center text-white">
+                          <Check className="w-3 h-3 stroke-[3]" />
+                        </div>
+                      )}
+                      <div className="text-2xl mb-1.5">{cat.icon}</div>
+                      <div className={`text-xs font-black ${isSelected ? 'text-emerald-950' : 'text-slate-900'}`}>
                         {cat.name}
                       </div>
-                      <div className="text-[10px] text-slate-500 line-clamp-1 mt-0.5">
+                      <div className="text-[10px] text-slate-500 line-clamp-1 mt-0.5 font-medium">
                         {cat.desc}
                       </div>
                     </button>
@@ -323,9 +334,13 @@ export function CreateTripModal({
 
             {/* Location Selection */}
             <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 block">
-                2. Pick Location / Area
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-black uppercase tracking-wider text-slate-800">
+                  2. Pick Location / Area
+                </label>
+                <span className="text-[11px] text-slate-500 font-medium">Where to meet</span>
+              </div>
+              
               <div className="flex flex-wrap gap-2 mb-3">
                 {QUICK_LOCATIONS.map((loc) => {
                   const isSelected = destination === loc;
@@ -338,9 +353,9 @@ export function CreateTripModal({
                         setDestination(loc);
                         setCustomDestination('');
                       }}
-                      className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                      className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer select-none touch-manipulation active:scale-95 ${
                         isSelected
-                          ? 'bg-slate-900 text-white shadow-sm'
+                          ? 'bg-slate-900 text-white shadow-sm ring-2 ring-slate-900'
                           : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
                       }`}
                     >
@@ -354,9 +369,9 @@ export function CreateTripModal({
                     hapticTap();
                     setDestination('custom');
                   }}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer select-none touch-manipulation active:scale-95 ${
                     destination === 'custom'
-                      ? 'bg-slate-900 text-white shadow-sm'
+                      ? 'bg-slate-900 text-white shadow-sm ring-2 ring-slate-900'
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
                   }`}
                 >
