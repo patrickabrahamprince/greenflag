@@ -72,6 +72,11 @@ body.min-h-dvh::after {
 
   body {
     @apply bg-cream text-ink font-sans antialiased;
+    color: #0F172A;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #0F172A;
   }
 
   ::selection {
@@ -79,12 +84,14 @@ body.min-h-dvh::after {
   }
 
   .font-display {
-    letter-spacing: 0.005em;
-    font-weight: 600;
+    font-family: var(--font-display), system-ui, sans-serif;
+    letter-spacing: -0.015em;
+    font-weight: 700;
   }
 
   h1.font-display, h2.font-display {
-    line-height: 1.1;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
   }
 }
 

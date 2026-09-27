@@ -41,12 +41,10 @@ module.exports = {
         indigo: '#059669',
       },
       fontFamily: {
-        // Apple SF Pro for admin panel
         apple: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', 'Segoe UI', 'system-ui', 'sans-serif'],
-        // Cabinet Grotesk, per the Dateasy design system
-        display: ['var(--font-cabinet-grotesk)', 'system-ui', 'sans-serif'],
-        sans: ['var(--font-cabinet-grotesk)', 'system-ui', 'sans-serif'],
-        serif: ['var(--font-cabinet-grotesk)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        sans: ['var(--font-sans)', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        serif: ['var(--font-display)', 'Georgia', 'serif'],
       },
       // Type scale from the design deck. Sizes given in px for the ratio,
       // Tailwind stores them in rem (÷16) with a paired line-height.
