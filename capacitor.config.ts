@@ -53,6 +53,9 @@ const config: CapacitorConfig = {
       'accounts.google.com',
       '*.google.com',
       'appleid.apple.com',
+      '*.razorpay.com',
+      'api.razorpay.com',
+      'checkout.razorpay.com',
     ],
   },
   plugins: {
