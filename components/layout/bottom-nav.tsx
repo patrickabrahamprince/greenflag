@@ -44,8 +44,8 @@ export function BottomNav() {
   return (
     <>
       <PendingReviewBanner />
-      <nav className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-app">
-        <div className="nav-glass rounded-full flex justify-around items-center py-2.5 px-3">
+      <nav className="fixed bottom-[max(0.6rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2.5rem)] max-w-[390px]">
+        <div className="nav-glass rounded-full flex justify-around items-center py-1.5 px-2.5 shadow-lg">
           {tabs.map((tab) => {
             const active = pathname === tab.href || pathname.startsWith(`${tab.href}/`);
             const isMessages = tab.href === '/messages';
@@ -54,33 +54,33 @@ export function BottomNav() {
                 key={tab.name}
                 href={tab.href}
                 onClick={() => hapticTap()}
-                className="flex flex-col items-center justify-center relative py-1 px-2 group transition-transform active:scale-90"
+                className="flex flex-col items-center justify-center relative py-0.5 px-1.5 group transition-transform active:scale-90"
               >
                 <span className="sr-only">{tab.name}</span>
                 <div className="relative">
                   <div
                     className={cn(
-                      'flex items-center justify-center rounded-2xl transition-all duration-300',
+                      'flex items-center justify-center rounded-xl transition-all duration-300',
                       active
-                        ? 'w-10 h-10 bg-emerald/15 border border-emerald/30 text-emerald shadow-sm'
-                        : 'w-9 h-9 text-ink/40 hover:text-ink/80 hover:bg-black/5'
+                        ? 'w-8 h-8 bg-emerald/15 border border-emerald/30 text-emerald shadow-sm'
+                        : 'w-8 h-8 text-ink/40 hover:text-ink/80 hover:bg-black/5'
                     )}
                   >
                     <tab.icon
-                      className={cn('transition-all duration-200', active ? 'text-emerald w-5 h-5' : 'w-5 h-5')}
+                      className={cn('transition-all duration-200', active ? 'text-emerald w-4 h-4' : 'w-4 h-4')}
                       strokeWidth={active ? 2.5 : 1.75}
                     />
                   </div>
                   {isMessages && unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 min-w-[18px] h-4.5 px-1 bg-emerald text-white font-extrabold text-[10px] rounded-full flex items-center justify-center shadow-sm border border-white animate-pulse">
+                    <span className="absolute -top-1 -right-1 min-w-[15px] h-3.5 px-1 bg-emerald text-white font-extrabold text-[9px] rounded-full flex items-center justify-center shadow-sm border border-white animate-pulse">
                       {unreadCount > 99 ? '99+' : unreadCount}
                     </span>
                   )}
                 </div>
                 <span
                   className={cn(
-                    'text-[10px] tracking-tight mt-1 transition-colors duration-200 font-medium',
-                    active ? 'text-emerald font-bold' : 'text-ink/45 group-hover:text-ink/75'
+                    'text-[9px] tracking-tight mt-0.5 transition-colors duration-200',
+                    active ? 'text-emerald font-bold' : 'text-ink/50 group-hover:text-ink/80 font-medium'
                   )}
                 >
                   {tab.name}
