@@ -1,3 +1,5 @@
+const colors = require('tailwindcss/colors');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
@@ -26,19 +28,34 @@ module.exports = {
         ink: '#0F172A',
         black: '#0F172A',
         'black-deep': '#020617',
-        gold: '#D97706',        // Warm Amber/Gold for coins and badges
+        gold: {
+          DEFAULT: '#D97706',
+          light: '#F59E0B',
+          dark: '#B45309',
+          ...colors.amber,
+        },
         'gold-light': '#F59E0B',
         'gold-dark': '#B45309',
-        emerald: '#059669',
+        emerald: {
+          DEFAULT: '#059669',
+          glow: '#10B981',
+          ...colors.emerald,
+        },
         'emerald-glow': '#10B981',
         blush: '#059669',
-        violet: '#6366F1',
+        violet: {
+          DEFAULT: '#6366F1',
+          ...colors.violet,
+        },
         lavender: '#8B5CF6',
         surface: '#FFFFFF',
         'surface-light': '#F1F5F9',
         border: 'rgba(15, 23, 42, 0.08)',
         muted: 'rgba(15, 23, 42, 0.60)',
-        indigo: '#059669',
+        indigo: {
+          DEFAULT: '#059669',
+          ...colors.indigo,
+        },
       },
       fontFamily: {
         apple: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', 'Segoe UI', 'system-ui', 'sans-serif'],
