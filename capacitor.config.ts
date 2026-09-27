@@ -36,7 +36,7 @@ const config: CapacitorConfig = {
   // actually painting -- that gap is the "white screen before sign-in"
   // flash. Matching it to the app's real background color closes the gap
   // with dark instead of white regardless of system appearance.
-  backgroundColor: '#F8FAFC',
+  backgroundColor: '#FAF9F6',
   server: {
     url: serverUrl,
     cleartext: serverUrl.startsWith('http://'),
