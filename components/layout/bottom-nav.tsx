@@ -44,8 +44,8 @@ export function BottomNav() {
   return (
     <>
       <PendingReviewBanner />
-      <nav className="fixed bottom-[max(0.6rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2.5rem)] max-w-[390px]">
-        <div className="nav-glass rounded-full flex justify-around items-center py-1.5 px-2.5 shadow-lg">
+      <nav className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-[390px]">
+        <div className="bg-[#FAF9F6]/95 backdrop-blur-xl border border-stone-200/80 rounded-full flex justify-around items-center py-2 px-3 shadow-[0_12px_32px_-8px_rgba(45,36,30,0.15)]">
           {tabs.map((tab) => {
             const active = pathname === tab.href || pathname.startsWith(`${tab.href}/`);
             const isMessages = tab.href === '/messages';
@@ -54,25 +54,25 @@ export function BottomNav() {
                 key={tab.name}
                 href={tab.href}
                 onClick={() => hapticTap()}
-                className="flex flex-col items-center justify-center relative py-0.5 px-1.5 group transition-transform active:scale-90"
+                className="flex flex-col items-center justify-center relative py-0.5 px-1.5 group transition-transform active:scale-95"
               >
                 <span className="sr-only">{tab.name}</span>
                 <div className="relative">
                   <div
                     className={cn(
-                      'flex items-center justify-center rounded-xl transition-all duration-300',
+                      'flex items-center justify-center rounded-full transition-all duration-300',
                       active
-                        ? 'w-8 h-8 bg-emerald/15 border border-emerald/30 text-emerald shadow-sm'
-                        : 'w-8 h-8 text-ink/40 hover:text-ink/80 hover:bg-black/5'
+                        ? 'w-9 h-9 bg-[#1D3B2A] text-white shadow-[0_4px_12px_rgba(29,59,42,0.35)] scale-105'
+                        : 'w-9 h-9 text-[#382A21]/45 hover:text-[#382A21] hover:bg-[#382A21]/5'
                     )}
                   >
                     <tab.icon
-                      className={cn('transition-all duration-200', active ? 'text-emerald w-4 h-4' : 'w-4 h-4')}
+                      className={cn('transition-all duration-200', active ? 'text-white w-4 h-4' : 'w-4 h-4 text-[#382A21]/60')}
                       strokeWidth={active ? 2.5 : 1.75}
                     />
                   </div>
                   {isMessages && unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 min-w-[15px] h-3.5 px-1 bg-emerald text-white font-extrabold text-[9px] rounded-full flex items-center justify-center shadow-sm border border-white animate-pulse">
+                    <span className="absolute -top-0.5 -right-0.5 min-w-[15px] h-3.5 px-1 bg-[#F07A38] text-white font-extrabold text-[9px] rounded-full flex items-center justify-center shadow-sm border border-white animate-pulse">
                       {unreadCount > 99 ? '99+' : unreadCount}
                     </span>
                   )}
@@ -80,7 +80,7 @@ export function BottomNav() {
                 <span
                   className={cn(
                     'text-[9px] tracking-tight mt-0.5 transition-colors duration-200',
-                    active ? 'text-emerald font-bold' : 'text-ink/50 group-hover:text-ink/80 font-medium'
+                    active ? 'text-[#1D3B2A] font-bold' : 'text-[#382A21]/50 group-hover:text-[#382A21] font-medium'
                   )}
                 >
                   {tab.name}
