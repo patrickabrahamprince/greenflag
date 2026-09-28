@@ -24,6 +24,7 @@ import {
   Utensils,
   LocateFixed,
   Radio,
+  Loader2,
 } from 'lucide-react';
 import { hapticTap, hapticSuccess } from '@/lib/haptics';
 import toast from 'react-hot-toast';
@@ -111,6 +112,13 @@ const TRIPS_DATA: Trip[] = [
   },
 ];
 
+interface PlaceSearchResult {
+  id: string;
+  mainText: string;
+  secondaryText: string;
+  fullText: string;
+}
+
 function TripsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -124,7 +132,11 @@ function TripsContent() {
   // Create 5-Step Form State
   const [createStep, setCreateStep] = useState<number>(1);
   const [createLadder, setCreateLadder] = useState<'micro' | 'day' | 'getaway' | 'crawl'>('day');
-  const [createDestination, setCreateDestination] = useState('Nandi Hills');
+  const [createDestination, setCreateDestination] = useState('');
+  const [placesResults, setPlacesResults] = useState<PlaceSearchResult[]>([]);
+  const [isSearchingPlaces, setIsSearchingPlaces] = useState(false);
+  const searchPlacesTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const [createPickup, setCreatePickup] = useState('Indiranagar, Bangalore');
   const [gpsScanning, setGpsScanning] = useState(false);
   const [gpsDetected, setGpsDetected] = useState(false);
@@ -139,6 +151,40 @@ function TripsContent() {
   const [isPublished, setIsPublished] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const handleDestinationType = (val: string) => {
+    setCreateDestination(val);
+    if (searchPlacesTimeoutRef.current) {
+      clearTimeout(searchPlacesTimeoutRef.current);
+    }
+    if (!val.trim() || val.trim().length < 2) {
+      setPlacesResults([]);
+      setIsSearchingPlaces(false);
+      return;
+    }
+    setIsSearchingPlaces(true);
+    searchPlacesTimeoutRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/places/search?q=${encodeURIComponent(val.trim())}`);
+        if (res.ok) {
+          const data = await res.json();
+          setPlacesResults(data.results || []);
+        } else {
+          setPlacesResults([]);
+        }
+      } catch {
+        setPlacesResults([]);
+      } finally {
+        setIsSearchingPlaces(false);
+      }
+    }, 280);
+  };
+
+  const handleSelectPlace = (place: PlaceSearchResult) => {
+    hapticTap();
+    setCreateDestination(place.fullText || place.mainText);
+    setPlacesResults([]);
+  };
 
   const detectUserLocation = useCallback(async () => {
     hapticTap();
@@ -746,7 +792,7 @@ function TripsContent() {
                 </div>
               )}
 
-              {/* ---------------- QUESTION 3: DATE OR A TRIP & DESTINATION ---------------- */}
+              {/* ---------------- QUESTION 3: DATE OR A TRIP & GOOGLE MAPS SEARCH ---------------- */}
               {createStep === 3 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
@@ -754,7 +800,7 @@ function TripsContent() {
                       Are you going for a date or a trip?
                     </h2>
                     <p className="text-xs text-black/60 mt-1">
-                      Choose your intent and where you are planning to make a meet or trip.
+                      Choose your intent and type your destination or meet spot using Google Maps search.
                     </p>
                   </div>
 
@@ -772,7 +818,6 @@ function TripsContent() {
                           badge: 'Date Mode',
                           borderActive: 'border-rose-500 bg-rose-50/50',
                           badgeBg: 'bg-rose-100 text-rose-800',
-                          icon: '✨',
                         },
                         {
                           id: 'green',
@@ -781,7 +826,6 @@ function TripsContent() {
                           badge: 'Trip Mode',
                           borderActive: 'border-emerald-600 bg-emerald-50/50',
                           badgeBg: 'bg-emerald-100 text-emerald-800',
-                          icon: '🧭',
                         },
                         {
                           id: 'buddies',
@@ -790,7 +834,6 @@ function TripsContent() {
                           badge: 'Social Meet',
                           borderActive: 'border-teal-600 bg-teal-50/50',
                           badgeBg: 'bg-teal-100 text-teal-800',
-                          icon: '☕',
                         },
                         {
                           id: 'women',
@@ -799,7 +842,6 @@ function TripsContent() {
                           badge: 'Safe Circle',
                           borderActive: 'border-purple-600 bg-purple-50/50',
                           badgeBg: 'bg-purple-100 text-purple-800',
-                          icon: '🛡️',
                         },
                       ].map((opt) => {
                         const isSelected =
@@ -845,109 +887,83 @@ function TripsContent() {
                     </div>
                   </div>
 
-                  {/* Typing Box with MapPin & Clear Icon */}
+                  {/* Google Maps Live Search Typing Box */}
                   <div className="pt-2">
-                    <label className="text-[11px] font-bold tracking-widest text-black/40">
-                      WHERE ARE YOU PLANNING TO MEET / GO?
-                    </label>
-                    <div className="mt-1.5 relative">
-                      <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-600" />
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="text-[11px] font-bold tracking-widest text-black/40">
+                        SEARCH DESTINATION / MEET SPOT
+                      </label>
+                      <span className="text-[10px] font-bold text-emerald-700 flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-emerald-600" /> Google Maps Search
+                      </span>
+                    </div>
+
+                    <div className="relative">
+                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-600" />
                       <input
                         type="text"
                         value={createDestination}
-                        onChange={(e) => setCreateDestination(e.target.value)}
-                        placeholder="Type any spot e.g. Nandi Hills, Cubbon Park, Coorg..."
+                        onChange={(e) => handleDestinationType(e.target.value)}
+                        placeholder="Type any place, cafe, trek, viewpoint..."
                         className="w-full h-13 pl-10 pr-10 rounded-2xl bg-white border-2 border-black/15 font-bold text-[15px] focus:outline-none focus:border-black focus:ring-2 focus:ring-black/10 shadow-sm"
                       />
-                      {createDestination && (
+                      {isSearchingPlaces ? (
+                        <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
+                          <Loader2 className="w-4 h-4 text-black/40 animate-spin" />
+                        </div>
+                      ) : createDestination ? (
                         <button
                           type="button"
                           onClick={() => {
                             hapticTap();
                             setCreateDestination('');
+                            setPlacesResults([]);
                           }}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/10 flex items-center justify-center text-black/60 hover:text-black hover:bg-black/20 text-xs"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/10 flex items-center justify-center text-black/60 hover:text-black hover:bg-black/20 text-xs cursor-pointer"
                         >
                           ✕
                         </button>
-                      )}
+                      ) : null}
                     </div>
-                    {createDestination && (
-                      <div className="mt-1.5 flex items-center gap-1 text-[11px] font-semibold text-emerald-700">
-                        <span>✓ Destination:</span>
-                        <span className="font-bold text-black">{createDestination}</span>
+
+                    {/* Google Maps Live Search Results Dropdown */}
+                    {placesResults.length > 0 && (
+                      <div className="mt-2 rounded-2xl bg-white border border-black/10 shadow-xl overflow-hidden animate-fade-in divide-y divide-black/5 z-30">
+                        <div className="px-3.5 py-1.5 bg-black/5 flex items-center justify-between">
+                          <span className="text-[10px] font-bold text-black/50 uppercase tracking-wider">
+                            📍 Google Maps Predictions
+                          </span>
+                          <span className="text-[10px] text-black/40">Tap to select</span>
+                        </div>
+                        {placesResults.map((place) => (
+                          <button
+                            key={place.id}
+                            type="button"
+                            onClick={() => handleSelectPlace(place)}
+                            className="w-full px-3.5 py-2.5 text-left flex items-start gap-2.5 hover:bg-emerald-50/50 active:bg-emerald-100/50 transition cursor-pointer"
+                          >
+                            <div className="w-7 h-7 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 mt-0.5">
+                              <MapPin className="w-3.5 h-3.5" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-xs font-bold text-black truncate">
+                                {place.mainText}
+                              </div>
+                              <div className="text-[10px] text-black/60 truncate">
+                                {place.secondaryText}
+                              </div>
+                            </div>
+                          </button>
+                        ))}
                       </div>
                     )}
-                  </div>
 
-                  {/* Categorized Options: Scenic Roadtrips & Treks */}
-                  <div className="pt-1">
-                    <span className="text-[10px] font-bold text-black/50 uppercase tracking-wider block mb-1.5">
-                      ⛰️ Roadtrips & Getaways
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {[
-                        'Nandi Hills ⛰️',
-                        'Coorg Trails ☕',
-                        'Skandagiri Night Trek 🌌',
-                        'Chikmagalur Hills 🏞️',
-                        'Avalabetta Sunrise ⛰️',
-                        'Gokarna Beach 🏖️',
-                        'Mysore Palace 🏰',
-                        'Wayanad Camping 🏕️',
-                        'Ooty Tea Estates 🍃',
-                      ].map((spot) => (
-                        <button
-                          key={spot}
-                          type="button"
-                          onClick={() => {
-                            hapticTap();
-                            setCreateDestination(spot.replace(/ [^ ]+$/, ''));
-                          }}
-                          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer active:scale-95 ${
-                            createDestination === spot.replace(/ [^ ]+$/, '')
-                              ? 'bg-black text-white border-black shadow-xs font-bold'
-                              : 'bg-white border-black/10 text-black/75 hover:border-black/25'
-                          }`}
-                        >
-                          {spot}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Categorized Options: City Meets & Cafe Hangouts */}
-                  <div className="pt-1">
-                    <span className="text-[10px] font-bold text-black/50 uppercase tracking-wider block mb-1.5">
-                      ☕ City Meets & Cafe Dates
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {[
-                        'Cubbon Park Walk 🌳',
-                        'Indiranagar Cafe Crawl 🥐',
-                        'Church Street Books & Chai 📚',
-                        'Koramangala Rooftop 🍸',
-                        'Bangalore Palace Tour 🏰',
-                        'Sankey Tank Sunset 🌅',
-                        'Aroma Coffee Meet ☕',
-                      ].map((spot) => (
-                        <button
-                          key={spot}
-                          type="button"
-                          onClick={() => {
-                            hapticTap();
-                            setCreateDestination(spot.replace(/ [^ ]+$/, ''));
-                          }}
-                          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer active:scale-95 ${
-                            createDestination === spot.replace(/ [^ ]+$/, '')
-                              ? 'bg-black text-white border-black shadow-xs font-bold'
-                              : 'bg-white border-black/10 text-black/75 hover:border-black/25'
-                          }`}
-                        >
-                          {spot}
-                        </button>
-                      ))}
-                    </div>
+                    {createDestination && (
+                      <div className="mt-2 flex items-center gap-1.5 text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+                        <span>📍 Destination Selected:</span>
+                        <span className="font-bold text-black truncate">{createDestination}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
