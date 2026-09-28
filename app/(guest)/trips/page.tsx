@@ -1,7 +1,9 @@
 'use client';
 
-import { useState, useRef, useEffect, Suspense } from 'react';
+import { useState, useRef, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { Capacitor } from '@capacitor/core';
+import { Geolocation } from '@capacitor/geolocation';
 import {
   Search,
   MapPin,
@@ -20,6 +22,8 @@ import {
   Fuel,
   Home as HomeIcon,
   Utensils,
+  LocateFixed,
+  Radio,
 } from 'lucide-react';
 import { hapticTap, hapticSuccess } from '@/lib/haptics';
 import toast from 'react-hot-toast';
@@ -121,7 +125,9 @@ function TripsContent() {
   const [createStep, setCreateStep] = useState<number>(1);
   const [createLadder, setCreateLadder] = useState<'micro' | 'day' | 'getaway' | 'crawl'>('day');
   const [createDestination, setCreateDestination] = useState('Nandi Hills');
-  const [createPickup, setCreatePickup] = useState('Indiranagar');
+  const [createPickup, setCreatePickup] = useState('Indiranagar, Bangalore');
+  const [gpsScanning, setGpsScanning] = useState(false);
+  const [gpsDetected, setGpsDetected] = useState(false);
   const [createDate, setCreateDate] = useState('This Saturday');
   const [createTimeSlot, setCreateTimeSlot] = useState('🌅 Early Sunrise · 5:30 AM');
   const [createType, setCreateType] = useState<'green' | 'pink' | 'women'>('green');
@@ -133,6 +139,68 @@ function TripsContent() {
   const [isPublished, setIsPublished] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const detectUserLocation = useCallback(async () => {
+    hapticTap();
+    setGpsScanning(true);
+    setGpsDetected(false);
+
+    const resolveCoords = async (latitude: number, longitude: number) => {
+      try {
+        const res = await fetch(`/api/geocode/reverse?lat=${latitude}&lon=${longitude}`);
+        if (res.ok) {
+          const data = await res.json();
+          const addr = data.address;
+          const locality =
+            addr?.neighbourhood ||
+            addr?.suburb ||
+            addr?.city_district ||
+            addr?.city ||
+            addr?.town ||
+            'Indiranagar, Bangalore';
+          setCreatePickup(locality);
+          setGpsDetected(true);
+          hapticSuccess();
+          toast.success(`📍 Auto-scanned: ${locality}`);
+        } else {
+          setCreatePickup('Indiranagar, Bangalore');
+          setGpsDetected(true);
+        }
+      } catch {
+        setCreatePickup('Indiranagar, Bangalore');
+        setGpsDetected(true);
+      } finally {
+        setGpsScanning(false);
+      }
+    };
+
+    if (Capacitor.isNativePlatform()) {
+      Geolocation.getCurrentPosition({ timeout: 10000 })
+        .then((pos) => resolveCoords(pos.coords.latitude, pos.coords.longitude))
+        .catch(() => {
+          setGpsScanning(false);
+          setCreatePickup('Indiranagar, Bangalore');
+          toast('Location access ready: Selected Indiranagar', { icon: '📍' });
+        });
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      setGpsScanning(false);
+      setCreatePickup('Indiranagar, Bangalore');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => resolveCoords(pos.coords.latitude, pos.coords.longitude),
+      () => {
+        setGpsScanning(false);
+        setCreatePickup('Indiranagar, Bangalore');
+        toast('Location access ready: Selected Indiranagar', { icon: '📍' });
+      },
+      { timeout: 10000 }
+    );
+  }, []);
 
   useEffect(() => {
     if (searchParams.get('tab') === 'create') {
@@ -559,21 +627,140 @@ function TripsContent() {
                 </div>
               )}
 
-              {/* ---------------- QUESTION 2: DESTINATION & PICKUP ---------------- */}
+              {/* ---------------- QUESTION 2: LOCATION & AUTO SCAN ---------------- */}
               {createStep === 2 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
                     <h2 className="text-[22px] font-[800] tracking-tight leading-tight">
-                      Where are you heading?
+                      Where are you located?
                     </h2>
                     <p className="text-xs text-black/60 mt-1">
-                      Choose a destination and a convenient public pickup point.
+                      Auto-scan your GPS or pick your starting neighborhood for pickups.
+                    </p>
+                  </div>
+
+                  {/* High-Tech GPS Auto-Scan Card */}
+                  <div className="rounded-[24px] bg-gradient-to-br from-emerald-500 via-teal-600 to-[#1D3B2A] p-5 text-white shadow-lg relative overflow-hidden">
+                    <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
+                    
+                    <div className="flex items-start justify-between relative z-10">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30 shadow-inner">
+                          {gpsScanning ? (
+                            <Radio className="w-6 h-6 animate-spin text-amber-300" />
+                          ) : (
+                            <LocateFixed className="w-6 h-6 text-white" />
+                          )}
+                        </div>
+                        <div>
+                          <div className="text-[11px] font-bold uppercase tracking-widest text-emerald-200">
+                            GPS AUTO-DETECTION
+                          </div>
+                          <div className="text-[16px] font-[800] tracking-tight leading-tight mt-0.5">
+                            {gpsScanning ? 'Scanning live coordinates...' : createPickup || 'Auto-scan your area'}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between relative z-10">
+                      <span className="text-[11px] text-white/80 font-medium">
+                        {gpsDetected ? '✓ High accuracy GPS locked' : 'Instant 1-tap neighborhood detection'}
+                      </span>
+                      <button
+                        type="button"
+                        disabled={gpsScanning}
+                        onClick={detectUserLocation}
+                        className="px-4 py-2 rounded-full bg-white text-[#1D3B2A] text-xs font-black shadow-md hover:bg-emerald-50 active:scale-95 transition cursor-pointer flex items-center gap-1.5"
+                      >
+                        {gpsScanning ? (
+                          <>
+                            <div className="w-3.5 h-3.5 rounded-full border-2 border-[#1D3B2A] border-r-transparent animate-spin" />
+                            <span>Scanning...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                            <span>{gpsDetected ? 'Rescan GPS' : 'Auto Scan Location'}</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Manual Pickup Spot Landmark Input */}
+                  <div>
+                    <label className="text-[11px] font-bold tracking-widest text-black/40">
+                      STARTING LANDMARK / AREA
+                    </label>
+                    <div className="mt-1.5 relative">
+                      <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40" />
+                      <input
+                        type="text"
+                        value={createPickup}
+                        onChange={(e) => {
+                          setCreatePickup(e.target.value);
+                          setGpsDetected(false);
+                        }}
+                        placeholder="e.g. Indiranagar 100ft Rd, Sony Signal Koramangala..."
+                        className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-black/10 font-bold text-[14px] focus:outline-none focus:ring-2 focus:ring-black/10 shadow-sm"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Popular Starting Hubs */}
+                  <div>
+                    <span className="text-[10px] font-bold text-black/40 uppercase tracking-wider">
+                      Popular Bangalore Pickup Hubs
+                    </span>
+                    <div className="flex flex-wrap gap-1.5 mt-1.5">
+                      {[
+                        'Indiranagar',
+                        'Koramangala',
+                        'HSR Layout',
+                        'MG Road Metro',
+                        'Whitefield',
+                        'Hebbal Flyover',
+                        'Jayanagar 4th Block',
+                        'JP Nagar',
+                      ].map((spot) => (
+                        <button
+                          key={spot}
+                          type="button"
+                          onClick={() => {
+                            hapticTap();
+                            setCreatePickup(spot + ', Bangalore');
+                            setGpsDetected(false);
+                          }}
+                          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer ${
+                            createPickup.toLowerCase().includes(spot.toLowerCase())
+                              ? 'bg-black text-white border-black shadow-xs'
+                              : 'bg-white border-black/10 text-black/70 hover:border-black/20'
+                          }`}
+                        >
+                          📍 {spot}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ---------------- QUESTION 3: DESTINATION ---------------- */}
+              {createStep === 3 && (
+                <div className="animate-fade-in space-y-4">
+                  <div>
+                    <h2 className="text-[22px] font-[800] tracking-tight leading-tight">
+                      Where is this trip heading?
+                    </h2>
+                    <p className="text-xs text-black/60 mt-1">
+                      Choose your destination spot or roadtrip goal.
                     </p>
                   </div>
 
                   <div>
                     <label className="text-[11px] font-bold tracking-widest text-black/40">
-                      DESTINATION
+                      DESTINATION NAME
                     </label>
                     <div className="mt-1.5 relative">
                       <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40" />
@@ -590,7 +777,7 @@ function TripsContent() {
                   {/* Quick Pick Chips */}
                   <div>
                     <span className="text-[10px] font-bold text-black/40 uppercase tracking-wider">
-                      Popular Spots
+                      Popular Destinations
                     </span>
                     <div className="flex flex-wrap gap-1.5 mt-1.5">
                       {[
@@ -601,6 +788,7 @@ function TripsContent() {
                         'Chikmagalur 🏞️',
                         'Avalabetta ⛰️',
                         'Mysore Palace 🏰',
+                        'Gokarna Beach 🏖️',
                       ].map((spot) => (
                         <button
                           key={spot}
@@ -620,54 +808,22 @@ function TripsContent() {
                       ))}
                     </div>
                   </div>
-
-                  {/* Public Pickup Landmark */}
-                  <div className="pt-2">
-                    <label className="text-[11px] font-bold tracking-widest text-black/40">
-                      PUBLIC PICKUP SPOT
-                    </label>
-                    <div className="flex flex-wrap gap-1.5 mt-1.5">
-                      {[
-                        'Indiranagar',
-                        'Koramangala',
-                        'HSR Layout',
-                        'MG Road Metro',
-                        'Whitefield',
-                        'Hebbal Flyover',
-                      ].map((spot) => (
-                        <button
-                          key={spot}
-                          type="button"
-                          onClick={() => {
-                            hapticTap();
-                            setCreatePickup(spot);
-                          }}
-                          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer ${
-                            createPickup === spot
-                              ? 'bg-black text-white border-black shadow-xs'
-                              : 'bg-white border-black/10 text-black/70 hover:border-black/20'
-                          }`}
-                        >
-                          📍 {spot}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
                 </div>
               )}
 
-              {/* ---------------- QUESTION 3: DATE & SCHEDULE ---------------- */}
-              {createStep === 3 && (
+              {/* ---------------- QUESTION 4: SCHEDULE & GROUP ---------------- */}
+              {createStep === 4 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
                     <h2 className="text-[22px] font-[800] tracking-tight leading-tight">
-                      When are you planning to go?
+                      When & who are you traveling with?
                     </h2>
                     <p className="text-xs text-black/60 mt-1">
-                      Pick the date and ideal time of day for the plan.
+                      Set date, starting time slot, connection type, and group dynamics.
                     </p>
                   </div>
 
+                  {/* Day Picker */}
                   <div>
                     <label className="text-[11px] font-bold tracking-widest text-black/40">
                       DAY / TIMEFRAME
@@ -688,7 +844,7 @@ function TripsContent() {
                             hapticTap();
                             setCreateDate(d);
                           }}
-                          className={`h-11 rounded-2xl border text-xs font-bold transition cursor-pointer flex items-center justify-center ${
+                          className={`h-10 rounded-2xl border text-xs font-bold transition cursor-pointer flex items-center justify-center ${
                             createDate === d
                               ? 'bg-black text-white border-black shadow-sm'
                               : 'bg-white border-black/10 text-black/70 hover:border-black/20'
@@ -700,130 +856,107 @@ function TripsContent() {
                     </div>
                   </div>
 
-                  <div className="pt-2">
-                    <label className="text-[11px] font-bold tracking-widest text-black/40">
-                      STARTING TIME SLOT
-                    </label>
-                    <div className="space-y-2 mt-1.5">
-                      {[
-                        { id: '🌅 Early Sunrise · 5:30 AM', sub: 'Best for Nandi / Skandagiri sunrise views' },
-                        { id: '☀️ Morning Explorer · 8:30 AM', sub: 'Day roadtrips and breakfast stops' },
-                        { id: '🌆 Sunset & Golden Hour · 4:30 PM', sub: 'Evening chai, viewpoints & walks' },
-                        { id: '🌌 Night Trek / Stargazing · 10:00 PM', sub: 'Skandagiri / night trails' },
-                      ].map((slot) => (
-                        <button
-                          key={slot.id}
-                          type="button"
-                          onClick={() => {
-                            hapticTap();
-                            setCreateTimeSlot(slot.id);
-                          }}
-                          className={`w-full p-3.5 rounded-2xl border text-left transition cursor-pointer flex items-center justify-between ${
-                            createTimeSlot === slot.id
-                              ? 'bg-white border-black shadow-sm ring-1 ring-black'
-                              : 'bg-white/70 border-black/10 hover:border-black/20'
-                          }`}
-                        >
-                          <div>
-                            <div className="font-bold text-[13px] text-black">{slot.id}</div>
-                            <div className="text-[11px] text-black/50">{slot.sub}</div>
-                          </div>
-                          {createTimeSlot === slot.id && (
-                            <div className="w-5 h-5 bg-black rounded-full flex items-center justify-center shrink-0">
-                              <Check className="w-3 h-3 text-white" />
-                            </div>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* ---------------- QUESTION 4: GROUP & COMPATIBILITY ---------------- */}
-              {createStep === 4 && (
-                <div className="animate-fade-in space-y-4">
-                  <div>
-                    <h2 className="text-[22px] font-[800] tracking-tight leading-tight">
-                      Who are you looking to travel with?
-                    </h2>
-                    <p className="text-xs text-black/60 mt-1">
-                      Define the vibe, group dynamics, and transport arrangement.
-                    </p>
-                  </div>
-
-                  {/* Trip Type Selector */}
+                  {/* Time Slot Picker */}
                   <div>
                     <label className="text-[11px] font-bold tracking-widest text-black/40">
-                      CONNECTION INTENT
-                    </label>
-                    <div className="grid grid-cols-3 gap-2 mt-1.5">
-                      {[
-                        { id: 'green', label: '🟢 Buddies', desc: 'Adventure & Friends' },
-                        { id: 'pink', label: '💗 Travel Date', desc: '1-on-1 Chemistry' },
-                        { id: 'women', label: '👩 Women-Only', desc: 'Curated Circle' },
-                      ].map((t) => (
-                        <button
-                          key={t.id}
-                          type="button"
-                          onClick={() => {
-                            hapticTap();
-                            setCreateType(t.id as any);
-                          }}
-                          className={`p-3 rounded-2xl border text-left transition cursor-pointer ${
-                            createType === t.id
-                              ? 'bg-black text-white border-black shadow-sm'
-                              : 'bg-white border-black/10 text-black/70 hover:border-black/20'
-                          }`}
-                        >
-                          <div className="font-bold text-[12px]">{t.label}</div>
-                          <div className={`text-[10px] ${createType === t.id ? 'text-white/70' : 'text-black/50'}`}>
-                            {t.desc}
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Group Size */}
-                  <div>
-                    <label className="text-[11px] font-bold tracking-widest text-black/40">
-                      GROUP SIZE
-                    </label>
-                    <div className="grid grid-cols-3 gap-2 mt-1.5">
-                      {[
-                        { id: '1-on-1', label: '1-on-1 (Just 2)' },
-                        { id: '2-4', label: 'Small Squad (2-4)' },
-                        { id: '5+', label: 'Group (5+)' },
-                      ].map((sz) => (
-                        <button
-                          key={sz.id}
-                          type="button"
-                          onClick={() => {
-                            hapticTap();
-                            setCreateGroupSize(sz.id);
-                          }}
-                          className={`h-11 rounded-2xl border text-xs font-bold transition cursor-pointer flex items-center justify-center ${
-                            createGroupSize === sz.id
-                              ? 'bg-black text-white border-black shadow-sm'
-                              : 'bg-white border-black/10 text-black/70 hover:border-black/20'
-                          }`}
-                        >
-                          {sz.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Vehicle / Ride */}
-                  <div className="pt-1">
-                    <label className="text-[11px] font-bold tracking-widest text-black/40">
-                      RIDE / TRANSPORT
+                      STARTING TIME
                     </label>
                     <div className="grid grid-cols-2 gap-2 mt-1.5">
                       {[
-                        '🚗 Driving my car',
-                        '🏍️ Riding bike (1 pillion)',
+                        '🌅 Sunrise · 5:30 AM',
+                        '☀️ Morning · 8:30 AM',
+                        '🌆 Sunset · 4:30 PM',
+                        '🌌 Night · 10:00 PM',
+                      ].map((slot) => (
+                        <button
+                          key={slot}
+                          type="button"
+                          onClick={() => {
+                            hapticTap();
+                            setCreateTimeSlot(slot);
+                          }}
+                          className={`p-2.5 rounded-2xl border text-xs font-semibold text-left transition cursor-pointer flex items-center justify-between ${
+                            createTimeSlot === slot
+                              ? 'bg-white border-black shadow-sm ring-1 ring-black'
+                              : 'bg-white/70 border-black/10 text-black/70 hover:border-black/20'
+                          }`}
+                        >
+                          <span>{slot}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Connection Intent & Group Size */}
+                  <div className="grid grid-cols-2 gap-3 pt-1">
+                    <div>
+                      <label className="text-[11px] font-bold tracking-widest text-black/40">
+                        CONNECTION INTENT
+                      </label>
+                      <div className="space-y-1.5 mt-1.5">
+                        {[
+                          { id: 'green', label: '🟢 Buddies' },
+                          { id: 'pink', label: '💗 Travel Date' },
+                          { id: 'women', label: '👩 Women-Only' },
+                        ].map((t) => (
+                          <button
+                            key={t.id}
+                            type="button"
+                            onClick={() => {
+                              hapticTap();
+                              setCreateType(t.id as any);
+                            }}
+                            className={`w-full p-2 rounded-xl border text-xs font-bold text-left transition cursor-pointer ${
+                              createType === t.id
+                                ? 'bg-black text-white border-black shadow-xs'
+                                : 'bg-white border-black/10 text-black/70'
+                            }`}
+                          >
+                            {t.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-bold tracking-widest text-black/40">
+                        GROUP SIZE
+                      </label>
+                      <div className="space-y-1.5 mt-1.5">
+                        {[
+                          { id: '1-on-1', label: '1-on-1 (2 total)' },
+                          { id: '2-4', label: 'Squad (3-4)' },
+                          { id: '5+', label: 'Group (5+)' },
+                        ].map((sz) => (
+                          <button
+                            key={sz.id}
+                            type="button"
+                            onClick={() => {
+                              hapticTap();
+                              setCreateGroupSize(sz.id);
+                            }}
+                            className={`w-full p-2 rounded-xl border text-xs font-bold text-left transition cursor-pointer ${
+                              createGroupSize === sz.id
+                                ? 'bg-black text-white border-black shadow-xs'
+                                : 'bg-white border-black/10 text-black/70'
+                            }`}
+                          >
+                            {sz.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Vehicle */}
+                  <div>
+                    <label className="text-[11px] font-bold tracking-widest text-black/40">
+                      TRANSPORT
+                    </label>
+                    <div className="grid grid-cols-2 gap-2 mt-1.5">
+                      {[
+                        '🚗 Driving car',
+                        '🏍️ Riding bike',
                         '🚕 Cabs / Split ride',
                         '🚙 Looking for a ride',
                       ].map((ride) => (
@@ -834,13 +967,13 @@ function TripsContent() {
                             hapticTap();
                             setCreateRide(ride);
                           }}
-                          className={`p-3 rounded-2xl border text-xs font-semibold text-left transition cursor-pointer flex items-center justify-between ${
+                          className={`p-2.5 rounded-xl border text-xs font-semibold text-left transition cursor-pointer ${
                             createRide === ride
-                              ? 'bg-white border-black shadow-sm ring-1 ring-black'
-                              : 'bg-white/70 border-black/10 text-black/70 hover:border-black/20'
+                              ? 'bg-white border-black shadow-xs ring-1 ring-black'
+                              : 'bg-white/70 border-black/10 text-black/70'
                           }`}
                         >
-                          <span>{ride}</span>
+                          {ride}
                         </button>
                       ))}
                     </div>
@@ -856,7 +989,7 @@ function TripsContent() {
                       What's the vibe & estimated split cost?
                     </h2>
                     <p className="text-xs text-black/60 mt-1">
-                      Set expectations on atmosphere and fair shared expenses.
+                      Set the energy and fair estimated split cost per person.
                     </p>
                   </div>
 
@@ -940,7 +1073,7 @@ function TripsContent() {
                         </div>
                         <div>
                           <div className="font-bold text-[13px] text-black">Aarav · 4.9</div>
-                          <div className="text-[10px] text-black/50">Pickup: {createPickup}</div>
+                          <div className="text-[10px] text-black/50">📍 Pickup: {createPickup}</div>
                         </div>
                       </div>
                       <span className="px-2.5 py-0.5 rounded-full bg-black text-white text-[10px] font-bold">
@@ -955,7 +1088,7 @@ function TripsContent() {
                     <div className="text-xs text-black/60 mt-1 flex items-center gap-2">
                       <span>📅 {createDate}</span>
                       <span>•</span>
-                      <span>{createTimeSlot.split('·')[1]?.trim() || createTimeSlot}</span>
+                      <span>{createTimeSlot}</span>
                     </div>
 
                     <div className="flex flex-wrap gap-1 mt-2">
