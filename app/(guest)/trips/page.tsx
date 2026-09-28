@@ -746,22 +746,109 @@ function TripsContent() {
                 </div>
               )}
 
-              {/* ---------------- QUESTION 3: DESTINATION & MEET SPOT ---------------- */}
+              {/* ---------------- QUESTION 3: DATE OR A TRIP & DESTINATION ---------------- */}
               {createStep === 3 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
                     <h2 className="text-[22px] font-[800] tracking-tight leading-tight">
-                      Where are you planning to make a meet / trip?
+                      Are you going for a date or a trip?
                     </h2>
                     <p className="text-xs text-black/60 mt-1">
-                      Type your destination or select from popular roadtrips, treks, and city hangout spots.
+                      Choose your intent and where you are planning to make a meet or trip.
                     </p>
                   </div>
 
-                  {/* Typing Box with MapPin & Clear Icon */}
+                  {/* Date vs Trip Primary Choice Cards */}
                   <div>
                     <label className="text-[11px] font-bold tracking-widest text-black/40">
-                      TYPE DESTINATION / MEET PLACE
+                      CHOOSE TRIP INTENT
+                    </label>
+                    <div className="grid grid-cols-2 gap-2.5 mt-1.5">
+                      {[
+                        {
+                          id: 'pink',
+                          title: 'A Date 💗',
+                          sub: '1-on-1 romantic date & spark',
+                          badge: 'Date Mode',
+                          borderActive: 'border-rose-500 bg-rose-50/50',
+                          badgeBg: 'bg-rose-100 text-rose-800',
+                          icon: '✨',
+                        },
+                        {
+                          id: 'green',
+                          title: 'A Trip ⛰️',
+                          sub: 'Roadtrip, trek & adventure',
+                          badge: 'Trip Mode',
+                          borderActive: 'border-emerald-600 bg-emerald-50/50',
+                          badgeBg: 'bg-emerald-100 text-emerald-800',
+                          icon: '🧭',
+                        },
+                        {
+                          id: 'buddies',
+                          title: 'Buddies 🟢',
+                          sub: 'Chill social hangout & friends',
+                          badge: 'Social Meet',
+                          borderActive: 'border-teal-600 bg-teal-50/50',
+                          badgeBg: 'bg-teal-100 text-teal-800',
+                          icon: '☕',
+                        },
+                        {
+                          id: 'women',
+                          title: 'Women-Only 👩',
+                          sub: 'Safe verified girls squad',
+                          badge: 'Safe Circle',
+                          borderActive: 'border-purple-600 bg-purple-50/50',
+                          badgeBg: 'bg-purple-100 text-purple-800',
+                          icon: '🛡️',
+                        },
+                      ].map((opt) => {
+                        const isSelected =
+                          (opt.id === 'buddies' && createType === 'green') ||
+                          createType === opt.id;
+                        return (
+                          <button
+                            key={opt.id}
+                            type="button"
+                            onClick={() => {
+                              hapticTap();
+                              setCreateType(opt.id === 'buddies' ? 'green' : (opt.id as any));
+                            }}
+                            className={`p-3.5 rounded-2xl border-2 text-left transition cursor-pointer active:scale-95 flex flex-col justify-between relative ${
+                              isSelected
+                                ? `${opt.borderActive} shadow-sm`
+                                : 'bg-white border-black/10 hover:border-black/25'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-[800] text-[15px] text-black">
+                                {opt.title}
+                              </span>
+                              {isSelected && (
+                                <div className="w-4 h-4 rounded-full bg-black flex items-center justify-center">
+                                  <Check className="w-2.5 h-2.5 text-white" />
+                                </div>
+                              )}
+                            </div>
+                            <p className="text-[11px] text-black/60 font-medium mt-1 leading-snug">
+                              {opt.sub}
+                            </p>
+                            <div className="mt-2.5">
+                              <span
+                                className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${opt.badgeBg}`}
+                              >
+                                {opt.badge}
+                              </span>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Typing Box with MapPin & Clear Icon */}
+                  <div className="pt-2">
+                    <label className="text-[11px] font-bold tracking-widest text-black/40">
+                      WHERE ARE YOU PLANNING TO MEET / GO?
                     </label>
                     <div className="mt-1.5 relative">
                       <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-600" />
@@ -787,7 +874,7 @@ function TripsContent() {
                     </div>
                     {createDestination && (
                       <div className="mt-1.5 flex items-center gap-1 text-[11px] font-semibold text-emerald-700">
-                        <span>✓ Selected:</span>
+                        <span>✓ Destination:</span>
                         <span className="font-bold text-black">{createDestination}</span>
                       </div>
                     )}
@@ -796,7 +883,7 @@ function TripsContent() {
                   {/* Categorized Options: Scenic Roadtrips & Treks */}
                   <div className="pt-1">
                     <span className="text-[10px] font-bold text-black/50 uppercase tracking-wider block mb-1.5">
-                      ⛰️ Popular Roadtrips & Getaways
+                      ⛰️ Roadtrips & Getaways
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {[
@@ -832,7 +919,7 @@ function TripsContent() {
                   {/* Categorized Options: City Meets & Cafe Hangouts */}
                   <div className="pt-1">
                     <span className="text-[10px] font-bold text-black/50 uppercase tracking-wider block mb-1.5">
-                      ☕ City Meets & Cafe Hangouts
+                      ☕ City Meets & Cafe Dates
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {[
