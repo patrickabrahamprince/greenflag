@@ -25,6 +25,7 @@ import {
   LocateFixed,
   Radio,
   Loader2,
+  Compass,
 } from 'lucide-react';
 import { hapticTap, hapticSuccess } from '@/lib/haptics';
 import toast from 'react-hot-toast';
@@ -282,51 +283,78 @@ function TripsContent() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#faf8f5] flex flex-col font-[Inter] relative overflow-x-hidden text-black max-w-md mx-auto">
-      {/* Background Dots & Glow */}
-      <div
-        className="absolute inset-0 opacity-[0.04] pointer-events-none"
-        style={{
-          backgroundImage: 'radial-gradient(#000 1px, transparent 1px)',
-          backgroundSize: '22px 22px',
-        }}
-      />
-      <div className="absolute -top-32 -left-32 w-[350px] h-[350px] bg-gradient-to-br from-emerald-200 via-teal-200 to-cyan-200 rounded-full blur-[80px] opacity-60 pointer-events-none" />
-      <div className="absolute -bottom-32 -right-32 w-[350px] h-[350px] bg-gradient-to-br from-rose-200 via-orange-200 to-amber-200 rounded-full blur-[80px] opacity-60 pointer-events-none" />
+    <div className="min-h-screen w-full bg-[#fbf9f6] flex flex-col font-[Inter] relative overflow-x-hidden text-black max-w-md mx-auto select-none">
+      {/* Background Subtle Gradient Blobs */}
+      <div className="fixed -top-24 -left-24 w-80 h-80 bg-emerald-100/60 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed -bottom-24 -right-24 w-80 h-80 bg-rose-100/50 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Top Fixed Segmented View Switcher */}
+      <header className="px-4 pt-[max(14px,env(safe-area-inset-top,14px))] pb-2.5 bg-white/95 backdrop-blur-xl sticky top-0 z-30 border-b border-black/[0.06] shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)]">
+        <div className="flex items-center justify-between mb-2.5">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[11px] font-extrabold tracking-widest uppercase text-black/50">
+              GREENFLAG · BENGALURU
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[11px] font-bold">
+            <Shield className="w-3 h-3 text-emerald-600" />
+            <span>Verified Safety</span>
+          </div>
+        </div>
+
+        {/* Dual Tab Switcher Pill */}
+        <div className="flex bg-[#f2eee9] p-1 rounded-2xl gap-1 border border-black/5">
+          <button
+            type="button"
+            onClick={() => {
+              hapticTap();
+              setActiveTab('explore');
+            }}
+            className={`flex-1 py-2.5 rounded-xl font-[800] text-[13px] flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+              activeTab === 'explore'
+                ? 'bg-white text-black shadow-[0_4px_12px_rgba(0,0,0,0.08)]'
+                : 'text-black/60 hover:text-black'
+            }`}
+          >
+            <Compass className="w-4 h-4" />
+            <span>Explore Trips</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              hapticTap();
+              setActiveTab('create');
+            }}
+            className={`flex-1 py-2.5 rounded-xl font-[800] text-[13px] flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+              activeTab === 'create'
+                ? 'bg-black text-white shadow-[0_4px_12px_rgba(0,0,0,0.25)]'
+                : 'text-black/60 hover:text-black'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            <span>Host a Trip</span>
+          </button>
+        </div>
+      </header>
 
       {/* Main Content Area */}
-      <div className="flex-1 relative flex flex-col pb-36">
+      <main className="flex-1 relative flex flex-col pb-44">
         
         {/* ================= VIEW 1: EXPLORE (MAP + FEED) ================= */}
         {activeTab === 'explore' && (
-          <div className="h-full flex flex-col">
+          <div className="h-full flex flex-col animate-fade-in">
             
-            {/* Search & City Header with Safe Area Inset */}
-            <div className="px-5 pt-[max(16px,env(safe-area-inset-top,16px))] pb-3 bg-white/90 backdrop-blur-xl sticky top-0 z-20 border-b border-black/5 shadow-xs">
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-widest text-black/40">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>BANGALORE</span>
-                  </div>
-                  <div className="font-[800] text-[22px] tracking-tight leading-none mt-1">
-                    Where to next?
-                  </div>
-                </div>
-                <div className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center font-bold text-[14px] shadow-sm">
-                  A
-                </div>
-              </div>
-
-              {/* Search Input */}
+            {/* Search & Filter Section */}
+            <div className="px-4 pt-3 pb-1">
               <div className="relative">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search Nandi, Coorg, Cubbon..."
-                  className="w-full h-11 pl-10 pr-4 rounded-2xl bg-[#f5f3f0] border border-black/[0.06] text-[14px] placeholder:text-black/40 font-medium focus:outline-none focus:ring-2 focus:ring-black/10 transition"
+                  placeholder="Search Nandi, Coorg, Cubbon Park..."
+                  className="w-full h-11 pl-10 pr-4 rounded-2xl bg-white border border-black/10 text-[14px] placeholder:text-black/40 font-semibold focus:outline-none focus:ring-2 focus:ring-black/10 shadow-xs transition"
                 />
               </div>
 
@@ -341,7 +369,7 @@ function TripsContent() {
                         hapticTap();
                         setSelectedFilter(filter);
                       }}
-                      className={`shrink-0 h-8 px-4 rounded-full text-[13px] font-semibold border transition-all cursor-pointer ${
+                      className={`shrink-0 h-8 px-4 rounded-full text-[12px] font-bold border transition-all cursor-pointer ${
                         selectedFilter === filter
                           ? 'bg-black text-white border-black shadow-sm'
                           : 'bg-white border-black/10 text-black/70 hover:border-black/20'
@@ -355,7 +383,7 @@ function TripsContent() {
             </div>
 
             {/* Interactive Vector Map Canvas */}
-            <div className="relative h-[260px] sm:h-[300px] bg-[#eef4ee] overflow-hidden mx-4 my-3 rounded-[28px] border border-black/[0.06] shadow-inner shrink-0">
+            <div className="relative h-[250px] sm:h-[280px] bg-[#e9f2ea] overflow-hidden mx-4 my-3 rounded-[28px] border border-black/10 shadow-inner shrink-0">
               <div
                 className="absolute inset-0 opacity-[0.06] pointer-events-none"
                 style={{
@@ -364,14 +392,14 @@ function TripsContent() {
                 }}
               />
 
-              {/* Vector Roads & Topo Polygons */}
+              {/* Vector Roads */}
               <div className="absolute inset-0 p-6 pointer-events-none">
                 <div className="w-full h-full relative">
-                  <div className="absolute left-[20%] top-0 bottom-0 w-[6px] bg-white/80 rounded-full" />
-                  <div className="absolute top-[38%] left-0 right-0 h-[5px] bg-white/80 rounded-full" />
-                  <div className="absolute top-[68%] left-0 right-0 h-[4px] bg-white/60 rounded-full rotate-[-8deg]" />
-                  <div className="absolute left-[10%] top-[55%] w-[32%] h-[22%] bg-emerald-200/40 rounded-[18px]" />
-                  <div className="absolute right-[18%] top-[12%] w-[26%] h-[18%] bg-emerald-200/30 rounded-[16px]" />
+                  <div className="absolute left-[22%] top-0 bottom-0 w-[5px] bg-white/90 rounded-full" />
+                  <div className="absolute top-[40%] left-0 right-0 h-[5px] bg-white/90 rounded-full" />
+                  <div className="absolute top-[70%] left-0 right-0 h-[4px] bg-white/70 rounded-full rotate-[-6deg]" />
+                  <div className="absolute left-[12%] top-[55%] w-[32%] h-[22%] bg-emerald-200/50 rounded-[18px]" />
+                  <div className="absolute right-[15%] top-[12%] w-[28%] h-[20%] bg-emerald-200/40 rounded-[16px]" />
                 </div>
               </div>
 
@@ -389,7 +417,7 @@ function TripsContent() {
                 >
                   <div className="relative">
                     <div
-                      className={`absolute inset-0 rounded-full blur-[8px] opacity-40 ${
+                      className={`absolute inset-0 rounded-full blur-[6px] opacity-40 ${
                         trip.type === 'pink' ? 'bg-rose-400' : 'bg-emerald-400'
                       } animate-ping`}
                     />
@@ -405,8 +433,8 @@ function TripsContent() {
 
               {/* Cluster Badge */}
               <div className="absolute left-[58%] top-[30%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10">
-                <div className="bg-black text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-lg">
-                  3 trips
+                <div className="bg-black text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-lg">
+                  3 active trips
                 </div>
               </div>
 
@@ -415,19 +443,19 @@ function TripsContent() {
                 type="button"
                 onClick={() => {
                   hapticTap();
-                  toast('Current Location: Indiranagar, Bangalore', { icon: '📍' });
+                  toast('Location: Indiranagar, Bangalore', { icon: '📍' });
                 }}
-                className="absolute right-3 bottom-3 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center border border-black/10 cursor-pointer active:scale-90 transition z-10"
+                className="absolute right-3 bottom-3 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center border border-black/10 cursor-pointer active:scale-90 transition z-10"
               >
                 <Navigation className="w-4 h-4 text-black" />
               </button>
             </div>
 
-            {/* Bottom Swipeable Cards Carousel Header & List */}
+            {/* Trips List */}
             <div className="px-4">
               <div className="flex items-center justify-between mb-3 px-1">
-                <h3 className="text-[16px] font-bold tracking-tight">Available Trips</h3>
-                <span className="text-[12px] font-medium text-black/50">{filteredTrips.length} nearby</span>
+                <h3 className="text-[16px] font-[800] tracking-tight">Available Trips</h3>
+                <span className="text-[12px] font-bold text-black/50">{filteredTrips.length} active nearby</span>
               </div>
 
               <div
@@ -442,7 +470,7 @@ function TripsContent() {
                       hapticTap();
                       setSelectedTrip(trip);
                     }}
-                    className="snap-start shrink-0 w-[290px] text-left bg-white rounded-[22px] border border-black/[0.06] shadow-[0_12px_24px_-8px_rgba(0,0,0,0.08)] overflow-hidden group active:scale-[0.98] transition cursor-pointer"
+                    className="snap-start shrink-0 w-[295px] text-left bg-white rounded-[24px] border border-black/10 shadow-[0_12px_28px_-8px_rgba(0,0,0,0.06)] overflow-hidden active:scale-[0.98] transition cursor-pointer"
                   >
                     <div className="flex">
                       <div className={`w-1.5 self-stretch bg-gradient-to-b ${trip.gradient}`} />
@@ -456,14 +484,14 @@ function TripsContent() {
                             </div>
                             <div>
                               <div className="flex items-center gap-1">
-                                <span className="font-semibold text-[13px]">
+                                <span className="font-bold text-[13px]">
                                   {trip.host.name}
                                 </span>
                                 <div className="w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center">
                                   <Check className="w-2.5 h-2.5 text-white" />
                                 </div>
                               </div>
-                              <div className="text-[11px] text-black/50 flex items-center gap-1">
+                              <div className="text-[11px] text-black/50 font-medium flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
                                 {trip.time}
                               </div>
@@ -472,7 +500,7 @@ function TripsContent() {
 
                           {/* Green Score Circular Ring */}
                           <div className="flex items-center gap-1.5">
-                            <div className="w-8 h-8 rounded-full bg-[#f5f3f0] flex items-center justify-center text-[11px] font-bold relative">
+                            <div className="w-8 h-8 rounded-full bg-[#f5f3f0] flex items-center justify-center text-[11px] font-extrabold relative">
                               {trip.score}
                               <svg className="absolute inset-0 w-8 h-8 -rotate-90">
                                 <circle
@@ -491,17 +519,17 @@ function TripsContent() {
                         </div>
 
                         <div className="mt-3">
-                          <div className="font-[750] text-[16px] leading-tight tracking-tight">
+                          <div className="font-[800] text-[16px] leading-tight tracking-tight">
                             {trip.destination}
                           </div>
                           <div className="mt-2 flex flex-wrap gap-1.5">
-                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-100">
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-100">
                               {trip.match}
                             </span>
                             {trip.vibe.map((v) => (
                               <span
                                 key={v}
-                                className="text-[10px] px-2 py-0.5 rounded-full bg-black/5 text-black/60 font-medium"
+                                className="text-[10px] px-2 py-0.5 rounded-full bg-black/5 text-black/70 font-semibold"
                               >
                                 {v}
                               </span>
@@ -509,17 +537,17 @@ function TripsContent() {
                           </div>
                         </div>
 
-                        <div className="mt-3 flex items-center justify-between">
+                        <div className="mt-3.5 flex items-center justify-between pt-2.5 border-t border-black/5">
                           <div className="flex items-center gap-2">
-                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-black text-white">
+                            <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-black text-white">
                               {trip.totalSpots - trip.spots} left
                             </span>
-                            <span className="text-[12px] font-medium text-black/60">
+                            <span className="text-[12px] font-bold text-black/60">
                               ₹{trip.cost}/person
                             </span>
                           </div>
                           <div
-                            className={`w-7 h-7 rounded-full bg-gradient-to-br ${trip.gradient} flex items-center justify-center text-white shadow`}
+                            className={`w-7 h-7 rounded-full bg-gradient-to-br ${trip.gradient} flex items-center justify-center text-white shadow-xs`}
                           >
                             <ChevronRight className="w-4 h-4" />
                           </div>
@@ -535,7 +563,7 @@ function TripsContent() {
 
         {/* ================= VIEW 2: CREATE TRIP (5-QUESTION INTERACTIVE WIZARD) ================= */}
         {activeTab === 'create' && (
-          <div className="h-full px-5 pt-[max(16px,env(safe-area-inset-top,16px))] pb-28 flex flex-col justify-between min-h-[calc(100vh-140px)]">
+          <div className="px-4 pt-3 flex flex-col justify-between animate-fade-in">
             <div>
               {/* Header with Progress Steps */}
               <div className="flex items-center justify-between mb-2">
@@ -547,12 +575,12 @@ function TripsContent() {
                         hapticTap();
                         setCreateStep((s) => Math.max(1, s - 1));
                       }}
-                      className="w-8 h-8 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center text-black font-bold transition active:scale-90"
+                      className="w-8 h-8 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center text-black font-extrabold transition active:scale-90 cursor-pointer"
                     >
                       ←
                     </button>
                   )}
-                  <span className="text-[11px] font-extrabold tracking-widest uppercase text-emerald-800 bg-emerald-100/80 px-2.5 py-0.5 rounded-full">
+                  <span className="text-[11px] font-black tracking-widest uppercase text-emerald-900 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-200">
                     Question {createStep} of 5
                   </span>
                 </div>
@@ -571,9 +599,7 @@ function TripsContent() {
                   <div key={st} className="h-1.5 rounded-full overflow-hidden bg-black/10">
                     <div
                       className={`h-full transition-all duration-300 ${
-                        st <= createStep
-                          ? 'bg-black w-full'
-                          : 'w-0'
+                        st <= createStep ? 'bg-black w-full' : 'w-0'
                       }`}
                     />
                   </div>
@@ -590,10 +616,10 @@ function TripsContent() {
               {createStep === 1 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
-                    <h2 className="text-[22px] font-[800] tracking-tight leading-tight">
+                    <h2 className="text-[22px] font-[900] tracking-tight leading-tight">
                       What kind of plan is this?
                     </h2>
-                    <p className="text-xs text-black/60 mt-1">
+                    <p className="text-xs text-black/60 mt-1 font-medium">
                       Pick the experience format. Trust is built in layers.
                     </p>
                   </div>
@@ -605,7 +631,7 @@ function TripsContent() {
                         label: 'Micro Date',
                         sub: '60 min coffee & chat',
                         icon: '☕',
-                        grad: 'from-amber-300 to-orange-400',
+                        grad: 'from-amber-400 to-orange-400',
                         badge: 'Public Cafe Only',
                       },
                       {
@@ -640,25 +666,25 @@ function TripsContent() {
                           hapticTap();
                           setCreateLadder(item.id as any);
                         }}
-                        className={`p-4 rounded-[22px] border-2 text-left transition-all relative flex items-start gap-3.5 cursor-pointer active:scale-[0.98] ${
+                        className={`p-4 rounded-[24px] border-2 text-left transition-all relative flex items-start gap-3.5 cursor-pointer active:scale-[0.98] ${
                           createLadder === item.id
-                            ? 'border-black bg-white shadow-md'
-                            : 'border-black/10 bg-white/70 hover:border-black/30'
+                            ? 'border-black bg-white shadow-md ring-1 ring-black'
+                            : 'border-black/10 bg-white hover:border-black/30'
                         }`}
                       >
                         <div
-                          className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${item.grad} flex items-center justify-center text-[22px] shadow-sm shrink-0`}
+                          className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${item.grad} flex items-center justify-center text-[22px] shadow-xs shrink-0 text-white`}
                         >
                           {item.icon}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="font-bold text-[14px] text-black">
+                          <div className="font-[800] text-[15px] text-black leading-snug">
                             {item.label}
                           </div>
-                          <div className="text-[11px] text-black/60 mt-0.5">
+                          <div className="text-[11px] text-black/60 mt-0.5 font-medium">
                             {item.sub}
                           </div>
-                          <span className="inline-block text-[9px] font-bold px-2 py-0.5 rounded-full bg-black/5 text-black/70 mt-2">
+                          <span className="inline-block text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-black/5 text-black/70 mt-2">
                             {item.badge}
                           </span>
                         </div>
@@ -677,16 +703,16 @@ function TripsContent() {
               {createStep === 2 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
-                    <h2 className="text-[22px] font-[800] tracking-tight leading-tight">
+                    <h2 className="text-[22px] font-[900] tracking-tight leading-tight">
                       Where are you located?
                     </h2>
-                    <p className="text-xs text-black/60 mt-1">
-                      Auto-scan your GPS or pick your starting neighborhood for pickups.
+                    <p className="text-xs text-black/60 mt-1 font-medium">
+                      Auto-scan your GPS or pick your starting pickup neighborhood.
                     </p>
                   </div>
 
                   {/* High-Tech GPS Auto-Scan Card */}
-                  <div className="rounded-[24px] bg-gradient-to-br from-emerald-500 via-teal-600 to-[#1D3B2A] p-5 text-white shadow-lg relative overflow-hidden">
+                  <div className="rounded-[26px] bg-gradient-to-br from-emerald-600 via-teal-700 to-[#123020] p-5 text-white shadow-xl relative overflow-hidden">
                     <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
                     
                     <div className="flex items-start justify-between relative z-10">
@@ -699,7 +725,7 @@ function TripsContent() {
                           )}
                         </div>
                         <div>
-                          <div className="text-[11px] font-bold uppercase tracking-widest text-emerald-200">
+                          <div className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-200">
                             GPS AUTO-DETECTION
                           </div>
                           <div className="text-[16px] font-[800] tracking-tight leading-tight mt-0.5">
@@ -709,19 +735,19 @@ function TripsContent() {
                       </div>
                     </div>
 
-                    <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between relative z-10">
-                      <span className="text-[11px] text-white/80 font-medium">
+                    <div className="mt-4 pt-3.5 border-t border-white/15 flex items-center justify-between relative z-10">
+                      <span className="text-[11px] text-white/85 font-medium">
                         {gpsDetected ? '✓ High accuracy GPS locked' : 'Instant 1-tap neighborhood detection'}
                       </span>
                       <button
                         type="button"
                         disabled={gpsScanning}
                         onClick={detectUserLocation}
-                        className="px-4 py-2 rounded-full bg-white text-[#1D3B2A] text-xs font-black shadow-md hover:bg-emerald-50 active:scale-95 transition cursor-pointer flex items-center gap-1.5"
+                        className="px-4 py-2 rounded-full bg-white text-[#123020] text-xs font-black shadow-md hover:bg-emerald-50 active:scale-95 transition cursor-pointer flex items-center gap-1.5"
                       >
                         {gpsScanning ? (
                           <>
-                            <div className="w-3.5 h-3.5 rounded-full border-2 border-[#1D3B2A] border-r-transparent animate-spin" />
+                            <div className="w-3.5 h-3.5 rounded-full border-2 border-[#123020] border-r-transparent animate-spin" />
                             <span>Scanning...</span>
                           </>
                         ) : (
@@ -736,7 +762,7 @@ function TripsContent() {
 
                   {/* Manual Pickup Spot Landmark Input */}
                   <div>
-                    <label className="text-[11px] font-bold tracking-widest text-black/40">
+                    <label className="text-[11px] font-extrabold tracking-widest text-black/40">
                       STARTING LANDMARK / AREA
                     </label>
                     <div className="mt-1.5 relative">
@@ -749,14 +775,14 @@ function TripsContent() {
                           setGpsDetected(false);
                         }}
                         placeholder="e.g. Indiranagar 100ft Rd, Sony Signal Koramangala..."
-                        className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-black/10 font-bold text-[14px] focus:outline-none focus:ring-2 focus:ring-black/10 shadow-sm"
+                        className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-black/15 font-bold text-[14px] focus:outline-none focus:ring-2 focus:ring-black/10 shadow-xs"
                       />
                     </div>
                   </div>
 
                   {/* Popular Starting Hubs */}
                   <div>
-                    <span className="text-[10px] font-bold text-black/40 uppercase tracking-wider">
+                    <span className="text-[10px] font-extrabold text-black/40 uppercase tracking-wider">
                       Popular Bangalore Pickup Hubs
                     </span>
                     <div className="flex flex-wrap gap-1.5 mt-1.5">
@@ -778,10 +804,10 @@ function TripsContent() {
                             setCreatePickup(spot + ', Bangalore');
                             setGpsDetected(false);
                           }}
-                          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer ${
+                          className={`px-3 py-1.5 rounded-full text-xs font-bold border transition cursor-pointer ${
                             createPickup.toLowerCase().includes(spot.toLowerCase())
                               ? 'bg-black text-white border-black shadow-xs'
-                              : 'bg-white border-black/10 text-black/70 hover:border-black/20'
+                              : 'bg-white border-black/10 text-black/75 hover:border-black/25'
                           }`}
                         >
                           📍 {spot}
@@ -796,17 +822,17 @@ function TripsContent() {
               {createStep === 3 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
-                    <h2 className="text-[22px] font-[800] tracking-tight leading-tight">
+                    <h2 className="text-[22px] font-[900] tracking-tight leading-tight">
                       Are you going for a date or a trip?
                     </h2>
-                    <p className="text-xs text-black/60 mt-1">
-                      Choose your intent and type your destination or meet spot using Google Maps search.
+                    <p className="text-xs text-black/60 mt-1 font-medium">
+                      Choose your intent and search your destination or meet spot using Google Maps.
                     </p>
                   </div>
 
                   {/* Date vs Trip Primary Choice Cards */}
                   <div>
-                    <label className="text-[11px] font-bold tracking-widest text-black/40">
+                    <label className="text-[11px] font-extrabold tracking-widest text-black/40">
                       CHOOSE TRIP INTENT
                     </label>
                     <div className="grid grid-cols-2 gap-2.5 mt-1.5">
@@ -816,7 +842,7 @@ function TripsContent() {
                           title: 'A Date 💗',
                           sub: '1-on-1 romantic date & spark',
                           badge: 'Date Mode',
-                          borderActive: 'border-rose-500 bg-rose-50/50',
+                          borderActive: 'border-rose-500 bg-rose-50/60 ring-2 ring-rose-400',
                           badgeBg: 'bg-rose-100 text-rose-800',
                         },
                         {
@@ -824,7 +850,7 @@ function TripsContent() {
                           title: 'A Trip ⛰️',
                           sub: 'Roadtrip, trek & adventure',
                           badge: 'Trip Mode',
-                          borderActive: 'border-emerald-600 bg-emerald-50/50',
+                          borderActive: 'border-emerald-600 bg-emerald-50/60 ring-2 ring-emerald-400',
                           badgeBg: 'bg-emerald-100 text-emerald-800',
                         },
                         {
@@ -832,7 +858,7 @@ function TripsContent() {
                           title: 'Buddies 🟢',
                           sub: 'Chill social hangout & friends',
                           badge: 'Social Meet',
-                          borderActive: 'border-teal-600 bg-teal-50/50',
+                          borderActive: 'border-teal-600 bg-teal-50/60 ring-2 ring-teal-400',
                           badgeBg: 'bg-teal-100 text-teal-800',
                         },
                         {
@@ -840,7 +866,7 @@ function TripsContent() {
                           title: 'Women-Only 👩',
                           sub: 'Safe verified girls squad',
                           badge: 'Safe Circle',
-                          borderActive: 'border-purple-600 bg-purple-50/50',
+                          borderActive: 'border-purple-600 bg-purple-50/60 ring-2 ring-purple-400',
                           badgeBg: 'bg-purple-100 text-purple-800',
                         },
                       ].map((opt) => {
@@ -862,7 +888,7 @@ function TripsContent() {
                             }`}
                           >
                             <div className="flex items-center justify-between">
-                              <span className="font-[800] text-[15px] text-black">
+                              <span className="font-[900] text-[15px] text-black">
                                 {opt.title}
                               </span>
                               {isSelected && (
@@ -871,12 +897,12 @@ function TripsContent() {
                                 </div>
                               )}
                             </div>
-                            <p className="text-[11px] text-black/60 font-medium mt-1 leading-snug">
+                            <p className="text-[11px] text-black/60 font-semibold mt-1 leading-snug">
                               {opt.sub}
                             </p>
                             <div className="mt-2.5">
                               <span
-                                className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${opt.badgeBg}`}
+                                className={`text-[9px] font-black px-2 py-0.5 rounded-full ${opt.badgeBg}`}
                               >
                                 {opt.badge}
                               </span>
@@ -890,10 +916,10 @@ function TripsContent() {
                   {/* Google Maps Live Search Typing Box */}
                   <div className="pt-2">
                     <div className="flex items-center justify-between mb-1.5">
-                      <label className="text-[11px] font-bold tracking-widest text-black/40">
+                      <label className="text-[11px] font-extrabold tracking-widest text-black/40">
                         SEARCH DESTINATION / MEET SPOT
                       </label>
-                      <span className="text-[10px] font-bold text-emerald-700 flex items-center gap-1">
+                      <span className="text-[10px] font-extrabold text-emerald-800 flex items-center gap-1">
                         <MapPin className="w-3 h-3 text-emerald-600" /> Google Maps Search
                       </span>
                     </div>
@@ -905,7 +931,7 @@ function TripsContent() {
                         value={createDestination}
                         onChange={(e) => handleDestinationType(e.target.value)}
                         placeholder="Type any place, cafe, trek, viewpoint..."
-                        className="w-full h-13 pl-10 pr-10 rounded-2xl bg-white border-2 border-black/15 font-bold text-[15px] focus:outline-none focus:border-black focus:ring-2 focus:ring-black/10 shadow-sm"
+                        className="w-full h-13 pl-10 pr-10 rounded-2xl bg-white border-2 border-black/15 font-bold text-[15px] focus:outline-none focus:border-black focus:ring-2 focus:ring-black/10 shadow-xs"
                       />
                       {isSearchingPlaces ? (
                         <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
@@ -933,7 +959,7 @@ function TripsContent() {
                           <span className="text-[10px] font-bold text-black/50 uppercase tracking-wider">
                             📍 Google Maps Predictions
                           </span>
-                          <span className="text-[10px] text-black/40">Tap to select</span>
+                          <span className="text-[10px] text-black/40 font-semibold">Tap to select</span>
                         </div>
                         {placesResults.map((place) => (
                           <button
@@ -949,7 +975,7 @@ function TripsContent() {
                               <div className="text-xs font-bold text-black truncate">
                                 {place.mainText}
                               </div>
-                              <div className="text-[10px] text-black/60 truncate">
+                              <div className="text-[10px] text-black/60 truncate font-medium">
                                 {place.secondaryText}
                               </div>
                             </div>
@@ -959,9 +985,9 @@ function TripsContent() {
                     )}
 
                     {createDestination && (
-                      <div className="mt-2 flex items-center gap-1.5 text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+                      <div className="mt-2 flex items-center gap-1.5 text-[11px] font-bold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
                         <span>📍 Destination Selected:</span>
-                        <span className="font-bold text-black truncate">{createDestination}</span>
+                        <span className="font-extrabold text-black truncate">{createDestination}</span>
                       </div>
                     )}
                   </div>
@@ -972,17 +998,17 @@ function TripsContent() {
               {createStep === 4 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
-                    <h2 className="text-[22px] font-[800] tracking-tight leading-tight">
+                    <h2 className="text-[22px] font-[900] tracking-tight leading-tight">
                       When & who are you traveling with?
                     </h2>
-                    <p className="text-xs text-black/60 mt-1">
-                      Set date, starting time slot, connection type, and group dynamics.
+                    <p className="text-xs text-black/60 mt-1 font-medium">
+                      Set date, starting time slot, and group details.
                     </p>
                   </div>
 
                   {/* Day Picker */}
                   <div>
-                    <label className="text-[11px] font-bold tracking-widest text-black/40">
+                    <label className="text-[11px] font-extrabold tracking-widest text-black/40">
                       DAY / TIMEFRAME
                     </label>
                     <div className="grid grid-cols-3 gap-2 mt-1.5">
@@ -1001,10 +1027,10 @@ function TripsContent() {
                             hapticTap();
                             setCreateDate(d);
                           }}
-                          className={`h-10 rounded-2xl border text-xs font-bold transition cursor-pointer flex items-center justify-center ${
+                          className={`h-10 rounded-2xl border text-xs font-extrabold transition cursor-pointer flex items-center justify-center ${
                             createDate === d
                               ? 'bg-black text-white border-black shadow-sm'
-                              : 'bg-white border-black/10 text-black/70 hover:border-black/20'
+                              : 'bg-white border-black/10 text-black/75 hover:border-black/25'
                           }`}
                         >
                           {d}
@@ -1015,7 +1041,7 @@ function TripsContent() {
 
                   {/* Time Slot Picker */}
                   <div>
-                    <label className="text-[11px] font-bold tracking-widest text-black/40">
+                    <label className="text-[11px] font-extrabold tracking-widest text-black/40">
                       STARTING TIME
                     </label>
                     <div className="grid grid-cols-2 gap-2 mt-1.5">
@@ -1032,10 +1058,10 @@ function TripsContent() {
                             hapticTap();
                             setCreateTimeSlot(slot);
                           }}
-                          className={`p-2.5 rounded-2xl border text-xs font-semibold text-left transition cursor-pointer flex items-center justify-between ${
+                          className={`p-2.5 rounded-2xl border text-xs font-bold text-left transition cursor-pointer flex items-center justify-between ${
                             createTimeSlot === slot
-                              ? 'bg-white border-black shadow-sm ring-1 ring-black'
-                              : 'bg-white/70 border-black/10 text-black/70 hover:border-black/20'
+                              ? 'bg-white border-black shadow-xs ring-2 ring-black'
+                              : 'bg-white border-black/10 text-black/70 hover:border-black/25'
                           }`}
                         >
                           <span>{slot}</span>
@@ -1044,39 +1070,10 @@ function TripsContent() {
                     </div>
                   </div>
 
-                  {/* Connection Intent & Group Size */}
+                  {/* Group Size & Transport */}
                   <div className="grid grid-cols-2 gap-3 pt-1">
                     <div>
-                      <label className="text-[11px] font-bold tracking-widest text-black/40">
-                        CONNECTION INTENT
-                      </label>
-                      <div className="space-y-1.5 mt-1.5">
-                        {[
-                          { id: 'green', label: '🟢 Buddies' },
-                          { id: 'pink', label: '💗 Travel Date' },
-                          { id: 'women', label: '👩 Women-Only' },
-                        ].map((t) => (
-                          <button
-                            key={t.id}
-                            type="button"
-                            onClick={() => {
-                              hapticTap();
-                              setCreateType(t.id as any);
-                            }}
-                            className={`w-full p-2 rounded-xl border text-xs font-bold text-left transition cursor-pointer ${
-                              createType === t.id
-                                ? 'bg-black text-white border-black shadow-xs'
-                                : 'bg-white border-black/10 text-black/70'
-                            }`}
-                          >
-                            {t.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="text-[11px] font-bold tracking-widest text-black/40">
+                      <label className="text-[11px] font-extrabold tracking-widest text-black/40">
                         GROUP SIZE
                       </label>
                       <div className="space-y-1.5 mt-1.5">
@@ -1092,10 +1089,10 @@ function TripsContent() {
                               hapticTap();
                               setCreateGroupSize(sz.id);
                             }}
-                            className={`w-full p-2 rounded-xl border text-xs font-bold text-left transition cursor-pointer ${
+                            className={`w-full p-2.5 rounded-xl border text-xs font-extrabold text-left transition cursor-pointer ${
                               createGroupSize === sz.id
                                 ? 'bg-black text-white border-black shadow-xs'
-                                : 'bg-white border-black/10 text-black/70'
+                                : 'bg-white border-black/10 text-black/75'
                             }`}
                           >
                             {sz.label}
@@ -1103,36 +1100,35 @@ function TripsContent() {
                         ))}
                       </div>
                     </div>
-                  </div>
 
-                  {/* Vehicle */}
-                  <div>
-                    <label className="text-[11px] font-bold tracking-widest text-black/40">
-                      TRANSPORT
-                    </label>
-                    <div className="grid grid-cols-2 gap-2 mt-1.5">
-                      {[
-                        '🚗 Driving car',
-                        '🏍️ Riding bike',
-                        '🚕 Cabs / Split ride',
-                        '🚙 Looking for a ride',
-                      ].map((ride) => (
-                        <button
-                          key={ride}
-                          type="button"
-                          onClick={() => {
-                            hapticTap();
-                            setCreateRide(ride);
-                          }}
-                          className={`p-2.5 rounded-xl border text-xs font-semibold text-left transition cursor-pointer ${
-                            createRide === ride
-                              ? 'bg-white border-black shadow-xs ring-1 ring-black'
-                              : 'bg-white/70 border-black/10 text-black/70'
-                          }`}
-                        >
-                          {ride}
-                        </button>
-                      ))}
+                    <div>
+                      <label className="text-[11px] font-extrabold tracking-widest text-black/40">
+                        TRANSPORT
+                      </label>
+                      <div className="space-y-1.5 mt-1.5">
+                        {[
+                          '🚗 Driving car',
+                          '🏍️ Riding bike',
+                          '🚕 Split cabs',
+                          '🚙 Need a ride',
+                        ].map((ride) => (
+                          <button
+                            key={ride}
+                            type="button"
+                            onClick={() => {
+                              hapticTap();
+                              setCreateRide(ride);
+                            }}
+                            className={`w-full p-2.5 rounded-xl border text-xs font-bold text-left transition cursor-pointer ${
+                              createRide === ride
+                                ? 'bg-black text-white border-black shadow-xs'
+                                : 'bg-white border-black/10 text-black/75'
+                            }`}
+                          >
+                            {ride}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1142,17 +1138,17 @@ function TripsContent() {
               {createStep === 5 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
-                    <h2 className="text-[22px] font-[800] tracking-tight leading-tight">
+                    <h2 className="text-[22px] font-[900] tracking-tight leading-tight">
                       What's the vibe & estimated split cost?
                     </h2>
-                    <p className="text-xs text-black/60 mt-1">
+                    <p className="text-xs text-black/60 mt-1 font-medium">
                       Set the energy and fair estimated split cost per person.
                     </p>
                   </div>
 
                   {/* Vibe Tags */}
                   <div>
-                    <label className="text-[11px] font-bold tracking-widest text-black/40">
+                    <label className="text-[11px] font-extrabold tracking-widest text-black/40">
                       SELECT VIBE TAGS
                     </label>
                     <div className="flex flex-wrap gap-1.5 mt-1.5">
@@ -1172,10 +1168,10 @@ function TripsContent() {
                           key={tag}
                           type="button"
                           onClick={() => toggleVibe(tag)}
-                          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer ${
+                          className={`px-3 py-1.5 rounded-full text-xs font-bold border transition cursor-pointer ${
                             createVibes.includes(tag)
                               ? 'bg-black text-white border-black shadow-xs'
-                              : 'bg-white border-black/10 text-black/70 hover:border-black/20'
+                              : 'bg-white border-black/10 text-black/75 hover:border-black/25'
                           }`}
                         >
                           {tag}
@@ -1187,10 +1183,10 @@ function TripsContent() {
                   {/* Estimated Cost Split */}
                   <div>
                     <div className="flex justify-between items-center">
-                      <label className="text-[11px] font-bold tracking-widest text-black/40">
+                      <label className="text-[11px] font-extrabold tracking-widest text-black/40">
                         ESTIMATED COST SPLIT / PERSON
                       </label>
-                      <span className="text-sm font-black text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                      <span className="text-sm font-black text-emerald-800 bg-emerald-50 px-3 py-0.5 rounded-full border border-emerald-200">
                         ₹{createCost}
                       </span>
                     </div>
@@ -1209,10 +1205,10 @@ function TripsContent() {
                             hapticTap();
                             setCreateCost(c.v);
                           }}
-                          className={`py-2 rounded-xl border text-center text-xs font-bold transition cursor-pointer ${
+                          className={`py-2 rounded-xl border text-center text-xs font-black transition cursor-pointer ${
                             createCost === c.v
                               ? 'bg-black text-white border-black shadow-sm'
-                              : 'bg-white border-black/10 text-black/70 hover:border-black/20'
+                              : 'bg-white border-black/10 text-black/75 hover:border-black/25'
                           }`}
                         >
                           {c.l}
@@ -1222,27 +1218,27 @@ function TripsContent() {
                   </div>
 
                   {/* Interactive Live Summary Card */}
-                  <div className="rounded-[24px] border border-black/10 bg-gradient-to-br from-white via-amber-50/30 to-emerald-50/30 p-4 shadow-sm mt-3">
+                  <div className="rounded-[24px] border border-black/10 bg-gradient-to-br from-white via-amber-50/20 to-emerald-50/30 p-4 shadow-sm mt-3">
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs">
+                        <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-black text-xs">
                           A
                         </div>
                         <div>
-                          <div className="font-bold text-[13px] text-black">Aarav · 4.9</div>
-                          <div className="text-[10px] text-black/50">📍 Pickup: {createPickup}</div>
+                          <div className="font-extrabold text-[13px] text-black">Aarav · 4.9 ★</div>
+                          <div className="text-[10px] text-black/50 font-medium">📍 Pickup: {createPickup}</div>
                         </div>
                       </div>
-                      <span className="px-2.5 py-0.5 rounded-full bg-black text-white text-[10px] font-bold">
+                      <span className="px-2.5 py-0.5 rounded-full bg-black text-white text-[10px] font-black">
                         {createType === 'pink' ? '💗 DATE TRIP' : createType === 'women' ? '👩 WOMEN-ONLY' : '🟢 BUDDY TRIP'}
                       </span>
                     </div>
 
-                    <div className="mt-3 font-[800] text-[16px] text-black">
-                      {createDestination} {createLadder === 'micro' ? '☕' : createLadder === 'day' ? '⛰️' : createLadder === 'getaway' ? '🏕️' : '🥐'}
+                    <div className="mt-3 font-[900] text-[16px] text-black">
+                      {createDestination || 'Trip Destination'} {createLadder === 'micro' ? '☕' : createLadder === 'day' ? '⛰️' : createLadder === 'getaway' ? '🏕️' : '🥐'}
                     </div>
 
-                    <div className="text-xs text-black/60 mt-1 flex items-center gap-2">
+                    <div className="text-xs text-black/60 font-semibold mt-1 flex items-center gap-2">
                       <span>📅 {createDate}</span>
                       <span>•</span>
                       <span>{createTimeSlot}</span>
@@ -1250,7 +1246,7 @@ function TripsContent() {
 
                     <div className="flex flex-wrap gap-1 mt-2">
                       {createVibes.map((v) => (
-                        <span key={v} className="text-[10px] px-2 py-0.5 rounded-full bg-black/5 text-black/70">
+                        <span key={v} className="text-[10px] px-2 py-0.5 rounded-full bg-black/5 text-black/75 font-semibold">
                           {v}
                         </span>
                       ))}
@@ -1258,15 +1254,15 @@ function TripsContent() {
 
                     <div className="mt-3 pt-3 border-t border-black/5 flex justify-between items-center text-xs font-bold text-black">
                       <span className="text-black/60">{createRide}</span>
-                      <span className="text-emerald-700">₹{createCost}/person</span>
+                      <span className="text-emerald-700 font-extrabold">₹{createCost}/person</span>
                     </div>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Bottom Floating Step Navigation Buttons */}
-            <div className="pt-5 flex gap-3">
+            {/* Dedicated Floating Wizard Actions (Fixed above bottom navigation) */}
+            <div className="fixed bottom-20 inset-x-4 max-w-md mx-auto z-40 bg-white/95 backdrop-blur-2xl p-2 rounded-[24px] border border-black/10 shadow-[0_16px_36px_-8px_rgba(0,0,0,0.25)] flex gap-2.5">
               {createStep > 1 && (
                 <button
                   type="button"
@@ -1274,7 +1270,7 @@ function TripsContent() {
                     hapticTap();
                     setCreateStep((s) => Math.max(1, s - 1));
                   }}
-                  className="h-[52px] px-5 rounded-full border border-black/15 font-bold text-[14px] active:scale-95 transition cursor-pointer"
+                  className="h-12 px-5 rounded-2xl border border-black/15 font-bold text-[14px] active:scale-95 transition cursor-pointer hover:bg-black/5"
                 >
                   Back
                 </button>
@@ -1287,7 +1283,7 @@ function TripsContent() {
                     hapticTap();
                     setCreateStep((s) => Math.min(5, s + 1));
                   }}
-                  className="flex-1 h-[52px] rounded-full bg-black text-white font-bold text-[15px] shadow-[0_12px_24px_-8px_rgba(0,0,0,0.3)] active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer"
+                  className="flex-1 h-12 rounded-2xl bg-black text-white font-[800] text-[14px] shadow-md active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span>Next: Question {createStep + 1}</span>
                   <ChevronRight className="w-4 h-4" />
@@ -1296,10 +1292,10 @@ function TripsContent() {
                 <button
                   type="button"
                   onClick={handlePublish}
-                  className="flex-1 h-[52px] rounded-full bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 text-white font-bold text-[15px] shadow-[0_14px_28px_-10px_rgba(249,115,22,0.5)] active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer"
+                  className="flex-1 h-12 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white font-[800] text-[14px] shadow-lg active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <Sparkles className="w-4 h-4" />
-                  Publish Trip 🎉
+                  <Sparkles className="w-4 h-4 text-amber-300" />
+                  <span>Publish Trip 🎉</span>
                 </button>
               )}
             </div>
@@ -1310,15 +1306,15 @@ function TripsContent() {
                 <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-xl mb-5">
                   <Check className="w-10 h-10 text-white" />
                 </div>
-                <h3 className="text-[26px] font-[800] tracking-tight">Trip Live! 🎉</h3>
-                <p className="text-[14px] text-black/60 mt-2 leading-relaxed max-w-[280px]">
-                  Your {createDestination} trip is now live and visible to 240 nearby explorers in Bangalore.
+                <h3 className="text-[26px] font-[900] tracking-tight">Trip Live! 🎉</h3>
+                <p className="text-[14px] text-black/60 font-medium mt-2 leading-relaxed max-w-[280px]">
+                  Your {createDestination || 'Bangalore'} trip is now live and visible to 240 nearby verified explorers.
                 </p>
 
                 {/* Boost Card */}
-                <div className="mt-6 w-full max-w-[320px] bg-gradient-to-br from-violet-500 via-fuchsia-500 to-pink-500 rounded-[22px] p-4 text-left text-white shadow-xl">
+                <div className="mt-6 w-full max-w-[320px] bg-gradient-to-br from-violet-600 via-fuchsia-600 to-pink-600 rounded-[24px] p-4 text-left text-white shadow-xl">
                   <div className="flex items-center gap-2 font-bold text-[13px]">
-                    <Zap className="w-4 h-4" />
+                    <Zap className="w-4 h-4 text-amber-300" />
                     <span>Boost for ₹49</span>
                   </div>
                   <div className="text-[12px] opacity-90 mt-1 leading-relaxed">
@@ -1346,7 +1342,7 @@ function TripsContent() {
                     setActiveTab('explore');
                     setCreateStep(1);
                   }}
-                  className="mt-4 w-full max-w-[320px] h-12 rounded-full border border-black/10 font-semibold text-[14px] active:scale-95 transition cursor-pointer"
+                  className="mt-4 w-full max-w-[320px] h-12 rounded-full border border-black/10 font-bold text-[14px] active:scale-95 transition cursor-pointer"
                 >
                   Continue Exploring
                 </button>
@@ -1354,7 +1350,7 @@ function TripsContent() {
             )}
           </div>
         )}
-      </div>
+      </main>
 
       {/* ================= SLIDE-UP TRIP DETAILS SHEET ================= */}
       {selectedTrip && (
