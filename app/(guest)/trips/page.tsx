@@ -746,49 +746,69 @@ function TripsContent() {
                 </div>
               )}
 
-              {/* ---------------- QUESTION 3: DESTINATION ---------------- */}
+              {/* ---------------- QUESTION 3: DESTINATION & MEET SPOT ---------------- */}
               {createStep === 3 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
                     <h2 className="text-[22px] font-[800] tracking-tight leading-tight">
-                      Where is this trip heading?
+                      Where are you planning to make a meet / trip?
                     </h2>
                     <p className="text-xs text-black/60 mt-1">
-                      Choose your destination spot or roadtrip goal.
+                      Type your destination or select from popular roadtrips, treks, and city hangout spots.
                     </p>
                   </div>
 
+                  {/* Typing Box with MapPin & Clear Icon */}
                   <div>
                     <label className="text-[11px] font-bold tracking-widest text-black/40">
-                      DESTINATION NAME
+                      TYPE DESTINATION / MEET PLACE
                     </label>
                     <div className="mt-1.5 relative">
-                      <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40" />
+                      <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-600" />
                       <input
                         type="text"
                         value={createDestination}
                         onChange={(e) => setCreateDestination(e.target.value)}
-                        placeholder="e.g. Nandi Hills, Coorg, Cubbon Park..."
-                        className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-black/10 font-bold text-[14px] focus:outline-none focus:ring-2 focus:ring-black/10 shadow-sm"
+                        placeholder="Type any spot e.g. Nandi Hills, Cubbon Park, Coorg..."
+                        className="w-full h-13 pl-10 pr-10 rounded-2xl bg-white border-2 border-black/15 font-bold text-[15px] focus:outline-none focus:border-black focus:ring-2 focus:ring-black/10 shadow-sm"
                       />
+                      {createDestination && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            hapticTap();
+                            setCreateDestination('');
+                          }}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/10 flex items-center justify-center text-black/60 hover:text-black hover:bg-black/20 text-xs"
+                        >
+                          ✕
+                        </button>
+                      )}
                     </div>
+                    {createDestination && (
+                      <div className="mt-1.5 flex items-center gap-1 text-[11px] font-semibold text-emerald-700">
+                        <span>✓ Selected:</span>
+                        <span className="font-bold text-black">{createDestination}</span>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Quick Pick Chips */}
-                  <div>
-                    <span className="text-[10px] font-bold text-black/40 uppercase tracking-wider">
-                      Popular Destinations
+                  {/* Categorized Options: Scenic Roadtrips & Treks */}
+                  <div className="pt-1">
+                    <span className="text-[10px] font-bold text-black/50 uppercase tracking-wider block mb-1.5">
+                      ⛰️ Popular Roadtrips & Getaways
                     </span>
-                    <div className="flex flex-wrap gap-1.5 mt-1.5">
+                    <div className="flex flex-wrap gap-1.5">
                       {[
                         'Nandi Hills ⛰️',
                         'Coorg Trails ☕',
-                        'Cubbon Park 🌳',
-                        'Skandagiri Trek 🌌',
-                        'Chikmagalur 🏞️',
-                        'Avalabetta ⛰️',
-                        'Mysore Palace 🏰',
+                        'Skandagiri Night Trek 🌌',
+                        'Chikmagalur Hills 🏞️',
+                        'Avalabetta Sunrise ⛰️',
                         'Gokarna Beach 🏖️',
+                        'Mysore Palace 🏰',
+                        'Wayanad Camping 🏕️',
+                        'Ooty Tea Estates 🍃',
                       ].map((spot) => (
                         <button
                           key={spot}
@@ -797,10 +817,44 @@ function TripsContent() {
                             hapticTap();
                             setCreateDestination(spot.replace(/ [^ ]+$/, ''));
                           }}
-                          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer ${
+                          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer active:scale-95 ${
                             createDestination === spot.replace(/ [^ ]+$/, '')
-                              ? 'bg-black text-white border-black shadow-xs'
-                              : 'bg-white border-black/10 text-black/70 hover:border-black/20'
+                              ? 'bg-black text-white border-black shadow-xs font-bold'
+                              : 'bg-white border-black/10 text-black/75 hover:border-black/25'
+                          }`}
+                        >
+                          {spot}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Categorized Options: City Meets & Cafe Hangouts */}
+                  <div className="pt-1">
+                    <span className="text-[10px] font-bold text-black/50 uppercase tracking-wider block mb-1.5">
+                      ☕ City Meets & Cafe Hangouts
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[
+                        'Cubbon Park Walk 🌳',
+                        'Indiranagar Cafe Crawl 🥐',
+                        'Church Street Books & Chai 📚',
+                        'Koramangala Rooftop 🍸',
+                        'Bangalore Palace Tour 🏰',
+                        'Sankey Tank Sunset 🌅',
+                        'Aroma Coffee Meet ☕',
+                      ].map((spot) => (
+                        <button
+                          key={spot}
+                          type="button"
+                          onClick={() => {
+                            hapticTap();
+                            setCreateDestination(spot.replace(/ [^ ]+$/, ''));
+                          }}
+                          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer active:scale-95 ${
+                            createDestination === spot.replace(/ [^ ]+$/, '')
+                              ? 'bg-black text-white border-black shadow-xs font-bold'
+                              : 'bg-white border-black/10 text-black/75 hover:border-black/25'
                           }`}
                         >
                           {spot}
