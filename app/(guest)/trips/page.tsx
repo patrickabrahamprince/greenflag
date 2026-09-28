@@ -20,12 +20,14 @@ import {
   MessageCircle,
   Calendar,
   Fuel,
-  Home as HomeIcon,
-  Utensils,
   LocateFixed,
   Radio,
   Loader2,
   Compass,
+  ArrowRight,
+  SlidersHorizontal,
+  Star,
+  Award,
 } from 'lucide-react';
 import { hapticTap, hapticSuccess } from '@/lib/haptics';
 import toast from 'react-hot-toast';
@@ -33,6 +35,7 @@ import toast from 'react-hot-toast';
 interface Trip {
   id: number;
   destination: string;
+  subtitle: string;
   time: string;
   spots: number;
   totalSpots: number;
@@ -44,9 +47,14 @@ interface Trip {
     name: string;
     avatar: string;
     level: number;
+    verified: boolean;
   };
   vibe: string[];
-  gradient: string;
+  coverStyle: {
+    bg: string;
+    accent: string;
+    badge: string;
+  };
   pin: { x: number; y: number };
 }
 
@@ -54,61 +62,81 @@ const TRIPS_DATA: Trip[] = [
   {
     id: 1,
     destination: 'Nandi Hills Sunrise',
+    subtitle: 'Dawn cloud bed & heritage fortress drive',
     time: 'Today · 5:30 AM',
     spots: 2,
     totalSpots: 4,
     cost: 800,
     type: 'green',
     score: 4.9,
-    match: 'You both love sunrise treks',
-    host: { name: 'Aarav', avatar: 'A', level: 12 },
-    vibe: ['Chai & Chill', 'Trek & Talk'],
-    gradient: 'from-emerald-400 via-teal-400 to-cyan-400',
+    match: 'Shared affinity: Sunrise roadtrips & filter chai',
+    host: { name: 'Aarav M.', avatar: 'A', level: 12, verified: true },
+    vibe: ['Chai & Chill', 'Trek & Talk', 'Scenic Drive'],
+    coverStyle: {
+      bg: 'from-[#172e24] via-[#10241b] to-[#0a1711]',
+      accent: 'text-emerald-400',
+      badge: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/40',
+    },
     pin: { x: 32, y: 28 },
   },
   {
     id: 2,
-    destination: 'Coorg Coffee Trails',
-    time: 'Weekend · Sat 7AM',
+    destination: 'Coorg Private Coffee Trails',
+    subtitle: 'Estate tasting, misty plantation & slow photography',
+    time: 'Weekend · Sat 7:00 AM',
     spots: 1,
     totalSpots: 3,
     cost: 2400,
     type: 'pink',
-    score: 4.8,
-    match: 'Coffee lover + photographer',
-    host: { name: 'Meera', avatar: 'M', level: 8 },
-    vibe: ['Slow Travel', 'Photo Walks'],
-    gradient: 'from-rose-400 via-pink-400 to-fuchsia-400',
+    score: 4.85,
+    match: 'Coffee aficionado · Leica photographer',
+    host: { name: 'Meera K.', avatar: 'M', level: 8, verified: true },
+    vibe: ['Slow Travel', 'Photo Walks', 'Estate Stay'],
+    coverStyle: {
+      bg: 'from-[#331822] via-[#240f17] to-[#14080d]',
+      accent: 'text-rose-300',
+      badge: 'bg-rose-950/80 text-rose-300 border-rose-800/40',
+    },
     pin: { x: 68, y: 62 },
   },
   {
     id: 3,
-    destination: 'Cubbon Park Walk',
-    time: 'Today · 6 PM',
+    destination: 'Cubbon Heritage Botanical Walk',
+    subtitle: 'Bamboo groves, morning acoustics & artisanal roast',
+    time: 'Today · 6:00 PM',
     spots: 3,
     totalSpots: 5,
     cost: 0,
     type: 'green',
-    score: 4.7,
-    match: 'Both new to Bangalore',
-    host: { name: 'Rohan', avatar: 'R', level: 5 },
-    vibe: ['City Walks', 'Deep Talks'],
-    gradient: 'from-amber-300 via-orange-400 to-rose-400',
+    score: 4.75,
+    match: 'Architects & designers network meetup',
+    host: { name: 'Rohan V.', avatar: 'R', level: 5, verified: true },
+    vibe: ['City Walks', 'Deep Talks', 'Architecture'],
+    coverStyle: {
+      bg: 'from-[#2e2617] via-[#201a0f] to-[#120e08]',
+      accent: 'text-amber-300',
+      badge: 'bg-amber-950/80 text-amber-300 border-amber-800/40',
+    },
     pin: { x: 52, y: 40 },
   },
   {
     id: 4,
-    destination: 'Skandagiri Night Trek',
-    time: 'Tomorrow · 11 PM',
+    destination: 'Skandagiri Starlight Traverse',
+    subtitle: 'Night ridge ascent for peak cloud inversions',
+    time: 'Tomorrow · 11:00 PM',
     spots: 2,
     totalSpots: 6,
     cost: 1200,
     type: 'green',
-    score: 4.9,
-    match: 'Your trek count matches!',
-    host: { name: 'Sanya', avatar: 'S', level: 15 },
-    vibe: ['Night Trek', 'Adrenaline'],
-    gradient: 'from-violet-400 via-indigo-400 to-blue-400',
+    score: 4.95,
+    match: 'High-altitude verified mountain hikers',
+    host: { name: 'Sanya D.', avatar: 'S', level: 15, verified: true },
+    vibe: ['Night Trek', 'Stargazing', 'Adrenaline'],
+    coverStyle: {
+      bg: 'from-[#191e3b] via-[#101429] to-[#090b17]',
+      accent: 'text-indigo-300',
+      badge: 'bg-indigo-950/80 text-indigo-300 border-indigo-800/40',
+    },
     pin: { x: 42, y: 18 },
   },
 ];
@@ -124,13 +152,13 @@ function TripsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // Navigation State
+  // Navigation & Filter State
   const [activeTab, setActiveTab] = useState<'explore' | 'create'>('explore');
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Create 5-Step Form State
+  // 5-Step Interactive Form State
   const [createStep, setCreateStep] = useState<number>(1);
   const [createLadder, setCreateLadder] = useState<'micro' | 'day' | 'getaway' | 'crawl'>('day');
   const [createDestination, setCreateDestination] = useState('');
@@ -138,16 +166,16 @@ function TripsContent() {
   const [isSearchingPlaces, setIsSearchingPlaces] = useState(false);
   const searchPlacesTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [createPickup, setCreatePickup] = useState('Indiranagar, Bangalore');
+  const [createPickup, setCreatePickup] = useState('Indiranagar 100ft Rd, Bengaluru');
   const [gpsScanning, setGpsScanning] = useState(false);
   const [gpsDetected, setGpsDetected] = useState(false);
   const [createDate, setCreateDate] = useState('This Saturday');
-  const [createTimeSlot, setCreateTimeSlot] = useState('🌅 Early Sunrise · 5:30 AM');
+  const [createTimeSlot, setCreateTimeSlot] = useState('🌅 Dawn Sunrise · 5:30 AM');
   const [createType, setCreateType] = useState<'green' | 'pink' | 'women'>('green');
   const [createGroupSize, setCreateGroupSize] = useState('2-4');
-  const [createRide, setCreateRide] = useState('🚗 Driving my car');
+  const [createRide, setCreateRide] = useState('🚗 Private Car · 3 Spots');
   const [createCost, setCreateCost] = useState<number>(800);
-  const [createVibes, setCreateVibes] = useState<string[]>(['Chai & Chill', 'Trek & Talk']);
+  const [createVibes, setCreateVibes] = useState<string[]>(['Chai & Chill', 'Trek & Talk', 'Scenic Drive']);
   const [showScoreInfo, setShowScoreInfo] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
 
@@ -204,17 +232,19 @@ function TripsContent() {
             addr?.city_district ||
             addr?.city ||
             addr?.town ||
-            'Indiranagar, Bangalore';
-          setCreatePickup(locality);
+            'Indiranagar, Bengaluru';
+          setCreatePickup(`${locality}, Bengaluru`);
           setGpsDetected(true);
           hapticSuccess();
-          toast.success(`📍 Auto-scanned: ${locality}`);
+          toast.success(`📍 Located: ${locality}`, {
+            style: { background: '#141414', color: '#FAF7F2', border: '1px solid rgba(255,255,255,0.1)' },
+          });
         } else {
-          setCreatePickup('Indiranagar, Bangalore');
+          setCreatePickup('Indiranagar 100ft Rd, Bengaluru');
           setGpsDetected(true);
         }
       } catch {
-        setCreatePickup('Indiranagar, Bangalore');
+        setCreatePickup('Indiranagar 100ft Rd, Bengaluru');
         setGpsDetected(true);
       } finally {
         setGpsScanning(false);
@@ -226,15 +256,18 @@ function TripsContent() {
         .then((pos) => resolveCoords(pos.coords.latitude, pos.coords.longitude))
         .catch(() => {
           setGpsScanning(false);
-          setCreatePickup('Indiranagar, Bangalore');
-          toast('Location access ready: Selected Indiranagar', { icon: '📍' });
+          setCreatePickup('Indiranagar 100ft Rd, Bengaluru');
+          toast('Location locked to Indiranagar Hub', {
+            icon: '📍',
+            style: { background: '#141414', color: '#FAF7F2' },
+          });
         });
       return;
     }
 
     if (!navigator.geolocation) {
       setGpsScanning(false);
-      setCreatePickup('Indiranagar, Bangalore');
+      setCreatePickup('Indiranagar 100ft Rd, Bengaluru');
       return;
     }
 
@@ -242,8 +275,11 @@ function TripsContent() {
       (pos) => resolveCoords(pos.coords.latitude, pos.coords.longitude),
       () => {
         setGpsScanning(false);
-        setCreatePickup('Indiranagar, Bangalore');
-        toast('Location access ready: Selected Indiranagar', { icon: '📍' });
+        setCreatePickup('Indiranagar 100ft Rd, Bengaluru');
+        toast('Location locked to Indiranagar Hub', {
+          icon: '📍',
+          style: { background: '#141414', color: '#FAF7F2' },
+        });
       },
       { timeout: 10000 }
     );
@@ -258,13 +294,14 @@ function TripsContent() {
   }, [searchParams]);
 
   const filteredTrips = TRIPS_DATA.filter((trip) => {
-    if (selectedFilter === '💗 Dates' && trip.type !== 'pink') return false;
-    if (selectedFilter === '🟢 Buddies' && trip.type !== 'green') return false;
-    if (selectedFilter === '👩 Women-Only' && trip.id !== 2) return false;
+    if (selectedFilter === 'Dates' && trip.type !== 'pink') return false;
+    if (selectedFilter === 'Buddies' && trip.type !== 'green') return false;
+    if (selectedFilter === 'Women-Only' && trip.id !== 2) return false;
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
     return (
       trip.destination.toLowerCase().includes(q) ||
+      trip.subtitle.toLowerCase().includes(q) ||
       trip.host.name.toLowerCase().includes(q) ||
       trip.vibe.some((v) => v.toLowerCase().includes(q))
     );
@@ -283,42 +320,45 @@ function TripsContent() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#fbf9f6] flex flex-col font-[Inter] relative overflow-x-hidden text-black max-w-md mx-auto select-none">
-      {/* Background Subtle Gradient Blobs */}
-      <div className="fixed -top-24 -left-24 w-80 h-80 bg-emerald-100/60 rounded-full blur-3xl pointer-events-none" />
-      <div className="fixed -bottom-24 -right-24 w-80 h-80 bg-rose-100/50 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen w-full bg-[#FAF8F5] flex flex-col font-sans relative overflow-x-hidden text-[#18181B] max-w-md mx-auto select-none antialiased">
+      
+      {/* Luxury Subtle Atmosphere Light */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-md h-64 bg-gradient-to-b from-[#EFE9DF]/80 via-[#FAF8F5]/40 to-transparent pointer-events-none z-0" />
+      <div className="fixed -top-20 -left-20 w-72 h-72 bg-[#E3DAC9]/40 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Top Fixed Segmented View Switcher */}
-      <header className="px-4 pt-[max(14px,env(safe-area-inset-top,14px))] pb-2.5 bg-white/95 backdrop-blur-xl sticky top-0 z-30 border-b border-black/[0.06] shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)]">
-        <div className="flex items-center justify-between mb-2.5">
+      {/* ================= EDITORIAL TOP BRAND HEADER & SWITCHER ================= */}
+      <header className="px-5 pt-[max(14px,env(safe-area-inset-top,14px))] pb-3 bg-[#FAF8F5]/90 backdrop-blur-2xl sticky top-0 z-30 border-b border-[#18181B]/[0.06]">
+        
+        {/* Brand Bar */}
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[11px] font-extrabold tracking-widest uppercase text-black/50">
-              GREENFLAG · BENGALURU
+            <span className="w-1.5 h-1.5 rounded-full bg-[#1A382B]" />
+            <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-[#18181B]/60">
+              GREENFLAG · CURATED ESCAPES
             </span>
           </div>
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[11px] font-bold">
-            <Shield className="w-3 h-3 text-emerald-600" />
-            <span>Verified Safety</span>
+          <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#18181B]/[0.04] border border-[#18181B]/[0.06] text-[#18181B]/80 text-[10px] font-semibold tracking-wider uppercase">
+            <Shield className="w-3 h-3 text-[#1A382B]" />
+            <span>ID Verified</span>
           </div>
         </div>
 
-        {/* Dual Tab Switcher Pill */}
-        <div className="flex bg-[#f2eee9] p-1 rounded-2xl gap-1 border border-black/5">
+        {/* Minimalist Dual Segment Switcher */}
+        <div className="flex bg-[#EDE8DF] p-1 rounded-2xl gap-1 border border-[#18181B]/[0.04] shadow-inner">
           <button
             type="button"
             onClick={() => {
               hapticTap();
               setActiveTab('explore');
             }}
-            className={`flex-1 py-2.5 rounded-xl font-[800] text-[13px] flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+            className={`flex-1 py-2.5 rounded-xl font-bold text-[12px] tracking-wide flex items-center justify-center gap-2 transition-all cursor-pointer ${
               activeTab === 'explore'
-                ? 'bg-white text-black shadow-[0_4px_12px_rgba(0,0,0,0.08)]'
-                : 'text-black/60 hover:text-black'
+                ? 'bg-[#FAF8F5] text-[#18181B] shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-[#18181B]/[0.04]'
+                : 'text-[#18181B]/55 hover:text-[#18181B]'
             }`}
           >
-            <Compass className="w-4 h-4" />
-            <span>Explore Trips</span>
+            <Compass className="w-3.5 h-3.5" />
+            <span>Discover Escapes</span>
           </button>
           <button
             type="button"
@@ -326,41 +366,41 @@ function TripsContent() {
               hapticTap();
               setActiveTab('create');
             }}
-            className={`flex-1 py-2.5 rounded-xl font-[800] text-[13px] flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+            className={`flex-1 py-2.5 rounded-xl font-bold text-[12px] tracking-wide flex items-center justify-center gap-2 transition-all cursor-pointer ${
               activeTab === 'create'
-                ? 'bg-black text-white shadow-[0_4px_12px_rgba(0,0,0,0.25)]'
-                : 'text-black/60 hover:text-black'
+                ? 'bg-[#18181B] text-[#FAF8F5] shadow-[0_4px_16px_rgba(0,0,0,0.18)]'
+                : 'text-[#18181B]/55 hover:text-[#18181B]'
             }`}
           >
-            <Sparkles className="w-4 h-4 text-amber-400" />
-            <span>Host a Trip</span>
+            <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
+            <span>Host an Escape</span>
           </button>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 relative flex flex-col pb-44">
+      <main className="flex-1 relative flex flex-col pb-40 z-10">
         
-        {/* ================= VIEW 1: EXPLORE (MAP + FEED) ================= */}
+        {/* ================= VIEW 1: DISCOVER (EDITORIAL FEED & MAP) ================= */}
         {activeTab === 'explore' && (
           <div className="h-full flex flex-col animate-fade-in">
             
-            {/* Search & Filter Section */}
-            <div className="px-4 pt-3 pb-1">
+            {/* Search Bar & Curated Pills */}
+            <div className="px-5 pt-3.5 pb-2">
               <div className="relative">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#18181B]/40" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search Nandi, Coorg, Cubbon Park..."
-                  className="w-full h-11 pl-10 pr-4 rounded-2xl bg-white border border-black/10 text-[14px] placeholder:text-black/40 font-semibold focus:outline-none focus:ring-2 focus:ring-black/10 shadow-xs transition"
+                  placeholder="Search Nandi, Coorg, Cubbon, Skandagiri..."
+                  className="w-full h-11 pl-11 pr-4 rounded-2xl bg-[#FFFFFF] border border-[#18181B]/[0.08] text-[13px] placeholder:text-[#18181B]/35 font-medium text-[#18181B] focus:outline-none focus:border-[#18181B]/40 focus:ring-1 focus:ring-[#18181B]/20 shadow-[0_2px_6px_rgba(0,0,0,0.02)] transition"
                 />
               </div>
 
-              {/* Filter Chips Bar */}
-              <div className="flex gap-2 mt-3 overflow-x-auto scrollbar-none pb-1">
-                {['All', 'Today', 'Weekend', '💗 Dates', '🟢 Buddies', '👩 Women-Only'].map(
+              {/* Refined Filter Chips */}
+              <div className="flex gap-2 mt-3 overflow-x-auto scrollbar-none pb-0.5">
+                {['All', 'Today', 'Weekend', 'Dates', 'Buddies', 'Women-Only'].map(
                   (filter) => (
                     <button
                       key={filter}
@@ -369,10 +409,10 @@ function TripsContent() {
                         hapticTap();
                         setSelectedFilter(filter);
                       }}
-                      className={`shrink-0 h-8 px-4 rounded-full text-[12px] font-bold border transition-all cursor-pointer ${
+                      className={`shrink-0 h-7 px-3.5 rounded-full text-[11px] font-semibold tracking-wide transition-all cursor-pointer ${
                         selectedFilter === filter
-                          ? 'bg-black text-white border-black shadow-sm'
-                          : 'bg-white border-black/10 text-black/70 hover:border-black/20'
+                          ? 'bg-[#18181B] text-[#FAF8F5] shadow-xs'
+                          : 'bg-[#FFFFFF] border border-[#18181B]/[0.08] text-[#18181B]/65 hover:border-[#18181B]/25 hover:text-[#18181B]'
                       }`}
                     >
                       {filter}
@@ -382,28 +422,29 @@ function TripsContent() {
               </div>
             </div>
 
-            {/* Interactive Vector Map Canvas */}
-            <div className="relative h-[250px] sm:h-[280px] bg-[#e9f2ea] overflow-hidden mx-4 my-3 rounded-[28px] border border-black/10 shadow-inner shrink-0">
+            {/* Vector Editorial Map Canvas */}
+            <div className="relative h-[210px] bg-[#E8EDE6] overflow-hidden mx-5 my-3 rounded-[24px] border border-[#18181B]/[0.08] shadow-[inset_0_2px_8px_rgba(0,0,0,0.03)] shrink-0">
+              {/* Subtle Map Grid Texture */}
               <div
-                className="absolute inset-0 opacity-[0.06] pointer-events-none"
+                className="absolute inset-0 opacity-[0.05] pointer-events-none"
                 style={{
-                  backgroundImage: 'radial-gradient(#000 1px, transparent 1px)',
-                  backgroundSize: '20px 20px',
+                  backgroundImage: 'radial-gradient(#18181B 1px, transparent 1px)',
+                  backgroundSize: '18px 18px',
                 }}
               />
 
-              {/* Vector Roads */}
-              <div className="absolute inset-0 p-6 pointer-events-none">
+              {/* Minimalist Topography Vectors */}
+              <div className="absolute inset-0 p-5 pointer-events-none">
                 <div className="w-full h-full relative">
-                  <div className="absolute left-[22%] top-0 bottom-0 w-[5px] bg-white/90 rounded-full" />
-                  <div className="absolute top-[40%] left-0 right-0 h-[5px] bg-white/90 rounded-full" />
-                  <div className="absolute top-[70%] left-0 right-0 h-[4px] bg-white/70 rounded-full rotate-[-6deg]" />
-                  <div className="absolute left-[12%] top-[55%] w-[32%] h-[22%] bg-emerald-200/50 rounded-[18px]" />
-                  <div className="absolute right-[15%] top-[12%] w-[28%] h-[20%] bg-emerald-200/40 rounded-[16px]" />
+                  <div className="absolute left-[20%] top-0 bottom-0 w-[4px] bg-[#FFFFFF]/80 rounded-full" />
+                  <div className="absolute top-[42%] left-0 right-0 h-[4px] bg-[#FFFFFF]/80 rounded-full" />
+                  <div className="absolute top-[68%] left-0 right-0 h-[3px] bg-[#FFFFFF]/60 rounded-full rotate-[-5deg]" />
+                  <div className="absolute left-[14%] top-[50%] w-[35%] h-[25%] bg-[#D5E2D1]/70 rounded-[20px] border border-white/40" />
+                  <div className="absolute right-[12%] top-[10%] w-[30%] h-[24%] bg-[#D5E2D1]/60 rounded-[18px] border border-white/40" />
                 </div>
               </div>
 
-              {/* Live Map Pins */}
+              {/* Live Luxury Pins */}
               {TRIPS_DATA.map((trip) => (
                 <button
                   key={trip.id}
@@ -412,55 +453,61 @@ function TripsContent() {
                     hapticTap();
                     setSelectedTrip(trip);
                   }}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 group cursor-pointer active:scale-90 transition-transform z-10"
+                  className="absolute -translate-x-1/2 -translate-y-1/2 group cursor-pointer active:scale-95 transition-transform z-10"
                   style={{ left: `${trip.pin.x}%`, top: `${trip.pin.y}%` }}
                 >
-                  <div className="relative">
-                    <div
-                      className={`absolute inset-0 rounded-full blur-[6px] opacity-40 ${
-                        trip.type === 'pink' ? 'bg-rose-400' : 'bg-emerald-400'
-                      } animate-ping`}
-                    />
-                    <div
-                      className={`w-10 h-10 rounded-full bg-gradient-to-br ${trip.gradient} shadow-[0_8px_16px_-4px_rgba(0,0,0,0.3)] border-[2.5px] border-white flex items-center justify-center text-[15px]`}
-                    >
-                      {trip.type === 'pink' ? '💗' : '🟢'}
+                  <div className="relative flex flex-col items-center">
+                    <div className="w-8 h-8 rounded-full bg-[#18181B] border-2 border-[#FAF8F5] text-white flex items-center justify-center text-[11px] font-bold shadow-[0_6px_16px_rgba(0,0,0,0.25)]">
+                      {trip.type === 'pink' ? '✦' : '●'}
                     </div>
-                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rotate-45 shadow" />
+                    <div className="w-1.5 h-1.5 bg-[#18181B] rotate-45 -mt-1 shadow" />
                   </div>
                 </button>
               ))}
 
-              {/* Cluster Badge */}
-              <div className="absolute left-[58%] top-[30%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10">
-                <div className="bg-black text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-lg">
-                  3 active trips
+              {/* Luxury Map Overlay Pill */}
+              <div className="absolute left-3 top-3 pointer-events-none z-10">
+                <div className="bg-[#18181B]/85 backdrop-blur-md text-[#FAF8F5] text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full shadow-md border border-white/10 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span>Bengaluru Hub · 4 Active</span>
                 </div>
               </div>
 
-              {/* Navigation Center Button */}
+              {/* Recenter / GPS Button */}
               <button
                 type="button"
                 onClick={() => {
                   hapticTap();
-                  toast('Location: Indiranagar, Bangalore', { icon: '📍' });
+                  toast('Current View: Indiranagar Hub', {
+                    icon: '📍',
+                    style: { background: '#141414', color: '#FAF7F2' },
+                  });
                 }}
-                className="absolute right-3 bottom-3 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center border border-black/10 cursor-pointer active:scale-90 transition z-10"
+                className="absolute right-3 bottom-3 w-8 h-8 bg-white/90 backdrop-blur-md rounded-full shadow-md flex items-center justify-center border border-[#18181B]/[0.08] cursor-pointer active:scale-90 transition z-10"
               >
-                <Navigation className="w-4 h-4 text-black" />
+                <Navigation className="w-3.5 h-3.5 text-[#18181B]" />
               </button>
             </div>
 
-            {/* Trips List */}
-            <div className="px-4">
-              <div className="flex items-center justify-between mb-3 px-1">
-                <h3 className="text-[16px] font-[800] tracking-tight">Available Trips</h3>
-                <span className="text-[12px] font-bold text-black/50">{filteredTrips.length} active nearby</span>
+            {/* Curated Feed Section */}
+            <div className="px-5 mt-2">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h3 className="text-[15px] font-[800] tracking-[-0.01em] text-[#18181B]">
+                    Curated Escapes
+                  </h3>
+                  <p className="text-[11px] text-[#18181B]/45 font-medium">
+                    Verified hosts & fair cost sharing
+                  </p>
+                </div>
+                <span className="text-[11px] font-semibold text-[#18181B]/40">
+                  {filteredTrips.length} Available
+                </span>
               </div>
 
               <div
                 ref={scrollRef}
-                className="flex gap-3 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory"
+                className="flex gap-3.5 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory"
               >
                 {filteredTrips.map((trip) => (
                   <button
@@ -470,86 +517,96 @@ function TripsContent() {
                       hapticTap();
                       setSelectedTrip(trip);
                     }}
-                    className="snap-start shrink-0 w-[295px] text-left bg-white rounded-[24px] border border-black/10 shadow-[0_12px_28px_-8px_rgba(0,0,0,0.06)] overflow-hidden active:scale-[0.98] transition cursor-pointer"
+                    className="snap-start shrink-0 w-[305px] text-left bg-white rounded-[26px] border border-[#18181B]/[0.07] shadow-[0_8px_24px_-6px_rgba(24,24,27,0.05)] overflow-hidden active:scale-[0.985] transition cursor-pointer flex flex-col justify-between"
                   >
-                    <div className="flex">
-                      <div className={`w-1.5 self-stretch bg-gradient-to-b ${trip.gradient}`} />
-                      <div className="flex-1 p-4">
-                        <div className="flex items-start justify-between">
+                    {/* Editorial Header Banner */}
+                    <div className={`p-4 bg-gradient-to-br ${trip.coverStyle.bg} text-white relative overflow-hidden`}>
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-white/[0.04] rounded-full blur-2xl pointer-events-none" />
+                      
+                      <div className="flex items-start justify-between relative z-10">
+                        <span className={`text-[9px] font-bold tracking-[0.2em] uppercase px-2.5 py-0.5 rounded-full border ${trip.coverStyle.badge}`}>
+                          {trip.type === 'pink' ? '✦ Curated Date' : '● Roadtrip & Trek'}
+                        </span>
+                        
+                        {/* Rating Arc */}
+                        <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/10 text-[11px] font-bold">
+                          <Star className="w-3 h-3 fill-[#D4AF37] text-[#D4AF37]" />
+                          <span>{trip.score}</span>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 relative z-10">
+                        <h4 className="font-[800] text-[17px] leading-snug tracking-[-0.01em] text-white">
+                          {trip.destination}
+                        </h4>
+                        <p className="text-[11px] text-white/70 font-normal line-clamp-1 mt-0.5">
+                          {trip.subtitle}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Editorial Body Details */}
+                    <div className="p-4 flex flex-col justify-between flex-1">
+                      <div>
+                        {/* Host & Timing */}
+                        <div className="flex items-center justify-between pb-3 border-b border-[#18181B]/[0.06]">
                           <div className="flex items-center gap-2.5">
-                            <div
-                              className={`w-9 h-9 rounded-full bg-gradient-to-br ${trip.gradient} flex items-center justify-center text-white font-bold text-[14px] shadow`}
-                            >
+                            <div className="w-8 h-8 rounded-full bg-[#18181B] text-white flex items-center justify-center font-bold text-[12px] shadow-xs">
                               {trip.host.avatar}
                             </div>
                             <div>
                               <div className="flex items-center gap-1">
-                                <span className="font-bold text-[13px]">
+                                <span className="font-bold text-[12px] text-[#18181B]">
                                   {trip.host.name}
                                 </span>
-                                <div className="w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center">
-                                  <Check className="w-2.5 h-2.5 text-white" />
-                                </div>
+                                <span className="text-[9px] font-bold text-[#1A382B] bg-[#E8EDE6] px-1.5 py-0.2 rounded-full">
+                                  Lvl {trip.host.level}
+                                </span>
                               </div>
-                              <div className="text-[11px] text-black/50 font-medium flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {trip.time}
+                              <div className="text-[10px] text-[#18181B]/45 font-medium flex items-center gap-1 mt-0.5">
+                                <Clock className="w-3 h-3 text-[#18181B]/40" />
+                                <span>{trip.time}</span>
                               </div>
-                            </div>
-                          </div>
-
-                          {/* Green Score Circular Ring */}
-                          <div className="flex items-center gap-1.5">
-                            <div className="w-8 h-8 rounded-full bg-[#f5f3f0] flex items-center justify-center text-[11px] font-extrabold relative">
-                              {trip.score}
-                              <svg className="absolute inset-0 w-8 h-8 -rotate-90">
-                                <circle
-                                  cx="16"
-                                  cy="16"
-                                  r="13"
-                                  stroke="#10b981"
-                                  strokeWidth="2.5"
-                                  fill="none"
-                                  strokeDasharray={`${(trip.score / 5) * 81.6} 81.6`}
-                                  strokeLinecap="round"
-                                />
-                              </svg>
                             </div>
                           </div>
                         </div>
 
+                        {/* Match Reason & Vibes */}
                         <div className="mt-3">
-                          <div className="font-[800] text-[16px] leading-tight tracking-tight">
-                            {trip.destination}
-                          </div>
+                          <p className="text-[10px] text-[#18181B]/60 italic font-medium">
+                            "{trip.match}"
+                          </p>
                           <div className="mt-2 flex flex-wrap gap-1.5">
-                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-100">
-                              {trip.match}
-                            </span>
-                            {trip.vibe.map((v) => (
+                            {trip.vibe.slice(0, 2).map((v) => (
                               <span
                                 key={v}
-                                className="text-[10px] px-2 py-0.5 rounded-full bg-black/5 text-black/70 font-semibold"
+                                className="text-[9px] font-semibold tracking-wide px-2 py-0.5 rounded-full bg-[#FAF8F5] border border-[#18181B]/[0.06] text-[#18181B]/70"
                               >
                                 {v}
                               </span>
                             ))}
                           </div>
                         </div>
+                      </div>
 
-                        <div className="mt-3.5 flex items-center justify-between pt-2.5 border-t border-black/5">
-                          <div className="flex items-center gap-2">
-                            <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-black text-white">
-                              {trip.totalSpots - trip.spots} left
-                            </span>
-                            <span className="text-[12px] font-bold text-black/60">
-                              ₹{trip.cost}/person
-                            </span>
-                          </div>
-                          <div
-                            className={`w-7 h-7 rounded-full bg-gradient-to-br ${trip.gradient} flex items-center justify-center text-white shadow-xs`}
-                          >
-                            <ChevronRight className="w-4 h-4" />
+                      {/* Footer Cost & Booking Status */}
+                      <div className="mt-4 pt-3 border-t border-[#18181B]/[0.06] flex items-center justify-between">
+                        <div>
+                          <span className="text-[10px] text-[#18181B]/45 uppercase tracking-wider block font-semibold">
+                            Split Estimate
+                          </span>
+                          <span className="text-[13px] font-[800] text-[#18181B]">
+                            {trip.cost === 0 ? 'Complimentary' : `₹${trip.cost}`}
+                            <span className="text-[10px] font-normal text-[#18181B]/50 ml-1">/ person</span>
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold text-[#18181B]/70 px-2 py-0.5 rounded-full bg-[#FAF8F5] border border-[#18181B]/[0.08]">
+                            {trip.totalSpots - trip.spots} left
+                          </span>
+                          <div className="w-7 h-7 rounded-full bg-[#18181B] text-white flex items-center justify-center">
+                            <ChevronRight className="w-3.5 h-3.5" />
                           </div>
                         </div>
                       </div>
@@ -561,13 +618,13 @@ function TripsContent() {
           </div>
         )}
 
-        {/* ================= VIEW 2: CREATE TRIP (5-QUESTION INTERACTIVE WIZARD) ================= */}
+        {/* ================= VIEW 2: HOST AN ESCAPE (5-STEP WIZARD) ================= */}
         {activeTab === 'create' && (
-          <div className="px-4 pt-3 flex flex-col justify-between animate-fade-in">
+          <div className="px-5 pt-3.5 flex flex-col justify-between animate-fade-in">
             <div>
-              {/* Header with Progress Steps */}
+              {/* Header Navigation with Luxury Ticker */}
               <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   {createStep > 1 && (
                     <button
                       type="button"
@@ -575,31 +632,31 @@ function TripsContent() {
                         hapticTap();
                         setCreateStep((s) => Math.max(1, s - 1));
                       }}
-                      className="w-8 h-8 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center text-black font-extrabold transition active:scale-90 cursor-pointer"
+                      className="w-7 h-7 rounded-full bg-white border border-[#18181B]/[0.08] flex items-center justify-center text-[#18181B] font-bold text-xs shadow-xs transition active:scale-90 cursor-pointer"
                     >
                       ←
                     </button>
                   )}
-                  <span className="text-[11px] font-black tracking-widest uppercase text-emerald-900 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-200">
-                    Question {createStep} of 5
+                  <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/60">
+                    STEP {createStep.toString().padStart(2, '0')} / 05
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowScoreInfo(!showScoreInfo)}
-                  className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center cursor-pointer hover:bg-black/10 transition"
+                  className="w-7 h-7 rounded-full bg-white border border-[#18181B]/[0.08] flex items-center justify-center cursor-pointer hover:bg-black/5 transition shadow-xs"
                 >
-                  <Info className="w-4 h-4 text-black/70" />
+                  <Info className="w-3.5 h-3.5 text-[#18181B]/60" />
                 </button>
               </div>
 
-              {/* 5-Step Segmented Progress Bar */}
-              <div className="grid grid-cols-5 gap-1.5 mb-5 mt-2">
+              {/* Fine Segmented Hairline Progress */}
+              <div className="grid grid-cols-5 gap-1.5 mb-5 mt-1.5">
                 {[1, 2, 3, 4, 5].map((st) => (
-                  <div key={st} className="h-1.5 rounded-full overflow-hidden bg-black/10">
+                  <div key={st} className="h-1 rounded-full overflow-hidden bg-[#18181B]/[0.08]">
                     <div
                       className={`h-full transition-all duration-300 ${
-                        st <= createStep ? 'bg-black w-full' : 'w-0'
+                        st <= createStep ? 'bg-[#18181B] w-full' : 'w-0'
                       }`}
                     />
                   </div>
@@ -607,56 +664,56 @@ function TripsContent() {
               </div>
 
               {showScoreInfo && (
-                <div className="mb-4 p-3.5 rounded-2xl bg-black text-white text-[12px] leading-relaxed animate-fade-in shadow-lg">
-                  <strong>Green Score</strong> = your trust rating. Higher score = more visibility. Verified on-time hosts get 5x more requests.
+                <div className="mb-4 p-4 rounded-2xl bg-[#18181B] text-[#FAF8F5] text-[11px] leading-relaxed animate-fade-in shadow-xl border border-white/10">
+                  <div className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-[#D4AF37] mb-1">
+                    <Award className="w-3.5 h-3.5" />
+                    <span>GreenFlag Trust Protocol</span>
+                  </div>
+                  Verified hosts with accurate pickup spots and prompt communication unlock 5x priority placement on the curated map.
                 </div>
               )}
 
-              {/* ---------------- QUESTION 1: TRIP FORMAT ---------------- */}
+              {/* ---------------- QUESTION 1: EXPERIENCE FORMAT ---------------- */}
               {createStep === 1 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
-                    <h2 className="text-[22px] font-[900] tracking-tight leading-tight">
-                      What kind of plan is this?
+                    <h2 className="text-[20px] font-[800] tracking-[-0.02em] text-[#18181B]">
+                      What format are you hosting?
                     </h2>
-                    <p className="text-xs text-black/60 mt-1 font-medium">
-                      Pick the experience format. Trust is built in layers.
+                    <p className="text-[12px] text-[#18181B]/55 mt-1 font-normal">
+                      Select the cadence. Trust and comfort build in graduated steps.
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                  <div className="grid grid-cols-1 gap-2.5 mt-4">
                     {[
                       {
                         id: 'micro',
-                        label: 'Micro Date',
-                        sub: '60 min coffee & chat',
+                        label: 'Micro Date / Cafe Meet',
+                        sub: '60 min casual artisan coffee in daylight',
                         icon: '☕',
-                        grad: 'from-amber-400 to-orange-400',
-                        badge: 'Public Cafe Only',
+                        badge: 'PUBLIC VENUE ONLY',
                       },
                       {
                         id: 'day',
-                        label: 'Day Date / Roadtrip',
-                        sub: '1-day sunrise or trek',
+                        label: 'Day Date / Sunrise Roadtrip',
+                        sub: '1-day scenic drive, hill fortress or viewpoint',
                         icon: '⛰️',
-                        grad: 'from-emerald-400 to-teal-500',
-                        badge: 'Most Popular',
+                        badge: 'HIGH DEMAND',
                       },
                       {
                         id: 'getaway',
-                        label: 'Weekend Getaway',
-                        sub: '2-3 days scenic hills & stay',
+                        label: 'Weekend Retreat / Getaway',
+                        sub: '2-3 days coffee estate, trekking or camping',
                         icon: '🏕️',
-                        grad: 'from-violet-400 to-fuchsia-500',
-                        badge: 'Lvl 5+ Verified',
+                        badge: 'VERIFIED ID REQUIRED',
                       },
                       {
                         id: 'crawl',
-                        label: 'Cafe & Food Crawl',
-                        sub: '2-3 hours food hunt',
+                        label: 'Artisan Food & Cafe Crawl',
+                        sub: '2-3 hours curated culinary spots with a buddy',
                         icon: '🥐',
-                        grad: 'from-rose-400 to-pink-500',
-                        badge: 'Casual & Fun',
+                        badge: 'SOCIAL CASUAL',
                       },
                     ].map((item) => (
                       <button
@@ -666,94 +723,94 @@ function TripsContent() {
                           hapticTap();
                           setCreateLadder(item.id as any);
                         }}
-                        className={`p-4 rounded-[24px] border-2 text-left transition-all relative flex items-start gap-3.5 cursor-pointer active:scale-[0.98] ${
+                        className={`p-4 rounded-[22px] border text-left transition-all relative flex items-center gap-3.5 cursor-pointer active:scale-[0.99] ${
                           createLadder === item.id
-                            ? 'border-black bg-white shadow-md ring-1 ring-black'
-                            : 'border-black/10 bg-white hover:border-black/30'
+                            ? 'border-[#18181B] bg-white shadow-[0_8px_20px_rgba(0,0,0,0.06)] ring-1 ring-[#18181B]'
+                            : 'border-[#18181B]/[0.08] bg-white/80 hover:border-[#18181B]/20'
                         }`}
                       >
-                        <div
-                          className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${item.grad} flex items-center justify-center text-[22px] shadow-xs shrink-0 text-white`}
-                        >
+                        <div className="w-11 h-11 rounded-2xl bg-[#FAF8F5] border border-[#18181B]/[0.06] flex items-center justify-center text-[20px] shadow-inner shrink-0">
                           {item.icon}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="font-[800] text-[15px] text-black leading-snug">
-                            {item.label}
+                          <div className="flex items-center justify-between">
+                            <span className="font-[800] text-[14px] text-[#18181B]">
+                              {item.label}
+                            </span>
+                            {createLadder === item.id && (
+                              <div className="w-4 h-4 bg-[#18181B] rounded-full flex items-center justify-center shrink-0">
+                                <Check className="w-2.5 h-2.5 text-white" />
+                              </div>
+                            )}
                           </div>
-                          <div className="text-[11px] text-black/60 mt-0.5 font-medium">
+                          <p className="text-[11px] text-[#18181B]/55 mt-0.5 leading-snug">
                             {item.sub}
-                          </div>
-                          <span className="inline-block text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-black/5 text-black/70 mt-2">
+                          </p>
+                          <span className="inline-block text-[8px] font-bold tracking-[0.15em] uppercase text-[#18181B]/40 mt-1.5">
                             {item.badge}
                           </span>
                         </div>
-                        {createLadder === item.id && (
-                          <div className="w-5 h-5 bg-black rounded-full flex items-center justify-center shrink-0">
-                            <Check className="w-3 h-3 text-white" />
-                          </div>
-                        )}
                       </button>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* ---------------- QUESTION 2: LOCATION & AUTO SCAN ---------------- */}
+              {/* ---------------- QUESTION 2: LOCATION & GPS SCAN ---------------- */}
               {createStep === 2 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
-                    <h2 className="text-[22px] font-[900] tracking-tight leading-tight">
-                      Where are you located?
+                    <h2 className="text-[20px] font-[800] tracking-[-0.02em] text-[#18181B]">
+                      Where are you starting from?
                     </h2>
-                    <p className="text-xs text-black/60 mt-1 font-medium">
-                      Auto-scan your GPS or pick your starting pickup neighborhood.
+                    <p className="text-[12px] text-[#18181B]/55 mt-1 font-normal">
+                      Auto-scan your neighborhood GPS or pick a designated public meetup landmark.
                     </p>
                   </div>
 
-                  {/* High-Tech GPS Auto-Scan Card */}
-                  <div className="rounded-[26px] bg-gradient-to-br from-emerald-600 via-teal-700 to-[#123020] p-5 text-white shadow-xl relative overflow-hidden">
-                    <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
+                  {/* High-End Dark Emerald Luxury Radar Card */}
+                  <div className="rounded-[24px] bg-[#12221A] p-5 text-white shadow-xl relative overflow-hidden border border-white/10">
+                    <div className="absolute top-0 right-0 w-44 h-44 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
                     
                     <div className="flex items-start justify-between relative z-10">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30 shadow-inner">
+                        <div className="w-11 h-11 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white border border-white/20 shadow-inner">
                           {gpsScanning ? (
-                            <Radio className="w-6 h-6 animate-spin text-amber-300" />
+                            <Radio className="w-5 h-5 animate-spin text-[#D4AF37]" />
                           ) : (
-                            <LocateFixed className="w-6 h-6 text-white" />
+                            <LocateFixed className="w-5 h-5 text-emerald-400" />
                           )}
                         </div>
                         <div>
-                          <div className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-200">
-                            GPS AUTO-DETECTION
+                          <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-emerald-300/70">
+                            NEIGHBORHOOD SCAN
                           </div>
-                          <div className="text-[16px] font-[800] tracking-tight leading-tight mt-0.5">
-                            {gpsScanning ? 'Scanning live coordinates...' : createPickup || 'Auto-scan your area'}
+                          <div className="text-[15px] font-[800] tracking-tight mt-0.5 truncate max-w-[200px]">
+                            {gpsScanning ? 'Resolving coordinates...' : createPickup || 'Select starting hub'}
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    <div className="mt-4 pt-3.5 border-t border-white/15 flex items-center justify-between relative z-10">
-                      <span className="text-[11px] text-white/85 font-medium">
-                        {gpsDetected ? '✓ High accuracy GPS locked' : 'Instant 1-tap neighborhood detection'}
+                    <div className="mt-4 pt-3.5 border-t border-white/10 flex items-center justify-between relative z-10">
+                      <span className="text-[10px] text-white/70 font-medium">
+                        {gpsDetected ? '✓ High precision coordinate locked' : 'Instant 1-tap locality scan'}
                       </span>
                       <button
                         type="button"
                         disabled={gpsScanning}
                         onClick={detectUserLocation}
-                        className="px-4 py-2 rounded-full bg-white text-[#123020] text-xs font-black shadow-md hover:bg-emerald-50 active:scale-95 transition cursor-pointer flex items-center gap-1.5"
+                        className="px-3.5 py-1.5 rounded-full bg-white text-[#12221A] text-[11px] font-bold shadow-md hover:bg-emerald-50 active:scale-95 transition cursor-pointer flex items-center gap-1.5"
                       >
                         {gpsScanning ? (
                           <>
-                            <div className="w-3.5 h-3.5 rounded-full border-2 border-[#123020] border-r-transparent animate-spin" />
+                            <div className="w-3 h-3 rounded-full border-2 border-[#12221A] border-r-transparent animate-spin" />
                             <span>Scanning...</span>
                           </>
                         ) : (
                           <>
-                            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                            <span>{gpsDetected ? 'Rescan GPS' : 'Auto Scan Location'}</span>
+                            <Sparkles className="w-3 h-3 text-[#D4AF37]" />
+                            <span>{gpsDetected ? 'Rescan' : 'Auto Scan GPS'}</span>
                           </>
                         )}
                       </button>
@@ -762,11 +819,11 @@ function TripsContent() {
 
                   {/* Manual Pickup Spot Landmark Input */}
                   <div>
-                    <label className="text-[11px] font-extrabold tracking-widest text-black/40">
-                      STARTING LANDMARK / AREA
+                    <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
+                      STARTING PICKUP LANDMARK
                     </label>
                     <div className="mt-1.5 relative">
-                      <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40" />
+                      <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#18181B]/40" />
                       <input
                         type="text"
                         value={createPickup}
@@ -775,39 +832,38 @@ function TripsContent() {
                           setGpsDetected(false);
                         }}
                         placeholder="e.g. Indiranagar 100ft Rd, Sony Signal Koramangala..."
-                        className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-black/15 font-bold text-[14px] focus:outline-none focus:ring-2 focus:ring-black/10 shadow-xs"
+                        className="w-full h-11 pl-10 pr-4 rounded-2xl bg-white border border-[#18181B]/[0.1] font-semibold text-[13px] text-[#18181B] focus:outline-none focus:border-[#18181B]/40 shadow-xs"
                       />
                     </div>
                   </div>
 
-                  {/* Popular Starting Hubs */}
+                  {/* Curated Popular Starting Hubs */}
                   <div>
-                    <span className="text-[10px] font-extrabold text-black/40 uppercase tracking-wider">
-                      Popular Bangalore Pickup Hubs
+                    <span className="text-[9px] font-bold text-[#18181B]/40 uppercase tracking-[0.15em]">
+                      Curated Bengaluru Pickup Hubs
                     </span>
                     <div className="flex flex-wrap gap-1.5 mt-1.5">
                       {[
-                        'Indiranagar',
-                        'Koramangala',
-                        'HSR Layout',
+                        'Indiranagar 100ft Rd',
+                        'Koramangala 4th Block',
+                        'HSR Layout BDA',
                         'MG Road Metro',
-                        'Whitefield',
-                        'Hebbal Flyover',
-                        'Jayanagar 4th Block',
-                        'JP Nagar',
+                        'Whitefield ITPL',
+                        'Hebbal Esteem Mall',
+                        'JP Nagar 6th Phase',
                       ].map((spot) => (
                         <button
                           key={spot}
                           type="button"
                           onClick={() => {
                             hapticTap();
-                            setCreatePickup(spot + ', Bangalore');
+                            setCreatePickup(`${spot}, Bengaluru`);
                             setGpsDetected(false);
                           }}
-                          className={`px-3 py-1.5 rounded-full text-xs font-bold border transition cursor-pointer ${
+                          className={`px-3 py-1.5 rounded-full text-[11px] font-semibold tracking-wide border transition cursor-pointer ${
                             createPickup.toLowerCase().includes(spot.toLowerCase())
-                              ? 'bg-black text-white border-black shadow-xs'
-                              : 'bg-white border-black/10 text-black/75 hover:border-black/25'
+                              ? 'bg-[#18181B] text-white border-[#18181B] shadow-xs'
+                              : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70 hover:border-[#18181B]/20'
                           }`}
                         >
                           📍 {spot}
@@ -822,52 +878,52 @@ function TripsContent() {
               {createStep === 3 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
-                    <h2 className="text-[22px] font-[900] tracking-tight leading-tight">
-                      Are you going for a date or a trip?
+                    <h2 className="text-[20px] font-[800] tracking-[-0.02em] text-[#18181B]">
+                      Are you planning a date or a trip?
                     </h2>
-                    <p className="text-xs text-black/60 mt-1 font-medium">
-                      Choose your intent and search your destination or meet spot using Google Maps.
+                    <p className="text-[12px] text-[#18181B]/55 mt-1 font-normal">
+                      Select your intent and search the destination using Google Maps.
                     </p>
                   </div>
 
                   {/* Date vs Trip Primary Choice Cards */}
                   <div>
-                    <label className="text-[11px] font-extrabold tracking-widest text-black/40">
-                      CHOOSE TRIP INTENT
+                    <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
+                      CHOOSE ESCAPE INTENT
                     </label>
-                    <div className="grid grid-cols-2 gap-2.5 mt-1.5">
+                    <div className="grid grid-cols-2 gap-2 mt-1.5">
                       {[
                         {
                           id: 'pink',
-                          title: 'A Date 💗',
-                          sub: '1-on-1 romantic date & spark',
-                          badge: 'Date Mode',
-                          borderActive: 'border-rose-500 bg-rose-50/60 ring-2 ring-rose-400',
-                          badgeBg: 'bg-rose-100 text-rose-800',
+                          title: 'A Date ✦',
+                          sub: '1-on-1 romantic spark & curated ambiance',
+                          badge: 'DATE EXPERIENCE',
+                          borderActive: 'border-[#331822] bg-[#FAF5F7] ring-1 ring-[#331822]',
+                          badgeBg: 'text-rose-900 bg-rose-100/60',
                         },
                         {
                           id: 'green',
                           title: 'A Trip ⛰️',
-                          sub: 'Roadtrip, trek & adventure',
-                          badge: 'Trip Mode',
-                          borderActive: 'border-emerald-600 bg-emerald-50/60 ring-2 ring-emerald-400',
-                          badgeBg: 'bg-emerald-100 text-emerald-800',
+                          sub: 'Scenic roadtrip, summit trek & sights',
+                          badge: 'EXPLORATION',
+                          borderActive: 'border-[#12221A] bg-[#F4F8F5] ring-1 ring-[#12221A]',
+                          badgeBg: 'text-emerald-900 bg-emerald-100/60',
                         },
                         {
                           id: 'buddies',
-                          title: 'Buddies 🟢',
-                          sub: 'Chill social hangout & friends',
-                          badge: 'Social Meet',
-                          borderActive: 'border-teal-600 bg-teal-50/60 ring-2 ring-teal-400',
-                          badgeBg: 'bg-teal-100 text-teal-800',
+                          title: 'Buddies ●',
+                          sub: 'Chill social weekend & new conversations',
+                          badge: 'SOCIAL CIRCLE',
+                          borderActive: 'border-[#18181B] bg-[#F8F7F5] ring-1 ring-[#18181B]',
+                          badgeBg: 'text-zinc-900 bg-zinc-200/60',
                         },
                         {
                           id: 'women',
                           title: 'Women-Only 👩',
-                          sub: 'Safe verified girls squad',
-                          badge: 'Safe Circle',
-                          borderActive: 'border-purple-600 bg-purple-50/60 ring-2 ring-purple-400',
-                          badgeBg: 'bg-purple-100 text-purple-800',
+                          sub: 'Verified safe circle for women explorers',
+                          badge: 'PRIVATE CIRCLE',
+                          borderActive: 'border-[#291833] bg-[#F7F4F9] ring-1 ring-[#291833]',
+                          badgeBg: 'text-purple-900 bg-purple-100/60',
                         },
                       ].map((opt) => {
                         const isSelected =
@@ -881,28 +937,28 @@ function TripsContent() {
                               hapticTap();
                               setCreateType(opt.id === 'buddies' ? 'green' : (opt.id as any));
                             }}
-                            className={`p-3.5 rounded-2xl border-2 text-left transition cursor-pointer active:scale-95 flex flex-col justify-between relative ${
+                            className={`p-3.5 rounded-[20px] border text-left transition cursor-pointer active:scale-95 flex flex-col justify-between relative ${
                               isSelected
-                                ? `${opt.borderActive} shadow-sm`
-                                : 'bg-white border-black/10 hover:border-black/25'
+                                ? `${opt.borderActive} shadow-xs`
+                                : 'bg-white border-[#18181B]/[0.08] hover:border-[#18181B]/20'
                             }`}
                           >
                             <div className="flex items-center justify-between">
-                              <span className="font-[900] text-[15px] text-black">
+                              <span className="font-[800] text-[14px] text-[#18181B]">
                                 {opt.title}
                               </span>
                               {isSelected && (
-                                <div className="w-4 h-4 rounded-full bg-black flex items-center justify-center">
+                                <div className="w-4 h-4 rounded-full bg-[#18181B] flex items-center justify-center">
                                   <Check className="w-2.5 h-2.5 text-white" />
                                 </div>
                               )}
                             </div>
-                            <p className="text-[11px] text-black/60 font-semibold mt-1 leading-snug">
+                            <p className="text-[10px] text-[#18181B]/60 font-medium mt-1 leading-snug">
                               {opt.sub}
                             </p>
                             <div className="mt-2.5">
                               <span
-                                className={`text-[9px] font-black px-2 py-0.5 rounded-full ${opt.badgeBg}`}
+                                className={`text-[8px] font-bold tracking-wider px-2 py-0.5 rounded-full ${opt.badgeBg}`}
                               >
                                 {opt.badge}
                               </span>
@@ -913,29 +969,29 @@ function TripsContent() {
                     </div>
                   </div>
 
-                  {/* Google Maps Live Search Typing Box */}
+                  {/* Google Maps Search Input */}
                   <div className="pt-2">
                     <div className="flex items-center justify-between mb-1.5">
-                      <label className="text-[11px] font-extrabold tracking-widest text-black/40">
-                        SEARCH DESTINATION / MEET SPOT
+                      <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
+                        SEARCH DESTINATION VIA GOOGLE MAPS
                       </label>
-                      <span className="text-[10px] font-extrabold text-emerald-800 flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-emerald-600" /> Google Maps Search
+                      <span className="text-[9px] font-bold text-emerald-800 flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-emerald-700" /> Live Search
                       </span>
                     </div>
 
                     <div className="relative">
-                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-600" />
+                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#18181B]/40" />
                       <input
                         type="text"
                         value={createDestination}
                         onChange={(e) => handleDestinationType(e.target.value)}
-                        placeholder="Type any place, cafe, trek, viewpoint..."
-                        className="w-full h-13 pl-10 pr-10 rounded-2xl bg-white border-2 border-black/15 font-bold text-[15px] focus:outline-none focus:border-black focus:ring-2 focus:ring-black/10 shadow-xs"
+                        placeholder="Type any mountain peak, cafe, estate, resort..."
+                        className="w-full h-12 pl-10 pr-10 rounded-2xl bg-white border border-[#18181B]/[0.12] font-semibold text-[14px] text-[#18181B] focus:outline-none focus:border-[#18181B] shadow-xs"
                       />
                       {isSearchingPlaces ? (
                         <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
-                          <Loader2 className="w-4 h-4 text-black/40 animate-spin" />
+                          <Loader2 className="w-4 h-4 text-[#18181B]/40 animate-spin" />
                         </div>
                       ) : createDestination ? (
                         <button
@@ -945,7 +1001,7 @@ function TripsContent() {
                             setCreateDestination('');
                             setPlacesResults([]);
                           }}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/10 flex items-center justify-center text-black/60 hover:text-black hover:bg-black/20 text-xs cursor-pointer"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-black/10 flex items-center justify-center text-[#18181B]/60 text-xs cursor-pointer"
                         >
                           ✕
                         </button>
@@ -954,28 +1010,28 @@ function TripsContent() {
 
                     {/* Google Maps Live Search Results Dropdown */}
                     {placesResults.length > 0 && (
-                      <div className="mt-2 rounded-2xl bg-white border border-black/10 shadow-xl overflow-hidden animate-fade-in divide-y divide-black/5 z-30">
-                        <div className="px-3.5 py-1.5 bg-black/5 flex items-center justify-between">
-                          <span className="text-[10px] font-bold text-black/50 uppercase tracking-wider">
-                            📍 Google Maps Predictions
+                      <div className="mt-2 rounded-2xl bg-white border border-[#18181B]/[0.1] shadow-xl overflow-hidden animate-fade-in divide-y divide-[#18181B]/[0.05] z-30">
+                        <div className="px-3.5 py-1.5 bg-[#FAF8F5] flex items-center justify-between">
+                          <span className="text-[9px] font-bold text-[#18181B]/45 uppercase tracking-wider">
+                            📍 Google Maps Results
                           </span>
-                          <span className="text-[10px] text-black/40 font-semibold">Tap to select</span>
+                          <span className="text-[9px] text-[#18181B]/40 font-medium">Tap to confirm</span>
                         </div>
                         {placesResults.map((place) => (
                           <button
                             key={place.id}
                             type="button"
                             onClick={() => handleSelectPlace(place)}
-                            className="w-full px-3.5 py-2.5 text-left flex items-start gap-2.5 hover:bg-emerald-50/50 active:bg-emerald-100/50 transition cursor-pointer"
+                            className="w-full px-3.5 py-2.5 text-left flex items-start gap-2.5 hover:bg-[#FAF8F5] transition cursor-pointer"
                           >
-                            <div className="w-7 h-7 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 mt-0.5">
-                              <MapPin className="w-3.5 h-3.5" />
+                            <div className="w-6 h-6 rounded-xl bg-[#FAF8F5] text-[#18181B] flex items-center justify-center shrink-0 mt-0.5 border border-[#18181B]/[0.06]">
+                              <MapPin className="w-3 h-3 text-[#18181B]/60" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="text-xs font-bold text-black truncate">
+                              <div className="text-xs font-bold text-[#18181B] truncate">
                                 {place.mainText}
                               </div>
-                              <div className="text-[10px] text-black/60 truncate font-medium">
+                              <div className="text-[10px] text-[#18181B]/50 truncate font-normal">
                                 {place.secondaryText}
                               </div>
                             </div>
@@ -985,33 +1041,33 @@ function TripsContent() {
                     )}
 
                     {createDestination && (
-                      <div className="mt-2 flex items-center gap-1.5 text-[11px] font-bold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
-                        <span>📍 Destination Selected:</span>
-                        <span className="font-extrabold text-black truncate">{createDestination}</span>
+                      <div className="mt-2 flex items-center gap-2 text-[11px] font-semibold text-[#12221A] bg-[#F2F6F3] px-3.5 py-2 rounded-xl border border-emerald-900/10">
+                        <span className="text-[9px] uppercase font-bold tracking-wider text-emerald-900">Destination:</span>
+                        <span className="font-bold text-[#18181B] truncate">{createDestination}</span>
                       </div>
                     )}
                   </div>
                 </div>
               )}
 
-              {/* ---------------- QUESTION 4: SCHEDULE & GROUP ---------------- */}
+              {/* ---------------- QUESTION 4: TIMEFRAME & GROUP ---------------- */}
               {createStep === 4 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
-                    <h2 className="text-[22px] font-[900] tracking-tight leading-tight">
-                      When & who are you traveling with?
+                    <h2 className="text-[20px] font-[800] tracking-[-0.02em] text-[#18181B]">
+                      When & how are you going?
                     </h2>
-                    <p className="text-xs text-black/60 mt-1 font-medium">
-                      Set date, starting time slot, and group details.
+                    <p className="text-[12px] text-[#18181B]/55 mt-1 font-normal">
+                      Set date, departure slot, squad size, and transport mode.
                     </p>
                   </div>
 
                   {/* Day Picker */}
                   <div>
-                    <label className="text-[11px] font-extrabold tracking-widest text-black/40">
+                    <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
                       DAY / TIMEFRAME
                     </label>
-                    <div className="grid grid-cols-3 gap-2 mt-1.5">
+                    <div className="grid grid-cols-3 gap-1.5 mt-1.5">
                       {[
                         'Today',
                         'Tomorrow',
@@ -1027,10 +1083,10 @@ function TripsContent() {
                             hapticTap();
                             setCreateDate(d);
                           }}
-                          className={`h-10 rounded-2xl border text-xs font-extrabold transition cursor-pointer flex items-center justify-center ${
+                          className={`h-9 rounded-xl border text-[11px] font-bold transition cursor-pointer flex items-center justify-center ${
                             createDate === d
-                              ? 'bg-black text-white border-black shadow-sm'
-                              : 'bg-white border-black/10 text-black/75 hover:border-black/25'
+                              ? 'bg-[#18181B] text-white border-[#18181B] shadow-xs'
+                              : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70 hover:border-[#18181B]/20'
                           }`}
                         >
                           {d}
@@ -1041,15 +1097,15 @@ function TripsContent() {
 
                   {/* Time Slot Picker */}
                   <div>
-                    <label className="text-[11px] font-extrabold tracking-widest text-black/40">
-                      STARTING TIME
+                    <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
+                      STARTING TIME SLOT
                     </label>
-                    <div className="grid grid-cols-2 gap-2 mt-1.5">
+                    <div className="grid grid-cols-2 gap-1.5 mt-1.5">
                       {[
-                        '🌅 Sunrise · 5:30 AM',
-                        '☀️ Morning · 8:30 AM',
-                        '🌆 Sunset · 4:30 PM',
-                        '🌌 Night · 10:00 PM',
+                        '🌅 Dawn Sunrise · 5:30 AM',
+                        '☀️ Morning Roast · 8:30 AM',
+                        '🌆 Sunset Drive · 4:30 PM',
+                        '🌌 Night Traverse · 10:00 PM',
                       ].map((slot) => (
                         <button
                           key={slot}
@@ -1058,10 +1114,10 @@ function TripsContent() {
                             hapticTap();
                             setCreateTimeSlot(slot);
                           }}
-                          className={`p-2.5 rounded-2xl border text-xs font-bold text-left transition cursor-pointer flex items-center justify-between ${
+                          className={`p-2.5 rounded-xl border text-[11px] font-semibold text-left transition cursor-pointer flex items-center justify-between ${
                             createTimeSlot === slot
-                              ? 'bg-white border-black shadow-xs ring-2 ring-black'
-                              : 'bg-white border-black/10 text-black/70 hover:border-black/25'
+                              ? 'bg-white border-[#18181B] ring-1 ring-[#18181B] shadow-xs text-[#18181B] font-bold'
+                              : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/65 hover:border-[#18181B]/20'
                           }`}
                         >
                           <span>{slot}</span>
@@ -1071,16 +1127,16 @@ function TripsContent() {
                   </div>
 
                   {/* Group Size & Transport */}
-                  <div className="grid grid-cols-2 gap-3 pt-1">
+                  <div className="grid grid-cols-2 gap-2.5 pt-1">
                     <div>
-                      <label className="text-[11px] font-extrabold tracking-widest text-black/40">
-                        GROUP SIZE
+                      <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
+                        SQUAD SIZE
                       </label>
                       <div className="space-y-1.5 mt-1.5">
                         {[
-                          { id: '1-on-1', label: '1-on-1 (2 total)' },
-                          { id: '2-4', label: 'Squad (3-4)' },
-                          { id: '5+', label: 'Group (5+)' },
+                          { id: '1-on-1', label: '1-on-1 (2 Total)' },
+                          { id: '2-4', label: 'Squad (3-4 Members)' },
+                          { id: '5+', label: 'Group (5+ Members)' },
                         ].map((sz) => (
                           <button
                             key={sz.id}
@@ -1089,10 +1145,10 @@ function TripsContent() {
                               hapticTap();
                               setCreateGroupSize(sz.id);
                             }}
-                            className={`w-full p-2.5 rounded-xl border text-xs font-extrabold text-left transition cursor-pointer ${
+                            className={`w-full p-2.5 rounded-xl border text-[11px] font-bold text-left transition cursor-pointer ${
                               createGroupSize === sz.id
-                                ? 'bg-black text-white border-black shadow-xs'
-                                : 'bg-white border-black/10 text-black/75'
+                                ? 'bg-[#18181B] text-white border-[#18181B] shadow-xs'
+                                : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70'
                             }`}
                           >
                             {sz.label}
@@ -1102,15 +1158,15 @@ function TripsContent() {
                     </div>
 
                     <div>
-                      <label className="text-[11px] font-extrabold tracking-widest text-black/40">
-                        TRANSPORT
+                      <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
+                        TRANSPORTATION
                       </label>
                       <div className="space-y-1.5 mt-1.5">
                         {[
-                          '🚗 Driving car',
-                          '🏍️ Riding bike',
-                          '🚕 Split cabs',
-                          '🚙 Need a ride',
+                          '🚗 Driving Private Car',
+                          '🏍️ Cruising Motorcycle',
+                          '🚕 Split Cabs / Uber',
+                          '🚙 Need a Ride / Co-host',
                         ].map((ride) => (
                           <button
                             key={ride}
@@ -1119,10 +1175,10 @@ function TripsContent() {
                               hapticTap();
                               setCreateRide(ride);
                             }}
-                            className={`w-full p-2.5 rounded-xl border text-xs font-bold text-left transition cursor-pointer ${
+                            className={`w-full p-2.5 rounded-xl border text-[11px] font-medium text-left transition cursor-pointer ${
                               createRide === ride
-                                ? 'bg-black text-white border-black shadow-xs'
-                                : 'bg-white border-black/10 text-black/75'
+                                ? 'bg-[#18181B] text-white border-[#18181B] font-bold shadow-xs'
+                                : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70'
                             }`}
                           >
                             {ride}
@@ -1134,22 +1190,22 @@ function TripsContent() {
                 </div>
               )}
 
-              {/* ---------------- QUESTION 5: VIBES & SPLIT COST + PREVIEW ---------------- */}
+              {/* ---------------- QUESTION 5: VIBES & SPLIT COST + BOARDING PASS ---------------- */}
               {createStep === 5 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
-                    <h2 className="text-[22px] font-[900] tracking-tight leading-tight">
-                      What's the vibe & estimated split cost?
+                    <h2 className="text-[20px] font-[800] tracking-[-0.02em] text-[#18181B]">
+                      What's the vibe & estimated split?
                     </h2>
-                    <p className="text-xs text-black/60 mt-1 font-medium">
-                      Set the energy and fair estimated split cost per person.
+                    <p className="text-[12px] text-[#18181B]/55 mt-1 font-normal">
+                      Set atmosphere tags and the fair estimated shared cost per participant.
                     </p>
                   </div>
 
                   {/* Vibe Tags */}
                   <div>
-                    <label className="text-[11px] font-extrabold tracking-widest text-black/40">
-                      SELECT VIBE TAGS
+                    <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
+                      ATMOSPHERE & VIBE TAGS
                     </label>
                     <div className="flex flex-wrap gap-1.5 mt-1.5">
                       {[
@@ -1161,17 +1217,17 @@ function TripsContent() {
                         'Deep Talks',
                         'Sunset Views',
                         'Food Crawl',
-                        'Roadtrip Playlists',
+                        'Scenic Drive',
                         'Night Trek',
                       ].map((tag) => (
                         <button
                           key={tag}
                           type="button"
                           onClick={() => toggleVibe(tag)}
-                          className={`px-3 py-1.5 rounded-full text-xs font-bold border transition cursor-pointer ${
+                          className={`px-3 py-1.5 rounded-full text-[11px] font-semibold tracking-wide border transition cursor-pointer ${
                             createVibes.includes(tag)
-                              ? 'bg-black text-white border-black shadow-xs'
-                              : 'bg-white border-black/10 text-black/75 hover:border-black/25'
+                              ? 'bg-[#18181B] text-white border-[#18181B] shadow-xs'
+                              : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70 hover:border-[#18181B]/20'
                           }`}
                         >
                           {tag}
@@ -1183,11 +1239,11 @@ function TripsContent() {
                   {/* Estimated Cost Split */}
                   <div>
                     <div className="flex justify-between items-center">
-                      <label className="text-[11px] font-extrabold tracking-widest text-black/40">
+                      <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
                         ESTIMATED COST SPLIT / PERSON
                       </label>
-                      <span className="text-sm font-black text-emerald-800 bg-emerald-50 px-3 py-0.5 rounded-full border border-emerald-200">
-                        ₹{createCost}
+                      <span className="text-[13px] font-[800] text-[#12221A] bg-[#EAF2EC] px-3 py-0.5 rounded-full border border-emerald-900/10">
+                        {createCost === 0 ? 'Complimentary' : `₹${createCost}`}
                       </span>
                     </div>
                     <div className="grid grid-cols-5 gap-1.5 mt-2">
@@ -1205,10 +1261,10 @@ function TripsContent() {
                             hapticTap();
                             setCreateCost(c.v);
                           }}
-                          className={`py-2 rounded-xl border text-center text-xs font-black transition cursor-pointer ${
+                          className={`py-2 rounded-xl border text-center text-[11px] font-bold transition cursor-pointer ${
                             createCost === c.v
-                              ? 'bg-black text-white border-black shadow-sm'
-                              : 'bg-white border-black/10 text-black/75 hover:border-black/25'
+                              ? 'bg-[#18181B] text-white border-[#18181B] shadow-xs'
+                              : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70 hover:border-[#18181B]/20'
                           }`}
                         >
                           {c.l}
@@ -1217,52 +1273,82 @@ function TripsContent() {
                     </div>
                   </div>
 
-                  {/* Interactive Live Summary Card */}
-                  <div className="rounded-[24px] border border-black/10 bg-gradient-to-br from-white via-amber-50/20 to-emerald-50/30 p-4 shadow-sm mt-3">
-                    <div className="flex justify-between items-center">
+                  {/* ================= LUXURY BOARDING PASS PREVIEW ================= */}
+                  <div className="rounded-[26px] bg-white border border-[#18181B]/[0.08] shadow-[0_12px_32px_rgba(0,0,0,0.06)] overflow-hidden mt-3">
+                    
+                    {/* Top Gold Foil Bar */}
+                    <div className="bg-[#18181B] px-4 py-2.5 text-white flex justify-between items-center">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-black text-xs">
-                          A
-                        </div>
-                        <div>
-                          <div className="font-extrabold text-[13px] text-black">Aarav · 4.9 ★</div>
-                          <div className="text-[10px] text-black/50 font-medium">📍 Pickup: {createPickup}</div>
-                        </div>
+                        <span className="w-2 h-2 rounded-full bg-[#D4AF37]" />
+                        <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#D4AF37]">
+                          GREENFLAG BOARDING PASS
+                        </span>
                       </div>
-                      <span className="px-2.5 py-0.5 rounded-full bg-black text-white text-[10px] font-black">
-                        {createType === 'pink' ? '💗 DATE TRIP' : createType === 'women' ? '👩 WOMEN-ONLY' : '🟢 BUDDY TRIP'}
+                      <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-white/10 text-white/90">
+                        {createType === 'pink' ? '✦ Curated Date' : createType === 'women' ? '👩 Women Circle' : '● Roadtrip'}
                       </span>
                     </div>
 
-                    <div className="mt-3 font-[900] text-[16px] text-black">
-                      {createDestination || 'Trip Destination'} {createLadder === 'micro' ? '☕' : createLadder === 'day' ? '⛰️' : createLadder === 'getaway' ? '🏕️' : '🥐'}
-                    </div>
+                    {/* Ticket Body */}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#18181B]/40">
+                            DEPARTURE HUB
+                          </div>
+                          <div className="text-[13px] font-[800] text-[#18181B] truncate max-w-[170px]">
+                            {createPickup.split(',')[0]}
+                          </div>
+                        </div>
 
-                    <div className="text-xs text-black/60 font-semibold mt-1 flex items-center gap-2">
-                      <span>📅 {createDate}</span>
-                      <span>•</span>
-                      <span>{createTimeSlot}</span>
-                    </div>
+                        <div className="flex items-center gap-1.5 text-[#18181B]/40">
+                          <div className="w-8 h-[1px] bg-[#18181B]/20" />
+                          <ArrowRight className="w-3.5 h-3.5 text-[#18181B]/60" />
+                          <div className="w-8 h-[1px] bg-[#18181B]/20" />
+                        </div>
 
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {createVibes.map((v) => (
-                        <span key={v} className="text-[10px] px-2 py-0.5 rounded-full bg-black/5 text-black/75 font-semibold">
-                          {v}
-                        </span>
-                      ))}
-                    </div>
+                        <div className="text-right">
+                          <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#18181B]/40">
+                            DESTINATION
+                          </div>
+                          <div className="text-[13px] font-[800] text-[#18181B] truncate max-w-[140px]">
+                            {createDestination.split(',')[0] || 'Trek Viewpoint'}
+                          </div>
+                        </div>
+                      </div>
 
-                    <div className="mt-3 pt-3 border-t border-black/5 flex justify-between items-center text-xs font-bold text-black">
-                      <span className="text-black/60">{createRide}</span>
-                      <span className="text-emerald-700 font-extrabold">₹{createCost}/person</span>
+                      {/* Perforated Divider */}
+                      <div className="relative my-3.5">
+                        <div className="border-t border-dashed border-[#18181B]/15" />
+                        <div className="absolute -left-6 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+                        <div className="absolute -right-6 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+                      </div>
+
+                      {/* Ticket Footer Metadata */}
+                      <div className="grid grid-cols-3 gap-2 text-[10px]">
+                        <div>
+                          <span className="text-[#18181B]/40 block font-semibold">SCHEDULE</span>
+                          <span className="font-bold text-[#18181B]">{createDate}</span>
+                        </div>
+                        <div>
+                          <span className="text-[#18181B]/40 block font-semibold">TIME</span>
+                          <span className="font-bold text-[#18181B] truncate">{createTimeSlot.split('·')[1] || '5:30 AM'}</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-[#18181B]/40 block font-semibold">SPLIT / PERS</span>
+                          <span className="font-[800] text-[#12221A]">
+                            {createCost === 0 ? 'Free' : `₹${createCost}`}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Dedicated Floating Wizard Actions (Fixed above bottom navigation) */}
-            <div className="fixed bottom-20 inset-x-4 max-w-md mx-auto z-40 bg-white/95 backdrop-blur-2xl p-2 rounded-[24px] border border-black/10 shadow-[0_16px_36px_-8px_rgba(0,0,0,0.25)] flex gap-2.5">
+            {/* ================= FLOATING DEDICATED ACTIONS ================= */}
+            <div className="fixed bottom-20 inset-x-5 max-w-md mx-auto z-40 bg-[#FAF8F5]/90 backdrop-blur-2xl p-2 rounded-[24px] border border-[#18181B]/[0.08] shadow-[0_16px_36px_-8px_rgba(24,24,27,0.18)] flex gap-2">
               {createStep > 1 && (
                 <button
                   type="button"
@@ -1270,7 +1356,7 @@ function TripsContent() {
                     hapticTap();
                     setCreateStep((s) => Math.max(1, s - 1));
                   }}
-                  className="h-12 px-5 rounded-2xl border border-black/15 font-bold text-[14px] active:scale-95 transition cursor-pointer hover:bg-black/5"
+                  className="h-12 px-5 rounded-2xl bg-white border border-[#18181B]/[0.1] font-bold text-[13px] active:scale-95 transition cursor-pointer hover:bg-black/5"
                 >
                   Back
                 </button>
@@ -1283,55 +1369,68 @@ function TripsContent() {
                     hapticTap();
                     setCreateStep((s) => Math.min(5, s + 1));
                   }}
-                  className="flex-1 h-12 rounded-2xl bg-black text-white font-[800] text-[14px] shadow-md active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer"
+                  className="flex-1 h-12 rounded-2xl bg-[#18181B] text-white font-[800] text-[13px] tracking-wide shadow-md active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Next: Question {createStep + 1}</span>
-                  <ChevronRight className="w-4 h-4" />
+                  <span>Proceed to Step {createStep + 1}</span>
+                  <ChevronRight className="w-4 h-4 text-white/70" />
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={handlePublish}
-                  className="flex-1 h-12 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white font-[800] text-[14px] shadow-lg active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer"
+                  className="flex-1 h-12 rounded-2xl bg-[#18181B] text-[#FAF8F5] font-[800] text-[13px] tracking-wide shadow-xl active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer border border-white/10"
                 >
-                  <Sparkles className="w-4 h-4 text-amber-300" />
-                  <span>Publish Trip 🎉</span>
+                  <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+                  <span>Publish Private Escape</span>
                 </button>
               )}
             </div>
 
             {/* Confetti / Published Success Overlay */}
             {isPublished && (
-              <div className="fixed inset-0 z-[110] bg-white/95 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center animate-fade-in">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-xl mb-5">
-                  <Check className="w-10 h-10 text-white" />
+              <div className="fixed inset-0 z-[110] bg-[#FAF8F5]/98 backdrop-blur-xl flex flex-col items-center justify-center p-8 text-center animate-fade-in max-w-md mx-auto">
+                <div className="w-16 h-16 rounded-full bg-[#18181B] flex items-center justify-center shadow-xl mb-4 border border-white/20">
+                  <Check className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-[26px] font-[900] tracking-tight">Trip Live! 🎉</h3>
-                <p className="text-[14px] text-black/60 font-medium mt-2 leading-relaxed max-w-[280px]">
-                  Your {createDestination || 'Bangalore'} trip is now live and visible to 240 nearby verified explorers.
+                
+                <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#18181B]/50">
+                  GREENFLAG ESCAPE PUBLISHED
+                </span>
+                <h3 className="text-[24px] font-[800] tracking-[-0.02em] text-[#18181B] mt-1">
+                  Your Escape is Live
+                </h3>
+                <p className="text-[13px] text-[#18181B]/60 font-normal mt-2 leading-relaxed max-w-[290px]">
+                  Your {createDestination || 'Bengaluru'} escape has been dispatched to 240 verified explorers in your radius.
                 </p>
 
-                {/* Boost Card */}
-                <div className="mt-6 w-full max-w-[320px] bg-gradient-to-br from-violet-600 via-fuchsia-600 to-pink-600 rounded-[24px] p-4 text-left text-white shadow-xl">
-                  <div className="flex items-center gap-2 font-bold text-[13px]">
-                    <Zap className="w-4 h-4 text-amber-300" />
-                    <span>Boost for ₹49</span>
+                {/* Priority Placement Boost Card */}
+                <div className="mt-6 w-full max-w-[320px] bg-[#18181B] rounded-[24px] p-5 text-left text-white shadow-2xl border border-white/10">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 font-bold text-[13px] text-[#D4AF37]">
+                      <Zap className="w-4 h-4" />
+                      <span>Priority Placement</span>
+                    </div>
+                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-white/10">
+                      ₹49
+                    </span>
                   </div>
-                  <div className="text-[12px] opacity-90 mt-1 leading-relaxed">
-                    Reach 5x more people in Bangalore. 87% of boosted trips get 3+ join requests in 1 hour.
-                  </div>
+                  <p className="text-[11px] text-white/70 mt-2 leading-relaxed">
+                    Elevate this escape to the top of the map radar. 87% of boosted escapes receive 3+ member applications within the hour.
+                  </p>
                   <button
                     type="button"
                     onClick={() => {
                       hapticSuccess();
-                      toast.success('Boost activated!');
+                      toast.success('Priority placement activated!', {
+                        style: { background: '#141414', color: '#FAF7F2' },
+                      });
                       setIsPublished(false);
                       setActiveTab('explore');
                       setCreateStep(1);
                     }}
-                    className="mt-3 w-full h-10 rounded-full bg-white text-black font-bold text-[13px] shadow active:scale-95 transition cursor-pointer"
+                    className="mt-4 w-full h-11 rounded-xl bg-white text-[#18181B] font-bold text-[12px] shadow-sm active:scale-95 transition cursor-pointer"
                   >
-                    Boost Now
+                    Activate Priority Placement
                   </button>
                 </div>
 
@@ -1342,9 +1441,9 @@ function TripsContent() {
                     setActiveTab('explore');
                     setCreateStep(1);
                   }}
-                  className="mt-4 w-full max-w-[320px] h-12 rounded-full border border-black/10 font-bold text-[14px] active:scale-95 transition cursor-pointer"
+                  className="mt-4 w-full max-w-[320px] h-11 rounded-xl border border-[#18181B]/[0.1] font-semibold text-[13px] text-[#18181B] active:scale-95 transition cursor-pointer"
                 >
-                  Continue Exploring
+                  Return to Discover
                 </button>
               </div>
             )}
@@ -1352,72 +1451,70 @@ function TripsContent() {
         )}
       </main>
 
-      {/* ================= SLIDE-UP TRIP DETAILS SHEET ================= */}
+      {/* ================= SLIDE-UP EDITORIAL DETAILS SHEET ================= */}
       {selectedTrip && (
-        <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-xs flex flex-col justify-end animate-fade-in">
-          <div className="bg-white w-full max-w-md mx-auto rounded-t-[32px] overflow-hidden flex flex-col max-h-[90vh] shadow-2xl animate-[slideUp_0.35s_cubic-bezier(0.16,1,0.3,1)] pb-[env(safe-area-inset-bottom,12px)]">
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs flex flex-col justify-end animate-fade-in max-w-md mx-auto">
+          <div className="bg-[#FAF8F5] w-full rounded-t-[32px] overflow-hidden flex flex-col max-h-[90vh] shadow-2xl animate-[slideUp_0.35s_cubic-bezier(0.16,1,0.3,1)] pb-[env(safe-area-inset-bottom,12px)] border-t border-white/20">
             
-            {/* Sheet Header Hero Gradient */}
+            {/* Sheet Header Hero Cover */}
             <div
-              className={`h-[180px] relative bg-gradient-to-br ${selectedTrip.gradient} p-5 flex flex-col justify-end shrink-0`}
+              className={`h-[190px] relative bg-gradient-to-br ${selectedTrip.coverStyle.bg} p-5 flex flex-col justify-end shrink-0 text-white`}
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
               <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-10">
                 <button
                   type="button"
                   onClick={() => setSelectedTrip(null)}
-                  className="w-9 h-9 rounded-full bg-black/30 backdrop-blur-xl text-white flex items-center justify-center border border-white/20 active:scale-90 transition cursor-pointer"
+                  className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-xl text-white flex items-center justify-center border border-white/20 active:scale-90 transition cursor-pointer"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4" />
                 </button>
-                <div className="h-9 px-3.5 rounded-full bg-white/20 backdrop-blur-xl border border-white/30 text-white text-[12px] font-semibold flex items-center gap-1.5 shadow">
-                  <Users className="w-4 h-4" />
-                  <span>{selectedTrip.totalSpots - selectedTrip.spots} spots left</span>
+                <div className="h-8 px-3 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 text-white text-[11px] font-semibold flex items-center gap-1.5 shadow">
+                  <Users className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>{selectedTrip.totalSpots - selectedTrip.spots} spots available</span>
                 </div>
               </div>
 
               <div className="relative z-10 text-white">
-                <div className="inline-flex px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-xl border border-white/20 text-[11px] font-bold tracking-wide mb-1">
-                  {selectedTrip.type === 'pink' ? '💗 DATE TRIP' : '🟢 BUDDY TRIP'}
-                </div>
-                <h2 className="text-[24px] font-[800] leading-tight tracking-tight">
+                <span className={`inline-block px-2.5 py-0.5 rounded-full border text-[9px] font-bold tracking-[0.2em] uppercase mb-1.5 ${selectedTrip.coverStyle.badge}`}>
+                  {selectedTrip.type === 'pink' ? '✦ Curated Date' : '● Verified Roadtrip'}
+                </span>
+                <h2 className="text-[22px] font-[800] text-white leading-tight tracking-[-0.01em]">
                   {selectedTrip.destination}
                 </h2>
-                <div className="flex items-center gap-2 mt-1 text-[13px] opacity-90">
-                  <Clock className="w-4 h-4" />
-                  <span>{selectedTrip.time} · ₹{selectedTrip.cost}/person</span>
+                <div className="flex items-center gap-2 mt-1 text-[12px] text-white/80">
+                  <Clock className="w-3.5 h-3.5 text-white/60" />
+                  <span>{selectedTrip.time} · ₹{selectedTrip.cost}/person split</span>
                 </div>
               </div>
             </div>
 
             {/* Sheet Scrollable Content */}
-            <div className="flex-1 overflow-y-auto scrollbar-none p-5 space-y-5">
+            <div className="flex-1 overflow-y-auto scrollbar-none p-5 space-y-4">
               
-              {/* 3-Stop Itinerary */}
+              {/* 3-Stop Curated Timeline */}
               <div>
-                <div className="text-[11px] font-bold tracking-widest text-black/40">
-                  3-STOP ITINERARY
+                <div className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
+                  CURATED TIMELINE & ITINERARY
                 </div>
                 <div className="mt-3 relative pl-6">
-                  <div className="absolute left-[7px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-emerald-400 to-teal-500 rounded-full" />
+                  <div className="absolute left-[7px] top-2 bottom-2 w-[1.5px] bg-[#18181B]/15" />
                   {[
-                    { time: '5:30 AM', place: 'Indiranagar Pickup', note: 'Public cafe meet' },
-                    { time: '7:00 AM', place: 'Nandi Hills Sunrise', note: 'Chai & viewpoint' },
-                    { time: '11:00 AM', place: 'Breakfast at foothills', note: 'Wrap & drop back' },
+                    { time: '5:30 AM', place: 'Indiranagar Metro / Public Cafe', note: 'Coffee meet & gear check' },
+                    { time: '7:00 AM', place: `${selectedTrip.destination}`, note: 'Scenic viewpoint & cloud bed' },
+                    { time: '11:00 AM', place: 'Foothills Breakfast & Roast', note: 'Relaxed wrap & drop back' },
                   ].map((step, idx) => (
-                    <div key={idx} className="relative flex gap-3 pb-4 last:pb-0">
-                      <div className="absolute -left-[19px] top-1 w-4 h-4 rounded-full bg-white border-2 border-emerald-500 flex items-center justify-center">
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                      </div>
-                      <div className="flex-1 bg-[#faf8f5] rounded-2xl p-3 border border-black/5">
+                    <div key={idx} className="relative flex gap-3 pb-3.5 last:pb-0">
+                      <div className="absolute -left-[19px] top-1 w-3.5 h-3.5 rounded-full bg-[#18181B] border-2 border-white flex items-center justify-center shadow-xs" />
+                      <div className="flex-1 bg-white rounded-2xl p-3 border border-[#18181B]/[0.06] shadow-xs">
                         <div className="flex justify-between items-center">
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black text-white">
+                          <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#18181B] text-white">
                             {step.time}
                           </span>
-                          <span className="text-[11px] text-black/50">{step.note}</span>
+                          <span className="text-[10px] text-[#18181B]/50">{step.note}</span>
                         </div>
-                        <div className="font-semibold text-[13px] mt-1">
+                        <div className="font-bold text-[12px] text-[#18181B] mt-1">
                           {step.place}
                         </div>
                       </div>
@@ -1426,30 +1523,29 @@ function TripsContent() {
                 </div>
               </div>
 
-              {/* Host Profile Card */}
-              <div className="rounded-[22px] border border-black/10 bg-white p-4 shadow-sm flex items-center gap-3">
-                <div className="relative w-14 h-14 shrink-0">
-                  <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${selectedTrip.gradient}`} />
-                  <div className="absolute inset-[2px] rounded-full bg-white flex items-center justify-center font-bold text-[18px]">
+              {/* Host Trust Profile Card */}
+              <div className="rounded-[22px] border border-[#18181B]/[0.08] bg-white p-4 shadow-xs flex items-center gap-3">
+                <div className="relative w-12 h-12 shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-[#18181B] text-white flex items-center justify-center font-bold text-[16px]">
                     {selectedTrip.host.avatar}
                   </div>
-                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center">
-                    <Check className="w-3 h-3 text-white" />
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-600 border-2 border-white flex items-center justify-center">
+                    <Check className="w-2.5 h-2.5 text-white" />
                   </div>
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-[14px] truncate">{selectedTrip.host.name}</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-black/5 font-semibold">
+                    <span className="font-bold text-[13px] text-[#18181B] truncate">{selectedTrip.host.name}</span>
+                    <span className="text-[9px] px-2 py-0.2 rounded-full bg-[#FAF8F5] border border-[#18181B]/[0.08] font-bold text-[#18181B]/70">
                       Lvl {selectedTrip.host.level}
                     </span>
                   </div>
                   <div className="flex gap-1.5 mt-1.5 flex-wrap">
-                    {['ID Verified', 'On-Time 8x', 'Friendly'].map((badge) => (
+                    {['Government ID Verified', '8x On-Time Host', '5.0 Trust'].map((badge) => (
                       <span
                         key={badge}
-                        className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 font-medium"
+                        className="text-[9px] px-2 py-0.5 rounded-full bg-[#F2F6F3] text-emerald-950 font-semibold border border-emerald-900/10"
                       >
                         {badge}
                       </span>
@@ -1457,122 +1553,81 @@ function TripsContent() {
                   </div>
                 </div>
 
-                <div className="w-12 h-12 rounded-full bg-[#f5f3f0] flex items-center justify-center relative shrink-0">
-                  <span className="font-bold text-[13px]">{selectedTrip.score}</span>
-                  <svg className="absolute inset-0 w-12 h-12 -rotate-90">
-                    <circle
-                      cx="24"
-                      cy="24"
-                      r="18"
-                      stroke="#e5e7eb"
-                      strokeWidth="3"
-                      fill="none"
-                    />
-                    <circle
-                      cx="24"
-                      cy="24"
-                      r="18"
-                      stroke="#10b981"
-                      strokeWidth="3"
-                      fill="none"
-                      strokeDasharray={`${(selectedTrip.score / 5) * 113} 113`}
-                      strokeLinecap="round"
-                    />
-                  </svg>
+                <div className="w-10 h-10 rounded-full bg-[#FAF8F5] border border-[#18181B]/[0.08] flex items-center justify-center relative shrink-0">
+                  <span className="font-extrabold text-[12px]">{selectedTrip.score}</span>
                 </div>
               </div>
 
               {/* Cost Split Breakdown */}
-              <div className="rounded-[22px] bg-[#faf8f5] border border-black/5 p-4">
-                <div className="flex justify-between items-center mb-3">
-                  <span className="text-[11px] font-bold tracking-widest text-black/40">
-                    COST SPLIT CALCULATOR
+              <div className="rounded-[22px] bg-white border border-[#18181B]/[0.08] p-4 shadow-xs">
+                <div className="flex justify-between items-center mb-2.5">
+                  <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
+                    TRANSPARENT SPLIT BREAKDOWN
                   </span>
-                  <span className="text-[12px] font-bold">₹{selectedTrip.cost}/person</span>
+                  <span className="text-[12px] font-bold text-[#18181B]">₹{selectedTrip.cost}/person</span>
                 </div>
-                <div className="space-y-2 text-[13px]">
+                <div className="space-y-1.5 text-[12px]">
                   {[
-                    { k: 'Fuel (120km)', v: 320 },
-                    { k: 'Entry & Parking', v: 180 },
-                    { k: 'Chai & Breakfast', v: 300 },
+                    { k: 'Fuel & Tolls (120km roundtrip)', v: 320 },
+                    { k: 'Entry passes & reserved parking', v: 180 },
+                    { k: 'Artisanal roast & breakfast pool', v: 300 },
                   ].map((row) => (
-                    <div key={row.k} className="flex justify-between">
-                      <span className="text-black/60">{row.k}</span>
-                      <span className="font-semibold">₹{row.v}</span>
+                    <div key={row.k} className="flex justify-between text-[#18181B]/70">
+                      <span>{row.k}</span>
+                      <span className="font-semibold text-[#18181B]">₹{row.v}</span>
                     </div>
                   ))}
-                  <div className="h-[1px] bg-black/10 my-2" />
-                  <div className="flex justify-between font-bold text-[14px]">
-                    <span>Total split</span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-black text-white text-[12px]">
-                      ₹{selectedTrip.cost} each
+                  <div className="h-[1px] bg-[#18181B]/[0.08] my-2" />
+                  <div className="flex justify-between font-bold text-[13px] text-[#18181B]">
+                    <span>Total per participant</span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#18181B] text-white text-[11px]">
+                      ₹{selectedTrip.cost}
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* Q&A Wall */}
-              <div>
-                <div className="text-[11px] font-bold tracking-widest text-black/40 flex items-center gap-1.5 mb-3">
-                  <MessageCircle className="w-3.5 h-3.5" />
-                  <span>Q&A WALL</span>
-                </div>
-                <div className="space-y-2.5">
-                  {[
-                    { q: 'Car or bike? Comfortable with pillion?', a: 'Bringing my car - 3 spots! 🟢' },
-                    { q: 'Is it beginner friendly?', a: 'Totally! Slow pace, chai breaks ☕' },
-                  ].map((qa, idx) => (
-                    <div key={idx} className="rounded-2xl bg-white border border-black/10 p-3 shadow-xs">
-                      <div className="text-[12px] font-medium text-black/70">
-                        <strong>Q:</strong> {qa.q}
-                      </div>
-                      <div className="text-[12px] font-semibold mt-1">
-                        <strong>A:</strong> {qa.a}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Safe by Design Notice */}
-              <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-3.5 flex gap-3 items-start">
-                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-xs shrink-0">
-                  <Shield className="w-4 h-4 text-emerald-600" />
-                </div>
-                <div className="text-[11px] leading-relaxed text-black/70">
-                  <strong className="text-emerald-950">Safe by Design:</strong> Public pickup, verified only, live location share enabled. No private addresses shared.
+              {/* Verified Safety Badge */}
+              <div className="rounded-2xl bg-[#F2F6F3] border border-emerald-900/10 p-3 flex gap-3 items-center">
+                <Shield className="w-5 h-5 text-emerald-800 shrink-0" />
+                <div className="text-[11px] leading-relaxed text-emerald-950 font-medium">
+                  <strong>Safe by Design:</strong> Public meetup hubs only. Verified identities. Live GPS trip coordinates shared with trusted contacts.
                 </div>
               </div>
             </div>
 
-            {/* Bottom Action Sheet Buttons */}
-            <div className="p-4 bg-white/95 backdrop-blur-xl border-t border-black/5 shrink-0">
-              <div className="flex gap-2.5">
+            {/* Bottom Join Actions */}
+            <div className="p-4 bg-[#FAF8F5] border-t border-[#18181B]/[0.08] shrink-0">
+              <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => {
                     hapticSuccess();
-                    toast.success('Joined as Buddy! 🟢');
+                    toast.success('Joined as Buddy! ●', {
+                      style: { background: '#141414', color: '#FAF7F2' },
+                    });
                     setSelectedTrip(null);
                   }}
-                  className="flex-1 h-[50px] rounded-full bg-white border border-black/15 font-bold text-[14px] flex items-center justify-center gap-1.5 active:scale-95 transition cursor-pointer shadow-xs"
+                  className="flex-1 h-12 rounded-2xl bg-white border border-[#18181B]/[0.12] font-bold text-[13px] text-[#18181B] active:scale-95 transition cursor-pointer shadow-xs"
                 >
-                  <span className="text-[15px]">🟢</span> Buddy
+                  Join as Buddy
                 </button>
                 <button
                   type="button"
                   onClick={() => {
                     hapticSuccess();
-                    toast.success('Requested as Date! 💗');
+                    toast.success('Requested as Date! ✦', {
+                      style: { background: '#141414', color: '#FAF7F2' },
+                    });
                     setSelectedTrip(null);
                   }}
-                  className="flex-[1.6] h-[50px] rounded-full bg-gradient-to-br from-rose-500 via-pink-500 to-fuchsia-500 text-white font-bold text-[14px] shadow-[0_12px_24px_-8px_rgba(236,72,153,0.5)] flex items-center justify-center gap-1.5 active:scale-95 transition cursor-pointer"
+                  className="flex-[1.5] h-12 rounded-2xl bg-[#18181B] text-white font-bold text-[13px] tracking-wide shadow-lg active:scale-95 transition cursor-pointer flex items-center justify-center gap-1.5"
                 >
-                  💗 Request as Date
+                  <span>✦ Request as Date</span>
                 </button>
               </div>
-              <div className="text-center text-[10px] text-black/40 mt-2 font-medium">
-                Host approves · No charge until confirmed
+              <div className="text-center text-[10px] text-[#18181B]/40 mt-2 font-medium">
+                Host approves all requests · Zero charges until confirmed
               </div>
             </div>
           </div>
@@ -1584,7 +1639,7 @@ function TripsContent() {
 
 export default function TripsPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#faf8f5]" />}>
+    <Suspense fallback={<div className="min-h-screen bg-[#FAF8F5]" />}>
       <TripsContent />
     </Suspense>
   );
