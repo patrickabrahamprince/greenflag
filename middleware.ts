@@ -7,6 +7,7 @@ const PUBLIC_PATHS = [
   '/admin/login',
   '/auth/callback', '/auth/error',
   '/terms', '/privacy', '/support', '/how-it-works', '/delete-account',
+  '/trips',
   '/_next', '/favicon', '/sw.js', '/manifest',
 ];
 
