@@ -99,7 +99,7 @@ export default function OnboardPage() {
       <div className="absolute -bottom-32 -right-32 w-[350px] h-[350px] bg-gradient-to-br from-rose-200 via-orange-200 to-amber-200 rounded-full blur-[80px] opacity-60 pointer-events-none" />
 
       {/* Top Segmented Progress Bar */}
-      <div className="pt-4 px-6 z-20">
+      <div className="pt-[max(16px,env(safe-area-inset-top,16px))] px-6 z-20">
         <div className="flex gap-1.5">
           {[0, 1, 2, 3].map((idx) => (
             <div key={idx} className="h-1 flex-1 rounded-full overflow-hidden bg-black/10">
@@ -274,7 +274,7 @@ export default function OnboardPage() {
       </div>
 
       {/* Bottom Text & Actions Area */}
-      <div className="bg-white rounded-t-[32px] px-6 pt-6 pb-8 flex flex-col shadow-[0_-12px_30px_-12px_rgba(0,0,0,0.08)] border-t border-black/5 z-20">
+      <div className="bg-white rounded-t-[32px] px-6 pt-5 pb-[max(24px,env(safe-area-inset-bottom,24px))] flex flex-col shadow-[0_-12px_30px_-12px_rgba(0,0,0,0.08)] border-t border-black/5 z-20">
         <div className="inline-flex self-start px-3 py-1 rounded-full bg-black/[0.06] text-[10px] font-bold tracking-widest mb-3">
           {ONBOARDING_SLIDES[slide].badge}
         </div>

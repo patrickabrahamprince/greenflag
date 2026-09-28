@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import {
   Search,
@@ -20,9 +20,6 @@ import {
   Fuel,
   Home as HomeIcon,
   Utensils,
-  Plus,
-  Compass,
-  User as UserIcon,
 } from 'lucide-react';
 import { hapticTap, hapticSuccess } from '@/lib/haptics';
 import toast from 'react-hot-toast';
@@ -110,7 +107,7 @@ const TRIPS_DATA: Trip[] = [
   },
 ];
 
-export default function TripsPage() {
+function TripsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -120,10 +117,17 @@ export default function TripsPage() {
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Create Form State
-  const [createLadder, setCreateLadder] = useState<'micro' | 'day' | 'getaway'>('day');
+  // Create 5-Step Form State
+  const [createStep, setCreateStep] = useState<number>(1);
+  const [createLadder, setCreateLadder] = useState<'micro' | 'day' | 'getaway' | 'crawl'>('day');
   const [createDestination, setCreateDestination] = useState('Nandi Hills');
+  const [createPickup, setCreatePickup] = useState('Indiranagar');
+  const [createDate, setCreateDate] = useState('This Saturday');
+  const [createTimeSlot, setCreateTimeSlot] = useState('🌅 Early Sunrise · 5:30 AM');
+  const [createType, setCreateType] = useState<'green' | 'pink' | 'women'>('green');
   const [createGroupSize, setCreateGroupSize] = useState('2-4');
+  const [createRide, setCreateRide] = useState('🚗 Driving my car');
+  const [createCost, setCreateCost] = useState<number>(800);
   const [createVibes, setCreateVibes] = useState<string[]>(['Chai & Chill', 'Trek & Talk']);
   const [showScoreInfo, setShowScoreInfo] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
@@ -176,15 +180,15 @@ export default function TripsPage() {
       <div className="absolute -top-32 -left-32 w-[350px] h-[350px] bg-gradient-to-br from-emerald-200 via-teal-200 to-cyan-200 rounded-full blur-[80px] opacity-60 pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-[350px] h-[350px] bg-gradient-to-br from-rose-200 via-orange-200 to-amber-200 rounded-full blur-[80px] opacity-60 pointer-events-none" />
 
-      {/* Main App Canvas */}
-      <div className="flex-1 relative flex flex-col pb-28">
+      {/* Main Content Area */}
+      <div className="flex-1 relative flex flex-col pb-36">
         
         {/* ================= VIEW 1: EXPLORE (MAP + FEED) ================= */}
         {activeTab === 'explore' && (
           <div className="h-full flex flex-col">
             
-            {/* Search & City Header */}
-            <div className="px-5 pt-3 pb-3 bg-white/90 backdrop-blur-xl sticky top-0 z-10 border-b border-black/5">
+            {/* Search & City Header with Safe Area Inset */}
+            <div className="px-5 pt-[max(16px,env(safe-area-inset-top,16px))] pb-3 bg-white/90 backdrop-blur-xl sticky top-0 z-20 border-b border-black/5 shadow-xs">
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-widest text-black/40">
@@ -195,7 +199,7 @@ export default function TripsPage() {
                     Where to next?
                   </div>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center font-bold text-[14px] shadow-lg">
+                <div className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center font-bold text-[14px] shadow-sm">
                   A
                 </div>
               </div>
@@ -225,7 +229,7 @@ export default function TripsPage() {
                       }}
                       className={`shrink-0 h-8 px-4 rounded-full text-[13px] font-semibold border transition-all cursor-pointer ${
                         selectedFilter === filter
-                          ? 'bg-black text-white border-black shadow-[0_6px_16px_-6px_rgba(0,0,0,0.4)]'
+                          ? 'bg-black text-white border-black shadow-sm'
                           : 'bg-white border-black/10 text-black/70 hover:border-black/20'
                       }`}
                     >
@@ -237,7 +241,7 @@ export default function TripsPage() {
             </div>
 
             {/* Interactive Vector Map Canvas */}
-            <div className="relative h-[320px] bg-[#eef4ee] overflow-hidden mx-4 my-3 rounded-[28px] border border-black/[0.06] shadow-inner shrink-0">
+            <div className="relative h-[260px] sm:h-[300px] bg-[#eef4ee] overflow-hidden mx-4 my-3 rounded-[28px] border border-black/[0.06] shadow-inner shrink-0">
               <div
                 className="absolute inset-0 opacity-[0.06] pointer-events-none"
                 style={{
@@ -266,7 +270,7 @@ export default function TripsPage() {
                     hapticTap();
                     setSelectedTrip(trip);
                   }}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 group cursor-pointer active:scale-95 transition-transform"
+                  className="absolute -translate-x-1/2 -translate-y-1/2 group cursor-pointer active:scale-90 transition-transform z-10"
                   style={{ left: `${trip.pin.x}%`, top: `${trip.pin.y}%` }}
                 >
                   <div className="relative">
@@ -286,7 +290,7 @@ export default function TripsPage() {
               ))}
 
               {/* Cluster Badge */}
-              <div className="absolute left-[58%] top-[30%] -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+              <div className="absolute left-[58%] top-[30%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10">
                 <div className="bg-black text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-lg">
                   3 trips
                 </div>
@@ -299,7 +303,7 @@ export default function TripsPage() {
                   hapticTap();
                   toast('Current Location: Indiranagar, Bangalore', { icon: '📍' });
                 }}
-                className="absolute right-3 bottom-3 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center border border-black/10 cursor-pointer active:scale-90 transition"
+                className="absolute right-3 bottom-3 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center border border-black/10 cursor-pointer active:scale-90 transition z-10"
               >
                 <Navigation className="w-4 h-4 text-black" />
               </button>
@@ -324,7 +328,7 @@ export default function TripsPage() {
                       hapticTap();
                       setSelectedTrip(trip);
                     }}
-                    className="snap-start shrink-0 w-[300px] text-left bg-white rounded-[22px] border border-black/[0.06] shadow-[0_12px_24px_-8px_rgba(0,0,0,0.08)] overflow-hidden group active:scale-[0.98] transition cursor-pointer"
+                    className="snap-start shrink-0 w-[290px] text-left bg-white rounded-[22px] border border-black/[0.06] shadow-[0_12px_24px_-8px_rgba(0,0,0,0.08)] overflow-hidden group active:scale-[0.98] transition cursor-pointer"
                   >
                     <div className="flex">
                       <div className={`w-1.5 self-stretch bg-gradient-to-b ${trip.gradient}`} />
@@ -415,239 +419,604 @@ export default function TripsPage() {
           </div>
         )}
 
-        {/* ================= VIEW 2: CREATE TRIP ================= */}
+        {/* ================= VIEW 2: CREATE TRIP (5-QUESTION INTERACTIVE WIZARD) ================= */}
         {activeTab === 'create' && (
-          <div className="h-full px-5 pt-3">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-[24px] font-[800] tracking-tight leading-none">
-                Create Trip
-              </h2>
-              <button
-                type="button"
-                onClick={() => setShowScoreInfo(!showScoreInfo)}
-                className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center cursor-pointer hover:bg-black/10 transition"
-              >
-                <Info className="w-4 h-4 text-black/70" />
-              </button>
-            </div>
-
-            {showScoreInfo && (
-              <div className="mb-4 p-3.5 rounded-2xl bg-black text-white text-[12px] leading-relaxed animate-fade-in shadow-lg">
-                <strong>Green Score</strong> = your trust rating. Higher score = more visibility. Earned via on-time, verified trips, and positive member vibes.
-              </div>
-            )}
-
-            {/* Ladder Selection Grid */}
-            <div className="grid grid-cols-3 gap-2.5 mb-5">
-              {[
-                { id: 'micro', label: 'Micro Date', sub: '60m', icon: '☕', grad: 'from-amber-300 to-orange-400', note: 'Public only' },
-                { id: 'day', label: 'Day Date', sub: '1 day', icon: '⛰️', grad: 'from-emerald-400 to-teal-500', note: 'Most popular' },
-                { id: 'getaway', label: 'Getaway', sub: '2-3 days', icon: '🏕️', grad: 'from-violet-400 to-fuchsia-500', note: 'Lvl 5+' },
-              ].map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => {
-                    hapticTap();
-                    setCreateLadder(item.id as any);
-                  }}
-                  className={`relative text-left rounded-[20px] p-3 border-2 transition-all cursor-pointer ${
-                    createLadder === item.id
-                      ? 'border-black bg-white shadow-md scale-[1.02]'
-                      : 'border-black/10 bg-white hover:border-black/20'
-                  }`}
-                >
-                  <div
-                    className={`w-9 h-9 rounded-xl bg-gradient-to-br ${item.grad} flex items-center justify-center text-[18px] shadow-sm`}
-                  >
-                    {item.icon}
-                  </div>
-                  <div className="mt-2 font-bold text-[12px] leading-tight">
-                    {item.label}
-                  </div>
-                  <div className="text-[10px] text-black/50 font-medium">
-                    {item.sub} · {item.note}
-                  </div>
-                  {createLadder === item.id && (
-                    <div className="absolute top-2 right-2 w-5 h-5 bg-black rounded-full flex items-center justify-center">
-                      <Check className="w-3 h-3 text-white" />
-                    </div>
+          <div className="h-full px-5 pt-[max(16px,env(safe-area-inset-top,16px))] pb-28 flex flex-col justify-between min-h-[calc(100vh-140px)]">
+            <div>
+              {/* Header with Progress Steps */}
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  {createStep > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        hapticTap();
+                        setCreateStep((s) => Math.max(1, s - 1));
+                      }}
+                      className="w-8 h-8 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center text-black font-bold transition active:scale-90"
+                    >
+                      ←
+                    </button>
                   )}
-                </button>
-              ))}
-            </div>
-
-            {/* Form Fields */}
-            <div className="space-y-4">
-              <div>
-                <label className="text-[11px] font-bold tracking-widest text-black/40">
-                  WHERE TO?
-                </label>
-                <div className="mt-1.5 relative">
-                  <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40" />
-                  <input
-                    type="text"
-                    value={createDestination}
-                    onChange={(e) => setCreateDestination(e.target.value)}
-                    className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-black/10 font-semibold text-[14px] focus:outline-none focus:ring-2 focus:ring-black/10 shadow-sm"
-                  />
+                  <span className="text-[11px] font-extrabold tracking-widest uppercase text-emerald-800 bg-emerald-100/80 px-2.5 py-0.5 rounded-full">
+                    Question {createStep} of 5
+                  </span>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setShowScoreInfo(!showScoreInfo)}
+                  className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center cursor-pointer hover:bg-black/10 transition"
+                >
+                  <Info className="w-4 h-4 text-black/70" />
+                </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-[11px] font-bold tracking-widest text-black/40">
-                    WHEN
-                  </label>
-                  <div className="mt-1.5 h-12 rounded-2xl bg-white border border-black/10 flex items-center px-3.5 gap-2 text-[13px] font-semibold shadow-sm">
-                    <Calendar className="w-4 h-4 text-black/40" />
-                    <span>Sat, 7AM</span>
+              {/* 5-Step Segmented Progress Bar */}
+              <div className="grid grid-cols-5 gap-1.5 mb-5 mt-2">
+                {[1, 2, 3, 4, 5].map((st) => (
+                  <div key={st} className="h-1.5 rounded-full overflow-hidden bg-black/10">
+                    <div
+                      className={`h-full transition-all duration-300 ${
+                        st <= createStep
+                          ? 'bg-black w-full'
+                          : 'w-0'
+                      }`}
+                    />
                   </div>
-                </div>
+                ))}
+              </div>
 
-                <div>
-                  <label className="text-[11px] font-bold tracking-widest text-black/40">
-                    GROUP SIZE
-                  </label>
-                  <div className="mt-1.5 flex gap-1.5">
-                    {['1', '2-4', '5+'].map((sz) => (
+              {showScoreInfo && (
+                <div className="mb-4 p-3.5 rounded-2xl bg-black text-white text-[12px] leading-relaxed animate-fade-in shadow-lg">
+                  <strong>Green Score</strong> = your trust rating. Higher score = more visibility. Verified on-time hosts get 5x more requests.
+                </div>
+              )}
+
+              {/* ---------------- QUESTION 1: TRIP FORMAT ---------------- */}
+              {createStep === 1 && (
+                <div className="animate-fade-in space-y-4">
+                  <div>
+                    <h2 className="text-[22px] font-[800] tracking-tight leading-tight">
+                      What kind of plan is this?
+                    </h2>
+                    <p className="text-xs text-black/60 mt-1">
+                      Pick the experience format. Trust is built in layers.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                    {[
+                      {
+                        id: 'micro',
+                        label: 'Micro Date',
+                        sub: '60 min coffee & chat',
+                        icon: '☕',
+                        grad: 'from-amber-300 to-orange-400',
+                        badge: 'Public Cafe Only',
+                      },
+                      {
+                        id: 'day',
+                        label: 'Day Date / Roadtrip',
+                        sub: '1-day sunrise or trek',
+                        icon: '⛰️',
+                        grad: 'from-emerald-400 to-teal-500',
+                        badge: 'Most Popular',
+                      },
+                      {
+                        id: 'getaway',
+                        label: 'Weekend Getaway',
+                        sub: '2-3 days scenic hills & stay',
+                        icon: '🏕️',
+                        grad: 'from-violet-400 to-fuchsia-500',
+                        badge: 'Lvl 5+ Verified',
+                      },
+                      {
+                        id: 'crawl',
+                        label: 'Cafe & Food Crawl',
+                        sub: '2-3 hours food hunt',
+                        icon: '🥐',
+                        grad: 'from-rose-400 to-pink-500',
+                        badge: 'Casual & Fun',
+                      },
+                    ].map((item) => (
                       <button
-                        key={sz}
+                        key={item.id}
                         type="button"
                         onClick={() => {
                           hapticTap();
-                          setCreateGroupSize(sz);
+                          setCreateLadder(item.id as any);
                         }}
-                        className={`flex-1 h-12 rounded-2xl border font-bold text-[13px] transition cursor-pointer ${
-                          createGroupSize === sz
-                            ? 'bg-black text-white border-black shadow-sm'
-                            : 'bg-white border-black/10 text-black/60 hover:bg-black/5'
+                        className={`p-4 rounded-[22px] border-2 text-left transition-all relative flex items-start gap-3.5 cursor-pointer active:scale-[0.98] ${
+                          createLadder === item.id
+                            ? 'border-black bg-white shadow-md'
+                            : 'border-black/10 bg-white/70 hover:border-black/30'
                         }`}
                       >
-                        {sz}
+                        <div
+                          className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${item.grad} flex items-center justify-center text-[22px] shadow-sm shrink-0`}
+                        >
+                          {item.icon}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-bold text-[14px] text-black">
+                            {item.label}
+                          </div>
+                          <div className="text-[11px] text-black/60 mt-0.5">
+                            {item.sub}
+                          </div>
+                          <span className="inline-block text-[9px] font-bold px-2 py-0.5 rounded-full bg-black/5 text-black/70 mt-2">
+                            {item.badge}
+                          </span>
+                        </div>
+                        {createLadder === item.id && (
+                          <div className="w-5 h-5 bg-black rounded-full flex items-center justify-center shrink-0">
+                            <Check className="w-3 h-3 text-white" />
+                          </div>
+                        )}
                       </button>
                     ))}
                   </div>
                 </div>
-              </div>
+              )}
 
-              {/* Cost Split Breakdown */}
-              <div>
-                <label className="text-[11px] font-bold tracking-widest text-black/40">
-                  COST SPLIT · ₹/PERSON
-                </label>
-                <div className="mt-1.5 p-3.5 rounded-2xl bg-white border border-black/10 shadow-sm">
-                  <div className="flex justify-between text-[12px] font-medium mb-2">
-                    <span className="text-black/50">Estimated Budget</span>
-                    <span className="font-bold text-[13px]">₹800</span>
+              {/* ---------------- QUESTION 2: DESTINATION & PICKUP ---------------- */}
+              {createStep === 2 && (
+                <div className="animate-fade-in space-y-4">
+                  <div>
+                    <h2 className="text-[22px] font-[800] tracking-tight leading-tight">
+                      Where are you heading?
+                    </h2>
+                    <p className="text-xs text-black/60 mt-1">
+                      Choose a destination and a convenient public pickup point.
+                    </p>
                   </div>
-                  <div className="h-2 rounded-full bg-black/10 overflow-hidden">
-                    <div className="h-full w-[62%] bg-gradient-to-r from-amber-400 to-orange-500 rounded-full" />
+
+                  <div>
+                    <label className="text-[11px] font-bold tracking-widest text-black/40">
+                      DESTINATION
+                    </label>
+                    <div className="mt-1.5 relative">
+                      <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40" />
+                      <input
+                        type="text"
+                        value={createDestination}
+                        onChange={(e) => setCreateDestination(e.target.value)}
+                        placeholder="e.g. Nandi Hills, Coorg, Cubbon Park..."
+                        className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-black/10 font-bold text-[14px] focus:outline-none focus:ring-2 focus:ring-black/10 shadow-sm"
+                      />
+                    </div>
                   </div>
-                  <div className="flex gap-2 mt-3 text-[11px]">
-                    {[
-                      { k: 'Fuel', v: '₹320', icon: <Fuel className="w-3 h-3" /> },
-                      { k: 'Stay', v: '₹0', icon: <HomeIcon className="w-3 h-3" /> },
-                      { k: 'Food', v: '₹480', icon: <Utensils className="w-3 h-3" /> },
-                    ].map((c) => (
-                      <div
-                        key={c.k}
-                        className="flex-1 bg-[#f5f3f0] rounded-xl p-2 flex items-center gap-1.5"
-                      >
-                        <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-xs">
-                          {c.icon}
+
+                  {/* Quick Pick Chips */}
+                  <div>
+                    <span className="text-[10px] font-bold text-black/40 uppercase tracking-wider">
+                      Popular Spots
+                    </span>
+                    <div className="flex flex-wrap gap-1.5 mt-1.5">
+                      {[
+                        'Nandi Hills ⛰️',
+                        'Coorg Trails ☕',
+                        'Cubbon Park 🌳',
+                        'Skandagiri Trek 🌌',
+                        'Chikmagalur 🏞️',
+                        'Avalabetta ⛰️',
+                        'Mysore Palace 🏰',
+                      ].map((spot) => (
+                        <button
+                          key={spot}
+                          type="button"
+                          onClick={() => {
+                            hapticTap();
+                            setCreateDestination(spot.replace(/ [^ ]+$/, ''));
+                          }}
+                          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer ${
+                            createDestination === spot.replace(/ [^ ]+$/, '')
+                              ? 'bg-black text-white border-black shadow-xs'
+                              : 'bg-white border-black/10 text-black/70 hover:border-black/20'
+                          }`}
+                        >
+                          {spot}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Public Pickup Landmark */}
+                  <div className="pt-2">
+                    <label className="text-[11px] font-bold tracking-widest text-black/40">
+                      PUBLIC PICKUP SPOT
+                    </label>
+                    <div className="flex flex-wrap gap-1.5 mt-1.5">
+                      {[
+                        'Indiranagar',
+                        'Koramangala',
+                        'HSR Layout',
+                        'MG Road Metro',
+                        'Whitefield',
+                        'Hebbal Flyover',
+                      ].map((spot) => (
+                        <button
+                          key={spot}
+                          type="button"
+                          onClick={() => {
+                            hapticTap();
+                            setCreatePickup(spot);
+                          }}
+                          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer ${
+                            createPickup === spot
+                              ? 'bg-black text-white border-black shadow-xs'
+                              : 'bg-white border-black/10 text-black/70 hover:border-black/20'
+                          }`}
+                        >
+                          📍 {spot}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ---------------- QUESTION 3: DATE & SCHEDULE ---------------- */}
+              {createStep === 3 && (
+                <div className="animate-fade-in space-y-4">
+                  <div>
+                    <h2 className="text-[22px] font-[800] tracking-tight leading-tight">
+                      When are you planning to go?
+                    </h2>
+                    <p className="text-xs text-black/60 mt-1">
+                      Pick the date and ideal time of day for the plan.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-bold tracking-widest text-black/40">
+                      DAY / TIMEFRAME
+                    </label>
+                    <div className="grid grid-cols-3 gap-2 mt-1.5">
+                      {[
+                        'Today',
+                        'Tomorrow',
+                        'This Saturday',
+                        'This Sunday',
+                        'Next Weekend',
+                        'Flexible',
+                      ].map((d) => (
+                        <button
+                          key={d}
+                          type="button"
+                          onClick={() => {
+                            hapticTap();
+                            setCreateDate(d);
+                          }}
+                          className={`h-11 rounded-2xl border text-xs font-bold transition cursor-pointer flex items-center justify-center ${
+                            createDate === d
+                              ? 'bg-black text-white border-black shadow-sm'
+                              : 'bg-white border-black/10 text-black/70 hover:border-black/20'
+                          }`}
+                        >
+                          {d}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <label className="text-[11px] font-bold tracking-widest text-black/40">
+                      STARTING TIME SLOT
+                    </label>
+                    <div className="space-y-2 mt-1.5">
+                      {[
+                        { id: '🌅 Early Sunrise · 5:30 AM', sub: 'Best for Nandi / Skandagiri sunrise views' },
+                        { id: '☀️ Morning Explorer · 8:30 AM', sub: 'Day roadtrips and breakfast stops' },
+                        { id: '🌆 Sunset & Golden Hour · 4:30 PM', sub: 'Evening chai, viewpoints & walks' },
+                        { id: '🌌 Night Trek / Stargazing · 10:00 PM', sub: 'Skandagiri / night trails' },
+                      ].map((slot) => (
+                        <button
+                          key={slot.id}
+                          type="button"
+                          onClick={() => {
+                            hapticTap();
+                            setCreateTimeSlot(slot.id);
+                          }}
+                          className={`w-full p-3.5 rounded-2xl border text-left transition cursor-pointer flex items-center justify-between ${
+                            createTimeSlot === slot.id
+                              ? 'bg-white border-black shadow-sm ring-1 ring-black'
+                              : 'bg-white/70 border-black/10 hover:border-black/20'
+                          }`}
+                        >
+                          <div>
+                            <div className="font-bold text-[13px] text-black">{slot.id}</div>
+                            <div className="text-[11px] text-black/50">{slot.sub}</div>
+                          </div>
+                          {createTimeSlot === slot.id && (
+                            <div className="w-5 h-5 bg-black rounded-full flex items-center justify-center shrink-0">
+                              <Check className="w-3 h-3 text-white" />
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ---------------- QUESTION 4: GROUP & COMPATIBILITY ---------------- */}
+              {createStep === 4 && (
+                <div className="animate-fade-in space-y-4">
+                  <div>
+                    <h2 className="text-[22px] font-[800] tracking-tight leading-tight">
+                      Who are you looking to travel with?
+                    </h2>
+                    <p className="text-xs text-black/60 mt-1">
+                      Define the vibe, group dynamics, and transport arrangement.
+                    </p>
+                  </div>
+
+                  {/* Trip Type Selector */}
+                  <div>
+                    <label className="text-[11px] font-bold tracking-widest text-black/40">
+                      CONNECTION INTENT
+                    </label>
+                    <div className="grid grid-cols-3 gap-2 mt-1.5">
+                      {[
+                        { id: 'green', label: '🟢 Buddies', desc: 'Adventure & Friends' },
+                        { id: 'pink', label: '💗 Travel Date', desc: '1-on-1 Chemistry' },
+                        { id: 'women', label: '👩 Women-Only', desc: 'Curated Circle' },
+                      ].map((t) => (
+                        <button
+                          key={t.id}
+                          type="button"
+                          onClick={() => {
+                            hapticTap();
+                            setCreateType(t.id as any);
+                          }}
+                          className={`p-3 rounded-2xl border text-left transition cursor-pointer ${
+                            createType === t.id
+                              ? 'bg-black text-white border-black shadow-sm'
+                              : 'bg-white border-black/10 text-black/70 hover:border-black/20'
+                          }`}
+                        >
+                          <div className="font-bold text-[12px]">{t.label}</div>
+                          <div className={`text-[10px] ${createType === t.id ? 'text-white/70' : 'text-black/50'}`}>
+                            {t.desc}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Group Size */}
+                  <div>
+                    <label className="text-[11px] font-bold tracking-widest text-black/40">
+                      GROUP SIZE
+                    </label>
+                    <div className="grid grid-cols-3 gap-2 mt-1.5">
+                      {[
+                        { id: '1-on-1', label: '1-on-1 (Just 2)' },
+                        { id: '2-4', label: 'Small Squad (2-4)' },
+                        { id: '5+', label: 'Group (5+)' },
+                      ].map((sz) => (
+                        <button
+                          key={sz.id}
+                          type="button"
+                          onClick={() => {
+                            hapticTap();
+                            setCreateGroupSize(sz.id);
+                          }}
+                          className={`h-11 rounded-2xl border text-xs font-bold transition cursor-pointer flex items-center justify-center ${
+                            createGroupSize === sz.id
+                              ? 'bg-black text-white border-black shadow-sm'
+                              : 'bg-white border-black/10 text-black/70 hover:border-black/20'
+                          }`}
+                        >
+                          {sz.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Vehicle / Ride */}
+                  <div className="pt-1">
+                    <label className="text-[11px] font-bold tracking-widest text-black/40">
+                      RIDE / TRANSPORT
+                    </label>
+                    <div className="grid grid-cols-2 gap-2 mt-1.5">
+                      {[
+                        '🚗 Driving my car',
+                        '🏍️ Riding bike (1 pillion)',
+                        '🚕 Cabs / Split ride',
+                        '🚙 Looking for a ride',
+                      ].map((ride) => (
+                        <button
+                          key={ride}
+                          type="button"
+                          onClick={() => {
+                            hapticTap();
+                            setCreateRide(ride);
+                          }}
+                          className={`p-3 rounded-2xl border text-xs font-semibold text-left transition cursor-pointer flex items-center justify-between ${
+                            createRide === ride
+                              ? 'bg-white border-black shadow-sm ring-1 ring-black'
+                              : 'bg-white/70 border-black/10 text-black/70 hover:border-black/20'
+                          }`}
+                        >
+                          <span>{ride}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ---------------- QUESTION 5: VIBES & SPLIT COST + PREVIEW ---------------- */}
+              {createStep === 5 && (
+                <div className="animate-fade-in space-y-4">
+                  <div>
+                    <h2 className="text-[22px] font-[800] tracking-tight leading-tight">
+                      What's the vibe & estimated split cost?
+                    </h2>
+                    <p className="text-xs text-black/60 mt-1">
+                      Set expectations on atmosphere and fair shared expenses.
+                    </p>
+                  </div>
+
+                  {/* Vibe Tags */}
+                  <div>
+                    <label className="text-[11px] font-bold tracking-widest text-black/40">
+                      SELECT VIBE TAGS
+                    </label>
+                    <div className="flex flex-wrap gap-1.5 mt-1.5">
+                      {[
+                        'Chai & Chill',
+                        'Trek & Talk',
+                        'Slow Travel',
+                        'Photo Walks',
+                        'City Walks',
+                        'Deep Talks',
+                        'Sunset Views',
+                        'Food Crawl',
+                        'Roadtrip Playlists',
+                        'Night Trek',
+                      ].map((tag) => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => toggleVibe(tag)}
+                          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer ${
+                            createVibes.includes(tag)
+                              ? 'bg-black text-white border-black shadow-xs'
+                              : 'bg-white border-black/10 text-black/70 hover:border-black/20'
+                          }`}
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Estimated Cost Split */}
+                  <div>
+                    <div className="flex justify-between items-center">
+                      <label className="text-[11px] font-bold tracking-widest text-black/40">
+                        ESTIMATED COST SPLIT / PERSON
+                      </label>
+                      <span className="text-sm font-black text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                        ₹{createCost}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-5 gap-1.5 mt-2">
+                      {[
+                        { v: 0, l: 'Free' },
+                        { v: 400, l: '₹400' },
+                        { v: 800, l: '₹800' },
+                        { v: 1500, l: '₹1.5k' },
+                        { v: 2800, l: '₹2.8k' },
+                      ].map((c) => (
+                        <button
+                          key={c.v}
+                          type="button"
+                          onClick={() => {
+                            hapticTap();
+                            setCreateCost(c.v);
+                          }}
+                          className={`py-2 rounded-xl border text-center text-xs font-bold transition cursor-pointer ${
+                            createCost === c.v
+                              ? 'bg-black text-white border-black shadow-sm'
+                              : 'bg-white border-black/10 text-black/70 hover:border-black/20'
+                          }`}
+                        >
+                          {c.l}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Interactive Live Summary Card */}
+                  <div className="rounded-[24px] border border-black/10 bg-gradient-to-br from-white via-amber-50/30 to-emerald-50/30 p-4 shadow-sm mt-3">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs">
+                          A
                         </div>
                         <div>
-                          <div className="font-bold leading-none">{c.v}</div>
-                          <div className="text-[9px] text-black/50">{c.k}</div>
+                          <div className="font-bold text-[13px] text-black">Aarav · 4.9</div>
+                          <div className="text-[10px] text-black/50">Pickup: {createPickup}</div>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Vibe Tags Multi-select */}
-              <div>
-                <label className="text-[11px] font-bold tracking-widest text-black/40">
-                  VIBE TAGS
-                </label>
-                <div className="mt-1.5 flex flex-wrap gap-2">
-                  {[
-                    'Chai & Chill',
-                    'Trek & Talk',
-                    'Slow Travel',
-                    'Photo Walks',
-                    'City Walks',
-                    'Deep Talks',
-                    'Night Trek',
-                  ].map((tag) => (
-                    <button
-                      key={tag}
-                      type="button"
-                      onClick={() => toggleVibe(tag)}
-                      className={`px-3.5 py-1.5 rounded-full text-[12px] font-semibold border transition cursor-pointer ${
-                        createVibes.includes(tag)
-                          ? 'bg-black text-white border-black shadow-xs'
-                          : 'bg-white border-black/10 text-black/60 hover:border-black/20'
-                      }`}
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Live Preview Card */}
-              <div className="rounded-[22px] border border-black/10 bg-gradient-to-br from-white to-[#fdf8f3] p-4 shadow-sm">
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-[13px]">
-                      A
+                      <span className="px-2.5 py-0.5 rounded-full bg-black text-white text-[10px] font-bold">
+                        {createType === 'pink' ? '💗 DATE TRIP' : createType === 'women' ? '👩 WOMEN-ONLY' : '🟢 BUDDY TRIP'}
+                      </span>
                     </div>
-                    <div>
-                      <div className="font-bold text-[13px]">You · 4.9</div>
-                      <div className="text-[11px] text-black/50">Verified · Hosting</div>
+
+                    <div className="mt-3 font-[800] text-[16px] text-black">
+                      {createDestination} {createLadder === 'micro' ? '☕' : createLadder === 'day' ? '⛰️' : createLadder === 'getaway' ? '🏕️' : '🥐'}
+                    </div>
+
+                    <div className="text-xs text-black/60 mt-1 flex items-center gap-2">
+                      <span>📅 {createDate}</span>
+                      <span>•</span>
+                      <span>{createTimeSlot.split('·')[1]?.trim() || createTimeSlot}</span>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {createVibes.map((v) => (
+                        <span key={v} className="text-[10px] px-2 py-0.5 rounded-full bg-black/5 text-black/70">
+                          {v}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="mt-3 pt-3 border-t border-black/5 flex justify-between items-center text-xs font-bold text-black">
+                      <span className="text-black/60">{createRide}</span>
+                      <span className="text-emerald-700">₹{createCost}/person</span>
                     </div>
                   </div>
-                  <div className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-100">
-                    PREVIEW
-                  </div>
                 </div>
-                <div className="mt-3 font-[800] text-[17px] tracking-tight">
-                  {createDestination || 'Your destination'}{' '}
-                  {createLadder === 'micro' ? '☕' : createLadder === 'day' ? '⛰️' : '🏕️'}
-                </div>
-                <div className="mt-2 flex gap-1.5 flex-wrap">
-                  {createVibes.map((v) => (
-                    <span
-                      key={v}
-                      className="text-[10px] px-2 py-0.5 rounded-full bg-black/5 text-black/70"
-                    >
-                      {v}
-                    </span>
-                  ))}
-                </div>
-                <div className="mt-3 flex items-center justify-between text-[12px]">
-                  <span className="text-black/50">Group {createGroupSize}</span>
-                  <span className="font-bold">₹800/person</span>
-                </div>
-              </div>
+              )}
+            </div>
 
-              {/* Publish Button */}
-              <button
-                type="button"
-                onClick={handlePublish}
-                className="w-full h-[52px] rounded-full bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 text-white font-bold text-[15px] shadow-[0_14px_28px_-10px_rgba(249,115,22,0.5)] active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer mt-4"
-              >
-                <Sparkles className="w-4 h-4" />
-                Publish Trip
-              </button>
+            {/* Bottom Floating Step Navigation Buttons */}
+            <div className="pt-5 flex gap-3">
+              {createStep > 1 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    hapticTap();
+                    setCreateStep((s) => Math.max(1, s - 1));
+                  }}
+                  className="h-[52px] px-5 rounded-full border border-black/15 font-bold text-[14px] active:scale-95 transition cursor-pointer"
+                >
+                  Back
+                </button>
+              )}
+
+              {createStep < 5 ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    hapticTap();
+                    setCreateStep((s) => Math.min(5, s + 1));
+                  }}
+                  className="flex-1 h-[52px] rounded-full bg-black text-white font-bold text-[15px] shadow-[0_12px_24px_-8px_rgba(0,0,0,0.3)] active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>Next: Question {createStep + 1}</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handlePublish}
+                  className="flex-1 h-[52px] rounded-full bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 text-white font-bold text-[15px] shadow-[0_14px_28px_-10px_rgba(249,115,22,0.5)] active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Publish Trip 🎉
+                </button>
+              )}
             </div>
 
             {/* Confetti / Published Success Overlay */}
             {isPublished && (
-              <div className="fixed inset-0 z-50 bg-white/95 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center animate-fade-in">
+              <div className="fixed inset-0 z-[110] bg-white/95 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center animate-fade-in">
                 <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-xl mb-5">
                   <Check className="w-10 h-10 text-white" />
                 </div>
@@ -672,6 +1041,7 @@ export default function TripsPage() {
                       toast.success('Boost activated!');
                       setIsPublished(false);
                       setActiveTab('explore');
+                      setCreateStep(1);
                     }}
                     className="mt-3 w-full h-10 rounded-full bg-white text-black font-bold text-[13px] shadow active:scale-95 transition cursor-pointer"
                   >
@@ -684,6 +1054,7 @@ export default function TripsPage() {
                   onClick={() => {
                     setIsPublished(false);
                     setActiveTab('explore');
+                    setCreateStep(1);
                   }}
                   className="mt-4 w-full max-w-[320px] h-12 rounded-full border border-black/10 font-semibold text-[14px] active:scale-95 transition cursor-pointer"
                 >
@@ -697,12 +1068,12 @@ export default function TripsPage() {
 
       {/* ================= SLIDE-UP TRIP DETAILS SHEET ================= */}
       {selectedTrip && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex flex-col justify-end animate-fade-in">
-          <div className="bg-white w-full max-w-md mx-auto rounded-t-[32px] overflow-hidden flex flex-col max-h-[90vh] shadow-2xl animate-[slideUp_0.35s_cubic-bezier(0.16,1,0.3,1)]">
+        <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-xs flex flex-col justify-end animate-fade-in">
+          <div className="bg-white w-full max-w-md mx-auto rounded-t-[32px] overflow-hidden flex flex-col max-h-[90vh] shadow-2xl animate-[slideUp_0.35s_cubic-bezier(0.16,1,0.3,1)] pb-[env(safe-area-inset-bottom,12px)]">
             
             {/* Sheet Header Hero Gradient */}
             <div
-              className={`h-[200px] relative bg-gradient-to-br ${selectedTrip.gradient} p-5 flex flex-col justify-end shrink-0`}
+              className={`h-[180px] relative bg-gradient-to-br ${selectedTrip.gradient} p-5 flex flex-col justify-end shrink-0`}
             >
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
 
@@ -724,7 +1095,7 @@ export default function TripsPage() {
                 <div className="inline-flex px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-xl border border-white/20 text-[11px] font-bold tracking-wide mb-1">
                   {selectedTrip.type === 'pink' ? '💗 DATE TRIP' : '🟢 BUDDY TRIP'}
                 </div>
-                <h2 className="text-[26px] font-[800] leading-tight tracking-tight">
+                <h2 className="text-[24px] font-[800] leading-tight tracking-tight">
                   {selectedTrip.destination}
                 </h2>
                 <div className="flex items-center gap-2 mt-1 text-[13px] opacity-90">
@@ -922,5 +1293,13 @@ export default function TripsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function TripsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#faf8f5]" />}>
+      <TripsContent />
+    </Suspense>
   );
 }

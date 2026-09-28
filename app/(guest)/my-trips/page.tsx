@@ -43,7 +43,7 @@ export default function MyTripsPage() {
       <div className="absolute -bottom-32 -right-32 w-[350px] h-[350px] bg-gradient-to-br from-rose-200 via-orange-200 to-amber-200 rounded-full blur-[80px] opacity-60 pointer-events-none" />
 
       {/* Main Content Area */}
-      <div className="flex-1 px-5 pt-4 pb-28">
+      <div className="flex-1 px-5 pt-[max(16px,env(safe-area-inset-top,16px))] pb-36">
         <h2 className="text-[24px] font-[800] tracking-tight">My Trips</h2>
 
         {/* Live Activity Banner */}
