@@ -8,6 +8,11 @@ const PUBLIC_PATHS = [
   '/auth/callback', '/auth/error',
   '/terms', '/privacy', '/support', '/how-it-works', '/delete-account',
   '/trips',
+  '/home-hub',
+  '/schedule',
+  '/membership',
+  '/tour-demo',
+  '/onboard',
   '/_next', '/favicon', '/sw.js', '/manifest',
 ];
 
