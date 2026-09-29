@@ -1,7 +1,7 @@
 'use client';
 
+import { GripVertical, Lightbulb, Upload, X } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { Upload, X, Lightbulb, GripVertical } from 'lucide-react';
 
 const PHOTO_TIPS = [
   'Lead with a clear, recent photo of your face -- no group shots or sunglasses up front.',
@@ -66,11 +66,10 @@ export function PhotoUploadSlots({
         onClick={() => {
           if (!photo && photos.length < maxPhotos) inputRef.current?.click();
         }}
-        className={`rounded-2xl border-2 flex items-center justify-center relative overflow-hidden transition-all duration-300 ${className} ${
-          photo
+        className={`rounded-2xl border-2 flex items-center justify-center relative overflow-hidden transition-all duration-300 ${className} ${photo
             ? 'border-transparent shadow-sm'
             : 'border-dashed border-stone-300 bg-white/70 hover:border-[#1D3B2A] hover:bg-emerald-50/30 active:scale-95 cursor-pointer shadow-xs'
-        } ${draggedIdx === i ? 'opacity-50' : ''}`}
+          } ${draggedIdx === i ? 'opacity-50' : ''}`}
       >
         {photo ? (
           <>
@@ -116,7 +115,7 @@ export function PhotoUploadSlots({
           {maxPhotos - photos.length > 0 ? `${maxPhotos - photos.length} needed` : 'Ready'}
         </span>
       </div>
-      
+
       <div className="bg-amber-50/80 border border-amber-200/80 rounded-xl px-3 py-2 mb-4 flex items-center gap-2">
         <Lightbulb className="w-4 h-4 text-amber-600 shrink-0" />
         <p className="text-xs text-amber-900 font-medium leading-tight">First photo is your main card. Drag photos to reorder anytime.</p>
@@ -135,7 +134,7 @@ export function PhotoUploadSlots({
         onChange={handleChange}
       />
       {error && <p className="text-red-600 font-medium text-xs mt-2">{error}</p>}
-      
+
       <button
         type="button"
         onClick={() => setShowTips((v) => !v)}
