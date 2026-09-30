@@ -988,27 +988,28 @@ function TripsContent() {
         {activeTab === 'explore' && (
           <div className="h-full flex flex-col animate-fade-in space-y-6 pt-2">
             
-            {/* 1. TITLE + PILL SEGMENTED SWITCHER (ONE WAY / ROUND TRIP / MULTI-CITY) */}
+            {/* 1. TITLE + PILL SEGMENTED SWITCHER (DAY TRIPS / WEEKEND / GETAWAYS) */}
             <div className="px-6 space-y-3.5">
               <h1 className="text-[28px] font-[900] text-[#18181B] tracking-tight leading-tight">
-                AirSwift Book Flights
+                GreenFlag Escapes
               </h1>
 
               {/* Segmented Control Pills */}
               <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                 {[
-                  { id: 'oneway', label: 'One Way' },
-                  { id: 'roundtrip', label: 'Round Trip' },
-                  { id: 'multicity', label: 'Multi-City' },
+                  { id: 'all', label: 'All Escapes' },
+                  { id: 'day', label: 'Day Drives' },
+                  { id: 'weekend', label: 'Weekend Pairs' },
+                  { id: 'women', label: 'Women Safe' },
                 ].map((pill, idx) => {
-                  const isSelected = (idx === 0 && selectedFilter === 'All') || (idx === 1 && selectedFilter === 'Dates') || (idx === 2 && selectedFilter === 'Buddies');
+                  const isSelected = (idx === 0 && selectedFilter === 'All') || (idx === 1 && selectedFilter === 'Flash') || (idx === 2 && selectedFilter === 'Dates') || (idx === 3 && selectedFilter === 'Women-Only');
                   return (
                     <button
                       key={pill.id}
                       type="button"
                       onClick={() => {
                         hapticTap();
-                        setSelectedFilter(idx === 0 ? 'All' : idx === 1 ? 'Dates' : 'Buddies');
+                        setSelectedFilter(idx === 0 ? 'All' : idx === 1 ? 'Flash' : idx === 2 ? 'Dates' : 'Women-Only');
                       }}
                       className={`px-5 py-2 rounded-full text-[13px] font-[700] transition-all cursor-pointer ${
                         isSelected

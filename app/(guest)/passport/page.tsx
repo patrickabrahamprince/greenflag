@@ -9,14 +9,17 @@ import {
   Sparkles, 
   Star, 
   Award, 
-  Users,
-  LogOut,
-  Trash2,
-  PauseCircle,
-  Settings,
-  ChevronRight,
-  Loader2,
-  Lock
+  Users, 
+  LogOut, 
+  Trash2, 
+  PauseCircle, 
+  Settings, 
+  ChevronRight, 
+  Loader2, 
+  Lock,
+  Bell,
+  QrCode,
+  Share2
 } from 'lucide-react';
 import { hapticTap, hapticSuccess, hapticWarning } from '@/lib/haptics';
 import { createClient } from '@/lib/supabase/client';
@@ -31,7 +34,7 @@ export default function PassportPage() {
   const coinBalance = useCoinStore((s) => s.balance);
   const setBalance = useCoinStore((s) => s.setBalance);
 
-  const [showScoreInfo, setShowScoreInfo] = useState(false);
+  const [activeTab, setActiveTab] = useState<'pass' | 'stamps' | 'verified'>('pass');
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showDeleteReason, setShowDeleteReason] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -97,95 +100,293 @@ export default function PassportPage() {
     }
   };
 
-  const displayName = user?.name || 'Explorer';
-  const displayCity = user?.city || 'Bangalore';
-  const initial = displayName.charAt(0).toUpperCase();
+  const displayName = user?.name || 'Korina Villanueva';
+  const displayCity = user?.city || 'Bangalore, India';
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#E3F2FD] via-[#F0F7FF] to-[#FAF8F5] text-stone-900 font-sans max-w-md mx-auto relative overflow-hidden flex flex-col pb-28">
+    <div className="min-h-screen w-full bg-[#FAF8F5] text-stone-900 font-sans max-w-md mx-auto relative overflow-hidden flex flex-col pb-36 select-none antialiased">
       
-      {/* Top Ambient Glow Background */}
-      <div className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-sky-200/50 via-indigo-100/30 to-transparent pointer-events-none" />
+      {/* Top Ambient Glow */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-md h-64 bg-gradient-to-b from-[#EFE9DF]/80 via-[#FAF8F5]/40 to-transparent pointer-events-none z-0" />
 
-      {/* Header */}
-      <header className="relative z-10 px-6 pt-[max(20px,env(safe-area-inset-top,20px))] pb-4 flex items-center justify-between">
+      {/* ================= AIRSWIFT TOP HEADER ================= */}
+      <header className="px-6 pt-[max(16px,env(safe-area-inset-top,16px))] pb-2 sticky top-0 z-30 flex items-center justify-between bg-[#FAF8F5]/80 backdrop-blur-md">
+        {/* User Avatar + Greeting */}
         <div className="flex items-center gap-3">
           <div className="relative">
-            <div className="w-12 h-12 rounded-full p-[2px] bg-gradient-to-tr from-amber-400 via-purple-500 to-sky-400">
+            <div className="w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-amber-400 via-amber-200 to-amber-500 shadow-sm flex items-center justify-center">
               <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&q=80"
                 alt="Profile"
-                className="w-full h-full rounded-full object-cover border-2 border-white"
+                className="w-full h-full rounded-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Korina';
+                }}
               />
             </div>
-            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#00E5A3] rounded-full border-2 border-white" />
+            <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full" />
           </div>
           <div>
-            <h1 className="text-[22px] font-[800] text-[#18181B] tracking-tight">Passport & Profile</h1>
-            <p className="text-[12px] font-semibold text-stone-500">{displayCity} · Verified Member</p>
+            <div className="text-[11px] font-medium text-stone-500">Good Morning!</div>
+            <div className="text-[15px] font-[900] text-[#18181B] tracking-tight">{displayName}</div>
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={() => {
-            hapticTap();
-            router.push('/settings');
-          }}
-          className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-md border border-white shadow-xs flex items-center justify-center text-stone-700 hover:bg-white transition cursor-pointer active:scale-95"
-          aria-label="Settings"
-        >
-          <Settings className="w-4 h-4 text-stone-700" />
-        </button>
+        {/* Top Right Badges & Settings */}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 bg-[#18181B] text-white px-3 py-1.5 rounded-full shadow-sm">
+            <span className="text-[12px] font-[800]">12</span>
+            <Bell className="w-3.5 h-3.5 text-white/90" />
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              hapticTap();
+              router.push('/settings');
+            }}
+            className="w-9 h-9 rounded-full bg-white border border-stone-200 shadow-sm flex items-center justify-center text-stone-800 hover:bg-stone-50 active:scale-95 transition cursor-pointer"
+            aria-label="Settings"
+          >
+            <Settings className="w-4 h-4 text-stone-700" />
+          </button>
+        </div>
       </header>
 
       {/* Main Content */}
-      <main className="px-6 space-y-4 pt-1">
+      <main className="px-6 space-y-5 pt-2 z-10">
         
-        {/* 1. Bento Trust / Performance Card (Sky & Mint Glow) */}
-        <div className="rounded-[28px] bg-white border border-stone-200/70 p-5 shadow-sm space-y-4">
+        {/* Title + Pill Switcher */}
+        <div className="space-y-3">
+          <h1 className="text-[28px] font-[900] text-[#18181B] tracking-tight leading-tight">
+            AirSwift Passport
+          </h1>
+
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+            {[
+              { id: 'pass', label: 'Boarding Pass' },
+              { id: 'stamps', label: 'Travel Stamps' },
+              { id: 'verified', label: 'ID Verified' },
+            ].map((pill) => {
+              const isSelected = activeTab === pill.id;
+              return (
+                <button
+                  key={pill.id}
+                  type="button"
+                  onClick={() => {
+                    hapticTap();
+                    setActiveTab(pill.id as any);
+                  }}
+                  className={`px-5 py-2 rounded-full text-[13px] font-[700] transition-all cursor-pointer ${
+                    isSelected
+                      ? 'bg-[#18181B] text-white shadow-md'
+                      : 'bg-[#F2EDE4] text-stone-700 hover:bg-[#EAE4D9]'
+                  }`}
+                >
+                  {pill.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 1. GOLDEN SAFFRON AIRSWIFT BOARDING PASS (EXACT SCREENSHOT DESIGN) */}
+        <div className="bg-[#F5A623] rounded-[32px] p-5 text-stone-900 shadow-xl relative overflow-hidden space-y-3">
+          
+          {/* Header Row: Passport Tag & QR icon */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#00E5A3]" />
-              <span className="text-[13px] font-[800] text-stone-900">Green Trust Score</span>
+              <span className="px-2.5 py-0.5 rounded-full bg-black/10 text-stone-950 font-[800] text-[10px] tracking-wider uppercase">
+                Official Travel Pass
+              </span>
+              <span className="text-[11px] font-bold text-stone-950">GF-884291</span>
             </div>
-            <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
-              Top 5%
-            </span>
+            <div className="w-7 h-7 rounded-lg bg-black/10 flex items-center justify-center">
+              <QrCode className="w-4 h-4 text-stone-950" />
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* SVG Circular Ring 90% */}
-            <div className="relative w-16 h-16 shrink-0 flex items-center justify-center">
-              <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                <path
-                  className="text-stone-100"
-                  strokeWidth="3.5"
-                  stroke="currentColor"
-                  fill="none"
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-                <path
-                  stroke="#00E5A3"
-                  strokeDasharray="90, 100"
-                  strokeLinecap="round"
-                  strokeWidth="3.5"
-                  fill="none"
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-              </svg>
-              <span className="absolute font-[900] text-[15px] text-stone-900">4.9</span>
+          {/* Upper Route Split Block with Circular Swap */}
+          <div className="relative flex gap-2">
+            <div className="flex-1 bg-[#F9BC45] rounded-2xl p-3 border border-black/5">
+              <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Home Base</div>
+              <div className="text-[22px] font-[900] text-stone-950 tracking-tight leading-none mt-1">BLR</div>
+              <div className="text-[11px] font-semibold text-stone-800/80 truncate mt-0.5">
+                {displayCity.split(',')[0]}
+              </div>
             </div>
 
-            <div className="flex-1">
-              <p className="text-[12px] font-medium text-stone-600 leading-snug">
-                Your trust rating is based on verified identification, on-time arrivals, and host reviews.
-              </p>
+            <div className="w-8 h-8 rounded-full bg-[#18181B] text-white shadow-md flex items-center justify-center text-xs font-bold self-center -mx-3 z-10">
+              ✈
+            </div>
+
+            <div className="flex-1 bg-[#F9BC45] rounded-2xl p-3 text-right border border-black/5">
+              <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Destination</div>
+              <div className="text-[22px] font-[900] text-stone-950 tracking-tight leading-none mt-1">ANY</div>
+              <div className="text-[11px] font-semibold text-stone-800/80 truncate mt-0.5">
+                Global & Escapes
+              </div>
+            </div>
+          </div>
+
+          {/* Perforated Divider Line with Cutouts */}
+          <div className="relative -mx-5 my-1">
+            <div className="border-t border-dashed border-stone-800/20" />
+            <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+            <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+          </div>
+
+          {/* Middle Details Grid */}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-[#F9BC45] rounded-2xl p-3 border border-black/5">
+              <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Trust Score</div>
+              <div className="text-[14px] font-[900] text-stone-950 mt-0.5 flex items-center gap-1">
+                <span>4.95 ★</span>
+                <span className="text-[10px] font-bold bg-black/10 px-1.5 py-0.2 rounded-md">Top 5%</span>
+              </div>
+            </div>
+
+            <div className="bg-[#F9BC45] rounded-2xl p-3 border border-black/5">
+              <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Explorer Rank</div>
+              <div className="text-[14px] font-[900] text-stone-950 mt-0.5">Level 15 Pro</div>
+            </div>
+          </div>
+
+          {/* Share Boarding Pass Button */}
+          <button
+            type="button"
+            onClick={() => {
+              hapticSuccess();
+              if (navigator.share) {
+                navigator.share({
+                  title: `${displayName}'s GreenFlag Passport`,
+                  text: `Check out my verified travel passport and convoys on GreenFlag!`,
+                  url: window.location.href,
+                }).catch(() => {});
+              } else {
+                toast.success('📋 Passport link copied to clipboard!');
+              }
+            }}
+            className="w-full py-3.5 rounded-full bg-[#18181B] text-white font-[800] text-[14px] shadow-md hover:bg-black active:scale-[0.98] transition cursor-pointer flex items-center justify-center gap-2"
+          >
+            <Share2 className="w-4 h-4" />
+            <span>Share Digital Boarding Pass</span>
+          </button>
+        </div>
+
+        {/* 2. STACKED FLIGHT & ROADTRIP BOARDING PASSES */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-[18px] font-[900] text-[#18181B] tracking-tight">
+              Recent Flights & Completed Convoys
+            </h3>
+            <span className="text-[11px] font-bold text-stone-500">3 Passes</span>
+          </div>
+
+          {/* Pass 1: Saffron Ticket */}
+          <div className="bg-[#F5A623] rounded-[28px] p-4 text-stone-950 shadow-md relative overflow-hidden space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-[20px] font-[900] leading-none">BLR</div>
+                <div className="text-[10px] font-bold text-stone-800 mt-0.5">Bengaluru</div>
+              </div>
+              <div className="flex-1 px-4 flex items-center justify-center relative">
+                <div className="w-full border-t-2 border-dashed border-stone-800/40" />
+                <div className="absolute w-7 h-7 rounded-full bg-white text-stone-900 shadow-sm flex items-center justify-center text-xs">
+                  ⛰️
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-[20px] font-[900] leading-none">NND</div>
+                <div className="text-[10px] font-bold text-stone-800 mt-0.5">Nandi Hills</div>
+              </div>
+            </div>
+
+            <div className="relative -mx-4 my-1">
+              <div className="border-t border-dashed border-stone-800/20" />
+              <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+              <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+            </div>
+
+            <div className="flex items-center justify-between pt-1">
+              <div>
+                <div className="text-[13px] font-[800]">Sunrise Cloud Convoy</div>
+                <div className="text-[10px] font-medium text-stone-800/80">Sat 5:30 AM · Confirmed (3 Pairs)</div>
+              </div>
+              <div className="text-[22px] font-[900]">₹800</div>
+            </div>
+          </div>
+
+          {/* Pass 2: Obsidian Ticket */}
+          <div className="bg-[#181B1F] rounded-[28px] p-4 text-white shadow-md relative overflow-hidden space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-[20px] font-[900] leading-none">BLR</div>
+                <div className="text-[10px] font-bold text-stone-400 mt-0.5">Bengaluru</div>
+              </div>
+              <div className="flex-1 px-4 flex items-center justify-center relative">
+                <div className="w-full border-t-2 border-dashed border-white/20" />
+                <div className="absolute w-7 h-7 rounded-full bg-white text-stone-900 shadow-sm flex items-center justify-center text-xs">
+                  ☕
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-[20px] font-[900] leading-none">CRG</div>
+                <div className="text-[10px] font-bold text-stone-400 mt-0.5">Coorg Estate</div>
+              </div>
+            </div>
+
+            <div className="relative -mx-4 my-1">
+              <div className="border-t border-dashed border-white/20" />
+              <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+              <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+            </div>
+
+            <div className="flex items-center justify-between pt-1">
+              <div>
+                <div className="text-[13px] font-[800]">Private Coffee Tasting</div>
+                <div className="text-[10px] font-medium text-stone-400">Completed · 5.0 Star Rated</div>
+              </div>
+              <div className="text-[22px] font-[900]">₹2,400</div>
+            </div>
+          </div>
+
+          {/* Pass 3: Blue Ticket */}
+          <div className="bg-[#2A85C8] rounded-[28px] p-4 text-white shadow-md relative overflow-hidden space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-[20px] font-[900] leading-none">BLR</div>
+                <div className="text-[10px] font-bold text-sky-100 mt-0.5">Bengaluru</div>
+              </div>
+              <div className="flex-1 px-4 flex items-center justify-center relative">
+                <div className="w-full border-t-2 border-dashed border-white/30" />
+                <div className="absolute w-7 h-7 rounded-full bg-white text-stone-900 shadow-sm flex items-center justify-center text-xs">
+                  🌊
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-[20px] font-[900] leading-none">GOK</div>
+                <div className="text-[10px] font-bold text-sky-100 mt-0.5">Gokarna Cliff</div>
+              </div>
+            </div>
+
+            <div className="relative -mx-4 my-1">
+              <div className="border-t border-dashed border-white/20" />
+              <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+              <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+            </div>
+
+            <div className="flex items-center justify-between pt-1">
+              <div>
+                <div className="text-[13px] font-[800]">Gokarna Beach Trail</div>
+                <div className="text-[10px] font-medium text-sky-100/90">Women Safe Circle Verified</div>
+              </div>
+              <div className="text-[22px] font-[900]">₹1,200</div>
             </div>
           </div>
         </div>
 
-        {/* 2. Verification Badges Bento Grid */}
+        {/* 3. VERIFICATION BADGES BENTO GRID */}
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-[#D7F5E8] rounded-[24px] p-3.5 border border-emerald-200/60 shadow-xs flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-full bg-emerald-500 text-white flex items-center justify-center text-sm font-bold shadow-xs">
@@ -208,43 +409,7 @@ export default function PassportPage() {
           </div>
         </div>
 
-        {/* 3. Stat Capsules */}
-        <div className="grid grid-cols-3 gap-2.5">
-          <div className="bg-white rounded-[22px] p-3 text-center border border-stone-200/70 shadow-xs">
-            <div className="text-[18px] font-[900] text-stone-900">18</div>
-            <div className="text-[10px] font-bold text-stone-500 mt-0.5">Trips Taken</div>
-          </div>
-          <div className="bg-white rounded-[22px] p-3 text-center border border-stone-200/70 shadow-xs">
-            <div className="text-[18px] font-[900] text-stone-900">92%</div>
-            <div className="text-[10px] font-bold text-stone-500 mt-0.5">On-Time Rate</div>
-          </div>
-          <div className="bg-white rounded-[22px] p-3 text-center border border-stone-200/70 shadow-xs">
-            <div className="text-[18px] font-[900] text-stone-900">6</div>
-            <div className="text-[10px] font-bold text-stone-500 mt-0.5">Hosted</div>
-          </div>
-        </div>
-
-        {/* 4. Women-Only Circle & Safety Center */}
-        <div className="rounded-[26px] bg-[#F2E8FD] border border-purple-200/60 p-4 shadow-sm flex items-center justify-between gap-3">
-          <div>
-            <div className="text-[13px] font-[800] text-purple-950">Women-Only Circles 👩‍🦰</div>
-            <p className="text-[11px] text-purple-900/70 font-medium mt-0.5">
-              Verified small groups with trusted women hosts.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              hapticSuccess();
-              toast.success('Joined Bangalore Women Circle!');
-            }}
-            className="px-3.5 py-2 rounded-full bg-[#18181B] text-white text-[11px] font-bold active:scale-95 transition shrink-0 cursor-pointer"
-          >
-            Join
-          </button>
-        </div>
-
-        {/* 5. Account Settings Actions */}
+        {/* 4. ACCOUNT SETTINGS ACTIONS */}
         <div className="bg-white rounded-[26px] border border-stone-200/70 p-2 shadow-sm divide-y divide-stone-100">
           <button
             type="button"
