@@ -983,68 +983,153 @@ function TripsContent() {
         {activeTab === 'explore' && (
           <div className="h-full flex flex-col animate-fade-in space-y-5 pt-1">
             
-            {/* 1. APPLE MAPS-STYLE TRAVEL DATING RADAR MAP (ON TOP) */}
-            <div className="px-6">
-              <div className="relative rounded-[32px] overflow-hidden border border-stone-300/70 bg-[#F4F6F9] text-stone-900 shadow-md p-4 min-h-[260px] flex flex-col justify-between">
+            {/* 1. EXPANSIVE APPLE MAPS-STYLE TRAVEL DATING RADAR MAP (ON TOP) */}
+            <div className="px-5">
+              <div
+                onTouchStart={handleMapTouchStart}
+                onTouchMove={handleMapTouchMove}
+                onTouchEnd={handleMapTouchEnd}
+                onMouseDown={(e) => handleMapPointerDown(e.clientX, e.clientY)}
+                onMouseMove={(e) => handleMapPointerMove(e.clientX, e.clientY)}
+                onMouseUp={handleMapPointerUp}
+                onMouseLeave={handleMapPointerUp}
+                onWheel={handleMapWheel}
+                className="relative rounded-[36px] overflow-hidden border border-stone-200/90 bg-[#E5EBF2] text-stone-900 shadow-lg h-[430px] flex flex-col justify-between cursor-grab active:cursor-grabbing select-none"
+              >
                 
-                {/* Apple Maps Vector Map Grid & Roads Background */}
+                {/* PANNABLE & ZOOMABLE MAP CANVAS LAYER */}
                 <div
-                  className="absolute inset-0 pointer-events-none opacity-90"
+                  className="absolute inset-0 w-full h-full origin-center pointer-events-none transition-transform duration-75 ease-out"
                   style={{
-                    backgroundColor: '#E8ECF2',
-                    backgroundImage: `
-                      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8) 0%, rgba(232, 236, 242, 0.4) 100%),
-                      linear-gradient(rgba(203, 213, 225, 0.5) 1.5px, transparent 1.5px),
-                      linear-gradient(90deg, rgba(203, 213, 225, 0.5) 1.5px, transparent 1.5px)
-                    `,
-                    backgroundSize: '100% 100%, 32px 32px, 32px 32px',
+                    transform: `translate3d(${mapPan.x}px, ${mapPan.y}px, 0px) scale(${mapZoom})`,
                   }}
-                />
-
-                {/* Apple Maps Water Body / Greenery Accents */}
-                <div className="absolute -top-10 -right-10 w-44 h-44 rounded-full bg-[#D2E7D6] opacity-70 blur-[1px] pointer-events-none" />
-                <div className="absolute -bottom-10 -left-10 w-48 h-48 rounded-full bg-[#D4E8F8] opacity-80 blur-[1px] pointer-events-none" />
-
-                {/* Apple Maps Curved Navigation Route Path */}
-                <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 340 260">
-                  {/* Route Glow & Line */}
-                  <path
-                    d="M 50 210 C 100 170, 140 190, 200 120 C 240 70, 270 90, 300 40"
-                    stroke="#2563EB"
-                    strokeWidth="5"
-                    strokeLinecap="round"
-                    fill="none"
-                    className="drop-shadow-sm opacity-90"
-                  />
-                  <path
-                    d="M 50 210 C 100 170, 140 190, 200 120 C 240 70, 270 90, 300 40"
-                    stroke="#60A5FA"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    fill="none"
+                >
+                  {/* Apple Maps Street Grid Texture */}
+                  <div
+                    className="absolute -inset-32"
+                    style={{
+                      backgroundColor: '#E8ECF2',
+                      backgroundImage: `
+                        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.85) 0%, rgba(232, 236, 242, 0.5) 100%),
+                        linear-gradient(rgba(203, 213, 225, 0.6) 1.5px, transparent 1.5px),
+                        linear-gradient(90deg, rgba(203, 213, 225, 0.6) 1.5px, transparent 1.5px)
+                      `,
+                      backgroundSize: '100% 100%, 36px 36px, 36px 36px',
+                    }}
                   />
 
-                  {/* Secondary Date Route */}
-                  <path
-                    d="M 80 180 Q 180 230 270 160"
-                    stroke="#A855F7"
-                    strokeWidth="3.5"
-                    strokeDasharray="6 4"
-                    strokeLinecap="round"
-                    fill="none"
-                    className="opacity-75"
-                  />
-                </svg>
+                  {/* Organic Topographical Land & Water Bodies */}
+                  <div className="absolute top-8 -right-12 w-64 h-64 rounded-full bg-[#D2E8D6] opacity-80 blur-[2px]" />
+                  <div className="absolute bottom-4 -left-16 w-72 h-72 rounded-full bg-[#D6EAF8] opacity-90 blur-[2px]" />
+                  <div className="absolute top-44 left-1/3 w-40 h-40 rounded-full bg-[#E5F3D8] opacity-70 blur-[3px]" />
 
-                {/* Top Apple Maps Floating Search / Hub Capsule */}
-                <div className="relative z-10 flex items-center justify-between">
+                  {/* Highway Routes Vector Geometry */}
+                  <svg className="absolute -inset-16 w-[140%] h-[140%]" viewBox="0 0 500 500">
+                    {/* Main Highway Route (Blue) */}
+                    <path
+                      d="M 60 400 C 140 320, 200 350, 280 220 C 330 130, 390 160, 440 60"
+                      stroke="#2563EB"
+                      strokeWidth="7"
+                      strokeLinecap="round"
+                      fill="none"
+                      className="drop-shadow-sm opacity-90"
+                    />
+                    <path
+                      d="M 60 400 C 140 320, 200 350, 280 220 C 330 130, 390 160, 440 60"
+                      stroke="#60A5FA"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      fill="none"
+                    />
+
+                    {/* Secondary Sunset Date Route (Purple) */}
+                    <path
+                      d="M 100 360 Q 240 420 380 280"
+                      stroke="#9333EA"
+                      strokeWidth="4.5"
+                      strokeDasharray="8 5"
+                      strokeLinecap="round"
+                      fill="none"
+                      className="opacity-80"
+                    />
+                  </svg>
+
+                  {/* Interactive Map Pin 1: Nandi Hills Sunrise Convoy */}
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      hapticSuccess();
+                      setSelectedTrip(TRIPS_DATA[0]);
+                    }}
+                    className="absolute top-24 right-10 z-20 pointer-events-auto flex items-center gap-2 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-full shadow-md border border-stone-200 cursor-pointer active:scale-95 hover:scale-105 transition"
+                  >
+                    <img
+                      src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80"
+                      alt="Host"
+                      className="w-6 h-6 rounded-full object-cover border border-purple-400"
+                    />
+                    <div className="text-left">
+                      <div className="text-[12px] font-[900] text-stone-900 leading-tight">
+                        Nandi Sunrise Convoy
+                      </div>
+                      <div className="text-[10px] text-rose-600 font-bold">💕 3 Dating Pairs</div>
+                    </div>
+                  </div>
+
+                  {/* Interactive Map Pin 2: Coorg Estate Drive */}
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      hapticSuccess();
+                      setSelectedTrip(TRIPS_DATA[1]);
+                    }}
+                    className="absolute bottom-28 left-8 z-20 pointer-events-auto flex items-center gap-2 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-full shadow-md border border-stone-200 cursor-pointer active:scale-95 hover:scale-105 transition"
+                  >
+                    <img
+                      src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80"
+                      alt="Co-driver"
+                      className="w-6 h-6 rounded-full object-cover border border-sky-400"
+                    />
+                    <div className="text-left">
+                      <div className="text-[12px] font-[900] text-stone-900 leading-tight">
+                        ☕ Coorg Trail & Sunset
+                      </div>
+                      <div className="text-[10px] text-emerald-700 font-bold">1 Spot Open</div>
+                    </div>
+                  </div>
+
+                  {/* Interactive Map Pin 3: Gokarna Beach Roadtrip */}
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      hapticSuccess();
+                      setSelectedTrip(TRIPS_DATA[2] || TRIPS_DATA[0]);
+                    }}
+                    className="absolute top-48 left-14 z-20 pointer-events-auto flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full shadow-md border border-stone-200 cursor-pointer active:scale-95 hover:scale-105 transition"
+                  >
+                    <span className="text-[13px]">🌊</span>
+                    <span className="text-[11px] font-bold text-stone-900">Gokarna Coastal Date</span>
+                  </div>
+
+                  {/* Live Radar Pulse on Map Center */}
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                    <span className="w-12 h-12 rounded-full bg-blue-500/20 animate-ping absolute -inset-2" />
+                    <span className="w-8 h-8 rounded-full bg-blue-600/30 flex items-center justify-center">
+                      <span className="w-3 h-3 rounded-full bg-blue-600 border-2 border-white shadow-xs" />
+                    </span>
+                  </div>
+                </div>
+
+                {/* TOP FLOATING OVERLAY: Search Pill & Compass */}
+                <div className="relative z-30 p-4 flex items-center justify-between pointer-events-none">
                   <button
                     type="button"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       hapticTap();
                       setShowLocationModal(true);
                     }}
-                    className="flex items-center gap-2 bg-white/95 backdrop-blur-xl px-3.5 py-2 rounded-full border border-stone-200 shadow-sm hover:bg-white active:scale-95 transition cursor-pointer"
+                    className="pointer-events-auto flex items-center gap-2 bg-white/95 backdrop-blur-xl px-4 py-2.5 rounded-full border border-stone-200 shadow-md hover:bg-white active:scale-95 transition cursor-pointer"
                   >
                     <span className="w-2.5 h-2.5 rounded-full bg-[#00E5A3] animate-pulse shrink-0" />
                     <span className="text-[12px] font-[800] text-stone-900 tracking-tight">
@@ -1053,98 +1138,73 @@ function TripsContent() {
                     <span className="text-stone-400 text-xs">▾</span>
                   </button>
 
-                  <div className="flex items-center gap-1.5">
+                  {/* Floating Gesture Controls (Zoom + Recenter + Compass) */}
+                  <div className="pointer-events-auto flex flex-col gap-1.5 shadow-sm bg-white/95 backdrop-blur-xl p-1 rounded-2xl border border-stone-200">
                     <button
                       type="button"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         hapticTap();
-                        toast.success('🧭 Compass aligned to North');
+                        setMapZoom((z) => Math.min(2.4, z + 0.3));
                       }}
-                      className="w-9 h-9 rounded-full bg-white/95 backdrop-blur-xl border border-stone-200 shadow-sm flex items-center justify-center text-stone-700 active:scale-90 transition cursor-pointer"
-                      aria-label="Compass"
+                      className="w-8 h-8 rounded-xl hover:bg-stone-100 flex items-center justify-center font-bold text-stone-700 active:scale-90 transition text-sm cursor-pointer"
+                      aria-label="Zoom in"
                     >
-                      🧭
+                      +
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        hapticTap();
+                        setMapZoom((z) => Math.max(0.7, z - 0.3));
+                      }}
+                      className="w-8 h-8 rounded-xl hover:bg-stone-100 flex items-center justify-center font-bold text-stone-700 active:scale-90 transition text-sm cursor-pointer"
+                      aria-label="Zoom out"
+                    >
+                      −
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        hapticSuccess();
+                        setMapPan({ x: 0, y: 0 });
+                        setMapZoom(1);
+                        toast.success('🎯 Map Centered');
+                      }}
+                      className="w-8 h-8 rounded-xl hover:bg-stone-100 flex items-center justify-center text-stone-700 active:scale-90 transition text-xs cursor-pointer"
+                      aria-label="Recenter"
+                    >
+                      🎯
                     </button>
                   </div>
                 </div>
 
-                {/* Interactive Apple Maps Pin 1: Nandi Hills Sunrise Convoy */}
-                <div
-                  onClick={() => {
-                    hapticSuccess();
-                    setSelectedTrip(TRIPS_DATA[0]);
-                  }}
-                  className="absolute top-12 right-5 z-20 flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full shadow-md border border-stone-200 cursor-pointer active:scale-95 hover:scale-105 transition"
-                >
-                  <img
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=60&q=80"
-                    alt="Host"
-                    className="w-5 h-5 rounded-full object-cover border border-purple-400"
-                  />
-                  <div className="text-left">
-                    <div className="text-[11px] font-[900] text-stone-900 leading-tight flex items-center gap-1">
-                      <span>Nandi Sunrise Convoy</span>
-                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-rose-100 text-rose-700 font-bold">💕 3 Pairs</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Interactive Apple Maps Pin 2: Coorg Estate Drive */}
-                <div
-                  onClick={() => {
-                    hapticSuccess();
-                    setSelectedTrip(TRIPS_DATA[1]);
-                  }}
-                  className="absolute bottom-16 left-4 z-20 flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full shadow-md border border-stone-200 cursor-pointer active:scale-95 hover:scale-105 transition"
-                >
-                  <img
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=60&q=80"
-                    alt="Co-driver"
-                    className="w-5 h-5 rounded-full object-cover border border-sky-400"
-                  />
-                  <div className="text-left">
-                    <div className="text-[11px] font-[900] text-stone-900 leading-tight flex items-center gap-1">
-                      <span>☕ Coorg Trail & Sunset</span>
-                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 font-bold">1 Spot</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Interactive Apple Maps Pin 3: Gokarna Beach Roadtrip */}
-                <div
-                  onClick={() => {
-                    hapticSuccess();
-                    setSelectedTrip(TRIPS_DATA[2] || TRIPS_DATA[0]);
-                  }}
-                  className="absolute top-28 left-6 z-20 flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full shadow-md border border-stone-200 cursor-pointer active:scale-95 hover:scale-105 transition"
-                >
-                  <span className="text-[12px]">🌊</span>
-                  <span className="text-[10px] font-bold text-stone-800">Gokarna Coastal Date</span>
-                </div>
-
-                {/* Apple Maps Bottom Info Card: Live Turn & Roadtrip Status */}
-                <div className="relative z-10 mt-auto pt-2">
-                  <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-3 shadow-sm border border-stone-200 flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+                {/* BOTTOM FLOATING OVERLAY: Live Convoy Status */}
+                <div className="relative z-30 p-4 pointer-events-none">
+                  <div className="pointer-events-auto bg-white/95 backdrop-blur-xl rounded-[24px] p-4 shadow-md border border-stone-200 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
                         🚗
                       </div>
                       <div>
-                        <div className="text-[12px] font-[800] text-stone-900">
+                        <div className="text-[13px] font-[800] text-stone-900 leading-tight">
                           Next Convoy: Nandi Peak at 05:30 AM
                         </div>
-                        <div className="text-[10px] text-stone-500 font-medium">
+                        <div className="text-[11px] text-stone-500 font-medium mt-0.5">
                           Indiranagar 100ft Rd · 3 Single Pairs Confirmed
                         </div>
                       </div>
                     </div>
                     <button
                       type="button"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         hapticSuccess();
                         setSelectedTrip(TRIPS_DATA[0]);
                       }}
-                      className="px-3 py-1.5 rounded-full bg-[#18181B] text-white text-[11px] font-bold active:scale-95 transition shrink-0"
+                      className="px-4 py-2 rounded-full bg-[#18181B] text-white text-[12px] font-bold active:scale-95 transition shrink-0 cursor-pointer shadow-xs"
                     >
                       Join Convoy
                     </button>
