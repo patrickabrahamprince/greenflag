@@ -793,6 +793,7 @@ function TripsContent() {
               onClick={() => {
                 hapticTap();
                 setActiveTab('explore');
+                router.replace('/trips');
               }}
               className={`px-3 py-1.5 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
                 activeTab === 'explore'
@@ -807,6 +808,7 @@ function TripsContent() {
               onClick={() => {
                 hapticTap();
                 setActiveTab('create');
+                router.replace('/trips?tab=create');
               }}
               className={`px-3 py-1.5 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
                 activeTab === 'create'
@@ -2000,9 +2002,9 @@ function TripsContent() {
               )}
             </div>
 
-            {/* ================= FLOATING DEDICATED ACTIONS ================= */}
-            <div className="fixed bottom-20 left-0 right-0 max-w-md mx-auto px-5 z-40 pointer-events-none">
-              <div className="bg-[#FAF8F5]/95 backdrop-blur-2xl p-2 rounded-[24px] border border-[#18181B]/[0.08] shadow-[0_16px_36px_-8px_rgba(24,24,27,0.18)] flex items-center gap-2 pointer-events-auto">
+            {/* ================= DOCKED DEDICATED ACTIONS ================= */}
+            <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto px-5 pt-3 pb-[calc(14px+env(safe-area-inset-bottom,14px))] z-[60] bg-[#FAF8F5]/98 backdrop-blur-2xl border-t border-[#18181B]/[0.08] shadow-[0_-12px_32px_rgba(0,0,0,0.06)]">
+              <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => {
@@ -2011,6 +2013,7 @@ function TripsContent() {
                       setCreateStep((s) => Math.max(1, s - 1));
                     } else {
                       setActiveTab('explore');
+                      router.replace('/trips');
                     }
                   }}
                   className="h-12 px-4 rounded-2xl bg-white border border-[#18181B]/[0.1] font-bold text-[13px] text-[#18181B] active:scale-95 transition cursor-pointer hover:bg-black/5 shrink-0 flex items-center justify-center gap-1.5 shadow-xs"

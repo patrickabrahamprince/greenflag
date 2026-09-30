@@ -19,6 +19,10 @@ function BottomNavContent() {
     { id: 'passport', label: 'Passport', href: '/passport', icon: User },
   ];
 
+  if (currentTab === 'create' || pathname === '/standard/builder') {
+    return null;
+  }
+
   return (
     <nav className="fixed bottom-3 inset-x-4 z-50 max-w-md mx-auto pointer-events-auto pb-[env(safe-area-inset-bottom,0px)]">
       <div className="bg-black/95 backdrop-blur-2xl rounded-[26px] p-1.5 flex justify-between shadow-[0_16px_40px_-10px_rgba(0,0,0,0.45)] border border-white/10">
