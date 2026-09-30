@@ -1389,7 +1389,7 @@ function TripsContent() {
                     </button>
                   )}
                   <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/60">
-                    STEP {createStep.toString().padStart(2, '0')} / 05
+                    STEP {createStep.toString().padStart(2, '0')} / 06
                   </span>
                 </div>
                 <button
@@ -1402,8 +1402,8 @@ function TripsContent() {
               </div>
 
               {/* Fine Segmented Hairline Progress */}
-              <div className="grid grid-cols-5 gap-1.5 mb-5 mt-1.5">
-                {[1, 2, 3, 4, 5].map((st) => (
+              <div className="grid grid-cols-6 gap-1.5 mb-5 mt-1.5">
+                {[1, 2, 3, 4, 5, 6].map((st) => (
                   <div key={st} className="h-1 rounded-full overflow-hidden bg-[#18181B]/[0.08]">
                     <div
                       className={`h-full transition-all duration-300 ${
@@ -1951,34 +1951,72 @@ function TripsContent() {
                       </div>
                     </div>
                   </div>
+                </div>
+              )}
 
-                  {/* ================= 👥 SQUAD SIZE & TRANSPORT ================= */}
-                  <div className="grid grid-cols-2 gap-2.5 pt-1">
-                    <div>
-                      <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
-                        {createType === 'pink' ? 'DATE CAPACITY' : 'SQUAD SIZE'}
+              {/* ---------------- QUESTION 5: SQUAD CAPACITY & TRANSPORTATION LOGISTICS ---------------- */}
+              {createStep === 5 && (
+                <div className="animate-fade-in space-y-4">
+                  <div>
+                    <h2 className="text-[20px] font-[800] tracking-[-0.02em] text-[#18181B] flex items-center gap-2">
+                      <span>Who is joining & how are you traveling?</span>
+                      <span className="text-sm">🚗</span>
+                    </h2>
+                    <p className="text-[12px] text-[#18181B]/55 mt-1 font-normal">
+                      Set participant capacity limits and travel convoy arrangements.
+                    </p>
+                  </div>
+
+                  {/* Capacity Card */}
+                  <div className="bg-white rounded-[26px] p-5 shadow-sm border border-[#18181B]/[0.08] space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40 flex items-center gap-1.5">
+                        <Users className="w-3.5 h-3.5 text-[#18181B]/60" />
+                        <span>{createType === 'pink' ? 'DATE CAPACITY LIMIT' : 'SQUAD PARTICIPANT CAPACITY'}</span>
                       </label>
-                      {createType === 'pink' ? (
-                        <div className="p-3 rounded-2xl bg-[#FAF5F7] border border-[#331822]/20 mt-1.5 space-y-1 shadow-xs">
-                          <div className="flex items-center justify-between">
-                            <span className="text-[12px] font-[800] text-rose-950">
-                              ✦ 1-on-1 (1 Guest)
-                            </span>
-                            <span className="text-[8px] font-extrabold px-1.5 py-0.2 rounded-full bg-rose-200 text-rose-900 uppercase">
-                              Strictly 1
-                            </span>
-                          </div>
-                          <p className="text-[10px] text-rose-900/75 leading-tight font-medium">
-                            Strictly 1-on-1 private experience. Group capacity disabled.
-                          </p>
+                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#18181B]/5 text-[#18181B]/70">
+                        {createType === 'pink' ? '1 Guest Max' : 'Selected'}
+                      </span>
+                    </div>
+
+                    {createType === 'pink' ? (
+                      <div className="p-4 rounded-2xl bg-[#FAF5F7] border border-[#331822]/20 space-y-1.5 shadow-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[13px] font-[800] text-rose-950 flex items-center gap-1.5">
+                            <span>✦</span> Private 1-on-1 Date (1 Guest Only)
+                          </span>
+                          <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-rose-200 text-rose-900 uppercase">
+                            Strictly 1
+                          </span>
                         </div>
-                      ) : (
-                        <div className="space-y-1.5 mt-1.5">
-                          {[
-                            { id: '1-on-1', label: '1-on-1 (2 Total)' },
-                            { id: '2-4', label: 'Squad (3-4 Members)' },
-                            { id: '5+', label: 'Group (5+ Members)' },
-                          ].map((sz) => (
+                        <p className="text-[11px] text-rose-900/80 leading-relaxed font-medium">
+                          Romantic dates are strictly 1-on-1 private experiences between you and 1 guest. Group sizes are disabled for dates.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 gap-2 pt-1">
+                        {[
+                          {
+                            id: '1-on-1',
+                            title: '1-on-1 (2 Total)',
+                            desc: 'Just you and 1 explorer · Private duo',
+                            badge: 'Private',
+                          },
+                          {
+                            id: '2-4',
+                            title: 'Squad (3-4 Members)',
+                            desc: 'Small tight-knit group · Recommended for cars & trails',
+                            badge: 'Popular',
+                          },
+                          {
+                            id: '5+',
+                            title: 'Community Group (5+ Members)',
+                            desc: 'Open convoy meetup · Best for casual social walks',
+                            badge: 'Open',
+                          },
+                        ].map((sz) => {
+                          const isSelected = createGroupSize === sz.id;
+                          return (
                             <button
                               key={sz.id}
                               type="button"
@@ -1986,54 +2024,102 @@ function TripsContent() {
                                 hapticTap();
                                 setCreateGroupSize(sz.id);
                               }}
-                              className={`w-full p-2.5 rounded-xl border text-[11px] font-bold text-left transition cursor-pointer ${
-                                createGroupSize === sz.id
-                                  ? 'bg-[#18181B] text-white border-[#18181B] shadow-xs'
-                                  : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70 hover:border-[#18181B]/20'
+                              className={`w-full p-3.5 rounded-2xl border text-left transition-all duration-150 cursor-pointer flex items-center justify-between ${
+                                isSelected
+                                  ? 'bg-[#18181B] text-white border-[#18181B] shadow-md scale-[1.01]'
+                                  : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/80 hover:border-[#18181B]/20'
                               }`}
                             >
-                              {sz.label}
+                              <div>
+                                <div className="text-[13px] font-[800]">{sz.title}</div>
+                                <div className={`text-[11px] mt-0.5 ${isSelected ? 'text-white/70' : 'text-stone-500'}`}>
+                                  {sz.desc}
+                                </div>
+                              </div>
+                              <span
+                                className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                                  isSelected ? 'bg-white/20 text-white' : 'bg-stone-100 text-stone-600'
+                                }`}
+                              >
+                                {sz.badge}
+                              </span>
                             </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
 
-                    <div>
-                      <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
-                        TRANSPORTATION
-                      </label>
-                      <div className="space-y-1.5 mt-1.5">
-                        {[
-                          '🚗 Private Car',
-                          '🏍️ Cruiser Bike',
-                          '🚕 Split Cabs',
-                          '🚙 Need a Ride',
-                        ].map((ride) => (
+                  {/* Transportation Logistics Card */}
+                  <div className="bg-white rounded-[26px] p-5 shadow-sm border border-[#18181B]/[0.08] space-y-2.5">
+                    <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40 flex items-center gap-1.5">
+                      <Navigation className="w-3.5 h-3.5 text-[#18181B]/60" />
+                      <span>TRANSPORTATION ARRANGEMENTS</span>
+                    </label>
+
+                    <div className="grid grid-cols-1 gap-2 pt-1">
+                      {[
+                        {
+                          id: '🚗 Driving Private Car',
+                          title: '🚗 Driving Private Car',
+                          desc: 'Host is driving with 3-4 open seats in car',
+                        },
+                        {
+                          id: '🏍️ Cruising Motorcycle',
+                          title: '🏍️ Cruising Motorcycle',
+                          desc: 'Solo cruiser or with pillion rider',
+                        },
+                        {
+                          id: '🚕 Split Cabs / Rideshare',
+                          title: '🚕 Split Cabs / Rideshare',
+                          desc: 'Book Uber/cabs together & split ride cost evenly',
+                        },
+                        {
+                          id: '🚙 Need a Ride / Co-pilot',
+                          title: '🚙 Need a Ride / Co-pilot',
+                          desc: 'Looking to join another member’s ride',
+                        },
+                      ].map((ride) => {
+                        const isSelected = createRide === ride.id;
+                        return (
                           <button
-                            key={ride}
+                            key={ride.id}
                             type="button"
                             onClick={() => {
                               hapticTap();
-                              setCreateRide(ride);
+                              setCreateRide(ride.id);
                             }}
-                            className={`w-full p-2.5 rounded-xl border text-[11px] font-medium text-left transition cursor-pointer ${
-                              createRide === ride
-                                ? 'bg-[#18181B] text-white border-[#18181B] font-bold shadow-xs'
-                                : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70 hover:border-[#18181B]/20'
+                            className={`w-full p-3.5 rounded-2xl border text-left transition-all duration-150 cursor-pointer flex items-center justify-between ${
+                              isSelected
+                                ? 'bg-[#18181B] text-white border-[#18181B] shadow-md scale-[1.01]'
+                                : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/80 hover:border-[#18181B]/20'
                             }`}
                           >
-                            {ride}
+                            <div>
+                              <div className="text-[13px] font-[800]">{ride.title}</div>
+                              <div className={`text-[11px] mt-0.5 ${isSelected ? 'text-white/70' : 'text-stone-500'}`}>
+                                {ride.desc}
+                              </div>
+                            </div>
+                            <div
+                              className={`w-5 h-5 rounded-full flex items-center justify-center border transition ${
+                                isSelected
+                                  ? 'bg-[#1D8E66] border-[#1D8E66] text-white'
+                                  : 'border-stone-300 bg-white'
+                              }`}
+                            >
+                              {isSelected && <Check className="w-3 h-3 text-white stroke-[3]" />}
+                            </div>
                           </button>
-                        ))}
-                      </div>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* ---------------- QUESTION 5: VIBES & SPLIT COST + BOARDING PASS ---------------- */}
-              {createStep === 5 && (
+              {/* ---------------- QUESTION 6: VIBES & SPLIT COST + BOARDING PASS ---------------- */}
+              {createStep === 6 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
                     <h2 className="text-[20px] font-[800] tracking-[-0.02em] text-[#18181B]">
@@ -2174,7 +2260,7 @@ function TripsContent() {
                         </div>
                         <div>
                           <span className="text-[#18181B]/40 block font-semibold">TIME</span>
-                          <span className="font-bold text-[#18181B] truncate">{createTimeSlot.split('·')[1] || '5:30 AM'}</span>
+                          <span className="font-bold text-[#18181B] truncate">{createTimeSlot}</span>
                         </div>
                         <div className="text-right">
                           <span className="text-[#18181B]/40 block font-semibold">SPLIT / PERS</span>
@@ -2209,12 +2295,12 @@ function TripsContent() {
                   <span>{createStep === 1 ? 'Cancel' : 'Back'}</span>
                 </button>
 
-                {createStep < 5 ? (
+                {createStep < 6 ? (
                   <button
                     type="button"
                     onClick={() => {
                       hapticTap();
-                      setCreateStep((s) => Math.min(5, s + 1));
+                      setCreateStep((s) => Math.min(6, s + 1));
                     }}
                     className="flex-1 h-12 rounded-2xl bg-[#18181B] text-white font-[800] text-[13px] tracking-wide shadow-md active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer"
                   >
