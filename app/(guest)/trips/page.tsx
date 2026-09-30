@@ -83,62 +83,62 @@ interface HeroSlide {
 const HERO_SLIDES: HeroSlide[] = [
   {
     id: 1,
-    tag: '🌅 DAWN EXPEDITION',
+    tag: 'DAWN EXPEDITION',
     badgeBg: 'bg-emerald-900/80 text-emerald-300 border-emerald-700/50',
     title: 'Sunrise Above the Clouds',
     subtitle: 'Nandi Hills Fortress convoy with artisanal dawn filter chai',
-    stats: '4.9 ★ · 2 Seats Available',
+    stats: '4.9 Star · 2 Seats Available',
     tripId: 1,
     bgGradient: 'from-[#0d281a] via-[#091e13] to-[#040f09]',
     accentColor: 'text-emerald-400',
-    icon: '⛰️',
+    icon: '',
   },
   {
     id: 2,
-    tag: '☕ ARTISAN COFFEE EXPEDITION',
+    tag: 'ARTISAN COFFEE EXPEDITION',
     badgeBg: 'bg-amber-900/80 text-amber-200 border-amber-700/50',
     title: 'Coorg Private Coffee Tasting',
     subtitle: 'Estate walks, fresh single-origin roast & slow photography',
-    stats: '4.85 ★ · 1 Spot Left',
+    stats: '4.85 Star · 1 Spot Left',
     tripId: 2,
     bgGradient: 'from-[#2a1b10] via-[#1c120a] to-[#0e0905]',
     accentColor: 'text-amber-300',
-    icon: '☕',
+    icon: '',
   },
   {
     id: 3,
-    tag: '👩 100% FEMALE VERIFIED',
+    tag: '100% FEMALE VERIFIED',
     badgeBg: 'bg-purple-900/80 text-purple-300 border-purple-700/50',
     title: 'Gokarna Beach & Cliff Circle',
     subtitle: 'Sunset yoga, secluded coves & beachside brunch circle',
-    stats: '5.0 ★ · Women Safe Circle',
+    stats: '5.0 Star · Women Safe Circle',
     tripId: 6,
     bgGradient: 'from-[#281330] via-[#1a0c20] to-[#0a040d]',
     accentColor: 'text-purple-300',
-    icon: '🌊',
+    icon: '',
   },
   {
     id: 4,
-    tag: '🌌 STARLIGHT TRAVERSE',
+    tag: 'STARLIGHT TRAVERSE',
     badgeBg: 'bg-indigo-900/80 text-indigo-300 border-indigo-700/50',
     title: 'Skandagiri Midnight Ridge Climb',
     subtitle: 'Ascent under the stars for peak cloud inversions',
-    stats: '4.95 ★ · Departs Tonight 11 PM',
+    stats: '4.95 Star · Departs Tonight 11 PM',
     tripId: 4,
     bgGradient: 'from-[#121630] via-[#0b0e20] to-[#04060e]',
     accentColor: 'text-indigo-300',
-    icon: '✨',
+    icon: '',
   },
 ];
 
 const MARQUEE_ITEMS = [
-  '⚡ Aarav confirmed 2 seats on Nandi Sunrise Convoy',
-  '🛡️ 100% ID Verified & Escort-Free Protocol active',
-  '🔥 Savandurga Flash Roadtrip departs in 2 hours',
-  '☕ Meera opened Coorg Coffee Estate Cupping',
-  '✨ Ananya joined Gokarna Women Circle',
-  '📍 Indiranagar Hub: 18 departures scheduled today',
-  '🌟 Top Rated Host Sanya reached Level 15 Explorer',
+  'Aarav confirmed 2 seats on Nandi Sunrise Convoy',
+  '100% ID Verified & Escort-Free Protocol active',
+  'Savandurga Flash Roadtrip departs in 2 hours',
+  'Meera opened Coorg Coffee Estate Cupping',
+  'Ananya joined Gokarna Women Circle',
+  'Indiranagar Hub: 18 departures scheduled today',
+  'Top Rated Host Sanya reached Level 15 Explorer',
 ];
 
 const TRIPS_DATA: Trip[] = [
@@ -291,7 +291,7 @@ const TRIPS_DATA: Trip[] = [
     id: 7,
     destination: 'Savandurga Monolith Flash Roadtrip',
     subtitle: 'Asia’s largest monolith sunset hike & dhaba dinner',
-    time: '⚡ Today · 3:30 PM',
+    time: 'Today · 3:30 PM',
     spots: 1,
     totalSpots: 4,
     cost: 950,
@@ -588,7 +588,7 @@ function TripsContent() {
               city: `${city}, ${region}`,
             });
             hapticSuccess();
-            toast.success(`📍 Located in ${city}!`, {
+            toast.success(`Located in ${city}!`, {
               style: { background: '#141414', color: '#FAF7F2' },
             });
             setShowLocationModal(false);
@@ -611,7 +611,7 @@ function TripsContent() {
             city: `${city}, ${state}`,
           });
           hapticSuccess();
-          toast.success(`📍 Locked to ${locality}!`, {
+          toast.success(`Locked to ${locality}!`, {
             style: { background: '#141414', color: '#FAF7F2' },
           });
           setShowLocationModal(false);
@@ -625,7 +625,7 @@ function TripsContent() {
         city: 'Bengaluru, Karnataka',
       });
       hapticSuccess();
-      toast.success('📍 Set to Indiranagar Hub', {
+      toast.success('Set to Indiranagar Hub', {
         style: { background: '#141414', color: '#FAF7F2' },
       });
       setShowLocationModal(false);
@@ -634,7 +634,7 @@ function TripsContent() {
         name: 'Indiranagar, Bengaluru',
         city: 'Bengaluru, Karnataka',
       });
-      toast.success('📍 Set to Indiranagar Hub', {
+      toast.success('Set to Indiranagar Hub', {
         style: { background: '#141414', color: '#FAF7F2' },
       });
       setShowLocationModal(false);
@@ -689,7 +689,7 @@ function TripsContent() {
       setSelectedDateCard(label);
       setCreateDate(label);
       hapticSuccess();
-      toast.success(`📅 Escape scheduled for ${label}!`, {
+      toast.success(`Escape scheduled for ${label}!`, {
         style: { background: '#141414', color: '#FAF7F2' },
       });
     }
@@ -757,7 +757,7 @@ function TripsContent() {
 
   const [createType, setCreateType] = useState<'green' | 'pink' | 'women'>('green');
   const [createGroupSize, setCreateGroupSize] = useState('2-4');
-  const [createRide, setCreateRide] = useState('🚗 Private Car · 3 Spots');
+  const [createRide, setCreateRide] = useState('Private Car · 3 Spots');
   const [createCost, setCreateCost] = useState<number>(800);
   const [createVibes, setCreateVibes] = useState<string[]>(['Chai & Chill', 'Trek & Talk', 'Scenic Drive']);
   const [showScoreInfo, setShowScoreInfo] = useState(false);
@@ -820,7 +820,7 @@ function TripsContent() {
           setCreatePickup(`${locality}, Bengaluru`);
           setGpsDetected(true);
           hapticSuccess();
-          toast.success(`📍 Located: ${locality}`, {
+          toast.success(`Located: ${locality}`, {
             style: { background: '#141414', color: '#FAF7F2', border: '1px solid rgba(255,255,255,0.1)' },
           });
         } else {
@@ -842,7 +842,6 @@ function TripsContent() {
           setGpsScanning(false);
           setCreatePickup('Indiranagar 100ft Rd, Bengaluru');
           toast('Location locked to Indiranagar Hub', {
-            icon: '📍',
             style: { background: '#141414', color: '#FAF7F2' },
           });
         });
@@ -861,7 +860,6 @@ function TripsContent() {
         setGpsScanning(false);
         setCreatePickup('Indiranagar 100ft Rd, Bengaluru');
         toast('Location locked to Indiranagar Hub', {
-          icon: '📍',
           style: { background: '#141414', color: '#FAF7F2' },
         });
       },
@@ -958,7 +956,7 @@ function TripsContent() {
             type="button"
             onClick={() => {
               hapticTap();
-              toast.success('🔔 12 Live Escapes & Invites available');
+              toast.success('12 Live Escapes & Invites available');
             }}
             className="flex items-center gap-1.5 bg-[#18181B] text-white px-3 py-1.5 rounded-full shadow-sm hover:bg-black active:scale-95 transition cursor-pointer"
           >
@@ -992,11 +990,11 @@ function TripsContent() {
             <div className="px-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
               {[
                 { id: 'all', label: 'All Escapes' },
-                { id: 'dates', label: 'Dating Pairs 💕' },
-                { id: 'convoys', label: 'Roadtrips 🚗' },
-                { id: 'women', label: 'Women Safe 👩' },
-                { id: 'sunrise', label: 'Sunrise 🌅' },
-                { id: 'coffee', label: 'Coffee Walks ☕' },
+                { id: 'dates', label: 'Dating Pairs' },
+                { id: 'convoys', label: 'Roadtrips' },
+                { id: 'women', label: 'Women Safe' },
+                { id: 'sunrise', label: 'Sunrise' },
+                { id: 'coffee', label: 'Coffee Walks' },
               ].map((pill) => {
                 const isSelected = 
                   (pill.id === 'all' && selectedFilter === 'All') ||
@@ -1100,8 +1098,8 @@ function TripsContent() {
                     {/* Central User Location Beacon */}
                     <div className="absolute top-[42%] left-[45%] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
                       <div className="w-12 h-12 rounded-full bg-emerald-500/20 animate-ping absolute" />
-                      <div className="w-6 h-6 rounded-full bg-emerald-600 border-2 border-white shadow-md flex items-center justify-center text-white text-[9px] font-bold">
-                        📍
+                      <div className="w-6 h-6 rounded-full bg-emerald-600 border-2 border-white shadow-md flex items-center justify-center text-white">
+                        <MapPin className="w-3 h-3 text-white" />
                       </div>
                     </div>
 
@@ -1148,14 +1146,14 @@ function TripsContent() {
                             ? 'bg-rose-600 text-white border-rose-300'
                             : 'bg-[#1A382B] text-white border-emerald-300'
                         }`}>
-                          {trip.category === 'women' ? '👩 Women' : trip.type === 'pink' ? '💗 Date' : '🟢 Trip'} • ₹{trip.cost}
+                          {trip.category === 'women' ? 'Women Safe' : trip.type === 'pink' ? 'Dating Pair' : 'Roadtrip'} • ₹{trip.cost}
                         </div>
 
                         {/* Pin Head */}
                         <div className={`w-8 h-8 rounded-full border-2 text-white flex items-center justify-center text-[12px] font-bold shadow-[0_6px_16px_rgba(0,0,0,0.25)] ${
                           isSelected ? 'border-emerald-400 bg-black ring-2 ring-white' : 'border-[#FAF8F5] bg-[#18181B]'
                         }`}>
-                          {trip.type === 'pink' ? '✦' : '●'}
+                          {trip.type === 'pink' ? 'D' : 'R'}
                         </div>
                         <div className="w-1.5 h-1.5 bg-[#18181B] rotate-45 -mt-1 shadow" />
                       </div>
@@ -1231,7 +1229,7 @@ function TripsContent() {
                         ? 'bg-rose-100 text-rose-900 border border-rose-200'
                         : 'bg-emerald-100 text-emerald-900 border border-emerald-200'
                     }`}>
-                      {activeMapPin.category === 'women' ? '👩 Safe Women Circle' : activeMapPin.type === 'pink' ? '✦ Curated Date' : '🟢 Roadtrip & Trek'}
+                      {activeMapPin.category === 'women' ? 'Safe Women Circle' : activeMapPin.type === 'pink' ? 'Curated Date' : 'Roadtrip & Trek'}
                     </span>
                     <span className="text-[10px] font-semibold text-[#18181B]/60 flex items-center gap-1">
                       <Clock className="w-3 h-3 text-[#18181B]/40" />
@@ -1354,7 +1352,7 @@ function TripsContent() {
 
                   <div className="flex items-center justify-between text-[11px] font-medium text-emerald-900/70 pt-2 border-t border-emerald-900/10">
                     <span>Sat 5:30am</span>
-                    <span className="font-bold text-emerald-950">💕 3 Dating Pairs</span>
+                    <span className="font-bold text-emerald-950">3 Dating Pairs</span>
                   </div>
                 </div>
 
@@ -1453,14 +1451,14 @@ function TripsContent() {
                 <h3 className="text-[17px] font-[800] text-[#18181B] tracking-tight">
                   Travel Dating & Connections
                 </h3>
-                <span className="text-[11px] font-bold text-emerald-600">Mutual Sparks 💕</span>
+                <span className="text-[11px] font-bold text-emerald-600">Mutual Sparks</span>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 {/* Left Pink Chemistry Card */}
                 <div className="bg-[#FFEBF2] rounded-[26px] p-4 shadow-sm border border-rose-200/60 flex flex-col justify-between min-h-[145px]">
-                  <div className="w-10 h-10 rounded-2xl bg-white shadow-xs flex items-center justify-center text-rose-500 text-lg">
-                    💖
+                  <div className="w-10 h-10 rounded-2xl bg-white shadow-xs flex items-center justify-center text-rose-500">
+                    <Sparkles className="w-5 h-5 text-rose-500" />
                   </div>
                   <div>
                     <div className="text-[13px] font-[800] text-rose-950">Secret Spark</div>
@@ -1479,8 +1477,8 @@ function TripsContent() {
 
                 {/* Right Sky Verified Singles Nearby Card */}
                 <div className="bg-[#E8F3FF] rounded-[26px] p-4 shadow-sm border border-sky-200/60 flex flex-col justify-between min-h-[145px]">
-                  <div className="w-10 h-10 rounded-2xl bg-white shadow-xs flex items-center justify-center text-sky-600 text-lg">
-                    🧭
+                  <div className="w-10 h-10 rounded-2xl bg-white shadow-xs flex items-center justify-center text-sky-600">
+                    <Compass className="w-5 h-5 text-sky-600" />
                   </div>
                   <div>
                     <div className="text-[13px] font-[800] text-sky-950">Travel Singles</div>
@@ -1512,7 +1510,7 @@ function TripsContent() {
                 <div className="flex-1 space-y-1.5 pl-2">
                   <div className="bg-white/85 backdrop-blur-sm p-2.5 rounded-2xl shadow-xs border border-white">
                     <div className="text-[12px] font-[800] text-stone-900">
-                      ☕ Spontaneous Chai & Sunset Drive
+                      Spontaneous Chai & Sunset Drive
                     </div>
                     <div className="text-[10px] text-stone-600 font-medium mt-0.5 flex items-center justify-between">
                       <span>Indiranagar 100ft Rd</span>
@@ -1547,8 +1545,8 @@ function TripsContent() {
                     </div>
                   </div>
 
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-400 to-indigo-500 flex items-center justify-center text-white text-xl shadow-sm">
-                    ⛰️
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-400 to-indigo-500 flex items-center justify-center text-white shadow-sm">
+                    <Compass className="w-6 h-6 text-white" />
                   </div>
                 </div>
               </div>
@@ -1631,28 +1629,28 @@ function TripsContent() {
                         id: 'micro',
                         label: 'Micro Date / Cafe Meet',
                         sub: '60 min casual artisan coffee in daylight',
-                        icon: '☕',
+                        icon: '',
                         badge: 'PUBLIC VENUE ONLY',
                       },
                       {
                         id: 'day',
                         label: 'Day Date / Sunrise Roadtrip',
                         sub: '1-day scenic drive, hill fortress or viewpoint',
-                        icon: '⛰️',
+                        icon: '',
                         badge: 'HIGH DEMAND',
                       },
                       {
                         id: 'getaway',
                         label: 'Weekend Retreat / Getaway',
                         sub: '2-3 days coffee estate, trekking or camping',
-                        icon: '🏕️',
+                        icon: '',
                         badge: 'VERIFIED ID REQUIRED',
                       },
                       {
                         id: 'crawl',
                         label: 'Artisan Food & Cafe Crawl',
                         sub: '2-3 hours curated culinary spots with a buddy',
-                        icon: '🥐',
+                        icon: '',
                         badge: 'SOCIAL CASUAL',
                       },
                     ].map((item) => (
@@ -1734,7 +1732,7 @@ function TripsContent() {
 
                     <div className="mt-4 pt-3.5 border-t border-white/10 flex items-center justify-between relative z-10">
                       <span className="text-[10px] text-white/70 font-medium">
-                        {gpsDetected ? '✓ High precision coordinate locked' : 'Instant 1-tap locality scan'}
+                        {gpsDetected ? 'High precision coordinate locked' : 'Instant 1-tap locality scan'}
                       </span>
                       <button
                         type="button"
@@ -1806,7 +1804,7 @@ function TripsContent() {
                               : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70 hover:border-[#18181B]/20'
                           }`}
                         >
-                          📍 {spot}
+                          {spot}
                         </button>
                       ))}
                     </div>
@@ -1835,7 +1833,7 @@ function TripsContent() {
                       {[
                         {
                           id: 'pink',
-                          title: 'A Date ✦',
+                          title: 'A Date',
                           sub: 'Strictly 1-on-1 private date · 1 Guest only',
                           badge: '1 GUEST ONLY (1-ON-1)',
                           borderActive: 'border-[#331822] bg-[#FAF5F7] ring-1 ring-[#331822]',
@@ -1843,7 +1841,7 @@ function TripsContent() {
                         },
                         {
                           id: 'green',
-                          title: 'A Trip ⛰️',
+                          title: 'A Trip',
                           sub: 'Scenic roadtrip, summit trek & sights',
                           badge: 'EXPLORATION',
                           borderActive: 'border-[#12221A] bg-[#F4F8F5] ring-1 ring-[#12221A]',
@@ -1851,7 +1849,7 @@ function TripsContent() {
                         },
                         {
                           id: 'buddies',
-                          title: 'Buddies ●',
+                          title: 'Buddies',
                           sub: 'Chill social weekend & new conversations',
                           badge: 'SOCIAL CIRCLE',
                           borderActive: 'border-[#18181B] bg-[#F8F7F5] ring-1 ring-[#18181B]',
@@ -1859,7 +1857,7 @@ function TripsContent() {
                         },
                         {
                           id: 'women',
-                          title: 'Women-Only 👩',
+                          title: 'Women-Only',
                           sub: 'Verified safe circle for women explorers',
                           badge: 'PRIVATE CIRCLE',
                           borderActive: 'border-[#291833] bg-[#F7F4F9] ring-1 ring-[#291833]',
@@ -1947,7 +1945,7 @@ function TripsContent() {
                           }}
                           className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-black/10 flex items-center justify-center text-[#18181B]/60 text-xs cursor-pointer"
                         >
-                          ✕
+                          X
                         </button>
                       ) : null}
                     </div>
@@ -1957,7 +1955,7 @@ function TripsContent() {
                       <div className="mt-2 rounded-2xl bg-white border border-[#18181B]/[0.1] shadow-xl overflow-hidden animate-fade-in divide-y divide-[#18181B]/[0.05] z-30">
                         <div className="px-3.5 py-1.5 bg-[#FAF8F5] flex items-center justify-between">
                           <span className="text-[9px] font-bold text-[#18181B]/45 uppercase tracking-wider">
-                            📍 Google Maps Results
+                            Google Maps Results
                           </span>
                           <span className="text-[9px] text-[#18181B]/40 font-medium">Tap to confirm</span>
                         </div>
@@ -2184,7 +2182,7 @@ function TripsContent() {
                   <div>
                     <h2 className="text-[20px] font-[800] tracking-[-0.02em] text-[#18181B] flex items-center gap-2">
                       <span>{createType === 'pink' ? 'How will you travel?' : 'Who is joining & how are you traveling?'}</span>
-                      <span className="text-sm">🚗</span>
+                      
                     </h2>
                     <p className="text-[12px] text-[#18181B]/55 mt-1 font-normal">
                       {createType === 'pink'
@@ -2272,23 +2270,23 @@ function TripsContent() {
                     <div className="grid grid-cols-1 gap-2 pt-1">
                       {[
                         {
-                          id: '🚗 Driving Private Car',
-                          title: '🚗 Driving Private Car',
+                          id: 'Driving Private Car',
+                          title: 'Driving Private Car',
                           desc: 'Host is driving with 3-4 open seats in car',
                         },
                         {
-                          id: '🏍️ Cruising Motorcycle',
-                          title: '🏍️ Cruising Motorcycle',
+                          id: 'Cruising Motorcycle',
+                          title: 'Cruising Motorcycle',
                           desc: 'Solo cruiser or with pillion rider',
                         },
                         {
-                          id: '🚕 Split Cabs / Rideshare',
-                          title: '🚕 Split Cabs / Rideshare',
+                          id: 'Split Cabs / Rideshare',
+                          title: 'Split Cabs / Rideshare',
                           desc: 'Book Uber/cabs together & split ride cost evenly',
                         },
                         {
-                          id: '🚙 Need a Ride / Co-pilot',
-                          title: '🚙 Need a Ride / Co-pilot',
+                          id: 'Need a Ride / Co-pilot',
+                          title: 'Need a Ride / Co-pilot',
                           desc: 'Looking to join another member’s ride',
                         },
                       ].map((ride) => {
@@ -2336,7 +2334,7 @@ function TripsContent() {
                   <div>
                     <h2 className="text-[20px] font-[800] tracking-[-0.02em] text-[#18181B] flex items-center gap-2">
                       <span>Atmosphere & Shared Split</span>
-                      <span className="text-sm">✨</span>
+                      
                     </h2>
                     <p className="text-[12px] text-[#18181B]/55 mt-1 font-normal">
                       Select vibe tags and set the fair estimated contribution per explorer.
@@ -2356,14 +2354,14 @@ function TripsContent() {
 
                     <div className="grid grid-cols-2 gap-2">
                       {[
-                        { id: 'Chai & Chill', icon: '☕', label: 'Chai & Chill' },
-                        { id: 'Trek & Talk', icon: '🥾', label: 'Trek & Talk' },
-                        { id: 'Photo Walks', icon: '📸', label: 'Photo Walks' },
-                        { id: 'Sunset Views', icon: '🌅', label: 'Sunset Views' },
-                        { id: 'Food Crawl', icon: '🍜', label: 'Food Crawl' },
-                        { id: 'Scenic Drive', icon: '🚗', label: 'Scenic Drive' },
-                        { id: 'Deep Talks', icon: '💬', label: 'Deep Talks' },
-                        { id: 'Night Trek', icon: '⛺', label: 'Night Trek' },
+                        { id: 'Chai & Chill', label: 'Chai & Chill' },
+                        { id: 'Trek & Talk', label: 'Trek & Talk' },
+                        { id: 'Photo Walks', label: 'Photo Walks' },
+                        { id: 'Sunset Views', label: 'Sunset Views' },
+                        { id: 'Food Crawl', label: 'Food Crawl' },
+                        { id: 'Scenic Drive', label: 'Scenic Drive' },
+                        { id: 'Deep Talks', label: 'Deep Talks' },
+                        { id: 'Night Trek', label: 'Night Trek' },
                       ].map((tag) => {
                         const isSelected = createVibes.includes(tag.id);
                         return (
@@ -2377,9 +2375,8 @@ function TripsContent() {
                                 : 'bg-stone-50 border-stone-200/80 text-stone-700 hover:bg-stone-100'
                             }`}
                           >
-                            <span className="flex items-center gap-1.5 truncate">
-                              <span>{tag.icon}</span>
-                              <span className="truncate">{tag.label}</span>
+                            <span className="truncate font-bold">
+                              {tag.label}
                             </span>
                             {isSelected && <Check className="w-3 h-3 text-[#1D8E66] shrink-0 stroke-[3]" />}
                           </button>
@@ -2444,7 +2441,7 @@ function TripsContent() {
                         </span>
                       </div>
                       <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-white/10 text-white/90">
-                        {createType === 'pink' ? '✦ Curated Date' : createType === 'women' ? '👩 Women Circle' : '● Roadtrip'}
+                        {createType === 'pink' ? 'Curated Date' : createType === 'women' ? 'Women Circle' : 'Roadtrip'}
                       </span>
                     </div>
 
@@ -2639,13 +2636,13 @@ function TripsContent() {
                   selectedTrip.type === 'pink' ? 'bg-rose-950/60 border-rose-400/30' : 'bg-black/40 border-white/20'
                 }`}>
                   <Users className={`w-3.5 h-3.5 ${selectedTrip.type === 'pink' ? 'text-rose-300' : 'text-emerald-400'}`} />
-                  <span>{selectedTrip.type === 'pink' ? '✦ 1-on-1 (1 spot only)' : `${selectedTrip.totalSpots - selectedTrip.spots} spots available`}</span>
+                  <span>{selectedTrip.type === 'pink' ? '1-on-1 (1 spot only)' : `${selectedTrip.totalSpots - selectedTrip.spots} spots available`}</span>
                 </div>
               </div>
 
               <div className="relative z-10 text-white">
                 <span className={`inline-block px-2.5 py-0.5 rounded-full border text-[9px] font-bold tracking-[0.2em] uppercase mb-1.5 ${selectedTrip.coverStyle.badge}`}>
-                  {selectedTrip.type === 'pink' ? '✦ 1-on-1 Curated Date' : selectedTrip.category === 'women' ? '👩 Women Safe Circle' : '● Verified Roadtrip'}
+                  {selectedTrip.type === 'pink' ? '1-on-1 Curated Date' : selectedTrip.category === 'women' ? 'Women Safe Circle' : 'Verified Roadtrip'}
                 </span>
                 <h2 className="text-[22px] font-[800] text-white leading-tight tracking-[-0.01em]">
                   {selectedTrip.destination}
@@ -2771,14 +2768,14 @@ function TripsContent() {
                     type="button"
                     onClick={() => {
                       hapticSuccess();
-                      toast.success('Requested 1-on-1 Date! ✦', {
+                      toast.success('Requested 1-on-1 Date!', {
                         style: { background: '#141414', color: '#FAF7F2' },
                       });
                       setSelectedTrip(null);
                     }}
                     className="w-full h-12 rounded-2xl bg-[#331822] text-rose-200 border border-rose-800/40 font-bold text-[13px] tracking-wide shadow-lg active:scale-95 transition cursor-pointer flex items-center justify-center gap-2"
                   >
-                    <span>✦ Request 1-on-1 Date</span>
+                    <span>Request 1-on-1 Date</span>
                   </button>
                   <div className="text-center text-[10px] text-[#18181B]/40 mt-2 font-medium">
                     Strictly 1-on-1 Date · Host approves request before confirmation
@@ -2791,7 +2788,7 @@ function TripsContent() {
                       type="button"
                       onClick={() => {
                         hapticSuccess();
-                        toast.success('Joined as Buddy! ●', {
+                        toast.success('Joined as Buddy!', {
                           style: { background: '#141414', color: '#FAF7F2' },
                         });
                         setSelectedTrip(null);
@@ -2804,7 +2801,7 @@ function TripsContent() {
                       type="button"
                       onClick={() => {
                         hapticSuccess();
-                        toast.success('Joined Exploration! ⛰️', {
+                        toast.success('Joined Exploration!', {
                           style: { background: '#141414', color: '#FAF7F2' },
                         });
                         setSelectedTrip(null);
@@ -2863,7 +2860,7 @@ function TripsContent() {
                 />
               </div>
 
-              {/* 🎯 1-Tap GPS Auto-Scan Button */}
+              {/* 1-Tap GPS Auto-Scan Button */}
               <button
                 type="button"
                 disabled={locationGpsScanning}
@@ -2886,7 +2883,7 @@ function TripsContent() {
                 <ChevronRight className="w-4 h-4 text-emerald-800" />
               </button>
 
-              {/* ⭐️ Popular Neighborhoods in Bengaluru */}
+              {/* Popular Neighborhoods in Bengaluru */}
               <div>
                 <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#18181B]/50 mb-2 px-1">
                   Popular Hubs in Bengaluru
@@ -2902,7 +2899,7 @@ function TripsContent() {
                         hapticSuccess();
                         setSelectedLocation(item);
                         setShowLocationModal(false);
-                        toast.success(`📍 Switched to ${item.name}`, {
+                        toast.success(`Switched to ${item.name}`, {
                           style: { background: '#141414', color: '#FAF7F2' },
                         });
                       }}
@@ -2923,7 +2920,7 @@ function TripsContent() {
                 </div>
               </div>
 
-              {/* 🏙️ Weekend Destinations & Other Cities */}
+              {/* Weekend Destinations & Other Cities */}
               <div>
                 <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#18181B]/50 mb-2 px-1">
                   Weekend Escapes & Top Destinations
@@ -2939,7 +2936,7 @@ function TripsContent() {
                         hapticSuccess();
                         setSelectedLocation(dest);
                         setShowLocationModal(false);
-                        toast.success(`📍 Switched to ${dest.name}`, {
+                        toast.success(`Switched to ${dest.name}`, {
                           style: { background: '#141414', color: '#FAF7F2' },
                         });
                       }}

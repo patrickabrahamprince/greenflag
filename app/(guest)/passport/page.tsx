@@ -19,7 +19,11 @@ import {
   Lock,
   Bell,
   QrCode,
-  Share2
+  Share2,
+  Plane,
+  Mountain,
+  Coffee,
+  Waves
 } from 'lucide-react';
 import { hapticTap, hapticSuccess, hapticWarning } from '@/lib/haptics';
 import { createClient } from '@/lib/supabase/client';
@@ -216,8 +220,8 @@ export default function PassportPage() {
               </div>
             </div>
 
-            <div className="w-8 h-8 rounded-full bg-[#18181B] text-white shadow-md flex items-center justify-center text-xs font-bold self-center -mx-3 z-10">
-              ✈
+            <div className="w-8 h-8 rounded-full bg-[#18181B] text-white shadow-md flex items-center justify-center self-center -mx-3 z-10">
+              <Plane className="w-3.5 h-3.5 text-white" />
             </div>
 
             <div className="flex-1 bg-[#F9BC45] rounded-2xl p-3 text-right border border-black/5">
@@ -241,7 +245,7 @@ export default function PassportPage() {
             <div className="bg-[#F9BC45] rounded-2xl p-3 border border-black/5">
               <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Trust Score</div>
               <div className="text-[14px] font-[900] text-stone-950 mt-0.5 flex items-center gap-1">
-                <span>4.95 ★</span>
+                <span className="flex items-center gap-1">4.95 <Star className="w-3.5 h-3.5 fill-current text-stone-900" /></span>
                 <span className="text-[10px] font-bold bg-black/10 px-1.5 py-0.2 rounded-md">Top 5%</span>
               </div>
             </div>
@@ -264,7 +268,7 @@ export default function PassportPage() {
                   url: window.location.href,
                 }).catch(() => {});
               } else {
-                toast.success('📋 Passport link copied to clipboard!');
+                toast.success('Passport link copied to clipboard!');
               }
             }}
             className="w-full py-3.5 rounded-full bg-[#18181B] text-white font-[800] text-[14px] shadow-md hover:bg-black active:scale-[0.98] transition cursor-pointer flex items-center justify-center gap-2"
@@ -293,7 +297,7 @@ export default function PassportPage() {
               <div className="flex-1 px-4 flex items-center justify-center relative">
                 <div className="w-full border-t-2 border-dashed border-stone-800/40" />
                 <div className="absolute w-7 h-7 rounded-full bg-white text-stone-900 shadow-sm flex items-center justify-center text-xs">
-                  ⛰️
+                  <Mountain className="w-3.5 h-3.5 text-stone-900" />
                 </div>
               </div>
               <div className="text-right">
@@ -327,7 +331,7 @@ export default function PassportPage() {
               <div className="flex-1 px-4 flex items-center justify-center relative">
                 <div className="w-full border-t-2 border-dashed border-white/20" />
                 <div className="absolute w-7 h-7 rounded-full bg-white text-stone-900 shadow-sm flex items-center justify-center text-xs">
-                  ☕
+                  <Coffee className="w-3.5 h-3.5 text-stone-900" />
                 </div>
               </div>
               <div className="text-right">
@@ -361,7 +365,7 @@ export default function PassportPage() {
               <div className="flex-1 px-4 flex items-center justify-center relative">
                 <div className="w-full border-t-2 border-dashed border-white/30" />
                 <div className="absolute w-7 h-7 rounded-full bg-white text-stone-900 shadow-sm flex items-center justify-center text-xs">
-                  🌊
+                  <Waves className="w-3.5 h-3.5 text-stone-900" />
                 </div>
               </div>
               <div className="text-right">
@@ -389,8 +393,8 @@ export default function PassportPage() {
         {/* 3. VERIFICATION BADGES BENTO GRID */}
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-[#D7F5E8] rounded-[24px] p-3.5 border border-emerald-200/60 shadow-xs flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full bg-emerald-500 text-white flex items-center justify-center text-sm font-bold shadow-xs">
-              ✓
+            <div className="w-9 h-9 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xs">
+              <Check className="w-4 h-4 text-white stroke-[3]" />
             </div>
             <div>
               <div className="text-[12px] font-[800] text-emerald-950">ID Checked</div>
@@ -399,8 +403,8 @@ export default function PassportPage() {
           </div>
 
           <div className="bg-[#DDF0FE] rounded-[24px] p-3.5 border border-sky-200/60 shadow-xs flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full bg-sky-500 text-white flex items-center justify-center text-sm font-bold shadow-xs">
-              ✓
+            <div className="w-9 h-9 rounded-full bg-sky-500 text-white flex items-center justify-center shadow-xs">
+              <Check className="w-4 h-4 text-white stroke-[3]" />
             </div>
             <div>
               <div className="text-[12px] font-[800] text-sky-950">Face Match</div>
