@@ -30,8 +30,9 @@ import {
   Star,
   Award,
   Bell,
-  AlarmClock,
   User,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react';
 import { hapticTap, hapticSuccess } from '@/lib/haptics';
 import toast from 'react-hot-toast';
@@ -648,8 +649,10 @@ function TripsContent() {
   const [createTimeSlot, setCreateTimeSlot] = useState('11:45 am');
   const timeWheelRef = useRef<HTMLDivElement>(null);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isProgrammaticScroll = useRef(false);
 
   const handleTimeWheelScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    if (isProgrammaticScroll.current) return;
     const container = e.currentTarget;
     const itemHeight = 44;
     const index = Math.round(container.scrollTop / itemHeight);
@@ -660,10 +663,15 @@ function TripsContent() {
     }
     
     scrollTimeoutRef.current = setTimeout(() => {
-      setSelectedTimeIndex(clampedIndex);
-      setCreateTimeSlot(TIME_WHEEL_SLOTS[clampedIndex]);
-      hapticTap();
-    }, 40);
+      setSelectedTimeIndex((prev) => {
+        if (prev !== clampedIndex) {
+          hapticTap();
+          setCreateTimeSlot(TIME_WHEEL_SLOTS[clampedIndex]);
+          return clampedIndex;
+        }
+        return prev;
+      });
+    }, 60);
   }, []);
 
   const handleSelectTimeSlot = useCallback((idx: number) => {
@@ -671,23 +679,31 @@ function TripsContent() {
     setSelectedTimeIndex(idx);
     setCreateTimeSlot(TIME_WHEEL_SLOTS[idx]);
     if (timeWheelRef.current) {
+      isProgrammaticScroll.current = true;
       timeWheelRef.current.scrollTo({
         top: idx * 44,
         behavior: 'smooth',
       });
+      setTimeout(() => {
+        isProgrammaticScroll.current = false;
+      }, 350);
     }
   }, []);
 
   useEffect(() => {
     if (createStep === 4 && timeWheelRef.current) {
+      isProgrammaticScroll.current = true;
+      const targetScroll = selectedTimeIndex * 44;
+      timeWheelRef.current.scrollTop = targetScroll;
       const timer = setTimeout(() => {
         if (timeWheelRef.current) {
-          timeWheelRef.current.scrollTop = selectedTimeIndex * 44;
+          timeWheelRef.current.scrollTop = targetScroll;
         }
+        isProgrammaticScroll.current = false;
       }, 100);
       return () => clearTimeout(timer);
     }
-  }, [createStep, selectedTimeIndex]);
+  }, [createStep]);
 
   const [createType, setCreateType] = useState<'green' | 'pink' | 'women'>('green');
   const [createGroupSize, setCreateGroupSize] = useState('2-4');
@@ -1855,8 +1871,36 @@ function TripsContent() {
 
                   {/* Vertical Tumbler Time Drum (Real Smooth Scroll & Wheel Picker) */}
                   <div className="bg-white rounded-[28px] py-4 px-3 shadow-sm border border-[#18181B]/[0.06] overflow-hidden relative">
-                    <div className="text-center text-[13px] text-stone-500 font-medium mb-2.5">
-                      {createType === 'pink' ? 'Video call starts in' : 'Video call starts in'}
+                    <div className="flex items-center justify-between px-2 mb-2">
+                      <div className="text-[13px] text-stone-500 font-medium">
+                        {createType === 'pink' ? 'Video call starts in' : 'Video call starts in'}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (selectedTimeIndex > 0) {
+                              handleSelectTimeSlot(selectedTimeIndex - 1);
+                            }
+                          }}
+                          className="w-7 h-7 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition cursor-pointer"
+                          aria-label="Previous time"
+                        >
+                          <ChevronUp className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (selectedTimeIndex < TIME_WHEEL_SLOTS.length - 1) {
+                              handleSelectTimeSlot(selectedTimeIndex + 1);
+                            }
+                          }}
+                          className="w-7 h-7 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition cursor-pointer"
+                          aria-label="Next time"
+                        >
+                          <ChevronDown className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
 
                     {/* Time Drum 220px Window */}
@@ -1868,8 +1912,11 @@ function TripsContent() {
                       <div
                         ref={timeWheelRef}
                         onScroll={handleTimeWheelScroll}
-                        className="h-full overflow-y-scroll snap-y snap-mandatory relative z-10 scrollbar-none overscroll-contain touch-pan-y"
-                        style={{ scrollBehavior: 'smooth' }}
+                        className="h-full overflow-y-auto snap-y snap-mandatory relative z-10 scrollbar-none overscroll-contain"
+                        style={{
+                          WebkitOverflowScrolling: 'touch',
+                          touchAction: 'pan-y',
+                        }}
                       >
                         {/* Top 2-slot spacer */}
                         <div className="h-[88px] shrink-0 pointer-events-none" />
