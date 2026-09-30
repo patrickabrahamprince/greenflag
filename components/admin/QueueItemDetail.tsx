@@ -59,7 +59,12 @@ export function QueueItemDetail({ item, onApprove, onReject, moderating }: Queue
         >
           {moderating ? <Loader2 className="w-4 h-4 animate-spin" /> : <X className="w-4 h-4" />} Reject
         </button>
-        <button className="btn-danger text-sm py-2.5 px-3">
+        <button
+          onClick={() => onReject(item.id)}
+          disabled={moderating}
+          title="Ban user"
+          className="btn-danger text-sm py-2.5 px-3 disabled:opacity-40"
+        >
           <Ban className="w-4 h-4" />
         </button>
       </div>
