@@ -25,6 +25,7 @@ import {
   Loader2,
   Compass,
   ArrowRight,
+  ArrowLeft,
   SlidersHorizontal,
   Star,
   Award,
@@ -1252,7 +1253,7 @@ function TripsContent() {
 
         {/* ================= VIEW 2: HOST AN ESCAPE (5-STEP WIZARD) ================= */}
         {activeTab === 'create' && (
-          <div className="px-5 pt-3.5 flex flex-col justify-between animate-fade-in">
+          <div className="px-5 pt-3.5 pb-32 flex flex-col justify-between animate-fade-in">
             <div>
               {/* Header Navigation with Luxury Ticker */}
               <div className="flex items-center justify-between mb-2">
@@ -2000,42 +2001,47 @@ function TripsContent() {
             </div>
 
             {/* ================= FLOATING DEDICATED ACTIONS ================= */}
-            <div className="fixed bottom-20 inset-x-5 max-w-md mx-auto z-40 bg-[#FAF8F5]/90 backdrop-blur-2xl p-2 rounded-[24px] border border-[#18181B]/[0.08] shadow-[0_16px_36px_-8px_rgba(24,24,27,0.18)] flex gap-2">
-              {createStep > 1 && (
+            <div className="fixed bottom-20 left-0 right-0 max-w-md mx-auto px-5 z-40 pointer-events-none">
+              <div className="bg-[#FAF8F5]/95 backdrop-blur-2xl p-2 rounded-[24px] border border-[#18181B]/[0.08] shadow-[0_16px_36px_-8px_rgba(24,24,27,0.18)] flex items-center gap-2 pointer-events-auto">
                 <button
                   type="button"
                   onClick={() => {
                     hapticTap();
-                    setCreateStep((s) => Math.max(1, s - 1));
+                    if (createStep > 1) {
+                      setCreateStep((s) => Math.max(1, s - 1));
+                    } else {
+                      setActiveTab('explore');
+                    }
                   }}
-                  className="h-12 px-5 rounded-2xl bg-white border border-[#18181B]/[0.1] font-bold text-[13px] active:scale-95 transition cursor-pointer hover:bg-black/5"
+                  className="h-12 px-4 rounded-2xl bg-white border border-[#18181B]/[0.1] font-bold text-[13px] text-[#18181B] active:scale-95 transition cursor-pointer hover:bg-black/5 shrink-0 flex items-center justify-center gap-1.5 shadow-xs"
                 >
-                  Back
+                  <ArrowLeft className="w-4 h-4 text-[#18181B]/70" />
+                  <span>{createStep === 1 ? 'Cancel' : 'Back'}</span>
                 </button>
-              )}
 
-              {createStep < 5 ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    hapticTap();
-                    setCreateStep((s) => Math.min(5, s + 1));
-                  }}
-                  className="flex-1 h-12 rounded-2xl bg-[#18181B] text-white font-[800] text-[13px] tracking-wide shadow-md active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <span>Proceed to Step {createStep + 1}</span>
-                  <ChevronRight className="w-4 h-4 text-white/70" />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handlePublish}
-                  className="flex-1 h-12 rounded-2xl bg-[#18181B] text-[#FAF8F5] font-[800] text-[13px] tracking-wide shadow-xl active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer border border-white/10"
-                >
-                  <Sparkles className="w-4 h-4 text-[#D4AF37]" />
-                  <span>Publish Private Escape</span>
-                </button>
-              )}
+                {createStep < 5 ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      hapticTap();
+                      setCreateStep((s) => Math.min(5, s + 1));
+                    }}
+                    className="flex-1 h-12 rounded-2xl bg-[#18181B] text-white font-[800] text-[13px] tracking-wide shadow-md active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <span>Proceed to Step {createStep + 1}</span>
+                    <ChevronRight className="w-4 h-4 text-white/70" />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handlePublish}
+                    className="flex-1 h-12 rounded-2xl bg-[#18181B] text-[#FAF8F5] font-[800] text-[13px] tracking-wide shadow-xl active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer border border-white/10"
+                  >
+                    <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+                    <span>Publish Private Escape</span>
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Confetti / Published Success Overlay */}
