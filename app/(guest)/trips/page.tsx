@@ -983,124 +983,278 @@ function TripsContent() {
         {activeTab === 'explore' && (
           <div className="h-full flex flex-col animate-fade-in space-y-5 pt-1">
             
-            {/* 1. LIVE ANIMATED TRAVEL DATING RADAR MAP (ON TOP) */}
-            <div className="px-5">
-              <div className="relative rounded-[32px] overflow-hidden border border-stone-200/80 bg-[#0F172A] text-white shadow-xl p-5 min-h-[300px] flex flex-col justify-between">
-                {/* Stylized Vector Map Grid & Road Canvas */}
+            {/* ================= INTERACTIVE EDITORIAL MAP CANVAS (INITIAL MAP) ================= */}
+            <div className="px-5 mt-1">
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-1.5">
+                  <Compass className="w-4 h-4 text-emerald-800" />
+                  <span className="text-[13px] font-[800] text-[#18181B] tracking-tight">Interactive Radar & Routes</span>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100/70 px-2 py-0.5 rounded-full">
+                  Tap pin for overview
+                </span>
+              </div>
+            </div>
+
+            <div 
+              className="relative h-[250px] bg-[#E8EDE6] overflow-hidden mx-5 mb-2 rounded-[28px] border border-[#18181B]/[0.08] shadow-[inset_0_2px_8px_rgba(0,0,0,0.03)] shrink-0 select-none cursor-grab active:cursor-grabbing touch-none"
+              onMouseDown={(e) => handleMapPointerDown(e.clientX, e.clientY)}
+              onMouseMove={(e) => handleMapPointerMove(e.clientX, e.clientY)}
+              onMouseUp={handleMapPointerUp}
+              onMouseLeave={handleMapPointerUp}
+              onTouchStart={handleMapTouchStart}
+              onTouchMove={handleMapTouchMove}
+              onTouchEnd={handleMapTouchEnd}
+              onWheel={handleMapWheel}
+            >
+              {/* Pannable & Zoomable World Layer */}
+              <div
+                className="absolute inset-[-150px] transition-transform duration-75 ease-out"
+                style={{
+                  transform: `translate(${mapPan.x}px, ${mapPan.y}px) scale(${mapZoom})`,
+                  transformOrigin: 'center center',
+                }}
+              >
+                {/* Subtle Map Grid Texture */}
                 <div
-                  className="absolute inset-0 opacity-25 pointer-events-none"
+                  className="absolute inset-0 opacity-[0.05] pointer-events-none"
                   style={{
-                    backgroundImage: `radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.2) 0%, transparent 70%),
-                                      linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
-                                      linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)`,
-                    backgroundSize: '100% 100%, 32px 32px, 32px 32px',
+                    backgroundImage: 'radial-gradient(#18181B 1px, transparent 1px)',
+                    backgroundSize: '18px 18px',
                   }}
                 />
 
-                {/* Animated Route Curved Highway Lines */}
-                <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 340 240">
-                  {/* Glowing Cyan Highway Path */}
-                  <path
-                    d="M 40 190 Q 140 50 290 90"
-                    stroke="#38BDF8"
-                    strokeWidth="3.5"
-                    strokeDasharray="8 5"
-                    fill="none"
-                    className="opacity-90 animate-pulse"
-                  />
-                  {/* Glowing Purple Highway Path */}
-                  <path
-                    d="M 60 160 Q 190 210 280 140"
-                    stroke="#A855F7"
-                    strokeWidth="3"
-                    strokeDasharray="6 4"
-                    fill="none"
-                    className="opacity-75"
-                  />
-                </svg>
+                {/* Topography & Arterial Roads Vector */}
+                <div className="absolute inset-0 p-5 pointer-events-none">
+                  <div className="w-full h-full relative">
+                    <svg className="w-full h-full opacity-40" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M 0 300 C 250 180, 450 500, 800 350" fill="none" stroke="#FFFFFF" strokeWidth="18" />
+                      <path d="M 180 0 C 220 280, 320 400, 400 800" fill="none" stroke="#CBD5E1" strokeWidth="12" />
+                      <path d="M 450 0 C 400 250, 580 420, 540 800" fill="none" stroke="#FFFFFF" strokeWidth="14" />
+                      {/* Dynamic Route Line to Selected Pin */}
+                      {activeMapPin && (
+                        <line 
+                          x1="380" 
+                          y1="340" 
+                          x2={`${activeMapPin.pin.x * 6}`} 
+                          y2={`${activeMapPin.pin.y * 6}`} 
+                          stroke="#10B981" 
+                          strokeWidth="3" 
+                          strokeDasharray="6 4" 
+                          className="opacity-70"
+                        />
+                      )}
+                      <ellipse cx="320" cy="380" rx="90" ry="70" fill="rgba(186, 230, 253, 0.7)" stroke="#93C5FD" strokeWidth="2" />
+                      <ellipse cx="580" cy="260" rx="60" ry="45" fill="rgba(209, 250, 229, 0.8)" stroke="#6EE7B7" strokeWidth="2" />
+                    </svg>
 
-                {/* Interactive Map Header Bar */}
-                <div className="relative z-10 flex items-center justify-between">
-                  <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 shadow-xs">
-                    <span className="w-2 h-2 rounded-full bg-[#00E5A3] animate-pulse" />
-                    <span className="text-[12px] font-[800] text-emerald-300">14 Escapes & Pairs Live</span>
-                  </div>
+                    {/* Central User Location Beacon */}
+                    <div className="absolute top-[42%] left-[45%] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+                      <div className="w-12 h-12 rounded-full bg-emerald-500/20 animate-ping absolute" />
+                      <div className="w-6 h-6 rounded-full bg-emerald-600 border-2 border-white shadow-md flex items-center justify-center text-white text-[9px] font-bold">
+                        📍
+                      </div>
+                    </div>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      hapticTap();
-                      setShowLocationModal(true);
-                    }}
-                    className="px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-[11px] font-bold text-white hover:bg-white/25 active:scale-95 transition cursor-pointer"
-                  >
-                    Bangalore Hub ▾
-                  </button>
-                </div>
-
-                {/* Interactive Map Animated Pins */}
-                <div className="relative z-10 my-6 h-28 relative">
-                  {/* Pin 1: Nandi Hills Sunrise Convoy */}
-                  <div
-                    onClick={() => {
-                      hapticSuccess();
-                      setSelectedTrip(TRIPS_DATA[0]);
-                    }}
-                    className="absolute top-1 right-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-3 py-1.5 rounded-full shadow-lg border border-white/40 flex items-center gap-1.5 text-[11px] font-[800] cursor-pointer hover:scale-105 active:scale-95 transition"
-                  >
-                    <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-                    <span>⛰️ Nandi Convoy (3 Pairs)</span>
-                  </div>
-
-                  {/* Pin 2: Coorg Estate Drive */}
-                  <div
-                    onClick={() => {
-                      hapticSuccess();
-                      setSelectedTrip(TRIPS_DATA[1]);
-                    }}
-                    className="absolute bottom-2 left-4 bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-3 py-1.5 rounded-full shadow-lg border border-white/40 flex items-center gap-1.5 text-[11px] font-[800] cursor-pointer hover:scale-105 active:scale-95 transition"
-                  >
-                    <span>☕ Coorg Estate Drive</span>
-                  </div>
-
-                  {/* Pin 3: Gokarna Beach Trail */}
-                  <div
-                    onClick={() => {
-                      hapticSuccess();
-                      setSelectedTrip(TRIPS_DATA[2] || TRIPS_DATA[0]);
-                    }}
-                    className="absolute top-14 left-16 bg-gradient-to-r from-rose-500 to-pink-600 text-white px-2.5 py-1 rounded-full shadow-md border border-white/30 flex items-center gap-1 text-[10px] font-bold cursor-pointer hover:scale-105 transition"
-                  >
-                    <span>💕 Gokarna Trail</span>
-                  </div>
-
-                  {/* Center Radar Pulse */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                    <span className="w-14 h-14 rounded-full bg-sky-400/20 animate-ping absolute -inset-2" />
-                    <span className="w-9 h-9 rounded-full bg-sky-500/30 flex items-center justify-center">
-                      <span className="w-3.5 h-3.5 rounded-full bg-[#00E5A3] border-2 border-white shadow-xs" />
-                    </span>
+                    <div className="absolute top-[34%] left-[38%] text-[10px] font-bold text-stone-500 uppercase tracking-widest pointer-events-none">
+                      Indiranagar Hub
+                    </div>
+                    <div className="absolute top-[48%] left-[30%] text-[10px] font-bold text-stone-500 uppercase tracking-widest pointer-events-none">
+                      Koramangala
+                    </div>
+                    <div className="absolute top-[20%] left-[44%] text-[10px] font-bold text-stone-500 uppercase tracking-widest pointer-events-none">
+                      Nandi Hills Route
+                    </div>
                   </div>
                 </div>
 
-                {/* Map Bottom Action Bar */}
-                <div className="relative z-10 flex items-center justify-between pt-3 border-t border-white/10">
-                  <div className="text-[12px] text-white/80 font-medium">
-                    Tap any pin to view route & join
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      hapticTap();
-                      setSelectedTrip(TRIPS_DATA[0]);
-                    }}
-                    className="px-4 py-1.5 rounded-full bg-white text-stone-900 text-[12px] font-bold active:scale-95 transition cursor-pointer shadow-sm"
-                  >
-                    View Nearest &gt;
-                  </button>
+                {/* Interactive Luxury Event Pins */}
+                {filteredTrips.map((trip) => {
+                  const isSelected = activeMapPin?.id === trip.id;
+                  return (
+                    <button
+                      key={trip.id}
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        hapticTap();
+                        setActiveMapPin(trip);
+                      }}
+                      className={`absolute -translate-x-1/2 -translate-y-1/2 group cursor-pointer transition-all z-20 pointer-events-auto ${
+                        isSelected ? 'scale-125 z-30' : 'hover:scale-110 active:scale-95'
+                      }`}
+                      style={{ left: `${trip.pin.x}%`, top: `${trip.pin.y}%` }}
+                    >
+                      <div className="relative flex flex-col items-center">
+                        {/* Animated Focus Halo on Selected Pin */}
+                        {isSelected && (
+                          <div className="absolute -inset-2 rounded-full bg-emerald-400/40 animate-ping pointer-events-none" />
+                        )}
+
+                        {/* Countdown / Tag Pill */}
+                        <div className={`px-2 py-0.5 rounded-full text-[9px] font-bold whitespace-nowrap mb-1 shadow-md border ${
+                          isSelected 
+                            ? 'bg-[#18181B] text-white border-white ring-2 ring-emerald-400'
+                            : trip.type === 'pink'
+                            ? 'bg-rose-600 text-white border-rose-300'
+                            : 'bg-[#1A382B] text-white border-emerald-300'
+                        }`}>
+                          {trip.category === 'women' ? '👩 Women' : trip.type === 'pink' ? '💗 Date' : '🟢 Trip'} • ₹{trip.cost}
+                        </div>
+
+                        {/* Pin Head */}
+                        <div className={`w-8 h-8 rounded-full border-2 text-white flex items-center justify-center text-[12px] font-bold shadow-[0_6px_16px_rgba(0,0,0,0.25)] ${
+                          isSelected ? 'border-emerald-400 bg-black ring-2 ring-white' : 'border-[#FAF8F5] bg-[#18181B]'
+                        }`}>
+                          {trip.type === 'pink' ? '✦' : '●'}
+                        </div>
+                        <div className="w-1.5 h-1.5 bg-[#18181B] rotate-45 -mt-1 shadow" />
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Luxury Map Overlay Pill */}
+              <div className="absolute left-3 top-3 pointer-events-none z-10">
+                <div className="bg-[#18181B]/85 backdrop-blur-md text-[#FAF8F5] text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full shadow-md border border-white/10 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span>{selectedLocation.name.split(',')[0]} · {filteredTrips.length} Pins</span>
                 </div>
               </div>
+
+              {/* Floating Map Zoom & Center Controls */}
+              <div className="absolute right-3 top-3 z-30 flex flex-col gap-1.5">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    hapticTap();
+                    setMapZoom((z) => Math.min(2.4, z + 0.2));
+                  }}
+                  className="w-7 h-7 bg-white/95 backdrop-blur-md rounded-full shadow-md flex items-center justify-center font-bold text-xs border border-[#18181B]/[0.08] active:scale-90 transition cursor-pointer"
+                >
+                  +
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    hapticTap();
+                    setMapZoom((z) => Math.max(0.7, z - 0.2));
+                  }}
+                  className="w-7 h-7 bg-white/95 backdrop-blur-md rounded-full shadow-md flex items-center justify-center font-bold text-xs border border-[#18181B]/[0.08] active:scale-90 transition cursor-pointer"
+                >
+                  -
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    hapticSuccess();
+                    setMapPan({ x: 0, y: 0 });
+                    setMapZoom(1);
+                    toast.success(`Centered on ${selectedLocation.name}`);
+                  }}
+                  className="w-7 h-7 bg-white/95 backdrop-blur-md rounded-full shadow-md flex items-center justify-center text-emerald-800 border border-[#18181B]/[0.08] active:scale-90 transition cursor-pointer"
+                >
+                  <Navigation className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Drag instruction overlay */}
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/40 backdrop-blur-md px-2.5 py-0.5 rounded-full text-[9px] font-bold text-white/80 pointer-events-none">
+                Drag to explore · Pinch to zoom
+              </div>
             </div>
+
+            {/* ================= INTERACTIVE PIN ACTIVITY OVERVIEW SHEET ================= */}
+            {activeMapPin && (
+              <div className="mx-5 mb-1 p-4 bg-white rounded-[26px] border border-[#18181B]/[0.09] shadow-[0_12px_32px_rgba(0,0,0,0.07)] animate-slide-up">
+                
+                {/* Header Badge & Timing */}
+                <div className="flex items-center justify-between pb-2 border-b border-[#18181B]/[0.06]">
+                  <div className="flex items-center gap-1.5">
+                    <span className={`text-[9px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                      activeMapPin.category === 'women'
+                        ? 'bg-purple-100 text-purple-900 border border-purple-200'
+                        : activeMapPin.type === 'pink'
+                        ? 'bg-rose-100 text-rose-900 border border-rose-200'
+                        : 'bg-emerald-100 text-emerald-900 border border-emerald-200'
+                    }`}>
+                      {activeMapPin.category === 'women' ? '👩 Safe Women Circle' : activeMapPin.type === 'pink' ? '✦ Curated Date' : '🟢 Roadtrip & Trek'}
+                    </span>
+                    <span className="text-[10px] font-semibold text-[#18181B]/60 flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-[#18181B]/40" />
+                      {activeMapPin.time}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1 bg-black/5 px-2 py-0.5 rounded-full text-[10px] font-bold text-[#18181B]">
+                    <Star className="w-3 h-3 fill-[#D4AF37] text-[#D4AF37]" />
+                    <span>{activeMapPin.score}</span>
+                  </div>
+                </div>
+
+                {/* Title & Route Info */}
+                <div className="mt-2.5">
+                  <h4 className="font-[800] text-[16px] text-[#18181B] tracking-tight leading-snug">
+                    {activeMapPin.destination}
+                  </h4>
+                  <p className="text-[11px] text-[#18181B]/60 font-medium line-clamp-1 mt-0.5">
+                    {activeMapPin.subtitle}
+                  </p>
+                  
+                  {/* Route & Distance Badge */}
+                  <div className="mt-2 flex items-center gap-2 text-[10px] text-emerald-950 font-semibold bg-[#F2F6F3] p-2 rounded-xl border border-emerald-900/10">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-800 shrink-0" />
+                    <span className="truncate">Pickup: <strong>{activeMapPin.pickupHub}</strong></span>
+                    <span className="text-stone-400">•</span>
+                    <span className="shrink-0">{activeMapPin.distance} ({activeMapPin.routeTime})</span>
+                  </div>
+                </div>
+
+                {/* Host Snapshot & Split Cost */}
+                <div className="mt-3 flex items-center justify-between pt-2.5 border-t border-[#18181B]/[0.06]">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-[#18181B] text-white font-bold text-xs flex items-center justify-center">
+                      {activeMapPin.host.avatar}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1">
+                        <span className="font-bold text-[12px] text-[#18181B]">{activeMapPin.host.name}</span>
+                        <span className="text-[8px] font-bold bg-[#E8EDE6] text-[#1A382B] px-1.5 py-0.2 rounded-full">
+                          Lvl {activeMapPin.host.level}
+                        </span>
+                      </div>
+                      <div className="text-[10px] text-[#18181B]/50 font-medium">
+                        {activeMapPin.totalSpots - activeMapPin.spots} spots left of {activeMapPin.totalSpots}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className="text-right">
+                      <div className="text-[9px] text-[#18181B]/50 uppercase font-bold tracking-wider">Per Person</div>
+                      <div className="font-extrabold text-[14px] text-[#18181B]">
+                        {activeMapPin.cost === 0 ? 'FREE' : `₹${activeMapPin.cost}`}
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        hapticSuccess();
+                        setSelectedTrip(activeMapPin);
+                      }}
+                      className="px-4 py-2 rounded-full bg-[#18181B] text-white text-[12px] font-bold hover:bg-black active:scale-95 transition shadow-sm cursor-pointer"
+                    >
+                      Details &gt;
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* 2. HORIZONTAL PASTEL BENTO TRAVEL DATING CARDS CAROUSEL */}
             <div className="px-6">

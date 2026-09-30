@@ -67,8 +67,8 @@ export function PhotoUploadSlots({
           if (!photo && photos.length < maxPhotos) inputRef.current?.click();
         }}
         className={`rounded-2xl border-2 flex items-center justify-center relative overflow-hidden transition-all duration-300 ${className} ${photo
-            ? 'border-transparent shadow-sm'
-            : 'border-dashed border-stone-300 bg-white/70 hover:border-[#1D3B2A] hover:bg-emerald-50/30 active:scale-95 cursor-pointer shadow-xs'
+          ? 'border-transparent shadow-sm'
+          : 'border-dashed border-stone-300 bg-white/70 hover:border-[#1D3B2A] hover:bg-emerald-50/30 active:scale-95 cursor-pointer shadow-xs'
           } ${draggedIdx === i ? 'opacity-50' : ''}`}
       >
         {photo ? (
