@@ -152,11 +152,11 @@ export default function ProfilePage() {
       <div className="mt-5 p-5 rounded-[32px] bg-gradient-to-r from-[#1D3B2A] via-[#2D5A3F] to-[#1D3B2A] text-white shadow-[0_8px_24px_rgba(29,59,42,0.35)] flex items-center justify-between border border-white/20">
         <div>
           <h3 className="font-display text-sm font-extrabold text-white flex items-center gap-1.5">
-            <span>✈️</span>
-            <span>GreenFlag Trips & Hangouts</span>
+            <MapPin className="w-4 h-4 text-emerald-300" />
+            <span>GreenFlag Travel Dating & Convoys</span>
           </h3>
           <p className="text-xs text-white/80 mt-1 max-w-[210px] leading-relaxed font-medium">
-            Plan weekend getaways, host hangouts, and meet companions.
+            Plan weekend getaways, host travel dates, and meet singles.
           </p>
         </div>
         <button

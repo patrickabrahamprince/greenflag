@@ -23,7 +23,8 @@ import {
   Plane,
   Mountain,
   Coffee,
-  Waves
+  Waves,
+  Compass
 } from 'lucide-react';
 import { hapticTap, hapticSuccess, hapticWarning } from '@/lib/haptics';
 import { createClient } from '@/lib/supabase/client';
@@ -162,15 +163,20 @@ export default function PassportPage() {
         
         {/* Title + Pill Switcher */}
         <div className="space-y-3">
-          <h1 className="text-[28px] font-[900] text-[#18181B] tracking-tight leading-tight">
-            AirSwift Passport
-          </h1>
+          <div>
+            <span className="text-[10px] font-extrabold tracking-[0.2em] uppercase text-emerald-800">
+              VERIFIED TRAVEL DATING
+            </span>
+            <h1 className="text-[28px] font-[900] text-[#18181B] tracking-tight leading-tight">
+              Travel Dating Passport
+            </h1>
+          </div>
 
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             {[
-              { id: 'pass', label: 'Boarding Pass' },
-              { id: 'stamps', label: 'Travel Stamps' },
-              { id: 'verified', label: 'ID Verified' },
+              { id: 'pass', label: 'Dating Boarding Pass' },
+              { id: 'stamps', label: 'Travel Date Stamps' },
+              { id: 'verified', label: 'Trust & Safety' },
             ].map((pill) => {
               const isSelected = activeTab === pill.id;
               return (
@@ -181,7 +187,7 @@ export default function PassportPage() {
                     hapticTap();
                     setActiveTab(pill.id as any);
                   }}
-                  className={`px-5 py-2 rounded-full text-[13px] font-[700] transition-all cursor-pointer ${
+                  className={`px-5 py-2 rounded-full text-[13px] font-[700] transition-all cursor-pointer whitespace-nowrap ${
                     isSelected
                       ? 'bg-[#18181B] text-white shadow-md'
                       : 'bg-[#F2EDE4] text-stone-700 hover:bg-[#EAE4D9]'
@@ -194,16 +200,16 @@ export default function PassportPage() {
           </div>
         </div>
 
-        {/* 1. GOLDEN SAFFRON AIRSWIFT BOARDING PASS (EXACT SCREENSHOT DESIGN) */}
+        {/* 1. GOLDEN SAFFRON TRAVEL DATING BOARDING PASS */}
         <div className="bg-[#F5A623] rounded-[32px] p-5 text-stone-900 shadow-xl relative overflow-hidden space-y-3">
           
           {/* Header Row: Passport Tag & QR icon */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="px-2.5 py-0.5 rounded-full bg-black/10 text-stone-950 font-[800] text-[10px] tracking-wider uppercase">
-                Official Travel Pass
+                Official Travel Dating Pass
               </span>
-              <span className="text-[11px] font-bold text-stone-950">GF-884291</span>
+              <span className="text-[11px] font-bold text-stone-950">GF-SPARK-8842</span>
             </div>
             <div className="w-7 h-7 rounded-lg bg-black/10 flex items-center justify-center">
               <QrCode className="w-4 h-4 text-stone-950" />
@@ -221,14 +227,14 @@ export default function PassportPage() {
             </div>
 
             <div className="w-8 h-8 rounded-full bg-[#18181B] text-white shadow-md flex items-center justify-center self-center -mx-3 z-10">
-              <Plane className="w-3.5 h-3.5 text-white" />
+              <Compass className="w-3.5 h-3.5 text-white" />
             </div>
 
             <div className="flex-1 bg-[#F9BC45] rounded-2xl p-3 text-right border border-black/5">
-              <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Destination</div>
-              <div className="text-[22px] font-[900] text-stone-950 tracking-tight leading-none mt-1">ANY</div>
+              <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Date Preference</div>
+              <div className="text-[22px] font-[900] text-stone-950 tracking-tight leading-none mt-1">SPARK</div>
               <div className="text-[11px] font-semibold text-stone-800/80 truncate mt-0.5">
-                Global & Escapes
+                Sunrise & Escapes
               </div>
             </div>
           </div>
@@ -243,7 +249,7 @@ export default function PassportPage() {
           {/* Middle Details Grid */}
           <div className="grid grid-cols-2 gap-2">
             <div className="bg-[#F9BC45] rounded-2xl p-3 border border-black/5">
-              <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Trust Score</div>
+              <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Chemistry Rating</div>
               <div className="text-[14px] font-[900] text-stone-950 mt-0.5 flex items-center gap-1">
                 <span className="flex items-center gap-1">4.95 <Star className="w-3.5 h-3.5 fill-current text-stone-900" /></span>
                 <span className="text-[10px] font-bold bg-black/10 px-1.5 py-0.2 rounded-md">Top 5%</span>
@@ -251,7 +257,7 @@ export default function PassportPage() {
             </div>
 
             <div className="bg-[#F9BC45] rounded-2xl p-3 border border-black/5">
-              <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Explorer Rank</div>
+              <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Single Explorer</div>
               <div className="text-[14px] font-[900] text-stone-950 mt-0.5">Level 15 Pro</div>
             </div>
           </div>
@@ -263,7 +269,7 @@ export default function PassportPage() {
               hapticSuccess();
               if (navigator.share) {
                 navigator.share({
-                  title: `${displayName}'s GreenFlag Passport`,
+                  title: `${displayName}'s GreenFlag Travel Dating Passport`,
                   text: `Check out my verified travel passport and convoys on GreenFlag!`,
                   url: window.location.href,
                 }).catch(() => {});
@@ -274,17 +280,17 @@ export default function PassportPage() {
             className="w-full py-3.5 rounded-full bg-[#18181B] text-white font-[800] text-[14px] shadow-md hover:bg-black active:scale-[0.98] transition cursor-pointer flex items-center justify-center gap-2"
           >
             <Share2 className="w-4 h-4" />
-            <span>Share Digital Boarding Pass</span>
+            <span>Share Dating Passport</span>
           </button>
         </div>
 
-        {/* 2. STACKED FLIGHT & ROADTRIP BOARDING PASSES */}
+        {/* 2. STACKED COMPLETED TRAVEL DATES & CONVOYS */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-[18px] font-[900] text-[#18181B] tracking-tight">
-              Recent Flights & Completed Convoys
+              Completed Travel Dates & Convoys
             </h3>
-            <span className="text-[11px] font-bold text-stone-500">3 Passes</span>
+            <span className="text-[11px] font-bold text-stone-500">3 Verified Passes</span>
           </div>
 
           {/* Pass 1: Saffron Ticket */}
@@ -314,8 +320,8 @@ export default function PassportPage() {
 
             <div className="flex items-center justify-between pt-1">
               <div>
-                <div className="text-[13px] font-[800]">Sunrise Cloud Convoy</div>
-                <div className="text-[10px] font-medium text-stone-800/80">Sat 5:30 AM · Confirmed (3 Pairs)</div>
+                <div className="text-[13px] font-[800]">Sunrise Cloud Dating Convoy</div>
+                <div className="text-[10px] font-medium text-stone-800/80">Sat 5:30 AM · Completed (3 Pairs)</div>
               </div>
               <div className="text-[22px] font-[900]">₹800</div>
             </div>
@@ -348,8 +354,8 @@ export default function PassportPage() {
 
             <div className="flex items-center justify-between pt-1">
               <div>
-                <div className="text-[13px] font-[800]">Private Coffee Tasting</div>
-                <div className="text-[10px] font-medium text-stone-400">Completed · 5.0 Star Rated</div>
+                <div className="text-[13px] font-[800]">1-on-1 Coffee Tasting Date</div>
+                <div className="text-[10px] font-medium text-stone-400">Completed · 5.0 Star Chemistry</div>
               </div>
               <div className="text-[22px] font-[900]">₹2,400</div>
             </div>
@@ -382,7 +388,7 @@ export default function PassportPage() {
 
             <div className="flex items-center justify-between pt-1">
               <div>
-                <div className="text-[13px] font-[800]">Gokarna Beach Trail</div>
+                <div className="text-[13px] font-[800]">Gokarna Beach & Sunset Circle</div>
                 <div className="text-[10px] font-medium text-sky-100/90">Women Safe Circle Verified</div>
               </div>
               <div className="text-[22px] font-[900]">₹1,200</div>
@@ -397,8 +403,8 @@ export default function PassportPage() {
               <Check className="w-4 h-4 text-white stroke-[3]" />
             </div>
             <div>
-              <div className="text-[12px] font-[800] text-emerald-950">ID Checked</div>
-              <div className="text-[10px] text-emerald-900/70 font-medium">Govt verified</div>
+              <div className="text-[12px] font-[800] text-emerald-950">Govt ID Checked</div>
+              <div className="text-[10px] text-emerald-900/70 font-medium">100% Verified Single</div>
             </div>
           </div>
 
@@ -408,7 +414,7 @@ export default function PassportPage() {
             </div>
             <div>
               <div className="text-[12px] font-[800] text-sky-950">Face Match</div>
-              <div className="text-[10px] text-sky-900/70 font-medium">Real photo 100%</div>
+              <div className="text-[10px] text-sky-900/70 font-medium">Real Photo Verified</div>
             </div>
           </div>
         </div>
