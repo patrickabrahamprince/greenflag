@@ -365,45 +365,6 @@ const POPULAR_DESTINATION_CITIES = [
   { name: 'Delhi NCR & Gurgaon', city: 'Delhi NCR' },
 ];
 
-const ALARM_PRESETS = [
-  {
-    id: 'sunrise',
-    icon: '🌅',
-    name: 'Dawn Sunrise Convoy',
-    hour: '05',
-    minute: '30',
-    period: 'AM' as const,
-    sub: 'Early morning cloud bed drive',
-  },
-  {
-    id: 'morning',
-    icon: '☕',
-    name: 'Morning Roast & Meet',
-    hour: '08',
-    minute: '30',
-    period: 'AM' as const,
-    sub: 'Artisan daylight cafe meet',
-  },
-  {
-    id: 'sunset',
-    icon: '🌆',
-    name: 'Golden Hour & Sunset',
-    hour: '04',
-    minute: '30',
-    period: 'PM' as const,
-    sub: 'Scenic viewpoints & highway drive',
-  },
-  {
-    id: 'night',
-    icon: '🌌',
-    name: 'Night Ridge Traverse',
-    hour: '10',
-    minute: '00',
-    period: 'PM' as const,
-    sub: 'Night stargazing & peak trek',
-  },
-];
-
 function TripsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -640,53 +601,28 @@ function TripsContent() {
   const [gpsScanning, setGpsScanning] = useState(false);
   const [gpsDetected, setGpsDetected] = useState(false);
   const [createDate, setCreateDate] = useState('This Saturday');
-  const [createTimeSlot, setCreateTimeSlot] = useState('🌅 Dawn Sunrise · 05:30 AM');
   const [alarmHour, setAlarmHour] = useState('05');
   const [alarmMinute, setAlarmMinute] = useState('30');
   const [alarmPeriod, setAlarmPeriod] = useState<'AM' | 'PM'>('AM');
-  const [alarmTitle, setAlarmTitle] = useState('🌅 Dawn Sunrise Convoy');
-  const [selectedAlarmId, setSelectedAlarmId] = useState('sunrise');
   const [alarmDays, setAlarmDays] = useState<string[]>(['Sat', 'Sun']);
+  const [createTimeSlot, setCreateTimeSlot] = useState('05:30 AM');
 
-  const adjustAlarmHour = (delta: number) => {
+  const setTimeHour = (h: string) => {
     hapticTap();
-    const current = parseInt(alarmHour, 10) || 5;
-    let next = current + delta;
-    if (next > 12) next = 1;
-    if (next < 1) next = 12;
-    const formatted = next.toString().padStart(2, '0');
-    setAlarmHour(formatted);
-    setCreateTimeSlot(`${alarmTitle} · ${formatted}:${alarmMinute} ${alarmPeriod}`);
-    setSelectedAlarmId('custom');
+    setAlarmHour(h);
+    setCreateTimeSlot(`${h}:${alarmMinute} ${alarmPeriod}`);
   };
 
-  const adjustAlarmMinute = (delta: number) => {
+  const setTimeMinute = (m: string) => {
     hapticTap();
-    const current = parseInt(alarmMinute, 10) || 0;
-    let next = current + delta;
-    if (next >= 60) next = 0;
-    if (next < 0) next = 45;
-    const formatted = next.toString().padStart(2, '0');
-    setAlarmMinute(formatted);
-    setCreateTimeSlot(`${alarmTitle} · ${alarmHour}:${formatted} ${alarmPeriod}`);
-    setSelectedAlarmId('custom');
+    setAlarmMinute(m);
+    setCreateTimeSlot(`${alarmHour}:${m} ${alarmPeriod}`);
   };
 
   const toggleAlarmPeriod = (p: 'AM' | 'PM') => {
     hapticTap();
     setAlarmPeriod(p);
-    setCreateTimeSlot(`${alarmTitle} · ${alarmHour}:${alarmMinute} ${p}`);
-    setSelectedAlarmId('custom');
-  };
-
-  const selectAlarmPreset = (preset: typeof ALARM_PRESETS[0]) => {
-    hapticTap();
-    setSelectedAlarmId(preset.id);
-    setAlarmHour(preset.hour);
-    setAlarmMinute(preset.minute);
-    setAlarmPeriod(preset.period);
-    setAlarmTitle(`${preset.icon} ${preset.name}`);
-    setCreateTimeSlot(`${preset.icon} ${preset.name} · ${preset.hour}:${preset.minute} ${preset.period}`);
+    setCreateTimeSlot(`${alarmHour}:${alarmMinute} ${p}`);
   };
 
   const toggleAlarmDay = (day: string) => {
@@ -1801,174 +1737,126 @@ function TripsContent() {
                 <div className="animate-fade-in space-y-4">
                   <div>
                     <h2 className="text-[20px] font-[800] tracking-[-0.02em] text-[#18181B] flex items-center gap-2">
-                      <span>Set Departure Alarm</span>
+                      <span>When & how are you going?</span>
                       <span className="text-sm">⏰</span>
                     </h2>
                     <p className="text-[12px] text-[#18181B]/55 mt-1 font-normal">
-                      Set your exact wake-up alarm, departure time, and squad details.
+                      Set departure time alarm, date timeframe, squad capacity, and ride.
                     </p>
                   </div>
 
-                  {/* ================= ⏰ APPLE CLOCK / ALARM CARD ================= */}
-                  <div className="rounded-[26px] bg-[#111317] text-white p-4.5 border border-white/10 shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-36 h-36 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
-                    
-                    {/* Alarm Card Header */}
+                  {/* ================= ⏰ SLEEK APPLE ALARM CARD ================= */}
+                  <div className="rounded-[26px] bg-[#18181B] text-white p-5 shadow-2xl border border-white/10 relative overflow-hidden">
+                    <div className="absolute -top-10 -right-10 w-36 h-36 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+                    {/* Header & AM/PM Switch */}
                     <div className="flex items-center justify-between mb-3 relative z-10">
                       <div className="flex items-center gap-2">
-                        <AlarmClock className="w-4 h-4 text-[#D4AF37]" />
-                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#D4AF37]">
-                          DEPARTURE ALARM
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-700/40 text-emerald-300 text-[9px] font-bold">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                        <span>ALARM ACTIVE</span>
-                      </div>
-                    </div>
-
-                    {/* Master Digital Alarm Display */}
-                    <div className="bg-black/40 rounded-2xl p-4 border border-white/5 flex items-center justify-between relative z-10">
-                      
-                      {/* Hour & Minute Stepper Display */}
-                      <div className="flex items-center gap-2">
-                        {/* Hour */}
-                        <div className="flex flex-col items-center">
-                          <button
-                            type="button"
-                            onClick={() => adjustAlarmHour(1)}
-                            className="w-8 h-6 rounded-lg bg-white/10 hover:bg-white/20 active:scale-90 flex items-center justify-center text-white/80 font-bold text-xs transition cursor-pointer"
-                          >
-                            +
-                          </button>
-                          <span className="text-[38px] font-[900] tracking-tight font-mono text-white my-0.5">
-                            {alarmHour}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => adjustAlarmHour(-1)}
-                            className="w-8 h-6 rounded-lg bg-white/10 hover:bg-white/20 active:scale-90 flex items-center justify-center text-white/80 font-bold text-xs transition cursor-pointer"
-                          >
-                            -
-                          </button>
+                        <div className="w-7 h-7 rounded-xl bg-white/10 flex items-center justify-center">
+                          <AlarmClock className="w-3.5 h-3.5 text-[#D4AF37]" />
                         </div>
-
-                        <span className="text-[34px] font-[900] text-[#D4AF37] font-mono -mt-1 animate-pulse">
-                          :
-                        </span>
-
-                        {/* Minute */}
-                        <div className="flex flex-col items-center">
-                          <button
-                            type="button"
-                            onClick={() => adjustAlarmMinute(15)}
-                            className="w-8 h-6 rounded-lg bg-white/10 hover:bg-white/20 active:scale-90 flex items-center justify-center text-white/80 font-bold text-xs transition cursor-pointer"
-                          >
-                            +
-                          </button>
-                          <span className="text-[38px] font-[900] tracking-tight font-mono text-white my-0.5">
-                            {alarmMinute}
+                        <div>
+                          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#D4AF37] block">
+                            DEPARTURE ALARM
                           </span>
-                          <button
-                            type="button"
-                            onClick={() => adjustAlarmMinute(-15)}
-                            className="w-8 h-6 rounded-lg bg-white/10 hover:bg-white/20 active:scale-90 flex items-center justify-center text-white/80 font-bold text-xs transition cursor-pointer"
-                          >
-                            -
-                          </button>
+                          <span className="text-[10px] text-white/50 font-medium">Meetup & convoy time</span>
                         </div>
                       </div>
 
-                      {/* AM / PM Toggle Pill */}
-                      <div className="flex flex-col gap-1.5 p-1 rounded-2xl bg-white/5 border border-white/10">
-                        <button
-                          type="button"
-                          onClick={() => toggleAlarmPeriod('AM')}
-                          className={`px-3 py-1.5 rounded-xl font-[900] text-[12px] transition cursor-pointer ${
-                            alarmPeriod === 'AM'
-                              ? 'bg-[#D4AF37] text-black shadow-md'
-                              : 'text-white/45 hover:text-white'
-                          }`}
-                        >
-                          AM
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => toggleAlarmPeriod('PM')}
-                          className={`px-3 py-1.5 rounded-xl font-[900] text-[12px] transition cursor-pointer ${
-                            alarmPeriod === 'PM'
-                              ? 'bg-[#D4AF37] text-black shadow-md'
-                              : 'text-white/45 hover:text-white'
-                          }`}
-                        >
-                          PM
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Live Alarm Schedule Banner */}
-                    <div className="mt-3 px-3 py-2 rounded-xl bg-white/5 border border-white/5 flex items-center gap-2 text-[11px] text-white/80">
-                      <Bell className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
-                      <span className="truncate">
-                        Alarm sounds on <strong className="text-white">{createDate}</strong> at <strong className="text-[#D4AF37]">{alarmHour}:{alarmMinute} {alarmPeriod}</strong>
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* ================= ⏰ ALARM PRESET SLOTS (iOS CLOCK LIST) ================= */}
-                  <div>
-                    <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
-                      QUICK ALARM SLOTS
-                    </label>
-                    <div className="space-y-1.5 mt-1.5">
-                      {ALARM_PRESETS.map((preset) => {
-                        const isSelected = selectedAlarmId === preset.id;
-                        return (
+                      {/* AM / PM Toggle */}
+                      <div className="flex bg-white/10 p-1 rounded-xl border border-white/10">
+                        {(['AM', 'PM'] as const).map((p) => (
                           <button
-                            key={preset.id}
+                            key={p}
                             type="button"
-                            onClick={() => selectAlarmPreset(preset)}
-                            className={`w-full p-3 rounded-2xl border text-left transition cursor-pointer flex items-center justify-between ${
-                              isSelected
-                                ? 'bg-white border-[#18181B] ring-1 ring-[#18181B] shadow-sm'
-                                : 'bg-white border-[#18181B]/[0.08] hover:border-[#18181B]/20'
+                            onClick={() => toggleAlarmPeriod(p)}
+                            className={`px-3 py-1 rounded-lg text-[11px] font-[900] transition cursor-pointer ${
+                              alarmPeriod === p
+                                ? 'bg-white text-black shadow-sm'
+                                : 'text-white/50 hover:text-white'
                             }`}
                           >
-                            <div className="flex items-center gap-3">
-                              <span className="text-xl shrink-0">{preset.icon}</span>
-                              <div>
-                                <div className="flex items-center gap-1.5">
-                                  <span className="font-mono font-[900] text-[14px] text-[#18181B]">
-                                    {preset.hour}:{preset.minute}
-                                  </span>
-                                  <span className="text-[10px] font-extrabold text-[#18181B]/60">
-                                    {preset.period}
-                                  </span>
-                                </div>
-                                <div className="text-[11px] font-bold text-[#18181B]/70">
-                                  {preset.name}
-                                </div>
-                              </div>
-                            </div>
+                            {p}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
 
-                            {/* iOS Style Toggle Switch */}
-                            <div
-                              className={`w-11 h-6 rounded-full transition-colors p-0.5 flex items-center ${
-                                isSelected ? 'bg-emerald-600 justify-end' : 'bg-stone-200 justify-start'
+                    {/* Big Digital Readout */}
+                    <div className="flex items-baseline justify-center gap-2 my-2 py-1 relative z-10">
+                      <span className="text-[54px] font-[900] tracking-tight font-mono text-white leading-none">
+                        {alarmHour}:{alarmMinute}
+                      </span>
+                      <span className="text-[18px] font-[800] text-[#D4AF37] font-mono">
+                        {alarmPeriod}
+                      </span>
+                    </div>
+
+                    {/* Hour Chips Selector */}
+                    <div className="mt-4 pt-3.5 border-t border-white/10 relative z-10">
+                      <div className="text-[9px] uppercase font-bold tracking-[0.15em] text-white/40 mb-2">
+                        SELECT HOUR
+                      </div>
+                      <div className="grid grid-cols-6 gap-1.5">
+                        {['05', '06', '07', '08', '09', '10', '11', '12', '01', '02', '03', '04'].map((h) => {
+                          const isSelected = alarmHour === h;
+                          return (
+                            <button
+                              key={h}
+                              type="button"
+                              onClick={() => setTimeHour(h)}
+                              className={`h-9 rounded-xl font-mono text-[13px] font-[800] transition cursor-pointer flex items-center justify-center ${
+                                isSelected
+                                  ? 'bg-[#D4AF37] text-black shadow-md font-[900]'
+                                  : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/5'
                               }`}
                             >
-                              <div className="w-5 h-5 rounded-full bg-white shadow-md" />
-                            </div>
-                          </button>
-                        );
-                      })}
+                              {h}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Minute Chips Selector */}
+                    <div className="mt-3 relative z-10">
+                      <div className="text-[9px] uppercase font-bold tracking-[0.15em] text-white/40 mb-2">
+                        SELECT MINUTES
+                      </div>
+                      <div className="grid grid-cols-4 gap-1.5">
+                        {['00', '15', '30', '45'].map((m) => {
+                          const isSelected = alarmMinute === m;
+                          return (
+                            <button
+                              key={m}
+                              type="button"
+                              onClick={() => setTimeMinute(m)}
+                              className={`h-9 rounded-xl font-mono text-[13px] font-[800] transition cursor-pointer flex items-center justify-center ${
+                                isSelected
+                                  ? 'bg-white text-black shadow-md font-[900]'
+                                  : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/5'
+                              }`}
+                            >
+                              :{m}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Alarm Confirmation Footer */}
+                    <div className="mt-4 pt-2.5 border-t border-white/10 flex items-center gap-2 text-[11px] text-white/75 relative z-10">
+                      <Bell className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
+                      <span className="truncate">
+                        Alarm set for <strong className="text-white">{createDate}</strong> at <strong className="text-[#D4AF37]">{alarmHour}:{alarmMinute} {alarmPeriod}</strong>
+                      </span>
                     </div>
                   </div>
 
                   {/* ================= 📅 ALARM DATE & DAY RECURRENCE ================= */}
                   <div>
                     <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
-                      DEPARTURE DAY / RECURRENCE
+                      DEPARTURE DAY / TIMEFRAME
                     </label>
                     
                     {/* Quick Date Chips */}
