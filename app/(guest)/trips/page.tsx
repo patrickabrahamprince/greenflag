@@ -41,6 +41,10 @@ interface Trip {
   totalSpots: number;
   cost: number;
   type: 'green' | 'pink';
+  category: 'sunrise' | 'coffee' | 'walk' | 'night' | 'micro' | 'women' | 'flash' | 'weekend';
+  distance: string;
+  routeTime: string;
+  pickupHub: string;
   score: number;
   match: string;
   host: {
@@ -58,16 +62,94 @@ interface Trip {
   pin: { x: number; y: number };
 }
 
+interface HeroSlide {
+  id: number;
+  tag: string;
+  badgeBg: string;
+  title: string;
+  subtitle: string;
+  stats: string;
+  tripId: number;
+  bgGradient: string;
+  accentColor: string;
+  icon: string;
+}
+
+const HERO_SLIDES: HeroSlide[] = [
+  {
+    id: 1,
+    tag: '🌅 DAWN EXPEDITION',
+    badgeBg: 'bg-emerald-900/80 text-emerald-300 border-emerald-700/50',
+    title: 'Sunrise Above the Clouds',
+    subtitle: 'Nandi Hills Fortress convoy with artisanal dawn filter chai',
+    stats: '4.9 ★ · 2 Seats Available',
+    tripId: 1,
+    bgGradient: 'from-[#0d281a] via-[#091e13] to-[#040f09]',
+    accentColor: 'text-emerald-400',
+    icon: '⛰️',
+  },
+  {
+    id: 2,
+    tag: '☕ ARTISAN COFFEE EXPEDITION',
+    badgeBg: 'bg-amber-900/80 text-amber-200 border-amber-700/50',
+    title: 'Coorg Private Coffee Tasting',
+    subtitle: 'Estate walks, fresh single-origin roast & slow photography',
+    stats: '4.85 ★ · 1 Spot Left',
+    tripId: 2,
+    bgGradient: 'from-[#2a1b10] via-[#1c120a] to-[#0e0905]',
+    accentColor: 'text-amber-300',
+    icon: '☕',
+  },
+  {
+    id: 3,
+    tag: '👩 100% FEMALE VERIFIED',
+    badgeBg: 'bg-purple-900/80 text-purple-300 border-purple-700/50',
+    title: 'Gokarna Beach & Cliff Circle',
+    subtitle: 'Sunset yoga, secluded coves & beachside brunch circle',
+    stats: '5.0 ★ · Women Safe Circle',
+    tripId: 6,
+    bgGradient: 'from-[#281330] via-[#1a0c20] to-[#0a040d]',
+    accentColor: 'text-purple-300',
+    icon: '🌊',
+  },
+  {
+    id: 4,
+    tag: '🌌 STARLIGHT TRAVERSE',
+    badgeBg: 'bg-indigo-900/80 text-indigo-300 border-indigo-700/50',
+    title: 'Skandagiri Midnight Ridge Climb',
+    subtitle: 'Ascent under the stars for peak cloud inversions',
+    stats: '4.95 ★ · Departs Tonight 11 PM',
+    tripId: 4,
+    bgGradient: 'from-[#121630] via-[#0b0e20] to-[#04060e]',
+    accentColor: 'text-indigo-300',
+    icon: '✨',
+  },
+];
+
+const MARQUEE_ITEMS = [
+  '⚡ Aarav confirmed 2 seats on Nandi Sunrise Convoy',
+  '🛡️ 100% ID Verified & Escort-Free Protocol active',
+  '🔥 Savandurga Flash Roadtrip departs in 2 hours',
+  '☕ Meera opened Coorg Coffee Estate Cupping',
+  '✨ Ananya joined Gokarna Women Circle',
+  '📍 Indiranagar Hub: 18 departures scheduled today',
+  '🌟 Top Rated Host Sanya reached Level 15 Explorer',
+];
+
 const TRIPS_DATA: Trip[] = [
   {
     id: 1,
-    destination: 'Nandi Hills Sunrise',
+    destination: 'Nandi Hills Sunrise Convoy',
     subtitle: 'Dawn cloud bed & heritage fortress drive',
     time: 'Today · 5:30 AM',
     spots: 2,
     totalSpots: 4,
     cost: 800,
     type: 'green',
+    category: 'sunrise',
+    distance: '54 km',
+    routeTime: '1h 15m',
+    pickupHub: 'Indiranagar 100ft Rd',
     score: 4.9,
     match: 'Shared affinity: Sunrise roadtrips & filter chai',
     host: { name: 'Aarav M.', avatar: 'A', level: 12, verified: true },
@@ -77,7 +159,7 @@ const TRIPS_DATA: Trip[] = [
       accent: 'text-emerald-400',
       badge: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/40',
     },
-    pin: { x: 32, y: 28 },
+    pin: { x: 42, y: 22 },
   },
   {
     id: 2,
@@ -88,6 +170,10 @@ const TRIPS_DATA: Trip[] = [
     totalSpots: 3,
     cost: 2400,
     type: 'pink',
+    category: 'coffee',
+    distance: '240 km',
+    routeTime: '4h 30m',
+    pickupHub: 'Koramangala 4th Block',
     score: 4.85,
     match: 'Coffee aficionado · Leica photographer',
     host: { name: 'Meera K.', avatar: 'M', level: 8, verified: true },
@@ -97,7 +183,7 @@ const TRIPS_DATA: Trip[] = [
       accent: 'text-rose-300',
       badge: 'bg-rose-950/80 text-rose-300 border-rose-800/40',
     },
-    pin: { x: 68, y: 62 },
+    pin: { x: 74, y: 68 },
   },
   {
     id: 3,
@@ -108,6 +194,10 @@ const TRIPS_DATA: Trip[] = [
     totalSpots: 5,
     cost: 0,
     type: 'green',
+    category: 'micro',
+    distance: '4.2 km',
+    routeTime: '15m',
+    pickupHub: 'MG Road Metro Hub',
     score: 4.75,
     match: 'Architects & designers network meetup',
     host: { name: 'Rohan V.', avatar: 'R', level: 5, verified: true },
@@ -117,17 +207,21 @@ const TRIPS_DATA: Trip[] = [
       accent: 'text-amber-300',
       badge: 'bg-amber-950/80 text-amber-300 border-amber-800/40',
     },
-    pin: { x: 52, y: 40 },
+    pin: { x: 48, y: 46 },
   },
   {
     id: 4,
     destination: 'Skandagiri Starlight Traverse',
     subtitle: 'Night ridge ascent for peak cloud inversions',
-    time: 'Tomorrow · 11:00 PM',
+    time: 'Tonight · 11:00 PM',
     spots: 2,
     totalSpots: 6,
     cost: 1200,
     type: 'green',
+    category: 'night',
+    distance: '62 km',
+    routeTime: '1h 30m',
+    pickupHub: 'Hebbal Expressway',
     score: 4.95,
     match: 'High-altitude verified mountain hikers',
     host: { name: 'Sanya D.', avatar: 'S', level: 15, verified: true },
@@ -137,9 +231,106 @@ const TRIPS_DATA: Trip[] = [
       accent: 'text-indigo-300',
       badge: 'bg-indigo-950/80 text-indigo-300 border-indigo-800/40',
     },
-    pin: { x: 42, y: 18 },
+    pin: { x: 38, y: 16 },
+  },
+  {
+    id: 5,
+    destination: 'Araku Daylight Pour-Over & Jazz',
+    subtitle: 'Single origin tasting & curated slow conversation',
+    time: 'Today · 4:00 PM',
+    spots: 1,
+    totalSpots: 2,
+    cost: 450,
+    type: 'pink',
+    category: 'micro',
+    distance: '2.5 km',
+    routeTime: '10m',
+    pickupHub: 'Indiranagar 12th Main',
+    score: 4.9,
+    match: 'Specialty coffee roaster · Vinyl enthusiast',
+    host: { name: 'Kabir T.', avatar: 'K', level: 9, verified: true },
+    vibe: ['Micro Date', 'Pour Over', 'Indie Vinyl'],
+    coverStyle: {
+      bg: 'from-[#291e14] via-[#1a130c] to-[#0d0906]',
+      accent: 'text-amber-300',
+      badge: 'bg-amber-950/80 text-amber-300 border-amber-800/40',
+    },
+    pin: { x: 56, y: 42 },
+  },
+  {
+    id: 6,
+    destination: 'Gokarna Beach & Cliff Circle',
+    subtitle: 'Sunset yoga, secluded coves & beachside brunch circle',
+    time: 'Fri · 9:00 PM',
+    spots: 2,
+    totalSpots: 5,
+    cost: 3400,
+    type: 'pink',
+    category: 'women',
+    distance: '480 km',
+    routeTime: '8h drive',
+    pickupHub: 'Indiranagar Metro Hub',
+    score: 5.0,
+    match: 'Verified safe women explorers circle',
+    host: { name: 'Ananya S.', avatar: 'A', level: 14, verified: true },
+    vibe: ['Women-Only', 'Beach Yoga', 'Coastal Trail'],
+    coverStyle: {
+      bg: 'from-[#2e1330] via-[#1d0c20] to-[#0d040e]',
+      accent: 'text-purple-300',
+      badge: 'bg-purple-950/80 text-purple-300 border-purple-800/40',
+    },
+    pin: { x: 82, y: 55 },
+  },
+  {
+    id: 7,
+    destination: 'Savandurga Monolith Flash Roadtrip',
+    subtitle: 'Asia’s largest monolith sunset hike & dhaba dinner',
+    time: '⚡ Today · 3:30 PM',
+    spots: 1,
+    totalSpots: 4,
+    cost: 950,
+    type: 'green',
+    category: 'flash',
+    distance: '48 km',
+    routeTime: '1h 10m',
+    pickupHub: 'HSR Layout BDA',
+    score: 4.88,
+    match: 'Adrenaline roadtrips & sunset viewpoints',
+    host: { name: 'Dev R.', avatar: 'D', level: 11, verified: true },
+    vibe: ['Flash Escape', 'Rock Monolith', 'Dhaba Food'],
+    coverStyle: {
+      bg: 'from-[#2b170c] via-[#1b0e07] to-[#0c0603]',
+      accent: 'text-orange-400',
+      badge: 'bg-orange-950/80 text-orange-300 border-orange-800/40',
+    },
+    pin: { x: 28, y: 52 },
+  },
+  {
+    id: 8,
+    destination: 'Chikmagalur Mullayanagiri Peak Retreat',
+    subtitle: 'Highest peak sunset trek, waterfalls & estate stay',
+    time: 'Sat · 6:00 AM',
+    spots: 2,
+    totalSpots: 4,
+    cost: 2800,
+    type: 'green',
+    category: 'weekend',
+    distance: '245 km',
+    routeTime: '4h 45m',
+    pickupHub: 'Yeshwanthpur Hub',
+    score: 4.92,
+    match: 'Mountain trails & homestay bonfires',
+    host: { name: 'Vikram N.', avatar: 'V', level: 10, verified: true },
+    vibe: ['Peak Summit', 'Campfire', 'Estate Stay'],
+    coverStyle: {
+      bg: 'from-[#14261d] via-[#0d1a13] to-[#060d09]',
+      accent: 'text-emerald-300',
+      badge: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/40',
+    },
+    pin: { x: 62, y: 78 },
   },
 ];
+
 
 interface PlaceSearchResult {
   id: string;
@@ -189,6 +380,20 @@ function TripsContent() {
   const [activeMapPin, setActiveMapPin] = useState<Trip | null>(TRIPS_DATA[0]);
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Hero Slideshow State
+  const [heroSlideIndex, setHeroSlideIndex] = useState(0);
+  const [isSlidePaused, setIsSlidePaused] = useState(false);
+  const slideTouchStartX = useRef<number | null>(null);
+
+  // Auto-advance slideshow every 4.5s
+  useEffect(() => {
+    if (isSlidePaused || activeTab !== 'explore') return;
+    const interval = setInterval(() => {
+      setHeroSlideIndex((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 4500);
+    return () => clearInterval(interval);
+  }, [isSlidePaused, activeTab]);
 
   // Interactive Map Pan & Zoom State with Multi-Touch Pinch Zoom
   const [mapPan, setMapPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -518,13 +723,18 @@ function TripsContent() {
   const filteredTrips = TRIPS_DATA.filter((trip) => {
     if (selectedFilter === 'Dates' && trip.type !== 'pink') return false;
     if (selectedFilter === 'Buddies' && trip.type !== 'green') return false;
-    if (selectedFilter === 'Women-Only' && trip.id !== 2) return false;
+    if (selectedFilter === 'Women-Only' && trip.category !== 'women') return false;
+    if (selectedFilter === 'Sunrise' && trip.category !== 'sunrise') return false;
+    if (selectedFilter === 'Coffee' && trip.category !== 'coffee' && trip.category !== 'micro') return false;
+    if (selectedFilter === 'Night' && trip.category !== 'night') return false;
+    if (selectedFilter === 'Flash' && trip.category !== 'flash') return false;
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
     return (
       trip.destination.toLowerCase().includes(q) ||
       trip.subtitle.toLowerCase().includes(q) ||
       trip.host.name.toLowerCase().includes(q) ||
+      trip.pickupHub.toLowerCase().includes(q) ||
       trip.vibe.some((v) => v.toLowerCase().includes(q))
     );
   });
@@ -549,18 +759,17 @@ function TripsContent() {
       <div className="fixed -top-20 -left-20 w-72 h-72 bg-[#E3DAC9]/40 rounded-full blur-3xl pointer-events-none" />
 
       {/* ================= EDITORIAL TOP BRAND HEADER & SWITCHER ================= */}
-      {/* ================= EDITORIAL TOP BRAND & ZOMATO-STYLE LOCATION BAR ================= */}
-      <header className="px-5 pt-[max(12px,env(safe-area-inset-top,12px))] pb-3 bg-[#FAF8F5]/95 backdrop-blur-2xl sticky top-0 z-30 border-b border-[#18181B]/[0.06]">
+      <header className="px-5 pt-[max(12px,env(safe-area-inset-top,12px))] pb-2.5 bg-[#FAF8F5]/95 backdrop-blur-2xl sticky top-0 z-30 border-b border-[#18181B]/[0.06]">
         
         {/* Zomato-Style Location Bar */}
-        <div className="flex items-center justify-between mb-2.5">
+        <div className="flex items-center justify-between mb-2">
           <button
             type="button"
             onClick={() => {
               hapticTap();
               setShowLocationModal(true);
             }}
-            className="flex items-start gap-2.5 text-left group active:scale-[0.98] transition cursor-pointer max-w-[280px]"
+            className="flex items-start gap-2 text-left group active:scale-[0.98] transition cursor-pointer max-w-[270px]"
           >
             <div className="w-8 h-8 rounded-full bg-[#1A382B] text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
               <MapPin className="w-4 h-4 text-emerald-300" />
@@ -590,7 +799,7 @@ function TripsContent() {
               hapticTap();
               setActiveTab('explore');
             }}
-            className={`flex-1 py-2.5 rounded-xl font-bold text-[12px] tracking-wide flex items-center justify-center gap-2 transition-all cursor-pointer ${
+            className={`flex-1 py-2 rounded-xl font-bold text-[12px] tracking-wide flex items-center justify-center gap-2 transition-all cursor-pointer ${
               activeTab === 'explore'
                 ? 'bg-[#FAF8F5] text-[#18181B] shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-[#18181B]/[0.04]'
                 : 'text-[#18181B]/55 hover:text-[#18181B]'
@@ -605,7 +814,7 @@ function TripsContent() {
               hapticTap();
               setActiveTab('create');
             }}
-            className={`flex-1 py-2.5 rounded-xl font-bold text-[12px] tracking-wide flex items-center justify-center gap-2 transition-all cursor-pointer ${
+            className={`flex-1 py-2 rounded-xl font-bold text-[12px] tracking-wide flex items-center justify-center gap-2 transition-all cursor-pointer ${
               activeTab === 'create'
                 ? 'bg-[#18181B] text-[#FAF8F5] shadow-[0_4px_16px_rgba(0,0,0,0.18)]'
                 : 'text-[#18181B]/55 hover:text-[#18181B]'
@@ -617,6 +826,21 @@ function TripsContent() {
         </div>
       </header>
 
+      {/* ================= LIVE MARQUEE RUNNING TICKER ================= */}
+      {activeTab === 'explore' && (
+        <div className="w-full bg-[#18181B] text-white py-1.5 overflow-hidden border-b border-white/10 shrink-0 z-20">
+          <div className="animate-marquee flex items-center gap-8 whitespace-nowrap text-[11px] font-semibold tracking-wide">
+            {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, idx) => (
+              <span key={idx} className="inline-flex items-center gap-2 text-white/90">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                {item}
+                <span className="text-white/30 mx-2">•</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Main Content Area */}
       <main className="flex-1 relative flex flex-col pb-40 z-10">
         
@@ -624,7 +848,7 @@ function TripsContent() {
         {activeTab === 'explore' && (
           <div className="h-full flex flex-col animate-fade-in">
             
-            {/* Search Bar & Curated Pills */}
+            {/* Search Bar */}
             <div className="px-5 pt-3.5 pb-2">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#18181B]/40" />
@@ -632,14 +856,14 @@ function TripsContent() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search Nandi, Coorg, Cubbon, Skandagiri..."
+                  placeholder="Search Nandi, Coorg, Gokarna, Skandagiri..."
                   className="w-full h-11 pl-11 pr-4 rounded-2xl bg-[#FFFFFF] border border-[#18181B]/[0.08] text-[13px] placeholder:text-[#18181B]/35 font-medium text-[#18181B] focus:outline-none focus:border-[#18181B]/40 focus:ring-1 focus:ring-[#18181B]/20 shadow-[0_2px_6px_rgba(0,0,0,0.02)] transition"
                 />
               </div>
 
               {/* Refined Filter Chips */}
-              <div className="flex gap-2 mt-3 overflow-x-auto scrollbar-none pb-0.5">
-                {['All', 'Today', 'Weekend', 'Dates', 'Buddies', 'Women-Only'].map(
+              <div className="flex gap-2 mt-2.5 overflow-x-auto scrollbar-none pb-0.5">
+                {['All', 'Sunrise', 'Coffee', 'Dates', 'Buddies', 'Women-Only', 'Night', 'Flash'].map(
                   (filter) => (
                     <button
                       key={filter}
@@ -648,7 +872,7 @@ function TripsContent() {
                         hapticTap();
                         setSelectedFilter(filter);
                       }}
-                      className={`shrink-0 h-7 px-3.5 rounded-full text-[11px] font-semibold tracking-wide transition-all cursor-pointer ${
+                      className={`shrink-0 h-7 px-3 rounded-full text-[11px] font-semibold tracking-wide transition-all cursor-pointer ${
                         selectedFilter === filter
                           ? 'bg-[#18181B] text-[#FAF8F5] shadow-xs'
                           : 'bg-[#FFFFFF] border border-[#18181B]/[0.08] text-[#18181B]/65 hover:border-[#18181B]/25 hover:text-[#18181B]'
@@ -661,9 +885,115 @@ function TripsContent() {
               </div>
             </div>
 
-            {/* Interactive Touch-Pannable & Pinch-Zoomable Editorial Map Canvas */}
+            {/* ================= HERO FEATURED SLIDESHOW CAROUSEL ================= */}
             <div 
-              className="relative h-[250px] bg-[#E8EDE6] overflow-hidden mx-5 my-2.5 rounded-[28px] border border-[#18181B]/[0.08] shadow-[inset_0_2px_8px_rgba(0,0,0,0.03)] shrink-0 select-none cursor-grab active:cursor-grabbing touch-none"
+              className="mx-5 my-1.5 relative rounded-[28px] overflow-hidden shadow-lg border border-[#18181B]/10 select-none cursor-pointer"
+              onMouseEnter={() => setIsSlidePaused(true)}
+              onMouseLeave={() => setIsSlidePaused(false)}
+              onTouchStart={(e) => {
+                setIsSlidePaused(true);
+                slideTouchStartX.current = e.touches[0].clientX;
+              }}
+              onTouchEnd={(e) => {
+                setIsSlidePaused(false);
+                if (slideTouchStartX.current !== null) {
+                  const diff = e.changedTouches[0].clientX - slideTouchStartX.current;
+                  if (diff > 40) {
+                    // Swipe right -> prev
+                    setHeroSlideIndex((prev) => (prev === 0 ? HERO_SLIDES.length - 1 : prev - 1));
+                    hapticTap();
+                  } else if (diff < -40) {
+                    // Swipe left -> next
+                    setHeroSlideIndex((prev) => (prev + 1) % HERO_SLIDES.length);
+                    hapticTap();
+                  }
+                  slideTouchStartX.current = null;
+                }
+              }}
+            >
+              {HERO_SLIDES.map((slide, idx) => {
+                const isActive = idx === heroSlideIndex;
+                const slideTrip = TRIPS_DATA.find((t) => t.id === slide.tripId) || TRIPS_DATA[0];
+                return (
+                  <div
+                    key={slide.id}
+                    onClick={() => {
+                      hapticTap();
+                      setSelectedTrip(slideTrip);
+                    }}
+                    className={`p-5 bg-gradient-to-br ${slide.bgGradient} text-white transition-opacity duration-500 relative flex flex-col justify-between min-h-[165px] ${
+                      isActive ? 'block opacity-100' : 'hidden opacity-0'
+                    }`}
+                  >
+                    <div className="absolute top-0 right-0 w-48 h-48 bg-white/[0.06] rounded-full blur-3xl pointer-events-none" />
+                    
+                    {/* Slide Top Metadata */}
+                    <div className="flex items-center justify-between relative z-10">
+                      <span className={`text-[9px] font-bold tracking-[0.2em] uppercase px-2.5 py-0.5 rounded-full border ${slide.badgeBg}`}>
+                        {slide.tag}
+                      </span>
+                      <div className="flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/10 text-[10px] font-bold text-white/90">
+                        <span>{slide.stats}</span>
+                      </div>
+                    </div>
+
+                    {/* Slide Content */}
+                    <div className="my-2 relative z-10">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">{slide.icon}</span>
+                        <h3 className="font-[800] text-[18px] leading-snug tracking-tight text-white">
+                          {slide.title}
+                        </h3>
+                      </div>
+                      <p className="text-[11px] text-white/75 font-normal line-clamp-1 mt-1">
+                        {slide.subtitle}
+                      </p>
+                    </div>
+
+                    {/* Slide Footer with Direct CTA & Progress Dots */}
+                    <div className="flex items-center justify-between pt-2 border-t border-white/10 relative z-10">
+                      <div className="flex items-center gap-1.5">
+                        {HERO_SLIDES.map((_, dotIdx) => (
+                          <button
+                            key={dotIdx}
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              hapticTap();
+                              setHeroSlideIndex(dotIdx);
+                            }}
+                            className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                              dotIdx === heroSlideIndex ? 'w-5 bg-white' : 'w-1.5 bg-white/30'
+                            }`}
+                          />
+                        ))}
+                      </div>
+
+                      <div className="flex items-center gap-1 text-[11px] font-bold text-white hover:text-emerald-300 transition">
+                        <span>Explore Trip</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* ================= INTERACTIVE EDITORIAL MAP CANVAS ================= */}
+            <div className="px-5 mt-2">
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-1.5">
+                  <Compass className="w-4 h-4 text-emerald-800" />
+                  <span className="text-[13px] font-[800] text-[#18181B] tracking-tight">Interactive Radar & Routes</span>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100/70 px-2 py-0.5 rounded-full">
+                  Tap pin for overview
+                </span>
+              </div>
+            </div>
+
+            <div 
+              className="relative h-[250px] bg-[#E8EDE6] overflow-hidden mx-5 mb-2 rounded-[28px] border border-[#18181B]/[0.08] shadow-[inset_0_2px_8px_rgba(0,0,0,0.03)] shrink-0 select-none cursor-grab active:cursor-grabbing touch-none"
               onMouseDown={(e) => handleMapPointerDown(e.clientX, e.clientY)}
               onMouseMove={(e) => handleMapPointerMove(e.clientX, e.clientY)}
               onMouseUp={handleMapPointerUp}
@@ -697,17 +1027,38 @@ function TripsContent() {
                       <path d="M 0 300 C 250 180, 450 500, 800 350" fill="none" stroke="#FFFFFF" strokeWidth="18" />
                       <path d="M 180 0 C 220 280, 320 400, 400 800" fill="none" stroke="#CBD5E1" strokeWidth="12" />
                       <path d="M 450 0 C 400 250, 580 420, 540 800" fill="none" stroke="#FFFFFF" strokeWidth="14" />
+                      {/* Dynamic Route Line to Selected Pin */}
+                      {activeMapPin && (
+                        <line 
+                          x1="380" 
+                          y1="340" 
+                          x2={`${activeMapPin.pin.x * 6}`} 
+                          y2={`${activeMapPin.pin.y * 6}`} 
+                          stroke="#10B981" 
+                          strokeWidth="3" 
+                          strokeDasharray="6 4" 
+                          className="opacity-70"
+                        />
+                      )}
                       <ellipse cx="320" cy="380" rx="90" ry="70" fill="rgba(186, 230, 253, 0.7)" stroke="#93C5FD" strokeWidth="2" />
                       <ellipse cx="580" cy="260" rx="60" ry="45" fill="rgba(209, 250, 229, 0.8)" stroke="#6EE7B7" strokeWidth="2" />
                     </svg>
 
+                    {/* Central User Location Beacon */}
+                    <div className="absolute top-[42%] left-[45%] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+                      <div className="w-12 h-12 rounded-full bg-emerald-500/20 animate-ping absolute" />
+                      <div className="w-6 h-6 rounded-full bg-emerald-600 border-2 border-white shadow-md flex items-center justify-center text-white text-[9px] font-bold">
+                        📍
+                      </div>
+                    </div>
+
                     <div className="absolute top-[34%] left-[38%] text-[10px] font-bold text-stone-500 uppercase tracking-widest pointer-events-none">
-                      Indiranagar
+                      Indiranagar Hub
                     </div>
                     <div className="absolute top-[48%] left-[30%] text-[10px] font-bold text-stone-500 uppercase tracking-widest pointer-events-none">
                       Koramangala
                     </div>
-                    <div className="absolute top-[22%] left-[48%] text-[10px] font-bold text-stone-500 uppercase tracking-widest pointer-events-none">
+                    <div className="absolute top-[20%] left-[44%] text-[10px] font-bold text-stone-500 uppercase tracking-widest pointer-events-none">
                       Nandi Hills Route
                     </div>
                   </div>
@@ -731,6 +1082,11 @@ function TripsContent() {
                       style={{ left: `${trip.pin.x}%`, top: `${trip.pin.y}%` }}
                     >
                       <div className="relative flex flex-col items-center">
+                        {/* Animated Focus Halo on Selected Pin */}
+                        {isSelected && (
+                          <div className="absolute -inset-2 rounded-full bg-emerald-400/40 animate-ping pointer-events-none" />
+                        )}
+
                         {/* Countdown / Tag Pill */}
                         <div className={`px-2 py-0.5 rounded-full text-[9px] font-bold whitespace-nowrap mb-1 shadow-md border ${
                           isSelected 
@@ -739,7 +1095,7 @@ function TripsContent() {
                             ? 'bg-rose-600 text-white border-rose-300'
                             : 'bg-[#1A382B] text-white border-emerald-300'
                         }`}>
-                          {trip.type === 'pink' ? '💗 Date' : '🟢 Trip'} • ₹{trip.cost}
+                          {trip.category === 'women' ? '👩 Women' : trip.type === 'pink' ? '💗 Date' : '🟢 Trip'} • ₹{trip.cost}
                         </div>
 
                         {/* Pin Head */}
@@ -759,7 +1115,7 @@ function TripsContent() {
               <div className="absolute left-3 top-3 pointer-events-none z-10">
                 <div className="bg-[#18181B]/85 backdrop-blur-md text-[#FAF8F5] text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full shadow-md border border-white/10 flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  <span>{selectedLocation.name} · {filteredTrips.length} Escapes</span>
+                  <span>{selectedLocation.name.split(',')[0]} · {filteredTrips.length} Pins</span>
                 </div>
               </div>
 
@@ -770,7 +1126,7 @@ function TripsContent() {
                   onClick={(e) => {
                     e.stopPropagation();
                     hapticTap();
-                    setMapZoom((z) => Math.min(1.5, z + 0.15));
+                    setMapZoom((z) => Math.min(2.4, z + 0.2));
                   }}
                   className="w-7 h-7 bg-white/95 backdrop-blur-md rounded-full shadow-md flex items-center justify-center font-bold text-xs border border-[#18181B]/[0.08] active:scale-90 transition cursor-pointer"
                 >
@@ -781,7 +1137,7 @@ function TripsContent() {
                   onClick={(e) => {
                     e.stopPropagation();
                     hapticTap();
-                    setMapZoom((z) => Math.max(0.85, z - 0.15));
+                    setMapZoom((z) => Math.max(0.7, z - 0.2));
                   }}
                   className="w-7 h-7 bg-white/95 backdrop-blur-md rounded-full shadow-md flex items-center justify-center font-bold text-xs border border-[#18181B]/[0.08] active:scale-90 transition cursor-pointer"
                 >
@@ -804,53 +1160,129 @@ function TripsContent() {
 
               {/* Drag instruction overlay */}
               <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/40 backdrop-blur-md px-2.5 py-0.5 rounded-full text-[9px] font-bold text-white/80 pointer-events-none">
-                Drag to explore map
+                Drag to explore · Pinch to zoom
               </div>
             </div>
 
-            {/* Selected Pin Mini Overview Sheet */}
+            {/* ================= INTERACTIVE PIN ACTIVITY OVERVIEW SHEET ================= */}
             {activeMapPin && (
-              <div className="mx-5 mb-2 p-3.5 bg-white rounded-[22px] border border-[#18181B]/[0.09] shadow-[0_8px_20px_rgba(0,0,0,0.06)] flex items-center justify-between gap-3 animate-slide-up">
-                <div className="flex-1 min-w-0 cursor-pointer" onClick={() => setSelectedTrip(activeMapPin)}>
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <span className={`text-[9px] font-bold uppercase px-2 py-0.2 rounded-full ${
-                      activeMapPin.type === 'pink' ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'
+              <div className="mx-5 mb-3 p-4 bg-white rounded-[26px] border border-[#18181B]/[0.09] shadow-[0_12px_32px_rgba(0,0,0,0.07)] animate-slide-up">
+                
+                {/* Header Badge & Timing */}
+                <div className="flex items-center justify-between pb-2 border-b border-[#18181B]/[0.06]">
+                  <div className="flex items-center gap-1.5">
+                    <span className={`text-[9px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                      activeMapPin.category === 'women'
+                        ? 'bg-purple-100 text-purple-900 border border-purple-200'
+                        : activeMapPin.type === 'pink'
+                        ? 'bg-rose-100 text-rose-900 border border-rose-200'
+                        : 'bg-emerald-100 text-emerald-900 border border-emerald-200'
                     }`}>
-                      {activeMapPin.type === 'pink' ? '✦ Curated Date' : '● Roadtrip'}
+                      {activeMapPin.category === 'women' ? '👩 Safe Women Circle' : activeMapPin.type === 'pink' ? '✦ Curated Date' : '🟢 Roadtrip & Trek'}
                     </span>
-                    <span className="text-[10px] font-semibold text-stone-500">• {activeMapPin.time}</span>
+                    <span className="text-[10px] font-semibold text-[#18181B]/60 flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-[#18181B]/40" />
+                      {activeMapPin.time}
+                    </span>
                   </div>
-                  <h4 className="font-[800] text-[14px] text-[#18181B] truncate">{activeMapPin.destination}</h4>
-                  <p className="text-[11px] text-stone-500 truncate">Host: {activeMapPin.host.name} (★{activeMapPin.score}) • ₹{activeMapPin.cost}/person</p>
+
+                  <div className="flex items-center gap-1 bg-black/5 px-2 py-0.5 rounded-full text-[10px] font-bold text-[#18181B]">
+                    <Star className="w-3 h-3 fill-[#D4AF37] text-[#D4AF37]" />
+                    <span>{activeMapPin.score}</span>
+                  </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    hapticTap();
-                    setSelectedTrip(activeMapPin);
-                  }}
-                  className="px-3.5 py-2.5 rounded-xl bg-[#18181B] text-white font-bold text-[11px] shrink-0 active:scale-95 transition shadow-sm flex items-center gap-1 cursor-pointer"
-                >
-                  <span>View Plan</span>
-                  <ChevronRight className="w-3 h-3" />
-                </button>
+                {/* Title & Route Info */}
+                <div className="mt-2.5">
+                  <h4 className="font-[800] text-[16px] text-[#18181B] tracking-tight leading-snug">
+                    {activeMapPin.destination}
+                  </h4>
+                  <p className="text-[11px] text-[#18181B]/60 font-medium line-clamp-1 mt-0.5">
+                    {activeMapPin.subtitle}
+                  </p>
+                  
+                  {/* Route & Distance Badge */}
+                  <div className="mt-2 flex items-center gap-2 text-[10px] text-emerald-950 font-semibold bg-[#F2F6F3] p-2 rounded-xl border border-emerald-900/10">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-800 shrink-0" />
+                    <span className="truncate">Pickup: <strong>{activeMapPin.pickupHub}</strong></span>
+                    <span className="text-stone-400">•</span>
+                    <span className="shrink-0">{activeMapPin.distance} ({activeMapPin.routeTime})</span>
+                  </div>
+                </div>
+
+                {/* Host Snapshot & Split Cost */}
+                <div className="mt-3 flex items-center justify-between pt-2.5 border-t border-[#18181B]/[0.06]">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-[#18181B] text-white font-bold text-xs flex items-center justify-center">
+                      {activeMapPin.host.avatar}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1">
+                        <span className="font-bold text-[12px] text-[#18181B]">{activeMapPin.host.name}</span>
+                        <span className="text-[8px] font-bold bg-[#E8EDE6] text-[#1A382B] px-1.5 py-0.2 rounded-full">
+                          Lvl {activeMapPin.host.level}
+                        </span>
+                      </div>
+                      <div className="text-[10px] text-[#18181B]/50 font-medium">
+                        {activeMapPin.totalSpots - activeMapPin.spots} spots left of {activeMapPin.totalSpots}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="text-right">
+                    <span className="text-[9px] uppercase tracking-wider text-[#18181B]/45 font-bold block">
+                      Per Person Split
+                    </span>
+                    <span className="font-[800] text-[14px] text-[#18181B]">
+                      {activeMapPin.cost === 0 ? 'Complimentary' : `₹${activeMapPin.cost}`}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="mt-3.5 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      hapticTap();
+                      setSelectedTrip(activeMapPin);
+                    }}
+                    className="flex-1 py-2.5 rounded-xl bg-white border border-[#18181B]/[0.12] text-[#18181B] font-bold text-[11px] shadow-xs active:scale-95 transition cursor-pointer flex items-center justify-center gap-1"
+                  >
+                    <span>View Full Plan</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      hapticSuccess();
+                      toast.success(`Request sent to ${activeMapPin.host.name}! ✦`, {
+                        style: { background: '#141414', color: '#FAF7F2' },
+                      });
+                    }}
+                    className="flex-1 py-2.5 rounded-xl bg-[#18181B] text-white font-bold text-[11px] shadow-md active:scale-95 transition cursor-pointer flex items-center justify-center gap-1.5"
+                  >
+                    <Zap className="w-3.5 h-3.5 text-[#D4AF37]" />
+                    <span>Quick Join</span>
+                  </button>
+                </div>
               </div>
             )}
 
-            {/* Curated Feed Section */}
+            {/* ================= SECTION 1: 🌟 TRENDING WEEKEND ESCAPES ================= */}
             <div className="px-5 mt-2">
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-2.5">
                 <div>
                   <h3 className="text-[15px] font-[800] tracking-[-0.01em] text-[#18181B]">
-                    Curated Escapes in {selectedLocation.name.split(',')[0]}
+                    🌟 Trending Weekend Escapes
                   </h3>
                   <p className="text-[11px] text-[#18181B]/45 font-medium">
-                    Verified hosts & fair cost sharing
+                    High demand roadtrips & verified squad convoys
                   </p>
                 </div>
-                <span className="text-[11px] font-semibold text-[#18181B]/40">
-                  {filteredTrips.length} Available
+                <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                  Verified Squads
                 </span>
               </div>
 
@@ -866,18 +1298,17 @@ function TripsContent() {
                       hapticTap();
                       setSelectedTrip(trip);
                     }}
-                    className="snap-start shrink-0 w-[305px] text-left bg-white rounded-[26px] border border-[#18181B]/[0.07] shadow-[0_8px_24px_-6px_rgba(24,24,27,0.05)] overflow-hidden active:scale-[0.985] transition cursor-pointer flex flex-col justify-between"
+                    className="snap-start shrink-0 w-[295px] text-left bg-white rounded-[26px] border border-[#18181B]/[0.07] shadow-[0_8px_24px_-6px_rgba(24,24,27,0.05)] overflow-hidden active:scale-[0.985] transition cursor-pointer flex flex-col justify-between"
                   >
-                    {/* Editorial Header Banner */}
+                    {/* Banner */}
                     <div className={`p-4 bg-gradient-to-br ${trip.coverStyle.bg} text-white relative overflow-hidden`}>
                       <div className="absolute top-0 right-0 w-32 h-32 bg-white/[0.04] rounded-full blur-2xl pointer-events-none" />
                       
                       <div className="flex items-start justify-between relative z-10">
                         <span className={`text-[9px] font-bold tracking-[0.2em] uppercase px-2.5 py-0.5 rounded-full border ${trip.coverStyle.badge}`}>
-                          {trip.type === 'pink' ? '✦ Curated Date' : '● Roadtrip & Trek'}
+                          {trip.category === 'women' ? '👩 Safe Women' : trip.type === 'pink' ? '✦ Curated Date' : '● Roadtrip'}
                         </span>
                         
-                        {/* Rating Arc */}
                         <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/10 text-[11px] font-bold">
                           <Star className="w-3 h-3 fill-[#D4AF37] text-[#D4AF37]" />
                           <span>{trip.score}</span>
@@ -885,7 +1316,7 @@ function TripsContent() {
                       </div>
 
                       <div className="mt-3 relative z-10">
-                        <h4 className="font-[800] text-[17px] leading-snug tracking-[-0.01em] text-white">
+                        <h4 className="font-[800] text-[16px] leading-snug tracking-[-0.01em] text-white">
                           {trip.destination}
                         </h4>
                         <p className="text-[11px] text-white/70 font-normal line-clamp-1 mt-0.5">
@@ -894,13 +1325,13 @@ function TripsContent() {
                       </div>
                     </div>
 
-                    {/* Editorial Body Details */}
+                    {/* Details */}
                     <div className="p-4 flex flex-col justify-between flex-1">
                       <div>
                         {/* Host & Timing */}
                         <div className="flex items-center justify-between pb-3 border-b border-[#18181B]/[0.06]">
                           <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-full bg-[#18181B] text-white flex items-center justify-center font-bold text-[12px] shadow-xs">
+                            <div className="w-8 h-8 rounded-full bg-[#18181B] text-white flex items-center justify-center font-bold text-[12px]">
                               {trip.host.avatar}
                             </div>
                             <div>
@@ -920,7 +1351,7 @@ function TripsContent() {
                           </div>
                         </div>
 
-                        {/* Match Reason & Vibes */}
+                        {/* Match & Vibes */}
                         <div className="mt-3">
                           <p className="text-[10px] text-[#18181B]/60 italic font-medium">
                             "{trip.match}"
@@ -938,10 +1369,10 @@ function TripsContent() {
                         </div>
                       </div>
 
-                      {/* Footer Cost & Booking Status */}
+                      {/* Footer Cost & Booking */}
                       <div className="mt-4 pt-3 border-t border-[#18181B]/[0.06] flex items-center justify-between">
                         <div>
-                          <span className="text-[10px] text-[#18181B]/45 uppercase tracking-wider block font-semibold">
+                          <span className="text-[9px] text-[#18181B]/45 uppercase tracking-wider block font-semibold">
                             Split Estimate
                           </span>
                           <span className="text-[13px] font-[800] text-[#18181B]">
@@ -964,6 +1395,228 @@ function TripsContent() {
                 ))}
               </div>
             </div>
+
+            {/* ================= SECTION 2: ⚡ FLASH ESCAPES (DEPARTING TODAY) ================= */}
+            <div className="px-5 mt-4">
+              <div className="flex items-center justify-between mb-2.5">
+                <div>
+                  <h3 className="text-[15px] font-[800] tracking-[-0.01em] text-[#18181B]">
+                    ⚡ Flash Escapes (Departing Soon)
+                  </h3>
+                  <p className="text-[11px] text-[#18181B]/45 font-medium">
+                    Spontaneous departures starting in 1-3 hours
+                  </p>
+                </div>
+                <span className="text-[10px] font-bold text-orange-800 bg-orange-100 px-2 py-0.5 rounded-full">
+                  Fast Booking
+                </span>
+              </div>
+
+              <div className="space-y-2.5">
+                {TRIPS_DATA.filter((t) => t.category === 'flash' || t.category === 'night').map((trip) => (
+                  <button
+                    key={trip.id}
+                    type="button"
+                    onClick={() => {
+                      hapticTap();
+                      setSelectedTrip(trip);
+                    }}
+                    className="w-full p-4 rounded-[22px] bg-white border border-[#18181B]/[0.08] shadow-xs flex items-center justify-between text-left active:scale-[0.99] transition cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-11 h-11 rounded-2xl bg-[#18181B] text-white flex items-center justify-center font-bold text-base shrink-0 shadow-sm">
+                        {trip.category === 'flash' ? '⚡' : '🌌'}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-orange-800 bg-orange-100 px-2 py-0.2 rounded-full">
+                            {trip.time}
+                          </span>
+                          <span className="text-[10px] text-stone-500 font-semibold">• {trip.distance}</span>
+                        </div>
+                        <h4 className="font-[800] text-[13px] text-[#18181B] truncate mt-0.5">
+                          {trip.destination}
+                        </h4>
+                        <p className="text-[11px] text-[#18181B]/55 truncate">
+                          Pickup: {trip.pickupHub} • Host {trip.host.name}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-right shrink-0 pl-2">
+                      <div className="font-[800] text-[13px] text-[#18181B]">₹{trip.cost}</div>
+                      <span className="text-[9px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full mt-0.5 inline-block">
+                        {trip.totalSpots - trip.spots} left
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* ================= SECTION 3: ☕ MICRO DATES & CAFE MEETS ================= */}
+            <div className="px-5 mt-5">
+              <div className="flex items-center justify-between mb-2.5">
+                <div>
+                  <h3 className="text-[15px] font-[800] tracking-[-0.01em] text-[#18181B]">
+                    ☕ Micro Dates & Daylight Cafe Meets
+                  </h3>
+                  <p className="text-[11px] text-[#18181B]/45 font-medium">
+                    1-on-1 casual coffee, deep talks & public cafe settings
+                  </p>
+                </div>
+                <span className="text-[10px] font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded-full">
+                  Daylight Only
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                {TRIPS_DATA.filter((t) => t.category === 'micro' || t.category === 'coffee').map((trip) => (
+                  <button
+                    key={trip.id}
+                    type="button"
+                    onClick={() => {
+                      hapticTap();
+                      setSelectedTrip(trip);
+                    }}
+                    className="p-3.5 rounded-[22px] bg-white border border-[#18181B]/[0.08] shadow-xs text-left active:scale-[0.98] transition cursor-pointer flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-100 text-amber-900">
+                          {trip.category === 'micro' ? '☕ 60m Micro' : '🌱 Estate'}
+                        </span>
+                        <span className="text-[10px] font-bold text-stone-700">★ {trip.score}</span>
+                      </div>
+                      <h4 className="font-[800] text-[13px] text-[#18181B] leading-tight line-clamp-2">
+                        {trip.destination}
+                      </h4>
+                      <p className="text-[10px] text-[#18181B]/55 line-clamp-2 mt-1">
+                        {trip.subtitle}
+                      </p>
+                    </div>
+
+                    <div className="mt-3 pt-2 border-t border-[#18181B]/[0.06] flex items-center justify-between">
+                      <span className="text-[10px] text-stone-500 font-medium">{trip.time.split('·')[0]}</span>
+                      <span className="text-[11px] font-[800] text-[#18181B]">
+                        {trip.cost === 0 ? 'Free' : `₹${trip.cost}`}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* ================= SECTION 4: 👩 WOMEN-ONLY SAFE CIRCLES ================= */}
+            <div className="px-5 mt-5">
+              <div className="p-4 rounded-[26px] bg-gradient-to-br from-[#2b1430] via-[#1a0c20] to-[#0d0510] text-white shadow-lg border border-purple-800/30 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-36 h-36 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+                
+                <div className="flex items-start justify-between relative z-10">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-purple-950 border border-purple-500/30 flex items-center justify-center text-sm">
+                      👩
+                    </div>
+                    <div>
+                      <span className="text-[9px] font-bold tracking-[0.2em] uppercase text-purple-300">
+                        SAFE CIRCLE PROTOCOL
+                      </span>
+                      <h3 className="font-[800] text-[15px] text-white">Women-Only Verified Getaways</h3>
+                    </div>
+                  </div>
+                  <span className="text-[9px] font-bold bg-white/10 px-2 py-0.5 rounded-full border border-white/20">
+                    100% Female Verified
+                  </span>
+                </div>
+
+                <p className="text-[11px] text-purple-200/80 mt-2.5 leading-relaxed relative z-10">
+                  Curated safe getaways led by verified female leads. Zero unverified participants.
+                </p>
+
+                <div className="mt-3.5 pt-3 border-t border-white/10 flex items-center justify-between relative z-10">
+                  <div>
+                    <div className="text-[12px] font-bold text-white">Gokarna Cliff & Ocean Retreat</div>
+                    <div className="text-[10px] text-purple-300/70">3 Spots Remaining · ₹3,400 / person</div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      hapticTap();
+                      const gokarnaTrip = TRIPS_DATA.find((t) => t.category === 'women') || TRIPS_DATA[0];
+                      setSelectedTrip(gokarnaTrip);
+                    }}
+                    className="px-3.5 py-1.5 rounded-full bg-white text-purple-950 font-bold text-[11px] active:scale-95 transition shadow-sm cursor-pointer"
+                  >
+                    View Circle
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* ================= SECTION 5: 💬 REAL EXPLORER REVIEWS & MOMENTS ================= */}
+            <div className="px-5 mt-5">
+              <div className="flex items-center justify-between mb-2.5">
+                <div>
+                  <h3 className="text-[15px] font-[800] tracking-[-0.01em] text-[#18181B]">
+                    💬 Verified Explorer Moments
+                  </h3>
+                  <p className="text-[11px] text-[#18181B]/45 font-medium">
+                    Real community stories and completed escapes
+                  </p>
+                </div>
+                <span className="text-[10px] font-bold text-stone-600 bg-stone-100 px-2 py-0.5 rounded-full">
+                  100% Verified
+                </span>
+              </div>
+
+              <div className="space-y-2.5">
+                {[
+                  {
+                    author: 'Tanvi S.',
+                    role: 'Architect & Weekend Hiker',
+                    escape: 'Nandi Hills Dawn Sunrise',
+                    review: 'The safest roadtrip setup in Bangalore! Clear cost splitting, amazing crowd, and no awkward moments.',
+                    rating: 5,
+                    avatar: 'T',
+                  },
+                  {
+                    author: 'Rishi M.',
+                    role: 'Product Designer',
+                    escape: 'Cubbon Botanical Architecture Walk',
+                    review: 'Met 4 brilliant designers on a Sunday morning. Great conversations over Third Wave filter roasts.',
+                    rating: 5,
+                    avatar: 'R',
+                  },
+                ].map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="p-4 rounded-[22px] bg-white border border-[#18181B]/[0.07] shadow-xs text-left"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full bg-[#18181B] text-white flex items-center justify-center font-bold text-[11px]">
+                          {item.avatar}
+                        </div>
+                        <div>
+                          <div className="font-bold text-[12px] text-[#18181B]">{item.author}</div>
+                          <div className="text-[9px] text-[#18181B]/45 font-medium">{item.role}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-0.5 text-amber-500 text-xs">
+                        {'★'.repeat(item.rating)}
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-[#18181B]/75 leading-relaxed font-normal italic">
+                      "{item.review}"
+                    </p>
+                    <div className="mt-2 text-[9px] font-bold text-emerald-800 uppercase tracking-wider">
+                      Trip: {item.escape}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
         )}
 
