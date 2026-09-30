@@ -1113,8 +1113,24 @@ function TripsContent() {
           </div>
         </div>
 
-        {/* Top Right Notification Pill & Plus Action Button */}
+        {/* Top Right Actions: 3D Map Toggle, Notification Pill & Plus Action Button */}
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              hapticTap();
+              setIs3DMapView(!is3DMapView);
+            }}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full shadow-xs border transition cursor-pointer font-[800] text-[12px] ${
+              is3DMapView 
+                ? 'bg-[#141414] text-[#CEFF00] border-[#141414]'
+                : 'bg-white text-[#141414] border-stone-200/90 hover:bg-stone-50'
+            }`}
+          >
+            <MapIcon className={`w-3.5 h-3.5 ${is3DMapView ? 'text-[#CEFF00]' : 'text-stone-800'}`} />
+            <span>{is3DMapView ? 'Feed' : '3D Map'}</span>
+          </button>
+
           <button
             type="button"
             onClick={() => {
@@ -1218,16 +1234,16 @@ function TripsContent() {
 
             {/* ================= 3D AERIAL CITY SKYLINE VIEW (DRIBBLE SCREENSHOT 1) ================= */}
             {is3DMapView ? (
-              <div className="relative h-[480px] mx-5 mb-3 rounded-[32px] overflow-hidden border border-[#141414]/15 shadow-xl select-none">
+              <div className="relative h-[530px] mx-5 mb-3 rounded-[34px] overflow-hidden border border-[#141414]/15 shadow-2xl select-none bg-stone-900">
                 
                 {/* 3D Skyscraper Cityscape Photo Backdrop */}
                 <div 
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
                   style={{
-                    backgroundImage: `url('https://images.unsplash.com/photo-1477959858617-67f30bc75b82?auto=format&fit=crop&w=1200&q=80')`,
+                    backgroundImage: `url('/city_3d_aerial.jpg')`,
                   }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/60 pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/65 pointer-events-none" />
                 </div>
 
                 {/* Top Floating Frosted Card (Olivia, 3.5 km away + Chat Button) */}
@@ -1237,7 +1253,7 @@ function TripsContent() {
                       hapticTap();
                       setShowChatModal(true);
                     }}
-                    className="bg-white/80 backdrop-blur-2xl border border-white/60 shadow-2xl rounded-[28px] p-3 flex items-center justify-between cursor-pointer hover:bg-white/90 active:scale-[0.98] transition"
+                    className="bg-white/85 backdrop-blur-2xl border border-white/70 shadow-2xl rounded-[26px] p-3 flex items-center justify-between cursor-pointer hover:bg-white/95 active:scale-[0.98] transition"
                   >
                     {/* Left: Avatar */}
                     <div className="flex items-center gap-3">
@@ -1245,13 +1261,13 @@ function TripsContent() {
                         <img
                           src={selectedCityExplorer.avatar}
                           alt={selectedCityExplorer.name}
-                          className="w-10 h-10 rounded-full object-cover border border-white/80 shadow-sm"
+                          className="w-10 h-10 rounded-full object-cover border border-white shadow-sm"
                         />
-                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[#CEFF00] border border-[#141414] rounded-full" />
+                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border border-[#141414] rounded-full" />
                       </div>
                       <div>
                         {/* Drag indicator pill */}
-                        <div className="w-8 h-1 bg-stone-300 rounded-full mx-auto mb-1 opacity-60" />
+                        <div className="w-8 h-1 bg-stone-300 rounded-full mx-auto mb-1 opacity-70" />
                         <div className="text-[15px] font-[900] text-[#141414] tracking-tight leading-tight">
                           {selectedCityExplorer.name}
                         </div>
@@ -1269,7 +1285,7 @@ function TripsContent() {
                         hapticSuccess();
                         setShowChatModal(true);
                       }}
-                      className="w-10 h-10 rounded-full bg-white/60 backdrop-blur-xl border border-white/80 flex items-center justify-center text-[#141414] shadow-md hover:bg-white active:scale-90 transition cursor-pointer"
+                      className="w-10 h-10 rounded-full bg-white/70 backdrop-blur-xl border border-white flex items-center justify-center text-[#141414] shadow-md hover:bg-white active:scale-90 transition cursor-pointer"
                       aria-label="Open Chat"
                     >
                       <MessageSquare className="w-5 h-5 text-stone-800 fill-stone-800/10 stroke-[2.2]" />
