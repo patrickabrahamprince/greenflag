@@ -31,6 +31,7 @@ import {
   Award,
   Bell,
   AlarmClock,
+  User,
 } from 'lucide-react';
 import { hapticTap, hapticSuccess } from '@/lib/haptics';
 import toast from 'react-hot-toast';
@@ -365,6 +366,45 @@ const POPULAR_DESTINATION_CITIES = [
   { name: 'Delhi NCR & Gurgaon', city: 'Delhi NCR' },
 ];
 
+const CALENDAR_DATES = [
+  { day: 'Wed', date: 'Oct 1', label: 'Wed · Oct 1' },
+  { day: 'Thu', date: 'Oct 2', label: 'Thu · Oct 2' },
+  { day: 'Fri', date: 'Oct 3', label: 'Fri · Oct 3' },
+  { day: 'Sat', date: 'Oct 4', label: 'Sat · Oct 4' },
+  { day: 'Sun', date: 'Oct 5', label: 'Sun · Oct 5' },
+  { day: 'Mon', date: 'Oct 6', label: 'Mon · Oct 6' },
+  { day: 'Tue', date: 'Oct 7', label: 'Tue · Oct 7' },
+];
+
+const TIME_WHEEL_SLOTS = [
+  '05:00 am',
+  '05:30 am',
+  '06:00 am',
+  '06:30 am',
+  '07:00 am',
+  '07:30 am',
+  '08:00 am',
+  '08:30 am',
+  '09:00 am',
+  '09:30 am',
+  '10:00 am',
+  '11:15 am',
+  '11:30 am',
+  '11:45 am',
+  '12:00 pm',
+  '12:15 pm',
+  '01:00 pm',
+  '02:30 pm',
+  '04:00 pm',
+  '04:30 pm',
+  '05:00 pm',
+  '05:30 pm',
+  '06:00 pm',
+  '08:00 pm',
+  '09:30 pm',
+  '10:00 pm',
+];
+
 function TripsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -600,37 +640,10 @@ function TripsContent() {
   const [createPickup, setCreatePickup] = useState('Indiranagar 100ft Rd, Bengaluru');
   const [gpsScanning, setGpsScanning] = useState(false);
   const [gpsDetected, setGpsDetected] = useState(false);
-  const [createDate, setCreateDate] = useState('This Saturday');
-  const [alarmHour, setAlarmHour] = useState('05');
-  const [alarmMinute, setAlarmMinute] = useState('30');
-  const [alarmPeriod, setAlarmPeriod] = useState<'AM' | 'PM'>('AM');
-  const [alarmDays, setAlarmDays] = useState<string[]>(['Sat', 'Sun']);
-  const [createTimeSlot, setCreateTimeSlot] = useState('05:30 AM');
-
-  const setTimeHour = (h: string) => {
-    hapticTap();
-    setAlarmHour(h);
-    setCreateTimeSlot(`${h}:${alarmMinute} ${alarmPeriod}`);
-  };
-
-  const setTimeMinute = (m: string) => {
-    hapticTap();
-    setAlarmMinute(m);
-    setCreateTimeSlot(`${alarmHour}:${m} ${alarmPeriod}`);
-  };
-
-  const toggleAlarmPeriod = (p: 'AM' | 'PM') => {
-    hapticTap();
-    setAlarmPeriod(p);
-    setCreateTimeSlot(`${alarmHour}:${alarmMinute} ${p}`);
-  };
-
-  const toggleAlarmDay = (day: string) => {
-    hapticTap();
-    setAlarmDays((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
-    );
-  };
+  const [selectedDateCard, setSelectedDateCard] = useState('Sat · Oct 4');
+  const [createDate, setCreateDate] = useState('Sat · Oct 4');
+  const [selectedTimeIndex, setSelectedTimeIndex] = useState(13); // '11:45 am'
+  const [createTimeSlot, setCreateTimeSlot] = useState('11:45 am');
 
   const [createType, setCreateType] = useState<'green' | 'pink' | 'women'>('green');
   const [createGroupSize, setCreateGroupSize] = useState('2-4');
@@ -1732,177 +1745,105 @@ function TripsContent() {
                 </div>
               )}
 
-              {/* ---------------- QUESTION 4: ALARM TIME & DATE STUDIO ---------------- */}
+              {/* ---------------- QUESTION 4: SCREENSHOT-MATCHING DATE & TIME STUDIO ---------------- */}
               {createStep === 4 && (
-                <div className="animate-fade-in space-y-4">
-                  <div>
-                    <h2 className="text-[20px] font-[800] tracking-[-0.02em] text-[#18181B] flex items-center gap-2">
-                      <span>When & how are you going?</span>
-                      <span className="text-sm">⏰</span>
-                    </h2>
-                    <p className="text-[12px] text-[#18181B]/55 mt-1 font-normal">
-                      Set departure time alarm, date timeframe, squad capacity, and ride.
+                <div className="animate-fade-in space-y-4 pb-2">
+                  {/* Top Host Profile Card (Exact Screenshot Match) */}
+                  <div className="bg-white rounded-[28px] p-5 shadow-sm border border-[#18181B]/[0.06] text-center flex flex-col items-center relative overflow-hidden">
+                    <div className="relative mb-2.5">
+                      <div className="w-20 h-20 rounded-full p-1 bg-gradient-to-tr from-[#1D8E66]/30 to-emerald-200/50 shadow-inner">
+                        <img
+                          src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"
+                          alt="Host Avatar"
+                          className="w-full h-full rounded-full object-cover"
+                        />
+                      </div>
+                      <div className="absolute bottom-0 right-0 w-6 h-6 bg-[#1D8E66] text-white rounded-full flex items-center justify-center shadow-md border-2 border-white">
+                        <User className="w-3 h-3 text-white" />
+                      </div>
+                    </div>
+
+                    <h3 className="text-[22px] font-[800] text-[#18181B] tracking-tight">
+                      {createType === 'pink' ? 'Date Host · Jordan' : 'Squad Host · Jordan'}
+                    </h3>
+                    <p className="text-[13px] text-stone-500 font-medium mt-0.5">
+                      Received schedule expires in 7 days
                     </p>
-                  </div>
 
-                  {/* ================= ⏰ SLEEK APPLE ALARM CARD ================= */}
-                  <div className="rounded-[26px] bg-[#18181B] text-white p-5 shadow-2xl border border-white/10 relative overflow-hidden">
-                    <div className="absolute -top-10 -right-10 w-36 h-36 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-
-                    {/* Header & AM/PM Switch */}
-                    <div className="flex items-center justify-between mb-3 relative z-10">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-xl bg-white/10 flex items-center justify-center">
-                          <AlarmClock className="w-3.5 h-3.5 text-[#D4AF37]" />
-                        </div>
-                        <div>
-                          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#D4AF37] block">
-                            DEPARTURE ALARM
-                          </span>
-                          <span className="text-[10px] text-white/50 font-medium">Meetup & convoy time</span>
-                        </div>
-                      </div>
-
-                      {/* AM / PM Toggle */}
-                      <div className="flex bg-white/10 p-1 rounded-xl border border-white/10">
-                        {(['AM', 'PM'] as const).map((p) => (
-                          <button
-                            key={p}
-                            type="button"
-                            onClick={() => toggleAlarmPeriod(p)}
-                            className={`px-3 py-1 rounded-lg text-[11px] font-[900] transition cursor-pointer ${
-                              alarmPeriod === p
-                                ? 'bg-white text-black shadow-sm'
-                                : 'text-white/50 hover:text-white'
-                            }`}
-                          >
-                            {p}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Big Digital Readout */}
-                    <div className="flex items-baseline justify-center gap-2 my-2 py-1 relative z-10">
-                      <span className="text-[54px] font-[900] tracking-tight font-mono text-white leading-none">
-                        {alarmHour}:{alarmMinute}
-                      </span>
-                      <span className="text-[18px] font-[800] text-[#D4AF37] font-mono">
-                        {alarmPeriod}
-                      </span>
-                    </div>
-
-                    {/* Hour Chips Selector */}
-                    <div className="mt-4 pt-3.5 border-t border-white/10 relative z-10">
-                      <div className="text-[9px] uppercase font-bold tracking-[0.15em] text-white/40 mb-2">
-                        SELECT HOUR
-                      </div>
-                      <div className="grid grid-cols-6 gap-1.5">
-                        {['05', '06', '07', '08', '09', '10', '11', '12', '01', '02', '03', '04'].map((h) => {
-                          const isSelected = alarmHour === h;
-                          return (
-                            <button
-                              key={h}
-                              type="button"
-                              onClick={() => setTimeHour(h)}
-                              className={`h-9 rounded-xl font-mono text-[13px] font-[800] transition cursor-pointer flex items-center justify-center ${
-                                isSelected
-                                  ? 'bg-[#D4AF37] text-black shadow-md font-[900]'
-                                  : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/5'
-                              }`}
-                            >
-                              {h}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Minute Chips Selector */}
-                    <div className="mt-3 relative z-10">
-                      <div className="text-[9px] uppercase font-bold tracking-[0.15em] text-white/40 mb-2">
-                        SELECT MINUTES
-                      </div>
-                      <div className="grid grid-cols-4 gap-1.5">
-                        {['00', '15', '30', '45'].map((m) => {
-                          const isSelected = alarmMinute === m;
-                          return (
-                            <button
-                              key={m}
-                              type="button"
-                              onClick={() => setTimeMinute(m)}
-                              className={`h-9 rounded-xl font-mono text-[13px] font-[800] transition cursor-pointer flex items-center justify-center ${
-                                isSelected
-                                  ? 'bg-white text-black shadow-md font-[900]'
-                                  : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/5'
-                              }`}
-                            >
-                              :{m}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Alarm Confirmation Footer */}
-                    <div className="mt-4 pt-2.5 border-t border-white/10 flex items-center gap-2 text-[11px] text-white/75 relative z-10">
-                      <Bell className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
-                      <span className="truncate">
-                        Alarm set for <strong className="text-white">{createDate}</strong> at <strong className="text-[#D4AF37]">{alarmHour}:{alarmMinute} {alarmPeriod}</strong>
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* ================= 📅 ALARM DATE & DAY RECURRENCE ================= */}
-                  <div>
-                    <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
-                      DEPARTURE DAY / TIMEFRAME
-                    </label>
-                    
-                    {/* Quick Date Chips */}
-                    <div className="grid grid-cols-3 gap-1.5 mt-1.5">
-                      {[
-                        'Today',
-                        'Tomorrow',
-                        'This Saturday',
-                        'This Sunday',
-                        'Next Weekend',
-                        'Flexible',
-                      ].map((d) => (
-                        <button
-                          key={d}
-                          type="button"
-                          onClick={() => {
-                            hapticTap();
-                            setCreateDate(d);
-                          }}
-                          className={`h-9 rounded-xl border text-[11px] font-bold transition cursor-pointer flex items-center justify-center ${
-                            createDate === d
-                              ? 'bg-[#18181B] text-white border-[#18181B] shadow-xs'
-                              : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70 hover:border-[#18181B]/20'
-                          }`}
-                        >
-                          {d}
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* iOS Day Bubbles (Mon - Sun) */}
-                    <div className="flex items-center justify-between gap-1.5 mt-2 p-2 bg-white rounded-2xl border border-[#18181B]/[0.08]">
-                      {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => {
-                        const isActive = alarmDays.includes(day);
+                    {/* Horizontal Date Cards (Mon Oct 4, Tue Oct 5, Wed Oct 6, etc.) */}
+                    <div className="flex items-center gap-2.5 mt-5 w-full overflow-x-auto pb-1.5 scrollbar-none px-1">
+                      {CALENDAR_DATES.map((item) => {
+                        const isSelected = selectedDateCard === item.label || createDate === item.label;
                         return (
                           <button
-                            key={day}
+                            key={item.label}
                             type="button"
-                            onClick={() => toggleAlarmDay(day)}
-                            className={`w-9 h-9 rounded-full font-[800] text-[11px] transition cursor-pointer flex items-center justify-center ${
-                              isActive
-                                ? 'bg-[#18181B] text-white shadow-xs'
-                                : 'bg-[#FAF8F5] text-[#18181B]/50 hover:text-[#18181B]'
+                            onClick={() => {
+                              hapticTap();
+                              setSelectedDateCard(item.label);
+                              setCreateDate(item.label);
+                            }}
+                            className={`flex-1 min-w-[80px] h-[76px] rounded-[20px] flex flex-col items-center justify-center transition-all duration-200 cursor-pointer ${
+                              isSelected
+                                ? 'bg-[#1D8E66] text-white shadow-lg shadow-[#1D8E66]/25 scale-[1.02]'
+                                : 'bg-white border border-stone-200/90 text-stone-700 hover:border-emerald-300 shadow-xs'
                             }`}
                           >
-                            {day[0]}
+                            <span className={`text-[14px] font-[700] ${isSelected ? 'text-white' : 'text-stone-800'}`}>
+                              {item.day}
+                            </span>
+                            <span className={`text-[12px] font-[600] mt-0.5 ${isSelected ? 'text-white/90' : 'text-stone-500'}`}>
+                              {item.date}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Vertical Tumbler Time Drum (Screenshot Exact Match) */}
+                  <div className="bg-white rounded-[28px] py-4 px-3 shadow-sm border border-[#18181B]/[0.06] overflow-hidden">
+                    <div className="text-center text-[13px] text-stone-500 font-medium mb-3">
+                      {createType === 'pink' ? 'Private date meetup starts in' : 'Departure convoy starts in'}
+                    </div>
+
+                    {/* Tumbler Drum 5 Rows */}
+                    <div className="flex flex-col select-none">
+                      {[-2, -1, 0, 1, 2].map((offset) => {
+                        const targetIndex = selectedTimeIndex + offset;
+                        if (targetIndex < 0 || targetIndex >= TIME_WHEEL_SLOTS.length) {
+                          return (
+                            <div
+                              key={`empty-${offset}`}
+                              className="h-10 flex items-center justify-center text-transparent text-sm"
+                            >
+                              --:--
+                            </div>
+                          );
+                        }
+
+                        const slotTime = TIME_WHEEL_SLOTS[targetIndex];
+                        const isCenter = offset === 0;
+                        const isNear = Math.abs(offset) === 1;
+
+                        return (
+                          <button
+                            key={slotTime}
+                            type="button"
+                            onClick={() => {
+                              hapticTap();
+                              setSelectedTimeIndex(targetIndex);
+                              setCreateTimeSlot(slotTime);
+                            }}
+                            className={`w-full transition-all duration-150 flex items-center justify-center cursor-pointer ${
+                              isCenter
+                                ? 'bg-[#EAF6F0] text-[#1D8E66] font-[800] text-[18px] py-3.5 border-y border-[#1D8E66]/25 shadow-xs my-0.5'
+                                : isNear
+                                ? 'text-stone-500 hover:text-stone-800 font-[600] text-[15px] py-2.5'
+                                : 'text-stone-300 hover:text-stone-500 font-[500] text-[14px] py-2'
+                            }`}
+                          >
+                            {slotTime}
                           </button>
                         );
                       })}
@@ -1916,17 +1857,17 @@ function TripsContent() {
                         {createType === 'pink' ? 'DATE CAPACITY' : 'SQUAD SIZE'}
                       </label>
                       {createType === 'pink' ? (
-                        <div className="p-3 rounded-2xl bg-[#FAF5F7] border border-[#331822]/20 mt-1.5 space-y-1.5 shadow-xs">
+                        <div className="p-3 rounded-2xl bg-[#FAF5F7] border border-[#331822]/20 mt-1.5 space-y-1 shadow-xs">
                           <div className="flex items-center justify-between">
                             <span className="text-[12px] font-[800] text-rose-950">
-                              ✦ 1-on-1 (1 Guest Only)
+                              ✦ 1-on-1 (1 Guest)
                             </span>
                             <span className="text-[8px] font-extrabold px-1.5 py-0.2 rounded-full bg-rose-200 text-rose-900 uppercase">
                               Strictly 1
                             </span>
                           </div>
                           <p className="text-[10px] text-rose-900/75 leading-tight font-medium">
-                            Dates are strictly 1-on-1 private experiences (Host + 1 Guest). Group capacity is disabled.
+                            Strictly 1-on-1 private experience. Group capacity disabled.
                           </p>
                         </div>
                       ) : (
@@ -1946,7 +1887,7 @@ function TripsContent() {
                               className={`w-full p-2.5 rounded-xl border text-[11px] font-bold text-left transition cursor-pointer ${
                                 createGroupSize === sz.id
                                   ? 'bg-[#18181B] text-white border-[#18181B] shadow-xs'
-                                  : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70'
+                                  : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70 hover:border-[#18181B]/20'
                               }`}
                             >
                               {sz.label}
@@ -1962,10 +1903,10 @@ function TripsContent() {
                       </label>
                       <div className="space-y-1.5 mt-1.5">
                         {[
-                          '🚗 Driving Private Car',
-                          '🏍️ Cruising Motorcycle',
-                          '🚕 Split Cabs / Uber',
-                          '🚙 Need a Ride / Co-host',
+                          '🚗 Private Car',
+                          '🏍️ Cruiser Bike',
+                          '🚕 Split Cabs',
+                          '🚙 Need a Ride',
                         ].map((ride) => (
                           <button
                             key={ride}
@@ -1977,7 +1918,7 @@ function TripsContent() {
                             className={`w-full p-2.5 rounded-xl border text-[11px] font-medium text-left transition cursor-pointer ${
                               createRide === ride
                                 ? 'bg-[#18181B] text-white border-[#18181B] font-bold shadow-xs'
-                                : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70'
+                                : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70 hover:border-[#18181B]/20'
                             }`}
                           >
                             {ride}
