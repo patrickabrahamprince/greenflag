@@ -1,79 +1,91 @@
-# GreenFlag — App Rules & Master Specification
+# GreenFlag — Master App Blueprint & Rules
 
-> **Official product and architectural blueprint for GreenFlag (Travel + Dating App).**
-> Any future feature, refactor, or UI update MUST adhere strictly to the rules defined in this document.
+> **The definitive product blueprint and architecture guide for GreenFlag.**
+> All ongoing development, design decisions, and feature additions must adhere to the rules in this document.
 
 ---
 
 ## 1. What the App Is All About
 
-**GreenFlag** is a premium **Travel + Dating** mobile application. It enables verified travelers and singles to connect over shared experiences, curated road trips, weekend retreats, cafe crawls, and sunrise convoys.
+**GreenFlag** is a **fun, vibrant, and engaging app that pushes people to take solo and group trips, meet new people, and explore natural dating connections along the way.**
 
-### Core Value Proposition
-- **Experience-First Dating**: People connect over shared journey plans (e.g. dawn cloud drives, artisan single-origin coffee tastings, cliff-edge hikes, secluded beach circles) rather than superficial swiping.
-- **100% ID Verified & Escort-Free**: Mandatory verification protocols, verified badge levels, and trust scoring.
-- **Safe & Curated Circles**: Dedicated Female-Verified circles and public meetup protocols for initial micro-dates.
-- **Double-Blind Matching**: Mutual affinity and secret sparks only reveal when both individuals express shared interest.
+### Core Pillars & User Journey
+1. **Pushing Solo & Spontaneous Escapes**:
+   - Inspires users to get out of the routine with curated day rides, sunrise fortress drives, scenic cafes, and hidden local gems.
+   - Low-friction solo discovery: discover nearby spots, join open convoys, or hit the road independently.
+
+2. **Group Trips & Community Convoys**:
+   - Effortlessly organize or join verified group getaways: weekend coffee estate stays, beach camping, cliff treks, and road trips.
+   - Built-in cost-splitting per person (fuel, snacks, entry) and designated city departure hubs.
+
+3. **Meeting New People & Social Chemistry**:
+   - Connect with verified explorers who share your exact travel pace, music playlists, and outdoor passions.
+   - Safe, verified environments (100% ID verification, Female-Verified Circles, public daylight meetup options).
+
+4. **Natural, Pressure-Free Dating**:
+   - No awkward swipe-fatigue: romantic sparks happen organically through shared travel itineraries, sunrise drives, and mutual sparks.
+   - Double-blind mutual interest: secret sparks and match vibes only reveal when both individuals are genuinely interested.
 
 ---
 
-## 2. Visual Design System & Aesthetics (Design Bomb Spec)
+## 2. Visual Design System (Design Bomb Spec)
 
-The app follows the minimalist luxury aesthetic inspired by **Design Bomb**:
+GreenFlag pairs high-energy engagement with an ultra-clean, minimalist luxury aesthetic:
 
-| Token | Hex / Value | Purpose |
+| Token | Hex / Value | Role in the App |
 | :--- | :--- | :--- |
-| **Base Canvas** | `#F7F6EB` | Warm, organic luxury cream backdrop |
-| **Deep Ink / Onyx** | `#141414` / `#18181B` | Primary typography, deep buttons, header text |
-| **Electric Lime** | `#CEFF00` | Energy accents, confirmation tags, spark badges |
-| **Hot Magenta** | `#FF3EBA` | Romantic sparks, match signals, heart highlights |
-| **Champagne Gold** | `#D4AF37` | Boarding pass foil, trust badges, elite verification |
-| **Subtle Borders** | `#18181B]/[0.08]` | Hairline borders, perforated divider lines |
+| **Base Canvas** | `#F7F6EB` | Organic warm luxury cream background |
+| **Deep Ink / Onyx** | `#141414` / `#18181B` | Bold titles, high-contrast action buttons, chips |
+| **Electric Lime** | `#CEFF00` | High-energy nudges, active departure badges, spark indicators |
+| **Hot Magenta** | `#FF3EBA` | Romantic sparks, dating matches, favorite hearts |
+| **Champagne Gold** | `#D4AF37` | Elite verified host badges, boarding pass foil borders |
+| **Borders & Dividers** | `#18181B]/[0.08]` | Subtle hairline cards, ticket notches, perforated dividers |
 
-### Design Rules
-1. **Zero Emojis in Core UI**: Use crisp SVG icons from `lucide-react` (e.g. `MapPin`, `Sparkles`, `Compass`, `Shield`, `Heart`, `Clock`). Do not use emoji graphics in headers, chips, or titles.
-2. **Editorial Boarding Pass Aesthetics**: Ticket perforations, notch cutouts, clean barcode badges, and structured passport stamp aesthetics.
-3. **Typography**: High contrast, bold uppercase tracking for metadata (`text-[9px] tracking-[0.2em] font-bold uppercase`), smooth rounded sans-serif for headlines.
-4. **Haptics**: Always trigger `hapticTap()`, `hapticSuccess()`, or `hapticWarning()` on touch interactions.
-
----
-
-## 3. Core App Modules & Navigation
-
-### 1. Discover / Explore (`/trips`)
-- **Radar & Convoy Feed**: Curated dawn expeditions, artisan coffee trails, female circles, and starlight ridge climbs.
-- **Filter Pills**: `All Escapes`, `Micro Dates (60m)`, `Sunrise Convoys`, `Weekend Getaways`, `Female Circles`.
-- **Hero Scenery & Ticket Cards**: Each card displays destination, departure hub, split cost per person, host explorer level, and shared vibe tags.
-- **Boarding Pass Slide-Up Sheet**: Full itinerary, host trust rating, verified pickup location, and instant RSVP / Spark.
-
-### 2. Travel Passport (`/passport`)
-- **Traveler Identity**: Verified identity badge, passport tier, home airport/city hub.
-- **Traveled Routes & Convoys**: Past completed expeditions and stamped locations.
-- **Dating & Travel Preferences**: Early riser vs. night owl, soundtrack preferences, coffee style, travel pace.
-
-### 3. Escape Host Wizard (`activeTab === 'create'`)
-- 6-step guided experience to host a micro-date, day roadtrip, or weekend getaway.
-- Automatic route time, distance calculation, pickup hub selector, and shared fuel/snack split calculator.
+### Tone & UX Principles
+- **Fun, Adventurous & Engaging**: Active counters, instant departure nudges, interactive radar maps, and rich trip itineraries.
+- **Zero Cheap Emoji Clutter**: Use clean, crisp SVG icons from `lucide-react` (`MapPin`, `Compass`, `Sparkles`, `Users`, `Flame`, `Zap`, `Shield`, `Heart`, `Calendar`).
+- **Boarding Pass & Passport Details**: Every trip feels like an authentic boarding pass ticket; user profiles double as verified Travel Passports with stamped badges.
+- **Micro-Haptics**: Tactile feedback on all button presses, filter changes, and booking confirmations.
 
 ---
 
-## 4. Technical Stack & Deployment Protocol
+## 3. Core App Modules
 
-- **Frontend**: Next.js 16 (App Router), React, Tailwind CSS, TypeScript.
-- **Native Bridge**: Capacitor 8 (Android & iOS).
-- **Backend & Database**: Supabase (Auth, PostgreSQL, Storage, Edge Functions).
-- **Payments**: Razorpay (Webhooks, verified payment orders).
-- **Production Server**: `https://greenflag-dusky.vercel.app`
+### 🗺️ 1. Explore & Convoys Feed (`/trips`)
+- **Interactive Proximity Radar**: View nearby travelers and upcoming departures in real-time.
+- **Categorized Escapes**:
+  - `Micro Dates & Cafe Meets (60m)`
+  - `Sunrise Roadtrips & Convoys`
+  - `Weekend Retreats & Getaways`
+  - `100% Female-Verified Circles`
+  - `Solo Traveler Matchups`
+- **Luxury Boarding Pass Sheet**: View itinerary details, pickup spot, shared cost split, host trust score, and RSVP / Spark.
 
-### 📱 Android & Play Store Deployment Workflow
-The live Play Store binary uses Capacitor configured with `server: { url: 'https://greenflag-dusky.vercel.app' }`. This means production updates deploy instantly to live users.
+### 🛂 2. Travel Passport (`/passport`)
+- **Explorer Identity**: Verified badges, home departure hub, and host level.
+- **Travel DNA**: Solo travel style, roadtrip music vibes, sunrise vs. sunset preferences.
+- **Route Stamps**: History of completed trips, convoys, and verified connections.
 
-**Every deployment must run in this sequence:**
+### 🚗 3. Host an Escape Wizard (`activeTab === 'create'`)
+- 6-step flow to host a solo meetup, group convoy, or curated date.
+- Departure hub auto-complete, route time estimates, and shared split calculator.
+
+---
+
+## 4. Technical Architecture & Deployment Workflow
+
+- **Framework**: Next.js 16 (App Router), React, Tailwind CSS, TypeScript.
+- **Native App**: Capacitor 8 (Android & iOS).
+- **Backend**: Supabase (Auth, Postgres, Storage, RLS).
+- **Live Production Endpoint**: `https://greenflag-dusky.vercel.app`
+
+### 🚀 Production Deployment Sequence
+Whenever updating the live Play Store app:
 ```bash
-# 1. Verify build & types
+# 1. Verify build and TypeScript
 npm run build
 
-# 2. Synchronize native Android assets and plugins
+# 2. Sync native assets and plugins to Android
 npx cap sync android
 
 # 3. Deploy live production bundle to Vercel
@@ -82,9 +94,9 @@ npx vercel --prod --yes
 
 ---
 
-## 5. Strict Guardrails (What NOT to Do)
+## 5. Strict Guardrails
 
-- ❌ **Never replace the Travel Dating core** with generic unstyled dating templates or plain airline ticket booking clones.
-- ❌ **Never remove the Design Bomb color theme** (`#F7F6EB`, `#141414`, `#CEFF00`, `#FF3EBA`).
-- ❌ **Never introduce generic cartoon emojis** into the primary UI components.
-- ❌ **Never push broken code**: Always run `npm run build` to confirm 0 TypeScript / Lint errors before syncing or deploying.
+- ❌ **Never lose the Solo + Group + Dating balance**: The app is simultaneously about adventures, making friends, taking solo/group trips, and dating.
+- ❌ **Never revert to plain generic swiping**: Keep the experience-driven, convoy-first identity.
+- ❌ **Preserve the Design Bomb aesthetic**: Keep `#F7F6EB`, `#141414`, `#CEFF00`, `#FF3EBA`.
+- ❌ **Never deploy unverified code**: Always run `npm run build` first.
