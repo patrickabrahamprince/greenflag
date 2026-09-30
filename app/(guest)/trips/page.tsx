@@ -994,106 +994,109 @@ function TripsContent() {
                 onMouseUp={handleMapPointerUp}
                 onMouseLeave={handleMapPointerUp}
                 onWheel={handleMapWheel}
-                className="relative rounded-[36px] overflow-hidden border border-stone-300/80 bg-[#F4F3F0] text-stone-900 shadow-xl h-[450px] flex flex-col justify-between cursor-grab active:cursor-grabbing select-none"
+                className="relative rounded-[36px] overflow-hidden border border-stone-200/90 bg-[#F4F3F0] text-stone-900 shadow-2xl h-[460px] flex flex-col justify-between cursor-grab active:cursor-grabbing select-none"
               >
                 
-                {/* APPLE MAPS PANNABLE & ZOOMABLE VECTOR CANVAS */}
+                {/* REAL RETINA APPLE MAPS TILE CANVAS LAYER (PANNABLE & ZOOMABLE) */}
                 <div
                   className="absolute inset-0 w-full h-full origin-center pointer-events-none transition-transform duration-75 ease-out"
                   style={{
                     transform: `translate3d(${mapPan.x}px, ${mapPan.y}px, 0px) scale(${mapZoom})`,
                   }}
                 >
-                  {/* Apple Maps Base Ground Layer */}
-                  <div
-                    className="absolute -inset-40 bg-[#F4F3F0]"
-                    style={{
-                      backgroundImage: `
-                        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.6) 0%, rgba(244, 243, 240, 0.3) 100%),
-                        linear-gradient(rgba(226, 232, 240, 0.4) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(226, 232, 240, 0.4) 1px, transparent 1px)
-                      `,
-                      backgroundSize: '100% 100%, 40px 40px, 40px 40px',
-                    }}
-                  />
-
-                  {/* Apple Maps Natural Green Parks & Nature Reserves */}
-                  <div className="absolute top-6 right-2 w-72 h-72 rounded-[48px] bg-[#D6EBD2] border border-[#BBDCB6] opacity-95 rotate-12" />
-                  <div className="absolute bottom-2 -left-12 w-80 h-64 rounded-[60px] bg-[#D4E8F8] border border-[#B6D8F4] opacity-95 -rotate-6" />
-                  <div className="absolute top-48 left-16 w-52 h-44 rounded-[40px] bg-[#E2F0D9] border border-[#CDE5C2] opacity-90" />
-
-                  {/* High-Fidelity Apple Maps Highway & Road Network (SVG) */}
-                  <svg className="absolute -inset-20 w-[150%] h-[150%]" viewBox="0 0 600 600">
-                    {/* Secondary Local Street Grid */}
-                    <path d="M 40 180 L 560 180" stroke="#E2E8F0" strokeWidth="3" strokeLinecap="round" />
-                    <path d="M 40 320 L 560 320" stroke="#E2E8F0" strokeWidth="3" strokeLinecap="round" />
-                    <path d="M 40 440 L 560 440" stroke="#E2E8F0" strokeWidth="3" strokeLinecap="round" />
-                    <path d="M 160 40 L 160 560" stroke="#E2E8F0" strokeWidth="3" strokeLinecap="round" />
-                    <path d="M 320 40 L 320 560" stroke="#E2E8F0" strokeWidth="3" strokeLinecap="round" />
-                    <path d="M 460 40 L 460 560" stroke="#E2E8F0" strokeWidth="3" strokeLinecap="round" />
-
-                    {/* Major Arterial Highway (White Ribbon with Gray Casing) */}
-                    <path
-                      d="M 60 520 C 180 420, 220 450, 320 280 C 380 160, 440 200, 520 60"
-                      stroke="#CBD5E1"
-                      strokeWidth="11"
-                      strokeLinecap="round"
-                      fill="none"
+                  {/* Real High-Resolution Voyager Apple-Style Cartography 3x3 Grid */}
+                  <div className="absolute -top-[256px] -left-[256px] w-[1024px] h-[1024px] grid grid-cols-3 grid-rows-3 pointer-events-none">
+                    <img
+                      src="https://a.basemaps.cartocdn.com/rastertiles/voyager/11/1463/973@2x.png"
+                      alt=""
+                      className="w-[341px] h-[341px] object-cover"
+                      draggable={false}
                     />
+                    <img
+                      src="https://b.basemaps.cartocdn.com/rastertiles/voyager/11/1464/973@2x.png"
+                      alt=""
+                      className="w-[341px] h-[341px] object-cover"
+                      draggable={false}
+                    />
+                    <img
+                      src="https://c.basemaps.cartocdn.com/rastertiles/voyager/11/1465/973@2x.png"
+                      alt=""
+                      className="w-[341px] h-[341px] object-cover"
+                      draggable={false}
+                    />
+                    <img
+                      src="https://a.basemaps.cartocdn.com/rastertiles/voyager/11/1463/974@2x.png"
+                      alt=""
+                      className="w-[341px] h-[341px] object-cover"
+                      draggable={false}
+                    />
+                    <img
+                      src="https://b.basemaps.cartocdn.com/rastertiles/voyager/11/1464/974@2x.png"
+                      alt=""
+                      className="w-[341px] h-[341px] object-cover"
+                      draggable={false}
+                    />
+                    <img
+                      src="https://c.basemaps.cartocdn.com/rastertiles/voyager/11/1465/974@2x.png"
+                      alt=""
+                      className="w-[341px] h-[341px] object-cover"
+                      draggable={false}
+                    />
+                    <img
+                      src="https://a.basemaps.cartocdn.com/rastertiles/voyager/11/1463/975@2x.png"
+                      alt=""
+                      className="w-[341px] h-[341px] object-cover"
+                      draggable={false}
+                    />
+                    <img
+                      src="https://b.basemaps.cartocdn.com/rastertiles/voyager/11/1464/975@2x.png"
+                      alt=""
+                      className="w-[341px] h-[341px] object-cover"
+                      draggable={false}
+                    />
+                    <img
+                      src="https://c.basemaps.cartocdn.com/rastertiles/voyager/11/1465/975@2x.png"
+                      alt=""
+                      className="w-[341px] h-[341px] object-cover"
+                      draggable={false}
+                    />
+                  </div>
+
+                  {/* Overlaid Apple GPS Navigation Highway Route SVG */}
+                  <svg className="absolute -inset-10 w-[125%] h-[125%] pointer-events-none" viewBox="0 0 500 500">
+                    {/* Route Blue Shadow */}
                     <path
-                      d="M 60 520 C 180 420, 220 450, 320 280 C 380 160, 440 200, 520 60"
-                      stroke="#FFFFFF"
+                      d="M 230 330 C 240 280, 270 240, 310 170 C 340 120, 380 90, 410 40"
+                      stroke="#0055CC"
                       strokeWidth="8"
                       strokeLinecap="round"
                       fill="none"
+                      className="opacity-30 blur-[2px]"
                     />
-
-                    {/* Golden Freeway (Expressway with Orange Core & White Casing) */}
+                    {/* Vibrant Apple Blue Route Line */}
                     <path
-                      d="M 80 480 Q 260 520 420 340 T 560 220"
-                      stroke="#E2E8F0"
-                      strokeWidth="9"
-                      strokeLinecap="round"
-                      fill="none"
-                    />
-                    <path
-                      d="M 80 480 Q 260 520 420 340 T 560 220"
-                      stroke="#FBBF24"
-                      strokeWidth="6"
-                      strokeLinecap="round"
-                      fill="none"
-                    />
-
-                    {/* Active Apple GPS Route (Vibrant Blue with Cyan Glow) */}
-                    <path
-                      d="M 140 450 C 220 380, 250 400, 340 260 C 390 170, 430 190, 480 110"
-                      stroke="#1D4ED8"
-                      strokeWidth="7"
-                      strokeLinecap="round"
-                      fill="none"
-                      className="opacity-40 blur-[2px]"
-                    />
-                    <path
-                      d="M 140 450 C 220 380, 250 400, 340 260 C 390 170, 430 190, 480 110"
+                      d="M 230 330 C 240 280, 270 240, 310 170 C 340 120, 380 90, 410 40"
                       stroke="#007AFF"
-                      strokeWidth="5"
+                      strokeWidth="5.5"
                       strokeLinecap="round"
                       fill="none"
                     />
 
-                    {/* Apple Maps GPS Route Direction Chevrons */}
-                    <circle cx="240" cy="350" r="3" fill="#FFFFFF" />
-                    <circle cx="340" cy="260" r="3" fill="#FFFFFF" />
-                    <circle cx="430" cy="160" r="3" fill="#FFFFFF" />
-                  </svg>
+                    {/* Secondary Date Trail Route (Lavender) */}
+                    <path
+                      d="M 210 350 Q 150 400 90 420"
+                      stroke="#A855F7"
+                      strokeWidth="4"
+                      strokeDasharray="6 4"
+                      strokeLinecap="round"
+                      fill="none"
+                      className="opacity-80"
+                    />
 
-                  {/* Apple Maps Highway Route Shield Badges */}
-                  <div className="absolute top-36 left-48 bg-[#007AFF] text-white px-1.5 py-0.5 rounded-[4px] text-[9px] font-[900] tracking-wider shadow-xs border border-white">
-                    NH 44
-                  </div>
-                  <div className="absolute bottom-40 right-28 bg-[#F59E0B] text-black px-1.5 py-0.5 rounded-[4px] text-[9px] font-[900] tracking-wider shadow-xs border border-white">
-                    SH 17
-                  </div>
+                    {/* Navigation Turn Dots */}
+                    <circle cx="270" cy="240" r="3.5" fill="#FFFFFF" />
+                    <circle cx="340" cy="120" r="3.5" fill="#FFFFFF" />
+                  </svg>
 
                   {/* APPLE MAPS 3D TEARDROP BALLOON PIN 1: Nandi Hills Sunrise Convoy */}
                   <div
@@ -1102,10 +1105,9 @@ function TripsContent() {
                       hapticSuccess();
                       setSelectedTrip(TRIPS_DATA[0]);
                     }}
-                    className="absolute top-20 right-14 z-30 pointer-events-auto cursor-pointer group hover:scale-105 active:scale-95 transition-transform"
+                    className="absolute top-12 right-16 z-30 pointer-events-auto cursor-pointer group hover:scale-105 active:scale-95 transition-transform"
                   >
-                    {/* Callout Bubble */}
-                    <div className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-2xl shadow-lg border border-stone-200/90 flex items-center gap-2 mb-1.5">
+                    <div className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-2xl shadow-lg border border-stone-200/90 flex items-center gap-2 mb-1.5 whitespace-nowrap">
                       <img
                         src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80"
                         alt="Aarav"
@@ -1116,7 +1118,6 @@ function TripsContent() {
                         <div className="text-[9px] text-rose-600 font-bold">💕 3 Dating Pairs</div>
                       </div>
                     </div>
-                    {/* Teardrop Balloon */}
                     <div className="w-8 h-8 rounded-full bg-[#FF3B30] text-white flex items-center justify-center shadow-md mx-auto relative border-2 border-white">
                       <span className="text-xs">⛰️</span>
                       <div className="w-2 h-2 bg-[#FF3B30] rotate-45 absolute -bottom-1 left-1/2 -translate-x-1/2 border-r-2 border-b-2 border-white" />
@@ -1130,10 +1131,9 @@ function TripsContent() {
                       hapticSuccess();
                       setSelectedTrip(TRIPS_DATA[1]);
                     }}
-                    className="absolute bottom-28 left-10 z-30 pointer-events-auto cursor-pointer group hover:scale-105 active:scale-95 transition-transform"
+                    className="absolute bottom-32 left-10 z-30 pointer-events-auto cursor-pointer group hover:scale-105 active:scale-95 transition-transform"
                   >
-                    {/* Callout Bubble */}
-                    <div className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-2xl shadow-lg border border-stone-200/90 flex items-center gap-2 mb-1.5">
+                    <div className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-2xl shadow-lg border border-stone-200/90 flex items-center gap-2 mb-1.5 whitespace-nowrap">
                       <img
                         src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80"
                         alt="Rohan"
@@ -1144,39 +1144,23 @@ function TripsContent() {
                         <div className="text-[9px] text-emerald-700 font-bold">1 Spot Open</div>
                       </div>
                     </div>
-                    {/* Teardrop Balloon */}
                     <div className="w-8 h-8 rounded-full bg-[#34C759] text-white flex items-center justify-center shadow-md mx-auto relative border-2 border-white">
                       <span className="text-xs">☕</span>
                       <div className="w-2 h-2 bg-[#34C759] rotate-45 absolute -bottom-1 left-1/2 -translate-x-1/2 border-r-2 border-b-2 border-white" />
                     </div>
                   </div>
 
-                  {/* APPLE MAPS PIN 3: Gokarna Beach */}
-                  <div
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      hapticSuccess();
-                      setSelectedTrip(TRIPS_DATA[2] || TRIPS_DATA[0]);
-                    }}
-                    className="absolute top-44 left-16 z-30 pointer-events-auto cursor-pointer hover:scale-105 active:scale-95 transition-transform"
-                  >
-                    <div className="w-7 h-7 rounded-full bg-[#AF52DE] text-white flex items-center justify-center shadow-md mx-auto relative border-2 border-white">
-                      <span className="text-[11px]">🌊</span>
-                      <div className="w-1.5 h-1.5 bg-[#AF52DE] rotate-45 absolute -bottom-0.5 left-1/2 -translate-x-1/2 border-r border-b border-white" />
-                    </div>
-                  </div>
-
                   {/* USER LIVE LOCATION PULSE (Apple Blue Dot) */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                    <span className="w-14 h-14 rounded-full bg-[#007AFF]/25 animate-ping absolute -inset-2" />
-                    <span className="w-10 h-10 rounded-full bg-[#007AFF]/35 flex items-center justify-center">
-                      <span className="w-4 h-4 rounded-full bg-[#007AFF] border-2 border-white shadow-md" />
+                  <div className="absolute top-[68%] left-[45%] -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                    <span className="w-12 h-12 rounded-full bg-[#007AFF]/25 animate-ping absolute -inset-2" />
+                    <span className="w-8 h-8 rounded-full bg-[#007AFF]/35 flex items-center justify-center">
+                      <span className="w-3.5 h-3.5 rounded-full bg-[#007AFF] border-2 border-white shadow-md" />
                     </span>
                   </div>
 
                 </div>
 
-                {/* TOP FLOATING APPLE MAPS CONTROLS */}
+                {/* TOP FLOATING APPLE MAPS SEARCH & CONTROLS */}
                 <div className="relative z-30 p-3.5 flex items-center justify-between pointer-events-none">
                   {/* Apple Maps Search / Hub Pill */}
                   <button
@@ -1186,7 +1170,7 @@ function TripsContent() {
                       hapticTap();
                       setShowLocationModal(true);
                     }}
-                    className="pointer-events-auto flex items-center gap-2.5 bg-white/90 backdrop-blur-2xl px-4 py-2.5 rounded-full border border-stone-200/80 shadow-[0_8px_20px_rgba(0,0,0,0.06)] hover:bg-white active:scale-95 transition cursor-pointer"
+                    className="pointer-events-auto flex items-center gap-2.5 bg-white/95 backdrop-blur-2xl px-4 py-2.5 rounded-full border border-stone-200/90 shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:bg-white active:scale-95 transition cursor-pointer"
                   >
                     <span className="w-2.5 h-2.5 rounded-full bg-[#34C759] animate-pulse shrink-0" />
                     <span className="text-[12px] font-[800] text-stone-900 tracking-tight">
@@ -1196,7 +1180,7 @@ function TripsContent() {
                   </button>
 
                   {/* Apple 3D Compass & Zoom Stack */}
-                  <div className="pointer-events-auto flex flex-col gap-1.5 shadow-[0_8px_20px_rgba(0,0,0,0.06)] bg-white/90 backdrop-blur-2xl p-1 rounded-2xl border border-stone-200/80">
+                  <div className="pointer-events-auto flex flex-col gap-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.08)] bg-white/95 backdrop-blur-2xl p-1 rounded-2xl border border-stone-200/90">
                     <button
                       type="button"
                       onClick={(e) => {
@@ -1240,7 +1224,7 @@ function TripsContent() {
 
                 {/* BOTTOM FLOATING APPLE MAPS TURN-BY-TURN GUIDANCE SHEET */}
                 <div className="relative z-30 p-3.5 pointer-events-none">
-                  <div className="pointer-events-auto bg-white/95 backdrop-blur-2xl rounded-[28px] p-4 shadow-[0_12px_32px_rgba(0,0,0,0.08)] border border-stone-200/80 space-y-2.5">
+                  <div className="pointer-events-auto bg-white/95 backdrop-blur-2xl rounded-[28px] p-4 shadow-[0_12px_36px_rgba(0,0,0,0.12)] border border-stone-200/90 space-y-2.5">
                     {/* Apple Green Navigation Banner */}
                     <div className="bg-[#1C8B43] text-white px-3 py-1.5 rounded-xl flex items-center justify-between text-[11px] font-[800]">
                       <div className="flex items-center gap-1.5">
