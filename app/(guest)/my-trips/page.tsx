@@ -35,7 +35,7 @@ export default function MyTripsPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#E3F2FD] via-[#F0F7FF] to-[#FAF8F5] text-stone-900 font-sans max-w-md mx-auto relative overflow-hidden flex flex-col pb-28">
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#E3F2FD] via-[#F0F7FF] to-[#F7F6EB] text-stone-900 font-sans max-w-md mx-auto relative overflow-hidden flex flex-col pb-28">
       
       {/* Top Ambient Glow Background */}
       <div className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-sky-200/50 via-indigo-100/30 to-transparent pointer-events-none" />

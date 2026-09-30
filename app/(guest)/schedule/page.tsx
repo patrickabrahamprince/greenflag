@@ -162,12 +162,12 @@ export default function ScheduleBookingPage() {
     setBookingSuccess(slot);
     toast.success(`Booked ${slot.title}!`, {
       icon: '🎉',
-      style: { background: '#16181A', color: '#FAF8F5' },
+      style: { background: '#16181A', color: '#F7F6EB' },
     });
   };
 
   return (
-    <div className={`min-h-screen w-full ${isDarkMode ? 'bg-[#000000] text-white' : 'bg-[#FAF8F5] text-black'} flex flex-col font-sans select-none max-w-md mx-auto relative overflow-x-hidden pb-28 antialiased`}>
+    <div className={`min-h-screen w-full ${isDarkMode ? 'bg-[#000000] text-white' : 'bg-[#F7F6EB] text-black'} flex flex-col font-sans select-none max-w-md mx-auto relative overflow-x-hidden pb-28 antialiased`}>
       
       {/* ================= TOP NAVIGATION HEADER (IMG_1100) ================= */}
       <header className="px-4 pt-[max(14px,env(safe-area-inset-top,14px))] pb-2.5 flex items-center justify-between sticky top-0 z-30 backdrop-blur-xl bg-opacity-90">

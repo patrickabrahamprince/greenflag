@@ -33,7 +33,7 @@ function BottomNavContent() {
 
   return (
     <nav className="fixed bottom-4 inset-x-0 z-50 flex justify-center pointer-events-none px-4 pb-[env(safe-area-inset-bottom,0px)]">
-      <div className="pointer-events-auto bg-white/85 backdrop-blur-2xl border border-white/80 rounded-full px-3 py-1.5 flex items-center gap-2 shadow-[0_16px_36px_rgba(0,0,0,0.08)] max-w-xs w-full justify-between">
+      <div className="pointer-events-auto bg-[#141414]/92 backdrop-blur-2xl border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-2 shadow-[0_16px_36px_rgba(0,0,0,0.25)] max-w-xs w-full justify-between">
         {tabs.map((tab) => {
           const isActive =
             tab.id === 'explore'
@@ -54,14 +54,14 @@ function BottomNavContent() {
               }}
               className={`relative flex items-center justify-center p-2.5 rounded-full transition-all cursor-pointer active:scale-90 ${
                 isActive
-                  ? 'bg-gradient-to-tr from-[#9D54FF] to-[#7B2CBF] text-white shadow-lg shadow-[#9D54FF]/30 scale-105'
-                  : 'text-stone-400 hover:text-stone-800 hover:bg-stone-100/50'
+                  ? 'bg-[#CEFF00] text-[#141414] shadow-lg shadow-[#CEFF00]/20 scale-105 font-black'
+                  : 'text-white/50 hover:text-white hover:bg-white/5'
               }`}
               aria-label={tab.label}
             >
               <tab.icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
               {tab.badge && !isActive && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#00E5A3] rounded-full ring-2 ring-white" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#FF3EBA] rounded-full ring-2 ring-[#141414]" />
               )}
             </button>
           );

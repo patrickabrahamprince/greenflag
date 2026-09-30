@@ -109,17 +109,17 @@ export default function PassportPage() {
   const displayCity = user?.city || 'Bangalore, India';
 
   return (
-    <div className="min-h-screen w-full bg-[#FAF8F5] text-stone-900 font-sans max-w-md mx-auto relative overflow-hidden flex flex-col pb-36 select-none antialiased">
+    <div className="min-h-screen w-full bg-[#F7F6EB] text-[#141414] font-sans max-w-md mx-auto relative overflow-hidden flex flex-col pb-36 select-none antialiased">
       
       {/* Top Ambient Glow */}
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-md h-64 bg-gradient-to-b from-[#EFE9DF]/80 via-[#FAF8F5]/40 to-transparent pointer-events-none z-0" />
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-md h-64 bg-gradient-to-b from-[#ECEAE0]/80 via-[#F7F6EB]/40 to-transparent pointer-events-none z-0" />
 
-      {/* ================= AIRSWIFT TOP HEADER ================= */}
-      <header className="px-6 pt-[max(16px,env(safe-area-inset-top,16px))] pb-2 sticky top-0 z-30 flex items-center justify-between bg-[#FAF8F5]/80 backdrop-blur-md">
+      {/* ================= EDITORIAL TOP HEADER ================= */}
+      <header className="px-6 pt-[max(16px,env(safe-area-inset-top,16px))] pb-2 sticky top-0 z-30 flex items-center justify-between bg-[#F7F6EB]/90 backdrop-blur-md">
         {/* User Avatar + Greeting */}
         <div className="flex items-center gap-3">
           <div className="relative">
-            <div className="w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-amber-400 via-amber-200 to-amber-500 shadow-sm flex items-center justify-center">
+            <div className="w-11 h-11 rounded-full p-0.5 bg-[#141414] shadow-sm flex items-center justify-center">
               <img
                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&q=80"
                 alt="Profile"
@@ -129,19 +129,19 @@ export default function PassportPage() {
                 }}
               />
             </div>
-            <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full" />
+            <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-[#CEFF00] border-2 border-[#141414] rounded-full" />
           </div>
           <div>
-            <div className="text-[11px] font-medium text-stone-500">Good Morning!</div>
-            <div className="text-[15px] font-[900] text-[#18181B] tracking-tight">{displayName}</div>
+            <div className="text-[11px] font-semibold text-[#141414]/55">Good Morning!</div>
+            <div className="text-[15px] font-[900] text-[#141414] tracking-tight">{displayName}</div>
           </div>
         </div>
 
         {/* Top Right Badges & Settings */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 bg-[#18181B] text-white px-3 py-1.5 rounded-full shadow-sm">
-            <span className="text-[12px] font-[800]">12</span>
-            <Bell className="w-3.5 h-3.5 text-white/90" />
+          <div className="flex items-center gap-1.5 bg-[#141414] text-[#CEFF00] px-3 py-1.5 rounded-full shadow-sm">
+            <span className="text-[12px] font-[900]">12</span>
+            <Bell className="w-3.5 h-3.5 text-[#CEFF00]" />
           </div>
 
           <button
@@ -150,10 +150,10 @@ export default function PassportPage() {
               hapticTap();
               router.push('/settings');
             }}
-            className="w-9 h-9 rounded-full bg-white border border-stone-200 shadow-sm flex items-center justify-center text-stone-800 hover:bg-stone-50 active:scale-95 transition cursor-pointer"
+            className="w-9 h-9 rounded-full bg-white border border-[#141414]/15 shadow-sm flex items-center justify-center text-[#141414] hover:bg-[#F7F6EB] active:scale-95 transition cursor-pointer"
             aria-label="Settings"
           >
-            <Settings className="w-4 h-4 text-stone-700" />
+            <Settings className="w-4 h-4 text-[#141414]" />
           </button>
         </div>
       </header>
@@ -164,10 +164,10 @@ export default function PassportPage() {
         {/* Title + Pill Switcher */}
         <div className="space-y-3">
           <div>
-            <span className="text-[10px] font-extrabold tracking-[0.2em] uppercase text-emerald-800">
+            <span className="text-[10px] font-black tracking-[0.2em] uppercase text-[#141414]/60">
               VERIFIED TRAVEL DATING
             </span>
-            <h1 className="text-[28px] font-[900] text-[#18181B] tracking-tight leading-tight">
+            <h1 className="text-[28px] font-[900] text-[#141414] tracking-tight leading-tight">
               Travel Dating Passport
             </h1>
           </div>
@@ -187,10 +187,10 @@ export default function PassportPage() {
                     hapticTap();
                     setActiveTab(pill.id as any);
                   }}
-                  className={`px-5 py-2 rounded-full text-[13px] font-[700] transition-all cursor-pointer whitespace-nowrap ${
+                  className={`px-5 py-2 rounded-full text-[13px] font-[800] transition-all cursor-pointer whitespace-nowrap ${
                     isSelected
-                      ? 'bg-[#18181B] text-white shadow-md'
-                      : 'bg-[#F2EDE4] text-stone-700 hover:bg-[#EAE4D9]'
+                      ? 'bg-[#141414] text-[#CEFF00] shadow-sm ring-1 ring-[#141414]'
+                      : 'bg-white/80 text-[#141414]/70 border border-[#141414]/10 hover:bg-white hover:text-[#141414]'
                   }`}
                 >
                   {pill.label}
@@ -204,15 +204,15 @@ export default function PassportPage() {
         {activeTab === 'pass' && (
           <div className="space-y-4 animate-fade-in">
             {/* 1. GOLDEN SAFFRON TRAVEL DATING BOARDING PASS */}
-            <div className="bg-[#F5A623] rounded-[32px] p-5 text-stone-900 shadow-xl relative overflow-hidden space-y-3">
+            <div className="bg-[#F5A623] rounded-[32px] p-5 text-stone-900 shadow-xl relative overflow-hidden space-y-3 border border-black/10">
               
               {/* Header Row: Passport Tag & QR icon */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full bg-black/10 text-stone-950 font-[800] text-[10px] tracking-wider uppercase">
+                  <span className="px-2.5 py-0.5 rounded-full bg-black/15 text-stone-950 font-black text-[10px] tracking-wider uppercase">
                     Official Travel Dating Pass
                   </span>
-                  <span className="text-[11px] font-bold text-stone-950">GF-SPARK-8842</span>
+                  <span className="text-[11px] font-black text-stone-950">GF-SPARK-8842</span>
                 </div>
                 <div className="w-7 h-7 rounded-lg bg-black/10 flex items-center justify-center">
                   <QrCode className="w-4 h-4 text-stone-950" />
@@ -222,19 +222,19 @@ export default function PassportPage() {
               {/* Upper Route Split Block with Circular Swap */}
               <div className="relative flex gap-2">
                 <div className="flex-1 bg-[#F9BC45] rounded-2xl p-3 border border-black/5">
-                  <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Home Base</div>
+                  <div className="text-[10px] font-black text-stone-800 uppercase tracking-wider">Home Base</div>
                   <div className="text-[22px] font-[900] text-stone-950 tracking-tight leading-none mt-1">BLR</div>
                   <div className="text-[11px] font-semibold text-stone-800/80 truncate mt-0.5">
                     {displayCity.split(',')[0]}
                   </div>
                 </div>
 
-                <div className="w-8 h-8 rounded-full bg-[#18181B] text-white shadow-md flex items-center justify-center self-center -mx-3 z-10">
-                  <Compass className="w-3.5 h-3.5 text-white" />
+                <div className="w-8 h-8 rounded-full bg-[#141414] text-[#CEFF00] shadow-md flex items-center justify-center self-center -mx-3 z-10">
+                  <Compass className="w-3.5 h-3.5 text-[#CEFF00]" />
                 </div>
 
                 <div className="flex-1 bg-[#F9BC45] rounded-2xl p-3 text-right border border-black/5">
-                  <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Date Preference</div>
+                  <div className="text-[10px] font-black text-stone-800 uppercase tracking-wider">Date Preference</div>
                   <div className="text-[22px] font-[900] text-stone-950 tracking-tight leading-none mt-1">SPARK</div>
                   <div className="text-[11px] font-semibold text-stone-800/80 truncate mt-0.5">
                     Sunrise & Escapes
@@ -244,23 +244,23 @@ export default function PassportPage() {
 
               {/* Perforated Divider Line with Cutouts */}
               <div className="relative -mx-5 my-1">
-                <div className="border-t border-dashed border-stone-800/20" />
-                <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-                <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+                <div className="border-t border-dashed border-stone-800/30" />
+                <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#F7F6EB]" />
+                <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#F7F6EB]" />
               </div>
 
               {/* Middle Details Grid */}
               <div className="grid grid-cols-2 gap-2">
                 <div className="bg-[#F9BC45] rounded-2xl p-3 border border-black/5">
-                  <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Chemistry Rating</div>
+                  <div className="text-[10px] font-black text-stone-800 uppercase tracking-wider">Chemistry Rating</div>
                   <div className="text-[14px] font-[900] text-stone-950 mt-0.5 flex items-center gap-1">
                     <span className="flex items-center gap-1">4.95 <Star className="w-3.5 h-3.5 fill-current text-stone-900" /></span>
-                    <span className="text-[10px] font-bold bg-black/10 px-1.5 py-0.2 rounded-md">Top 5%</span>
+                    <span className="text-[10px] font-black bg-black/10 px-1.5 py-0.2 rounded-md">Top 5%</span>
                   </div>
                 </div>
 
                 <div className="bg-[#F9BC45] rounded-2xl p-3 border border-black/5">
-                  <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Single Explorer</div>
+                  <div className="text-[10px] font-black text-stone-800 uppercase tracking-wider">Single Explorer</div>
                   <div className="text-[14px] font-[900] text-stone-950 mt-0.5">Level 15 Pro</div>
                 </div>
               </div>
@@ -280,7 +280,7 @@ export default function PassportPage() {
                     toast.success('Passport link copied to clipboard!');
                   }
                 }}
-                className="w-full py-3.5 rounded-full bg-[#18181B] text-white font-[800] text-[14px] shadow-md hover:bg-black active:scale-[0.98] transition cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-full bg-[#141414] text-[#CEFF00] font-black text-[14px] shadow-md hover:bg-black active:scale-[0.98] transition cursor-pointer flex items-center justify-center gap-2"
               >
                 <Share2 className="w-4 h-4" />
                 <span>Share Dating Passport</span>
@@ -289,15 +289,15 @@ export default function PassportPage() {
 
             {/* Quick Stats Bento */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white rounded-[24px] p-4 border border-stone-200/80 shadow-xs">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400">Total Escapes</div>
-                <div className="text-[20px] font-[900] text-stone-900 mt-0.5">18 Completed</div>
-                <div className="text-[11px] text-emerald-700 font-semibold mt-1">100% On-Time Host</div>
+              <div className="bg-white rounded-[28px] p-4 border border-[#141414]/10 shadow-xs">
+                <div className="text-[10px] font-black uppercase tracking-wider text-[#141414]/40">Total Escapes</div>
+                <div className="text-[20px] font-[900] text-[#141414] mt-0.5">18 Completed</div>
+                <div className="text-[11px] text-[#141414] font-bold mt-1">100% On-Time Host</div>
               </div>
-              <div className="bg-white rounded-[24px] p-4 border border-stone-200/80 shadow-xs">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400">Mutual Sparks</div>
-                <div className="text-[20px] font-[900] text-rose-600 mt-0.5">12 Matches</div>
-                <div className="text-[11px] text-stone-500 font-semibold mt-1">Double-Blind Active</div>
+              <div className="bg-white rounded-[28px] p-4 border border-[#141414]/10 shadow-xs">
+                <div className="text-[10px] font-black uppercase tracking-wider text-[#141414]/40">Mutual Sparks</div>
+                <div className="text-[20px] font-[900] text-[#FF3EBA] mt-0.5">12 Matches</div>
+                <div className="text-[11px] text-[#141414]/60 font-semibold mt-1">Double-Blind Active</div>
               </div>
             </div>
           </div>
@@ -307,18 +307,18 @@ export default function PassportPage() {
         {activeTab === 'stamps' && (
           <div className="space-y-3 animate-fade-in">
             <div className="flex items-center justify-between">
-              <h3 className="text-[18px] font-[900] text-[#18181B] tracking-tight">
+              <h3 className="text-[18px] font-[900] text-[#141414] tracking-tight">
                 Completed Travel Dates & Convoys
               </h3>
-              <span className="text-[11px] font-bold text-stone-500">3 Verified Passes</span>
+              <span className="text-[11px] font-black text-[#141414]/60">3 Verified Passes</span>
             </div>
 
             {/* Pass 1: Saffron Ticket */}
-            <div className="bg-[#F5A623] rounded-[28px] p-4 text-stone-950 shadow-md relative overflow-hidden space-y-3">
+            <div className="bg-[#F5A623] rounded-[28px] p-4 text-stone-950 shadow-md relative overflow-hidden space-y-3 border border-black/10">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-[20px] font-[900] leading-none">BLR</div>
-                  <div className="text-[10px] font-bold text-stone-800 mt-0.5">Bengaluru</div>
+                  <div className="text-[10px] font-black text-stone-800 mt-0.5">Bengaluru</div>
                 </div>
                 <div className="flex-1 px-4 flex items-center justify-center relative">
                   <div className="w-full border-t-2 border-dashed border-stone-800/40" />
@@ -328,19 +328,19 @@ export default function PassportPage() {
                 </div>
                 <div className="text-right">
                   <div className="text-[20px] font-[900] leading-none">NND</div>
-                  <div className="text-[10px] font-bold text-stone-800 mt-0.5">Nandi Hills</div>
+                  <div className="text-[10px] font-black text-stone-800 mt-0.5">Nandi Hills</div>
                 </div>
               </div>
 
               <div className="relative -mx-4 my-1">
                 <div className="border-t border-dashed border-stone-800/20" />
-                <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-                <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+                <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#F7F6EB]" />
+                <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#F7F6EB]" />
               </div>
 
               <div className="flex items-center justify-between pt-1">
                 <div>
-                  <div className="text-[13px] font-[800]">Sunrise Cloud Dating Convoy</div>
+                  <div className="text-[13px] font-[900]">Sunrise Cloud Dating Convoy</div>
                   <div className="text-[10px] font-medium text-stone-800/80">Sat 5:30 AM · Completed (3 Pairs)</div>
                 </div>
                 <div className="text-[22px] font-[900]">₹800</div>
@@ -348,68 +348,68 @@ export default function PassportPage() {
             </div>
 
             {/* Pass 2: Obsidian Ticket */}
-            <div className="bg-[#181B1F] rounded-[28px] p-4 text-white shadow-md relative overflow-hidden space-y-3">
+            <div className="bg-[#141414] rounded-[28px] p-4 text-white shadow-md relative overflow-hidden space-y-3 border border-white/10">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-[20px] font-[900] leading-none">BLR</div>
-                  <div className="text-[10px] font-bold text-stone-400 mt-0.5">Bengaluru</div>
+                  <div className="text-[20px] font-[900] leading-none text-[#CEFF00]">BLR</div>
+                  <div className="text-[10px] font-black text-white/60 mt-0.5">Bengaluru</div>
                 </div>
                 <div className="flex-1 px-4 flex items-center justify-center relative">
                   <div className="w-full border-t-2 border-dashed border-white/20" />
-                  <div className="absolute w-7 h-7 rounded-full bg-white text-stone-900 shadow-sm flex items-center justify-center text-xs">
-                    <Coffee className="w-3.5 h-3.5 text-stone-900" />
+                  <div className="absolute w-7 h-7 rounded-full bg-[#CEFF00] text-[#141414] shadow-sm flex items-center justify-center text-xs">
+                    <Coffee className="w-3.5 h-3.5 text-[#141414]" />
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[20px] font-[900] leading-none">CRG</div>
-                  <div className="text-[10px] font-bold text-stone-400 mt-0.5">Coorg Estate</div>
+                  <div className="text-[20px] font-[900] leading-none text-[#CEFF00]">CRG</div>
+                  <div className="text-[10px] font-black text-white/60 mt-0.5">Coorg Estate</div>
                 </div>
               </div>
 
               <div className="relative -mx-4 my-1">
                 <div className="border-t border-dashed border-white/20" />
-                <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-                <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+                <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#F7F6EB]" />
+                <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#F7F6EB]" />
               </div>
 
               <div className="flex items-center justify-between pt-1">
                 <div>
-                  <div className="text-[13px] font-[800]">1-on-1 Coffee Tasting Date</div>
-                  <div className="text-[10px] font-medium text-stone-400">Completed · 5.0 Star Chemistry</div>
+                  <div className="text-[13px] font-[900]">1-on-1 Coffee Tasting Date</div>
+                  <div className="text-[10px] font-medium text-white/60">Completed · 5.0 Star Chemistry</div>
                 </div>
-                <div className="text-[22px] font-[900]">₹2,400</div>
+                <div className="text-[22px] font-[900] text-[#CEFF00]">₹2,400</div>
               </div>
             </div>
 
             {/* Pass 3: Blue Ticket */}
-            <div className="bg-[#2A85C8] rounded-[28px] p-4 text-white shadow-md relative overflow-hidden space-y-3">
+            <div className="bg-white rounded-[28px] p-4 text-[#141414] shadow-sm relative overflow-hidden space-y-3 border border-[#141414]/10">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-[20px] font-[900] leading-none">BLR</div>
-                  <div className="text-[10px] font-bold text-sky-100 mt-0.5">Bengaluru</div>
+                  <div className="text-[10px] font-black text-[#141414]/60 mt-0.5">Bengaluru</div>
                 </div>
                 <div className="flex-1 px-4 flex items-center justify-center relative">
-                  <div className="w-full border-t-2 border-dashed border-white/30" />
-                  <div className="absolute w-7 h-7 rounded-full bg-white text-stone-900 shadow-sm flex items-center justify-center text-xs">
-                    <Waves className="w-3.5 h-3.5 text-stone-900" />
+                  <div className="w-full border-t-2 border-dashed border-[#141414]/20" />
+                  <div className="absolute w-7 h-7 rounded-full bg-[#141414] text-[#CEFF00] shadow-sm flex items-center justify-center text-xs">
+                    <Waves className="w-3.5 h-3.5 text-[#CEFF00]" />
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="text-[20px] font-[900] leading-none">GOK</div>
-                  <div className="text-[10px] font-bold text-sky-100 mt-0.5">Gokarna Cliff</div>
+                  <div className="text-[10px] font-black text-[#141414]/60 mt-0.5">Gokarna Cliff</div>
                 </div>
               </div>
 
               <div className="relative -mx-4 my-1">
-                <div className="border-t border-dashed border-white/20" />
-                <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-                <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+                <div className="border-t border-dashed border-[#141414]/20" />
+                <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#F7F6EB]" />
+                <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#F7F6EB]" />
               </div>
 
               <div className="flex items-center justify-between pt-1">
                 <div>
-                  <div className="text-[13px] font-[800]">Gokarna Beach & Sunset Circle</div>
-                  <div className="text-[10px] font-medium text-sky-100/90">Women Safe Circle Verified</div>
+                  <div className="text-[13px] font-[900]">Gokarna Beach & Sunset Circle</div>
+                  <div className="text-[10px] font-medium text-[#141414]/60">Women Safe Circle Verified</div>
                 </div>
                 <div className="text-[22px] font-[900]">₹1,200</div>
               </div>
@@ -420,34 +420,34 @@ export default function PassportPage() {
         {/* TAB 3: TRUST & SAFETY */}
         {activeTab === 'verified' && (
           <div className="space-y-3 animate-fade-in">
-            <div className="bg-white rounded-[26px] p-5 border border-stone-200/80 shadow-xs space-y-3">
-              <div className="flex items-center gap-2 font-[900] text-[16px] text-stone-900">
-                <Shield className="w-5 h-5 text-emerald-600" />
+            <div className="bg-white rounded-[28px] p-5 border border-[#141414]/10 shadow-xs space-y-3">
+              <div className="flex items-center gap-2 font-[900] text-[16px] text-[#141414]">
+                <Shield className="w-5 h-5 text-[#141414]" />
                 <span>GreenFlag Safety & Trust Protocol</span>
               </div>
-              <p className="text-[12px] text-stone-600 leading-relaxed">
+              <p className="text-[12px] text-[#141414]/70 leading-relaxed">
                 All members must pass government ID verification, real-time facial biometric check, and agree to public meetup hubs.
               </p>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-[#D7F5E8] rounded-[24px] p-4 border border-emerald-200/60 shadow-xs flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xs">
-                  <Check className="w-4 h-4 text-white stroke-[3]" />
+              <div className="bg-white rounded-[28px] p-4 border border-[#141414]/10 shadow-xs flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-full bg-[#141414] text-[#CEFF00] flex items-center justify-center shadow-xs">
+                  <Check className="w-4 h-4 text-[#CEFF00] stroke-[3]" />
                 </div>
                 <div>
-                  <div className="text-[12px] font-[800] text-emerald-950">Govt ID Checked</div>
-                  <div className="text-[10px] text-emerald-900/70 font-medium">100% Verified Single</div>
+                  <div className="text-[12px] font-[900] text-[#141414]">Govt ID Checked</div>
+                  <div className="text-[10px] text-[#141414]/60 font-medium">100% Verified Single</div>
                 </div>
               </div>
 
-              <div className="bg-[#DDF0FE] rounded-[24px] p-3.5 border border-sky-200/60 shadow-xs flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-sky-500 text-white flex items-center justify-center shadow-xs">
-                  <Check className="w-4 h-4 text-white stroke-[3]" />
+              <div className="bg-white rounded-[28px] p-3.5 border border-[#141414]/10 shadow-xs flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-full bg-[#141414] text-[#CEFF00] flex items-center justify-center shadow-xs">
+                  <Check className="w-4 h-4 text-[#CEFF00] stroke-[3]" />
                 </div>
                 <div>
-                  <div className="text-[12px] font-[800] text-sky-950">Face Match</div>
-                  <div className="text-[10px] text-sky-900/70 font-medium">Real Photo Verified</div>
+                  <div className="text-[12px] font-[900] text-[#141414]">Face Match</div>
+                  <div className="text-[10px] text-[#141414]/60 font-medium">Real Photo Verified</div>
                 </div>
               </div>
             </div>
@@ -455,20 +455,20 @@ export default function PassportPage() {
         )}
 
         {/* 4. ACCOUNT SETTINGS ACTIONS */}
-        <div className="bg-white rounded-[26px] border border-stone-200/70 p-2 shadow-sm divide-y divide-stone-100">
+        <div className="bg-white rounded-[28px] border border-[#141414]/10 p-2 shadow-xs divide-y divide-[#141414]/06">
           <button
             type="button"
             onClick={() => {
               hapticTap();
               setShowPauseConfirm(true);
             }}
-            className="w-full p-3 flex items-center justify-between text-left hover:bg-stone-50 transition rounded-xl cursor-pointer"
+            className="w-full p-3 flex items-center justify-between text-left hover:bg-[#F7F6EB] transition rounded-xl cursor-pointer"
           >
             <div className="flex items-center gap-3">
-              <PauseCircle className="w-4 h-4 text-stone-600" />
-              <span className="text-[13px] font-semibold text-stone-800">Pause Account</span>
+              <PauseCircle className="w-4 h-4 text-[#141414]" />
+              <span className="text-[13px] font-bold text-[#141414]">Pause Account</span>
             </div>
-            <ChevronRight className="w-4 h-4 text-stone-400" />
+            <ChevronRight className="w-4 h-4 text-[#141414]/40" />
           </button>
 
           <button
@@ -477,13 +477,13 @@ export default function PassportPage() {
               hapticTap();
               setShowLogoutConfirm(true);
             }}
-            className="w-full p-3 flex items-center justify-between text-left hover:bg-stone-50 transition rounded-xl cursor-pointer"
+            className="w-full p-3 flex items-center justify-between text-left hover:bg-[#F7F6EB] transition rounded-xl cursor-pointer"
           >
             <div className="flex items-center gap-3">
               <LogOut className="w-4 h-4 text-amber-600" />
-              <span className="text-[13px] font-semibold text-amber-900">Sign Out</span>
+              <span className="text-[13px] font-bold text-amber-900">Sign Out</span>
             </div>
-            <ChevronRight className="w-4 h-4 text-stone-400" />
+            <ChevronRight className="w-4 h-4 text-[#141414]/40" />
           </button>
 
           <button
@@ -496,9 +496,9 @@ export default function PassportPage() {
           >
             <div className="flex items-center gap-3">
               <Trash2 className="w-4 h-4 text-rose-600" />
-              <span className="text-[13px] font-semibold text-rose-700">Delete Account</span>
+              <span className="text-[13px] font-bold text-rose-700">Delete Account</span>
             </div>
-            <ChevronRight className="w-4 h-4 text-stone-400" />
+            <ChevronRight className="w-4 h-4 text-[#141414]/40" />
           </button>
         </div>
 
