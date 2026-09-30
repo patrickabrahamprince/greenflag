@@ -2044,41 +2044,29 @@ function TripsContent() {
                 <div className="animate-fade-in space-y-4">
                   <div>
                     <h2 className="text-[20px] font-[800] tracking-[-0.02em] text-[#18181B] flex items-center gap-2">
-                      <span>Who is joining & how are you traveling?</span>
+                      <span>{createType === 'pink' ? 'How will you travel?' : 'Who is joining & how are you traveling?'}</span>
                       <span className="text-sm">🚗</span>
                     </h2>
                     <p className="text-[12px] text-[#18181B]/55 mt-1 font-normal">
-                      Set participant capacity limits and travel convoy arrangements.
+                      {createType === 'pink'
+                        ? 'Select travel and convoy arrangements for the meetup.'
+                        : 'Set participant capacity limits and travel convoy arrangements.'}
                     </p>
                   </div>
 
-                  {/* Capacity Card */}
-                  <div className="bg-white rounded-[26px] p-5 shadow-sm border border-[#18181B]/[0.08] space-y-2.5">
-                    <div className="flex items-center justify-between">
-                      <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40 flex items-center gap-1.5">
-                        <Users className="w-3.5 h-3.5 text-[#18181B]/60" />
-                        <span>{createType === 'pink' ? 'DATE CAPACITY LIMIT' : 'SQUAD PARTICIPANT CAPACITY'}</span>
-                      </label>
-                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#18181B]/5 text-[#18181B]/70">
-                        {createType === 'pink' ? '1 Guest Max' : 'Selected'}
-                      </span>
-                    </div>
-
-                    {createType === 'pink' ? (
-                      <div className="p-4 rounded-2xl bg-[#FAF5F7] border border-[#331822]/20 space-y-1.5 shadow-xs">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[13px] font-[800] text-rose-950 flex items-center gap-1.5">
-                            <span>✦</span> Private 1-on-1 Date (1 Guest Only)
-                          </span>
-                          <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-rose-200 text-rose-900 uppercase">
-                            Strictly 1
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-rose-900/80 leading-relaxed font-medium">
-                          Romantic dates are strictly 1-on-1 private experiences between you and 1 guest. Group sizes are disabled for dates.
-                        </p>
+                  {/* Squad Capacity Card (Hidden for Date Mode per user request) */}
+                  {createType !== 'pink' && (
+                    <div className="bg-white rounded-[26px] p-5 shadow-sm border border-[#18181B]/[0.08] space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40 flex items-center gap-1.5">
+                          <Users className="w-3.5 h-3.5 text-[#18181B]/60" />
+                          <span>SQUAD PARTICIPANT CAPACITY</span>
+                        </label>
+                        <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#18181B]/5 text-[#18181B]/70">
+                          Selected
+                        </span>
                       </div>
-                    ) : (
+
                       <div className="grid grid-cols-1 gap-2 pt-1">
                         {[
                           {
@@ -2132,8 +2120,8 @@ function TripsContent() {
                           );
                         })}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
 
                   {/* Transportation Logistics Card */}
                   <div className="bg-white rounded-[26px] p-5 shadow-sm border border-[#18181B]/[0.08] space-y-2.5">
@@ -2207,88 +2195,107 @@ function TripsContent() {
               {createStep === 6 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
-                    <h2 className="text-[20px] font-[800] tracking-[-0.02em] text-[#18181B]">
-                      What's the vibe & estimated split?
+                    <h2 className="text-[20px] font-[800] tracking-[-0.02em] text-[#18181B] flex items-center gap-2">
+                      <span>Atmosphere & Shared Split</span>
+                      <span className="text-sm">✨</span>
                     </h2>
                     <p className="text-[12px] text-[#18181B]/55 mt-1 font-normal">
-                      Set atmosphere tags and the fair estimated shared cost per participant.
+                      Select vibe tags and set the fair estimated contribution per explorer.
                     </p>
                   </div>
 
-                  {/* Vibe Tags */}
-                  <div>
-                    <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
-                      ATMOSPHERE & VIBE TAGS
-                    </label>
-                    <div className="flex flex-wrap gap-1.5 mt-1.5">
+                  {/* Vibe Tags Card */}
+                  <div className="bg-white rounded-[26px] p-5 shadow-sm border border-[#18181B]/[0.08] space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
+                        ATMOSPHERE & VIBE TAGS
+                      </label>
+                      <span className="text-[10px] font-bold text-stone-500">
+                        {createVibes.length} selected
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
                       {[
-                        'Chai & Chill',
-                        'Trek & Talk',
-                        'Slow Travel',
-                        'Photo Walks',
-                        'City Walks',
-                        'Deep Talks',
-                        'Sunset Views',
-                        'Food Crawl',
-                        'Scenic Drive',
-                        'Night Trek',
-                      ].map((tag) => (
-                        <button
-                          key={tag}
-                          type="button"
-                          onClick={() => toggleVibe(tag)}
-                          className={`px-3 py-1.5 rounded-full text-[11px] font-semibold tracking-wide border transition cursor-pointer ${
-                            createVibes.includes(tag)
-                              ? 'bg-[#18181B] text-white border-[#18181B] shadow-xs'
-                              : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70 hover:border-[#18181B]/20'
-                          }`}
-                        >
-                          {tag}
-                        </button>
-                      ))}
+                        { id: 'Chai & Chill', icon: '☕', label: 'Chai & Chill' },
+                        { id: 'Trek & Talk', icon: '🥾', label: 'Trek & Talk' },
+                        { id: 'Photo Walks', icon: '📸', label: 'Photo Walks' },
+                        { id: 'Sunset Views', icon: '🌅', label: 'Sunset Views' },
+                        { id: 'Food Crawl', icon: '🍜', label: 'Food Crawl' },
+                        { id: 'Scenic Drive', icon: '🚗', label: 'Scenic Drive' },
+                        { id: 'Deep Talks', icon: '💬', label: 'Deep Talks' },
+                        { id: 'Night Trek', icon: '⛺', label: 'Night Trek' },
+                      ].map((tag) => {
+                        const isSelected = createVibes.includes(tag.id);
+                        return (
+                          <button
+                            key={tag.id}
+                            type="button"
+                            onClick={() => toggleVibe(tag.id)}
+                            className={`p-2.5 rounded-xl text-[12px] font-semibold tracking-tight border transition-all duration-150 cursor-pointer flex items-center justify-between ${
+                              isSelected
+                                ? 'bg-[#18181B] text-white border-[#18181B] shadow-xs'
+                                : 'bg-stone-50 border-stone-200/80 text-stone-700 hover:bg-stone-100'
+                            }`}
+                          >
+                            <span className="flex items-center gap-1.5 truncate">
+                              <span>{tag.icon}</span>
+                              <span className="truncate">{tag.label}</span>
+                            </span>
+                            {isSelected && <Check className="w-3 h-3 text-[#1D8E66] shrink-0 stroke-[3]" />}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
-                  {/* Estimated Cost Split */}
-                  <div>
+                  {/* Estimated Cost Split Card */}
+                  <div className="bg-white rounded-[26px] p-5 shadow-sm border border-[#18181B]/[0.08] space-y-3">
                     <div className="flex justify-between items-center">
                       <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
                         ESTIMATED COST SPLIT / PERSON
                       </label>
-                      <span className="text-[13px] font-[800] text-[#12221A] bg-[#EAF2EC] px-3 py-0.5 rounded-full border border-emerald-900/10">
-                        {createCost === 0 ? 'Complimentary' : `₹${createCost}`}
+                      <span className="text-[13px] font-[800] text-[#1D8E66] bg-[#EAF6F0] px-3 py-0.5 rounded-full border border-emerald-900/10">
+                        {createCost === 0 ? 'Complimentary · Free' : `₹${createCost} / person`}
                       </span>
                     </div>
-                    <div className="grid grid-cols-5 gap-1.5 mt-2">
+
+                    <div className="grid grid-cols-5 gap-1.5 pt-1">
                       {[
                         { v: 0, l: 'Free' },
-                        { v: 400, l: '₹400' },
-                        { v: 800, l: '₹800' },
-                        { v: 1500, l: '₹1.5k' },
-                        { v: 2800, l: '₹2.8k' },
-                      ].map((c) => (
-                        <button
-                          key={c.v}
-                          type="button"
-                          onClick={() => {
-                            hapticTap();
-                            setCreateCost(c.v);
-                          }}
-                          className={`py-2 rounded-xl border text-center text-[11px] font-bold transition cursor-pointer ${
-                            createCost === c.v
-                              ? 'bg-[#18181B] text-white border-[#18181B] shadow-xs'
-                              : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70 hover:border-[#18181B]/20'
-                          }`}
-                        >
-                          {c.l}
-                        </button>
-                      ))}
+                        { v: 300, l: '₹300' },
+                        { v: 600, l: '₹600' },
+                        { v: 1200, l: '₹1.2k' },
+                        { v: 2500, l: '₹2.5k' },
+                      ].map((c) => {
+                        const isSelected = createCost === c.v;
+                        return (
+                          <button
+                            key={c.v}
+                            type="button"
+                            onClick={() => {
+                              hapticTap();
+                              setCreateCost(c.v);
+                            }}
+                            className={`py-2.5 rounded-xl border text-center text-[12px] font-bold transition-all duration-150 cursor-pointer ${
+                              isSelected
+                                ? 'bg-[#18181B] text-white border-[#18181B] shadow-xs'
+                                : 'bg-stone-50 border-stone-200/80 text-stone-700 hover:bg-stone-100'
+                            }`}
+                          >
+                            {c.l}
+                          </button>
+                        );
+                      })}
                     </div>
+
+                    <p className="text-[11px] text-stone-500 font-normal leading-relaxed pt-1">
+                      Estimated shared split for fuel, snacks & entry tickets. Settled directly during the trip.
+                    </p>
                   </div>
 
                   {/* ================= LUXURY BOARDING PASS PREVIEW ================= */}
-                  <div className="rounded-[26px] bg-white border border-[#18181B]/[0.08] shadow-[0_12px_32px_rgba(0,0,0,0.06)] overflow-hidden mt-3">
-                    
+                  <div className="rounded-[26px] bg-white border border-[#18181B]/[0.08] shadow-[0_12px_32px_rgba(0,0,0,0.06)] overflow-hidden">
                     {/* Top Gold Foil Bar */}
                     <div className="bg-[#18181B] px-4 py-2.5 text-white flex justify-between items-center">
                       <div className="flex items-center gap-2">
