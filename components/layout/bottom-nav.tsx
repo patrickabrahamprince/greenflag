@@ -2,8 +2,7 @@
 
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { Suspense, useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Compass, Plus, Calendar, User } from 'lucide-react';
+import { Compass, Calendar, MessageCircle, User } from 'lucide-react';
 import { hapticTap } from '@/lib/haptics';
 
 function BottomNavContent() {
@@ -23,9 +22,9 @@ function BottomNavContent() {
 
   const tabs = [
     { id: 'explore', label: 'Explore', href: '/trips', icon: Compass },
-    { id: 'create', label: 'Create', href: '/trips?tab=create', icon: Plus },
-    { id: 'my-trips', label: 'My Trips', href: '/my-trips', icon: Calendar, badge: 3 },
-    { id: 'passport', label: 'Passport', href: '/passport', icon: User },
+    { id: 'plans', label: 'My Plans', href: '/my-trips', icon: Calendar, badge: 3 },
+    { id: 'chat', label: 'Chat', href: '/messages', icon: MessageCircle },
+    { id: 'profile', label: 'Profile', href: '/passport', icon: User },
   ];
 
   if (isWizardActive || currentTab === 'create' || pathname === '/standard/builder') {
@@ -33,16 +32,16 @@ function BottomNavContent() {
   }
 
   return (
-    <nav className="fixed bottom-3 inset-x-4 z-50 max-w-md mx-auto pointer-events-auto pb-[env(safe-area-inset-bottom,0px)]">
-      <div className="bg-black/95 backdrop-blur-2xl rounded-[26px] p-1.5 flex justify-between shadow-[0_16px_40px_-10px_rgba(0,0,0,0.45)] border border-white/10">
+    <nav className="fixed bottom-4 inset-x-0 z-50 flex justify-center pointer-events-none px-4 pb-[env(safe-area-inset-bottom,0px)]">
+      <div className="pointer-events-auto bg-white/85 backdrop-blur-2xl border border-white/80 rounded-full px-3 py-1.5 flex items-center gap-2 shadow-[0_16px_36px_rgba(0,0,0,0.08)] max-w-xs w-full justify-between">
         {tabs.map((tab) => {
           const isActive =
             tab.id === 'explore'
               ? (pathname === '/trips' || pathname === '/discover') && currentTab !== 'create'
-              : tab.id === 'create'
-              ? pathname === '/trips' && currentTab === 'create'
-              : tab.id === 'my-trips'
-              ? pathname.startsWith('/my-trips') || pathname.startsWith('/my-connections')
+              : tab.id === 'plans'
+              ? pathname.startsWith('/my-trips') || pathname.startsWith('/my-connections') || pathname.startsWith('/schedule')
+              : tab.id === 'chat'
+              ? pathname.startsWith('/messages')
               : pathname.startsWith('/passport') || pathname.startsWith('/profile');
 
           return (
@@ -53,16 +52,16 @@ function BottomNavContent() {
                 hapticTap();
                 router.push(tab.href);
               }}
-              className={`relative flex-1 h-12 rounded-[20px] flex flex-col items-center justify-center gap-0.5 transition-all active:scale-95 cursor-pointer ${
-                isActive ? 'bg-white text-black shadow-md' : 'text-white/60 hover:text-white'
+              className={`relative flex items-center justify-center p-2.5 rounded-full transition-all cursor-pointer active:scale-90 ${
+                isActive
+                  ? 'bg-gradient-to-tr from-[#9D54FF] to-[#7B2CBF] text-white shadow-lg shadow-[#9D54FF]/30 scale-105'
+                  : 'text-stone-400 hover:text-stone-800 hover:bg-stone-100/50'
               }`}
+              aria-label={tab.label}
             >
-              <tab.icon className="w-5 h-5" />
-              <span className="text-[10px] font-bold tracking-wide">{tab.label}</span>
+              <tab.icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
               {tab.badge && !isActive && (
-                <span className="absolute top-1 right-3 w-4 h-4 bg-rose-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center border border-black">
-                  {tab.badge}
-                </span>
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#00E5A3] rounded-full ring-2 ring-white" />
               )}
             </button>
           );
@@ -79,4 +78,5 @@ export function BottomNav() {
     </Suspense>
   );
 }
+
 

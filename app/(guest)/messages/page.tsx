@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Bell, Loader2, MessageCircle } from 'lucide-react';
+import { Bell, Loader2, MessageCircle, Compass } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useUserStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
@@ -36,10 +36,10 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
   return (
     <button
       onClick={() => { hapticTap(); router.push(`/messages/${conv.id}`); }}
-      className="w-full flex items-center gap-3.5 px-4 py-3.5 text-left transition-all bg-white border border-stone-200/80 rounded-[24px] shadow-[0_4px_16px_rgba(45,36,30,0.04)] hover:border-[#1D3B2A]/30 hover:shadow-md active:scale-[0.98]"
+      className="w-full flex items-center gap-3.5 p-4 text-left transition-all bg-white border border-stone-200/70 rounded-[26px] shadow-xs hover:border-purple-300 hover:shadow-sm active:scale-[0.98] cursor-pointer"
     >
-      <div className="relative w-12 h-12 rounded-full flex-shrink-0">
-        <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-stone-100 border border-stone-200">
+      <div className="relative w-12 h-12 rounded-full shrink-0">
+        <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-stone-100 border-2 border-white shadow-xs">
           {partnerPhoto ? (
             <Image
               src={partnerPhoto}
@@ -50,31 +50,31 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
               onError={() => {}}
             />
           ) : (
-            <span className="font-display font-bold text-sm text-[#1D3B2A]">
+            <span className="font-bold text-sm text-stone-800">
               {conv.partner?.name?.[0] ?? '?'}
             </span>
           )}
         </div>
-        <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#1D3B2A] border-2 border-white shadow-sm" />
+        <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-[#00E5A3] border-2 border-white" />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-0.5">
-          <span className="font-display font-bold text-sm text-[#382A21] truncate">
+          <span className="font-bold text-[14px] text-stone-900 truncate">
             {conv.partner?.name}
           </span>
           {conv.last_message && (
-            <span className="text-[11px] font-medium text-[#382A21]/50 flex-shrink-0 ml-2">
+            <span className="text-[11px] font-semibold text-stone-400 shrink-0 ml-2">
               {conv.last_message.created_at ? new Date(conv.last_message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
             </span>
           )}
         </div>
         {conv.last_message ? (
-          <p className="text-xs text-[#382A21]/60 truncate font-normal">
+          <p className="text-[12px] text-stone-500 truncate font-medium">
             {conv.last_message.content}
           </p>
         ) : (
-          <p className="text-xs text-[#1D3B2A] font-semibold truncate flex items-center gap-1">
-            <span>✨</span> Travel connection ready! Say hello
+          <p className="text-[12px] text-purple-700 font-bold truncate flex items-center gap-1">
+            <span>✨</span> Connected! Tap to say hello
           </p>
         )}
       </div>
@@ -82,19 +82,10 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
   );
 }
 
-interface InProgressPartner {
-  matchUserId: string;
-  name: string;
-  photo: string | null;
-}
-
-// Matches the standardHint rate limit window (lib/rate-limit.ts) -- once
-// this passes, the server allows another nudge, so the button needs to
-// re-enable itself instead of staying "Nudged" forever.
 const NUDGE_COOLDOWN_MS = 60 * 60 * 1000;
 
 function InProgressMatches({ userId, supabase }: { userId: string; supabase: ReturnType<typeof createClient> }) {
-  const [partners, setPartners] = useState<InProgressPartner[]>([]);
+  const [partners, setPartners] = useState<{ matchUserId: string; name: string; photo: string | null }[]>([]);
   const [loading, setLoading] = useState(true);
   const [hintedUntil, setHintedUntil] = useState<Record<string, number>>({});
   const [now, setNow] = useState(() => Date.now());
@@ -119,7 +110,7 @@ function InProgressMatches({ userId, supabase }: { userId: string; supabase: Ret
         data.map(async (m: any) => {
           const partnerId = m.user1_id === userId ? m.user2_id : m.user1_id;
           const { data: partner } = await supabase.from('profiles').select('id, name, photos').eq('id', partnerId).single();
-          return { matchUserId: partnerId, name: partner?.name || 'Him', photo: partner?.photos?.[0] || null };
+          return { matchUserId: partnerId, name: partner?.name || 'Explorer', photo: partner?.photos?.[0] || null };
         })
       );
       setPartners(enriched);
@@ -139,7 +130,7 @@ function InProgressMatches({ userId, supabase }: { userId: string; supabase: Ret
         return;
       }
       setHintedUntil((prev) => ({ ...prev, [partnerId]: Date.now() + NUDGE_COOLDOWN_MS }));
-      toast.success(data.started ? "Nudge sent — he's been notified to continue your Standard" : "Nudge sent — he's been notified to begin your Standard");
+      toast.success("Nudge sent!");
     } catch {
       toast.error('Failed to send hint');
     } finally {
@@ -150,30 +141,30 @@ function InProgressMatches({ userId, supabase }: { userId: string; supabase: Ret
   if (loading || partners.length === 0) return null;
 
   return (
-    <div className="w-full px-6 mt-8">
-      <p className="text-xs uppercase tracking-wide text-ink/40 mb-3">Waiting on your Standard</p>
+    <div className="w-full px-6 mt-6">
+      <p className="text-[11px] font-bold text-stone-400 uppercase tracking-wider mb-2.5">Pending Connections</p>
       <div className="space-y-2">
         {partners.map((p) => (
-          <div key={p.matchUserId} className="flex items-center gap-3 p-3 bg-card rounded-card">
-            <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-well">
+          <div key={p.matchUserId} className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-stone-200/70 shadow-xs">
+            <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-stone-100">
               {p.photo ? (
                 <Image src={p.photo} alt="" width={40} height={40} className="w-full h-full object-cover" onError={() => {}} />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-ink/30 text-xs">?</div>
+                <div className="w-full h-full flex items-center justify-center text-stone-400 text-xs">?</div>
               )}
             </div>
-            <span className="flex-1 text-sm text-ink truncate">{p.name}</span>
+            <span className="flex-1 text-[13px] font-bold text-stone-800 truncate">{p.name}</span>
             <button
               onClick={() => handleLike(p.matchUserId)}
               disabled={sendingId === p.matchUserId || (hintedUntil[p.matchUserId] ?? 0) > now}
-              className="btn-secondary text-xs px-3 py-2 flex items-center gap-1.5 shrink-0 disabled:opacity-50"
+              className="px-3 py-1.5 rounded-full bg-[#18181B] text-white text-[11px] font-bold flex items-center gap-1.5 shrink-0 disabled:opacity-50 active:scale-95 transition"
             >
               {sendingId === p.matchUserId ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <Loader2 className="w-3 h-3 animate-spin" />
               ) : (
-                <Bell className="w-3.5 h-3.5" />
+                <Bell className="w-3 h-3" />
               )}
-              {(hintedUntil[p.matchUserId] ?? 0) > now ? 'Nudged' : 'Nudge'}
+              {(hintedUntil[p.matchUserId] ?? 0) > now ? 'Sent' : 'Nudge'}
             </button>
           </div>
         ))}
@@ -222,7 +213,7 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
 
       setConversations(enriched);
       setCached(cacheKey, enriched);
-    } catch (err) {
+    } catch {
       // Safe catch
     } finally {
       setLoading(false);
@@ -236,15 +227,6 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
 
   const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } = usePullToRefresh(load);
 
-  // Without this, a new message only ever showed up in the preview list
-  // after navigating away from it and back (the initial load's own
-  // useEffect re-running on remount) -- messages/[connectionId]/page.tsx
-  // already does the equivalent for the conversation itself, this is the
-  // same pattern for the list. No single-match filter is possible here
-  // (this needs to hear about every match this user is in, not one), so
-  // it subscribes broadly and checks client-side against the ids already
-  // loaded, via a ref so the handler always sees the current list instead
-  // of whatever it closed over at subscribe time.
   useEffect(() => {
     const channel = supabase
       .channel(`messages-list:${userId}`)
@@ -276,33 +258,27 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
 
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="w-5 h-5 rounded-full border-2 border-gold border-t-transparent animate-spin" />
+      <div className="flex-1 flex items-center justify-center pt-20">
+        <div className="w-6 h-6 rounded-full border-2 border-purple-500 border-t-transparent animate-spin" />
       </div>
     );
   }
 
   if (conversations.length === 0) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center pb-28 px-6">
+      <div className="flex-1 flex flex-col items-center justify-center pb-28 px-6 pt-10">
         <EmptyState
-          icon={<MessageCircle className="w-6 h-6" />}
-          title="No messages yet"
-          description={
-            persona === 'woman'
-              ? 'Your conversations begin once he completes your Standard.'
-              : 'No conversations yet. Discover a profile to begin.'
-          }
+          icon={<MessageCircle className="w-6 h-6 text-purple-600" />}
+          title="No chats yet"
+          description="Join a trip or connect with an explorer to start chatting."
         />
         {persona === 'woman' && <InProgressMatches userId={userId} supabase={supabase} />}
-        {/* Pinned to the bottom of the available space instead of sitting
-            right under the description -- keeps it reachable with a
-            thumb regardless of how tall the empty-state copy is. */}
-        {persona !== 'woman' && (
-          <button onClick={() => { hapticTap(); router.push('/discover'); }} className="btn-primary w-full max-w-xs py-3 text-sm mt-auto">
-            Go to Discover
-          </button>
-        )}
+        <button
+          onClick={() => { hapticTap(); router.push('/trips'); }}
+          className="mt-8 px-6 py-3 rounded-full bg-[#18181B] text-white text-[13px] font-bold active:scale-95 transition cursor-pointer shadow-md"
+        >
+          Explore Trips
+        </button>
       </div>
     );
   }
@@ -313,17 +289,15 @@ function ChatList({ userId, supabase, persona }: ChatListPageProps) {
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
-      className="flex-1 overflow-y-auto overscroll-none scrollbar-hide"
+      className="flex-1 overflow-y-auto overscroll-none scrollbar-hide pb-28"
     >
       <div
         className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
         style={{ height: pullDistance }}
       >
-        <Loader2 className={`w-5 h-5 text-gold ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
+        <Loader2 className={`w-5 h-5 text-purple-600 ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
       </div>
-      {/* Separated card rows with a real gap between them, per the design
-          system -- was a flush list divided by hairline borders. */}
-      <div className="px-6 space-y-3">
+      <div className="px-6 space-y-3 pt-2">
         {conversations.map((conv) => (
           <ChatListItem key={conv.id} conv={conv} />
         ))}
@@ -338,12 +312,6 @@ export default function MessagesListPage() {
   const supabase = createClient();
 
   useEffect(() => {
-    // Checking the client-side user store directly here raced against
-    // Providers' own async hydration on a fresh page load -- an already
-    // logged-in user could get bounced to /login before the store caught
-    // up. A real auth check (same pattern used elsewhere, e.g.
-    // messages/[connectionId]) isn't racy: it's authoritative regardless
-    // of whether the store has populated yet.
     let cancelled = false;
     supabase.auth.getUser().then(({ data: { user: authUser } }) => {
       if (!cancelled && !authUser) router.push('/login');
@@ -354,11 +322,44 @@ export default function MessagesListPage() {
   if (!user) return null;
 
   return (
-    <div className="h-[calc(100dvh-5rem)] flex flex-col bg-[#FAF9F6]">
-      <div className="max-w-app mx-auto w-full flex-1 flex flex-col pt-safe-top">
-        <h1 className="font-display text-2xl font-extrabold text-[#382A21] px-6 pt-5 pb-3">Chat</h1>
-        <ChatList userId={user.id} supabase={supabase} persona={user.persona} />
-      </div>
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#E3F2FD] via-[#F0F7FF] to-[#FAF8F5] text-stone-900 font-sans max-w-md mx-auto relative overflow-hidden flex flex-col">
+      
+      {/* Top Ambient Glow Background */}
+      <div className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-sky-200/50 via-indigo-100/30 to-transparent pointer-events-none" />
+
+      {/* Header */}
+      <header className="relative z-10 px-6 pt-[max(20px,env(safe-area-inset-top,20px))] pb-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <div className="w-12 h-12 rounded-full p-[2px] bg-gradient-to-tr from-amber-400 via-purple-500 to-sky-400">
+              <img
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
+                alt="Profile"
+                className="w-full h-full rounded-full object-cover border-2 border-white"
+              />
+            </div>
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#00E5A3] rounded-full border-2 border-white" />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-[800] text-[#18181B] tracking-tight">Messages</h1>
+            <p className="text-[12px] font-semibold text-stone-500">Trip buddies & conversations</p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            hapticTap();
+            router.push('/trips');
+          }}
+          className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-md border border-white shadow-xs flex items-center justify-center text-stone-700 hover:bg-white transition cursor-pointer active:scale-95"
+          aria-label="Explore"
+        >
+          <Compass className="w-5 h-5 text-stone-700" />
+        </button>
+      </header>
+
+      <ChatList userId={user.id} supabase={supabase} persona={user.persona} />
     </div>
   );
 }
