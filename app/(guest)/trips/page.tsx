@@ -33,9 +33,122 @@ import {
   User,
   ChevronUp,
   ChevronDown,
+  Layers,
+  List,
+  Play,
+  Pause,
+  Mic,
+  Send,
+  MessageSquare,
+  Volume2,
+  Flame,
+  Map as MapIcon,
+  Heart,
 } from 'lucide-react';
 import { hapticTap, hapticSuccess } from '@/lib/haptics';
 import toast from 'react-hot-toast';
+
+export interface CityExplorer {
+  id: string;
+  name: string;
+  age: number;
+  distance: string;
+  avatar: string;
+  role: string;
+  coords: { x: number; y: number };
+  isHighlighted?: boolean;
+}
+
+export const CITY_EXPLORERS: CityExplorer[] = [
+  {
+    id: 'olivia',
+    name: 'Olivia',
+    age: 24,
+    distance: '3.5 km away',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=240&q=80',
+    role: 'Product Designer',
+    coords: { x: 38, y: 56 },
+    isHighlighted: true,
+  },
+  {
+    id: 'marcus',
+    name: 'Marcus',
+    age: 27,
+    distance: '4.8 km away',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=240&q=80',
+    role: 'Street Photographer',
+    coords: { x: 84, y: 44 },
+  },
+  {
+    id: 'aisha',
+    name: 'Aisha',
+    age: 26,
+    distance: '1.2 km away',
+    avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=240&q=80',
+    role: 'Marketing Lead',
+    coords: { x: 53, y: 74 },
+  },
+  {
+    id: 'leo',
+    name: 'Leo',
+    age: 25,
+    distance: '2.1 km away',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=240&q=80',
+    role: 'Architect & Cyclist',
+    coords: { x: 26, y: 92 },
+  },
+];
+
+export interface ChatMessageItem {
+  id: string;
+  sender: 'other' | 'me';
+  text?: string;
+  time: string;
+  emoji?: string;
+  isVoiceNote?: boolean;
+  voiceDuration?: string;
+}
+
+export const INITIAL_OLIVIA_CHAT: ChatMessageItem[] = [
+  {
+    id: '1',
+    sender: 'other',
+    text: 'Pretty good – busy, but in a good way. Just finished work. 🐶 You?',
+    time: '3:15 PM',
+  },
+  {
+    id: '2',
+    sender: 'me',
+    text: "Nice timing. There's a street food festival happening downtown tonight.",
+    time: '3:17 PM',
+  },
+  {
+    id: '3',
+    sender: 'other',
+    text: 'Sounds like a sign. Want to go together?',
+    time: '3:17 PM',
+  },
+  {
+    id: '4',
+    sender: 'me',
+    text: 'Honestly? Yeah. Street food is a solid first date.',
+    time: '3:18 PM',
+    emoji: '🔥',
+  },
+  {
+    id: '5',
+    sender: 'other',
+    isVoiceNote: true,
+    voiceDuration: '00:14',
+    time: '3:19 PM',
+  },
+  {
+    id: '6',
+    sender: 'me',
+    text: 'Good answer. What time are you thinking?',
+    time: '3:20 PM',
+  },
+];
 
 interface Trip {
   id: number;
@@ -438,6 +551,60 @@ function TripsContent() {
   const [activeMapPin, setActiveMapPin] = useState<Trip | null>(TRIPS_DATA[0]);
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // 3D City Aerial Map & Conversation State (Matching Dribbble Spec)
+  const [is3DMapView, setIs3DMapView] = useState(false);
+  const [selectedCityExplorer, setSelectedCityExplorer] = useState<CityExplorer>(CITY_EXPLORERS[0]);
+  const [showChatModal, setShowChatModal] = useState(false);
+  const [chatMessages, setChatMessages] = useState<ChatMessageItem[]>(INITIAL_OLIVIA_CHAT);
+  const [chatInputText, setChatInputText] = useState('');
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [audioProgress, setAudioProgress] = useState(0);
+  const [isRecordingAudio, setIsRecordingAudio] = useState(false);
+
+  // Audio voice note timer simulation
+  useEffect(() => {
+    let interval: any;
+    if (isPlayingAudio) {
+      interval = setInterval(() => {
+        setAudioProgress((prev) => {
+          if (prev >= 14) {
+            setIsPlayingAudio(false);
+            return 0;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isPlayingAudio]);
+
+  const handleSendChatMessage = (textToSend?: string) => {
+    const text = textToSend || chatInputText.trim();
+    if (!text) return;
+    hapticSuccess();
+    const newMsg: ChatMessageItem = {
+      id: Date.now().toString(),
+      sender: 'me',
+      text,
+      time: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }),
+    };
+    setChatMessages((prev) => [...prev, newMsg]);
+    setChatInputText('');
+
+    // Dynamic auto-reply from Olivia
+    setTimeout(() => {
+      hapticTap();
+      const replyMsg: ChatMessageItem = {
+        id: (Date.now() + 1).toString(),
+        sender: 'other',
+        text: "Sounds perfect! Let's meet by 7:30 near the main food festival entrance 🍕✨",
+        time: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }),
+      };
+      setChatMessages((prev) => [...prev, replyMsg]);
+      toast.success(`${selectedCityExplorer.name} replied!`);
+    }, 1200);
+  };
 
   // Hero Slideshow State
   const [heroSlideIndex, setHeroSlideIndex] = useState(0);
@@ -1026,19 +1193,162 @@ function TripsContent() {
               })}
             </div>
 
-            {/* 2. INTERACTIVE EDITORIAL MAP CANVAS (TRAVEL DATING RADAR) */}
+            {/* 2. INTERACTIVE EDITORIAL MAP CANVAS (3D CITY AERIAL MAP / 2D RADAR) */}
             <div className="px-5">
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-1.5">
                   <Compass className="w-4 h-4 text-[#141414]" />
-                  <span className="text-[13px] font-[900] text-[#141414] tracking-tight">Travel Dating Radar & Live Routes</span>
+                  <span className="text-[13px] font-[900] text-[#141414] tracking-tight">
+                    {is3DMapView ? '3D Aerial Proximity Map' : 'Travel Dating Radar & Live Routes'}
+                  </span>
                 </div>
-                <span className="text-[10px] font-black text-[#141414] bg-[#CEFF00] px-2.5 py-0.5 rounded-full border border-[#141414]/20">
-                  Tap pin for route
-                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    hapticTap();
+                    setIs3DMapView(!is3DMapView);
+                  }}
+                  className="flex items-center gap-1 text-[10px] font-black text-[#141414] bg-[#CEFF00] px-2.5 py-0.5 rounded-full border border-[#141414]/20 hover:scale-105 active:scale-95 transition cursor-pointer"
+                >
+                  <Layers className="w-3 h-3 text-[#141414]" />
+                  <span>{is3DMapView ? '2D Radar' : '3D City Map'}</span>
+                </button>
               </div>
             </div>
 
+            {/* ================= 3D AERIAL CITY SKYLINE VIEW (DRIBBLE SCREENSHOT 1) ================= */}
+            {is3DMapView ? (
+              <div className="relative h-[480px] mx-5 mb-3 rounded-[32px] overflow-hidden border border-[#141414]/15 shadow-xl select-none">
+                
+                {/* 3D Skyscraper Cityscape Photo Backdrop */}
+                <div 
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
+                  style={{
+                    backgroundImage: `url('https://images.unsplash.com/photo-1477959858617-67f30bc75b82?auto=format&fit=crop&w=1200&q=80')`,
+                  }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/60 pointer-events-none" />
+                </div>
+
+                {/* Top Floating Frosted Card (Olivia, 3.5 km away + Chat Button) */}
+                <div className="absolute top-4 inset-x-4 z-30">
+                  <div 
+                    onClick={() => {
+                      hapticTap();
+                      setShowChatModal(true);
+                    }}
+                    className="bg-white/80 backdrop-blur-2xl border border-white/60 shadow-2xl rounded-[28px] p-3 flex items-center justify-between cursor-pointer hover:bg-white/90 active:scale-[0.98] transition"
+                  >
+                    {/* Left: Avatar */}
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <img
+                          src={selectedCityExplorer.avatar}
+                          alt={selectedCityExplorer.name}
+                          className="w-10 h-10 rounded-full object-cover border border-white/80 shadow-sm"
+                        />
+                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[#CEFF00] border border-[#141414] rounded-full" />
+                      </div>
+                      <div>
+                        {/* Drag indicator pill */}
+                        <div className="w-8 h-1 bg-stone-300 rounded-full mx-auto mb-1 opacity-60" />
+                        <div className="text-[15px] font-[900] text-[#141414] tracking-tight leading-tight">
+                          {selectedCityExplorer.name}
+                        </div>
+                        <div className="text-[11px] font-medium text-stone-500">
+                          {selectedCityExplorer.distance}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right: Frosted Chat Bubble Button */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        hapticSuccess();
+                        setShowChatModal(true);
+                      }}
+                      className="w-10 h-10 rounded-full bg-white/60 backdrop-blur-xl border border-white/80 flex items-center justify-center text-[#141414] shadow-md hover:bg-white active:scale-90 transition cursor-pointer"
+                      aria-label="Open Chat"
+                    >
+                      <MessageSquare className="w-5 h-5 text-stone-800 fill-stone-800/10 stroke-[2.2]" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Floating Avatar Pins on Real 3D Building Locations */}
+                {CITY_EXPLORERS.map((explorer) => {
+                  const isSelected = selectedCityExplorer.id === explorer.id;
+                  return (
+                    <button
+                      key={explorer.id}
+                      type="button"
+                      onClick={() => {
+                        hapticTap();
+                        setSelectedCityExplorer(explorer);
+                      }}
+                      className={`absolute -translate-x-1/2 -translate-y-1/2 z-20 transition-all duration-300 cursor-pointer ${
+                        isSelected ? 'scale-115 z-40' : 'hover:scale-105 active:scale-95 opacity-90'
+                      }`}
+                      style={{ left: `${explorer.coords.x}%`, top: `${explorer.coords.y}%` }}
+                    >
+                      <div className="relative flex flex-col items-center">
+                        {/* Circular Avatar Pin */}
+                        <div className={`rounded-full p-0.5 shadow-2xl transition-all ${
+                          isSelected
+                            ? 'w-13 h-13 border-[3.5px] border-[#F5C344] ring-4 ring-[#F5C344]/35 bg-[#F5C344]'
+                            : 'w-10 h-10 border-2 border-white bg-white/90'
+                        }`}>
+                          <img
+                            src={explorer.avatar}
+                            alt={explorer.name}
+                            className="w-full h-full rounded-full object-cover"
+                          />
+                        </div>
+
+                        {/* Yellow Tag Pill under selected Pin (e.g. Olivia) */}
+                        {isSelected && (
+                          <div className="mt-1 px-3 py-0.5 rounded-full bg-[#F5C344] text-[#141414] font-[900] text-[11px] shadow-lg tracking-tight border border-amber-500/20">
+                            {explorer.name}
+                          </div>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+
+                {/* Right Floating Map Controls (Layer & List) */}
+                <div className="absolute right-4 bottom-6 z-30 flex flex-col gap-2">
+                  <div className="bg-white/80 backdrop-blur-2xl border border-white/60 rounded-full p-1.5 flex flex-col gap-2.5 shadow-xl">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        hapticTap();
+                        setIs3DMapView(false);
+                      }}
+                      className="w-9 h-9 rounded-full bg-white/70 hover:bg-white flex items-center justify-center text-stone-800 transition active:scale-90 shadow-xs cursor-pointer"
+                      aria-label="Toggle Layer"
+                    >
+                      <MapIcon className="w-4 h-4 text-stone-700" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        hapticTap();
+                        const el = document.getElementById('convoys-section');
+                        el?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="w-9 h-9 rounded-full bg-white/70 hover:bg-white flex items-center justify-center text-stone-800 transition active:scale-90 shadow-xs cursor-pointer"
+                      aria-label="List View"
+                    >
+                      <List className="w-4 h-4 text-stone-700" />
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            ) : (
             <div 
               className="relative h-[390px] bg-[#ECEAE0] overflow-hidden mx-5 mb-2 rounded-[28px] border border-[#141414]/15 shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)] shrink-0 select-none cursor-grab active:cursor-grabbing touch-none"
               onMouseDown={(e) => handleMapPointerDown(e.clientX, e.clientY)}
@@ -1215,6 +1525,7 @@ function TripsContent() {
                 Drag to explore · Pinch to zoom
               </div>
             </div>
+            )}
 
             {/* ================= INTERACTIVE PIN ACTIVITY OVERVIEW SHEET ================= */}
             {activeMapPin && (
@@ -2860,6 +3171,227 @@ function TripsContent() {
               </div>
 
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= SCREEN 2: DATING & TRAVEL CHAT SCREEN (DRIBBLE SCREENSHOT 2) ================= */}
+      {showChatModal && (
+        <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-md flex items-center justify-center max-w-md mx-auto">
+          <div className="w-full h-full bg-[#EDF3F8] flex flex-col justify-between overflow-hidden relative animate-fade-in text-[#141414]">
+            
+            {/* Top iOS Status & Dynamic Header */}
+            <div className="px-5 pt-[max(14px,env(safe-area-inset-top,14px))] pb-3 bg-white/90 backdrop-blur-xl border-b border-stone-200/80 sticky top-0 z-30 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowChatModal(false)}
+                  className="w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-700 active:scale-90 transition cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                <div className="flex items-center gap-2.5">
+                  <div className="relative">
+                    <img
+                      src={selectedCityExplorer.avatar}
+                      alt={selectedCityExplorer.name}
+                      className="w-10 h-10 rounded-full object-cover border border-stone-200 shadow-xs"
+                    />
+                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full" />
+                  </div>
+                  <div>
+                    <div className="font-[900] text-[15px] text-[#141414] leading-tight">
+                      {selectedCityExplorer.name}
+                    </div>
+                    <div className="text-[11px] text-stone-500 font-medium">
+                      {selectedCityExplorer.distance}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    hapticTap();
+                    toast.success('Sparks match verified!');
+                  }}
+                  className="w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-700 active:scale-90 transition cursor-pointer"
+                  aria-label="Spark"
+                >
+                  <Sparkles className="w-4 h-4 text-amber-500" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowChatModal(false)}
+                  className="w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-700 active:scale-90 transition cursor-pointer"
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Chat Messages Feed (Matching Screenshot) */}
+            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3.5 scrollbar-none">
+              
+              {/* Date Header Pill */}
+              <div className="text-center my-1">
+                <span className="px-3 py-1 rounded-full bg-white/70 text-stone-500 text-[10px] font-bold tracking-wider uppercase border border-stone-200/50">
+                  Today
+                </span>
+              </div>
+
+              {chatMessages.map((msg) => {
+                const isMe = msg.sender === 'me';
+                return (
+                  <div
+                    key={msg.id}
+                    className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} space-y-1 animate-slide-up`}
+                  >
+                    {/* Voice Note Pill */}
+                    {msg.isVoiceNote ? (
+                      <div className="bg-white rounded-2xl rounded-tl-xs p-3 shadow-xs border border-stone-200/70 max-w-[260px] flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            hapticTap();
+                            setIsPlayingAudio(!isPlayingAudio);
+                          }}
+                          className="w-9 h-9 rounded-full bg-[#141414] text-white flex items-center justify-center active:scale-90 transition cursor-pointer shrink-0"
+                        >
+                          {isPlayingAudio ? (
+                            <Pause className="w-4 h-4 fill-white" />
+                          ) : (
+                            <Play className="w-4 h-4 fill-white ml-0.5" />
+                          )}
+                        </button>
+                        
+                        {/* Interactive Equalizer Waveform Bars */}
+                        <div className="flex items-center gap-0.5 flex-1 h-6">
+                          {[40, 65, 80, 50, 95, 30, 70, 85, 60, 45, 90, 75, 55, 35, 80, 60].map((height, idx) => (
+                            <div
+                              key={idx}
+                              className={`w-1 rounded-full transition-all duration-200 ${
+                                isPlayingAudio && idx <= (audioProgress * 16) / 14
+                                  ? 'bg-[#141414]'
+                                  : 'bg-stone-300'
+                              }`}
+                              style={{
+                                height: isPlayingAudio
+                                  ? `${Math.max(25, (height + (Math.sin(idx + audioProgress) * 35)) % 100)}%`
+                                  : `${height}%`,
+                              }}
+                            />
+                          ))}
+                        </div>
+
+                        <span className="text-[11px] font-bold text-stone-500 shrink-0 font-mono">
+                          {isPlayingAudio
+                            ? `00:${String(Math.min(14, audioProgress)).padStart(2, '0')}`
+                            : msg.voiceDuration || '00:14'}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5">
+                        {/* Emoji reaction if any on left */}
+                        {msg.emoji && (
+                          <span className="w-6 h-6 rounded-full bg-white shadow-xs border border-stone-200 flex items-center justify-center text-xs">
+                            {msg.emoji}
+                          </span>
+                        )}
+                        <div
+                          className={`px-4 py-2.5 rounded-2xl text-[14px] leading-relaxed font-medium shadow-xs max-w-[280px] ${
+                            isMe
+                              ? 'bg-[#D2E7FA] text-[#141414] rounded-tr-xs border border-blue-200/60'
+                              : 'bg-white text-[#141414] rounded-tl-xs border border-stone-200/70'
+                          }`}
+                        >
+                          {msg.text}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Timestamp */}
+                    <span className="text-[10px] text-stone-400 font-semibold px-1">
+                      {msg.time}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Bottom Floating Chat Input Bar (Matching Screenshot) */}
+            <div className="px-4 py-3 bg-white/95 backdrop-blur-2xl border-t border-stone-200/80 pb-[max(18px,env(safe-area-inset-bottom,16px))]">
+              
+              {/* Quick Suggestion Icebreakers */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none">
+                {[
+                  "Let's do 7:30 PM! 🍕",
+                  "Street food first date is a sign ✨",
+                  "I know the best taco spot downtown 🌮",
+                ].map((sug) => (
+                  <button
+                    key={sug}
+                    type="button"
+                    onClick={() => handleSendChatMessage(sug)}
+                    className="px-3 py-1 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 text-[11px] font-semibold transition shrink-0 cursor-pointer"
+                  >
+                    {sug}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <div className="flex-1 bg-stone-100 rounded-full px-4 py-2.5 flex items-center justify-between border border-stone-200/70 focus-within:border-amber-400 focus-within:bg-white transition">
+                  <input
+                    type="text"
+                    value={chatInputText}
+                    onChange={(e) => setChatInputText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSendChatMessage();
+                      }
+                    }}
+                    placeholder="Type here"
+                    className="flex-1 bg-transparent text-[14px] text-[#141414] placeholder:text-stone-400 outline-none font-medium"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      hapticTap();
+                      setIsRecordingAudio(!isRecordingAudio);
+                      if (!isRecordingAudio) {
+                        toast.success('🎙️ Recording voice note...');
+                      } else {
+                        toast.success('Voice note saved & ready to send');
+                      }
+                    }}
+                    className={`w-7 h-7 rounded-full flex items-center justify-center transition ${
+                      isRecordingAudio ? 'bg-rose-500 text-white animate-pulse' : 'text-stone-500 hover:text-stone-800'
+                    }`}
+                    aria-label="Voice Note"
+                  >
+                    <Mic className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Vibrant Yellow Send Button with Paper Airplane Icon */}
+                <button
+                  type="button"
+                  onClick={() => handleSendChatMessage()}
+                  disabled={!chatInputText.trim() && !isRecordingAudio}
+                  className="w-11 h-11 rounded-full bg-[#F5C344] hover:bg-[#ebbb38] text-[#141414] flex items-center justify-center shadow-md active:scale-90 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shrink-0"
+                  aria-label="Send"
+                >
+                  <Send className="w-4 h-4 ml-0.5 fill-[#141414]" />
+                </button>
+              </div>
+
+            </div>
+
           </div>
         </div>
       )}
