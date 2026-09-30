@@ -981,53 +981,188 @@ function TripsContent() {
         
         {/* ================= VIEW 1: SCREENSHOT-EXACT HUB & SCHEDULE ================= */}
         {activeTab === 'explore' && (
-          <div className="h-full flex flex-col animate-fade-in space-y-5 pt-2">
+          <div className="h-full flex flex-col animate-fade-in space-y-5 pt-1">
             
-            {/* 1. UPCOMING HEADER & DATE CAPSULES ROW (Screenshot 1 Exact) */}
+            {/* 1. APPLE MAPS-STYLE TRAVEL DATING RADAR MAP (ON TOP) */}
             <div className="px-6">
-              <div className="flex items-center gap-2 mb-3">
-                <h2 className="text-[20px] font-[800] text-[#18181B] tracking-tight">Upcoming</h2>
-                <span className="px-2 py-0.5 rounded-full bg-[#00E5A3] text-black font-[900] text-[11px] shadow-sm">
-                  +3
-                </span>
-              </div>
+              <div className="relative rounded-[32px] overflow-hidden border border-stone-300/70 bg-[#F4F6F9] text-stone-900 shadow-md p-4 min-h-[260px] flex flex-col justify-between">
+                
+                {/* Apple Maps Vector Map Grid & Roads Background */}
+                <div
+                  className="absolute inset-0 pointer-events-none opacity-90"
+                  style={{
+                    backgroundColor: '#E8ECF2',
+                    backgroundImage: `
+                      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8) 0%, rgba(232, 236, 242, 0.4) 100%),
+                      linear-gradient(rgba(203, 213, 225, 0.5) 1.5px, transparent 1.5px),
+                      linear-gradient(90deg, rgba(203, 213, 225, 0.5) 1.5px, transparent 1.5px)
+                    `,
+                    backgroundSize: '100% 100%, 32px 32px, 32px 32px',
+                  }}
+                />
 
-              {/* Horizontal Date Capsules */}
-              <div className="flex items-center justify-between gap-2 overflow-x-auto scrollbar-none pb-1">
-                {[
-                  { day: 'Sat', num: '20' },
-                  { day: 'Sun', num: '21' },
-                  { day: 'Mon', num: '22' },
-                  { day: 'Tue', num: '23', isHighlight: true },
-                  { day: 'Wed', num: '24' },
-                  { day: 'Thu', num: '25' },
-                ].map((item) => {
-                  const isSelected = item.isHighlight;
-                  return (
+                {/* Apple Maps Water Body / Greenery Accents */}
+                <div className="absolute -top-10 -right-10 w-44 h-44 rounded-full bg-[#D2E7D6] opacity-70 blur-[1px] pointer-events-none" />
+                <div className="absolute -bottom-10 -left-10 w-48 h-48 rounded-full bg-[#D4E8F8] opacity-80 blur-[1px] pointer-events-none" />
+
+                {/* Apple Maps Curved Navigation Route Path */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 340 260">
+                  {/* Route Glow & Line */}
+                  <path
+                    d="M 50 210 C 100 170, 140 190, 200 120 C 240 70, 270 90, 300 40"
+                    stroke="#2563EB"
+                    strokeWidth="5"
+                    strokeLinecap="round"
+                    fill="none"
+                    className="drop-shadow-sm opacity-90"
+                  />
+                  <path
+                    d="M 50 210 C 100 170, 140 190, 200 120 C 240 70, 270 90, 300 40"
+                    stroke="#60A5FA"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    fill="none"
+                  />
+
+                  {/* Secondary Date Route */}
+                  <path
+                    d="M 80 180 Q 180 230 270 160"
+                    stroke="#A855F7"
+                    strokeWidth="3.5"
+                    strokeDasharray="6 4"
+                    strokeLinecap="round"
+                    fill="none"
+                    className="opacity-75"
+                  />
+                </svg>
+
+                {/* Top Apple Maps Floating Search / Hub Capsule */}
+                <div className="relative z-10 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      hapticTap();
+                      setShowLocationModal(true);
+                    }}
+                    className="flex items-center gap-2 bg-white/95 backdrop-blur-xl px-3.5 py-2 rounded-full border border-stone-200 shadow-sm hover:bg-white active:scale-95 transition cursor-pointer"
+                  >
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#00E5A3] animate-pulse shrink-0" />
+                    <span className="text-[12px] font-[800] text-stone-900 tracking-tight">
+                      Bangalore Hub · 18 Singles & Convoys
+                    </span>
+                    <span className="text-stone-400 text-xs">▾</span>
+                  </button>
+
+                  <div className="flex items-center gap-1.5">
                     <button
-                      key={item.num}
                       type="button"
-                      onClick={() => hapticTap()}
-                      className={`flex flex-col items-center justify-center min-w-[50px] h-[64px] rounded-[18px] transition-all cursor-pointer ${
-                        isSelected
-                          ? 'bg-[#9D54FF] text-white shadow-lg shadow-[#9D54FF]/30 scale-[1.04]'
-                          : 'bg-white/60 hover:bg-white text-stone-700 border border-white/80 shadow-xs'
-                      }`}
+                      onClick={() => {
+                        hapticTap();
+                        toast.success('🧭 Compass aligned to North');
+                      }}
+                      className="w-9 h-9 rounded-full bg-white/95 backdrop-blur-xl border border-stone-200 shadow-sm flex items-center justify-center text-stone-700 active:scale-90 transition cursor-pointer"
+                      aria-label="Compass"
                     >
-                      <span className={`text-[11px] font-semibold ${isSelected ? 'text-white/80' : 'text-stone-500'}`}>
-                        {item.day}
-                      </span>
-                      <span className={`text-[15px] font-[800] mt-0.5 ${isSelected ? 'text-white' : 'text-stone-800'}`}>
-                        {item.num}
-                      </span>
+                      🧭
                     </button>
-                  );
-                })}
+                  </div>
+                </div>
+
+                {/* Interactive Apple Maps Pin 1: Nandi Hills Sunrise Convoy */}
+                <div
+                  onClick={() => {
+                    hapticSuccess();
+                    setSelectedTrip(TRIPS_DATA[0]);
+                  }}
+                  className="absolute top-12 right-5 z-20 flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full shadow-md border border-stone-200 cursor-pointer active:scale-95 hover:scale-105 transition"
+                >
+                  <img
+                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=60&q=80"
+                    alt="Host"
+                    className="w-5 h-5 rounded-full object-cover border border-purple-400"
+                  />
+                  <div className="text-left">
+                    <div className="text-[11px] font-[900] text-stone-900 leading-tight flex items-center gap-1">
+                      <span>Nandi Sunrise Convoy</span>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-rose-100 text-rose-700 font-bold">💕 3 Pairs</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Interactive Apple Maps Pin 2: Coorg Estate Drive */}
+                <div
+                  onClick={() => {
+                    hapticSuccess();
+                    setSelectedTrip(TRIPS_DATA[1]);
+                  }}
+                  className="absolute bottom-16 left-4 z-20 flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full shadow-md border border-stone-200 cursor-pointer active:scale-95 hover:scale-105 transition"
+                >
+                  <img
+                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=60&q=80"
+                    alt="Co-driver"
+                    className="w-5 h-5 rounded-full object-cover border border-sky-400"
+                  />
+                  <div className="text-left">
+                    <div className="text-[11px] font-[900] text-stone-900 leading-tight flex items-center gap-1">
+                      <span>☕ Coorg Trail & Sunset</span>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 font-bold">1 Spot</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Interactive Apple Maps Pin 3: Gokarna Beach Roadtrip */}
+                <div
+                  onClick={() => {
+                    hapticSuccess();
+                    setSelectedTrip(TRIPS_DATA[2] || TRIPS_DATA[0]);
+                  }}
+                  className="absolute top-28 left-6 z-20 flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full shadow-md border border-stone-200 cursor-pointer active:scale-95 hover:scale-105 transition"
+                >
+                  <span className="text-[12px]">🌊</span>
+                  <span className="text-[10px] font-bold text-stone-800">Gokarna Coastal Date</span>
+                </div>
+
+                {/* Apple Maps Bottom Info Card: Live Turn & Roadtrip Status */}
+                <div className="relative z-10 mt-auto pt-2">
+                  <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-3 shadow-sm border border-stone-200 flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+                        🚗
+                      </div>
+                      <div>
+                        <div className="text-[12px] font-[800] text-stone-900">
+                          Next Convoy: Nandi Peak at 05:30 AM
+                        </div>
+                        <div className="text-[10px] text-stone-500 font-medium">
+                          Indiranagar 100ft Rd · 3 Single Pairs Confirmed
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        hapticSuccess();
+                        setSelectedTrip(TRIPS_DATA[0]);
+                      }}
+                      className="px-3 py-1.5 rounded-full bg-[#18181B] text-white text-[11px] font-bold active:scale-95 transition shrink-0"
+                    >
+                      Join Convoy
+                    </button>
+                  </div>
+                </div>
+
               </div>
             </div>
 
-            {/* 2. HORIZONTAL PASTEL BENTO CARDS CAROUSEL (Screenshot 1 Exact) */}
+            {/* 2. HORIZONTAL PASTEL BENTO TRAVEL DATING CARDS CAROUSEL */}
             <div className="px-6">
+              <div className="flex items-center justify-between mb-2.5">
+                <h2 className="text-[18px] font-[800] text-[#18181B] tracking-tight">
+                  Weekend Escapes & Dating Convoys
+                </h2>
+                <span className="text-[11px] font-bold text-purple-700">Swipe &gt;</span>
+              </div>
+
               <div className="flex gap-3.5 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory">
                 {/* Mint Card */}
                 <div
@@ -1038,7 +1173,6 @@ function TripsContent() {
                   className="snap-start shrink-0 w-[240px] p-4 rounded-[26px] bg-[#D7F5E8] border border-emerald-200/50 shadow-sm flex flex-col justify-between cursor-pointer active:scale-[0.98] transition min-h-[160px]"
                 >
                   <div className="flex items-center justify-between">
-                    {/* Overlapping Avatars */}
                     <div className="flex items-center -space-x-2">
                       <img
                         src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80"
@@ -1068,8 +1202,8 @@ function TripsContent() {
                   </div>
 
                   <div className="flex items-center justify-between text-[11px] font-medium text-emerald-900/70 pt-2 border-t border-emerald-900/10">
-                    <span>Today 9:45am</span>
-                    <span className="font-bold text-emerald-950">Priority High</span>
+                    <span>Sat 5:30am</span>
+                    <span className="font-bold text-emerald-950">💕 3 Dating Pairs</span>
                   </div>
                 </div>
 
@@ -1101,7 +1235,7 @@ function TripsContent() {
                   </div>
 
                   <div className="flex items-center justify-between text-[11px] font-medium text-sky-900/70 pt-2 border-t border-sky-900/10">
-                    <span>Today 11:00am</span>
+                    <span>This Sunday</span>
                     <span className="font-bold text-sky-950">1 Spot Left</span>
                   </div>
                 </div>
@@ -1134,14 +1268,14 @@ function TripsContent() {
                   </div>
 
                   <div className="flex items-center justify-between text-[11px] font-medium text-purple-900/70 pt-2 border-t border-purple-900/10">
-                    <span>This Sat 4:30pm</span>
+                    <span>Long Weekend</span>
                     <span className="font-bold text-purple-950">Women Safe</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* 3. ORGANIC CAPSULE "ADD AN ESCAPE / ADD A TASK" BAR (Screenshot 1 Exact) */}
+            {/* 3. ORGANIC CAPSULE "HOST A PLAN / ESCAPE" ACTION BAR */}
             <div className="px-6">
               <button
                 type="button"
@@ -1153,189 +1287,86 @@ function TripsContent() {
                 className="w-full h-14 bg-[#18181B] text-white rounded-full px-5 flex items-center justify-between shadow-lg active:scale-[0.98] transition cursor-pointer relative overflow-hidden group"
               >
                 <span className="text-[14px] font-[700] tracking-wide text-white/90">
-                  Host an escape / Add a plan
+                  Host a travel date / convoy
                 </span>
                 
-                {/* Organic Circular Plus Button on Right */}
                 <div className="w-10 h-10 rounded-full bg-white/15 group-hover:bg-[#00E5A3] group-hover:text-black text-white flex items-center justify-center transition-all">
                   <span className="text-[20px] font-bold leading-none">+</span>
                 </div>
               </button>
             </div>
 
-            {/* 4. LIVE TRAVEL DATING MAP RADAR (Interactive Bento Map) */}
-            <div className="px-6">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-[17px] font-[800] text-[#18181B] tracking-tight">
-                    Live Travel Dating Map
-                  </h3>
-                  <span className="flex h-2 w-2 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                  </span>
-                </div>
-                <span className="text-[11px] font-bold text-stone-500">Bangalore Hub</span>
-              </div>
-
-              {/* Bento Map Container */}
-              <div className="relative rounded-[28px] overflow-hidden border border-stone-200/80 bg-[#0F172A] text-white shadow-md p-4 min-h-[220px] flex flex-col justify-between">
-                {/* Stylized Vector Map Grid & Road Canvas */}
-                <div
-                  className="absolute inset-0 opacity-25 pointer-events-none"
-                  style={{
-                    backgroundImage: `radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.15) 0%, transparent 70%),
-                                      linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
-                                      linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)`,
-                    backgroundSize: '100% 100%, 28px 28px, 28px 28px',
-                  }}
-                />
-
-                {/* Animated Route Curved Line */}
-                <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 320 200">
-                  <path
-                    d="M 40 160 Q 140 40 280 80"
-                    stroke="#38BDF8"
-                    strokeWidth="2.5"
-                    strokeDasharray="6 4"
-                    fill="none"
-                    className="opacity-70 animate-pulse"
-                  />
-                  <path
-                    d="M 60 140 Q 180 180 260 120"
-                    stroke="#A855F7"
-                    strokeWidth="2"
-                    strokeDasharray="4 4"
-                    fill="none"
-                    className="opacity-60"
-                  />
-                </svg>
-
-                {/* Interactive Map Header Bar */}
-                <div className="relative z-10 flex items-center justify-between">
-                  <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
-                    <span className="w-2 h-2 rounded-full bg-[#00E5A3] animate-pulse" />
-                    <span className="text-[11px] font-bold text-emerald-300">14 Escapes & Pairs Live</span>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      hapticTap();
-                      setShowLocationModal(true);
-                    }}
-                    className="px-2.5 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-[10px] font-bold text-white hover:bg-white/25 active:scale-95 transition"
-                  >
-                    Change Hub ▾
-                  </button>
-                </div>
-
-                {/* Interactive Map Pins (Dating Escapes & Road Trips) */}
-                <div className="relative z-10 my-4 h-24 relative">
-                  {/* Pin 1: Nandi Hills Sunrise Convoy */}
-                  <div
-                    onClick={() => {
-                      hapticSuccess();
-                      setSelectedTrip(TRIPS_DATA[0]);
-                    }}
-                    className="absolute top-1 right-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-2.5 py-1 rounded-full shadow-lg border border-white/40 flex items-center gap-1.5 text-[10px] font-[800] cursor-pointer hover:scale-105 active:scale-95 transition"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
-                    <span>⛰️ Nandi Convoy (3 Pairs)</span>
-                  </div>
-
-                  {/* Pin 2: Indiranagar Chai Date */}
-                  <div
-                    onClick={() => {
-                      hapticSuccess();
-                      setSelectedTrip(TRIPS_DATA[1]);
-                    }}
-                    className="absolute bottom-2 left-4 bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-2.5 py-1 rounded-full shadow-lg border border-white/40 flex items-center gap-1.5 text-[10px] font-[800] cursor-pointer hover:scale-105 active:scale-95 transition"
-                  >
-                    <span>☕ Coorg Estate Drive</span>
-                  </div>
-
-                  {/* Pin 3: Cubbon Park Sunset Walk */}
-                  <div
-                    onClick={() => {
-                      hapticSuccess();
-                      setSelectedTrip(TRIPS_DATA[2] || TRIPS_DATA[0]);
-                    }}
-                    className="absolute top-12 left-16 bg-gradient-to-r from-rose-500 to-pink-600 text-white px-2 py-0.5 rounded-full shadow-md border border-white/30 flex items-center gap-1 text-[9px] font-bold cursor-pointer hover:scale-105 transition"
-                  >
-                    <span>💕 Gokarna Trail</span>
-                  </div>
-                </div>
-
-                {/* Map Bottom Action Bar */}
-                <div className="relative z-10 flex items-center justify-between pt-2 border-t border-white/10">
-                  <div className="text-[11px] text-white/70 font-medium">
-                    Tap any pin to view route & join
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      hapticTap();
-                      setSelectedTrip(TRIPS_DATA[0]);
-                    }}
-                    className="px-3 py-1 rounded-full bg-white text-stone-900 text-[11px] font-bold active:scale-95 transition"
-                  >
-                    View Nearest &gt;
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* 5. BENTO SCHEDULE & HIGHLIGHTS (Screenshot 2 Exact) */}
+            {/* 4. MEET YOUR TRAVEL DATE & CHEMISTRY SPARK (BENTO DUO) */}
             <div className="px-6 space-y-3">
-              {/* Lime Green Banner Card with Scheduled Timeline Blocks */}
-              <div className="bg-[#D8F8A7] rounded-[28px] p-4 shadow-sm border border-lime-300/60 flex items-start justify-between gap-3">
-                <div className="pt-1">
-                  <div className="text-[24px] font-[900] text-lime-950 leading-none">Oct 4</div>
-                  <div className="text-[11px] font-bold text-lime-900/70 mt-1">Saturday</div>
-                </div>
-
-                <div className="flex-1 space-y-1.5 pl-2">
-                  <div className="bg-white/80 backdrop-blur-sm p-2 rounded-xl shadow-xs border border-white">
-                    <div className="text-[11px] font-[800] text-stone-800 truncate">Dawn Convoy Meetup</div>
-                    <div className="text-[9px] text-stone-500 font-semibold">05:30 – 08:45 AM</div>
-                  </div>
-                  <div className="bg-white/80 backdrop-blur-sm p-2 rounded-xl shadow-xs border border-white">
-                    <div className="text-[11px] font-[800] text-stone-800 truncate">Fortress Peak Summit & Chai</div>
-                    <div className="text-[9px] text-stone-500 font-semibold">09:00 – 11:30 AM</div>
-                  </div>
-                </div>
+              <div className="flex items-center justify-between">
+                <h3 className="text-[17px] font-[800] text-[#18181B] tracking-tight">
+                  Travel Dating & Connections
+                </h3>
+                <span className="text-[11px] font-bold text-emerald-600">Mutual Sparks 💕</span>
               </div>
 
-              {/* Bento Duo: Pink Chat Card & Blue Hours Gauge Card */}
               <div className="grid grid-cols-2 gap-3">
-                {/* Left Pink Chat Card */}
-                <div className="bg-[#FFEBF2] rounded-[26px] p-4 shadow-sm border border-rose-200/60 flex flex-col justify-between min-h-[140px]">
-                  <div className="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center text-rose-500 text-lg">
-                    💬
+                {/* Left Pink Chemistry Card */}
+                <div className="bg-[#FFEBF2] rounded-[26px] p-4 shadow-sm border border-rose-200/60 flex flex-col justify-between min-h-[145px]">
+                  <div className="w-10 h-10 rounded-2xl bg-white shadow-xs flex items-center justify-center text-rose-500 text-lg">
+                    💖
                   </div>
                   <div>
-                    <div className="text-[13px] font-[800] text-rose-950">Let's talk now!</div>
+                    <div className="text-[13px] font-[800] text-rose-950">Secret Spark</div>
+                    <p className="text-[10px] text-rose-900/70 font-medium mt-0.5 leading-tight">
+                      Double-blind interest on roadtrips.
+                    </p>
                     <button
                       type="button"
                       onClick={() => router.push('/messages')}
-                      className="mt-2 w-full py-1.5 rounded-full bg-[#18181B] text-white text-[11px] font-bold shadow-xs active:scale-95 transition"
+                      className="mt-2.5 w-full py-1.5 rounded-full bg-[#18181B] text-white text-[11px] font-bold shadow-xs active:scale-95 transition"
                     >
-                      Start chat
+                      View Sparks
                     </button>
                   </div>
                 </div>
 
-                {/* Right Blue Hours Gauge Card */}
-                <div className="bg-[#E8F3FF] rounded-[26px] p-4 shadow-sm border border-sky-200/60 flex flex-col justify-between min-h-[140px]">
-                  <div>
-                    <div className="text-[20px] font-[900] text-sky-950 leading-none">21:30</div>
-                    <div className="text-[10px] font-bold text-sky-900/60 mt-0.5">Hours explored</div>
+                {/* Right Sky Verified Singles Nearby Card */}
+                <div className="bg-[#E8F3FF] rounded-[26px] p-4 shadow-sm border border-sky-200/60 flex flex-col justify-between min-h-[145px]">
+                  <div className="w-10 h-10 rounded-2xl bg-white shadow-xs flex items-center justify-center text-sky-600 text-lg">
+                    🧭
                   </div>
+                  <div>
+                    <div className="text-[13px] font-[800] text-sky-950">Travel Singles</div>
+                    <p className="text-[10px] text-sky-900/70 font-medium mt-0.5 leading-tight">
+                      14 verified explorers in your area.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        hapticSuccess();
+                        toast.success('Browsing verified travelers nearby');
+                        setSelectedTrip(TRIPS_DATA[0]);
+                      }}
+                      className="mt-2.5 w-full py-1.5 rounded-full bg-sky-700 text-white text-[11px] font-bold shadow-xs active:scale-95 transition"
+                    >
+                      Meet Singles
+                    </button>
+                  </div>
+                </div>
+              </div>
 
-                  {/* 3D Gauge Clock Visual */}
-                  <div className="w-12 h-12 rounded-full border-4 border-sky-400/30 border-t-sky-600 self-end flex items-center justify-center">
-                    <Clock className="w-4 h-4 text-sky-700" />
+              {/* Spontaneous Chai & Sunset Drive Meetup (Lime Green Card) */}
+              <div className="bg-[#D8F8A7] rounded-[28px] p-4 shadow-sm border border-lime-300/60 flex items-start justify-between gap-3">
+                <div className="pt-0.5">
+                  <div className="text-[20px] font-[900] text-lime-950 leading-none">Today</div>
+                  <div className="text-[11px] font-bold text-lime-900/70 mt-1">5:30 PM</div>
+                </div>
+
+                <div className="flex-1 space-y-1.5 pl-2">
+                  <div className="bg-white/85 backdrop-blur-sm p-2.5 rounded-2xl shadow-xs border border-white">
+                    <div className="text-[12px] font-[800] text-stone-900">
+                      ☕ Spontaneous Chai & Sunset Drive
+                    </div>
+                    <div className="text-[10px] text-stone-600 font-medium mt-0.5 flex items-center justify-between">
+                      <span>Indiranagar 100ft Rd</span>
+                      <span className="font-bold text-emerald-700">4 Singles Joined</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1343,13 +1374,13 @@ function TripsContent() {
               {/* Active Escapes Progress List Card */}
               <div className="bg-white rounded-[26px] p-4 shadow-sm border border-stone-200/70">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[13px] font-[800] text-[#18181B]">Active escapes</span>
+                  <span className="text-[13px] font-[800] text-[#18181B]">Active travel dates</span>
                   <span className="text-[11px] font-bold text-[#1D8E66]">View all &gt;</span>
                 </div>
 
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <div className="text-[13px] font-[800] text-stone-900">Skandagiri Midnight Ridge</div>
+                    <div className="text-[13px] font-[800] text-stone-900">Skandagiri Midnight Ridge Drive</div>
                     <div className="text-[10px] text-stone-500 font-medium">18 explorers · 4 spots open</div>
                     {/* Segmented Progress Pill Bar */}
                     <div className="flex items-center gap-1 mt-2">
@@ -1370,6 +1401,7 @@ function TripsContent() {
                   </div>
                 </div>
               </div>
+
             </div>
 
           </div>
