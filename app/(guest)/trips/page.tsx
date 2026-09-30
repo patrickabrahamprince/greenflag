@@ -367,39 +367,41 @@ const POPULAR_DESTINATION_CITIES = [
 ];
 
 const CALENDAR_DATES = [
-  { day: 'Wed', date: 'Oct 1', label: 'Wed · Oct 1' },
-  { day: 'Thu', date: 'Oct 2', label: 'Thu · Oct 2' },
-  { day: 'Fri', date: 'Oct 3', label: 'Fri · Oct 3' },
-  { day: 'Sat', date: 'Oct 4', label: 'Sat · Oct 4' },
-  { day: 'Sun', date: 'Oct 5', label: 'Sun · Oct 5' },
-  { day: 'Mon', date: 'Oct 6', label: 'Mon · Oct 6' },
-  { day: 'Tue', date: 'Oct 7', label: 'Tue · Oct 7' },
+  { day: 'Mon', date: 'Oct 4', label: 'Mon · Oct 4' },
+  { day: 'Tue', date: 'Oct 5', label: 'Tue · Oct 5' },
+  { day: 'Wed', date: 'Oct 6', label: 'Wed · Oct 6' },
+  { day: 'Thu', date: 'Oct 7', label: 'Thu · Oct 7' },
+  { day: 'Fri', date: 'Oct 8', label: 'Fri · Oct 8' },
+  { day: 'Sat', date: 'Oct 9', label: 'Sat · Oct 9' },
+  { day: 'Sun', date: 'Oct 10', label: 'Sun · Oct 10' },
 ];
 
 const TIME_WHEEL_SLOTS = [
-  '05:00 am',
-  '05:30 am',
-  '06:00 am',
-  '06:30 am',
-  '07:00 am',
-  '07:30 am',
   '08:00 am',
   '08:30 am',
   '09:00 am',
   '09:30 am',
   '10:00 am',
+  '10:30 am',
+  '11:00 am',
   '11:15 am',
   '11:30 am',
   '11:45 am',
   '12:00 pm',
   '12:15 pm',
+  '12:30 pm',
   '01:00 pm',
+  '01:30 pm',
+  '02:00 pm',
   '02:30 pm',
+  '03:00 pm',
+  '03:30 pm',
   '04:00 pm',
   '04:30 pm',
   '05:00 pm',
   '05:30 pm',
   '06:00 pm',
+  '07:00 pm',
   '08:00 pm',
   '09:30 pm',
   '10:00 pm',
@@ -640,10 +642,52 @@ function TripsContent() {
   const [createPickup, setCreatePickup] = useState('Indiranagar 100ft Rd, Bengaluru');
   const [gpsScanning, setGpsScanning] = useState(false);
   const [gpsDetected, setGpsDetected] = useState(false);
-  const [selectedDateCard, setSelectedDateCard] = useState('Sat · Oct 4');
-  const [createDate, setCreateDate] = useState('Sat · Oct 4');
-  const [selectedTimeIndex, setSelectedTimeIndex] = useState(13); // '11:45 am'
+  const [selectedDateCard, setSelectedDateCard] = useState('Mon · Oct 4');
+  const [createDate, setCreateDate] = useState('Mon · Oct 4');
+  const [selectedTimeIndex, setSelectedTimeIndex] = useState(9); // '11:45 am'
   const [createTimeSlot, setCreateTimeSlot] = useState('11:45 am');
+  const timeWheelRef = useRef<HTMLDivElement>(null);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleTimeWheelScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    const container = e.currentTarget;
+    const itemHeight = 44;
+    const index = Math.round(container.scrollTop / itemHeight);
+    const clampedIndex = Math.max(0, Math.min(TIME_WHEEL_SLOTS.length - 1, index));
+    
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+    
+    scrollTimeoutRef.current = setTimeout(() => {
+      setSelectedTimeIndex(clampedIndex);
+      setCreateTimeSlot(TIME_WHEEL_SLOTS[clampedIndex]);
+      hapticTap();
+    }, 40);
+  }, []);
+
+  const handleSelectTimeSlot = useCallback((idx: number) => {
+    hapticTap();
+    setSelectedTimeIndex(idx);
+    setCreateTimeSlot(TIME_WHEEL_SLOTS[idx]);
+    if (timeWheelRef.current) {
+      timeWheelRef.current.scrollTo({
+        top: idx * 44,
+        behavior: 'smooth',
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (createStep === 4 && timeWheelRef.current) {
+      const timer = setTimeout(() => {
+        if (timeWheelRef.current) {
+          timeWheelRef.current.scrollTop = selectedTimeIndex * 44;
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [createStep, selectedTimeIndex]);
 
   const [createType, setCreateType] = useState<'green' | 'pink' | 'women'>('green');
   const [createGroupSize, setCreateGroupSize] = useState('2-4');
@@ -1751,28 +1795,36 @@ function TripsContent() {
                   {/* Top Host Profile Card (Exact Screenshot Match) */}
                   <div className="bg-white rounded-[28px] p-5 shadow-sm border border-[#18181B]/[0.06] text-center flex flex-col items-center relative overflow-hidden">
                     <div className="relative mb-2.5">
-                      <div className="w-20 h-20 rounded-full p-1 bg-gradient-to-tr from-[#1D8E66]/30 to-emerald-200/50 shadow-inner">
+                      <div className="w-20 h-20 rounded-full p-1 bg-gradient-to-tr from-[#1D8E66]/30 to-emerald-200/50 shadow-inner flex items-center justify-center overflow-hidden bg-stone-100">
                         <img
                           src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"
-                          alt="Host Avatar"
+                          alt="Jordan"
                           className="w-full h-full rounded-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            const fallback = e.currentTarget.parentElement?.querySelector('.avatar-fallback') as HTMLElement;
+                            if (fallback) fallback.style.display = 'flex';
+                          }}
                         />
+                        <div className="avatar-fallback hidden w-full h-full rounded-full bg-emerald-700 text-white font-[800] text-[24px] items-center justify-center">
+                          J
+                        </div>
                       </div>
                       <div className="absolute bottom-0 right-0 w-6 h-6 bg-[#1D8E66] text-white rounded-full flex items-center justify-center shadow-md border-2 border-white">
-                        <User className="w-3 h-3 text-white" />
+                        <User className="w-3.5 h-3.5 text-white" />
                       </div>
                     </div>
 
                     <h3 className="text-[22px] font-[800] text-[#18181B] tracking-tight">
-                      {createType === 'pink' ? 'Date Host · Jordan' : 'Squad Host · Jordan'}
+                      {createType === 'pink' ? 'Jordan' : 'Jordan'}
                     </h3>
                     <p className="text-[13px] text-stone-500 font-medium mt-0.5">
                       Received schedule expires in 7 days
                     </p>
 
-                    {/* Horizontal Date Cards (Mon Oct 4, Tue Oct 5, Wed Oct 6, etc.) */}
-                    <div className="flex items-center gap-2.5 mt-5 w-full overflow-x-auto pb-1.5 scrollbar-none px-1">
-                      {CALENDAR_DATES.map((item) => {
+                    {/* Horizontal Date Cards (Mon Oct 4, Tue Oct 5, Wed Oct 6) */}
+                    <div className="flex items-center gap-3 mt-5 w-full justify-center px-1">
+                      {CALENDAR_DATES.slice(0, 3).map((item) => {
                         const isSelected = selectedDateCard === item.label || createDate === item.label;
                         return (
                           <button
@@ -1783,13 +1835,13 @@ function TripsContent() {
                               setSelectedDateCard(item.label);
                               setCreateDate(item.label);
                             }}
-                            className={`flex-1 min-w-[80px] h-[76px] rounded-[20px] flex flex-col items-center justify-center transition-all duration-200 cursor-pointer ${
+                            className={`flex-1 max-w-[100px] h-[82px] rounded-[22px] flex flex-col items-center justify-center transition-all duration-200 cursor-pointer ${
                               isSelected
-                                ? 'bg-[#1D8E66] text-white shadow-lg shadow-[#1D8E66]/25 scale-[1.02]'
+                                ? 'bg-[#1D8E66] text-white shadow-lg shadow-[#1D8E66]/25 scale-[1.03]'
                                 : 'bg-white border border-stone-200/90 text-stone-700 hover:border-emerald-300 shadow-xs'
                             }`}
                           >
-                            <span className={`text-[14px] font-[700] ${isSelected ? 'text-white' : 'text-stone-800'}`}>
+                            <span className={`text-[15px] font-[700] tracking-tight ${isSelected ? 'text-white' : 'text-stone-800'}`}>
                               {item.day}
                             </span>
                             <span className={`text-[12px] font-[600] mt-0.5 ${isSelected ? 'text-white/90' : 'text-stone-500'}`}>
@@ -1801,52 +1853,55 @@ function TripsContent() {
                     </div>
                   </div>
 
-                  {/* Vertical Tumbler Time Drum (Screenshot Exact Match) */}
-                  <div className="bg-white rounded-[28px] py-4 px-3 shadow-sm border border-[#18181B]/[0.06] overflow-hidden">
-                    <div className="text-center text-[13px] text-stone-500 font-medium mb-3">
-                      {createType === 'pink' ? 'Private date meetup starts in' : 'Departure convoy starts in'}
+                  {/* Vertical Tumbler Time Drum (Real Smooth Scroll & Wheel Picker) */}
+                  <div className="bg-white rounded-[28px] py-4 px-3 shadow-sm border border-[#18181B]/[0.06] overflow-hidden relative">
+                    <div className="text-center text-[13px] text-stone-500 font-medium mb-2.5">
+                      {createType === 'pink' ? 'Video call starts in' : 'Video call starts in'}
                     </div>
 
-                    {/* Tumbler Drum 5 Rows */}
-                    <div className="flex flex-col select-none">
-                      {[-2, -1, 0, 1, 2].map((offset) => {
-                        const targetIndex = selectedTimeIndex + offset;
-                        if (targetIndex < 0 || targetIndex >= TIME_WHEEL_SLOTS.length) {
+                    {/* Time Drum 220px Window */}
+                    <div className="relative h-[220px]">
+                      {/* Fixed Central Highlight Band */}
+                      <div className="absolute top-[88px] left-0 right-0 h-[44px] bg-[#EAF6F0] border-y border-[#1D8E66]/20 pointer-events-none rounded-xl z-0" />
+
+                      {/* Scrollable Drum List */}
+                      <div
+                        ref={timeWheelRef}
+                        onScroll={handleTimeWheelScroll}
+                        className="h-full overflow-y-scroll snap-y snap-mandatory relative z-10 scrollbar-none overscroll-contain touch-pan-y"
+                        style={{ scrollBehavior: 'smooth' }}
+                      >
+                        {/* Top 2-slot spacer */}
+                        <div className="h-[88px] shrink-0 pointer-events-none" />
+
+                        {/* All Slots */}
+                        {TIME_WHEEL_SLOTS.map((slotTime, idx) => {
+                          const isSelected = idx === selectedTimeIndex;
+                          const isNear = Math.abs(idx - selectedTimeIndex) === 1;
+                          const isFar = Math.abs(idx - selectedTimeIndex) === 2;
+
                           return (
                             <div
-                              key={`empty-${offset}`}
-                              className="h-10 flex items-center justify-center text-transparent text-sm"
+                              key={slotTime}
+                              onClick={() => handleSelectTimeSlot(idx)}
+                              className={`h-[44px] snap-center flex items-center justify-center cursor-pointer transition-all duration-150 select-none ${
+                                isSelected
+                                  ? 'text-[#1D8E66] font-[800] text-[18px] tracking-tight scale-105'
+                                  : isNear
+                                  ? 'text-stone-500 hover:text-stone-800 font-[600] text-[15px]'
+                                  : isFar
+                                  ? 'text-stone-300 hover:text-stone-500 font-[500] text-[14px]'
+                                  : 'text-stone-200/50 font-[400] text-[13px]'
+                              }`}
                             >
-                              --:--
+                              {slotTime}
                             </div>
                           );
-                        }
+                        })}
 
-                        const slotTime = TIME_WHEEL_SLOTS[targetIndex];
-                        const isCenter = offset === 0;
-                        const isNear = Math.abs(offset) === 1;
-
-                        return (
-                          <button
-                            key={slotTime}
-                            type="button"
-                            onClick={() => {
-                              hapticTap();
-                              setSelectedTimeIndex(targetIndex);
-                              setCreateTimeSlot(slotTime);
-                            }}
-                            className={`w-full transition-all duration-150 flex items-center justify-center cursor-pointer ${
-                              isCenter
-                                ? 'bg-[#EAF6F0] text-[#1D8E66] font-[800] text-[18px] py-3.5 border-y border-[#1D8E66]/25 shadow-xs my-0.5'
-                                : isNear
-                                ? 'text-stone-500 hover:text-stone-800 font-[600] text-[15px] py-2.5'
-                                : 'text-stone-300 hover:text-stone-500 font-[500] text-[14px] py-2'
-                            }`}
-                          >
-                            {slotTime}
-                          </button>
-                        );
-                      })}
+                        {/* Bottom 2-slot spacer */}
+                        <div className="h-[88px] shrink-0 pointer-events-none" />
+                      </div>
                     </div>
                   </div>
 
