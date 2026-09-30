@@ -29,6 +29,8 @@ import {
   SlidersHorizontal,
   Star,
   Award,
+  Bell,
+  AlarmClock,
 } from 'lucide-react';
 import { hapticTap, hapticSuccess } from '@/lib/haptics';
 import toast from 'react-hot-toast';
@@ -363,6 +365,45 @@ const POPULAR_DESTINATION_CITIES = [
   { name: 'Delhi NCR & Gurgaon', city: 'Delhi NCR' },
 ];
 
+const ALARM_PRESETS = [
+  {
+    id: 'sunrise',
+    icon: '🌅',
+    name: 'Dawn Sunrise Convoy',
+    hour: '05',
+    minute: '30',
+    period: 'AM' as const,
+    sub: 'Early morning cloud bed drive',
+  },
+  {
+    id: 'morning',
+    icon: '☕',
+    name: 'Morning Roast & Meet',
+    hour: '08',
+    minute: '30',
+    period: 'AM' as const,
+    sub: 'Artisan daylight cafe meet',
+  },
+  {
+    id: 'sunset',
+    icon: '🌆',
+    name: 'Golden Hour & Sunset',
+    hour: '04',
+    minute: '30',
+    period: 'PM' as const,
+    sub: 'Scenic viewpoints & highway drive',
+  },
+  {
+    id: 'night',
+    icon: '🌌',
+    name: 'Night Ridge Traverse',
+    hour: '10',
+    minute: '00',
+    period: 'PM' as const,
+    sub: 'Night stargazing & peak trek',
+  },
+];
+
 function TripsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -599,7 +640,62 @@ function TripsContent() {
   const [gpsScanning, setGpsScanning] = useState(false);
   const [gpsDetected, setGpsDetected] = useState(false);
   const [createDate, setCreateDate] = useState('This Saturday');
-  const [createTimeSlot, setCreateTimeSlot] = useState('🌅 Dawn Sunrise · 5:30 AM');
+  const [createTimeSlot, setCreateTimeSlot] = useState('🌅 Dawn Sunrise · 05:30 AM');
+  const [alarmHour, setAlarmHour] = useState('05');
+  const [alarmMinute, setAlarmMinute] = useState('30');
+  const [alarmPeriod, setAlarmPeriod] = useState<'AM' | 'PM'>('AM');
+  const [alarmTitle, setAlarmTitle] = useState('🌅 Dawn Sunrise Convoy');
+  const [selectedAlarmId, setSelectedAlarmId] = useState('sunrise');
+  const [alarmDays, setAlarmDays] = useState<string[]>(['Sat', 'Sun']);
+
+  const adjustAlarmHour = (delta: number) => {
+    hapticTap();
+    const current = parseInt(alarmHour, 10) || 5;
+    let next = current + delta;
+    if (next > 12) next = 1;
+    if (next < 1) next = 12;
+    const formatted = next.toString().padStart(2, '0');
+    setAlarmHour(formatted);
+    setCreateTimeSlot(`${alarmTitle} · ${formatted}:${alarmMinute} ${alarmPeriod}`);
+    setSelectedAlarmId('custom');
+  };
+
+  const adjustAlarmMinute = (delta: number) => {
+    hapticTap();
+    const current = parseInt(alarmMinute, 10) || 0;
+    let next = current + delta;
+    if (next >= 60) next = 0;
+    if (next < 0) next = 45;
+    const formatted = next.toString().padStart(2, '0');
+    setAlarmMinute(formatted);
+    setCreateTimeSlot(`${alarmTitle} · ${alarmHour}:${formatted} ${alarmPeriod}`);
+    setSelectedAlarmId('custom');
+  };
+
+  const toggleAlarmPeriod = (p: 'AM' | 'PM') => {
+    hapticTap();
+    setAlarmPeriod(p);
+    setCreateTimeSlot(`${alarmTitle} · ${alarmHour}:${alarmMinute} ${p}`);
+    setSelectedAlarmId('custom');
+  };
+
+  const selectAlarmPreset = (preset: typeof ALARM_PRESETS[0]) => {
+    hapticTap();
+    setSelectedAlarmId(preset.id);
+    setAlarmHour(preset.hour);
+    setAlarmMinute(preset.minute);
+    setAlarmPeriod(preset.period);
+    setAlarmTitle(`${preset.icon} ${preset.name}`);
+    setCreateTimeSlot(`${preset.icon} ${preset.name} · ${preset.hour}:${preset.minute} ${preset.period}`);
+  };
+
+  const toggleAlarmDay = (day: string) => {
+    hapticTap();
+    setAlarmDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    );
+  };
+
   const [createType, setCreateType] = useState<'green' | 'pink' | 'women'>('green');
   const [createGroupSize, setCreateGroupSize] = useState('2-4');
   const [createRide, setCreateRide] = useState('🚗 Private Car · 3 Spots');
@@ -1700,23 +1796,182 @@ function TripsContent() {
                 </div>
               )}
 
-              {/* ---------------- QUESTION 4: TIMEFRAME & GROUP ---------------- */}
+              {/* ---------------- QUESTION 4: ALARM TIME & DATE STUDIO ---------------- */}
               {createStep === 4 && (
                 <div className="animate-fade-in space-y-4">
                   <div>
-                    <h2 className="text-[20px] font-[800] tracking-[-0.02em] text-[#18181B]">
-                      When & how are you going?
+                    <h2 className="text-[20px] font-[800] tracking-[-0.02em] text-[#18181B] flex items-center gap-2">
+                      <span>Set Departure Alarm</span>
+                      <span className="text-sm">⏰</span>
                     </h2>
                     <p className="text-[12px] text-[#18181B]/55 mt-1 font-normal">
-                      Set date, departure slot, squad size, and transport mode.
+                      Set your exact wake-up alarm, departure time, and squad details.
                     </p>
                   </div>
 
-                  {/* Day Picker */}
+                  {/* ================= ⏰ APPLE CLOCK / ALARM CARD ================= */}
+                  <div className="rounded-[26px] bg-[#111317] text-white p-4.5 border border-white/10 shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-36 h-36 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+                    
+                    {/* Alarm Card Header */}
+                    <div className="flex items-center justify-between mb-3 relative z-10">
+                      <div className="flex items-center gap-2">
+                        <AlarmClock className="w-4 h-4 text-[#D4AF37]" />
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#D4AF37]">
+                          DEPARTURE ALARM
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-700/40 text-emerald-300 text-[9px] font-bold">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <span>ALARM ACTIVE</span>
+                      </div>
+                    </div>
+
+                    {/* Master Digital Alarm Display */}
+                    <div className="bg-black/40 rounded-2xl p-4 border border-white/5 flex items-center justify-between relative z-10">
+                      
+                      {/* Hour & Minute Stepper Display */}
+                      <div className="flex items-center gap-2">
+                        {/* Hour */}
+                        <div className="flex flex-col items-center">
+                          <button
+                            type="button"
+                            onClick={() => adjustAlarmHour(1)}
+                            className="w-8 h-6 rounded-lg bg-white/10 hover:bg-white/20 active:scale-90 flex items-center justify-center text-white/80 font-bold text-xs transition cursor-pointer"
+                          >
+                            +
+                          </button>
+                          <span className="text-[38px] font-[900] tracking-tight font-mono text-white my-0.5">
+                            {alarmHour}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => adjustAlarmHour(-1)}
+                            className="w-8 h-6 rounded-lg bg-white/10 hover:bg-white/20 active:scale-90 flex items-center justify-center text-white/80 font-bold text-xs transition cursor-pointer"
+                          >
+                            -
+                          </button>
+                        </div>
+
+                        <span className="text-[34px] font-[900] text-[#D4AF37] font-mono -mt-1 animate-pulse">
+                          :
+                        </span>
+
+                        {/* Minute */}
+                        <div className="flex flex-col items-center">
+                          <button
+                            type="button"
+                            onClick={() => adjustAlarmMinute(15)}
+                            className="w-8 h-6 rounded-lg bg-white/10 hover:bg-white/20 active:scale-90 flex items-center justify-center text-white/80 font-bold text-xs transition cursor-pointer"
+                          >
+                            +
+                          </button>
+                          <span className="text-[38px] font-[900] tracking-tight font-mono text-white my-0.5">
+                            {alarmMinute}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => adjustAlarmMinute(-15)}
+                            className="w-8 h-6 rounded-lg bg-white/10 hover:bg-white/20 active:scale-90 flex items-center justify-center text-white/80 font-bold text-xs transition cursor-pointer"
+                          >
+                            -
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* AM / PM Toggle Pill */}
+                      <div className="flex flex-col gap-1.5 p-1 rounded-2xl bg-white/5 border border-white/10">
+                        <button
+                          type="button"
+                          onClick={() => toggleAlarmPeriod('AM')}
+                          className={`px-3 py-1.5 rounded-xl font-[900] text-[12px] transition cursor-pointer ${
+                            alarmPeriod === 'AM'
+                              ? 'bg-[#D4AF37] text-black shadow-md'
+                              : 'text-white/45 hover:text-white'
+                          }`}
+                        >
+                          AM
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => toggleAlarmPeriod('PM')}
+                          className={`px-3 py-1.5 rounded-xl font-[900] text-[12px] transition cursor-pointer ${
+                            alarmPeriod === 'PM'
+                              ? 'bg-[#D4AF37] text-black shadow-md'
+                              : 'text-white/45 hover:text-white'
+                          }`}
+                        >
+                          PM
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Live Alarm Schedule Banner */}
+                    <div className="mt-3 px-3 py-2 rounded-xl bg-white/5 border border-white/5 flex items-center gap-2 text-[11px] text-white/80">
+                      <Bell className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
+                      <span className="truncate">
+                        Alarm sounds on <strong className="text-white">{createDate}</strong> at <strong className="text-[#D4AF37]">{alarmHour}:{alarmMinute} {alarmPeriod}</strong>
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* ================= ⏰ ALARM PRESET SLOTS (iOS CLOCK LIST) ================= */}
                   <div>
                     <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
-                      DAY / TIMEFRAME
+                      QUICK ALARM SLOTS
                     </label>
+                    <div className="space-y-1.5 mt-1.5">
+                      {ALARM_PRESETS.map((preset) => {
+                        const isSelected = selectedAlarmId === preset.id;
+                        return (
+                          <button
+                            key={preset.id}
+                            type="button"
+                            onClick={() => selectAlarmPreset(preset)}
+                            className={`w-full p-3 rounded-2xl border text-left transition cursor-pointer flex items-center justify-between ${
+                              isSelected
+                                ? 'bg-white border-[#18181B] ring-1 ring-[#18181B] shadow-sm'
+                                : 'bg-white border-[#18181B]/[0.08] hover:border-[#18181B]/20'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className="text-xl shrink-0">{preset.icon}</span>
+                              <div>
+                                <div className="flex items-center gap-1.5">
+                                  <span className="font-mono font-[900] text-[14px] text-[#18181B]">
+                                    {preset.hour}:{preset.minute}
+                                  </span>
+                                  <span className="text-[10px] font-extrabold text-[#18181B]/60">
+                                    {preset.period}
+                                  </span>
+                                </div>
+                                <div className="text-[11px] font-bold text-[#18181B]/70">
+                                  {preset.name}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* iOS Style Toggle Switch */}
+                            <div
+                              className={`w-11 h-6 rounded-full transition-colors p-0.5 flex items-center ${
+                                isSelected ? 'bg-emerald-600 justify-end' : 'bg-stone-200 justify-start'
+                              }`}
+                            >
+                              <div className="w-5 h-5 rounded-full bg-white shadow-md" />
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* ================= 📅 ALARM DATE & DAY RECURRENCE ================= */}
+                  <div>
+                    <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
+                      DEPARTURE DAY / RECURRENCE
+                    </label>
+                    
+                    {/* Quick Date Chips */}
                     <div className="grid grid-cols-3 gap-1.5 mt-1.5">
                       {[
                         'Today',
@@ -1743,40 +1998,30 @@ function TripsContent() {
                         </button>
                       ))}
                     </div>
-                  </div>
 
-                  {/* Time Slot Picker */}
-                  <div>
-                    <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
-                      STARTING TIME SLOT
-                    </label>
-                    <div className="grid grid-cols-2 gap-1.5 mt-1.5">
-                      {[
-                        '🌅 Dawn Sunrise · 5:30 AM',
-                        '☀️ Morning Roast · 8:30 AM',
-                        '🌆 Sunset Drive · 4:30 PM',
-                        '🌌 Night Traverse · 10:00 PM',
-                      ].map((slot) => (
-                        <button
-                          key={slot}
-                          type="button"
-                          onClick={() => {
-                            hapticTap();
-                            setCreateTimeSlot(slot);
-                          }}
-                          className={`p-2.5 rounded-xl border text-[11px] font-semibold text-left transition cursor-pointer flex items-center justify-between ${
-                            createTimeSlot === slot
-                              ? 'bg-white border-[#18181B] ring-1 ring-[#18181B] shadow-xs text-[#18181B] font-bold'
-                              : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/65 hover:border-[#18181B]/20'
-                          }`}
-                        >
-                          <span>{slot}</span>
-                        </button>
-                      ))}
+                    {/* iOS Day Bubbles (Mon - Sun) */}
+                    <div className="flex items-center justify-between gap-1.5 mt-2 p-2 bg-white rounded-2xl border border-[#18181B]/[0.08]">
+                      {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => {
+                        const isActive = alarmDays.includes(day);
+                        return (
+                          <button
+                            key={day}
+                            type="button"
+                            onClick={() => toggleAlarmDay(day)}
+                            className={`w-9 h-9 rounded-full font-[800] text-[11px] transition cursor-pointer flex items-center justify-center ${
+                              isActive
+                                ? 'bg-[#18181B] text-white shadow-xs'
+                                : 'bg-[#FAF8F5] text-[#18181B]/50 hover:text-[#18181B]'
+                            }`}
+                          >
+                            {day[0]}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
-                  {/* Group Size & Transport */}
+                  {/* ================= 👥 SQUAD SIZE & TRANSPORT ================= */}
                   <div className="grid grid-cols-2 gap-2.5 pt-1">
                     <div>
                       <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
