@@ -472,8 +472,8 @@ function TripsContent() {
     if (!isMapDragging.current) return;
     const dx = clientX - mapDragStart.current.x;
     const dy = clientY - mapDragStart.current.y;
-    const newX = Math.max(-240, Math.min(240, mapPanStart.current.x + dx));
-    const newY = Math.max(-180, Math.min(180, mapPanStart.current.y + dy));
+    const newX = Math.max(-280, Math.min(280, mapPanStart.current.x + dx));
+    const newY = Math.max(-260, Math.min(260, mapPanStart.current.y + dy));
     setMapPan({ x: newX, y: newY });
   };
 
@@ -997,7 +997,7 @@ function TripsContent() {
             </div>
 
             <div 
-              className="relative h-[250px] bg-[#E8EDE6] overflow-hidden mx-5 mb-2 rounded-[28px] border border-[#18181B]/[0.08] shadow-[inset_0_2px_8px_rgba(0,0,0,0.03)] shrink-0 select-none cursor-grab active:cursor-grabbing touch-none"
+              className="relative h-[390px] bg-[#E8EDE6] overflow-hidden mx-5 mb-2 rounded-[28px] border border-[#18181B]/[0.08] shadow-[inset_0_2px_8px_rgba(0,0,0,0.03)] shrink-0 select-none cursor-grab active:cursor-grabbing touch-none"
               onMouseDown={(e) => handleMapPointerDown(e.clientX, e.clientY)}
               onMouseMove={(e) => handleMapPointerMove(e.clientX, e.clientY)}
               onMouseUp={handleMapPointerUp}
@@ -1009,7 +1009,7 @@ function TripsContent() {
             >
               {/* Pannable & Zoomable World Layer */}
               <div
-                className="absolute inset-[-150px] transition-transform duration-75 ease-out"
+                className="absolute inset-[-220px] transition-transform duration-75 ease-out"
                 style={{
                   transform: `translate(${mapPan.x}px, ${mapPan.y}px) scale(${mapZoom})`,
                   transformOrigin: 'center center',
