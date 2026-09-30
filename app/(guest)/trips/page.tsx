@@ -166,8 +166,8 @@ const TRIPS_DATA: Trip[] = [
     destination: 'Coorg Private Coffee Trails',
     subtitle: 'Estate tasting, misty plantation & slow photography',
     time: 'Weekend · Sat 7:00 AM',
-    spots: 1,
-    totalSpots: 3,
+    spots: 0,
+    totalSpots: 1,
     cost: 2400,
     type: 'pink',
     category: 'coffee',
@@ -177,7 +177,7 @@ const TRIPS_DATA: Trip[] = [
     score: 4.85,
     match: 'Coffee aficionado · Leica photographer',
     host: { name: 'Meera K.', avatar: 'M', level: 8, verified: true },
-    vibe: ['Slow Travel', 'Photo Walks', 'Estate Stay'],
+    vibe: ['Slow Travel', 'Photo Talks', 'Estate Stay'],
     coverStyle: {
       bg: 'from-[#331822] via-[#240f17] to-[#14080d]',
       accent: 'text-rose-300',
@@ -238,8 +238,8 @@ const TRIPS_DATA: Trip[] = [
     destination: 'Araku Daylight Pour-Over & Jazz',
     subtitle: 'Single origin tasting & curated slow conversation',
     time: 'Today · 4:00 PM',
-    spots: 1,
-    totalSpots: 2,
+    spots: 0,
+    totalSpots: 1,
     cost: 450,
     type: 'pink',
     category: 'micro',
@@ -265,7 +265,7 @@ const TRIPS_DATA: Trip[] = [
     spots: 2,
     totalSpots: 5,
     cost: 3400,
-    type: 'pink',
+    type: 'green',
     category: 'women',
     distance: '480 km',
     routeTime: '8h drive',
@@ -281,6 +281,7 @@ const TRIPS_DATA: Trip[] = [
     },
     pin: { x: 82, y: 55 },
   },
+
   {
     id: 7,
     destination: 'Savandurga Monolith Flash Roadtrip',
@@ -1085,10 +1086,10 @@ function TripsContent() {
                         activeMapPin.category === 'women'
                           ? 'bg-purple-100 text-purple-900'
                           : activeMapPin.type === 'pink'
-                          ? 'bg-rose-100 text-rose-900'
+                          ? 'bg-rose-100 text-rose-900 border border-rose-200/60'
                           : 'bg-emerald-100 text-emerald-900'
                       }`}>
-                        {activeMapPin.category === 'women' ? 'Women Safe' : activeMapPin.type === 'pink' ? 'Curated Date' : 'Roadtrip'}
+                        {activeMapPin.category === 'women' ? 'Women Safe' : activeMapPin.type === 'pink' ? '✦ 1-on-1 Date' : 'Roadtrip Squad'}
                       </span>
                       <span className="text-[10px] text-stone-500 font-medium">• {activeMapPin.time}</span>
                     </div>
@@ -1164,8 +1165,12 @@ function TripsContent() {
                           {trip.cost === 0 ? 'Free' : `₹${trip.cost}`}
                         </div>
                       </div>
-                      <span className="text-[9px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full">
-                        {trip.totalSpots - trip.spots} spots left
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                        trip.type === 'pink'
+                          ? 'text-rose-900 bg-rose-50 border border-rose-200/60'
+                          : 'text-emerald-800 bg-emerald-50'
+                      }`}>
+                        {trip.type === 'pink' ? '✦ 1-on-1 (1 spot)' : `${trip.totalSpots - trip.spots} spots left`}
                       </span>
                     </div>
                   </button>
@@ -1523,8 +1528,8 @@ function TripsContent() {
                         {
                           id: 'pink',
                           title: 'A Date ✦',
-                          sub: '1-on-1 romantic spark & curated ambiance',
-                          badge: 'DATE EXPERIENCE',
+                          sub: 'Strictly 1-on-1 private date · 1 Guest only',
+                          badge: '1 GUEST ONLY (1-ON-1)',
                           borderActive: 'border-[#331822] bg-[#FAF5F7] ring-1 ring-[#331822]',
                           badgeBg: 'text-rose-900 bg-rose-100/60',
                         },
@@ -1562,7 +1567,11 @@ function TripsContent() {
                             type="button"
                             onClick={() => {
                               hapticTap();
-                              setCreateType(opt.id === 'buddies' ? 'green' : (opt.id as any));
+                              const nextType = opt.id === 'buddies' ? 'green' : (opt.id as any);
+                              setCreateType(nextType);
+                              if (nextType === 'pink') {
+                                setCreateGroupSize('1-on-1');
+                              }
                             }}
                             className={`p-3.5 rounded-[20px] border text-left transition cursor-pointer active:scale-95 flex flex-col justify-between relative ${
                               isSelected
@@ -1757,31 +1766,47 @@ function TripsContent() {
                   <div className="grid grid-cols-2 gap-2.5 pt-1">
                     <div>
                       <label className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#18181B]/40">
-                        SQUAD SIZE
+                        {createType === 'pink' ? 'DATE CAPACITY' : 'SQUAD SIZE'}
                       </label>
-                      <div className="space-y-1.5 mt-1.5">
-                        {[
-                          { id: '1-on-1', label: '1-on-1 (2 Total)' },
-                          { id: '2-4', label: 'Squad (3-4 Members)' },
-                          { id: '5+', label: 'Group (5+ Members)' },
-                        ].map((sz) => (
-                          <button
-                            key={sz.id}
-                            type="button"
-                            onClick={() => {
-                              hapticTap();
-                              setCreateGroupSize(sz.id);
-                            }}
-                            className={`w-full p-2.5 rounded-xl border text-[11px] font-bold text-left transition cursor-pointer ${
-                              createGroupSize === sz.id
-                                ? 'bg-[#18181B] text-white border-[#18181B] shadow-xs'
-                                : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70'
-                            }`}
-                          >
-                            {sz.label}
-                          </button>
-                        ))}
-                      </div>
+                      {createType === 'pink' ? (
+                        <div className="p-3 rounded-2xl bg-[#FAF5F7] border border-[#331822]/20 mt-1.5 space-y-1.5 shadow-xs">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[12px] font-[800] text-rose-950">
+                              ✦ 1-on-1 (1 Guest Only)
+                            </span>
+                            <span className="text-[8px] font-extrabold px-1.5 py-0.2 rounded-full bg-rose-200 text-rose-900 uppercase">
+                              Strictly 1
+                            </span>
+                          </div>
+                          <p className="text-[10px] text-rose-900/75 leading-tight font-medium">
+                            Dates are strictly 1-on-1 private experiences (Host + 1 Guest). Group capacity is disabled.
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="space-y-1.5 mt-1.5">
+                          {[
+                            { id: '1-on-1', label: '1-on-1 (2 Total)' },
+                            { id: '2-4', label: 'Squad (3-4 Members)' },
+                            { id: '5+', label: 'Group (5+ Members)' },
+                          ].map((sz) => (
+                            <button
+                              key={sz.id}
+                              type="button"
+                              onClick={() => {
+                                hapticTap();
+                                setCreateGroupSize(sz.id);
+                              }}
+                              className={`w-full p-2.5 rounded-xl border text-[11px] font-bold text-left transition cursor-pointer ${
+                                createGroupSize === sz.id
+                                  ? 'bg-[#18181B] text-white border-[#18181B] shadow-xs'
+                                  : 'bg-white border-[#18181B]/[0.08] text-[#18181B]/70'
+                              }`}
+                            >
+                              {sz.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     <div>
@@ -2097,15 +2122,17 @@ function TripsContent() {
                 >
                   <X className="w-4 h-4" />
                 </button>
-                <div className="h-8 px-3 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 text-white text-[11px] font-semibold flex items-center gap-1.5 shadow">
-                  <Users className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>{selectedTrip.totalSpots - selectedTrip.spots} spots available</span>
+                <div className={`h-8 px-3 rounded-full backdrop-blur-xl border text-white text-[11px] font-semibold flex items-center gap-1.5 shadow ${
+                  selectedTrip.type === 'pink' ? 'bg-rose-950/60 border-rose-400/30' : 'bg-black/40 border-white/20'
+                }`}>
+                  <Users className={`w-3.5 h-3.5 ${selectedTrip.type === 'pink' ? 'text-rose-300' : 'text-emerald-400'}`} />
+                  <span>{selectedTrip.type === 'pink' ? '✦ 1-on-1 (1 spot only)' : `${selectedTrip.totalSpots - selectedTrip.spots} spots available`}</span>
                 </div>
               </div>
 
               <div className="relative z-10 text-white">
                 <span className={`inline-block px-2.5 py-0.5 rounded-full border text-[9px] font-bold tracking-[0.2em] uppercase mb-1.5 ${selectedTrip.coverStyle.badge}`}>
-                  {selectedTrip.type === 'pink' ? '✦ Curated Date' : '● Verified Roadtrip'}
+                  {selectedTrip.type === 'pink' ? '✦ 1-on-1 Curated Date' : selectedTrip.category === 'women' ? '👩 Women Safe Circle' : '● Verified Roadtrip'}
                 </span>
                 <h2 className="text-[22px] font-[800] text-white leading-tight tracking-[-0.01em]">
                   {selectedTrip.destination}
@@ -2225,37 +2252,60 @@ function TripsContent() {
 
             {/* Bottom Join Actions */}
             <div className="p-4 bg-[#FAF8F5] border-t border-[#18181B]/[0.08] shrink-0">
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    hapticSuccess();
-                    toast.success('Joined as Buddy! ●', {
-                      style: { background: '#141414', color: '#FAF7F2' },
-                    });
-                    setSelectedTrip(null);
-                  }}
-                  className="flex-1 h-12 rounded-2xl bg-white border border-[#18181B]/[0.12] font-bold text-[13px] text-[#18181B] active:scale-95 transition cursor-pointer shadow-xs"
-                >
-                  Join as Buddy
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    hapticSuccess();
-                    toast.success('Requested as Date! ✦', {
-                      style: { background: '#141414', color: '#FAF7F2' },
-                    });
-                    setSelectedTrip(null);
-                  }}
-                  className="flex-[1.5] h-12 rounded-2xl bg-[#18181B] text-white font-bold text-[13px] tracking-wide shadow-lg active:scale-95 transition cursor-pointer flex items-center justify-center gap-1.5"
-                >
-                  <span>✦ Request as Date</span>
-                </button>
-              </div>
-              <div className="text-center text-[10px] text-[#18181B]/40 mt-2 font-medium">
-                Host approves all requests · Zero charges until confirmed
-              </div>
+              {selectedTrip.type === 'pink' ? (
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      hapticSuccess();
+                      toast.success('Requested 1-on-1 Date! ✦', {
+                        style: { background: '#141414', color: '#FAF7F2' },
+                      });
+                      setSelectedTrip(null);
+                    }}
+                    className="w-full h-12 rounded-2xl bg-[#331822] text-rose-200 border border-rose-800/40 font-bold text-[13px] tracking-wide shadow-lg active:scale-95 transition cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <span>✦ Request 1-on-1 Date</span>
+                  </button>
+                  <div className="text-center text-[10px] text-[#18181B]/40 mt-2 font-medium">
+                    Strictly 1-on-1 Date · Host approves request before confirmation
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        hapticSuccess();
+                        toast.success('Joined as Buddy! ●', {
+                          style: { background: '#141414', color: '#FAF7F2' },
+                        });
+                        setSelectedTrip(null);
+                      }}
+                      className="flex-1 h-12 rounded-2xl bg-white border border-[#18181B]/[0.12] font-bold text-[13px] text-[#18181B] active:scale-95 transition cursor-pointer shadow-xs"
+                    >
+                      Join Squad
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        hapticSuccess();
+                        toast.success('Joined Exploration! ⛰️', {
+                          style: { background: '#141414', color: '#FAF7F2' },
+                        });
+                        setSelectedTrip(null);
+                      }}
+                      className="flex-[1.5] h-12 rounded-2xl bg-[#18181B] text-white font-bold text-[13px] tracking-wide shadow-lg active:scale-95 transition cursor-pointer flex items-center justify-center gap-1.5"
+                    >
+                      <span>Join Exploration</span>
+                    </button>
+                  </div>
+                  <div className="text-center text-[10px] text-[#18181B]/40 mt-2 font-medium">
+                    Host approves all requests · Zero charges until confirmed
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
