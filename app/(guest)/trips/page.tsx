@@ -984,391 +984,63 @@ function TripsContent() {
       {/* Main Content Area */}
       <main className="flex-1 relative flex flex-col pb-36 z-10">
         
-        {/* ================= VIEW 1: AIRSWIFT + ENTRY+ TRAVEL HUB ================= */}
+        {/* ================= VIEW 1: DATING + TRAVEL ESCAPES HUB ================= */}
         {activeTab === 'explore' && (
-          <div className="h-full flex flex-col animate-fade-in space-y-6 pt-2">
+          <div className="h-full flex flex-col animate-fade-in space-y-5 pt-1">
             
-            {/* 1. TITLE + PILL SEGMENTED SWITCHER (DAY TRIPS / WEEKEND / GETAWAYS) */}
-            <div className="px-6 space-y-3.5">
-              <h1 className="text-[28px] font-[900] text-[#18181B] tracking-tight leading-tight">
-                GreenFlag Escapes
-              </h1>
-
-              {/* Segmented Control Pills */}
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-                {[
-                  { id: 'all', label: 'All Escapes' },
-                  { id: 'day', label: 'Day Drives' },
-                  { id: 'weekend', label: 'Weekend Pairs' },
-                  { id: 'women', label: 'Women Safe' },
-                ].map((pill, idx) => {
-                  const isSelected = (idx === 0 && selectedFilter === 'All') || (idx === 1 && selectedFilter === 'Flash') || (idx === 2 && selectedFilter === 'Dates') || (idx === 3 && selectedFilter === 'Women-Only');
-                  return (
-                    <button
-                      key={pill.id}
-                      type="button"
-                      onClick={() => {
-                        hapticTap();
-                        setSelectedFilter(idx === 0 ? 'All' : idx === 1 ? 'Flash' : idx === 2 ? 'Dates' : 'Women-Only');
-                      }}
-                      className={`px-5 py-2 rounded-full text-[13px] font-[700] transition-all cursor-pointer ${
-                        isSelected
-                          ? 'bg-[#18181B] text-white shadow-md'
-                          : 'bg-[#F2EDE4] text-stone-700 hover:bg-[#EAE4D9]'
-                      }`}
-                    >
-                      {pill.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* 2. GOLDEN SAFFRON SEARCH BENTO TICKET CARD (SCREENSHOT 1 EXACT) */}
-            <div className="px-6">
-              <div className="bg-[#F5A623] rounded-[32px] p-4 text-stone-900 shadow-xl relative overflow-hidden space-y-2.5">
+            {/* 1. TRAVEL DATING FILTER PILLS */}
+            <div className="px-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+              {[
+                { id: 'all', label: 'All Escapes' },
+                { id: 'dates', label: 'Dating Pairs 💕' },
+                { id: 'convoys', label: 'Roadtrips 🚗' },
+                { id: 'women', label: 'Women Safe 👩' },
+                { id: 'sunrise', label: 'Sunrise 🌅' },
+                { id: 'coffee', label: 'Coffee Walks ☕' },
+              ].map((pill) => {
+                const isSelected = 
+                  (pill.id === 'all' && selectedFilter === 'All') ||
+                  (pill.id === 'dates' && selectedFilter === 'Dates') ||
+                  (pill.id === 'convoys' && selectedFilter === 'Buddies') ||
+                  (pill.id === 'women' && selectedFilter === 'Women-Only') ||
+                  (pill.id === 'sunrise' && selectedFilter === 'Sunrise') ||
+                  (pill.id === 'coffee' && selectedFilter === 'Coffee');
                 
-                {/* Upper Route Split Block with Circular Swap Button */}
-                <div className="relative flex gap-2">
-                  {/* From Block */}
-                  <div className="flex-1 bg-[#F9BC45] rounded-2xl p-3 border border-black/5">
-                    <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">From</div>
-                    <div className="text-[22px] font-[900] text-stone-950 tracking-tight leading-none mt-1">CGK</div>
-                    <div className="text-[11px] font-semibold text-stone-800/80 truncate mt-0.5">
-                      {selectedLocation.name.split(',')[0]}
-                    </div>
-                  </div>
-
-                  {/* Circular Swap Icon Badge */}
+                return (
                   <button
-                    type="button"
-                    onClick={() => {
-                      hapticSuccess();
-                      setShowLocationModal(true);
-                    }}
-                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#18181B] text-white shadow-md flex items-center justify-center text-xs font-bold active:scale-90 transition z-10 cursor-pointer"
-                  >
-                    ⇄
-                  </button>
-
-                  {/* To Block */}
-                  <div className="flex-1 bg-[#F9BC45] rounded-2xl p-3 text-right border border-black/5">
-                    <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">To</div>
-                    <div className="text-[22px] font-[900] text-stone-950 tracking-tight leading-none mt-1">ICN</div>
-                    <div className="text-[11px] font-semibold text-stone-800/80 truncate mt-0.5">
-                      Nandi Peak, Fortress
-                    </div>
-                  </div>
-                </div>
-
-                {/* Middle Departure Date Block */}
-                <div className="bg-[#F9BC45] rounded-2xl p-3 flex items-center justify-between border border-black/5">
-                  <div>
-                    <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Departure Date</div>
-                    <div className="text-[13px] font-[800] text-stone-950 flex items-center gap-1.5 mt-0.5">
-                      <span>📅</span>
-                      <span>Mon, Aug 27</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold text-stone-800">Return</span>
-                    <div className="w-10 h-6 bg-[#18181B] rounded-full p-0.5 flex items-center justify-end cursor-pointer">
-                      <div className="w-5 h-5 rounded-full bg-white shadow-xs" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Lower Passengers & Class Split Block */}
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="bg-[#F9BC45] rounded-2xl p-3 border border-black/5">
-                    <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Passengers</div>
-                    <div className="text-[12px] font-[800] text-stone-950 mt-0.5">2 Adult, 1 Kids</div>
-                  </div>
-
-                  <div className="bg-[#F9BC45] rounded-2xl p-3 border border-black/5 flex items-center justify-between">
-                    <div>
-                      <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Class Economy</div>
-                      <div className="text-[12px] font-[800] text-stone-950 mt-0.5">Economy</div>
-                    </div>
-                    <span className="text-xs font-bold text-stone-800">▾</span>
-                  </div>
-                </div>
-
-                {/* Search Flights Large Black Pill Button */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    hapticSuccess();
-                    toast.success('🔍 Finding optimal escapes and convoys...');
-                  }}
-                  className="w-full py-3.5 rounded-full bg-[#18181B] text-white font-[800] text-[15px] shadow-md hover:bg-black active:scale-[0.98] transition cursor-pointer text-center"
-                >
-                  Search Flights
-                </button>
-              </div>
-            </div>
-
-            {/* 3. ENTRY+ CURVED SCENERY HERO CARD (SCREENSHOT 2 EXACT) */}
-            <div className="px-6">
-              <div className="relative rounded-[36px] overflow-hidden min-h-[320px] p-6 text-white shadow-xl flex flex-col justify-between bg-cover bg-center"
-                   style={{
-                     backgroundImage: `linear-gradient(to bottom, rgba(15,23,42,0.35), rgba(15,23,42,0.75)), url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80')`
-                   }}
-              >
-                {/* Top Nav: Menu Icon + entry+ Logo + Sign In Pill */}
-                <div className="flex items-center justify-between">
-                  <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center cursor-pointer">
-                    <span className="text-white text-base">☰</span>
-                  </div>
-
-                  <div className="text-[20px] font-[900] tracking-tighter text-white">
-                    entry<span className="text-sky-400 font-bold">+</span>
-                  </div>
-
-                  <button
+                    key={pill.id}
                     type="button"
                     onClick={() => {
                       hapticTap();
-                      setShowLocationModal(true);
+                      setSelectedFilter(
+                        pill.id === 'all' ? 'All' :
+                        pill.id === 'dates' ? 'Dates' :
+                        pill.id === 'convoys' ? 'Buddies' :
+                        pill.id === 'women' ? 'Women-Only' :
+                        pill.id === 'sunrise' ? 'Sunrise' : 'Coffee'
+                      );
                     }}
-                    className="px-3.5 py-1 rounded-full bg-white/25 backdrop-blur-md text-[11px] font-bold text-white border border-white/30 hover:bg-white/35 active:scale-95 transition"
-                  >
-                    Sign In
-                  </button>
-                </div>
-
-                {/* Social Proof Badge + Headline */}
-                <div className="my-auto py-4 space-y-2">
-                  <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 shadow-xs">
-                    <div className="flex -space-x-1.5">
-                      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=60&q=80" alt="u1" className="w-4 h-4 rounded-full object-cover border border-white" />
-                      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=60&q=80" alt="u2" className="w-4 h-4 rounded-full object-cover border border-white" />
-                    </div>
-                    <span className="text-[10px] font-bold tracking-wider text-white uppercase">Over 1M+ Clients Served</span>
-                  </div>
-
-                  <h2 className="text-[26px] font-[900] text-white leading-tight">
-                    Visa processing; <br />
-                    made easy.
-                  </h2>
-                  <p className="text-[12px] text-white/80 font-medium">
-                    Fast, secure, and reliable visa services.
-                  </p>
-                </div>
-
-                {/* Frosted Glass Search Bar with Circular Arrow Button */}
-                <div className="relative">
-                  <div className="bg-white/25 backdrop-blur-xl rounded-full p-1.5 pl-4 flex items-center justify-between border border-white/40 shadow-lg">
-                    <input
-                      type="text"
-                      placeholder="Where are you traveling?"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="bg-transparent text-white placeholder-white/80 text-[13px] font-medium outline-hidden w-full"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        hapticSuccess();
-                        toast.success(`Exploring destination: ${searchQuery || 'Bangalore'}`);
-                      }}
-                      className="w-9 h-9 rounded-full bg-[#007AFF] text-white flex items-center justify-center font-bold text-sm shadow-md active:scale-90 transition cursor-pointer shrink-0"
-                    >
-                      ↗
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Horizontal Filter Pills (ALL / INSTANT / IN A WEEK / IN A MONTH) */}
-              <div className="flex items-center gap-2 overflow-x-auto pt-3 pb-1 scrollbar-none">
-                {['ALL', 'INSTANT', 'IN A WEEK', 'IN A MONTH'].map((tag, idx) => (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => {
-                      hapticTap();
-                      setSelectedFilter(tag === 'ALL' ? 'All' : tag === 'INSTANT' ? 'Flash' : 'Dates');
-                    }}
-                    className={`px-4 py-1.5 rounded-full text-[11px] font-[800] border transition-all cursor-pointer ${
-                      idx === 0 && selectedFilter === 'All'
-                        ? 'bg-[#007AFF] text-white border-[#007AFF] shadow-xs'
-                        : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50'
+                    className={`px-4 py-1.5 rounded-full text-[12px] font-[700] transition-all cursor-pointer shrink-0 ${
+                      isSelected
+                        ? 'bg-[#18181B] text-white shadow-sm'
+                        : 'bg-[#F2EDE4] text-stone-700 hover:bg-[#EAE4D9]'
                     }`}
                   >
-                    {tag}
+                    {pill.label}
                   </button>
-                ))}
-              </div>
+                );
+              })}
             </div>
 
-            {/* 4. STACKED BOARDING PASS / FLIGHT TICKET CARDS (RIGHT PHONE SCREENSHOT EXACT) */}
-            <div className="px-6 space-y-3.5">
-              <div className="flex items-center justify-between">
-                <h3 className="text-[18px] font-[900] text-[#18181B] tracking-tight">
-                  Available Flight & Roadtrip Convoys
-                </h3>
-                <span className="text-[11px] font-bold text-stone-500">3 Available</span>
-              </div>
-
-              {/* TICKET 1: SAFFRON GOLDEN TICKET (NYC -> SFO) */}
-              <div
-                onClick={() => {
-                  hapticSuccess();
-                  setSelectedTrip(TRIPS_DATA[0]);
-                }}
-                className="bg-[#F5A623] rounded-[28px] p-4 text-stone-950 shadow-md relative overflow-hidden cursor-pointer active:scale-[0.99] transition space-y-3"
-              >
-                {/* Route Header */}
-                <div className="flex items-center justify-between">
-                  <div className="text-left">
-                    <div className="text-[22px] font-[900] leading-none">NYC</div>
-                    <div className="text-[10px] font-bold text-stone-800 mt-0.5">New York</div>
-                  </div>
-
-                  {/* Dotted Flight Line with Center Airplane Icon */}
-                  <div className="flex-1 px-4 flex items-center justify-center relative">
-                    <div className="w-full border-t-2 border-dashed border-stone-800/40" />
-                    <div className="absolute w-7 h-7 rounded-full bg-white text-stone-900 shadow-sm flex items-center justify-center text-xs">
-                      ✈
-                    </div>
-                  </div>
-
-                  <div className="text-right">
-                    <div className="text-[22px] font-[900] leading-none">SFO</div>
-                    <div className="text-[10px] font-bold text-stone-800 mt-0.5">San Fransisco</div>
-                  </div>
-                </div>
-
-                {/* Perforated Divider Line with Side Cutouts */}
-                <div className="relative -mx-4 my-2">
-                  <div className="border-t border-dashed border-stone-800/20" />
-                  <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-                  <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-                </div>
-
-                {/* Ticket Details & Bold Price */}
-                <div className="flex items-center justify-between pt-1">
-                  <div>
-                    <div className="text-[13px] font-[800] text-stone-950">Fly Emirates</div>
-                    <div className="text-[11px] font-medium text-stone-800/80">10:20 PM · Jan 13, 2024</div>
-                  </div>
-
-                  <div className="text-[24px] font-[900] text-stone-950 tracking-tight">
-                    $520
-                  </div>
-                </div>
-              </div>
-
-              {/* TICKET 2: OBSIDIAN DARK TICKET (BABAI AIRLINES) */}
-              <div
-                onClick={() => {
-                  hapticSuccess();
-                  setSelectedTrip(TRIPS_DATA[1]);
-                }}
-                className="bg-[#181B1F] rounded-[28px] p-4 text-white shadow-md relative overflow-hidden cursor-pointer active:scale-[0.99] transition space-y-3"
-              >
-                {/* Route Header */}
-                <div className="flex items-center justify-between">
-                  <div className="text-left">
-                    <div className="text-[22px] font-[900] leading-none">NYC</div>
-                    <div className="text-[10px] font-bold text-stone-400 mt-0.5">New York</div>
-                  </div>
-
-                  {/* Dotted Flight Line with Center Airplane Icon */}
-                  <div className="flex-1 px-4 flex items-center justify-center relative">
-                    <div className="w-full border-t-2 border-dashed border-white/20" />
-                    <div className="absolute w-7 h-7 rounded-full bg-white text-stone-900 shadow-sm flex items-center justify-center text-xs">
-                      ✈
-                    </div>
-                  </div>
-
-                  <div className="text-right">
-                    <div className="text-[22px] font-[900] leading-none">SFO</div>
-                    <div className="text-[10px] font-bold text-stone-400 mt-0.5">San Fransisco</div>
-                  </div>
-                </div>
-
-                {/* Perforated Divider Line with Side Cutouts */}
-                <div className="relative -mx-4 my-2">
-                  <div className="border-t border-dashed border-white/20" />
-                  <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-                  <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-                </div>
-
-                {/* Ticket Details & Bold Price */}
-                <div className="flex items-center justify-between pt-1">
-                  <div>
-                    <div className="text-[13px] font-[800] text-white">Babai Airlines</div>
-                    <div className="text-[11px] font-medium text-stone-400">10:30 PM · Jan 13, 2024</div>
-                  </div>
-
-                  <div className="text-[24px] font-[900] text-white tracking-tight">
-                    $480
-                  </div>
-                </div>
-              </div>
-
-              {/* TICKET 3: COBALT BLUE TICKET (TURKISH AIRLINE) */}
-              <div
-                onClick={() => {
-                  hapticSuccess();
-                  setSelectedTrip(TRIPS_DATA[2] || TRIPS_DATA[0]);
-                }}
-                className="bg-[#2A85C8] rounded-[28px] p-4 text-white shadow-md relative overflow-hidden cursor-pointer active:scale-[0.99] transition space-y-3"
-              >
-                {/* Route Header */}
-                <div className="flex items-center justify-between">
-                  <div className="text-left">
-                    <div className="text-[22px] font-[900] leading-none">NYC</div>
-                    <div className="text-[10px] font-bold text-sky-100 mt-0.5">New York</div>
-                  </div>
-
-                  {/* Dotted Flight Line with Center Airplane Icon */}
-                  <div className="flex-1 px-4 flex items-center justify-center relative">
-                    <div className="w-full border-t-2 border-dashed border-white/30" />
-                    <div className="absolute w-7 h-7 rounded-full bg-white text-stone-900 shadow-sm flex items-center justify-center text-xs">
-                      ✈
-                    </div>
-                  </div>
-
-                  <div className="text-right">
-                    <div className="text-[22px] font-[900] leading-none">SFO</div>
-                    <div className="text-[10px] font-bold text-sky-100 mt-0.5">San Fransisco</div>
-                  </div>
-                </div>
-
-                {/* Perforated Divider Line with Side Cutouts */}
-                <div className="relative -mx-4 my-2">
-                  <div className="border-t border-dashed border-white/20" />
-                  <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-                  <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-                </div>
-
-                {/* Ticket Details & Bold Price */}
-                <div className="flex items-center justify-between pt-1">
-                  <div>
-                    <div className="text-[13px] font-[800] text-white">Turkish Airline</div>
-                    <div className="text-[11px] font-medium text-sky-100/90">SQ953 · Today 6:00 PM</div>
-                  </div>
-
-                  <div className="text-[24px] font-[900] text-white tracking-tight">
-                    $390
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 5. INTERACTIVE EDITORIAL MAP CANVAS (INITIAL MAP PRESERVED) */}
-            <div className="px-5 mt-4">
+            {/* 2. INTERACTIVE EDITORIAL MAP CANVAS (TRAVEL DATING RADAR) */}
+            <div className="px-5">
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-1.5">
                   <Compass className="w-4 h-4 text-emerald-800" />
-                  <span className="text-[13px] font-[800] text-[#18181B] tracking-tight">Interactive Radar & Routes</span>
+                  <span className="text-[13px] font-[800] text-[#18181B] tracking-tight">Travel Dating Radar & Live Routes</span>
                 </div>
                 <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100/70 px-2 py-0.5 rounded-full">
-                  Tap pin for overview
+                  Tap pin for pairs & route
                 </span>
               </div>
             </div>
