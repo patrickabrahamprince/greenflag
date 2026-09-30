@@ -148,15 +148,73 @@ interface PlaceSearchResult {
   fullText: string;
 }
 
+const POPULAR_NEIGHBORHOODS = [
+  { name: 'Indiranagar 100ft Rd', city: 'Bengaluru, Karnataka' },
+  { name: 'Koramangala 4th Block', city: 'Bengaluru, Karnataka' },
+  { name: 'HSR Layout Sector 1', city: 'Bengaluru, Karnataka' },
+  { name: 'MG Road / Church Street', city: 'Bengaluru, Karnataka' },
+  { name: 'Whitefield ITPL Main Rd', city: 'Bengaluru, Karnataka' },
+  { name: 'Jayanagar 4th Block', city: 'Bengaluru, Karnataka' },
+  { name: 'JP Nagar Phase 2', city: 'Bengaluru, Karnataka' },
+  { name: 'Hebbal / Airport Expressway', city: 'Bengaluru, Karnataka' },
+];
+
+const POPULAR_DESTINATION_CITIES = [
+  { name: 'Coorg Coffee Estates', city: 'Karnataka' },
+  { name: 'Nandi Hills Fortress', city: 'Chikkaballapur, Karnataka' },
+  { name: 'Gokarna Beach Trail', city: 'Uttara Kannada, Karnataka' },
+  { name: 'Chikmagalur Peak', city: 'Karnataka' },
+  { name: 'Ooty & Nilgiris', city: 'Tamil Nadu' },
+  { name: 'Goa Coastal Circle', city: 'North & South Goa' },
+  { name: 'Mumbai Sea Link', city: 'Maharashtra' },
+  { name: 'Delhi NCR & Gurgaon', city: 'Delhi NCR' },
+];
+
 function TripsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  // Zomato-Style Location State
+  const [selectedLocation, setSelectedLocation] = useState({
+    name: 'Indiranagar, Bengaluru',
+    city: 'Bengaluru, Karnataka',
+  });
+  const [showLocationModal, setShowLocationModal] = useState(false);
+  const [locationSearchQuery, setLocationSearchQuery] = useState('');
+  const [locationGpsScanning, setLocationGpsScanning] = useState(false);
+
   // Navigation & Filter State
   const [activeTab, setActiveTab] = useState<'explore' | 'create'>('explore');
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
+  const [activeMapPin, setActiveMapPin] = useState<Trip | null>(TRIPS_DATA[0]);
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Interactive Map Pan & Zoom State
+  const [mapPan, setMapPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [mapZoom, setMapZoom] = useState<number>(1);
+  const isMapDragging = useRef<boolean>(false);
+  const mapDragStart = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const mapPanStart = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  const handleMapPointerDown = (clientX: number, clientY: number) => {
+    isMapDragging.current = true;
+    mapDragStart.current = { x: clientX, y: clientY };
+    mapPanStart.current = { x: mapPan.x, y: mapPan.y };
+  };
+
+  const handleMapPointerMove = (clientX: number, clientY: number) => {
+    if (!isMapDragging.current) return;
+    const dx = clientX - mapDragStart.current.x;
+    const dy = clientY - mapDragStart.current.y;
+    const newX = Math.max(-180, Math.min(180, mapPanStart.current.x + dx));
+    const newY = Math.max(-140, Math.min(140, mapPanStart.current.y + dy));
+    setMapPan({ x: newX, y: newY });
+  };
+
+  const handleMapPointerUp = () => {
+    isMapDragging.current = false;
+  };
 
   // 5-Step Interactive Form State
   const [createStep, setCreateStep] = useState<number>(1);
@@ -327,17 +385,34 @@ function TripsContent() {
       <div className="fixed -top-20 -left-20 w-72 h-72 bg-[#E3DAC9]/40 rounded-full blur-3xl pointer-events-none" />
 
       {/* ================= EDITORIAL TOP BRAND HEADER & SWITCHER ================= */}
-      <header className="px-5 pt-[max(14px,env(safe-area-inset-top,14px))] pb-3 bg-[#FAF8F5]/90 backdrop-blur-2xl sticky top-0 z-30 border-b border-[#18181B]/[0.06]">
+      {/* ================= EDITORIAL TOP BRAND & ZOMATO-STYLE LOCATION BAR ================= */}
+      <header className="px-5 pt-[max(12px,env(safe-area-inset-top,12px))] pb-3 bg-[#FAF8F5]/95 backdrop-blur-2xl sticky top-0 z-30 border-b border-[#18181B]/[0.06]">
         
-        {/* Brand Bar */}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1A382B]" />
-            <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-[#18181B]/60">
-              GREENFLAG · CURATED ESCAPES
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#18181B]/[0.04] border border-[#18181B]/[0.06] text-[#18181B]/80 text-[10px] font-semibold tracking-wider uppercase">
+        {/* Zomato-Style Location Bar */}
+        <div className="flex items-center justify-between mb-2.5">
+          <button
+            type="button"
+            onClick={() => {
+              hapticTap();
+              setShowLocationModal(true);
+            }}
+            className="flex items-start gap-2.5 text-left group active:scale-[0.98] transition cursor-pointer max-w-[280px]"
+          >
+            <div className="w-8 h-8 rounded-full bg-[#1A382B] text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+              <MapPin className="w-4 h-4 text-emerald-300" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 font-[800] text-[14px] text-[#18181B] leading-none">
+                <span className="truncate">{selectedLocation.name}</span>
+                <span className="text-[10px] text-[#18181B]/40 group-hover:text-[#18181B] transition">▼</span>
+              </div>
+              <div className="text-[11px] text-[#18181B]/55 font-medium truncate mt-0.5">
+                {selectedLocation.city} • Tap to switch location
+              </div>
+            </div>
+          </button>
+
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#18181B]/[0.05] border border-[#18181B]/[0.06] text-[#18181B]/80 text-[10px] font-bold tracking-wider uppercase shrink-0">
             <Shield className="w-3 h-3 text-[#1A382B]" />
             <span>ID Verified</span>
           </div>
@@ -422,79 +497,188 @@ function TripsContent() {
               </div>
             </div>
 
-            {/* Vector Editorial Map Canvas */}
-            <div className="relative h-[210px] bg-[#E8EDE6] overflow-hidden mx-5 my-3 rounded-[24px] border border-[#18181B]/[0.08] shadow-[inset_0_2px_8px_rgba(0,0,0,0.03)] shrink-0">
-              {/* Subtle Map Grid Texture */}
+            {/* Interactive Touch-Pannable Editorial Map Canvas */}
+            <div 
+              className="relative h-[250px] bg-[#E8EDE6] overflow-hidden mx-5 my-2.5 rounded-[28px] border border-[#18181B]/[0.08] shadow-[inset_0_2px_8px_rgba(0,0,0,0.03)] shrink-0 select-none cursor-grab active:cursor-grabbing touch-none"
+              onMouseDown={(e) => handleMapPointerDown(e.clientX, e.clientY)}
+              onMouseMove={(e) => handleMapPointerMove(e.clientX, e.clientY)}
+              onMouseUp={handleMapPointerUp}
+              onMouseLeave={handleMapPointerUp}
+              onTouchStart={(e) => handleMapPointerDown(e.touches[0].clientX, e.touches[0].clientY)}
+              onTouchMove={(e) => handleMapPointerMove(e.touches[0].clientX, e.touches[0].clientY)}
+              onTouchEnd={handleMapPointerUp}
+            >
+              {/* Pannable & Zoomable World Layer */}
               <div
-                className="absolute inset-0 opacity-[0.05] pointer-events-none"
+                className="absolute inset-[-150px] transition-transform duration-75 ease-out"
                 style={{
-                  backgroundImage: 'radial-gradient(#18181B 1px, transparent 1px)',
-                  backgroundSize: '18px 18px',
+                  transform: `translate(${mapPan.x}px, ${mapPan.y}px) scale(${mapZoom})`,
+                  transformOrigin: 'center center',
                 }}
-              />
-
-              {/* Minimalist Topography Vectors */}
-              <div className="absolute inset-0 p-5 pointer-events-none">
-                <div className="w-full h-full relative">
-                  <div className="absolute left-[20%] top-0 bottom-0 w-[4px] bg-[#FFFFFF]/80 rounded-full" />
-                  <div className="absolute top-[42%] left-0 right-0 h-[4px] bg-[#FFFFFF]/80 rounded-full" />
-                  <div className="absolute top-[68%] left-0 right-0 h-[3px] bg-[#FFFFFF]/60 rounded-full rotate-[-5deg]" />
-                  <div className="absolute left-[14%] top-[50%] w-[35%] h-[25%] bg-[#D5E2D1]/70 rounded-[20px] border border-white/40" />
-                  <div className="absolute right-[12%] top-[10%] w-[30%] h-[24%] bg-[#D5E2D1]/60 rounded-[18px] border border-white/40" />
-                </div>
-              </div>
-
-              {/* Live Luxury Pins */}
-              {TRIPS_DATA.map((trip) => (
-                <button
-                  key={trip.id}
-                  type="button"
-                  onClick={() => {
-                    hapticTap();
-                    setSelectedTrip(trip);
+              >
+                {/* Subtle Map Grid Texture */}
+                <div
+                  className="absolute inset-0 opacity-[0.05] pointer-events-none"
+                  style={{
+                    backgroundImage: 'radial-gradient(#18181B 1px, transparent 1px)',
+                    backgroundSize: '18px 18px',
                   }}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 group cursor-pointer active:scale-95 transition-transform z-10"
-                  style={{ left: `${trip.pin.x}%`, top: `${trip.pin.y}%` }}
-                >
-                  <div className="relative flex flex-col items-center">
-                    <div className="w-8 h-8 rounded-full bg-[#18181B] border-2 border-[#FAF8F5] text-white flex items-center justify-center text-[11px] font-bold shadow-[0_6px_16px_rgba(0,0,0,0.25)]">
-                      {trip.type === 'pink' ? '✦' : '●'}
+                />
+
+                {/* Topography & Arterial Roads Vector */}
+                <div className="absolute inset-0 p-5 pointer-events-none">
+                  <div className="w-full h-full relative">
+                    <svg className="w-full h-full opacity-40" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M 0 300 C 250 180, 450 500, 800 350" fill="none" stroke="#FFFFFF" strokeWidth="18" />
+                      <path d="M 180 0 C 220 280, 320 400, 400 800" fill="none" stroke="#CBD5E1" strokeWidth="12" />
+                      <path d="M 450 0 C 400 250, 580 420, 540 800" fill="none" stroke="#FFFFFF" strokeWidth="14" />
+                      <ellipse cx="320" cy="380" rx="90" ry="70" fill="rgba(186, 230, 253, 0.7)" stroke="#93C5FD" strokeWidth="2" />
+                      <ellipse cx="580" cy="260" rx="60" ry="45" fill="rgba(209, 250, 229, 0.8)" stroke="#6EE7B7" strokeWidth="2" />
+                    </svg>
+
+                    <div className="absolute top-[34%] left-[38%] text-[10px] font-bold text-stone-500 uppercase tracking-widest pointer-events-none">
+                      Indiranagar
                     </div>
-                    <div className="w-1.5 h-1.5 bg-[#18181B] rotate-45 -mt-1 shadow" />
+                    <div className="absolute top-[48%] left-[30%] text-[10px] font-bold text-stone-500 uppercase tracking-widest pointer-events-none">
+                      Koramangala
+                    </div>
+                    <div className="absolute top-[22%] left-[48%] text-[10px] font-bold text-stone-500 uppercase tracking-widest pointer-events-none">
+                      Nandi Hills Route
+                    </div>
                   </div>
-                </button>
-              ))}
+                </div>
+
+                {/* Interactive Luxury Event Pins */}
+                {filteredTrips.map((trip) => {
+                  const isSelected = activeMapPin?.id === trip.id;
+                  return (
+                    <button
+                      key={trip.id}
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        hapticTap();
+                        setActiveMapPin(trip);
+                      }}
+                      className={`absolute -translate-x-1/2 -translate-y-1/2 group cursor-pointer transition-all z-20 pointer-events-auto ${
+                        isSelected ? 'scale-125 z-30' : 'hover:scale-110 active:scale-95'
+                      }`}
+                      style={{ left: `${trip.pin.x}%`, top: `${trip.pin.y}%` }}
+                    >
+                      <div className="relative flex flex-col items-center">
+                        {/* Countdown / Tag Pill */}
+                        <div className={`px-2 py-0.5 rounded-full text-[9px] font-bold whitespace-nowrap mb-1 shadow-md border ${
+                          isSelected 
+                            ? 'bg-[#18181B] text-white border-white ring-2 ring-emerald-400'
+                            : trip.type === 'pink'
+                            ? 'bg-rose-600 text-white border-rose-300'
+                            : 'bg-[#1A382B] text-white border-emerald-300'
+                        }`}>
+                          {trip.type === 'pink' ? '💗 Date' : '🟢 Trip'} • ₹{trip.cost}
+                        </div>
+
+                        {/* Pin Head */}
+                        <div className={`w-8 h-8 rounded-full border-2 text-white flex items-center justify-center text-[12px] font-bold shadow-[0_6px_16px_rgba(0,0,0,0.25)] ${
+                          isSelected ? 'border-emerald-400 bg-black ring-2 ring-white' : 'border-[#FAF8F5] bg-[#18181B]'
+                        }`}>
+                          {trip.type === 'pink' ? '✦' : '●'}
+                        </div>
+                        <div className="w-1.5 h-1.5 bg-[#18181B] rotate-45 -mt-1 shadow" />
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
 
               {/* Luxury Map Overlay Pill */}
               <div className="absolute left-3 top-3 pointer-events-none z-10">
                 <div className="bg-[#18181B]/85 backdrop-blur-md text-[#FAF8F5] text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full shadow-md border border-white/10 flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  <span>Bengaluru Hub · 4 Active</span>
+                  <span>{selectedLocation.name} · {filteredTrips.length} Escapes</span>
                 </div>
               </div>
 
-              {/* Recenter / GPS Button */}
-              <button
-                type="button"
-                onClick={() => {
-                  hapticTap();
-                  toast('Current View: Indiranagar Hub', {
-                    icon: '📍',
-                    style: { background: '#141414', color: '#FAF7F2' },
-                  });
-                }}
-                className="absolute right-3 bottom-3 w-8 h-8 bg-white/90 backdrop-blur-md rounded-full shadow-md flex items-center justify-center border border-[#18181B]/[0.08] cursor-pointer active:scale-90 transition z-10"
-              >
-                <Navigation className="w-3.5 h-3.5 text-[#18181B]" />
-              </button>
+              {/* Floating Map Zoom & Center Controls */}
+              <div className="absolute right-3 top-3 z-30 flex flex-col gap-1.5">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    hapticTap();
+                    setMapZoom((z) => Math.min(1.5, z + 0.15));
+                  }}
+                  className="w-7 h-7 bg-white/95 backdrop-blur-md rounded-full shadow-md flex items-center justify-center font-bold text-xs border border-[#18181B]/[0.08] active:scale-90 transition cursor-pointer"
+                >
+                  +
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    hapticTap();
+                    setMapZoom((z) => Math.max(0.85, z - 0.15));
+                  }}
+                  className="w-7 h-7 bg-white/95 backdrop-blur-md rounded-full shadow-md flex items-center justify-center font-bold text-xs border border-[#18181B]/[0.08] active:scale-90 transition cursor-pointer"
+                >
+                  -
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    hapticSuccess();
+                    setMapPan({ x: 0, y: 0 });
+                    setMapZoom(1);
+                    toast.success(`Centered on ${selectedLocation.name}`);
+                  }}
+                  className="w-7 h-7 bg-white/95 backdrop-blur-md rounded-full shadow-md flex items-center justify-center text-emerald-800 border border-[#18181B]/[0.08] active:scale-90 transition cursor-pointer"
+                >
+                  <Navigation className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Drag instruction overlay */}
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/40 backdrop-blur-md px-2.5 py-0.5 rounded-full text-[9px] font-bold text-white/80 pointer-events-none">
+                Drag to explore map
+              </div>
             </div>
+
+            {/* Selected Pin Mini Overview Sheet */}
+            {activeMapPin && (
+              <div className="mx-5 mb-2 p-3.5 bg-white rounded-[22px] border border-[#18181B]/[0.09] shadow-[0_8px_20px_rgba(0,0,0,0.06)] flex items-center justify-between gap-3 animate-slide-up">
+                <div className="flex-1 min-w-0 cursor-pointer" onClick={() => setSelectedTrip(activeMapPin)}>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span className={`text-[9px] font-bold uppercase px-2 py-0.2 rounded-full ${
+                      activeMapPin.type === 'pink' ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'
+                    }`}>
+                      {activeMapPin.type === 'pink' ? '✦ Curated Date' : '● Roadtrip'}
+                    </span>
+                    <span className="text-[10px] font-semibold text-stone-500">• {activeMapPin.time}</span>
+                  </div>
+                  <h4 className="font-[800] text-[14px] text-[#18181B] truncate">{activeMapPin.destination}</h4>
+                  <p className="text-[11px] text-stone-500 truncate">Host: {activeMapPin.host.name} (★{activeMapPin.score}) • ₹{activeMapPin.cost}/person</p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    hapticTap();
+                    setSelectedTrip(activeMapPin);
+                  }}
+                  className="px-3.5 py-2.5 rounded-xl bg-[#18181B] text-white font-bold text-[11px] shrink-0 active:scale-95 transition shadow-sm flex items-center gap-1 cursor-pointer"
+                >
+                  <span>View Plan</span>
+                  <ChevronRight className="w-3 h-3" />
+                </button>
+              </div>
+            )}
 
             {/* Curated Feed Section */}
             <div className="px-5 mt-2">
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <h3 className="text-[15px] font-[800] tracking-[-0.01em] text-[#18181B]">
-                    Curated Escapes
+                    Curated Escapes in {selectedLocation.name.split(',')[0]}
                   </h3>
                   <p className="text-[11px] text-[#18181B]/45 font-medium">
                     Verified hosts & fair cost sharing
@@ -1629,6 +1813,178 @@ function TripsContent() {
               <div className="text-center text-[10px] text-[#18181B]/40 mt-2 font-medium">
                 Host approves all requests · Zero charges until confirmed
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ================= ZOMATO-STYLE LOCATION SELECTOR MODAL ================= */}
+      {showLocationModal && (
+        <div className="fixed inset-0 backdrop-blur-md bg-black/60 flex items-end sm:items-center justify-center z-[120] p-0 sm:p-4 animate-fade-in">
+          <div className="bg-[#FAF8F5] rounded-t-[32px] sm:rounded-[32px] p-5 max-w-md w-full shadow-2xl border border-[#18181B]/[0.08] max-h-[85vh] flex flex-col animate-slide-up">
+            
+            {/* Header with Close */}
+            <div className="flex items-center justify-between pb-3 border-b border-[#18181B]/[0.08] shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-[#1A382B] text-white flex items-center justify-center">
+                  <MapPin className="w-4 h-4 text-emerald-300" />
+                </div>
+                <div>
+                  <h3 className="font-[800] text-[16px] text-[#18181B]">Select Location</h3>
+                  <p className="text-[11px] text-[#18181B]/55 font-medium">Find trips and meetups starting near you</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowLocationModal(false)}
+                className="w-8 h-8 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center text-[#18181B] transition active:scale-90 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Scrollable Location Body */}
+            <div className="flex-1 overflow-y-auto pt-4 space-y-4 no-scrollbar">
+              
+              {/* Search Location Input */}
+              <div className="relative">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#18181B]/40" />
+                <input
+                  type="text"
+                  value={locationSearchQuery}
+                  onChange={(e) => setLocationSearchQuery(e.target.value)}
+                  placeholder="Search area, landmark, or city..."
+                  className="w-full h-11 pl-10 pr-4 bg-white rounded-2xl border border-[#18181B]/[0.1] text-xs font-semibold text-[#18181B] focus:outline-none focus:border-[#18181B] shadow-xs"
+                />
+              </div>
+
+              {/* 🎯 1-Tap GPS Auto-Scan Button */}
+              <button
+                type="button"
+                disabled={locationGpsScanning}
+                onClick={async () => {
+                  setLocationGpsScanning(true);
+                  hapticTap();
+                  try {
+                    let lat = 12.9716;
+                    let lng = 77.5946;
+                    if (Capacitor.isNativePlatform()) {
+                      const pos = await Geolocation.getCurrentPosition({ timeout: 8000 });
+                      lat = pos.coords.latitude;
+                      lng = pos.coords.longitude;
+                    } else if (navigator.geolocation) {
+                      const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 8000 });
+                      });
+                      lat = pos.coords.latitude;
+                      lng = pos.coords.longitude;
+                    }
+                    const res = await fetch(`/api/geocode/reverse?lat=${lat}&lon=${lng}`);
+                    if (res.ok) {
+                      const data = await res.json();
+                      const locality = data.address?.neighbourhood || data.address?.suburb || data.address?.city || 'Indiranagar';
+                      setSelectedLocation({
+                        name: `${locality}, Bengaluru`,
+                        city: 'Bengaluru, Karnataka',
+                      });
+                      hapticSuccess();
+                      toast.success(`📍 Locked to ${locality}!`, {
+                        style: { background: '#141414', color: '#FAF7F2' },
+                      });
+                    }
+                  } catch {
+                    setSelectedLocation({
+                      name: 'Indiranagar, Bengaluru',
+                      city: 'Bengaluru, Karnataka',
+                    });
+                  } finally {
+                    setLocationGpsScanning(false);
+                    setShowLocationModal(false);
+                  }
+                }}
+                className="w-full p-3.5 rounded-2xl bg-[#E8EDE6] border border-emerald-800/20 text-[#1A382B] flex items-center justify-between active:scale-[0.99] transition shadow-xs cursor-pointer"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-[#1A382B] text-white flex items-center justify-center">
+                    {locationGpsScanning ? (
+                      <Radio className="w-4 h-4 animate-spin text-[#D4AF37]" />
+                    ) : (
+                      <LocateFixed className="w-4 h-4 text-emerald-300" />
+                    )}
+                  </div>
+                  <div className="text-left">
+                    <div className="font-[800] text-[13px] text-[#1A382B]">Use Current Location</div>
+                    <div className="text-[11px] text-emerald-900/70 font-medium">Using GPS auto-detection</div>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-emerald-800" />
+              </button>
+
+              {/* ⭐️ Popular Neighborhoods in Bengaluru */}
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#18181B]/50 mb-2 px-1">
+                  Popular Hubs in Bengaluru
+                </div>
+                <div className="bg-white rounded-[22px] border border-[#18181B]/[0.08] divide-y divide-[#18181B]/[0.05] overflow-hidden shadow-xs">
+                  {POPULAR_NEIGHBORHOODS.filter((n) =>
+                    n.name.toLowerCase().includes(locationSearchQuery.toLowerCase())
+                  ).map((item) => (
+                    <button
+                      key={item.name}
+                      type="button"
+                      onClick={() => {
+                        hapticSuccess();
+                        setSelectedLocation(item);
+                        setShowLocationModal(false);
+                        toast.success(`📍 Switched to ${item.name}`, {
+                          style: { background: '#141414', color: '#FAF7F2' },
+                        });
+                      }}
+                      className="w-full p-3 flex items-center justify-between text-left hover:bg-black/5 active:bg-black/10 transition cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <MapPin className="w-3.5 h-3.5 text-[#1A382B] shrink-0" />
+                        <div>
+                          <div className="font-[800] text-[13px] text-[#18181B]">{item.name}</div>
+                          <div className="text-[10px] text-[#18181B]/45 font-medium">{item.city}</div>
+                        </div>
+                      </div>
+                      {selectedLocation.name === item.name && (
+                        <Check className="w-4 h-4 text-emerald-700 font-bold" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 🏙️ Weekend Destinations & Other Cities */}
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#18181B]/50 mb-2 px-1">
+                  Weekend Escapes & Top Destinations
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {POPULAR_DESTINATION_CITIES.filter((c) =>
+                    c.name.toLowerCase().includes(locationSearchQuery.toLowerCase())
+                  ).map((dest) => (
+                    <button
+                      key={dest.name}
+                      type="button"
+                      onClick={() => {
+                        hapticSuccess();
+                        setSelectedLocation(dest);
+                        setShowLocationModal(false);
+                        toast.success(`📍 Switched to ${dest.name}`, {
+                          style: { background: '#141414', color: '#FAF7F2' },
+                        });
+                      }}
+                      className="p-3 rounded-2xl bg-white border border-[#18181B]/[0.08] text-left hover:border-black/20 active:scale-95 transition cursor-pointer shadow-xs"
+                    >
+                      <div className="font-bold text-[12px] text-[#18181B] truncate">{dest.name}</div>
+                      <div className="text-[10px] text-[#18181B]/50 truncate mt-0.5">{dest.city}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
