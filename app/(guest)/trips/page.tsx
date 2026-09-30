@@ -367,15 +367,26 @@ const POPULAR_DESTINATION_CITIES = [
   { name: 'Delhi NCR & Gurgaon', city: 'Delhi NCR' },
 ];
 
-const CALENDAR_DATES = [
-  { day: 'Mon', date: 'Oct 4', label: 'Mon · Oct 4' },
-  { day: 'Tue', date: 'Oct 5', label: 'Tue · Oct 5' },
-  { day: 'Wed', date: 'Oct 6', label: 'Wed · Oct 6' },
-  { day: 'Thu', date: 'Oct 7', label: 'Thu · Oct 7' },
-  { day: 'Fri', date: 'Oct 8', label: 'Fri · Oct 8' },
-  { day: 'Sat', date: 'Oct 9', label: 'Sat · Oct 9' },
-  { day: 'Sun', date: 'Oct 10', label: 'Sun · Oct 10' },
-];
+const generateUpcomingDates = (count = 30) => {
+  const list = [];
+  const base = new Date();
+  for (let i = 0; i < count; i++) {
+    const d = new Date(base);
+    d.setDate(base.getDate() + i);
+    const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+    const monthName = d.toLocaleDateString('en-US', { month: 'short' });
+    const dayNum = d.getDate();
+    list.push({
+      day: i === 0 ? 'Today' : i === 1 ? 'Tmrw' : dayName,
+      date: `${monthName} ${dayNum}`,
+      label: `${dayName} · ${monthName} ${dayNum}`,
+      iso: d.toISOString().split('T')[0],
+    });
+  }
+  return list;
+};
+
+const INITIAL_CALENDAR_DATES = generateUpcomingDates(30);
 
 const TIME_WHEEL_SLOTS = [
   '08:00 am',
@@ -643,8 +654,47 @@ function TripsContent() {
   const [createPickup, setCreatePickup] = useState('Indiranagar 100ft Rd, Bengaluru');
   const [gpsScanning, setGpsScanning] = useState(false);
   const [gpsDetected, setGpsDetected] = useState(false);
-  const [selectedDateCard, setSelectedDateCard] = useState('Mon · Oct 4');
-  const [createDate, setCreateDate] = useState('Mon · Oct 4');
+  const [calendarDateList, setCalendarDateList] = useState(INITIAL_CALENDAR_DATES);
+  const [selectedDateCard, setSelectedDateCard] = useState(INITIAL_CALENDAR_DATES[0]?.label || 'Today');
+  const [createDate, setCreateDate] = useState(INITIAL_CALENDAR_DATES[0]?.label || 'Today');
+  const datePickerInputRef = useRef<HTMLInputElement>(null);
+
+  const handleCustomDatePicked = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (!val) return;
+    const parts = val.split('-');
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      const pickedDate = new Date(year, month, day);
+      const dayName = pickedDate.toLocaleDateString('en-US', { weekday: 'short' });
+      const monthName = pickedDate.toLocaleDateString('en-US', { month: 'short' });
+      const dayNum = pickedDate.getDate();
+      const label = `${dayName} · ${monthName} ${dayNum}`;
+      
+      const newCard = {
+        day: dayName,
+        date: `${monthName} ${dayNum}`,
+        label,
+        iso: val,
+      };
+
+      setCalendarDateList((prev) => {
+        const exists = prev.find((item) => item.label === label);
+        if (exists) return prev;
+        return [newCard, ...prev];
+      });
+
+      setSelectedDateCard(label);
+      setCreateDate(label);
+      hapticSuccess();
+      toast.success(`📅 Escape scheduled for ${label}!`, {
+        style: { background: '#141414', color: '#FAF7F2' },
+      });
+    }
+  }, []);
+
   const [selectedTimeIndex, setSelectedTimeIndex] = useState(9); // '11:45 am'
   const [createTimeSlot, setCreateTimeSlot] = useState('11:45 am');
   const timeWheelRef = useRef<HTMLDivElement>(null);
@@ -1838,34 +1888,69 @@ function TripsContent() {
                       Received schedule expires in 7 days
                     </p>
 
-                    {/* Horizontal Date Cards (Mon Oct 4, Tue Oct 5, Wed Oct 6) */}
-                    <div className="flex items-center gap-3 mt-5 w-full justify-center px-1">
-                      {CALENDAR_DATES.slice(0, 3).map((item) => {
-                        const isSelected = selectedDateCard === item.label || createDate === item.label;
-                        return (
-                          <button
-                            key={item.label}
-                            type="button"
-                            onClick={() => {
-                              hapticTap();
-                              setSelectedDateCard(item.label);
-                              setCreateDate(item.label);
-                            }}
-                            className={`flex-1 max-w-[100px] h-[82px] rounded-[22px] flex flex-col items-center justify-center transition-all duration-200 cursor-pointer ${
-                              isSelected
-                                ? 'bg-[#1D8E66] text-white shadow-lg shadow-[#1D8E66]/25 scale-[1.03]'
-                                : 'bg-white border border-stone-200/90 text-stone-700 hover:border-emerald-300 shadow-xs'
-                            }`}
-                          >
-                            <span className={`text-[15px] font-[700] tracking-tight ${isSelected ? 'text-white' : 'text-stone-800'}`}>
-                              {item.day}
-                            </span>
-                            <span className={`text-[12px] font-[600] mt-0.5 ${isSelected ? 'text-white/90' : 'text-stone-500'}`}>
-                              {item.date}
-                            </span>
-                          </button>
-                        );
-                      })}
+                    {/* Horizontal Date Cards (All upcoming dates + custom calendar picker) */}
+                    <div className="w-full mt-4">
+                      <div className="flex items-center justify-between px-1 mb-2">
+                        <span className="text-[10px] font-bold text-stone-500 uppercase tracking-[0.15em]">
+                          Select Date
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => datePickerInputRef.current?.showPicker?.() || datePickerInputRef.current?.click?.()}
+                          className="flex items-center gap-1 text-[11px] font-bold text-[#1D8E66] hover:underline cursor-pointer"
+                        >
+                          <Calendar className="w-3.5 h-3.5" />
+                          <span>Calendar</span>
+                        </button>
+                      </div>
+
+                      <div className="flex items-center gap-2.5 w-full overflow-x-auto pb-2 scrollbar-none px-1">
+                        {calendarDateList.map((item) => {
+                          const isSelected = selectedDateCard === item.label || createDate === item.label;
+                          return (
+                            <button
+                              key={item.label}
+                              type="button"
+                              onClick={() => {
+                                hapticTap();
+                                setSelectedDateCard(item.label);
+                                setCreateDate(item.label);
+                              }}
+                              className={`min-w-[82px] h-[78px] rounded-[20px] shrink-0 flex flex-col items-center justify-center transition-all duration-200 cursor-pointer ${
+                                isSelected
+                                  ? 'bg-[#1D8E66] text-white shadow-lg shadow-[#1D8E66]/25 scale-[1.03]'
+                                  : 'bg-white border border-stone-200/90 text-stone-700 hover:border-emerald-300 shadow-xs'
+                              }`}
+                            >
+                              <span className={`text-[14px] font-[700] tracking-tight ${isSelected ? 'text-white' : 'text-stone-800'}`}>
+                                {item.day}
+                              </span>
+                              <span className={`text-[12px] font-[600] mt-0.5 ${isSelected ? 'text-white/90' : 'text-stone-500'}`}>
+                                {item.date}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Hidden Native Date Picker Input */}
+                      <input
+                        ref={datePickerInputRef}
+                        type="date"
+                        min={new Date().toISOString().split('T')[0]}
+                        onChange={handleCustomDatePicked}
+                        className="hidden"
+                      />
+
+                      {/* Host Later Calendar Action Button */}
+                      <button
+                        type="button"
+                        onClick={() => datePickerInputRef.current?.showPicker?.() || datePickerInputRef.current?.click?.()}
+                        className="mt-2.5 flex items-center justify-center gap-2 text-[12px] font-bold text-[#1D8E66] hover:text-[#167050] transition cursor-pointer py-2.5 px-3.5 rounded-2xl bg-[#EAF6F0] border border-emerald-900/10 w-full active:scale-98"
+                      >
+                        <Calendar className="w-4 h-4 text-[#1D8E66]" />
+                        <span>Host on a later date (Open Calendar)</span>
+                      </button>
                     </div>
                   </div>
 
