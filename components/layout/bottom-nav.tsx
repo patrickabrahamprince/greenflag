@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import { Suspense } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Compass, Plus, Calendar, User } from 'lucide-react';
 import { hapticTap } from '@/lib/haptics';
@@ -11,6 +11,15 @@ function BottomNavContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const currentTab = searchParams ? searchParams.get('tab') : null;
+  const [isWizardActive, setIsWizardActive] = useState(false);
+
+  useEffect(() => {
+    const handleWizard = (e: any) => {
+      setIsWizardActive(Boolean(e.detail));
+    };
+    window.addEventListener('gf-wizard-active', handleWizard);
+    return () => window.removeEventListener('gf-wizard-active', handleWizard);
+  }, []);
 
   const tabs = [
     { id: 'explore', label: 'Explore', href: '/trips', icon: Compass },
@@ -19,7 +28,7 @@ function BottomNavContent() {
     { id: 'passport', label: 'Passport', href: '/passport', icon: User },
   ];
 
-  if (currentTab === 'create' || pathname === '/standard/builder') {
+  if (isWizardActive || currentTab === 'create' || pathname === '/standard/builder') {
     return null;
   }
 

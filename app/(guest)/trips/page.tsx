@@ -722,6 +722,17 @@ function TripsContent() {
     }
   }, [searchParams]);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('gf-wizard-active', { detail: activeTab === 'create' }));
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('gf-wizard-active', { detail: false }));
+      }
+    };
+  }, [activeTab]);
+
   const filteredTrips = TRIPS_DATA.filter((trip) => {
     if (selectedFilter === 'Dates' && trip.type !== 'pink') return false;
     if (selectedFilter === 'Buddies' && trip.type !== 'green') return false;
@@ -2003,7 +2014,7 @@ function TripsContent() {
             </div>
 
             {/* ================= DOCKED DEDICATED ACTIONS ================= */}
-            <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto px-5 pt-3 pb-[calc(14px+env(safe-area-inset-bottom,14px))] z-[60] bg-[#FAF8F5]/98 backdrop-blur-2xl border-t border-[#18181B]/[0.08] shadow-[0_-12px_32px_rgba(0,0,0,0.06)]">
+            <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto px-5 pt-3 pb-[max(20px,calc(env(safe-area-inset-bottom,16px)+14px))] z-[99] bg-[#FAF8F5]/98 backdrop-blur-2xl border-t border-[#18181B]/[0.1] shadow-[0_-12px_32px_rgba(0,0,0,0.1)]">
               <div className="flex items-center gap-2">
                 <button
                   type="button"
