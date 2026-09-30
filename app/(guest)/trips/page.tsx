@@ -926,500 +926,398 @@ function TripsContent() {
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-md h-64 bg-gradient-to-b from-[#EFE9DF]/80 via-[#FAF8F5]/40 to-transparent pointer-events-none z-0" />
       <div className="fixed -top-20 -left-20 w-72 h-72 bg-[#E3DAC9]/40 rounded-full blur-3xl pointer-events-none" />
 
-      {/* ================= EDITORIAL TOP BRAND HEADER & SWITCHER ================= */}
-      <header className="px-5 pt-[max(12px,env(safe-area-inset-top,12px))] pb-2 bg-[#FAF8F5]/95 backdrop-blur-2xl sticky top-0 z-30 border-b border-[#18181B]/[0.05]">
-        
-        {/* Zomato-Style Location Bar */}
-        <div className="flex items-center justify-between mb-2">
+      {/* Ambient Top Radiant Sky Glow */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-md h-80 bg-gradient-to-b from-[#CBE4FC]/90 via-[#E8F2FD]/50 to-transparent pointer-events-none z-0" />
+
+      {/* ================= EDITORIAL TOP BRAND HEADER ================= */}
+      <header className="px-6 pt-[max(16px,env(safe-area-inset-top,16px))] pb-2 sticky top-0 z-30 flex items-center justify-between">
+        {/* 3D Profile Avatar with Golden Glow Ring */}
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <div className="w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-amber-400 via-amber-200 to-amber-500 shadow-md flex items-center justify-center">
+              <img
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&q=80"
+                alt="Profile"
+                className="w-full h-full rounded-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan';
+                }}
+              />
+            </div>
+            <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full" />
+          </div>
+          <div>
+            <div className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">Explorer Hub</div>
+            <div className="text-[15px] font-[800] text-[#18181B] tracking-tight">{selectedLocation.name.split(',')[0]}</div>
+          </div>
+        </div>
+
+        {/* Circular Frosted Glass Action Buttons */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowLocationModal(true)}
+            className="w-10 h-10 rounded-full bg-white/70 backdrop-blur-md border border-white/60 shadow-sm flex items-center justify-center text-stone-700 hover:bg-white transition cursor-pointer active:scale-95"
+            aria-label="Location search"
+          >
+            <Search className="w-4 h-4 text-stone-700" />
+          </button>
           <button
             type="button"
             onClick={() => {
               hapticTap();
-              setShowLocationModal(true);
+              setActiveTab(activeTab === 'explore' ? 'create' : 'explore');
             }}
-            className="flex items-center gap-2 text-left group active:scale-[0.98] transition cursor-pointer max-w-[260px]"
+            className="w-10 h-10 rounded-full bg-white/70 backdrop-blur-md border border-white/60 shadow-sm flex items-center justify-center text-stone-700 hover:bg-white transition cursor-pointer active:scale-95"
+            aria-label="Menu"
           >
-            <div className="w-7 h-7 rounded-full bg-[#1A382B] text-white flex items-center justify-center shrink-0 shadow-xs">
-              <MapPin className="w-3.5 h-3.5 text-emerald-300" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-1 font-[800] text-[13px] text-[#18181B] leading-none">
-                <span className="truncate">{selectedLocation.name}</span>
-                <span className="text-[9px] text-[#18181B]/40">▼</span>
-              </div>
-              <div className="text-[10px] text-[#18181B]/50 font-medium truncate mt-0.5">
-                {selectedLocation.city}
-              </div>
-            </div>
+            <SlidersHorizontal className="w-4 h-4 text-stone-700" />
           </button>
-
-          <div className="flex bg-[#EDE8DF] p-0.5 rounded-xl gap-0.5 border border-[#18181B]/[0.04]">
-            <button
-              type="button"
-              onClick={() => {
-                hapticTap();
-                setActiveTab('explore');
-                router.replace('/trips');
-              }}
-              className={`px-3 py-1.5 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
-                activeTab === 'explore'
-                  ? 'bg-white text-[#18181B] shadow-xs'
-                  : 'text-[#18181B]/50 hover:text-[#18181B]'
-              }`}
-            >
-              Discover
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                hapticTap();
-                setActiveTab('create');
-                router.replace('/trips?tab=create');
-              }}
-              className={`px-3 py-1.5 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
-                activeTab === 'create'
-                  ? 'bg-[#18181B] text-white shadow-xs'
-                  : 'text-[#18181B]/50 hover:text-[#18181B]'
-              }`}
-            >
-              Host
-            </button>
-          </div>
-        </div>
-
-        {/* Subtle Live Marquee Ticker */}
-        <div className="w-full bg-[#F0ECE1] py-1 px-2.5 rounded-full overflow-hidden border border-[#18181B]/[0.06] flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping shrink-0" />
-          <div className="overflow-hidden flex-1">
-            <div className="animate-marquee flex items-center gap-6 whitespace-nowrap text-[10px] font-medium text-[#18181B]/70">
-              {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, idx) => (
-                <span key={idx} className="inline-flex items-center gap-1.5">
-                  {item}
-                  <span className="text-[#18181B]/30 mx-1">•</span>
-                </span>
-              ))}
-            </div>
-          </div>
         </div>
       </header>
 
       {/* Main Content Area */}
       <main className="flex-1 relative flex flex-col pb-36 z-10">
         
-        {/* ================= VIEW 1: DISCOVER ================= */}
+        {/* ================= VIEW 1: SCREENSHOT-EXACT HUB & SCHEDULE ================= */}
         {activeTab === 'explore' && (
-          <div className="h-full flex flex-col animate-fade-in space-y-4 pt-2">
+          <div className="h-full flex flex-col animate-fade-in space-y-5 pt-2">
             
-            {/* Search Bar & Clean Filter Chips */}
-            <div className="px-5">
-              <div className="relative">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#18181B]/40" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search escapes, destinations, or hosts..."
-                  className="w-full h-10 pl-9 pr-4 rounded-xl bg-white border border-[#18181B]/[0.08] text-[12px] placeholder:text-[#18181B]/35 font-medium text-[#18181B] focus:outline-none focus:border-[#18181B]/40 shadow-xs"
-                />
+            {/* 1. UPCOMING HEADER & DATE CAPSULES ROW (Screenshot 1 Exact) */}
+            <div className="px-6">
+              <div className="flex items-center gap-2 mb-3">
+                <h2 className="text-[20px] font-[800] text-[#18181B] tracking-tight">Upcoming</h2>
+                <span className="px-2 py-0.5 rounded-full bg-[#00E5A3] text-black font-[900] text-[11px] shadow-sm">
+                  +3
+                </span>
               </div>
 
-              {/* Minimalist Filter Chips */}
-              <div className="flex gap-1.5 mt-2 overflow-x-auto scrollbar-none pb-0.5">
-                {['All', 'Sunrise', 'Coffee', 'Dates', 'Buddies', 'Women-Only'].map(
-                  (filter) => (
-                    <button
-                      key={filter}
-                      type="button"
-                      onClick={() => {
-                        hapticTap();
-                        setSelectedFilter(filter);
-                      }}
-                      className={`shrink-0 h-6 px-3 rounded-full text-[10px] font-semibold transition cursor-pointer ${
-                        selectedFilter === filter
-                          ? 'bg-[#18181B] text-white shadow-xs'
-                          : 'bg-white border border-[#18181B]/[0.08] text-[#18181B]/60 hover:text-[#18181B]'
-                      }`}
-                    >
-                      {filter}
-                    </button>
-                  )
-                )}
-              </div>
-            </div>
-
-            {/* ================= SLEEK FEATURED SLIDESHOW ================= */}
-            <div className="px-5">
-              <div 
-                className="relative rounded-[22px] overflow-hidden shadow-sm border border-[#18181B]/[0.08] select-none cursor-pointer"
-                onMouseEnter={() => setIsSlidePaused(true)}
-                onMouseLeave={() => setIsSlidePaused(false)}
-                onTouchStart={(e) => {
-                  setIsSlidePaused(true);
-                  slideTouchStartX.current = e.touches[0].clientX;
-                }}
-                onTouchEnd={(e) => {
-                  setIsSlidePaused(false);
-                  if (slideTouchStartX.current !== null) {
-                    const diff = e.changedTouches[0].clientX - slideTouchStartX.current;
-                    if (diff > 40) {
-                      setHeroSlideIndex((prev) => (prev === 0 ? HERO_SLIDES.length - 1 : prev - 1));
-                      hapticTap();
-                    } else if (diff < -40) {
-                      setHeroSlideIndex((prev) => (prev + 1) % HERO_SLIDES.length);
-                      hapticTap();
-                    }
-                    slideTouchStartX.current = null;
-                  }
-                }}
-              >
-                {HERO_SLIDES.map((slide, idx) => {
-                  const isActive = idx === heroSlideIndex;
-                  const slideTrip = TRIPS_DATA.find((t) => t.id === slide.tripId) || TRIPS_DATA[0];
+              {/* Horizontal Date Capsules */}
+              <div className="flex items-center justify-between gap-2 overflow-x-auto scrollbar-none pb-1">
+                {[
+                  { day: 'Sat', num: '20' },
+                  { day: 'Sun', num: '21' },
+                  { day: 'Mon', num: '22' },
+                  { day: 'Tue', num: '23', isHighlight: true },
+                  { day: 'Wed', num: '24' },
+                  { day: 'Thu', num: '25' },
+                ].map((item) => {
+                  const isSelected = item.isHighlight;
                   return (
-                    <div
-                      key={slide.id}
-                      onClick={() => {
-                        hapticTap();
-                        setSelectedTrip(slideTrip);
-                      }}
-                      className={`p-4 bg-gradient-to-br ${slide.bgGradient} text-white transition-opacity duration-300 relative flex flex-col justify-between min-h-[140px] ${
-                        isActive ? 'block opacity-100' : 'hidden opacity-0'
+                    <button
+                      key={item.num}
+                      type="button"
+                      onClick={() => hapticTap()}
+                      className={`flex flex-col items-center justify-center min-w-[50px] h-[64px] rounded-[18px] transition-all cursor-pointer ${
+                        isSelected
+                          ? 'bg-[#9D54FF] text-white shadow-lg shadow-[#9D54FF]/30 scale-[1.04]'
+                          : 'bg-white/60 hover:bg-white text-stone-700 border border-white/80 shadow-xs'
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <span className={`text-[8px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full border ${slide.badgeBg}`}>
-                          {slide.tag}
-                        </span>
-                        <span className="text-[10px] text-white/70 font-semibold">{slide.stats}</span>
-                      </div>
-
-                      <div className="my-1.5">
-                        <h3 className="font-[800] text-[16px] text-white leading-tight">
-                          {slide.title}
-                        </h3>
-                        <p className="text-[11px] text-white/70 truncate mt-0.5">
-                          {slide.subtitle}
-                        </p>
-                      </div>
-
-                      <div className="flex items-center justify-between pt-2 border-t border-white/10">
-                        <div className="flex items-center gap-1">
-                          {HERO_SLIDES.map((_, dotIdx) => (
-                            <div
-                              key={dotIdx}
-                              className={`h-1 rounded-full transition-all ${
-                                dotIdx === heroSlideIndex ? 'w-4 bg-white' : 'w-1 bg-white/30'
-                              }`}
-                            />
-                          ))}
-                        </div>
-                        <span className="text-[10px] font-bold text-white flex items-center gap-0.5">
-                          View Trip <ChevronRight className="w-3 h-3" />
-                        </span>
-                      </div>
-                    </div>
+                      <span className={`text-[11px] font-semibold ${isSelected ? 'text-white/80' : 'text-stone-500'}`}>
+                        {item.day}
+                      </span>
+                      <span className={`text-[15px] font-[800] mt-0.5 ${isSelected ? 'text-white' : 'text-stone-800'}`}>
+                        {item.num}
+                      </span>
+                    </button>
                   );
                 })}
               </div>
             </div>
 
-            {/* ================= INTERACTIVE EDITORIAL MAP CANVAS ================= */}
-            <div className="px-5">
-              <div className="flex items-center justify-between mb-1.5">
-                <div className="flex items-center gap-1.5">
-                  <Compass className="w-3.5 h-3.5 text-emerald-800" />
-                  <span className="text-[12px] font-[800] text-[#18181B]">Explore Nearby Routes</span>
-                </div>
-                <span className="text-[10px] text-[#18181B]/45 font-medium">Pinch to zoom</span>
-              </div>
-
-              <div 
-                className="relative h-[220px] bg-[#E8EDE6] overflow-hidden rounded-[24px] border border-[#18181B]/[0.08] shadow-[inset_0_2px_8px_rgba(0,0,0,0.03)] select-none cursor-grab active:cursor-grabbing touch-none"
-                onMouseDown={(e) => handleMapPointerDown(e.clientX, e.clientY)}
-                onMouseMove={(e) => handleMapPointerMove(e.clientX, e.clientY)}
-                onMouseUp={handleMapPointerUp}
-                onMouseLeave={handleMapPointerUp}
-                onTouchStart={handleMapTouchStart}
-                onTouchMove={handleMapTouchMove}
-                onTouchEnd={handleMapTouchEnd}
-                onWheel={handleMapWheel}
-              >
-                {/* Map World Layer */}
+            {/* 2. HORIZONTAL PASTEL BENTO CARDS CAROUSEL (Screenshot 1 Exact) */}
+            <div className="px-6">
+              <div className="flex gap-3.5 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory">
+                {/* Mint Card */}
                 <div
-                  className="absolute inset-[-150px] transition-transform duration-75 ease-out"
-                  style={{
-                    transform: `translate(${mapPan.x}px, ${mapPan.y}px) scale(${mapZoom})`,
-                    transformOrigin: 'center center',
-                  }}
-                >
-                  {/* Subtle Grid */}
-                  <div
-                    className="absolute inset-0 opacity-[0.04] pointer-events-none"
-                    style={{
-                      backgroundImage: 'radial-gradient(#18181B 1px, transparent 1px)',
-                      backgroundSize: '16px 16px',
-                    }}
-                  />
-
-                  {/* Roads & Topo */}
-                  <div className="absolute inset-0 p-5 pointer-events-none">
-                    <svg className="w-full h-full opacity-40" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M 0 300 C 250 180, 450 500, 800 350" fill="none" stroke="#FFFFFF" strokeWidth="16" />
-                      <path d="M 180 0 C 220 280, 320 400, 400 800" fill="none" stroke="#CBD5E1" strokeWidth="10" />
-                      <path d="M 450 0 C 400 250, 580 420, 540 800" fill="none" stroke="#FFFFFF" strokeWidth="12" />
-                      <ellipse cx="320" cy="380" rx="80" ry="60" fill="rgba(186, 230, 253, 0.6)" stroke="#93C5FD" strokeWidth="1.5" />
-                    </svg>
-
-                    {/* Central User Location */}
-                    <div className="absolute top-[42%] left-[45%] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
-                      <div className="w-8 h-8 rounded-full bg-emerald-500/20 animate-ping absolute" />
-                      <div className="w-5 h-5 rounded-full bg-emerald-600 border border-white shadow-xs flex items-center justify-center text-white text-[8px] font-bold">
-                        📍
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Map Pins */}
-                  {filteredTrips.map((trip) => {
-                    const isSelected = activeMapPin?.id === trip.id;
-                    return (
-                      <button
-                        key={trip.id}
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          hapticTap();
-                          setActiveMapPin(trip);
-                        }}
-                        className={`absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all z-20 pointer-events-auto ${
-                          isSelected ? 'scale-125 z-30' : 'hover:scale-110 active:scale-95'
-                        }`}
-                        style={{ left: `${trip.pin.x}%`, top: `${trip.pin.y}%` }}
-                      >
-                        <div className="relative flex flex-col items-center">
-                          <div className={`px-1.5 py-0.2 rounded-full text-[8px] font-bold whitespace-nowrap mb-0.5 shadow-sm border ${
-                            isSelected 
-                              ? 'bg-[#18181B] text-white border-white'
-                              : trip.type === 'pink'
-                              ? 'bg-rose-600 text-white border-rose-300'
-                              : 'bg-[#1A382B] text-white border-emerald-300'
-                          }`}>
-                            ₹{trip.cost}
-                          </div>
-                          <div className={`w-6 h-6 rounded-full border text-white flex items-center justify-center text-[10px] font-bold shadow-sm ${
-                            isSelected ? 'border-emerald-400 bg-black' : 'border-white bg-[#18181B]'
-                          }`}>
-                            {trip.type === 'pink' ? '✦' : '●'}
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Floating Zoom Buttons */}
-                <div className="absolute right-2.5 top-2.5 z-30 flex flex-col gap-1">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      hapticTap();
-                      setMapZoom((z) => Math.min(2.4, z + 0.25));
-                    }}
-                    className="w-6 h-6 bg-white rounded-full shadow-xs flex items-center justify-center font-bold text-[11px] border border-[#18181B]/[0.08]"
-                  >
-                    +
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      hapticTap();
-                      setMapZoom((z) => Math.max(0.7, z - 0.25));
-                    }}
-                    className="w-6 h-6 bg-white rounded-full shadow-xs flex items-center justify-center font-bold text-[11px] border border-[#18181B]/[0.08]"
-                  >
-                    -
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* ================= CLEAN PIN ACTIVITY OVERVIEW CARD ================= */}
-            {activeMapPin && (
-              <div className="px-5">
-                <div className="p-3.5 bg-white rounded-[20px] border border-[#18181B]/[0.08] shadow-sm flex items-center justify-between gap-3 animate-fade-in">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <span className={`text-[8px] font-bold uppercase px-1.5 py-0.2 rounded-full ${
-                        activeMapPin.category === 'women'
-                          ? 'bg-purple-100 text-purple-900'
-                          : activeMapPin.type === 'pink'
-                          ? 'bg-rose-100 text-rose-900 border border-rose-200/60'
-                          : 'bg-emerald-100 text-emerald-900'
-                      }`}>
-                        {activeMapPin.category === 'women' ? 'Women Safe' : activeMapPin.type === 'pink' ? '✦ 1-on-1 Date' : 'Roadtrip Squad'}
-                      </span>
-                      <span className="text-[10px] text-stone-500 font-medium">• {activeMapPin.time}</span>
-                    </div>
-
-                    <h4 className="font-[800] text-[14px] text-[#18181B] truncate mt-0.5">
-                      {activeMapPin.destination}
-                    </h4>
-                    
-                    <div className="text-[10px] text-[#18181B]/55 truncate mt-0.5 flex items-center gap-1">
-                      <span>Host: {activeMapPin.host.name} (★{activeMapPin.score})</span>
-                      <span>•</span>
-                      <strong className="text-[#18181B]">₹{activeMapPin.cost}</strong>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      hapticTap();
-                      setSelectedTrip(activeMapPin);
-                    }}
-                    className="px-3 py-2 rounded-xl bg-[#18181B] text-white font-bold text-[11px] shrink-0 active:scale-95 transition shadow-xs cursor-pointer flex items-center gap-1"
-                  >
-                    <span>View Plan</span>
-                    <ChevronRight className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* ================= SECTION 1: 🌟 CURATED ESCAPES ================= */}
-            <div className="px-5 pt-1">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-[14px] font-[800] text-[#18181B]">
-                  🌟 Trending Escapes
-                </h3>
-                <span className="text-[10px] text-[#18181B]/45 font-semibold">
-                  {filteredTrips.length} Available
-                </span>
-              </div>
-
-              <div
-                ref={scrollRef}
-                className="flex gap-3 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory"
-              >
-                {filteredTrips.map((trip) => (
-                  <button
-                    key={trip.id}
-                    type="button"
-                    onClick={() => {
-                      hapticTap();
-                      setSelectedTrip(trip);
-                    }}
-                    className="snap-start shrink-0 w-[260px] text-left bg-white rounded-[20px] border border-[#18181B]/[0.07] shadow-xs overflow-hidden active:scale-[0.985] transition cursor-pointer flex flex-col justify-between"
-                  >
-                    <div className={`p-3 bg-gradient-to-br ${trip.coverStyle.bg} text-white`}>
-                      <div className="flex items-center justify-between">
-                        <span className={`text-[8px] font-bold uppercase px-2 py-0.2 rounded-full border ${trip.coverStyle.badge}`}>
-                          {trip.type === 'pink' ? 'Date' : 'Roadtrip'}
-                        </span>
-                        <span className="text-[10px] font-bold text-white/90">★ {trip.score}</span>
-                      </div>
-                      <h4 className="font-[800] text-[14px] text-white truncate mt-2">
-                        {trip.destination}
-                      </h4>
-                      <p className="text-[10px] text-white/70 truncate">{trip.subtitle}</p>
-                    </div>
-
-                    <div className="p-3 flex items-center justify-between border-t border-[#18181B]/[0.05]">
-                      <div>
-                        <div className="text-[9px] text-[#18181B]/45 uppercase font-bold">Split</div>
-                        <div className="text-[12px] font-[800] text-[#18181B]">
-                          {trip.cost === 0 ? 'Free' : `₹${trip.cost}`}
-                        </div>
-                      </div>
-                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
-                        trip.type === 'pink'
-                          ? 'text-rose-900 bg-rose-50 border border-rose-200/60'
-                          : 'text-emerald-800 bg-emerald-50'
-                      }`}>
-                        {trip.type === 'pink' ? '✦ 1-on-1 (1 spot)' : `${trip.totalSpots - trip.spots} spots left`}
-                      </span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* ================= SECTION 2: ☕ MICRO DATES ================= */}
-            <div className="px-5 pt-1">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-[14px] font-[800] text-[#18181B]">
-                  ☕ Daylight Micro Dates
-                </h3>
-                <span className="text-[10px] text-[#18181B]/45 font-semibold">1-on-1 Cafe Meets</span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                {TRIPS_DATA.filter((t) => t.category === 'micro' || t.category === 'coffee').slice(0, 2).map((trip) => (
-                  <button
-                    key={trip.id}
-                    type="button"
-                    onClick={() => {
-                      hapticTap();
-                      setSelectedTrip(trip);
-                    }}
-                    className="p-3 rounded-[18px] bg-white border border-[#18181B]/[0.07] shadow-xs text-left active:scale-[0.98] transition cursor-pointer flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-[8px] font-bold uppercase px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-900">
-                          {trip.category === 'micro' ? '☕ 60m' : '🌱 Estate'}
-                        </span>
-                        <span className="text-[9px] font-bold text-stone-600">★ {trip.score}</span>
-                      </div>
-                      <h4 className="font-[800] text-[12px] text-[#18181B] truncate">
-                        {trip.destination}
-                      </h4>
-                    </div>
-
-                    <div className="mt-2 pt-1.5 border-t border-[#18181B]/[0.05] flex items-center justify-between text-[10px]">
-                      <span className="text-[#18181B]/45">{trip.time.split('·')[0]}</span>
-                      <strong className="text-[#18181B]">{trip.cost === 0 ? 'Free' : `₹${trip.cost}`}</strong>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* ================= SECTION 3: 👩 WOMEN-ONLY SAFE CIRCLES ================= */}
-            <div className="px-5 pt-1">
-              <div className="p-3.5 rounded-[20px] bg-[#221028] text-white shadow-xs border border-purple-800/30 flex items-center justify-between">
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs">👩</span>
-                    <span className="text-[9px] font-bold tracking-wider uppercase text-purple-300">
-                      Women-Only Circle
-                    </span>
-                  </div>
-                  <h4 className="font-[800] text-[13px] text-white mt-0.5">Gokarna Coastal Yoga & Trail</h4>
-                  <p className="text-[10px] text-purple-200/70">Verified safe female lead · ₹3,400 / person</p>
-                </div>
-
-                <button
-                  type="button"
                   onClick={() => {
                     hapticTap();
-                    const gokarnaTrip = TRIPS_DATA.find((t) => t.category === 'women') || TRIPS_DATA[0];
-                    setSelectedTrip(gokarnaTrip);
+                    setSelectedTrip(TRIPS_DATA[0]);
                   }}
-                  className="px-3 py-1.5 rounded-lg bg-white text-purple-950 font-bold text-[10px] active:scale-95 transition shadow-xs cursor-pointer"
+                  className="snap-start shrink-0 w-[240px] p-4 rounded-[26px] bg-[#D7F5E8] border border-emerald-200/50 shadow-sm flex flex-col justify-between cursor-pointer active:scale-[0.98] transition min-h-[160px]"
                 >
-                  View
-                </button>
+                  <div className="flex items-center justify-between">
+                    {/* Overlapping Avatars */}
+                    <div className="flex items-center -space-x-2">
+                      <img
+                        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80"
+                        alt="Member 1"
+                        className="w-7 h-7 rounded-full border-2 border-white object-cover"
+                      />
+                      <img
+                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80"
+                        alt="Member 2"
+                        className="w-7 h-7 rounded-full border-2 border-white object-cover"
+                      />
+                      <img
+                        src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80"
+                        alt="Member 3"
+                        className="w-7 h-7 rounded-full border-2 border-white object-cover"
+                      />
+                    </div>
+                    <div className="w-7 h-7 rounded-full bg-white/70 flex items-center justify-center text-stone-700 shadow-xs">
+                      <ArrowRight className="w-3.5 h-3.5 -rotate-45" />
+                    </div>
+                  </div>
+
+                  <div className="my-2">
+                    <h3 className="text-[16px] font-[800] text-emerald-950 leading-snug">
+                      Nandi Sunrise Cloud Convoy
+                    </h3>
+                  </div>
+
+                  <div className="flex items-center justify-between text-[11px] font-medium text-emerald-900/70 pt-2 border-t border-emerald-900/10">
+                    <span>Today 9:45am</span>
+                    <span className="font-bold text-emerald-950">Priority High</span>
+                  </div>
+                </div>
+
+                {/* Ice Blue Card */}
+                <div
+                  onClick={() => {
+                    hapticTap();
+                    setSelectedTrip(TRIPS_DATA[1]);
+                  }}
+                  className="snap-start shrink-0 w-[240px] p-4 rounded-[26px] bg-[#DDF0FE] border border-sky-200/50 shadow-sm flex flex-col justify-between cursor-pointer active:scale-[0.98] transition min-h-[160px]"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center -space-x-2">
+                      <img
+                        src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&q=80"
+                        alt="Host"
+                        className="w-7 h-7 rounded-full border-2 border-white object-cover"
+                      />
+                    </div>
+                    <div className="w-7 h-7 rounded-full bg-white/70 flex items-center justify-center text-stone-700 shadow-xs">
+                      <ArrowRight className="w-3.5 h-3.5 -rotate-45" />
+                    </div>
+                  </div>
+
+                  <div className="my-2">
+                    <h3 className="text-[16px] font-[800] text-sky-950 leading-snug">
+                      Coorg Coffee Estate Drive
+                    </h3>
+                  </div>
+
+                  <div className="flex items-center justify-between text-[11px] font-medium text-sky-900/70 pt-2 border-t border-sky-900/10">
+                    <span>Today 11:00am</span>
+                    <span className="font-bold text-sky-950">1 Spot Left</span>
+                  </div>
+                </div>
+
+                {/* Lavender Card */}
+                <div
+                  onClick={() => {
+                    hapticTap();
+                    setSelectedTrip(TRIPS_DATA[2] || TRIPS_DATA[0]);
+                  }}
+                  className="snap-start shrink-0 w-[240px] p-4 rounded-[26px] bg-[#F2E8FD] border border-purple-200/50 shadow-sm flex flex-col justify-between cursor-pointer active:scale-[0.98] transition min-h-[160px]"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center -space-x-2">
+                      <img
+                        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80"
+                        alt="Lead"
+                        className="w-7 h-7 rounded-full border-2 border-white object-cover"
+                      />
+                    </div>
+                    <div className="w-7 h-7 rounded-full bg-white/70 flex items-center justify-center text-stone-700 shadow-xs">
+                      <ArrowRight className="w-3.5 h-3.5 -rotate-45" />
+                    </div>
+                  </div>
+
+                  <div className="my-2">
+                    <h3 className="text-[16px] font-[800] text-purple-950 leading-snug">
+                      Gokarna Sunset & Trail
+                    </h3>
+                  </div>
+
+                  <div className="flex items-center justify-between text-[11px] font-medium text-purple-900/70 pt-2 border-t border-purple-900/10">
+                    <span>This Sat 4:30pm</span>
+                    <span className="font-bold text-purple-950">Women Safe</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 3. ORGANIC CAPSULE "ADD AN ESCAPE / ADD A TASK" BAR (Screenshot 1 Exact) */}
+            <div className="px-6">
+              <button
+                type="button"
+                onClick={() => {
+                  hapticTap();
+                  setActiveTab('create');
+                  router.replace('/trips?tab=create');
+                }}
+                className="w-full h-14 bg-[#18181B] text-white rounded-full px-5 flex items-center justify-between shadow-lg active:scale-[0.98] transition cursor-pointer relative overflow-hidden group"
+              >
+                <span className="text-[14px] font-[700] tracking-wide text-white/90">
+                  Host an escape / Add a plan
+                </span>
+                
+                {/* Organic Circular Plus Button on Right */}
+                <div className="w-10 h-10 rounded-full bg-white/15 group-hover:bg-[#00E5A3] group-hover:text-black text-white flex items-center justify-center transition-all">
+                  <span className="text-[20px] font-bold leading-none">+</span>
+                </div>
+              </button>
+            </div>
+
+            {/* 4. "YOUR PERFORMANCE" CIRCULAR METRICS (Screenshot 1 Exact) */}
+            <div className="px-6">
+              <h3 className="text-[16px] font-[800] text-[#18181B] tracking-tight mb-3">
+                Your performance
+              </h3>
+
+              <div className="grid grid-cols-2 gap-3">
+                {/* Metric 1: 90% Turquoise Ring */}
+                <div className="bg-white rounded-[24px] p-4 shadow-sm border border-stone-200/70 flex items-center gap-3">
+                  <div className="relative w-14 h-14 shrink-0 flex items-center justify-center">
+                    <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                      <path
+                        className="text-stone-100"
+                        strokeWidth="3.5"
+                        stroke="currentColor"
+                        fill="none"
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      />
+                      <path
+                        stroke="#00E5A3"
+                        strokeDasharray="90, 100"
+                        strokeLinecap="round"
+                        strokeWidth="3.5"
+                        fill="none"
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      />
+                    </svg>
+                    <span className="absolute font-[800] text-[13px] text-[#18181B]">90%</span>
+                  </div>
+                  <div>
+                    <div className="text-[12px] font-[800] text-[#18181B] leading-tight">Completion rate</div>
+                    <div className="text-[10px] text-stone-500 mt-0.5 font-medium">66/74 verified</div>
+                  </div>
+                </div>
+
+                {/* Metric 2: 53% Sky Blue Ring */}
+                <div className="bg-white rounded-[24px] p-4 shadow-sm border border-stone-200/70 flex items-center gap-3">
+                  <div className="relative w-14 h-14 shrink-0 flex items-center justify-center">
+                    <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                      <path
+                        className="text-stone-100"
+                        strokeWidth="3.5"
+                        stroke="currentColor"
+                        fill="none"
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      />
+                      <path
+                        stroke="#38BDF8"
+                        strokeDasharray="53, 100"
+                        strokeLinecap="round"
+                        strokeWidth="3.5"
+                        fill="none"
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      />
+                    </svg>
+                    <span className="absolute font-[800] text-[13px] text-[#18181B]">53%</span>
+                  </div>
+                  <div>
+                    <div className="text-[12px] font-[800] text-[#18181B] leading-tight">Joint participation</div>
+                    <div className="text-[10px] text-stone-500 mt-0.5 font-medium">12/23 hosted</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 5. BENTO SCHEDULE & HIGHLIGHTS (Screenshot 2 Exact) */}
+            <div className="px-6 space-y-3">
+              {/* Lime Green Banner Card with Scheduled Timeline Blocks */}
+              <div className="bg-[#D8F8A7] rounded-[28px] p-4 shadow-sm border border-lime-300/60 flex items-start justify-between gap-3">
+                <div className="pt-1">
+                  <div className="text-[24px] font-[900] text-lime-950 leading-none">Oct 4</div>
+                  <div className="text-[11px] font-bold text-lime-900/70 mt-1">Saturday</div>
+                </div>
+
+                <div className="flex-1 space-y-1.5 pl-2">
+                  <div className="bg-white/80 backdrop-blur-sm p-2 rounded-xl shadow-xs border border-white">
+                    <div className="text-[11px] font-[800] text-stone-800 truncate">Dawn Convoy Meetup</div>
+                    <div className="text-[9px] text-stone-500 font-semibold">05:30 – 08:45 AM</div>
+                  </div>
+                  <div className="bg-white/80 backdrop-blur-sm p-2 rounded-xl shadow-xs border border-white">
+                    <div className="text-[11px] font-[800] text-stone-800 truncate">Fortress Peak Summit & Chai</div>
+                    <div className="text-[9px] text-stone-500 font-semibold">09:00 – 11:30 AM</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bento Duo: Pink Chat Card & Blue Hours Gauge Card */}
+              <div className="grid grid-cols-2 gap-3">
+                {/* Left Pink Chat Card */}
+                <div className="bg-[#FFEBF2] rounded-[26px] p-4 shadow-sm border border-rose-200/60 flex flex-col justify-between min-h-[140px]">
+                  <div className="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center text-rose-500 text-lg">
+                    💬
+                  </div>
+                  <div>
+                    <div className="text-[13px] font-[800] text-rose-950">Let's talk now!</div>
+                    <button
+                      type="button"
+                      onClick={() => router.push('/messages')}
+                      className="mt-2 w-full py-1.5 rounded-full bg-[#18181B] text-white text-[11px] font-bold shadow-xs active:scale-95 transition"
+                    >
+                      Start chat
+                    </button>
+                  </div>
+                </div>
+
+                {/* Right Blue Hours Gauge Card */}
+                <div className="bg-[#E8F3FF] rounded-[26px] p-4 shadow-sm border border-sky-200/60 flex flex-col justify-between min-h-[140px]">
+                  <div>
+                    <div className="text-[20px] font-[900] text-sky-950 leading-none">21:30</div>
+                    <div className="text-[10px] font-bold text-sky-900/60 mt-0.5">Hours explored</div>
+                  </div>
+
+                  {/* 3D Gauge Clock Visual */}
+                  <div className="w-12 h-12 rounded-full border-4 border-sky-400/30 border-t-sky-600 self-end flex items-center justify-center">
+                    <Clock className="w-4 h-4 text-sky-700" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Active Escapes Progress List Card */}
+              <div className="bg-white rounded-[26px] p-4 shadow-sm border border-stone-200/70">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[13px] font-[800] text-[#18181B]">Active escapes</span>
+                  <span className="text-[11px] font-bold text-[#1D8E66]">View all &gt;</span>
+                </div>
+
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-[13px] font-[800] text-stone-900">Skandagiri Midnight Ridge</div>
+                    <div className="text-[10px] text-stone-500 font-medium">18 explorers · 4 spots open</div>
+                    {/* Segmented Progress Pill Bar */}
+                    <div className="flex items-center gap-1 mt-2">
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map((seg) => (
+                        <div
+                          key={seg}
+                          className={`h-2 w-3 rounded-full ${
+                            seg <= 6 ? 'bg-[#0066FF]' : 'bg-stone-200'
+                          }`}
+                        />
+                      ))}
+                      <span className="text-[9px] font-bold text-stone-500 ml-1.5">2 spots left</span>
+                    </div>
+                  </div>
+
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-400 to-indigo-500 flex items-center justify-center text-white text-xl shadow-sm">
+                    ⛰️
+                  </div>
+                </div>
               </div>
             </div>
 
           </div>
         )}
 
-        {/* ================= VIEW 2: HOST AN ESCAPE (5-STEP WIZARD) ================= */}
+        {/* ================= VIEW 2: HOST AN ESCAPE (6-STEP WIZARD) ================= */}
         {activeTab === 'create' && (
           <div className="px-5 pt-3.5 pb-32 flex flex-col justify-between animate-fade-in">
             <div>
