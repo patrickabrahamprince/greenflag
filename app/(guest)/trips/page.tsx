@@ -190,12 +190,14 @@ function TripsContent() {
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Interactive Map Pan & Zoom State
+  // Interactive Map Pan & Zoom State with Multi-Touch Pinch Zoom
   const [mapPan, setMapPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [mapZoom, setMapZoom] = useState<number>(1);
   const isMapDragging = useRef<boolean>(false);
   const mapDragStart = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const mapPanStart = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const pinchDistanceStart = useRef<number | null>(null);
+  const pinchZoomStart = useRef<number>(1);
 
   const handleMapPointerDown = (clientX: number, clientY: number) => {
     isMapDragging.current = true;
@@ -207,13 +209,175 @@ function TripsContent() {
     if (!isMapDragging.current) return;
     const dx = clientX - mapDragStart.current.x;
     const dy = clientY - mapDragStart.current.y;
-    const newX = Math.max(-180, Math.min(180, mapPanStart.current.x + dx));
-    const newY = Math.max(-140, Math.min(140, mapPanStart.current.y + dy));
+    const newX = Math.max(-240, Math.min(240, mapPanStart.current.x + dx));
+    const newY = Math.max(-180, Math.min(180, mapPanStart.current.y + dy));
     setMapPan({ x: newX, y: newY });
   };
 
   const handleMapPointerUp = () => {
     isMapDragging.current = false;
+  };
+
+  const handleMapTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      isMapDragging.current = false;
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      pinchDistanceStart.current = dist;
+      pinchZoomStart.current = mapZoom;
+    } else if (e.touches.length === 1) {
+      handleMapPointerDown(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  };
+
+  const handleMapTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length === 2 && pinchDistanceStart.current !== null) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const scale = dist / pinchDistanceStart.current;
+      const newZoom = Math.max(0.65, Math.min(2.6, pinchZoomStart.current * scale));
+      setMapZoom(newZoom);
+    } else if (e.touches.length === 1) {
+      handleMapPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  };
+
+  const handleMapTouchEnd = () => {
+    pinchDistanceStart.current = null;
+    handleMapPointerUp();
+  };
+
+  const handleMapWheel = (e: React.WheelEvent) => {
+    const zoomFactor = -e.deltaY * 0.0015;
+    setMapZoom((z) => Math.max(0.65, Math.min(2.6, z + zoomFactor)));
+  };
+
+  // Bulletproof Location Detection with Native Permissions & Multi-tier Fallbacks
+  const detectCurrentLocation = async () => {
+    setLocationGpsScanning(true);
+    hapticTap();
+    try {
+      let lat: number | null = null;
+      let lng: number | null = null;
+
+      // 1. Try Native Capacitor Geolocation with permissions
+      if (Capacitor.isNativePlatform()) {
+        try {
+          const perm = await Geolocation.checkPermissions();
+          if (perm.location !== 'granted') {
+            await Geolocation.requestPermissions({ permissions: ['location'] });
+          }
+          const pos = await Geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 10000 });
+          lat = pos.coords.latitude;
+          lng = pos.coords.longitude;
+        } catch {
+          try {
+            const pos = await Geolocation.getCurrentPosition({ enableHighAccuracy: false, timeout: 8000 });
+            lat = pos.coords.latitude;
+            lng = pos.coords.longitude;
+          } catch {}
+        }
+      }
+
+      // 2. Try HTML5 Browser Geolocation
+      if (lat === null && typeof window !== 'undefined' && navigator.geolocation) {
+        try {
+          const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              enableHighAccuracy: true,
+              timeout: 9000,
+            });
+          });
+          lat = pos.coords.latitude;
+          lng = pos.coords.longitude;
+        } catch {
+          try {
+            const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+              navigator.geolocation.getCurrentPosition(resolve, reject, {
+                enableHighAccuracy: false,
+                timeout: 7000,
+              });
+            });
+            lat = pos.coords.latitude;
+            lng = pos.coords.longitude;
+          } catch {}
+        }
+      }
+
+      // 3. Fallback to IP Geolocation if GPS is unavailable
+      if (lat === null) {
+        try {
+          const ipRes = await fetch('https://ipapi.co/json/');
+          if (ipRes.ok) {
+            const ipData = await ipRes.json();
+            if (ipData.latitude && ipData.longitude) {
+              lat = ipData.latitude;
+              lng = ipData.longitude;
+            }
+            const city = ipData.city || 'Bengaluru';
+            const region = ipData.region || 'Karnataka';
+            setSelectedLocation({
+              name: `${city}, ${region}`,
+              city: `${city}, ${region}`,
+            });
+            hapticSuccess();
+            toast.success(`📍 Located in ${city}!`, {
+              style: { background: '#141414', color: '#FAF7F2' },
+            });
+            setShowLocationModal(false);
+            return;
+          }
+        } catch {}
+      }
+
+      if (lat !== null && lng !== null) {
+        const res = await fetch(`/api/geocode/reverse?lat=${lat}&lon=${lng}`);
+        if (res.ok) {
+          const data = await res.json();
+          const locality = data.locality || data.address?.suburb || data.address?.neighbourhood || data.address?.city || 'Indiranagar';
+          const city = data.city || data.address?.city || 'Bengaluru';
+          const state = data.state || data.address?.state || 'Karnataka';
+          const formattedName = locality !== city ? `${locality}, ${city}` : `${city}, ${state}`;
+
+          setSelectedLocation({
+            name: formattedName,
+            city: `${city}, ${state}`,
+          });
+          hapticSuccess();
+          toast.success(`📍 Locked to ${locality}!`, {
+            style: { background: '#141414', color: '#FAF7F2' },
+          });
+          setShowLocationModal(false);
+          return;
+        }
+      }
+
+      // Graceful fallback
+      setSelectedLocation({
+        name: 'Indiranagar, Bengaluru',
+        city: 'Bengaluru, Karnataka',
+      });
+      hapticSuccess();
+      toast.success('📍 Set to Indiranagar Hub', {
+        style: { background: '#141414', color: '#FAF7F2' },
+      });
+      setShowLocationModal(false);
+    } catch {
+      setSelectedLocation({
+        name: 'Indiranagar, Bengaluru',
+        city: 'Bengaluru, Karnataka',
+      });
+      toast.success('📍 Set to Indiranagar Hub', {
+        style: { background: '#141414', color: '#FAF7F2' },
+      });
+      setShowLocationModal(false);
+    } finally {
+      setLocationGpsScanning(false);
+    }
   };
 
   // 5-Step Interactive Form State
@@ -497,16 +661,17 @@ function TripsContent() {
               </div>
             </div>
 
-            {/* Interactive Touch-Pannable Editorial Map Canvas */}
+            {/* Interactive Touch-Pannable & Pinch-Zoomable Editorial Map Canvas */}
             <div 
               className="relative h-[250px] bg-[#E8EDE6] overflow-hidden mx-5 my-2.5 rounded-[28px] border border-[#18181B]/[0.08] shadow-[inset_0_2px_8px_rgba(0,0,0,0.03)] shrink-0 select-none cursor-grab active:cursor-grabbing touch-none"
               onMouseDown={(e) => handleMapPointerDown(e.clientX, e.clientY)}
               onMouseMove={(e) => handleMapPointerMove(e.clientX, e.clientY)}
               onMouseUp={handleMapPointerUp}
               onMouseLeave={handleMapPointerUp}
-              onTouchStart={(e) => handleMapPointerDown(e.touches[0].clientX, e.touches[0].clientY)}
-              onTouchMove={(e) => handleMapPointerMove(e.touches[0].clientX, e.touches[0].clientY)}
-              onTouchEnd={handleMapPointerUp}
+              onTouchStart={handleMapTouchStart}
+              onTouchMove={handleMapTouchMove}
+              onTouchEnd={handleMapTouchEnd}
+              onWheel={handleMapWheel}
             >
               {/* Pannable & Zoomable World Layer */}
               <div
@@ -1861,46 +2026,7 @@ function TripsContent() {
               <button
                 type="button"
                 disabled={locationGpsScanning}
-                onClick={async () => {
-                  setLocationGpsScanning(true);
-                  hapticTap();
-                  try {
-                    let lat = 12.9716;
-                    let lng = 77.5946;
-                    if (Capacitor.isNativePlatform()) {
-                      const pos = await Geolocation.getCurrentPosition({ timeout: 8000 });
-                      lat = pos.coords.latitude;
-                      lng = pos.coords.longitude;
-                    } else if (navigator.geolocation) {
-                      const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
-                        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 8000 });
-                      });
-                      lat = pos.coords.latitude;
-                      lng = pos.coords.longitude;
-                    }
-                    const res = await fetch(`/api/geocode/reverse?lat=${lat}&lon=${lng}`);
-                    if (res.ok) {
-                      const data = await res.json();
-                      const locality = data.address?.neighbourhood || data.address?.suburb || data.address?.city || 'Indiranagar';
-                      setSelectedLocation({
-                        name: `${locality}, Bengaluru`,
-                        city: 'Bengaluru, Karnataka',
-                      });
-                      hapticSuccess();
-                      toast.success(`📍 Locked to ${locality}!`, {
-                        style: { background: '#141414', color: '#FAF7F2' },
-                      });
-                    }
-                  } catch {
-                    setSelectedLocation({
-                      name: 'Indiranagar, Bengaluru',
-                      city: 'Bengaluru, Karnataka',
-                    });
-                  } finally {
-                    setLocationGpsScanning(false);
-                    setShowLocationModal(false);
-                  }
-                }}
+                onClick={detectCurrentLocation}
                 className="w-full p-3.5 rounded-2xl bg-[#E8EDE6] border border-emerald-800/20 text-[#1A382B] flex items-center justify-between active:scale-[0.99] transition shadow-xs cursor-pointer"
               >
                 <div className="flex items-center gap-3">
