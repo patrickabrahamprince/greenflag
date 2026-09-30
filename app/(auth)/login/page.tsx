@@ -225,13 +225,13 @@ export default function LoginPage() {
       <OnboardingBackground />
 
       <div className="flex-1 flex flex-col items-center justify-center gap-6 animate-fade-in">
-        <div className="w-28 h-28 bg-white p-3 rounded-[32px] shadow-md border border-stone-200/90 flex items-center justify-center">
+        <div className="w-24 h-24 bg-black p-3.5 rounded-[28px] shadow-lg border border-black/10 flex items-center justify-center overflow-hidden">
           <Image
             src="/logo.png"
             alt="GreenFlag"
-            width={96}
-            height={96}
-            className="w-full h-full object-contain animate-logo-in"
+            width={80}
+            height={80}
+            className="w-full h-full object-contain animate-logo-in invert-0"
             priority
           />
         </div>
