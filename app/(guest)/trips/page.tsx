@@ -1163,67 +1163,125 @@ function TripsContent() {
               </button>
             </div>
 
-            {/* 4. "YOUR PERFORMANCE" CIRCULAR METRICS (Screenshot 1 Exact) */}
+            {/* 4. LIVE TRAVEL DATING MAP RADAR (Interactive Bento Map) */}
             <div className="px-6">
-              <h3 className="text-[16px] font-[800] text-[#18181B] tracking-tight mb-3">
-                Your performance
-              </h3>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-[17px] font-[800] text-[#18181B] tracking-tight">
+                    Live Travel Dating Map
+                  </h3>
+                  <span className="flex h-2 w-2 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                  </span>
+                </div>
+                <span className="text-[11px] font-bold text-stone-500">Bangalore Hub</span>
+              </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                {/* Metric 1: 90% Turquoise Ring */}
-                <div className="bg-white rounded-[24px] p-4 shadow-sm border border-stone-200/70 flex items-center gap-3">
-                  <div className="relative w-14 h-14 shrink-0 flex items-center justify-center">
-                    <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                      <path
-                        className="text-stone-100"
-                        strokeWidth="3.5"
-                        stroke="currentColor"
-                        fill="none"
-                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      />
-                      <path
-                        stroke="#00E5A3"
-                        strokeDasharray="90, 100"
-                        strokeLinecap="round"
-                        strokeWidth="3.5"
-                        fill="none"
-                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      />
-                    </svg>
-                    <span className="absolute font-[800] text-[13px] text-[#18181B]">90%</span>
+              {/* Bento Map Container */}
+              <div className="relative rounded-[28px] overflow-hidden border border-stone-200/80 bg-[#0F172A] text-white shadow-md p-4 min-h-[220px] flex flex-col justify-between">
+                {/* Stylized Vector Map Grid & Road Canvas */}
+                <div
+                  className="absolute inset-0 opacity-25 pointer-events-none"
+                  style={{
+                    backgroundImage: `radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.15) 0%, transparent 70%),
+                                      linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+                                      linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)`,
+                    backgroundSize: '100% 100%, 28px 28px, 28px 28px',
+                  }}
+                />
+
+                {/* Animated Route Curved Line */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 320 200">
+                  <path
+                    d="M 40 160 Q 140 40 280 80"
+                    stroke="#38BDF8"
+                    strokeWidth="2.5"
+                    strokeDasharray="6 4"
+                    fill="none"
+                    className="opacity-70 animate-pulse"
+                  />
+                  <path
+                    d="M 60 140 Q 180 180 260 120"
+                    stroke="#A855F7"
+                    strokeWidth="2"
+                    strokeDasharray="4 4"
+                    fill="none"
+                    className="opacity-60"
+                  />
+                </svg>
+
+                {/* Interactive Map Header Bar */}
+                <div className="relative z-10 flex items-center justify-between">
+                  <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+                    <span className="w-2 h-2 rounded-full bg-[#00E5A3] animate-pulse" />
+                    <span className="text-[11px] font-bold text-emerald-300">14 Escapes & Pairs Live</span>
                   </div>
-                  <div>
-                    <div className="text-[12px] font-[800] text-[#18181B] leading-tight">Completion rate</div>
-                    <div className="text-[10px] text-stone-500 mt-0.5 font-medium">66/74 verified</div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      hapticTap();
+                      setShowLocationModal(true);
+                    }}
+                    className="px-2.5 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-[10px] font-bold text-white hover:bg-white/25 active:scale-95 transition"
+                  >
+                    Change Hub ▾
+                  </button>
+                </div>
+
+                {/* Interactive Map Pins (Dating Escapes & Road Trips) */}
+                <div className="relative z-10 my-4 h-24 relative">
+                  {/* Pin 1: Nandi Hills Sunrise Convoy */}
+                  <div
+                    onClick={() => {
+                      hapticSuccess();
+                      setSelectedTrip(TRIPS_DATA[0]);
+                    }}
+                    className="absolute top-1 right-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-2.5 py-1 rounded-full shadow-lg border border-white/40 flex items-center gap-1.5 text-[10px] font-[800] cursor-pointer hover:scale-105 active:scale-95 transition"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+                    <span>⛰️ Nandi Convoy (3 Pairs)</span>
+                  </div>
+
+                  {/* Pin 2: Indiranagar Chai Date */}
+                  <div
+                    onClick={() => {
+                      hapticSuccess();
+                      setSelectedTrip(TRIPS_DATA[1]);
+                    }}
+                    className="absolute bottom-2 left-4 bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-2.5 py-1 rounded-full shadow-lg border border-white/40 flex items-center gap-1.5 text-[10px] font-[800] cursor-pointer hover:scale-105 active:scale-95 transition"
+                  >
+                    <span>☕ Coorg Estate Drive</span>
+                  </div>
+
+                  {/* Pin 3: Cubbon Park Sunset Walk */}
+                  <div
+                    onClick={() => {
+                      hapticSuccess();
+                      setSelectedTrip(TRIPS_DATA[2] || TRIPS_DATA[0]);
+                    }}
+                    className="absolute top-12 left-16 bg-gradient-to-r from-rose-500 to-pink-600 text-white px-2 py-0.5 rounded-full shadow-md border border-white/30 flex items-center gap-1 text-[9px] font-bold cursor-pointer hover:scale-105 transition"
+                  >
+                    <span>💕 Gokarna Trail</span>
                   </div>
                 </div>
 
-                {/* Metric 2: 53% Sky Blue Ring */}
-                <div className="bg-white rounded-[24px] p-4 shadow-sm border border-stone-200/70 flex items-center gap-3">
-                  <div className="relative w-14 h-14 shrink-0 flex items-center justify-center">
-                    <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                      <path
-                        className="text-stone-100"
-                        strokeWidth="3.5"
-                        stroke="currentColor"
-                        fill="none"
-                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      />
-                      <path
-                        stroke="#38BDF8"
-                        strokeDasharray="53, 100"
-                        strokeLinecap="round"
-                        strokeWidth="3.5"
-                        fill="none"
-                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      />
-                    </svg>
-                    <span className="absolute font-[800] text-[13px] text-[#18181B]">53%</span>
+                {/* Map Bottom Action Bar */}
+                <div className="relative z-10 flex items-center justify-between pt-2 border-t border-white/10">
+                  <div className="text-[11px] text-white/70 font-medium">
+                    Tap any pin to view route & join
                   </div>
-                  <div>
-                    <div className="text-[12px] font-[800] text-[#18181B] leading-tight">Joint participation</div>
-                    <div className="text-[10px] text-stone-500 mt-0.5 font-medium">12/23 hosted</div>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      hapticTap();
+                      setSelectedTrip(TRIPS_DATA[0]);
+                    }}
+                    className="px-3 py-1 rounded-full bg-white text-stone-900 text-[11px] font-bold active:scale-95 transition"
+                  >
+                    View Nearest &gt;
+                  </button>
                 </div>
               </div>
             </div>
