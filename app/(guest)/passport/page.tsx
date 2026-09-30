@@ -200,224 +200,259 @@ export default function PassportPage() {
           </div>
         </div>
 
-        {/* 1. GOLDEN SAFFRON TRAVEL DATING BOARDING PASS */}
-        <div className="bg-[#F5A623] rounded-[32px] p-5 text-stone-900 shadow-xl relative overflow-hidden space-y-3">
-          
-          {/* Header Row: Passport Tag & QR icon */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-black/10 text-stone-950 font-[800] text-[10px] tracking-wider uppercase">
-                Official Travel Dating Pass
-              </span>
-              <span className="text-[11px] font-bold text-stone-950">GF-SPARK-8842</span>
-            </div>
-            <div className="w-7 h-7 rounded-lg bg-black/10 flex items-center justify-center">
-              <QrCode className="w-4 h-4 text-stone-950" />
-            </div>
-          </div>
-
-          {/* Upper Route Split Block with Circular Swap */}
-          <div className="relative flex gap-2">
-            <div className="flex-1 bg-[#F9BC45] rounded-2xl p-3 border border-black/5">
-              <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Home Base</div>
-              <div className="text-[22px] font-[900] text-stone-950 tracking-tight leading-none mt-1">BLR</div>
-              <div className="text-[11px] font-semibold text-stone-800/80 truncate mt-0.5">
-                {displayCity.split(',')[0]}
-              </div>
-            </div>
-
-            <div className="w-8 h-8 rounded-full bg-[#18181B] text-white shadow-md flex items-center justify-center self-center -mx-3 z-10">
-              <Compass className="w-3.5 h-3.5 text-white" />
-            </div>
-
-            <div className="flex-1 bg-[#F9BC45] rounded-2xl p-3 text-right border border-black/5">
-              <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Date Preference</div>
-              <div className="text-[22px] font-[900] text-stone-950 tracking-tight leading-none mt-1">SPARK</div>
-              <div className="text-[11px] font-semibold text-stone-800/80 truncate mt-0.5">
-                Sunrise & Escapes
-              </div>
-            </div>
-          </div>
-
-          {/* Perforated Divider Line with Cutouts */}
-          <div className="relative -mx-5 my-1">
-            <div className="border-t border-dashed border-stone-800/20" />
-            <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-            <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-          </div>
-
-          {/* Middle Details Grid */}
-          <div className="grid grid-cols-2 gap-2">
-            <div className="bg-[#F9BC45] rounded-2xl p-3 border border-black/5">
-              <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Chemistry Rating</div>
-              <div className="text-[14px] font-[900] text-stone-950 mt-0.5 flex items-center gap-1">
-                <span className="flex items-center gap-1">4.95 <Star className="w-3.5 h-3.5 fill-current text-stone-900" /></span>
-                <span className="text-[10px] font-bold bg-black/10 px-1.5 py-0.2 rounded-md">Top 5%</span>
-              </div>
-            </div>
-
-            <div className="bg-[#F9BC45] rounded-2xl p-3 border border-black/5">
-              <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Single Explorer</div>
-              <div className="text-[14px] font-[900] text-stone-950 mt-0.5">Level 15 Pro</div>
-            </div>
-          </div>
-
-          {/* Share Boarding Pass Button */}
-          <button
-            type="button"
-            onClick={() => {
-              hapticSuccess();
-              if (navigator.share) {
-                navigator.share({
-                  title: `${displayName}'s GreenFlag Travel Dating Passport`,
-                  text: `Check out my verified travel passport and convoys on GreenFlag!`,
-                  url: window.location.href,
-                }).catch(() => {});
-              } else {
-                toast.success('Passport link copied to clipboard!');
-              }
-            }}
-            className="w-full py-3.5 rounded-full bg-[#18181B] text-white font-[800] text-[14px] shadow-md hover:bg-black active:scale-[0.98] transition cursor-pointer flex items-center justify-center gap-2"
-          >
-            <Share2 className="w-4 h-4" />
-            <span>Share Dating Passport</span>
-          </button>
-        </div>
-
-        {/* 2. STACKED COMPLETED TRAVEL DATES & CONVOYS */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-[18px] font-[900] text-[#18181B] tracking-tight">
-              Completed Travel Dates & Convoys
-            </h3>
-            <span className="text-[11px] font-bold text-stone-500">3 Verified Passes</span>
-          </div>
-
-          {/* Pass 1: Saffron Ticket */}
-          <div className="bg-[#F5A623] rounded-[28px] p-4 text-stone-950 shadow-md relative overflow-hidden space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-[20px] font-[900] leading-none">BLR</div>
-                <div className="text-[10px] font-bold text-stone-800 mt-0.5">Bengaluru</div>
-              </div>
-              <div className="flex-1 px-4 flex items-center justify-center relative">
-                <div className="w-full border-t-2 border-dashed border-stone-800/40" />
-                <div className="absolute w-7 h-7 rounded-full bg-white text-stone-900 shadow-sm flex items-center justify-center text-xs">
-                  <Mountain className="w-3.5 h-3.5 text-stone-900" />
+        {/* TAB 1: DATING BOARDING PASS */}
+        {activeTab === 'pass' && (
+          <div className="space-y-4 animate-fade-in">
+            {/* 1. GOLDEN SAFFRON TRAVEL DATING BOARDING PASS */}
+            <div className="bg-[#F5A623] rounded-[32px] p-5 text-stone-900 shadow-xl relative overflow-hidden space-y-3">
+              
+              {/* Header Row: Passport Tag & QR icon */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full bg-black/10 text-stone-950 font-[800] text-[10px] tracking-wider uppercase">
+                    Official Travel Dating Pass
+                  </span>
+                  <span className="text-[11px] font-bold text-stone-950">GF-SPARK-8842</span>
+                </div>
+                <div className="w-7 h-7 rounded-lg bg-black/10 flex items-center justify-center">
+                  <QrCode className="w-4 h-4 text-stone-950" />
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-[20px] font-[900] leading-none">NND</div>
-                <div className="text-[10px] font-bold text-stone-800 mt-0.5">Nandi Hills</div>
-              </div>
-            </div>
 
-            <div className="relative -mx-4 my-1">
-              <div className="border-t border-dashed border-stone-800/20" />
-              <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-              <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-            </div>
+              {/* Upper Route Split Block with Circular Swap */}
+              <div className="relative flex gap-2">
+                <div className="flex-1 bg-[#F9BC45] rounded-2xl p-3 border border-black/5">
+                  <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Home Base</div>
+                  <div className="text-[22px] font-[900] text-stone-950 tracking-tight leading-none mt-1">BLR</div>
+                  <div className="text-[11px] font-semibold text-stone-800/80 truncate mt-0.5">
+                    {displayCity.split(',')[0]}
+                  </div>
+                </div>
 
-            <div className="flex items-center justify-between pt-1">
-              <div>
-                <div className="text-[13px] font-[800]">Sunrise Cloud Dating Convoy</div>
-                <div className="text-[10px] font-medium text-stone-800/80">Sat 5:30 AM · Completed (3 Pairs)</div>
-              </div>
-              <div className="text-[22px] font-[900]">₹800</div>
-            </div>
-          </div>
+                <div className="w-8 h-8 rounded-full bg-[#18181B] text-white shadow-md flex items-center justify-center self-center -mx-3 z-10">
+                  <Compass className="w-3.5 h-3.5 text-white" />
+                </div>
 
-          {/* Pass 2: Obsidian Ticket */}
-          <div className="bg-[#181B1F] rounded-[28px] p-4 text-white shadow-md relative overflow-hidden space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-[20px] font-[900] leading-none">BLR</div>
-                <div className="text-[10px] font-bold text-stone-400 mt-0.5">Bengaluru</div>
-              </div>
-              <div className="flex-1 px-4 flex items-center justify-center relative">
-                <div className="w-full border-t-2 border-dashed border-white/20" />
-                <div className="absolute w-7 h-7 rounded-full bg-white text-stone-900 shadow-sm flex items-center justify-center text-xs">
-                  <Coffee className="w-3.5 h-3.5 text-stone-900" />
+                <div className="flex-1 bg-[#F9BC45] rounded-2xl p-3 text-right border border-black/5">
+                  <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Date Preference</div>
+                  <div className="text-[22px] font-[900] text-stone-950 tracking-tight leading-none mt-1">SPARK</div>
+                  <div className="text-[11px] font-semibold text-stone-800/80 truncate mt-0.5">
+                    Sunrise & Escapes
+                  </div>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-[20px] font-[900] leading-none">CRG</div>
-                <div className="text-[10px] font-bold text-stone-400 mt-0.5">Coorg Estate</div>
-              </div>
-            </div>
 
-            <div className="relative -mx-4 my-1">
-              <div className="border-t border-dashed border-white/20" />
-              <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-              <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-            </div>
-
-            <div className="flex items-center justify-between pt-1">
-              <div>
-                <div className="text-[13px] font-[800]">1-on-1 Coffee Tasting Date</div>
-                <div className="text-[10px] font-medium text-stone-400">Completed · 5.0 Star Chemistry</div>
+              {/* Perforated Divider Line with Cutouts */}
+              <div className="relative -mx-5 my-1">
+                <div className="border-t border-dashed border-stone-800/20" />
+                <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+                <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
               </div>
-              <div className="text-[22px] font-[900]">₹2,400</div>
-            </div>
-          </div>
 
-          {/* Pass 3: Blue Ticket */}
-          <div className="bg-[#2A85C8] rounded-[28px] p-4 text-white shadow-md relative overflow-hidden space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-[20px] font-[900] leading-none">BLR</div>
-                <div className="text-[10px] font-bold text-sky-100 mt-0.5">Bengaluru</div>
-              </div>
-              <div className="flex-1 px-4 flex items-center justify-center relative">
-                <div className="w-full border-t-2 border-dashed border-white/30" />
-                <div className="absolute w-7 h-7 rounded-full bg-white text-stone-900 shadow-sm flex items-center justify-center text-xs">
-                  <Waves className="w-3.5 h-3.5 text-stone-900" />
+              {/* Middle Details Grid */}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="bg-[#F9BC45] rounded-2xl p-3 border border-black/5">
+                  <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Chemistry Rating</div>
+                  <div className="text-[14px] font-[900] text-stone-950 mt-0.5 flex items-center gap-1">
+                    <span className="flex items-center gap-1">4.95 <Star className="w-3.5 h-3.5 fill-current text-stone-900" /></span>
+                    <span className="text-[10px] font-bold bg-black/10 px-1.5 py-0.2 rounded-md">Top 5%</span>
+                  </div>
+                </div>
+
+                <div className="bg-[#F9BC45] rounded-2xl p-3 border border-black/5">
+                  <div className="text-[10px] font-bold text-stone-800 uppercase tracking-wider">Single Explorer</div>
+                  <div className="text-[14px] font-[900] text-stone-950 mt-0.5">Level 15 Pro</div>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-[20px] font-[900] leading-none">GOK</div>
-                <div className="text-[10px] font-bold text-sky-100 mt-0.5">Gokarna Cliff</div>
+
+              {/* Share Boarding Pass Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  hapticSuccess();
+                  if (navigator.share) {
+                    navigator.share({
+                      title: `${displayName}'s GreenFlag Travel Dating Passport`,
+                      text: `Check out my verified travel passport and convoys on GreenFlag!`,
+                      url: window.location.href,
+                    }).catch(() => {});
+                  } else {
+                    toast.success('Passport link copied to clipboard!');
+                  }
+                }}
+                className="w-full py-3.5 rounded-full bg-[#18181B] text-white font-[800] text-[14px] shadow-md hover:bg-black active:scale-[0.98] transition cursor-pointer flex items-center justify-center gap-2"
+              >
+                <Share2 className="w-4 h-4" />
+                <span>Share Dating Passport</span>
+              </button>
+            </div>
+
+            {/* Quick Stats Bento */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-white rounded-[24px] p-4 border border-stone-200/80 shadow-xs">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400">Total Escapes</div>
+                <div className="text-[20px] font-[900] text-stone-900 mt-0.5">18 Completed</div>
+                <div className="text-[11px] text-emerald-700 font-semibold mt-1">100% On-Time Host</div>
+              </div>
+              <div className="bg-white rounded-[24px] p-4 border border-stone-200/80 shadow-xs">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400">Mutual Sparks</div>
+                <div className="text-[20px] font-[900] text-rose-600 mt-0.5">12 Matches</div>
+                <div className="text-[11px] text-stone-500 font-semibold mt-1">Double-Blind Active</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 2: TRAVEL DATE STAMPS */}
+        {activeTab === 'stamps' && (
+          <div className="space-y-3 animate-fade-in">
+            <div className="flex items-center justify-between">
+              <h3 className="text-[18px] font-[900] text-[#18181B] tracking-tight">
+                Completed Travel Dates & Convoys
+              </h3>
+              <span className="text-[11px] font-bold text-stone-500">3 Verified Passes</span>
+            </div>
+
+            {/* Pass 1: Saffron Ticket */}
+            <div className="bg-[#F5A623] rounded-[28px] p-4 text-stone-950 shadow-md relative overflow-hidden space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-[20px] font-[900] leading-none">BLR</div>
+                  <div className="text-[10px] font-bold text-stone-800 mt-0.5">Bengaluru</div>
+                </div>
+                <div className="flex-1 px-4 flex items-center justify-center relative">
+                  <div className="w-full border-t-2 border-dashed border-stone-800/40" />
+                  <div className="absolute w-7 h-7 rounded-full bg-white text-stone-900 shadow-sm flex items-center justify-center text-xs">
+                    <Mountain className="w-3.5 h-3.5 text-stone-900" />
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[20px] font-[900] leading-none">NND</div>
+                  <div className="text-[10px] font-bold text-stone-800 mt-0.5">Nandi Hills</div>
+                </div>
+              </div>
+
+              <div className="relative -mx-4 my-1">
+                <div className="border-t border-dashed border-stone-800/20" />
+                <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+                <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+              </div>
+
+              <div className="flex items-center justify-between pt-1">
+                <div>
+                  <div className="text-[13px] font-[800]">Sunrise Cloud Dating Convoy</div>
+                  <div className="text-[10px] font-medium text-stone-800/80">Sat 5:30 AM · Completed (3 Pairs)</div>
+                </div>
+                <div className="text-[22px] font-[900]">₹800</div>
               </div>
             </div>
 
-            <div className="relative -mx-4 my-1">
-              <div className="border-t border-dashed border-white/20" />
-              <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-              <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
-            </div>
-
-            <div className="flex items-center justify-between pt-1">
-              <div>
-                <div className="text-[13px] font-[800]">Gokarna Beach & Sunset Circle</div>
-                <div className="text-[10px] font-medium text-sky-100/90">Women Safe Circle Verified</div>
+            {/* Pass 2: Obsidian Ticket */}
+            <div className="bg-[#181B1F] rounded-[28px] p-4 text-white shadow-md relative overflow-hidden space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-[20px] font-[900] leading-none">BLR</div>
+                  <div className="text-[10px] font-bold text-stone-400 mt-0.5">Bengaluru</div>
+                </div>
+                <div className="flex-1 px-4 flex items-center justify-center relative">
+                  <div className="w-full border-t-2 border-dashed border-white/20" />
+                  <div className="absolute w-7 h-7 rounded-full bg-white text-stone-900 shadow-sm flex items-center justify-center text-xs">
+                    <Coffee className="w-3.5 h-3.5 text-stone-900" />
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[20px] font-[900] leading-none">CRG</div>
+                  <div className="text-[10px] font-bold text-stone-400 mt-0.5">Coorg Estate</div>
+                </div>
               </div>
-              <div className="text-[22px] font-[900]">₹1,200</div>
-            </div>
-          </div>
-        </div>
 
-        {/* 3. VERIFICATION BADGES BENTO GRID */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-[#D7F5E8] rounded-[24px] p-3.5 border border-emerald-200/60 shadow-xs flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xs">
-              <Check className="w-4 h-4 text-white stroke-[3]" />
-            </div>
-            <div>
-              <div className="text-[12px] font-[800] text-emerald-950">Govt ID Checked</div>
-              <div className="text-[10px] text-emerald-900/70 font-medium">100% Verified Single</div>
-            </div>
-          </div>
+              <div className="relative -mx-4 my-1">
+                <div className="border-t border-dashed border-white/20" />
+                <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+                <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+              </div>
 
-          <div className="bg-[#DDF0FE] rounded-[24px] p-3.5 border border-sky-200/60 shadow-xs flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full bg-sky-500 text-white flex items-center justify-center shadow-xs">
-              <Check className="w-4 h-4 text-white stroke-[3]" />
+              <div className="flex items-center justify-between pt-1">
+                <div>
+                  <div className="text-[13px] font-[800]">1-on-1 Coffee Tasting Date</div>
+                  <div className="text-[10px] font-medium text-stone-400">Completed · 5.0 Star Chemistry</div>
+                </div>
+                <div className="text-[22px] font-[900]">₹2,400</div>
+              </div>
             </div>
-            <div>
-              <div className="text-[12px] font-[800] text-sky-950">Face Match</div>
-              <div className="text-[10px] text-sky-900/70 font-medium">Real Photo Verified</div>
+
+            {/* Pass 3: Blue Ticket */}
+            <div className="bg-[#2A85C8] rounded-[28px] p-4 text-white shadow-md relative overflow-hidden space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-[20px] font-[900] leading-none">BLR</div>
+                  <div className="text-[10px] font-bold text-sky-100 mt-0.5">Bengaluru</div>
+                </div>
+                <div className="flex-1 px-4 flex items-center justify-center relative">
+                  <div className="w-full border-t-2 border-dashed border-white/30" />
+                  <div className="absolute w-7 h-7 rounded-full bg-white text-stone-900 shadow-sm flex items-center justify-center text-xs">
+                    <Waves className="w-3.5 h-3.5 text-stone-900" />
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[20px] font-[900] leading-none">GOK</div>
+                  <div className="text-[10px] font-bold text-sky-100 mt-0.5">Gokarna Cliff</div>
+                </div>
+              </div>
+
+              <div className="relative -mx-4 my-1">
+                <div className="border-t border-dashed border-white/20" />
+                <div className="absolute -left-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+                <div className="absolute -right-2.5 -top-2 w-4 h-4 rounded-full bg-[#FAF8F5]" />
+              </div>
+
+              <div className="flex items-center justify-between pt-1">
+                <div>
+                  <div className="text-[13px] font-[800]">Gokarna Beach & Sunset Circle</div>
+                  <div className="text-[10px] font-medium text-sky-100/90">Women Safe Circle Verified</div>
+                </div>
+                <div className="text-[22px] font-[900]">₹1,200</div>
+              </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* TAB 3: TRUST & SAFETY */}
+        {activeTab === 'verified' && (
+          <div className="space-y-3 animate-fade-in">
+            <div className="bg-white rounded-[26px] p-5 border border-stone-200/80 shadow-xs space-y-3">
+              <div className="flex items-center gap-2 font-[900] text-[16px] text-stone-900">
+                <Shield className="w-5 h-5 text-emerald-600" />
+                <span>GreenFlag Safety & Trust Protocol</span>
+              </div>
+              <p className="text-[12px] text-stone-600 leading-relaxed">
+                All members must pass government ID verification, real-time facial biometric check, and agree to public meetup hubs.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-[#D7F5E8] rounded-[24px] p-4 border border-emerald-200/60 shadow-xs flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xs">
+                  <Check className="w-4 h-4 text-white stroke-[3]" />
+                </div>
+                <div>
+                  <div className="text-[12px] font-[800] text-emerald-950">Govt ID Checked</div>
+                  <div className="text-[10px] text-emerald-900/70 font-medium">100% Verified Single</div>
+                </div>
+              </div>
+
+              <div className="bg-[#DDF0FE] rounded-[24px] p-3.5 border border-sky-200/60 shadow-xs flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-full bg-sky-500 text-white flex items-center justify-center shadow-xs">
+                  <Check className="w-4 h-4 text-white stroke-[3]" />
+                </div>
+                <div>
+                  <div className="text-[12px] font-[800] text-sky-950">Face Match</div>
+                  <div className="text-[10px] text-sky-900/70 font-medium">Real Photo Verified</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* 4. ACCOUNT SETTINGS ACTIONS */}
         <div className="bg-white rounded-[26px] border border-stone-200/70 p-2 shadow-sm divide-y divide-stone-100">
