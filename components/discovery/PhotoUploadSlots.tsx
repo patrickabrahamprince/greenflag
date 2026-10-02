@@ -96,9 +96,20 @@ export function PhotoUploadSlots({
             </button>
           </>
         ) : (
-          <div className="flex flex-col items-center gap-1.5 text-stone-400 group-hover:text-emerald-700">
-            <Upload size={22} className="text-stone-400" />
-            <span className="text-[11px] font-semibold text-stone-500">{i === 0 ? 'Cover Photo' : `Photo ${i + 1}`}</span>
+          <div className="flex flex-col items-center justify-center text-center p-3 gap-1.5 transition-transform">
+            <div className={`rounded-full bg-stone-100 flex items-center justify-center text-stone-500 border border-stone-200/80 shadow-2xs ${i === 0 ? 'w-10 h-10' : 'w-8 h-8'}`}>
+              <Upload size={i === 0 ? 18 : 15} />
+            </div>
+            <div>
+              <span className="block text-xs font-bold text-[#382A21]">
+                {i === 0 ? 'Main Cover Photo' : `Photo ${i + 1}`}
+              </span>
+              {i === 0 && (
+                <span className="block text-[10px] text-stone-500 font-medium">
+                  Visible on trip cards
+                </span>
+              )}
+            </div>
           </div>
         )}
       </div>
@@ -121,9 +132,22 @@ export function PhotoUploadSlots({
         <p className="text-xs text-amber-900 font-medium leading-tight">First photo is your main card. Drag photos to reorder anytime.</p>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
-        {Array.from({ length: maxPhotos }).map((_, i) => renderSlot(i, 'aspect-[3/4]'))}
-      </div>
+      {maxPhotos === 3 ? (
+        <div className="space-y-3">
+          {/* Hero Cover Slot */}
+          {renderSlot(0, 'w-full aspect-[16/10] sm:aspect-[16/9]')}
+
+          {/* Secondary Slots */}
+          <div className="grid grid-cols-2 gap-3">
+            {renderSlot(1, 'aspect-square sm:aspect-[4/3]')}
+            {renderSlot(2, 'aspect-square sm:aspect-[4/3]')}
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-3">
+          {Array.from({ length: maxPhotos }).map((_, i) => renderSlot(i, 'aspect-[3/4]'))}
+        </div>
+      )}
       <input
         ref={inputRef}
         type="file"
