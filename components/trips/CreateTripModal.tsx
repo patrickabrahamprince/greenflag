@@ -48,9 +48,9 @@ const TRUST_LADDER = [
     expiry: 'Expires in 12h',
     isLocked: false,
     badge: 'Open to All',
-    bgGradient: 'from-amber-500/10 via-amber-500/5 to-transparent',
-    border: 'border-amber-400/60',
-    tagBg: 'bg-amber-100 text-amber-900 border-amber-300',
+    bgGradient: 'from-stone-100/80 via-stone-50/50 to-white',
+    border: 'border-stone-200',
+    tagBg: 'bg-stone-100 text-stone-900 border-stone-200',
   },
   {
     level: 2 as TripLadderLevel,
@@ -62,9 +62,9 @@ const TRUST_LADDER = [
     expiry: 'Expires in 48h',
     isLocked: false,
     badge: '1+ Micro Date • 4.5★ Req.',
-    bgGradient: 'from-emerald-500/10 via-emerald-500/5 to-transparent',
-    border: 'border-emerald-500/60',
-    tagBg: 'bg-emerald-100 text-emerald-900 border-emerald-300',
+    bgGradient: 'from-stone-100/80 via-stone-50/50 to-white',
+    border: 'border-stone-200',
+    tagBg: 'bg-stone-100 text-stone-900 border-stone-200',
   },
   {
     level: 3 as TripLadderLevel,
@@ -76,9 +76,9 @@ const TRUST_LADDER = [
     expiry: 'Multi-Day Plan',
     isLocked: false,
     badge: '2+ Day Dates Req.',
-    bgGradient: 'from-purple-500/10 via-purple-500/5 to-transparent',
-    border: 'border-purple-500/60',
-    tagBg: 'bg-purple-100 text-purple-900 border-purple-300',
+    bgGradient: 'from-stone-100/80 via-stone-50/50 to-white',
+    border: 'border-stone-200',
+    tagBg: 'bg-stone-100 text-stone-900 border-stone-200',
   },
 ];
 

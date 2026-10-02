@@ -12,19 +12,14 @@
    -- no radial glow, depth comes from the elevation ramp (well/base/
    raised/card/overlay) alone. */
 html, body {
-  background-color: #F7F6EB !important;
-  color: #141414 !important;
+  background-color: #FFFFFF !important;
+  color: #1C1C1E !important;
 }
 html, body {
   -webkit-overflow-scrolling: touch;
 }
 * { -webkit-tap-highlight-color: transparent; }
 
-/* Belt-and-suspenders: individual scrollable containers (Discover,
-   chat lists, BottomSheet) already got scrollbar-hide, but any page that
-   overflows without its own inner scroll container relies on the
-   document itself scrolling -- html/body were never covered by those
-   per-component fixes, and that's the scrollbar that kept showing up. */
 html, body, * {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -60,195 +55,157 @@ body::-webkit-scrollbar,
   100% { transform: translateY(120vh) rotate(720deg); }
 }
 
-@keyframes dash {
-  to { stroke-dashoffset: -8; }
-}
-
 @layer base {
   * {
     @apply border-border;
   }
 
   body {
-    @apply bg-cream text-ink font-sans antialiased;
-    color: #141414;
+    background-color: #FFFFFF;
+    color: #1C1C1E;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    color: #141414;
+    color: #1C1C1E;
+    letter-spacing: -0.02em;
   }
 
   ::selection {
-    @apply bg-emerald/20 text-ink;
+    background-color: rgba(28, 28, 30, 0.12);
+    color: #1C1C1E;
   }
 
   .font-display {
-    font-family: var(--font-display), system-ui, sans-serif;
-    letter-spacing: -0.015em;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+    letter-spacing: -0.02em;
     font-weight: 700;
   }
 
   h1.font-display, h2.font-display {
     line-height: 1.15;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
   }
 }
 
 @layer components {
-  /* Primary: Radiant Emerald Gradient with vibrant glow and luxury bevel */
+  /* Primary: Marriott-style Solid Obsidian Black Pill Button */
   .btn-primary {
-    @apply relative text-white font-display font-bold rounded-pill px-8
+    @apply relative text-white font-sans font-bold rounded-full px-8
            min-h-[52px] flex items-center justify-center
-           text-label shadow-glow-emerald
+           text-sm shadow-sm
            transition-all duration-200 ease-out transform-gpu
-           active:scale-[0.97]
+           active:scale-[0.98]
            disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100;
-    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    will-change: transform, box-shadow;
+    background: #1C1C1E;
+    border: 1px solid #1C1C1E;
+    will-change: transform;
   }
 
   .btn-primary:hover {
-    background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
-    box-shadow: 0 6px 28px -2px rgba(16, 185, 129, 0.4);
+    background: #000000;
+    border-color: #000000;
   }
 
-  /* Secondary: Frosted clean light glass with crisp border */
+  /* Secondary: Clean White Capsule with subtle stone border */
   .btn-secondary {
-    @apply relative text-ink font-medium rounded-pill px-5 py-2.5
+    @apply relative text-[#1C1C1E] font-semibold rounded-full px-5 py-2.5
            flex items-center justify-center gap-2
-           text-sm shadow-sm
+           text-sm shadow-2xs
            transition-all duration-200 ease-out transform-gpu
-           active:scale-[0.96]
+           active:scale-[0.98]
            disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100;
     background: #FFFFFF;
-    border: 1px solid rgba(15, 23, 42, 0.1);
+    border: 1px solid #E4E4E7;
     will-change: transform;
   }
 
   .btn-secondary:hover {
-    background: #F8FAFC;
-    border-color: rgba(15, 23, 42, 0.2);
+    background: #F4F4F5;
+    border-color: #D4D4D8;
   }
 
-  /* Tertiary / Ghost: Translucent glass border */
+  /* Tertiary / Ghost */
   .btn-ghost {
-    @apply text-ink font-display font-medium rounded-pill px-6
+    @apply text-[#1C1C1E] font-medium rounded-full px-5
            min-h-[44px] flex items-center justify-center
-           text-label border border-black/10
+           text-sm border border-transparent
            transition-all duration-200 ease-out transform-gpu
-           active:scale-[0.97]
+           active:scale-[0.98]
            disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100;
-    background: rgba(15, 23, 42, 0.03);
-    will-change: transform;
+    background: transparent;
   }
 
   .btn-ghost:hover {
-    background: rgba(15, 23, 42, 0.06);
-    border-color: rgba(15, 23, 42, 0.2);
+    background: #F4F4F5;
   }
 
   .btn-danger {
-    @apply relative text-white font-display font-bold rounded-pill px-8
+    @apply relative text-white font-medium rounded-full px-8
            min-h-[52px] flex items-center justify-center gap-2
-           text-label shadow-sm
+           text-sm shadow-sm
            transition-all duration-200 ease-out transform-gpu
-           active:scale-[0.97]
-           disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100;
-    background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    will-change: transform;
+           active:scale-[0.98]
+           disabled:opacity-40 disabled:cursor-not-allowed;
+    background: #DC2626;
   }
 
-  .btn-danger:hover {
-    background: linear-gradient(135deg, #F87171 0%, #DC2626 100%);
-  }
-
-  /* Cards -- Luxury frosted clean white with subtle depth and border */
+  /* Cards -- Luxury minimalist clean white with crisp hairline border */
   .card {
-    @apply bg-white border border-black/[0.08] rounded-2xl p-6
+    @apply bg-white border border-stone-200/90 rounded-3xl p-6
            shadow-sm
            transition-all duration-200 ease-out transform-gpu;
-    will-change: transform, border-color, box-shadow;
   }
 
-  /* Confirm/report/block-style modal dialogs -- Ultra-luxury light glassmorphism */
   .dialog-card {
-    @apply border border-black/[0.08] rounded-3xl p-8 bg-white
+    @apply border border-stone-200/90 rounded-3xl p-8 bg-white
            shadow-2xl
            transition-all duration-200 ease-out transform-gpu;
-    will-change: transform, opacity;
   }
 
   .card-hover {
-    @apply card hover:border-emerald/50 hover:shadow-glow-emerald;
+    @apply card hover:border-[#1C1C1E] hover:shadow-md;
   }
 
   .input {
     @apply w-full rounded-2xl px-4 py-3.5
-           text-ink placeholder:text-ink/40 bg-well
-           border border-black/[0.08]
+           text-[#1C1C1E] placeholder:text-stone-400 bg-[#F4F4F5]
+           border border-transparent
            transition-all duration-200 ease-out
-           focus:outline-none focus:border-emerald focus:bg-white focus:ring-2 focus:ring-emerald/20;
+           focus:outline-none focus:border-[#1C1C1E] focus:bg-white focus:ring-1 focus:ring-[#1C1C1E];
   }
 
-  /* Hide number input spinners */
-  .input[type=number]::-webkit-outer-spin-button,
-  .input[type=number]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  .input[type=number] {
-    -moz-appearance: textfield;
-  }
-
-  /* Light input for admin panel */
-  .input-light {
-    @apply w-full rounded-xl px-4 py-2.5
-           text-gray-900 placeholder:text-gray-400 bg-gray-50
-           border border-gray-200
-           transition-all duration-200 ease-out
-           focus:outline-none focus:bg-white focus:border-emerald focus:ring-1 focus:ring-emerald/20;
-  }
-
-  /* Chrome/Safari force a yellow background on autofilled inputs unless
-     the inset box-shadow trick below overrides it */
-  .input:-webkit-autofill,
-  .input:-webkit-autofill:hover,
-  .input:-webkit-autofill:focus {
-    -webkit-text-fill-color: #0F172A;
-    -webkit-box-shadow: 0 0 0px 1000px #F1F5F9 inset;
-    box-shadow: 0 0 0px 1000px #F1F5F9 inset;
-    transition: background-color 9999s ease-in-out 0s;
+  .input-underline {
+    @apply w-full py-3 bg-transparent border-b border-stone-300 text-[#1C1C1E] placeholder:text-stone-400 focus:outline-none focus:border-[#1C1C1E] text-base transition-colors;
   }
 
   .input-error {
-    @apply border-[#EF4444] focus:border-[#EF4444];
-  }
-
-  .text-gradient {
-    background: linear-gradient(135deg, #059669 0%, #0F172A 60%, #064E3B 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  .skeleton {
-    @apply bg-surface-light rounded-none animate-pulse;
-  }
-
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .blur-bg {
-    @apply backdrop-blur-xl;
-    background: rgba(255, 255, 255, 0.85);
+    @apply border-red-500 focus:border-red-500;
   }
 
   .page-container {
-    @apply min-h-dvh max-w-app mx-auto px-8 pt-safe-top pb-24;
+    @apply min-h-dvh max-w-app mx-auto px-6 pt-safe-top pb-24;
+  }
+
+  .nav-glass {
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  }
+
+  .badge-dark {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-white bg-[#1C1C1E] border border-white/20 backdrop-blur-md shadow-sm;
+  }
+
+  .badge-light {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-[#1C1C1E] bg-[#F4F4F5] border border-stone-200 shadow-2xs;
+  }
+
+  .card-luxury {
+    @apply bg-white border border-stone-200/90 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all duration-300;
   }
 
   .screen-gradient {

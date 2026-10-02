@@ -233,47 +233,50 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative isolate min-h-dvh flex flex-col p-6 pt-safe-top pb-safe-bottom bg-[#FAF9F6] text-[#382A21]">
+    <div className="relative isolate min-h-dvh flex flex-col justify-between p-6 pt-safe-top pb-safe-bottom bg-white text-[#1C1C1E] overflow-hidden">
       <OnboardingBackground />
 
-      <div className="flex-1 flex flex-col items-center justify-center gap-6 animate-fade-in">
-        <div className="w-24 h-24 bg-black p-3.5 rounded-[28px] shadow-lg border border-black/10 flex items-center justify-center overflow-hidden">
+      {/* Brand Header */}
+      <div className="flex-1 flex flex-col items-center justify-center gap-4 my-auto animate-fade-in z-10">
+        <div className="w-18 h-18 bg-[#1C1C1E] p-3.5 rounded-2xl shadow-md border border-stone-200 flex items-center justify-center overflow-hidden">
           <Image
             src="/logo.png"
             alt="GreenFlag"
-            width={80}
-            height={80}
-            className="w-full h-full object-contain animate-logo-in invert-0"
+            width={64}
+            height={64}
+            className="w-full h-full object-contain animate-logo-in"
             priority
           />
         </div>
-        <div className="text-center">
-          <h1 className="font-display text-3xl font-black text-[#382A21] tracking-tight">GreenFlag</h1>
-          <p className="text-xs text-emerald-800 font-extrabold tracking-wider uppercase mt-1 bg-emerald-100/90 px-3 py-1 rounded-full border border-emerald-200 inline-block">
-            Meet People • Travel Together • Date on the Way
+        <div className="text-center space-y-1">
+          <h1 className="text-3xl font-extrabold text-[#1C1C1E] tracking-tight">GreenFlag</h1>
+          <p className="text-stone-500 text-xs font-medium">
+            Travel Getaways • Dating on the Way
           </p>
         </div>
       </div>
 
-      <div className="w-full max-w-sm mx-auto animate-slide-up">
+      {/* Main Card Container */}
+      <div className="w-full max-w-sm mx-auto animate-slide-up z-10">
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-2xl text-center mb-4 shadow-xs">
             {error}
           </div>
         )}
 
-        <div className="space-y-3">
+        <div className="bg-white border border-stone-200/90 rounded-3xl p-6 shadow-sm space-y-3.5">
           <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} onSuccess={redirectAfterAuth} />
+
           {Capacitor.getPlatform() !== 'android' && (
             <AppleButton onClick={handleAppleLogin} loading={appleLoading} />
           )}
 
-          {!showEmailLogin && (
+          {!showEmailLogin ? (
             <>
               <button
                 type="button"
                 onClick={handleShowEmailToggle}
-                className="w-full flex items-center justify-center gap-2.5 bg-white hover:bg-stone-50 text-[#382A21] font-bold text-xs py-3.5 px-4 rounded-full border border-stone-200 shadow-xs transition-all active:scale-95"
+                className="w-full flex items-center justify-center gap-2.5 bg-white hover:bg-stone-50 text-[#1C1C1E] font-bold text-xs py-3.5 px-4 rounded-full border border-stone-300 shadow-2xs transition-all active:scale-[0.98]"
               >
                 <Mail className="w-4 h-4 text-stone-500" />
                 <span>Continue with Email</span>
@@ -282,77 +285,80 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => handleQuickDemoLogin('reviewer-woman@greenflag.app', 'GreenFlag2026!')}
-                className="w-full flex items-center justify-center gap-2 bg-[#1D3B2A] hover:bg-[#2D5A3F] text-white font-extrabold text-xs py-3.5 px-4 rounded-full shadow-sm transition-all active:scale-95"
+                className="w-full flex items-center justify-center gap-2 bg-[#1C1C1E] hover:bg-black text-white font-bold text-xs py-3.5 px-4 rounded-full shadow-sm transition-all active:scale-[0.98]"
               >
-                <span>⚡ Instant Test Login (Sarah • 1500 Coins)</span>
+                <span>Instant Reviewer Sign In (Sarah)</span>
               </button>
             </>
+          ) : (
+            <form onSubmit={handleLogin} className="space-y-3 animate-fade-in pt-1">
+              <div className="flex bg-[#F4F4F5] p-1 rounded-full border border-stone-200 mb-2">
+                <button
+                  type="button"
+                  onClick={() => { setIsSignUp(false); setError(''); }}
+                  className={`flex-1 py-1.5 text-xs font-bold rounded-full transition-all ${!isSignUp ? 'bg-[#1C1C1E] text-white shadow-2xs' : 'text-stone-500 hover:text-[#1C1C1E]'}`}
+                >
+                  Sign In
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setIsSignUp(true); setError(''); }}
+                  className={`flex-1 py-1.5 text-xs font-bold rounded-full transition-all ${isSignUp ? 'bg-[#1C1C1E] text-white shadow-2xs' : 'text-stone-500 hover:text-[#1C1C1E]'}`}
+                >
+                  Create Account
+                </button>
+              </div>
+
+              <input
+                data-testid="email"
+                type="email"
+                placeholder="Email Address"
+                value={email}
+                onChange={(e) => handleEmailInput(e.target.value)}
+                required
+                className="w-full p-3.5 bg-[#F4F4F5] border border-stone-200 rounded-2xl text-xs font-medium text-[#1C1C1E] focus:outline-none focus:border-[#1C1C1E] focus:bg-white transition-all"
+              />
+              <input
+                data-testid="password"
+                type="password"
+                placeholder={isSignUp ? 'Create Password (min 6 chars)' : 'Password'}
+                value={password}
+                onChange={(e) => handlePasswordInput(e.target.value)}
+                required
+                minLength={6}
+                className="w-full p-3.5 bg-[#F4F4F5] border border-stone-200 rounded-2xl text-xs font-medium text-[#1C1C1E] focus:outline-none focus:border-[#1C1C1E] focus:bg-white transition-all"
+              />
+              <button
+                data-testid="login-btn"
+                type="submit"
+                disabled={loading}
+                className="w-full py-3.5 bg-[#1C1C1E] hover:bg-black text-white font-bold text-xs rounded-full shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+              >
+                {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto text-white" /> : isSignUp ? 'Create Account' : 'Sign In'}
+              </button>
+              <button
+                type="button"
+                onClick={() => { setShowEmailLogin(false); setError(''); }}
+                className="block mx-auto text-xs text-stone-500 hover:text-[#1C1C1E] font-medium transition-colors pt-1"
+              >
+                Back to all options
+              </button>
+            </form>
           )}
         </div>
 
-        {!showEmailLogin ? (
-          <button
-            onClick={handleShowEmailToggle}
-            className="block mx-auto mt-6 text-xs text-stone-500 hover:text-[#382A21] font-semibold underline underline-offset-4 transition-colors"
-          >
-            Having trouble? Email Sign In
-          </button>
-        ) : (
-          <form onSubmit={handleLogin} className="space-y-3.5 mt-5 p-5 bg-white border border-stone-200/90 rounded-[28px] shadow-sm animate-fade-in">
-            <div className="flex bg-stone-100 p-1 rounded-full border border-stone-200 mb-2">
-              <button
-                type="button"
-                onClick={() => { setIsSignUp(false); setError(''); }}
-                className={`flex-1 py-1.5 text-xs font-extrabold rounded-full transition-all ${!isSignUp ? 'bg-[#1D3B2A] text-white shadow-xs' : 'text-stone-500 hover:text-stone-800'}`}
-              >
-                Sign In
-              </button>
-              <button
-                type="button"
-                onClick={() => { setIsSignUp(true); setError(''); }}
-                className={`flex-1 py-1.5 text-xs font-extrabold rounded-full transition-all ${isSignUp ? 'bg-[#1D3B2A] text-white shadow-xs' : 'text-stone-500 hover:text-stone-800'}`}
-              >
-                Create Account
-              </button>
-            </div>
-
-            <input
-              data-testid="email"
-              type="email"
-              placeholder="Email Address"
-              value={email}
-              onChange={(e) => handleEmailInput(e.target.value)}
-              required
-              className="w-full p-3 bg-stone-50 border border-stone-200 rounded-[18px] text-xs font-bold text-[#382A21] focus:outline-none focus:border-[#1D3B2A]"
-            />
-            <input
-              data-testid="password"
-              type="password"
-              placeholder={isSignUp ? 'Create Password (min 6 chars)' : 'Password'}
-              value={password}
-              onChange={(e) => handlePasswordInput(e.target.value)}
-              required
-              minLength={6}
-              className="w-full p-3 bg-stone-50 border border-stone-200 rounded-[18px] text-xs font-bold text-[#382A21] focus:outline-none focus:border-[#1D3B2A]"
-            />
-            <button data-testid="login-btn" type="submit" disabled={loading} className="w-full py-3.5 bg-[#1D3B2A] hover:bg-[#2D5A3F] text-white font-extrabold text-xs rounded-full shadow-md active:scale-95 transition-all">
-              {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : isSignUp ? 'Create Account' : 'Sign In'}
-            </button>
-            <button
-              type="button"
-              onClick={() => { setShowEmailLogin(false); setError(''); }}
-              className="block mx-auto text-xs text-stone-500 hover:text-[#382A21] font-semibold transition-colors pt-1"
-            >
-              Back to all options
-            </button>
-          </form>
+        {!showEmailLogin && (
+          <p className="text-center text-[11px] text-stone-400 font-normal mt-4">
+            By signing in, you agree to our <a href="/terms" className="underline hover:text-stone-700">Terms</a> & <a href="/privacy" className="underline hover:text-stone-700">Privacy Policy</a>
+          </p>
         )}
       </div>
+
       <TermsGateModal
         open={pendingAction !== null}
         onAccept={handleAcceptTerms}
         onClose={() => setPendingAction(null)}
       />
     </div>
-  )
+  );
 }

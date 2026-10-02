@@ -32,8 +32,8 @@ function BottomNavContent() {
   }
 
   return (
-    <nav className="fixed bottom-4 inset-x-0 z-50 flex justify-center pointer-events-none px-4 pb-[env(safe-area-inset-bottom,0px)]">
-      <div className="pointer-events-auto bg-[#141414]/92 backdrop-blur-2xl border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-2 shadow-[0_16px_36px_rgba(0,0,0,0.25)] max-w-xs w-full justify-between">
+    <nav className="fixed bottom-5 inset-x-0 z-50 flex justify-center pointer-events-none px-4 pb-[env(safe-area-inset-bottom,0px)]">
+      <div className="pointer-events-auto bg-white/95 backdrop-blur-2xl border border-stone-200/90 rounded-full px-3 py-1.5 flex items-center gap-1 shadow-[0_12px_36px_rgba(0,0,0,0.12)] max-w-xs w-full justify-between">
         {tabs.map((tab) => {
           const isActive =
             tab.id === 'explore'
@@ -52,16 +52,19 @@ function BottomNavContent() {
                 hapticTap();
                 router.push(tab.href);
               }}
-              className={`relative flex items-center justify-center p-2.5 rounded-full transition-all cursor-pointer active:scale-90 ${
+              className={`relative flex items-center gap-1.5 px-3.5 py-2 rounded-full transition-all cursor-pointer active:scale-95 ${
                 isActive
-                  ? 'bg-[#CEFF00] text-[#141414] shadow-lg shadow-[#CEFF00]/20 scale-105 font-black'
-                  : 'text-white/50 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#1C1C1E] text-white shadow-sm font-bold'
+                  : 'text-stone-500 hover:text-[#1C1C1E] hover:bg-stone-100/80 font-medium'
               }`}
               aria-label={tab.label}
             >
-              <tab.icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
+              <tab.icon className="w-4 h-4 shrink-0" strokeWidth={isActive ? 2.5 : 2} />
+              {isActive && (
+                <span className="text-[12px] tracking-tight">{tab.label}</span>
+              )}
               {tab.badge && !isActive && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#FF3EBA] rounded-full ring-2 ring-[#141414]" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#1C1C1E] rounded-full ring-2 ring-white" />
               )}
             </button>
           );
@@ -78,5 +81,6 @@ export function BottomNav() {
     </Suspense>
   );
 }
+
 
 

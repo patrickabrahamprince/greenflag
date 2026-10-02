@@ -26,7 +26,6 @@ interface DiscoverProfile {
   active_trip?: { destination: string; start_date: string; vibe: string; id: string };
 }
 
-
 interface ProfileCardProps {
   profile: DiscoverProfile;
   persona?: string;
@@ -86,7 +85,7 @@ export function ProfileCard({
 
   return (
     <div className={`snap-start snap-always h-dvh w-full relative overflow-hidden ${prefersReducedMotion ? '' : 'animate-card-enter'}`}>
-      <div className="absolute inset-0 bg-black">
+      <div className="absolute inset-0 bg-[#1C1C1E]">
         <div
           className="relative w-full h-full overflow-hidden"
           onTouchStart={(e) => {
@@ -104,9 +103,9 @@ export function ProfileCard({
           }}
         >
           {!src || failedPhotoUrls.has(src) ? (
-            <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-well">
-              <ImageOff className="w-9 h-9 text-ink/25" />
-              <span className="text-ink/30 text-xs font-medium">No photo available</span>
+            <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-[#1C1C1E]">
+              <ImageOff className="w-9 h-9 text-white/40" />
+              <span className="text-white/50 text-xs font-medium">No photo available</span>
             </div>
           ) : (
             <img
@@ -121,20 +120,20 @@ export function ProfileCard({
             <button
               onClick={() => { hapticTap(); onPhotoUnlockClick(p.id); }}
               aria-label="Unlock"
-              className="glass-surface absolute inset-0 m-auto z-20 flex items-center justify-center gap-1.5 h-9 w-fit px-4 rounded-full active:scale-95 transition-all shadow-lg"
+              className="bg-white/90 backdrop-blur-xl border border-white/40 text-[#1C1C1E] absolute inset-0 m-auto z-20 flex items-center justify-center gap-1.5 h-10 w-fit px-5 rounded-full active:scale-95 transition-all shadow-xl"
             >
-              <Lock className="w-3.5 h-3.5 text-ink shrink-0" />
-              <span className="text-ink text-xs uppercase tracking-wide font-display font-bold whitespace-nowrap">Unlock Photos</span>
+              <Lock className="w-4 h-4 text-[#1C1C1E] shrink-0" />
+              <span className="text-[#1C1C1E] text-xs uppercase tracking-wider font-bold whitespace-nowrap">Unlock Photos</span>
             </button>
           )}
 
           {total > 1 && (
             <>
-              <div className="absolute top-safe-top inset-x-3 z-10 flex gap-1 pt-3">
+              <div className="absolute top-safe-top inset-x-4 z-10 flex gap-1.5 pt-3">
                 {photos.map((_, segIdx) => (
-                  <div key={segIdx} className="flex-1 h-1 rounded-full bg-ink/20 shadow-[0_0_2px_rgba(0,0,0,0.5)] overflow-hidden">
+                  <div key={segIdx} className="flex-1 h-1 rounded-full bg-white/30 backdrop-blur-sm overflow-hidden shadow-xs">
                     <div
-                      className="h-full bg-gold rounded-full transition-all duration-200"
+                      className="h-full bg-white rounded-full transition-all duration-300"
                       style={{ width: segIdx <= idx ? '100%' : '0%' }}
                     />
                   </div>
@@ -143,31 +142,31 @@ export function ProfileCard({
               <button
                 onClick={(e) => { e.stopPropagation(); hapticTap(); goTo(idx - 1); }}
                 aria-label="Previous photo"
-                className="absolute left-2 top-[38%] -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center"
+                className="absolute left-3 top-[42%] -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white active:scale-90 transition-transform shadow-lg"
               >
-                <ChevronLeft className="w-5 h-5 text-ink" />
+                <ChevronLeft className="w-5 h-5 text-white" />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); hapticTap(); goTo(idx + 1); }}
                 aria-label="Next photo"
-                className="absolute right-2 top-[38%] -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center"
+                className="absolute right-3 top-[42%] -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white active:scale-90 transition-transform shadow-lg"
               >
-                <ChevronRight className="w-5 h-5 text-ink" />
+                <ChevronRight className="w-5 h-5 text-white" />
               </button>
             </>
           )}
 
           {typeof p.match_percentage === 'number' && (
-            <div className="absolute top-safe-top right-3 mt-8 z-10 flex flex-col items-end gap-1">
-              <div className="bg-gold flex items-center gap-1 rounded-pill pl-2 pr-2.5 py-1">
-                <Flag className="w-3 h-3 text-ink" fill="currentColor" />
-                <span className="font-display font-bold text-ink text-xs whitespace-nowrap">
-                  {p.match_percentage}%
+            <div className="absolute top-safe-top right-4 mt-8 z-10 flex flex-col items-end gap-1.5">
+              <div className="bg-white/95 backdrop-blur-md text-[#1C1C1E] border border-white/50 flex items-center gap-1.5 rounded-full px-3 py-1 shadow-md">
+                <Flag className="w-3.5 h-3.5 text-[#1C1C1E]" fill="currentColor" />
+                <span className="font-bold text-[#1C1C1E] text-xs whitespace-nowrap">
+                  {p.match_percentage}% Match
                 </span>
               </div>
               {persona === 'woman' && !!interestCounts[p.id] && (
-                <span className="glass-surface rounded-full px-3 py-1 text-ink/80 text-[11px] whitespace-nowrap">
-                  Intention from {interestCounts[p.id]} {interestCounts[p.id] === 1 ? 'person' : 'people'}
+                <span className="bg-black/60 backdrop-blur-md border border-white/20 rounded-full px-3 py-1 text-white text-[11px] font-medium whitespace-nowrap shadow-sm">
+                  {interestCounts[p.id]} {interestCounts[p.id] === 1 ? 'invite' : 'invites'}
                 </span>
               )}
             </div>
@@ -175,24 +174,24 @@ export function ProfileCard({
         </div>
       </div>
 
-      <div className="absolute inset-x-0 bottom-0 h-2/5 backdrop-blur-md pointer-events-none"
+      <div className="absolute inset-x-0 bottom-0 h-1/2 backdrop-blur-sm pointer-events-none"
         style={{
           WebkitMaskImage: 'linear-gradient(to top, black 35%, transparent 100%)',
           maskImage: 'linear-gradient(to top, black 35%, transparent 100%)',
         }}
       />
 
-      <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black via-black/75 to-transparent pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none" />
 
-      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 px-6 pb-32 pt-10">
+      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 px-6 pb-28 pt-8 z-10">
         <div>
-          <h1 className="font-display text-title text-ink leading-none">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight drop-shadow-md">
             {p.name}{p.age ? `, ${p.age}` : ''}
           </h1>
-          <div className="flex items-center gap-3 mt-2 flex-wrap">
+          <div className="flex items-center gap-3 mt-1.5 flex-wrap">
             {p.city_auto && (
-              <p className="flex items-center gap-1 font-sans text-label text-ink/70 leading-none">
-                <MapPin className="w-3.5 h-3.5 shrink-0" />
+              <p className="flex items-center gap-1 font-sans text-xs sm:text-sm text-white/90 font-medium leading-none">
+                <MapPin className="w-3.5 h-3.5 shrink-0 text-white" />
                 {p.city_auto}
               </p>
             )}
@@ -200,7 +199,7 @@ export function ProfileCard({
               <a
                 href={p.instagram_url.startsWith('http') ? p.instagram_url : `https://instagram.com/${p.instagram_url}`}
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1 text-xs text-gold font-medium leading-none"
+                className="flex items-center gap-1 text-xs text-white/80 font-semibold leading-none hover:underline"
               >
                 <Instagram className="w-3.5 h-3.5" />
                 {p.instagram_url.replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '') || 'Instagram'}
@@ -208,10 +207,9 @@ export function ProfileCard({
             )}
           </div>
           {p.active_trip && (
-            <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-semibold shadow-[0_0_12px_rgba(16,185,129,0.25)]">
-              <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
+            <div className="mt-2.5 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/20 border border-white/30 text-white text-xs font-semibold backdrop-blur-md shadow-sm">
+              <Compass className="w-3.5 h-3.5 text-white shrink-0" />
               <span>{p.active_trip.destination} • {p.active_trip.start_date}</span>
-              <span className="text-[9px] bg-emerald-500 text-black px-1.5 py-0.5 rounded-full font-bold uppercase ml-0.5">Trip</span>
             </div>
           )}
         </div>
@@ -219,71 +217,59 @@ export function ProfileCard({
         {(p.job || p.height) && (
           <div className="flex items-center gap-4 flex-wrap">
             {p.job && (
-              <span className="flex items-center gap-1.5 text-sm text-ink/70 font-medium leading-none">
-                <Briefcase className="w-3.5 h-3.5 text-ink/40 shrink-0" />
+              <span className="flex items-center gap-1.5 text-xs sm:text-sm text-white/90 font-medium leading-none">
+                <Briefcase className="w-3.5 h-3.5 text-white/60 shrink-0" />
                 {p.job}
               </span>
             )}
             {p.height && (
-              <span className="flex items-center gap-1.5 text-sm text-ink/70 font-medium leading-none">
-                <Ruler className="w-3.5 h-3.5 text-ink/40 shrink-0" />
+              <span className="flex items-center gap-1.5 text-xs sm:text-sm text-white/90 font-medium leading-none">
+                <Ruler className="w-3.5 h-3.5 text-white/60 shrink-0" />
                 {p.height}
               </span>
             )}
           </div>
         )}
-        <div className={persona === 'woman' ? 'flex flex-wrap gap-1.5' : 'flex flex-wrap gap-2'}>
-          {shownInterests.map((interest: string, i: number) => {
-            const isMatched = Array.isArray(p.match_reasons) && p.match_reasons.includes(interest);
-            const sizeClass = persona === 'woman' ? 'px-3 py-1 text-xs' : 'px-3.5 py-1.5 text-xs';
-            const colors = [
-              'bg-orange-500/20 text-orange-200 border-orange-400/40',
-              'bg-purple-500/20 text-purple-200 border-purple-400/40',
-              'bg-emerald-500/20 text-emerald-200 border-emerald-400/40',
-              'bg-cyan-500/20 text-cyan-200 border-cyan-400/40',
-              'bg-amber-500/20 text-amber-200 border-amber-400/40',
-            ];
-            const colorClass = colors[i % colors.length];
 
+        <div className="flex flex-wrap gap-2">
+          {shownInterests.map((interest: string) => {
             return (
               <span
                 key={interest}
-                className={
-                  (isMatched
-                    ? `${sizeClass} rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-stone-950 font-black shadow-[0_4px_16px_rgba(245,158,11,0.4)] leading-none cursor-pointer transition-all duration-200 hover:scale-110 active:scale-95 border border-white/50`
-                    : `${sizeClass} rounded-full ${colorClass} backdrop-blur-md font-bold leading-none cursor-pointer transition-all duration-200 hover:scale-110 border active:scale-95`)
-                }
+                className="px-3.5 py-1 text-xs rounded-full bg-white/15 backdrop-blur-md text-white font-medium border border-white/25 leading-none shadow-xs"
               >
                 {interest}
               </span>
             );
           })}
         </div>
+
         {lookingFor.length > 0 && (
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-emerald-400 text-xs font-black uppercase tracking-wider leading-none">Travel Vibe</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-white/60 text-[11px] font-semibold uppercase tracking-wider leading-none">Looking For</span>
             {lookingFor.map((interest: string) => (
               <span
                 key={interest}
-                className="px-3 py-1 text-xs rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold leading-none"
+                className="px-3 py-1 text-xs rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-white/90 font-medium leading-none"
               >
                 {interest}
               </span>
             ))}
           </div>
         )}
+
         {p.bio && (
           <div>
-            <p className="text-emerald-400 text-xs font-black uppercase tracking-wider mb-1.5 leading-none">About</p>
+            <p className="text-white/60 text-[10px] font-bold uppercase tracking-wider mb-1 leading-none">About</p>
             <p
-              className={`text-white/90 text-sm sm:text-base leading-relaxed max-w-md font-light whitespace-pre-line ${expandedBios.has(p.id) ? '' : 'line-clamp-3'}`}
+              className={`text-white/95 text-sm sm:text-base leading-relaxed max-w-md font-normal whitespace-pre-line ${expandedBios.has(p.id) ? '' : 'line-clamp-2'}`}
             >
               {p.bio}
             </p>
-            {p.bio.length > 120 && (
+            {p.bio.length > 100 && (
               <button
                 onClick={() => onBioToggle(p.id)}
-                className="text-emerald-300 text-xs font-bold mt-1"
+                className="text-white text-xs font-bold mt-1 underline"
               >
                 {expandedBios.has(p.id) ? 'Show less' : '...more'}
               </button>
@@ -298,11 +284,11 @@ export function ProfileCard({
               hapticTap();
               onBegin(p.id);
             }}
-            aria-label="Meet for Trips"
-            className="flex-1 h-14 rounded-full flex items-center justify-center gap-2 font-black bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:brightness-110 active:scale-95 text-white shadow-[0_8px_24px_rgba(16,185,129,0.4)] transition-all duration-150 transform-gpu border border-white/30"
+            aria-label="Connect for Trips & Dating"
+            className="flex-1 h-14 rounded-full flex items-center justify-center gap-2 font-bold bg-white text-[#1C1C1E] hover:bg-stone-100 active:scale-[0.98] shadow-lg transition-all duration-150 border border-white"
           >
-            <Compass className="w-5 h-5 text-white" />
-            <span className="text-sm uppercase tracking-wider font-extrabold">Meet for Trips</span>
+            <Compass className="w-5 h-5 text-[#1C1C1E]" />
+            <span className="text-sm tracking-tight font-extrabold">Connect for Trips & Dating</span>
           </button>
           <button
             type="button"
@@ -311,7 +297,7 @@ export function ProfileCard({
               onMoreOptions(p.id);
             }}
             aria-label="More options"
-            className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-xl border border-white/20 flex items-center justify-center flex-shrink-0 hover:bg-black/60 active:scale-95 transition-all duration-150 transform-gpu text-white"
+            className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-xl border border-white/20 flex items-center justify-center flex-shrink-0 hover:bg-black/70 active:scale-95 transition-all duration-150 text-white shadow-md"
           >
             <MoreVertical className="w-5 h-5 text-white" />
           </button>
@@ -320,3 +306,4 @@ export function ProfileCard({
     </div>
   );
 }
+

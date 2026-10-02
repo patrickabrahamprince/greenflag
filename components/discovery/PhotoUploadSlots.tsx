@@ -1,12 +1,12 @@
 'use client';
 
-import { GripVertical, Lightbulb, Upload, X } from 'lucide-react';
+import { GripVertical, Lightbulb, Upload, X, Sparkles } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 const PHOTO_TIPS = [
-  'Lead with a clear, recent photo of your face -- no group shots or sunglasses up front.',
-  'Show your life: hobbies, travel, friends -- not just posed close-ups.',
-  'Skip heavy filters. Natural light photos get more attention.',
+  'Lead with a clear, smiling photo of your face -- solo shots in natural light work best.',
+  'Highlight your travels, weekend getaways, and cafe adventures.',
+  'Keep photos unfiltered and authentic for higher connection rates.',
 ];
 
 interface PhotoUploadSlotsProps {
@@ -66,10 +66,11 @@ export function PhotoUploadSlots({
         onClick={() => {
           if (!photo && photos.length < maxPhotos) inputRef.current?.click();
         }}
-        className={`rounded-2xl border-2 flex items-center justify-center relative overflow-hidden transition-all duration-300 ${className} ${photo
-          ? 'border-transparent shadow-sm'
-          : 'border-dashed border-stone-300 bg-white/70 hover:border-[#1D3B2A] hover:bg-emerald-50/30 active:scale-95 cursor-pointer shadow-xs'
-          } ${draggedIdx === i ? 'opacity-50' : ''}`}
+        className={`rounded-3xl border-2 flex items-center justify-center relative overflow-hidden transition-all duration-300 ${className} ${
+          photo
+            ? 'border-transparent shadow-md'
+            : 'border-dashed border-stone-300/90 bg-white hover:border-[#141414] hover:bg-stone-50/80 active:scale-[0.98] cursor-pointer shadow-xs'
+        } ${draggedIdx === i ? 'opacity-50 scale-95' : ''}`}
       >
         {photo ? (
           <>
@@ -79,34 +80,40 @@ export function PhotoUploadSlots({
               className="w-full h-full object-cover"
             />
             {isPrimary && (
-              <div className="absolute top-2.5 left-2.5 px-2.5 py-1 bg-[#1D3B2A] text-white rounded-full text-[11px] font-bold shadow-md tracking-wide">
-                Primary
+              <div className="absolute top-3 left-3 px-3 py-1 bg-[#141414] text-[#CEFF00] rounded-full text-[11px] font-[900] shadow-lg tracking-wider uppercase border border-[#CEFF00]/30 flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-[#CEFF00]" />
+                <span>Primary Cover</span>
               </div>
             )}
             {photo && (
-              <div className="absolute bottom-2.5 left-2.5 p-1 bg-black/40 backdrop-blur-sm rounded-md opacity-80 hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing">
+              <div className="absolute bottom-3 left-3 p-1.5 bg-[#141414]/60 backdrop-blur-md rounded-xl opacity-80 hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing border border-white/20">
                 <GripVertical size={16} className="text-white" />
               </div>
             )}
             <button
-              onClick={(e) => { e.stopPropagation(); onRemove(i); }}
-              className="absolute top-2.5 right-2.5 w-7 h-7 bg-black/70 hover:bg-black text-white rounded-full flex items-center justify-center active:scale-90 transition-all shadow-md"
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove(i);
+              }}
+              className="absolute top-3 right-3 w-8 h-8 bg-[#141414]/75 hover:bg-[#141414] text-white rounded-full flex items-center justify-center active:scale-90 transition-all shadow-lg border border-white/20"
+              aria-label="Remove photo"
             >
-              <X size={14} className="text-white" />
+              <X size={15} className="text-white" />
             </button>
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center text-center p-3 gap-1.5 transition-transform">
-            <div className={`rounded-full bg-stone-100 flex items-center justify-center text-stone-500 border border-stone-200/80 shadow-2xs ${i === 0 ? 'w-10 h-10' : 'w-8 h-8'}`}>
-              <Upload size={i === 0 ? 18 : 15} />
+          <div className="flex flex-col items-center justify-center text-center p-4 gap-2 transition-transform">
+            <div className={`rounded-full bg-stone-100 flex items-center justify-center text-stone-700 border border-stone-200 shadow-xs ${i === 0 ? 'w-12 h-12' : 'w-10 h-10'}`}>
+              <Upload size={i === 0 ? 20 : 16} />
             </div>
             <div>
-              <span className="block text-xs font-bold text-[#382A21]">
-                {i === 0 ? 'Main Cover Photo' : `Photo ${i + 1}`}
+              <span className="block text-[13px] font-[800] text-[#141414]">
+                {i === 0 ? 'Main Featured Photo' : `Trip Photo ${i + 1}`}
               </span>
               {i === 0 && (
-                <span className="block text-[10px] text-stone-500 font-medium">
-                  Visible on trip cards
+                <span className="block text-[11px] text-stone-500 font-medium mt-0.5">
+                  Shown on discovery cards & escapes
                 </span>
               )}
             </div>
@@ -117,19 +124,25 @@ export function PhotoUploadSlots({
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-2">
-        <label className="text-sm font-bold text-[#382A21]">
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <label className="text-sm font-[800] text-[#141414]">
           Photos <span className="text-stone-500 font-normal">({photos.length}/{maxPhotos})</span>
         </label>
-        <span className="text-xs font-semibold text-emerald-700 bg-emerald-100/80 px-2.5 py-0.5 rounded-full">
-          {maxPhotos - photos.length > 0 ? `${maxPhotos - photos.length} needed` : 'Ready'}
+        <span className={`text-[11px] font-[800] px-3 py-1 rounded-full uppercase tracking-wider ${
+          maxPhotos - photos.length > 0 
+            ? 'bg-amber-100/80 text-amber-900 border border-amber-200' 
+            : 'bg-[#CEFF00]/40 text-[#141414] border border-[#141414]/20'
+        }`}>
+          {maxPhotos - photos.length > 0 ? `${maxPhotos - photos.length} Needed` : 'Complete'}
         </span>
       </div>
 
-      <div className="bg-amber-50/80 border border-amber-200/80 rounded-xl px-3 py-2 mb-4 flex items-center gap-2">
-        <Lightbulb className="w-4 h-4 text-amber-600 shrink-0" />
-        <p className="text-xs text-amber-900 font-medium leading-tight">First photo is your main card. Drag photos to reorder anytime.</p>
+      <div className="bg-stone-100/90 border border-stone-200/80 rounded-2xl px-3.5 py-2.5 flex items-center gap-2.5">
+        <Lightbulb className="w-4 h-4 text-[#141414] shrink-0" />
+        <p className="text-xs text-[#141414]/80 font-medium leading-tight">
+          Your first photo is your travel card cover. Hold and drag to reorder.
+        </p>
       </div>
 
       {maxPhotos === 3 ? (
@@ -148,6 +161,7 @@ export function PhotoUploadSlots({
           {Array.from({ length: maxPhotos }).map((_, i) => renderSlot(i, 'aspect-[3/4]'))}
         </div>
       )}
+
       <input
         ref={inputRef}
         type="file"
@@ -157,21 +171,22 @@ export function PhotoUploadSlots({
         data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'photo-upload' : undefined}
         onChange={handleChange}
       />
-      {error && <p className="text-red-600 font-medium text-xs mt-2">{error}</p>}
+      {error && <p className="text-rose-600 font-bold text-xs mt-2">{error}</p>}
 
       <button
         type="button"
         onClick={() => setShowTips((v) => !v)}
-        className="flex items-center gap-1.5 text-xs font-semibold text-emerald-800 mt-4 active:scale-95 transition-transform"
+        className="flex items-center gap-1.5 text-xs font-[800] text-[#141414] mt-3 active:scale-95 transition-transform"
       >
-        <Lightbulb size={14} className="text-emerald-700" />
-        How to choose great travel photos
+        <Sparkles size={14} className="text-[#141414]" />
+        <span>Photo tips for maximum sparks & travel invites</span>
       </button>
+
       {showTips && (
-        <div className="mt-2.5 p-3.5 bg-white border border-stone-200 rounded-2xl shadow-xs">
-          <ul className="space-y-1.5 list-disc list-inside">
+        <div className="mt-2.5 p-4 bg-white border border-stone-200/90 rounded-2xl shadow-xs">
+          <ul className="space-y-2 list-disc list-inside">
             {PHOTO_TIPS.map((tip) => (
-              <li key={tip} className="text-xs text-stone-600 leading-relaxed">{tip}</li>
+              <li key={tip} className="text-xs text-stone-600 leading-relaxed font-medium">{tip}</li>
             ))}
           </ul>
         </div>
@@ -179,3 +194,4 @@ export function PhotoUploadSlots({
     </div>
   );
 }
+
