@@ -270,7 +270,7 @@ export default function LoginPage() {
         )}
 
         <div className="space-y-3">
-          <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} />
+          <GoogleButton onClick={handleGoogleLogin} loading={googleLoading} onSuccess={redirectAfterAuth} />
           {Capacitor.getPlatform() !== 'android' && (
             <AppleButton onClick={handleAppleLogin} loading={appleLoading} />
           )}
