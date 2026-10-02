@@ -186,21 +186,14 @@ export default function LoginPage() {
         await signInWithGoogleNative()
         await redirectAfterAuth()
       } else {
-        try {
-          await signInWithGoogleWeb()
-          await redirectAfterAuth()
-        } catch {
-          await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: { redirectTo: `${window.location.origin}/auth/callback` },
-          })
-        }
+        await signInWithGoogleWeb()
+        await redirectAfterAuth()
       }
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code
       if (code !== 'USER_CANCELLED') {
         console.error('Google sign-in error:', err)
-        setError('Google sign-in is unavailable. Please use email or demo sign in.')
+        setError('Google Sign-In is unavailable on web. Please sign in with email or demo login below.')
         setShowEmailLogin(true)
       }
     } finally {
