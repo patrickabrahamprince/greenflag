@@ -35,28 +35,28 @@ const QUESTION_IMAGES = [
 const QUIZ_QUESTIONS: Question[] = [
   {
     id: 'travel_style',
-    question: "What's your go-to travel style?",
-    options: ['Off-grid treks & mountain camping', 'Boutique homestays & cafe hopping', 'Scenic road trips & coastal drives', 'Backpacking & social hostels'],
+    question: "What's your go-to getaway & travel style?",
+    options: ['Off-grid treks & mountain camping', 'Boutique homestays & cafe dates', 'Scenic road trips & coastal drives', 'Backpacking & spontaneous escapes'],
+  },
+  {
+    id: 'dating_vibe',
+    question: "What's your ideal dating vibe on a trip?",
+    options: ['Romantic sunset drives & cozy cafes', 'Summit treks & adrenaline adventures together', 'Scenic road trips with deep conversations', 'Beach bonfires, music & playful banter'],
   },
   {
     id: 'weekend_escape',
-    question: 'Your ideal 3-day weekend getaway?',
-    options: ['Trek up a mist-covered peak (Coorg/Wayanad)', 'Lazy beach sunsets & seafood (Gokarna/Goa)', 'Exploring ancient ruins & bouldering (Hampi)', 'Coffee plantations & scenic viewpoints (Chikmagalur)'],
+    question: 'Your dream 3-day getaway with someone special?',
+    options: ['Trek up a mist-covered peak (Coorg/Wayanad)', 'Lazy beach sunsets & seafood (Gokarna/Goa)', 'Exploring ancient ruins & stargazing (Hampi)', 'Coffee plantation stay & fireside chats (Chikmagalur)'],
   },
   {
-    id: 'travel_pace',
-    question: 'How do you like your travel days?',
-    options: ['Sunrise starts & action-packed itineraries', 'Slow mornings with coffee, go with the flow', 'Curated road trip stops & scenic overlooks', 'Late-night bonfires & good music'],
-  },
-  {
-    id: 'travel_essential',
-    question: "What's always in your travel bag?",
-    options: ['Hiking boots & a reusable water bottle', 'A camera & a good book', 'Offline maps & a road trip playlist', 'A hammock & travel board games'],
+    id: 'spark_trigger',
+    question: 'What instantly creates a spark on the road?',
+    options: ['Blowing through playlists on open highways', 'Unplanned detours to hidden viewpoints', 'Late-night conversations under a starry sky', 'Bursting into laughter over local street food'],
   },
   {
     id: 'dream_companion',
-    question: 'What makes the best travel buddy?',
-    options: ['Always down for an adventure', 'Chill, considerate & easygoing', 'Great navigator or reliable driver', 'Fun conversationalist & storyteller'],
+    question: 'What are you looking for most in a travel & dating partner?',
+    options: ['Always down for an adrenaline adventure', 'Chill, considerate with romantic chemistry', 'A reliable copilot & great conversationalist', 'High energy, witty, and fun to be around'],
   },
 ];
 
@@ -66,52 +66,52 @@ type Trait = 'Grounded' | 'Romantic' | 'Adventurous' | 'Playful';
 const TRAIT_MAP: Record<string, Record<string, Trait>> = {
   travel_style: {
     'Off-grid treks & mountain camping': 'Adventurous',
-    'Boutique homestays & cafe hopping': 'Romantic',
+    'Boutique homestays & cafe dates': 'Romantic',
     'Scenic road trips & coastal drives': 'Grounded',
-    'Backpacking & social hostels': 'Playful',
+    'Backpacking & spontaneous escapes': 'Playful',
+  },
+  dating_vibe: {
+    'Romantic sunset drives & cozy cafes': 'Romantic',
+    'Summit treks & adrenaline adventures together': 'Adventurous',
+    'Scenic road trips with deep conversations': 'Grounded',
+    'Beach bonfires, music & playful banter': 'Playful',
   },
   weekend_escape: {
     'Trek up a mist-covered peak (Coorg/Wayanad)': 'Adventurous',
     'Lazy beach sunsets & seafood (Gokarna/Goa)': 'Romantic',
-    'Exploring ancient ruins & bouldering (Hampi)': 'Grounded',
-    'Coffee plantations & scenic viewpoints (Chikmagalur)': 'Playful',
+    'Exploring ancient ruins & stargazing (Hampi)': 'Grounded',
+    'Coffee plantation stay & fireside chats (Chikmagalur)': 'Playful',
   },
-  travel_pace: {
-    'Sunrise starts & action-packed itineraries': 'Adventurous',
-    'Slow mornings with coffee, go with the flow': 'Romantic',
-    'Curated road trip stops & scenic overlooks': 'Grounded',
-    'Late-night bonfires & good music': 'Playful',
-  },
-  travel_essential: {
-    'Hiking boots & a reusable water bottle': 'Adventurous',
-    'A camera & a good book': 'Romantic',
-    'Offline maps & a road trip playlist': 'Grounded',
-    'A hammock & travel board games': 'Playful',
+  spark_trigger: {
+    'Blowing through playlists on open highways': 'Grounded',
+    'Unplanned detours to hidden viewpoints': 'Adventurous',
+    'Late-night conversations under a starry sky': 'Romantic',
+    'Bursting into laughter over local street food': 'Playful',
   },
   dream_companion: {
-    'Always down for an adventure': 'Adventurous',
-    'Chill, considerate & easygoing': 'Romantic',
-    'Great navigator or reliable driver': 'Grounded',
-    'Fun conversationalist & storyteller': 'Playful',
+    'Always down for an adrenaline adventure': 'Adventurous',
+    'Chill, considerate with romantic chemistry': 'Romantic',
+    'A reliable copilot & great conversationalist': 'Grounded',
+    'High energy, witty, and fun to be around': 'Playful',
   },
 };
 
 const ARCHETYPES: Record<Trait, { title: string; description: string }> = {
   Grounded: {
-    title: 'The Route Captain',
-    description: "Prepared, dependable, and observant. You map out scenic detours, keep the crew safe, and make sure every road trip is smooth and unforgettable.",
+    title: 'The Roadtrip Copilot',
+    description: "Dependable, observant, and thoughtful. You map out scenic detours, keep the playlist flowing, and build deep connections over long highway drives.",
   },
   Romantic: {
-    title: 'The Slow Wanderer',
-    description: 'You travel for the soul. Sunset viewpoints, quiet cafe mornings, boutique stays, and meaningful conversations under the open sky.',
+    title: 'The Sunset Romantic',
+    description: 'You travel for the soul and spark. Golden hour viewpoints, quiet cafe mornings, boutique homestays, and stargazing conversations.',
   },
   Adventurous: {
     title: 'The Wild Explorer',
-    description: "Full throttle, spontaneous, and bold. You say yes to summits, river crossings, and uncharted trails that turn into epic stories.",
+    description: "Spontaneous, bold, and fearless. You say yes to cliffside treks, river crossings, and unplanned adventures that turn into unforgettable love stories.",
   },
   Playful: {
-    title: 'The Roadtrip Spark',
-    description: 'High energy, laughter, and great vibes. You bring the playlists, gather people around the bonfire, and make every mile memorable.',
+    title: 'The Adventure Spark',
+    description: 'High energy, infectious laughter, and great vibes. You bring the music, light up the bonfire, and make every single mile exciting.',
   },
 };
 

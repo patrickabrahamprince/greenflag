@@ -5,6 +5,24 @@ export interface InterestCategory {
 
 export const INTEREST_CATEGORIES: InterestCategory[] = [
   {
+    category: 'Travel & Getaway Vibes',
+    items: [
+      'Weekend Getaways', 'Road Trips', 'Beach Sunsets', 'Mountain Treks', 'Cafe Dates',
+      'Camping & Bonfires', 'Coorg Stays', 'Gokarna Beach Shacks', 'Hampi Ruins', 'Sunrise Drives',
+      'Scenic Detours', 'Spontaneous Escapes', 'Boutique Homestays', 'Off-grid Trails', 'Food Crawls',
+      'Late-night Chai', 'Stargazing', 'Waterfalls', 'Heritage Walks', 'Backpacking',
+    ],
+  },
+  {
+    category: 'Dating & Spark Intentions',
+    items: [
+      'Travel Romance', 'Adventure Dating', 'Spontaneous Sparks', 'Deep Conversations',
+      'Roadtrip Copilot', 'Romantic Getaways', 'Sunset Dates', 'Cafe Conversations',
+      'Mutual Chemistry', 'Playful Banter', 'Long Drives & Music', 'Fireside Chats',
+      'Weekend Travel Partner', 'Stargazing Dates', 'Chill Vibes',
+    ],
+  },
+  {
     category: 'Creativity',
     items: [
       'Poetry', 'Sneakers', 'Freelancing', 'Photography', 'Language Exchange',

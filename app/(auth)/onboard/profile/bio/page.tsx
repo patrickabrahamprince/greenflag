@@ -66,9 +66,9 @@ export default function ProfileBioPage() {
           <div className="w-12 h-12 rounded-2xl bg-orange-100 text-orange-800 flex items-center justify-center mb-4 font-bold text-xl">
             ✍️
           </div>
-          <h1 className="font-display text-3xl font-extrabold text-[#382A21] mb-2">A few words about you</h1>
+          <h1 className="font-display text-3xl font-extrabold text-[#382A21] mb-2">Your Travel & Dating Vibe</h1>
           <p className="text-stone-600 text-sm leading-relaxed mb-6 font-medium">
-            This is what fellow travelers read on your card — what gets you excited to travel?
+            This is what fellow travelers and dates read first — your dream getaways and what sparks your connection.
           </p>
 
           <label className="block text-xs font-bold text-[#382A21]/70 uppercase tracking-wider mb-2">
@@ -77,7 +77,7 @@ export default function ProfileBioPage() {
           <textarea
             value={value}
             onChange={(e) => { setValue(e.target.value); setError(''); }}
-            placeholder={`Always ready for a spontaneous weekend road trip. Love mountain treks, cozy cafe mornings, and discovering hidden beaches...`}
+            placeholder={`Always ready for a weekend road trip to Coorg or Gokarna. Love mountain treks, cozy cafe dates, stargazing, and deep talks on the road...`}
             maxLength={200}
             rows={4}
             autoFocus
@@ -97,7 +97,7 @@ export default function ProfileBioPage() {
           <div className="mt-5 pt-4 border-t border-stone-100">
             <span className="text-xs font-bold text-stone-400 uppercase tracking-wider block mb-2">Tap to Add Vibe</span>
             <div className="flex flex-wrap gap-1.5">
-              {['Mountain hikes 🏔️', 'Road tripper 🚗', 'Cafe runs ☕', 'Beach sunsets 🌅', 'Hostel vibes 🎒', 'Campfire music 🎸'].map((tag) => (
+              {['Weekend roadtrips 🚗', 'Cafe dates ☕', 'Beach sunsets 🌅', 'Mountain treks 🏔️', 'Travel romance ✨', 'Bonfires & music 🎸', 'Deep talks 🌙'].map((tag) => (
                 <button
                   key={tag}
                   type="button"

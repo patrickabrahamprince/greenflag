@@ -31,27 +31,27 @@ const INDIAN_CITIES = [
 
 const ONBOARDING_SLIDES = [
   {
-    badge: 'NEW WAY TO MEET',
-    title: 'Meet People.\nTravel Together.',
-    desc: 'Not another swipe app. Real road trips, cafes, and weekend getaways with real people.',
+    badge: 'TRAVEL TRIPS + DATING',
+    title: 'Meet People.\nTravel Together.\nDate on the Way.',
+    desc: 'Not another superficial swipe app. Real weekend getaways, sunrise drives, and coffee dates with verified travelers.',
     accent: 'from-emerald-400 to-teal-600',
   },
   {
-    badge: 'HOW IT WORKS',
-    title: "You don't swipe\npeople, you join\ntheir plans.",
-    desc: 'Dating happens on the way, not on a boring static profile.',
+    badge: 'NATURAL SPARKS',
+    title: "You don't swipe\nbios. You share\nreal getaways.",
+    desc: 'Romantic chemistry happens naturally over scenic drives, beach sunsets, and cozy homestays.',
     accent: 'from-orange-400 to-rose-500',
   },
   {
     badge: 'SAFE BY DESIGN',
-    title: 'Every person\nverified. First\nmeets public.',
-    desc: 'No ghosting. No catfishing. Verified ID + public cafe meetups.',
+    title: 'Every traveler\nverified. First\nmeets in daylight.',
+    desc: 'Zero catfishing. 100% ID verification, public cafe meets, and verified female-only travel buddy circles.',
     accent: 'from-violet-500 to-indigo-600',
   },
   {
-    badge: 'TRUST LADDER',
-    title: 'Start with coffee,\nearn trust,\nunlock getaways.',
-    desc: 'Trust is built in layers. Level 1 coffee dates up to Level 5 weekend trips.',
+    badge: 'TRAVEL CHEMISTRY',
+    title: 'Start with coffee,\nspark a connection,\nunlock getaways.',
+    desc: 'From quick 60-min cafe dates to weekend road trips to Coorg and Gokarna — explore at your pace.',
     accent: 'from-amber-400 to-orange-600',
   },
 ];
