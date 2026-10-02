@@ -159,6 +159,23 @@ export default function LoginPage() {
     }
   }
 
+  const handleQuickDemoLogin = async (demoEmail = 'reviewer-woman@greenflag.app', demoPass = 'GreenFlag2026!') => {
+    setEmail(demoEmail)
+    setPassword(demoPass)
+    setShowEmailLogin(true)
+    setLoading(true)
+    setError('')
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email: demoEmail, password: demoPass })
+      if (error) throw error
+      await redirectAfterAuth()
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Authentication failed')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleGoogleLogin = () => withTermsGate(handleGoogleLoginInner)
 
   const handleGoogleLoginInner = async () => {
@@ -257,14 +274,24 @@ export default function LoginPage() {
           )}
 
           {!showEmailLogin && (
-            <button
-              type="button"
-              onClick={handleShowEmailToggle}
-              className="w-full flex items-center justify-center gap-2.5 bg-white hover:bg-stone-50 text-[#382A21] font-bold text-xs py-3.5 px-4 rounded-full border border-stone-200 shadow-xs transition-all active:scale-95"
-            >
-              <Mail className="w-4 h-4 text-stone-500" />
-              <span>Continue with Email</span>
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={handleShowEmailToggle}
+                className="w-full flex items-center justify-center gap-2.5 bg-white hover:bg-stone-50 text-[#382A21] font-bold text-xs py-3.5 px-4 rounded-full border border-stone-200 shadow-xs transition-all active:scale-95"
+              >
+                <Mail className="w-4 h-4 text-stone-500" />
+                <span>Continue with Email</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleQuickDemoLogin()}
+                className="w-full flex items-center justify-center gap-2 bg-[#1D3B2A] hover:bg-[#2D5A3F] text-white font-extrabold text-xs py-3.5 px-4 rounded-full shadow-sm transition-all active:scale-95"
+              >
+                <span>⚡ Instant Test Login (Sarah • 1500 Coins)</span>
+              </button>
+            </>
           )}
         </div>
 
