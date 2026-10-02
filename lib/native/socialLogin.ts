@@ -64,27 +64,86 @@ async function ensureInitialized() {
   initialized = true;
 }
 
+export async function signInWithGoogleWeb(): Promise<void> {
+  if (typeof window === 'undefined') return;
+
+  if (!GOOGLE_WEB_CLIENT_ID) {
+    throw new Error('Google Web Client ID is not configured');
+  }
+
+  // Load Google Identity Services SDK
+  await new Promise<void>((resolve, reject) => {
+    if ((window as any).google?.accounts?.id) {
+      resolve();
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Failed to load Google Sign-In SDK'));
+    document.head.appendChild(script);
+  });
+
+  return new Promise<void>((resolve, reject) => {
+    const rawNonce = randomNonce();
+    const google = (window as any).google;
+
+    google.accounts.id.initialize({
+      client_id: GOOGLE_WEB_CLIENT_ID,
+      callback: async (response: { credential?: string }) => {
+        if (!response.credential) {
+          reject(new Error('No credential returned from Google'));
+          return;
+        }
+        try {
+          const supabase = createClient();
+          const { error } = await supabase.auth.signInWithIdToken({
+            provider: 'google',
+            token: response.credential,
+            nonce: rawNonce,
+          });
+          if (error) {
+            const { error: retryError } = await supabase.auth.signInWithIdToken({
+              provider: 'google',
+              token: response.credential,
+            });
+            if (retryError) throw retryError;
+          }
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
+      },
+      nonce: rawNonce,
+      auto_select: false,
+      cancel_on_tap_outside: true,
+    });
+
+    google.accounts.id.prompt((notification: any) => {
+      if (notification?.isNotDisplayed?.() || notification?.isSkippedMoment?.()) {
+        // If prompt was dismissed or not displayed, fallback to popup button
+        const hiddenDiv = document.createElement('div');
+        hiddenDiv.style.display = 'none';
+        document.body.appendChild(hiddenDiv);
+        google.accounts.id.renderButton(hiddenDiv, { theme: 'outline', size: 'large' });
+        const btn = hiddenDiv.querySelector('div[role=button]') as HTMLElement;
+        if (btn) btn.click();
+        setTimeout(() => {
+          try { document.body.removeChild(hiddenDiv); } catch {}
+        }, 3000);
+      }
+    });
+  });
+}
+
 export async function signInWithGoogleNative(): Promise<void> {
   if (!Capacitor.isNativePlatform()) throw new Error('Native Google sign-in is iOS/Android only');
   await ensureInitialized();
 
   const rawNonce = randomNonce();
   const hashedNonce = await sha256Hex(rawNonce);
-  // forcePrompt skips the plugin's "restore previous sign-in" fast path on
-  // iOS (GIDSignIn.hasPreviousSignIn() -> restorePreviousSignIn ->
-  // refreshTokensIfNeeded), which silently reuses whatever ID token is
-  // already cached in the device Keychain from an earlier session --
-  // that cached token's nonce claim reflects whichever nonce was current
-  // back when it was first issued, not the fresh one generated above, so
-  // Supabase's hash comparison fails with "nonces mismatched" on every
-  // sign-in after the first on a given device. Forcing the prompt makes
-  // it always run a real interactive sign-in bound to this nonce.
-  // No explicit scopes: both platforms' plugin code already defaults to
-  // exactly ["email", "profile", "openid"] when this is omitted. Passing
-  // it explicitly is what triggered Android's "You CANNOT use scopes
-  // without modifying the main activity" rejection -- its GoogleProvider
-  // requires MainActivity to opt in to a marker interface for *any*
-  // caller-supplied scopes array, even one identical to its own defaults.
   const { result } = await SocialLogin.login({
     provider: 'google',
     options: { nonce: hashedNonce, forcePrompt: true },

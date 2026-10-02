@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Capacitor } from '@capacitor/core'
 import { createClient } from '@/lib/supabase/client'
-import { signInWithGoogleNative, signInWithAppleNative } from '@/lib/native/socialLogin'
+import { signInWithGoogleNative, signInWithGoogleWeb, signInWithAppleNative } from '@/lib/native/socialLogin'
 import { Loader2, Sparkles, Camera, Mail } from 'lucide-react'
 import { GoogleButton } from '@/components/ui/GoogleButton'
 import { AppleButton } from '@/components/ui/AppleButton'
@@ -181,24 +181,26 @@ export default function LoginPage() {
   const handleGoogleLoginInner = async () => {
     setGoogleLoading(true)
     try {
-      // Native gets the real iOS account picker via Google's SDK; web keeps
-      // the existing hosted-redirect flow (in-app native, in-browser web --
-      // a WKWebView redirect has no access to the device's signed-in
-      // Google accounts the way the native SDK does).
       if (Capacitor.isNativePlatform()) {
         await signInWithGoogleNative()
         await redirectAfterAuth()
       } else {
-        await supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: { redirectTo: `${window.location.origin}/auth/callback` },
-        })
+        try {
+          await signInWithGoogleWeb()
+          await redirectAfterAuth()
+        } catch (webErr) {
+          console.warn('Google Identity Services failed, trying hosted OAuth:', webErr)
+          await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: { redirectTo: `${window.location.origin}/auth/callback` },
+          })
+        }
       }
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code
       if (code !== 'USER_CANCELLED') {
         console.error('Google sign-in error:', err)
-        setError('Google sign-in is temporarily unavailable. You can sign in with your email below.')
+        setError('Google sign-in encountered an issue. You can sign in instantly with email or 1-tap test login below.')
         setShowEmailLogin(true)
       }
     } finally {
