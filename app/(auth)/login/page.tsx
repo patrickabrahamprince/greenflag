@@ -186,25 +186,21 @@ export default function LoginPage() {
         await signInWithGoogleNative()
         await redirectAfterAuth()
       } else {
-        // On web, attempt GIS ID token or auto-authenticate Patrick's account
         try {
           await signInWithGoogleWeb()
           await redirectAfterAuth()
         } catch {
-          // Direct fallback for frictionless web sign-in
-          const { error: signInErr } = await supabase.auth.signInWithPassword({
-            email: 'patrickabraham.abraham@gmail.com',
-            password: 'GreenFlag2026!',
+          await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: { redirectTo: `${window.location.origin}/auth/callback` },
           })
-          if (signInErr) throw signInErr
-          await redirectAfterAuth()
         }
       }
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code
       if (code !== 'USER_CANCELLED') {
         console.error('Google sign-in error:', err)
-        setError('Signed in with email below.')
+        setError('Google sign-in is unavailable. Please use email or demo sign in.')
         setShowEmailLogin(true)
       }
     } finally {
@@ -292,18 +288,10 @@ export default function LoginPage() {
 
               <button
                 type="button"
-                onClick={() => handleQuickDemoLogin('patrickabraham.abraham@gmail.com', 'GreenFlag2026!')}
+                onClick={() => handleQuickDemoLogin('reviewer-woman@greenflag.app', 'GreenFlag2026!')}
                 className="w-full flex items-center justify-center gap-2 bg-[#1D3B2A] hover:bg-[#2D5A3F] text-white font-extrabold text-xs py-3.5 px-4 rounded-full shadow-sm transition-all active:scale-95"
               >
-                <span>⚡ 1-Tap Sign In (Patrick Abraham)</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickDemoLogin('reviewer-woman@greenflag.app', 'GreenFlag2026!')}
-                className="w-full flex items-center justify-center gap-2 bg-emerald-800 hover:bg-emerald-900 text-white font-extrabold text-xs py-3 px-4 rounded-full shadow-xs transition-all active:scale-95"
-              >
-                <span>⚡ Test Demo Account (Sarah • 1500 Coins)</span>
+                <span>⚡ Instant Test Login (Sarah • 1500 Coins)</span>
               </button>
             </>
           )}
