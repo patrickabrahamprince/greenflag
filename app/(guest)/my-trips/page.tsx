@@ -73,12 +73,12 @@ export default function MyTripsPage() {
   return (
     <div className="w-full h-full flex flex-col bg-white overflow-hidden max-w-md mx-auto select-none antialiased">
       
-      {/* ================= 100% FROZEN TOP HEADER ================= */}
-      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md pt-safe-top pb-3 px-6 border-b border-stone-100 space-y-3">
+      {/* ================= APPLE DESIGN KIT FROZEN HEADER ================= */}
+      <header className="shrink-0 z-30 bg-white/85 backdrop-blur-2xl backdrop-saturate-180 pt-safe-top pb-3 px-5 border-b border-black/[0.08] space-y-3">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-[22px] font-[800] text-[#1C1C1E] tracking-tight">My Plans</h1>
-            <p className="text-[12px] font-semibold text-stone-500">Scheduled escapes & hosted trips</p>
+            <h1 className="text-[24px] font-bold text-[#000000] tracking-tight">My Plans</h1>
+            <p className="text-[12px] font-medium text-[#8E8E93]">Scheduled getaways & hosted escapes</p>
           </div>
 
           <button
@@ -87,7 +87,7 @@ export default function MyTripsPage() {
               hapticTap();
               router.push('/trips?tab=create');
             }}
-            className="px-3.5 py-1.5 rounded-full bg-[#1C1C1E] hover:bg-black text-white text-[11px] font-bold shadow-2xs active:scale-95 transition flex items-center gap-1.5 cursor-pointer"
+            className="px-3.5 py-1.5 rounded-full bg-[#000000] text-white text-[12px] font-semibold shadow-2xs hover:opacity-90 active:scale-95 transition flex items-center gap-1.5 cursor-pointer"
             aria-label="Host Escape"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -95,8 +95,8 @@ export default function MyTripsPage() {
           </button>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="flex items-center gap-1.5 bg-[#F4F4F5] p-1 rounded-full border border-stone-200/90">
+        {/* Apple Native Segmented Control */}
+        <div className="bg-[#767680]/12 p-0.5 rounded-xl flex items-center">
           {(['Upcoming', 'Hosting', 'Past'] as const).map((tab) => {
             const isActive = activeTab === tab;
             const count = 
@@ -111,15 +111,17 @@ export default function MyTripsPage() {
                   hapticTap();
                   setActiveTab(tab);
                 }}
-                className={`flex-1 py-2 rounded-full text-[12px] font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 ${
+                className={`flex-1 py-1.5 rounded-lg text-[12px] font-semibold transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 ${
                   isActive
-                    ? 'bg-[#1C1C1E] text-white shadow-2xs'
-                    : 'text-stone-600 hover:text-[#1C1C1E]'
+                    ? 'bg-white text-[#000000] shadow-[0_1px_3px_rgba(0,0,0,0.12)]'
+                    : 'text-[#8E8E93] hover:text-[#000000]'
                 }`}
               >
                 <span>{tab}</span>
                 {count !== undefined && count > 0 && (
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-extrabold ${isActive ? 'bg-white text-[#1C1C1E]' : 'bg-stone-200 text-stone-700'}`}>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                    isActive ? 'bg-stone-100 text-[#000000]' : 'bg-black/[0.06] text-[#8E8E93]'
+                  }`}>
                     {count}
                   </span>
                 )}

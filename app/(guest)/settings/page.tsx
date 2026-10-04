@@ -122,16 +122,16 @@ export default function SettingsPage() {
 
   return (
     <div className="w-full h-full flex flex-col bg-white overflow-hidden max-w-md mx-auto select-none antialiased">
-      {/* 100% Frozen Top Header */}
-      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md px-6 pt-safe-top pb-3 border-b border-stone-100 flex items-center gap-3">
+      {/* ================= APPLE DESIGN KIT FROZEN HEADER ================= */}
+      <header className="shrink-0 z-30 bg-white/85 backdrop-blur-2xl backdrop-saturate-180 px-5 pt-safe-top pb-3 border-b border-black/[0.08] flex items-center gap-3">
         <button
           onClick={() => { hapticTap(); router.back(); }}
-          className="w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 border border-stone-200 flex items-center justify-center text-stone-900 active:scale-95 transition cursor-pointer"
+          className="w-8 h-8 rounded-full bg-[#767680]/12 hover:bg-[#767680]/18 flex items-center justify-center text-[#000000] active:scale-95 transition cursor-pointer"
           aria-label="Back"
         >
           <ArrowLeft className="w-4 h-4" />
         </button>
-        <h1 className="font-display text-xl font-bold text-stone-900 flex-1 tracking-tight">Settings</h1>
+        <h1 className="text-[20px] font-bold text-[#000000] flex-1 tracking-tight">Settings</h1>
       </header>
 
       <div

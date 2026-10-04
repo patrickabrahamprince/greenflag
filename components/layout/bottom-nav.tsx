@@ -22,9 +22,9 @@ function BottomNavContent() {
 
   const tabs = [
     { id: 'explore', label: 'Explore', href: '/trips', icon: Compass },
-    { id: 'plans', label: 'My Plans', href: '/my-trips', icon: Calendar },
-    { id: 'chat', label: 'Chat', href: '/messages', icon: MessageCircle },
-    { id: 'profile', label: 'Passport', href: '/passport', icon: User },
+    { id: 'plans', label: 'Plans', href: '/my-trips', icon: Calendar },
+    { id: 'chat', label: 'Messages', href: '/messages', icon: MessageCircle },
+    { id: 'passport', label: 'Passport', href: '/passport', icon: User },
   ];
 
   if (isWizardActive || currentTab === 'create' || pathname === '/standard/builder') {
@@ -32,8 +32,8 @@ function BottomNavContent() {
   }
 
   return (
-    <nav className="fixed bottom-4 inset-x-0 z-50 flex justify-center pointer-events-none px-4 pb-[env(safe-area-inset-bottom,0px)]">
-      <div className="pointer-events-auto bg-white/95 backdrop-blur-2xl border border-stone-200/90 rounded-full px-2 py-1.5 flex items-center shadow-[0_12px_36px_rgba(0,0,0,0.12)] max-w-[340px] w-full justify-between">
+    <nav className="fixed bottom-0 inset-x-0 z-50 pointer-events-none flex justify-center">
+      <div className="pointer-events-auto w-full max-w-md bg-white/85 dark:bg-[#1C1C1E]/85 backdrop-blur-2xl backdrop-saturate-180 border-t border-black/[0.08] shadow-[0_-4px_24px_rgba(0,0,0,0.04)] px-4 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom,0.75rem))] flex items-center justify-around">
         {tabs.map((tab) => {
           const isActive =
             tab.id === 'explore'
@@ -52,15 +52,23 @@ function BottomNavContent() {
                 hapticTap();
                 router.push(tab.href);
               }}
-              className={`relative flex-1 flex flex-col items-center justify-center py-1.5 px-2 rounded-full transition-all duration-200 cursor-pointer active:scale-95 ${
+              className={`flex-1 flex flex-col items-center justify-center py-1 px-1 transition-all duration-150 active:scale-90 cursor-pointer select-none ${
                 isActive
-                  ? 'bg-[#1C1C1E] text-white shadow-2xs font-bold'
-                  : 'text-stone-500 hover:text-[#1C1C1E] hover:bg-stone-100/70 font-medium'
+                  ? 'text-[#000000] font-semibold'
+                  : 'text-[#8E8E93] hover:text-[#000000] font-medium'
               }`}
               aria-label={tab.label}
             >
-              <tab.icon className="w-4 h-4 shrink-0" strokeWidth={isActive ? 2.4 : 1.9} />
-              <span className="text-[10px] tracking-tight leading-none mt-1">
+              <div className="relative">
+                <tab.icon 
+                  className={`w-5 h-5 transition-transform duration-150 ${
+                    isActive ? 'scale-105 text-[#000000] stroke-[2.4]' : 'text-[#8E8E93] stroke-[1.8]'
+                  }`} 
+                />
+              </div>
+              <span className={`text-[10px] tracking-tight leading-none mt-1 transition-colors ${
+                isActive ? 'text-[#000000] font-bold' : 'text-[#8E8E93]'
+              }`}>
                 {tab.label}
               </span>
             </button>

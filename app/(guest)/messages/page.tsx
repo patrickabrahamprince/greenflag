@@ -36,10 +36,10 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
   return (
     <button
       onClick={() => { hapticTap(); router.push(`/messages/${conv.id}`); }}
-      className="w-full flex items-center gap-3.5 p-4 text-left bg-[#F9FAFB] hover:bg-stone-100 border border-stone-200/80 rounded-3xl shadow-2xs hover:shadow-md transition-all duration-300 cubic-bezier(0.16,1,0.3,1) active:scale-[0.98] cursor-pointer animate-card-enter"
+      className="w-full flex items-center gap-3.5 p-3.5 text-left bg-white hover:bg-stone-50 border border-black/[0.06] rounded-2xl shadow-2xs active:scale-[0.99] transition-all cursor-pointer"
     >
       <div className="relative w-12 h-12 rounded-full shrink-0">
-        <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-white border border-stone-200 shadow-2xs">
+        <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-stone-100 ring-1 ring-black/[0.06]">
           {partnerPhoto ? (
             <Image
               src={partnerPhoto}
@@ -50,30 +50,30 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
               onError={() => {}}
             />
           ) : (
-            <span className="font-bold text-sm text-[#1C1C1E]">
+            <span className="font-bold text-sm text-[#000000]">
               {conv.partner?.name?.[0] ?? '?'}
             </span>
           )}
         </div>
-        <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#1C1C1E] border-2 border-white" />
+        <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-white" />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-0.5">
-          <span className="font-bold text-[14px] text-[#1C1C1E] truncate">
+          <span className="font-bold text-[15px] text-[#000000] truncate">
             {conv.partner?.name}
           </span>
           {conv.last_message && (
-            <span className="text-[11px] font-semibold text-stone-400 shrink-0 ml-2">
+            <span className="text-[11px] font-medium text-[#8E8E93] shrink-0 ml-2">
               {conv.last_message.created_at ? new Date(conv.last_message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
             </span>
           )}
         </div>
         {conv.last_message ? (
-          <p className="text-[12px] text-stone-500 truncate font-medium">
+          <p className="text-[13px] text-[#8E8E93] truncate font-medium">
             {conv.last_message.content}
           </p>
         ) : (
-          <p className="text-[12px] text-[#1C1C1E] font-semibold truncate flex items-center gap-1">
+          <p className="text-[13px] text-[#000000] font-semibold truncate flex items-center gap-1">
             <span>✨</span> Connected! Tap to say hello
           </p>
         )}
@@ -201,11 +201,11 @@ export default function MessagesListPage() {
   return (
     <div className="w-full h-full flex flex-col bg-white overflow-hidden max-w-md mx-auto select-none antialiased">
       
-      {/* 100% Frozen Fixed Top Header */}
-      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md pt-safe-top pb-3 px-6 flex items-center justify-between border-b border-stone-100">
+      {/* ================= APPLE DESIGN KIT FROZEN HEADER ================= */}
+      <header className="shrink-0 z-30 bg-white/85 backdrop-blur-2xl backdrop-saturate-180 pt-safe-top pb-3 px-5 border-b border-black/[0.08]">
         <div>
-          <h1 className="text-[22px] font-[800] text-[#1C1C1E] tracking-tight">Messages</h1>
-          <p className="text-[12px] font-semibold text-stone-500">Trip buddies & conversations</p>
+          <h1 className="text-[26px] font-bold text-[#000000] tracking-tight">Messages</h1>
+          <p className="text-[12px] font-medium text-[#8E8E93]">Trip buddies & conversations</p>
         </div>
       </header>
 

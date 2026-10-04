@@ -111,16 +111,16 @@ export default function PassportPage() {
   return (
     <div className="w-full h-full flex flex-col bg-white overflow-hidden max-w-md mx-auto select-none antialiased">
       
-      {/* ================= 100% FROZEN EDITORIAL TOP HEADER ================= */}
-      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md pt-safe-top pb-3 px-6 flex items-center justify-between border-b border-stone-100">
+      {/* ================= APPLE DESIGN KIT FROZEN HEADER ================= */}
+      <header className="shrink-0 z-30 bg-white/85 backdrop-blur-2xl backdrop-saturate-180 pt-safe-top pb-3 px-5 flex items-center justify-between border-b border-black/[0.08]">
         {/* User Avatar + Greeting */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <div className="relative">
-            <div className="w-10 h-10 rounded-full p-0.5 bg-[#1C1C1E] shadow-xs flex items-center justify-center">
+            <div className="w-9 h-9 rounded-full ring-1 ring-black/[0.08] shadow-2xs overflow-hidden flex items-center justify-center bg-stone-100">
               <img
                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&q=80"
                 alt="Profile"
-                className="w-full h-full rounded-full object-cover"
+                className="w-full h-full object-cover"
                 onError={(e) => {
                   e.currentTarget.src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Korina';
                 }}
@@ -128,12 +128,12 @@ export default function PassportPage() {
             </div>
           </div>
           <div>
-            <div className="text-[11px] font-medium text-stone-500">Verified Member</div>
-            <div className="text-[15px] font-bold text-[#1C1C1E] tracking-tight">{displayName}</div>
+            <div className="text-[11px] font-medium text-[#8E8E93] leading-none">Verified Member</div>
+            <div className="text-[15px] font-bold text-[#000000] tracking-tight leading-tight mt-0.5">{displayName}</div>
           </div>
         </div>
 
-        {/* Top Right Badges & Settings */}
+        {/* Top Right: Settings Button */}
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -141,29 +141,29 @@ export default function PassportPage() {
               hapticTap();
               router.push('/settings');
             }}
-            className="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 border border-stone-200 flex items-center justify-center text-[#1C1C1E] active:scale-95 transition cursor-pointer"
+            className="w-8 h-8 rounded-full bg-[#767680]/12 hover:bg-[#767680]/18 flex items-center justify-center text-[#000000] active:scale-95 transition cursor-pointer"
             aria-label="Settings"
           >
-            <Settings className="w-4 h-4 text-[#1C1C1E]" />
+            <Settings className="w-4 h-4 text-[#000000]" />
           </button>
         </div>
       </header>
 
       {/* Main Scrollable Content */}
-      <main className="flex-1 overflow-y-auto overscroll-contain px-6 space-y-5 pt-4 pb-36 z-10">
+      <main className="flex-1 overflow-y-auto overscroll-contain px-5 space-y-4 pt-3 pb-36 z-10">
         
-        {/* Title + Pill Switcher */}
+        {/* Apple Native Segmented Control */}
         <div className="space-y-3">
           <div>
-            <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-stone-400">
-              TRAVEL & DATING PASSPORT
+            <span className="text-[11px] font-semibold tracking-wider uppercase text-[#8E8E93]">
+              Travel & Dating Passport
             </span>
-            <h1 className="text-[26px] font-extrabold text-[#1C1C1E] tracking-tight leading-tight">
+            <h1 className="text-[26px] font-bold text-[#000000] tracking-tight leading-tight">
               Member Passport
             </h1>
           </div>
 
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          <div className="bg-[#767680]/12 p-0.5 rounded-xl flex items-center">
             {[
               { id: 'pass', label: 'Boarding Pass' },
               { id: 'stamps', label: 'Trip Stamps' },
@@ -178,10 +178,10 @@ export default function PassportPage() {
                     hapticTap();
                     setActiveTab(pill.id as any);
                   }}
-                  className={`px-4 py-1.5 rounded-full text-[12px] font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                  className={`flex-1 py-1.5 rounded-lg text-[12px] font-semibold transition-all duration-150 cursor-pointer text-center ${
                     isSelected
-                      ? 'bg-[#1C1C1E] text-white shadow-xs'
-                      : 'bg-[#F4F4F5] text-[#1C1C1E] border border-stone-200 hover:bg-stone-200/80'
+                      ? 'bg-white text-[#000000] shadow-[0_1px_3px_rgba(0,0,0,0.12)]'
+                      : 'text-[#8E8E93] hover:text-[#000000]'
                   }`}
                 >
                   {pill.label}

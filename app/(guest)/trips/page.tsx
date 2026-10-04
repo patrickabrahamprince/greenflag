@@ -1087,17 +1087,17 @@ function TripsContent() {
   return (
     <div className="w-full h-full flex flex-col bg-white overflow-hidden max-w-md mx-auto select-none antialiased">
       
-      {/* ================= MARRIOTT BONVOY STYLE FROZEN EDITORIAL HEADER ================= */}
-      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md pt-safe-top pb-3 px-6 border-b border-stone-100">
+      {/* ================= APPLE DESIGN KIT FROZEN HEADER ================= */}
+      <header className="shrink-0 z-30 bg-white/85 backdrop-blur-2xl backdrop-saturate-180 pt-safe-top pb-3 px-5 border-b border-black/[0.08]">
         <div className="flex items-center justify-between mb-3">
           {/* User Avatar + Greeting */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <div className="relative">
-              <div className="w-10 h-10 rounded-full p-0.5 bg-[#1C1C1E] shadow-xs flex items-center justify-center">
+              <div className="w-9 h-9 rounded-full ring-1 ring-black/[0.08] shadow-2xs overflow-hidden flex items-center justify-center bg-stone-100">
                 <img
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&q=80"
                   alt="Profile"
-                  className="w-full h-full rounded-full object-cover"
+                  className="w-full h-full object-cover"
                   onError={(e) => {
                     e.currentTarget.src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Korina';
                   }}
@@ -1105,28 +1105,43 @@ function TripsContent() {
               </div>
             </div>
             <div>
-              <div className="text-[11px] font-medium text-stone-500">Welcome Back</div>
-              <div className="text-[15px] font-bold text-[#1C1C1E] tracking-tight">Korina Villanueva</div>
+              <div className="text-[11px] font-medium text-[#8E8E93] leading-none">Welcome Back</div>
+              <div className="text-[15px] font-bold text-[#000000] tracking-tight leading-tight mt-0.5">Korina Villanueva</div>
             </div>
           </div>
 
-          {/* Top Right Actions: 3D Map Toggle, Notifications & Plus Action Button */}
+          {/* Top Right: Apple Native Segmented Control + Plus Button */}
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                hapticTap();
-                setIs3DMapView(!is3DMapView);
-              }}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border text-xs font-semibold transition cursor-pointer ${
-                is3DMapView 
-                  ? 'bg-[#1C1C1E] text-white border-[#1C1C1E]'
-                  : 'bg-stone-50 text-[#1C1C1E] border-stone-200 hover:bg-stone-100'
-              }`}
-            >
-              <MapIcon className="w-3.5 h-3.5" />
-              <span>{is3DMapView ? 'Feed' : 'Map'}</span>
-            </button>
+            <div className="bg-[#767680]/12 p-0.5 rounded-lg flex items-center">
+              <button
+                type="button"
+                onClick={() => {
+                  hapticTap();
+                  setIs3DMapView(false);
+                }}
+                className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer ${
+                  !is3DMapView
+                    ? 'bg-white text-[#000000] shadow-[0_1px_3px_rgba(0,0,0,0.12)]'
+                    : 'text-[#8E8E93] hover:text-[#000000]'
+                }`}
+              >
+                Feed
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  hapticTap();
+                  setIs3DMapView(true);
+                }}
+                className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer ${
+                  is3DMapView
+                    ? 'bg-white text-[#000000] shadow-[0_1px_3px_rgba(0,0,0,0.12)]'
+                    : 'text-[#8E8E93] hover:text-[#000000]'
+                }`}
+              >
+                Map
+              </button>
+            </div>
 
             <button
               type="button"
@@ -1135,7 +1150,7 @@ function TripsContent() {
                 setActiveTab('create');
                 router.replace('/trips?tab=create');
               }}
-              className="w-8 h-8 rounded-full bg-[#1C1C1E] text-white flex items-center justify-center font-bold text-base shadow-sm hover:bg-black active:scale-95 transition cursor-pointer"
+              className="w-8 h-8 rounded-full bg-[#000000] text-white flex items-center justify-center font-bold text-base shadow-2xs hover:opacity-90 active:scale-95 transition cursor-pointer"
               aria-label="Create Plan"
             >
               +
@@ -1143,20 +1158,20 @@ function TripsContent() {
           </div>
         </div>
 
-        {/* Marriott Style "Where can we take you?" Search Bar */}
+        {/* Apple Style Search Field */}
         <div>
           <div
             onClick={() => {
               hapticTap();
               setShowLocationModal(true);
             }}
-            className="w-full bg-[#F4F4F5] hover:bg-stone-100 active:scale-[0.99] border border-stone-200 rounded-full px-4 py-3 flex items-center justify-between cursor-pointer transition shadow-2xs"
+            className="w-full bg-[#767680]/12 hover:bg-[#767680]/16 active:scale-[0.99] rounded-xl px-3.5 py-2.5 flex items-center justify-between cursor-pointer transition"
           >
-            <div className="flex items-center gap-2.5 text-stone-600">
-              <Search className="w-4 h-4 text-[#1C1C1E]" />
-              <span className="text-xs font-semibold text-[#1C1C1E]">Where can we take you?</span>
+            <div className="flex items-center gap-2 text-[#8E8E93]">
+              <Search className="w-4 h-4 text-[#8E8E93]" />
+              <span className="text-[13px] font-medium text-[#000000]">Where to next?</span>
             </div>
-            <span className="text-[11px] font-bold text-[#1C1C1E] bg-white px-3 py-1 rounded-full border border-stone-200 shadow-2xs truncate max-w-[140px]">
+            <span className="text-[11px] font-semibold text-[#000000] bg-white/90 px-2.5 py-0.5 rounded-lg shadow-2xs truncate max-w-[130px] border border-black/[0.04]">
               📍 {selectedLocation.name.split(',')[0]}
             </span>
           </div>

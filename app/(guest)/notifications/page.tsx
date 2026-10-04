@@ -293,13 +293,13 @@ export default function NotificationsPage() {
 
   return (
     <div className="w-full h-full flex flex-col bg-white overflow-hidden max-w-md mx-auto select-none antialiased">
-      {/* 100% Frozen Top Header */}
-      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md px-6 pt-safe-top pb-3 border-b border-stone-100">
+      {/* ================= APPLE DESIGN KIT FROZEN HEADER ================= */}
+      <header className="shrink-0 z-30 bg-white/85 backdrop-blur-2xl backdrop-saturate-180 px-5 pt-safe-top pb-3 border-b border-black/[0.08]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h1 className="font-display text-2xl font-extrabold text-stone-900 tracking-tight">Alerts</h1>
+            <h1 className="text-[26px] font-bold text-[#000000] tracking-tight">Alerts</h1>
             {unreadCount > 0 && (
-              <span className="text-xs bg-stone-100 text-stone-900 font-bold px-2.5 py-0.5 rounded-full border border-stone-200">
+              <span className="text-[11px] bg-[#000000] text-white font-bold px-2 py-0.5 rounded-full">
                 {unreadCount} new
               </span>
             )}
@@ -308,7 +308,7 @@ export default function NotificationsPage() {
             <button
               onClick={handleMarkAllRead}
               disabled={markingRead}
-              className="text-xs text-stone-600 hover:text-stone-900 active:scale-90 font-bold transition-all flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+              className="text-[12px] text-[#000000] active:scale-95 font-semibold transition-all flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
             >
               {markingRead && <Loader2 className="w-3 h-3 animate-spin" />}
               Mark all read
