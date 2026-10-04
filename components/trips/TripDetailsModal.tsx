@@ -141,7 +141,7 @@ export function TripDetailsModal({
       }}
       className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-md animate-fade-in"
     >
-      <div className="bg-[#FAF9F6] border border-stone-200/90 rounded-t-[36px] sm:rounded-[36px] max-w-xl w-full h-[90dvh] max-h-[90dvh] flex flex-col min-h-0 overflow-hidden shadow-2xl text-[#382A21]">
+      <div className="bg-white border border-stone-200 rounded-t-[36px] sm:rounded-[36px] max-w-xl w-full h-[90dvh] max-h-[90dvh] flex flex-col min-h-0 overflow-hidden shadow-2xl text-stone-900">
         
         {/* Destination Hero Banner */}
         <div className="relative h-44 sm:h-52 w-full shrink-0 overflow-hidden">
@@ -186,7 +186,7 @@ export function TripDetailsModal({
                 {trip.ladder_level === 3 ? 'Getaway Date (2+ Days)' : trip.ladder_level === 2 ? 'Day Date' : 'Micro Date (60-90m)'}
               </span>
               {trip.female_only && (
-                <span className="px-2.5 py-0.5 rounded-full bg-purple-600/90 text-white text-[10px] font-bold flex items-center gap-1">
+                <span className="px-2.5 py-0.5 rounded-full bg-stone-900/90 text-white text-[10px] font-bold flex items-center gap-1">
                   <Shield className="w-3 h-3" /> Female-Only
                 </span>
               )}
@@ -203,7 +203,7 @@ export function TripDetailsModal({
         </div>
 
         {/* Tab Navigation Pill Bar */}
-        <div className="px-5 pt-3 pb-1 bg-white border-b border-stone-200/80 flex gap-2">
+        <div className="px-5 pt-3 pb-1 bg-white border-b border-stone-200 flex gap-2 overflow-x-auto no-scrollbar">
           {[
             { id: 'itinerary', label: 'Itinerary & Stops' },
             { id: 'split', label: 'Cost Split (₹)' },
@@ -216,10 +216,10 @@ export function TripDetailsModal({
                 hapticTap();
                 setActiveTab(t.id as unknown as typeof activeTab);
               }}
-              className={`px-3 py-1.5 rounded-full text-xs font-extrabold transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer ${
                 activeTab === t.id
-                  ? 'bg-[#1D3B2A] text-white shadow-xs'
-                  : 'text-stone-500 hover:text-[#382A21] hover:bg-stone-100'
+                  ? 'bg-[#1C1C1E] text-white shadow-xs'
+                  : 'text-stone-500 hover:text-stone-900 hover:bg-stone-100'
               }`}
             >
               {t.label}
@@ -235,9 +235,9 @@ export function TripDetailsModal({
             <div className="space-y-4">
               
               {/* Host Passport Bar */}
-              <div className="p-4 bg-white border border-stone-200/90 rounded-[24px] flex items-center justify-between shadow-xs">
+              <div className="p-4 bg-stone-50 border border-stone-200 rounded-[24px] flex items-center justify-between shadow-xs">
                 <div className="flex items-center gap-3">
-                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-emerald-600 bg-stone-100 shrink-0">
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-stone-300 bg-stone-100 shrink-0">
                     {trip.host?.photos?.[0] ? (
                       <Image
                         src={trip.host.photos[0]}
@@ -247,21 +247,21 @@ export function TripDetailsModal({
                         className="object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#1D3B2A] font-extrabold text-base">
+                      <div className="w-full h-full flex items-center justify-center text-stone-900 font-extrabold text-base">
                         {trip.host?.name?.charAt(0) || 'H'}
                       </div>
                     )}
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="font-extrabold text-sm text-[#382A21]">{trip.host?.name || 'Verified Host'}</span>
+                      <span className="font-extrabold text-sm text-stone-900">{trip.host?.name || 'Verified Host'}</span>
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold flex items-center gap-0.5">
                         <Check className="w-3 h-3" /> Govt ID
                       </span>
                     </div>
                     <div className="flex items-center gap-2 mt-0.5 text-xs text-stone-500 font-bold">
-                      <span className="text-emerald-700 flex items-center gap-0.5">
-                        <Star className="w-3 h-3 fill-emerald-600 text-emerald-600" /> {trip.host_green_score || 4.9} Green Score
+                      <span className="text-stone-800 flex items-center gap-0.5">
+                        <Star className="w-3 h-3 fill-stone-900 text-stone-900" /> {trip.host_green_score || 4.9} Green Score
                       </span>
                       <span>•</span>
                       <span>18 Trips Hosted</span>
@@ -271,45 +271,45 @@ export function TripDetailsModal({
 
                 <div className="text-right">
                   <span className="text-[10px] uppercase font-black text-stone-400 block">Spots</span>
-                  <span className="text-xs font-extrabold text-emerald-700">
+                  <span className="text-xs font-extrabold text-stone-900">
                     {trip.spots_available} of {trip.spots_total} left
                   </span>
                 </div>
               </div>
 
               {/* Itinerary Steps */}
-              <div className="p-4 bg-white border border-stone-200/90 rounded-[24px] shadow-xs space-y-3">
-                <h4 className="text-xs font-black uppercase tracking-wider text-[#382A21]/70 flex items-center gap-1.5">
-                  <Navigation className="w-3.5 h-3.5 text-[#1D3B2A]" /> Planned Stops & Flow
+              <div className="p-4 bg-white border border-stone-200 rounded-[24px] shadow-xs space-y-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-stone-600 flex items-center gap-1.5">
+                  <Navigation className="w-3.5 h-3.5 text-stone-900" /> Planned Stops & Flow
                 </h4>
 
-                <div className="space-y-3 relative pl-4 border-l-2 border-emerald-600/30 ml-2">
+                <div className="space-y-3 relative pl-4 border-l-2 border-stone-200 ml-2">
                   <div className="relative">
-                    <span className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-emerald-600 ring-4 ring-emerald-100" />
-                    <div className="font-extrabold text-xs text-[#382A21]">Stop 1: Meeting & Chai / Coffee</div>
+                    <span className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-stone-900 ring-4 ring-stone-100" />
+                    <div className="font-extrabold text-xs text-stone-900">Stop 1: Meeting & Chai / Coffee</div>
                     <p className="text-[11px] text-stone-500 font-medium">Public meeting spot ({trip.destination}). Quick intros & morning brew.</p>
                   </div>
 
                   <div className="relative">
-                    <span className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-emerald-600 ring-4 ring-emerald-100" />
-                    <div className="font-extrabold text-xs text-[#382A21]">Stop 2: Main Activity / Viewpoint</div>
+                    <span className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-stone-900 ring-4 ring-stone-100" />
+                    <div className="font-extrabold text-xs text-stone-900">Stop 2: Main Activity / Viewpoint</div>
                     <p className="text-[11px] text-stone-500 font-medium">{trip.vibe} session, walking trail or scenic overlook.</p>
                   </div>
 
                   <div className="relative">
-                    <span className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-emerald-600 ring-4 ring-emerald-100" />
-                    <div className="font-extrabold text-xs text-[#382A21]">Stop 3: Wrap Up & Secret Spark</div>
+                    <span className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-stone-900 ring-4 ring-stone-100" />
+                    <div className="font-extrabold text-xs text-stone-900">Stop 3: Wrap Up & Secret Spark</div>
                     <p className="text-[11px] text-stone-500 font-medium">Split bills via UPI, return safely & rate your experience in app.</p>
                   </div>
                 </div>
               </div>
 
               {/* Description */}
-              <div className="p-4 bg-white border border-stone-200/90 rounded-[24px] shadow-xs">
-                <h4 className="text-xs font-black uppercase tracking-wider text-[#382A21]/70 mb-1.5">
+              <div className="p-4 bg-stone-50 border border-stone-200 rounded-[24px] shadow-xs">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-stone-600 mb-1.5">
                   About This Hangout
                 </h4>
-                <p className="text-xs text-[#382A21]/80 leading-relaxed font-medium">
+                <p className="text-xs text-stone-700 leading-relaxed font-medium">
                   {trip.description || `Relaxed ${trip.vibe} hangout at ${trip.destination}. Open to verified members!`}
                 </p>
               </div>
@@ -333,21 +333,21 @@ export function TripDetailsModal({
           {/* TAB 3: Q&A WALL */}
           {activeTab === 'qa' && (
             <div className="space-y-4">
-              <div className="p-4 bg-white border border-stone-200/90 rounded-[24px] shadow-xs space-y-3">
-                <h4 className="text-xs font-black uppercase tracking-wider text-[#382A21]/70">
+              <div className="p-4 bg-white border border-stone-200 rounded-[24px] shadow-xs space-y-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-stone-600">
                   Public Questions & Answers
                 </h4>
 
                 <div className="space-y-3">
                   {qaList.map((qa) => (
-                    <div key={qa.id} className="p-3 bg-stone-50 border border-stone-200/80 rounded-[18px] space-y-1.5">
+                    <div key={qa.id} className="p-3 bg-stone-50 border border-stone-200 rounded-[18px] space-y-1.5">
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="font-extrabold text-[#382A21]">{qa.user_name}</span>
+                        <span className="font-extrabold text-stone-900">{qa.user_name}</span>
                         <span className="text-stone-400 font-medium">{qa.created_at}</span>
                       </div>
                       <p className="text-xs font-bold text-stone-800">Q: {qa.question}</p>
                       {qa.answer && (
-                        <p className="text-xs text-emerald-900 bg-emerald-50 p-2 rounded-[12px] border border-emerald-200 font-medium">
+                        <p className="text-xs text-stone-900 bg-white p-2.5 rounded-[12px] border border-stone-200 font-medium">
                           <strong>Host:</strong> {qa.answer}
                         </p>
                       )}
@@ -362,12 +362,12 @@ export function TripDetailsModal({
                     value={newQuestion}
                     onChange={(e) => setNewQuestion(e.target.value)}
                     placeholder="Ask the host a question about timing, carpool..."
-                    className="flex-1 p-2.5 bg-stone-50 border border-stone-200 rounded-full text-xs font-bold text-[#382A21] focus:outline-none focus:border-[#1D3B2A]"
+                    className="flex-1 p-2.5 bg-stone-50 border border-stone-200 rounded-full text-xs font-bold text-stone-900 placeholder-stone-400 focus:outline-none focus:border-[#1C1C1E] focus:bg-white"
                   />
                   <button
                     type="button"
                     onClick={handlePostQuestion}
-                    className="p-2.5 bg-[#1D3B2A] text-white rounded-full hover:bg-[#2D5A3F] transition-all cursor-pointer"
+                    className="p-2.5 bg-[#1C1C1E] text-white rounded-full hover:bg-black transition-all cursor-pointer"
                   >
                     <Send className="w-4 h-4" />
                   </button>
@@ -379,12 +379,12 @@ export function TripDetailsModal({
           {/* TAB 4: SAFETY */}
           {activeTab === 'safety' && (
             <div className="space-y-3">
-              <div className="p-4 bg-emerald-50/60 border border-emerald-200 rounded-[24px] space-y-2">
-                <div className="flex items-center gap-2 text-emerald-900 font-extrabold text-xs">
-                  <Shield className="w-4 h-4 text-emerald-700" />
-                  <span>Apple 4.3 Verified Safety Framework</span>
+              <div className="p-4 bg-stone-50 border border-stone-200 rounded-[24px] space-y-2">
+                <div className="flex items-center gap-2 text-stone-900 font-extrabold text-xs">
+                  <Shield className="w-4 h-4 text-stone-900" />
+                  <span>Verified Safety Framework</span>
                 </div>
-                <ul className="text-xs text-emerald-950/80 space-y-1 font-medium">
+                <ul className="text-xs text-stone-700 space-y-1.5 font-medium">
                   <li>• <strong>No Ghosting Guarantee:</strong> Host has 2 hours to accept or request expires automatically.</li>
                   <li>• <strong>Public Place Enforcement:</strong> Level 1 Micro Dates are restricted to verified public venues.</li>
                   <li>• <strong>Govt ID + Face Match:</strong> All attendees are verified with Digilocker.</li>
@@ -393,17 +393,17 @@ export function TripDetailsModal({
               </div>
 
               <div className="p-4 bg-white border border-stone-200 rounded-[24px] shadow-xs space-y-2">
-                <h4 className="text-xs font-black uppercase tracking-wider text-[#382A21]/70">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-stone-600">
                   Host Badges
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  <span className="px-3 py-1 bg-amber-50 border border-amber-200 text-amber-900 rounded-full text-xs font-bold">
+                  <span className="px-3 py-1 bg-stone-100 border border-stone-200 text-stone-900 rounded-full text-xs font-bold">
                     ⏱️ On-Time 15x
                   </span>
                   <span className="px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-full text-xs font-bold">
                     🛡️ Safe Host (100% 5★)
                   </span>
-                  <span className="px-3 py-1 bg-blue-50 border border-blue-200 text-blue-900 rounded-full text-xs font-bold">
+                  <span className="px-3 py-1 bg-stone-100 border border-stone-200 text-stone-900 rounded-full text-xs font-bold">
                     🚗 Verified Car Owner
                   </span>
                 </div>
@@ -414,20 +414,20 @@ export function TripDetailsModal({
         </div>
 
         {/* Bottom CTA Bar */}
-        <div className="p-4 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-stone-200/80 bg-white shrink-0">
+        <div className="p-4 pb-[max(1.2rem,env(safe-area-inset-bottom))] border-t border-stone-200 bg-white shrink-0">
           {isHost ? (
             <button
               onClick={() => {
                 hapticTap();
                 onManageClick(trip);
               }}
-              className="w-full py-3.5 px-4 bg-[#1D3B2A] hover:bg-[#2D5A3F] active:scale-[0.99] text-white font-extrabold text-xs rounded-full flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+              className="w-full py-3.5 px-4 bg-[#1C1C1E] hover:bg-black active:scale-[0.99] text-white font-extrabold text-xs rounded-full flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
             >
-              <Users className="w-4 h-4 text-emerald-400" />
+              <Users className="w-4 h-4 text-stone-300" />
               <span>Manage Requests ({trip.requests_count || 0})</span>
             </button>
           ) : trip.user_request_status === 'pending' ? (
-            <div className="w-full py-3.5 px-4 bg-amber-50 border border-amber-200 text-amber-900 font-extrabold text-xs rounded-full text-center">
+            <div className="w-full py-3.5 px-4 bg-stone-100 border border-stone-200 text-stone-800 font-extrabold text-xs rounded-full text-center">
               Request Sent • Waiting for Host Review (Auto-expires in 2h)
             </div>
           ) : trip.user_request_status === 'accepted' ? (
@@ -438,7 +438,7 @@ export function TripDetailsModal({
           ) : showJoinSheet ? (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-extrabold text-[#382A21]">Select Join Intent:</span>
+                <span className="text-xs font-extrabold text-stone-900">Select Join Intent:</span>
                 <div className="flex gap-1.5">
                   <button
                     type="button"
@@ -446,7 +446,7 @@ export function TripDetailsModal({
                       hapticTap();
                       setJoinIntent('green');
                     }}
-                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
                       joinIntent === 'green'
                         ? 'bg-emerald-700 text-white'
                         : 'bg-stone-100 text-stone-700'
@@ -460,7 +460,7 @@ export function TripDetailsModal({
                       hapticTap();
                       setJoinIntent('pink');
                     }}
-                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
                       joinIntent === 'pink'
                         ? 'bg-pink-600 text-white'
                         : 'bg-stone-100 text-stone-700'
@@ -476,14 +476,14 @@ export function TripDetailsModal({
                 onChange={(e) => setJoinNote(e.target.value)}
                 placeholder="Introduce yourself & why you'd like to join (min 10 chars)..."
                 rows={2}
-                className="w-full p-3 bg-stone-50 border border-stone-200 rounded-[18px] text-xs font-medium text-[#382A21] focus:outline-none focus:border-[#1D3B2A]"
+                className="w-full p-3 bg-stone-50 border border-stone-200 rounded-[18px] text-xs font-medium text-stone-900 placeholder-stone-400 focus:outline-none focus:border-[#1C1C1E] focus:bg-white"
               />
 
               <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => setShowJoinSheet(false)}
-                  className="px-4 py-2.5 bg-stone-100 text-stone-700 rounded-full text-xs font-bold"
+                  className="px-4 py-2.5 bg-stone-100 text-stone-700 rounded-full text-xs font-bold cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -491,7 +491,7 @@ export function TripDetailsModal({
                   type="button"
                   onClick={handleSubmitJoinRequest}
                   disabled={submittingJoin}
-                  className="flex-1 py-2.5 bg-[#1D3B2A] hover:bg-[#2D5A3F] text-white rounded-full text-xs font-extrabold shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="flex-1 py-2.5 bg-[#1C1C1E] hover:bg-black text-white rounded-full text-xs font-extrabold shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <span>Send Request (2h Expiry)</span>
                   <ArrowRight className="w-4 h-4" />
@@ -504,7 +504,7 @@ export function TripDetailsModal({
                 hapticTap();
                 setShowJoinSheet(true);
               }}
-              className="w-full py-3.5 px-4 bg-[#1D3B2A] hover:bg-[#2D5A3F] active:scale-[0.99] text-white font-extrabold text-xs rounded-full flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+              className="w-full py-3.5 px-4 bg-[#1C1C1E] hover:bg-black active:scale-[0.99] text-white font-extrabold text-xs rounded-full flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
             >
               <Users className="w-4 h-4" />
               <span>Request to Join ({trip.spots_available} spot left • ₹{trip.budget_per_day || 0}/pax)</span>

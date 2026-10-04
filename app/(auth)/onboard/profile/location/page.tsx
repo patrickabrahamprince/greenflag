@@ -114,141 +114,145 @@ export default function ProfileLocationPage() {
   };
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-between px-5 pt-safe-top pb-safe-bottom bg-white text-[#1C1C1E]">
+    <div className="fixed inset-0 flex flex-col bg-white text-[#1C1C1E] overflow-hidden">
       <OnboardingBackground image="/onboarding/location.jpg" />
       
-      <div>
-        {/* Header navigation */}
+      {/* Frozen Top Header */}
+      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md pt-safe-top pb-3 px-5 border-b border-stone-100/80">
         <div className="max-w-md mx-auto w-full flex items-center justify-between mb-2">
           <button
             onClick={() => router.push('/onboard/profile')}
-            className="text-[#1C1C1E] bg-[#F4F4F5] hover:bg-stone-200 border border-stone-200 shadow-2xs active:scale-90 transition-all p-2.5 rounded-full"
+            className="text-[#1C1C1E] bg-[#F4F4F5] hover:bg-stone-200 border border-stone-200 shadow-2xs active:scale-90 transition-all p-2.5 rounded-full cursor-pointer"
           >
             <ArrowLeft size={18} />
           </button>
         </div>
 
-        <div className="max-w-md mx-auto w-full mb-3">
+        <div className="max-w-md mx-auto w-full">
           <StepDots current={2} total={6} />
         </div>
-      </div>
+      </header>
 
-      {/* Main Location Card at the Top */}
-      <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
-        <div className="bg-[#F9FAFB] border border-stone-200 rounded-3xl p-6 shadow-2xs space-y-4">
-          
-          <div className="flex items-center justify-between">
-            <div className="w-10 h-10 rounded-2xl bg-[#1C1C1E] text-white flex items-center justify-center font-bold text-lg">
-              📍
-            </div>
-
-            {/* Locate Me GPS Button */}
-            <button
-              type="button"
-              onClick={detectLocation}
-              disabled={gpsDetecting}
-              className="px-3.5 py-2 rounded-full bg-[#1C1C1E] hover:bg-black text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs active:scale-95 transition cursor-pointer"
-            >
-              {gpsDetecting ? (
-                <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Locating...</span>
-                </>
-              ) : (
-                <>
-                  <Navigation className="w-3.5 h-3.5" />
-                  <span>Locate Me</span>
-                </>
-              )}
-            </button>
-          </div>
-
-          <div>
-            <h1 className="font-display text-2xl font-extrabold text-[#1C1C1E] tracking-tight mb-1">
-              Where are you located?
-            </h1>
-            <p className="text-stone-500 text-xs font-medium">
-              We match you with road trips, getaways, and singles starting near you.
-            </p>
-          </div>
-
-          {/* Searched / Found Location Feedback */}
-          {searchedDetail && (
-            <div className="bg-white rounded-2xl px-3.5 py-2.5 border border-stone-200 flex items-center justify-between text-xs text-[#1C1C1E] font-semibold animate-fade-in">
-              <div className="flex items-center gap-2 truncate">
-                <span className="w-2 h-2 rounded-full bg-[#1C1C1E]" />
-                <span className="truncate">{searchedDetail}</span>
+      {/* Fluid Scrollable Body */}
+      <main className="flex-1 overflow-y-auto overscroll-contain px-5 py-4 flex flex-col justify-between pb-safe-bottom">
+        <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full py-2">
+          <div className="bg-[#F9FAFB] border border-stone-200 rounded-3xl p-6 shadow-2xs space-y-4">
+            
+            <div className="flex items-center justify-between">
+              <div className="w-10 h-10 rounded-2xl bg-[#1C1C1E] text-white flex items-center justify-center font-bold text-lg">
+                📍
               </div>
-              <span className="text-[10px] bg-stone-100 px-2 py-0.5 rounded-full border border-stone-200 font-bold shrink-0 ml-2">
-                ✓ Verified
-              </span>
+
+              {/* Locate Me GPS Button */}
+              <button
+                type="button"
+                onClick={detectLocation}
+                disabled={gpsDetecting}
+                className="px-3.5 py-2 rounded-full bg-[#1C1C1E] hover:bg-black text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs active:scale-95 transition cursor-pointer"
+              >
+                {gpsDetecting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Locating...</span>
+                  </>
+                ) : (
+                  <>
+                    <Navigation className="w-3.5 h-3.5" />
+                    <span>Locate Me</span>
+                  </>
+                )}
+              </button>
             </div>
-          )}
 
-          {/* City Selection dropdown */}
-          <div className="space-y-1.5">
-            <select
-              value={cityValue}
-              onChange={(e) => { 
-                setCityValue(e.target.value); 
-                setSearchedDetail(`Searched: ${e.target.value} (Manual)`);
-                setError(''); 
-              }}
-              data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-city' : undefined}
-              className={`w-full rounded-2xl px-4 py-3.5 text-base font-bold text-[#1C1C1E] bg-white border transition-all duration-200 focus:outline-none focus:border-[#1C1C1E] ${
-                error ? 'border-red-500 bg-red-50/30' : 'border-stone-200'
-              }`}
-            >
-              <option value="">Select your city</option>
-              {INDIAN_CITIES.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Popular City Quick Chips */}
-          <div className="pt-2 border-t border-stone-200/80">
-            <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block mb-2">Popular Cities</span>
-            <div className="flex flex-wrap gap-1.5">
-              {INDIAN_CITIES.slice(0, 8).map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => {
-                    hapticTap();
-                    setCityValue(c);
-                    setSearchedDetail(`Searched: ${c} (Manual)`);
-                    setError('');
-                  }}
-                  className={`px-3 py-1 rounded-full text-xs font-semibold transition active:scale-95 cursor-pointer ${
-                    cityValue === c
-                      ? 'bg-[#1C1C1E] text-white font-bold shadow-2xs'
-                      : 'bg-white text-stone-700 border border-stone-200 hover:border-stone-300'
-                  }`}
-                >
-                  {c}
-                </button>
-              ))}
+            <div>
+              <h1 className="font-display text-2xl font-extrabold text-[#1C1C1E] tracking-tight mb-1">
+                Where are you located?
+              </h1>
+              <p className="text-stone-500 text-xs font-medium">
+                We match you with road trips, getaways, and singles starting near you.
+              </p>
             </div>
-          </div>
 
-          {/* Privacy Primer */}
-          <div className="flex items-center gap-1.5 text-[10px] text-stone-500 pt-1">
-            <Lock className="w-3.5 h-3.5 text-stone-400 shrink-0" />
-            <span>Privacy: Exact GPS coordinates are never displayed to other users.</span>
-          </div>
+            {/* Searched / Found Location Feedback */}
+            {searchedDetail && (
+              <div className="bg-white rounded-2xl px-3.5 py-2.5 border border-stone-200 flex items-center justify-between text-xs text-[#1C1C1E] font-semibold animate-fade-in">
+                <div className="flex items-center gap-2 truncate">
+                  <span className="w-2 h-2 rounded-full bg-[#1C1C1E]" />
+                  <span className="truncate">{searchedDetail}</span>
+                </div>
+                <span className="text-[10px] bg-stone-100 px-2 py-0.5 rounded-full border border-stone-200 font-bold shrink-0 ml-2">
+                  ✓ Verified
+                </span>
+              </div>
+            )}
 
+            {/* City Selection dropdown */}
+            <div className="space-y-1.5">
+              <select
+                value={cityValue}
+                onChange={(e) => { 
+                  setCityValue(e.target.value); 
+                  setSearchedDetail(`Searched: ${e.target.value} (Manual)`);
+                  setError(''); 
+                }}
+                data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-city' : undefined}
+                className={`w-full rounded-2xl px-4 py-3.5 text-base font-bold text-[#1C1C1E] bg-white border transition-all duration-200 focus:outline-none focus:border-[#1C1C1E] ${
+                  error ? 'border-red-500 bg-red-50/30' : 'border-stone-200'
+                }`}
+              >
+                <option value="">Select your city</option>
+                {INDIAN_CITIES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Popular City Quick Chips */}
+            <div className="pt-2 border-t border-stone-200/80">
+              <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block mb-2">Popular Cities</span>
+              <div className="flex flex-wrap gap-1.5">
+                {INDIAN_CITIES.slice(0, 8).map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => {
+                      hapticTap();
+                      setCityValue(c);
+                      setSearchedDetail(`Searched: ${c} (Manual)`);
+                      setError('');
+                    }}
+                    className={`px-3 py-1 rounded-full text-xs font-semibold transition active:scale-95 cursor-pointer ${
+                      cityValue === c
+                        ? 'bg-[#1C1C1E] text-white font-bold shadow-2xs'
+                        : 'bg-white text-stone-700 border border-stone-200 hover:border-stone-300'
+                    }`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Privacy Primer */}
+            <div className="flex items-center gap-1.5 text-[10px] text-stone-500 pt-1">
+              <Lock className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+              <span>Privacy: Exact GPS coordinates are never displayed to other users.</span>
+            </div>
+
+          </div>
         </div>
-      </div>
 
-      <button
-        onClick={handleContinue}
-        data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-location-continue' : undefined}
-        className="w-full py-4 max-w-md mx-auto rounded-full bg-[#1C1C1E] hover:bg-black text-white font-bold text-xs flex items-center justify-center gap-2 active:scale-[0.98] transition shadow-sm mb-2"
-      >
-        Continue
-        <ArrowRight className="w-4 h-4" />
-      </button>
+        <div className="max-w-md mx-auto w-full pt-2">
+          <button
+            onClick={handleContinue}
+            data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-location-continue' : undefined}
+            className="w-full py-4 rounded-full bg-[#1C1C1E] hover:bg-black text-white font-bold text-xs flex items-center justify-center gap-2 active:scale-[0.98] transition shadow-sm cursor-pointer"
+          >
+            Continue
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+      </main>
     </div>
   );
 }

@@ -261,10 +261,10 @@ export function CreateTripModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
-      <div className="w-full max-w-lg bg-[#FAF9F6] border border-stone-200/90 rounded-t-[36px] sm:rounded-[36px] shadow-2xl max-h-[92vh] flex flex-col overflow-hidden text-[#382A21]">
+      <div className="w-full max-w-lg bg-white border border-stone-200 rounded-t-[36px] sm:rounded-[36px] shadow-2xl max-h-[92vh] flex flex-col overflow-hidden text-stone-900">
         
         {/* Top Header */}
-        <div className="p-4 sm:p-5 border-b border-stone-200/80 flex items-center justify-between bg-white/80 backdrop-blur-md">
+        <div className="p-4 sm:p-5 border-b border-stone-200/80 flex items-center justify-between bg-white/95 backdrop-blur-md">
           <div className="flex items-center gap-2">
             {currentScreen === 'build' && (
               <button
@@ -273,19 +273,19 @@ export function CreateTripModal({
                   hapticTap();
                   setCurrentScreen('type');
                 }}
-                className="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-700 mr-1"
+                className="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-700 mr-1 cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
             )}
             <div>
-              <h2 className="font-display text-lg font-extrabold text-[#382A21]">
+              <h2 className="font-display text-lg font-extrabold text-stone-900">
                 {currentScreen === 'type' && 'Choose Trip Trust Ladder'}
                 {currentScreen === 'build' && 'Build Your Travel Plan'}
                 {currentScreen === 'success' && 'Plan Published! 🎉'}
               </h2>
               <p className="text-[11px] font-medium text-stone-500">
-                {currentScreen === 'type' && 'Verified Apple 4.3 Safe Dating Progression'}
+                {currentScreen === 'type' && 'Verified Safe Dating Progression'}
                 {currentScreen === 'build' && 'Transparent Cost Split & Safe Public Venues'}
                 {currentScreen === 'success' && 'Live on MapKit near your location'}
               </p>
@@ -309,10 +309,10 @@ export function CreateTripModal({
           {/* ================= SCREEN 2A: CHOOSE TYPE ================= */}
           {currentScreen === 'type' && (
             <div className="space-y-4">
-              <div className="p-3.5 bg-stone-100/80 border border-stone-200 rounded-[20px] flex items-start gap-2.5">
-                <Shield className="w-4 h-4 text-[#1D3B2A] shrink-0 mt-0.5" />
-                <p className="text-xs text-[#382A21]/80 font-medium leading-relaxed">
-                  <strong>Trust-First Progression:</strong> To keep everyone safe and compliant with Apple 4.3 safety guidelines, all first dates begin with Level 1 Public Micro Dates.
+              <div className="p-3.5 bg-stone-50 border border-stone-200 rounded-[20px] flex items-start gap-2.5">
+                <Shield className="w-4 h-4 text-stone-900 shrink-0 mt-0.5" />
+                <p className="text-xs text-stone-700 font-medium leading-relaxed">
+                  <strong>Trust-First Progression:</strong> To keep everyone safe, all first dates begin with Level 1 Public Micro Dates.
                 </p>
               </div>
 
@@ -323,31 +323,31 @@ export function CreateTripModal({
                     key={item.level}
                     type="button"
                     onClick={() => handleSelectLadder(item.level)}
-                    className={`w-full text-left p-5 rounded-[28px] border-2 bg-gradient-to-br ${item.bgGradient} bg-white ${item.border} shadow-sm hover:shadow-md transition-all active:scale-[0.98] group relative cursor-pointer`}
+                    className="w-full text-left p-5 rounded-[28px] border border-stone-200 bg-white hover:border-stone-400 shadow-sm hover:shadow-md transition-all active:scale-[0.98] group relative cursor-pointer"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-2xl bg-white border border-stone-200/90 shadow-xs flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                        <div className="w-12 h-12 rounded-2xl bg-stone-50 border border-stone-200 shadow-xs flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
                           {item.icon}
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <h3 className="font-display font-extrabold text-base text-[#382A21]">
+                            <h3 className="font-display font-extrabold text-base text-stone-900">
                               {item.title}
                             </h3>
                           </div>
-                          <span className={`inline-block mt-0.5 text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${item.tagBg}`}>
+                          <span className="inline-block mt-0.5 text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border bg-stone-100 text-stone-800 border-stone-200">
                             {item.duration} • {item.expiry}
                           </span>
                         </div>
                       </div>
 
-                      <div className="w-8 h-8 rounded-full bg-[#1D3B2A] text-white flex items-center justify-center shadow-xs group-hover:translate-x-0.5 transition-transform">
+                      <div className="w-8 h-8 rounded-full bg-[#1C1C1E] text-white flex items-center justify-center shadow-xs group-hover:translate-x-0.5 transition-transform">
                         <ArrowRight className="w-4 h-4" />
                       </div>
                     </div>
 
-                    <p className="text-xs text-[#382A21]/75 font-medium mt-3 leading-relaxed">
+                    <p className="text-xs text-stone-600 font-medium mt-3 leading-relaxed">
                       {item.description}
                     </p>
                   </button>
@@ -362,7 +362,7 @@ export function CreateTripModal({
               
               {/* Flag Color Intent Selector */}
               <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-[#382A21]/70 mb-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">
                   Trip Intent & Flag
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -372,10 +372,10 @@ export function CreateTripModal({
                       hapticTap();
                       setFlagColor('green');
                     }}
-                    className={`p-3.5 rounded-[22px] border-2 flex items-center gap-2.5 transition-all text-left ${
+                    className={`p-3.5 rounded-[22px] border-2 flex items-center gap-2.5 transition-all text-left cursor-pointer ${
                       flagColor === 'green'
                         ? 'border-emerald-600 bg-emerald-50/70 text-emerald-950 shadow-xs'
-                        : 'border-stone-200 bg-white text-[#382A21]/70'
+                        : 'border-stone-200 bg-white text-stone-600'
                     }`}
                   >
                     <span className="text-xl">🟢</span>
@@ -392,10 +392,10 @@ export function CreateTripModal({
                       setFlagColor('pink');
                       setGroupSize(1);
                     }}
-                    className={`p-3.5 rounded-[22px] border-2 flex items-center gap-2.5 transition-all text-left ${
+                    className={`p-3.5 rounded-[22px] border-2 flex items-center gap-2.5 transition-all text-left cursor-pointer ${
                       flagColor === 'pink'
                         ? 'border-pink-500 bg-pink-50/70 text-pink-950 shadow-xs'
-                        : 'border-stone-200 bg-white text-[#382A21]/70'
+                        : 'border-stone-200 bg-white text-stone-600'
                     }`}
                   >
                     <span className="text-xl">💗</span>
@@ -409,11 +409,11 @@ export function CreateTripModal({
 
               {/* Destination / Public Place Search */}
               <div className="relative">
-                <label className="block text-xs font-black uppercase tracking-wider text-[#382A21]/70 mb-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">
                   Meeting Spot / Destination {flagColor === 'pink' && <span className="text-pink-600 font-bold">(Public Place Enforced)</span>}
                 </label>
                 <div className="relative">
-                  <MapPin className="w-4 h-4 text-[#1D3B2A] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <MapPin className="w-4 h-4 text-stone-700 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
                     value={destination}
@@ -422,7 +422,7 @@ export function CreateTripModal({
                       setShowPlaceDropdown(true);
                     }}
                     placeholder="Search café, rooftop, trail or public spot..."
-                    className="w-full pl-10 pr-4 py-3 bg-white border border-stone-200/90 rounded-[20px] text-xs font-bold text-[#382A21] placeholder-stone-400 focus:outline-none focus:border-[#1D3B2A] shadow-xs"
+                    className="w-full pl-10 pr-4 py-3 bg-stone-50 border border-stone-200 rounded-[20px] text-xs font-bold text-stone-900 placeholder-stone-400 focus:outline-none focus:border-[#1C1C1E] focus:bg-white shadow-xs"
                   />
                 </div>
 
@@ -437,7 +437,7 @@ export function CreateTripModal({
                         setDestination(p);
                         setShowPlaceDropdown(false);
                       }}
-                      className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors border border-stone-200/60"
+                      className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors border border-stone-200 cursor-pointer"
                     >
                       📍 {p.split(',')[0]}
                     </button>
@@ -448,7 +448,7 @@ export function CreateTripModal({
               {/* Date & Time */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-wider text-[#382A21]/70 mb-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">
                     When
                   </label>
                   <div className="relative">
@@ -457,13 +457,13 @@ export function CreateTripModal({
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="w-full pl-10 pr-3 py-2.5 bg-white border border-stone-200/90 rounded-[18px] text-xs font-bold text-[#382A21] focus:outline-none focus:border-[#1D3B2A]"
+                      className="w-full pl-10 pr-3 py-2.5 bg-stone-50 border border-stone-200 rounded-[18px] text-xs font-bold text-stone-900 focus:outline-none focus:border-[#1C1C1E] focus:bg-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-wider text-[#382A21]/70 mb-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">
                     Start Time
                   </label>
                   <div className="relative">
@@ -472,7 +472,7 @@ export function CreateTripModal({
                       type="time"
                       value={startTime}
                       onChange={(e) => setStartTime(e.target.value)}
-                      className="w-full pl-10 pr-3 py-2.5 bg-white border border-stone-200/90 rounded-[18px] text-xs font-bold text-[#382A21] focus:outline-none focus:border-[#1D3B2A]"
+                      className="w-full pl-10 pr-3 py-2.5 bg-stone-50 border border-stone-200 rounded-[18px] text-xs font-bold text-stone-900 focus:outline-none focus:border-[#1C1C1E] focus:bg-white"
                     />
                   </div>
                 </div>
@@ -481,7 +481,7 @@ export function CreateTripModal({
               {/* Group Size & Female Only */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-wider text-[#382A21]/70 mb-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">
                     Group Size
                   </label>
                   {flagColor === 'pink' ? (
@@ -498,9 +498,9 @@ export function CreateTripModal({
                             hapticTap();
                             setGroupSize(num);
                           }}
-                          className={`flex-1 py-1.5 rounded-[14px] text-xs font-extrabold transition-all ${
+                          className={`flex-1 py-1.5 rounded-[14px] text-xs font-extrabold transition-all cursor-pointer ${
                             groupSize === num
-                              ? 'bg-[#1D3B2A] text-white shadow-xs'
+                              ? 'bg-[#1C1C1E] text-white shadow-xs'
                               : 'text-stone-600 hover:bg-stone-100'
                           }`}
                         >
@@ -512,7 +512,7 @@ export function CreateTripModal({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-wider text-[#382A21]/70 mb-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">
                     Safety Circle
                   </label>
                   <button
@@ -521,13 +521,13 @@ export function CreateTripModal({
                       hapticTap();
                       setIsWomenOnly(!isWomenOnly);
                     }}
-                    className={`w-full py-2.5 px-3 rounded-[18px] border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                    className={`w-full py-2.5 px-3 rounded-[18px] border text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                       isWomenOnly
-                        ? 'bg-purple-100 border-purple-300 text-purple-900 shadow-xs'
+                        ? 'bg-stone-900 text-white border-stone-900 shadow-xs'
                         : 'bg-white border-stone-200 text-stone-600 hover:bg-stone-50'
                     }`}
                   >
-                    <Shield className="w-3.5 h-3.5 text-purple-600" />
+                    <Shield className="w-3.5 h-3.5" />
                     <span>{isWomenOnly ? '👩 Women-Only' : 'Open to All'}</span>
                   </button>
                 </div>
@@ -536,7 +536,7 @@ export function CreateTripModal({
               {/* Vibe Tags (Select 2) */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs font-black uppercase tracking-wider text-[#382A21]/70">
+                  <label className="text-xs font-bold uppercase tracking-wider text-stone-600">
                     Vibe Tags (Select 2)
                   </label>
                   <span className="text-[10px] font-bold text-stone-500">
@@ -553,7 +553,7 @@ export function CreateTripModal({
                         onClick={() => toggleVibe(v.id)}
                         className={`px-3.5 py-2 rounded-full text-xs font-extrabold flex items-center gap-1.5 border transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-[#1D3B2A] text-white border-[#1D3B2A] shadow-xs'
+                            ? 'bg-[#1C1C1E] text-white border-[#1C1C1E] shadow-xs'
                             : 'bg-white text-stone-700 border-stone-200 hover:bg-stone-50'
                         }`}
                       >
@@ -565,53 +565,53 @@ export function CreateTripModal({
                 </div>
               </div>
 
-              {/* Cost Split Calculator Box (Apple 4.3 Utility) */}
-              <div className="p-4 bg-emerald-50/50 border border-emerald-200/80 rounded-[24px] space-y-3">
+              {/* Cost Split Calculator Box */}
+              <div className="p-4 bg-stone-50 border border-stone-200 rounded-[24px] space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <IndianRupee className="w-4 h-4 text-emerald-700" />
-                    <span className="font-display font-extrabold text-xs text-emerald-950">
+                    <IndianRupee className="w-4 h-4 text-stone-800" />
+                    <span className="font-display font-extrabold text-xs text-stone-900">
                       Cost Split Calculator
                     </span>
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-stone-700 bg-stone-200/80 px-2 py-0.5 rounded-full">
                     Auto-Calculated
                   </span>
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="bg-white p-2.5 rounded-[16px] border border-emerald-200/60 shadow-xs">
+                  <div className="bg-white p-2.5 rounded-[16px] border border-stone-200 shadow-xs">
                     <span className="text-[10px] font-bold text-stone-500 block">Fuel / Travel</span>
                     <input
                       type="number"
                       value={fuelCost}
                       onChange={(e) => setFuelCost(Number(e.target.value) || 0)}
-                      className="w-full text-center font-extrabold text-xs text-[#382A21] focus:outline-none"
+                      className="w-full text-center font-extrabold text-xs text-stone-900 focus:outline-none"
                     />
                   </div>
-                  <div className="bg-white p-2.5 rounded-[16px] border border-emerald-200/60 shadow-xs">
+                  <div className="bg-white p-2.5 rounded-[16px] border border-stone-200 shadow-xs">
                     <span className="text-[10px] font-bold text-stone-500 block">Food / Drinks</span>
                     <input
                       type="number"
                       value={foodCost}
                       onChange={(e) => setFoodCost(Number(e.target.value) || 0)}
-                      className="w-full text-center font-extrabold text-xs text-[#382A21] focus:outline-none"
+                      className="w-full text-center font-extrabold text-xs text-stone-900 focus:outline-none"
                     />
                   </div>
-                  <div className="bg-white p-2.5 rounded-[16px] border border-emerald-200/60 shadow-xs">
+                  <div className="bg-white p-2.5 rounded-[16px] border border-stone-200 shadow-xs">
                     <span className="text-[10px] font-bold text-stone-500 block">Stay (if any)</span>
                     <input
                       type="number"
                       value={stayCost}
                       onChange={(e) => setStayCost(Number(e.target.value) || 0)}
-                      className="w-full text-center font-extrabold text-xs text-[#382A21] focus:outline-none"
+                      className="w-full text-center font-extrabold text-xs text-stone-900 focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between pt-1 text-xs">
-                  <span className="font-bold text-emerald-900">Calculated Per Person:</span>
-                  <span className="font-extrabold text-sm text-[#1D3B2A] bg-white px-3 py-1 rounded-full border border-emerald-200 shadow-xs">
+                  <span className="font-bold text-stone-700">Calculated Per Person:</span>
+                  <span className="font-extrabold text-sm text-[#1C1C1E] bg-white px-3 py-1 rounded-full border border-stone-200 shadow-xs">
                     ₹{perPersonCost} / person
                   </span>
                 </div>
@@ -619,7 +619,7 @@ export function CreateTripModal({
 
               {/* Languages */}
               <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-[#382A21]/70 mb-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">
                   Comfort Languages
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -630,9 +630,9 @@ export function CreateTripModal({
                         key={lang}
                         type="button"
                         onClick={() => toggleLanguage(lang)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all ${
+                        className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-stone-800 text-white border-stone-800'
+                            ? 'bg-[#1C1C1E] text-white border-[#1C1C1E]'
                             : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50'
                         }`}
                       >
@@ -645,7 +645,7 @@ export function CreateTripModal({
 
               {/* Custom Note */}
               <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-[#382A21]/70 mb-2">
+                <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">
                   Short Note / Plan Description
                 </label>
                 <textarea
@@ -653,7 +653,7 @@ export function CreateTripModal({
                   onChange={(e) => setCustomNote(e.target.value)}
                   placeholder="e.g., Grabbing specialty pour-overs & working on side projects at Third Wave Indiranagar."
                   rows={2}
-                  className="w-full p-3 bg-white border border-stone-200/90 rounded-[20px] text-xs font-medium text-[#382A21] placeholder-stone-400 focus:outline-none focus:border-[#1D3B2A]"
+                  className="w-full p-3 bg-stone-50 border border-stone-200 rounded-[20px] text-xs font-medium text-stone-900 placeholder-stone-400 focus:outline-none focus:border-[#1C1C1E] focus:bg-white"
                 />
               </div>
 
@@ -668,7 +668,7 @@ export function CreateTripModal({
               </div>
 
               <div>
-                <h3 className="font-display font-extrabold text-xl text-[#382A21]">
+                <h3 className="font-display font-extrabold text-xl text-stone-900">
                   Your Plan is Live!
                 </h3>
                 <p className="text-xs text-stone-600 font-medium mt-1">
@@ -677,12 +677,12 @@ export function CreateTripModal({
               </div>
 
               {/* Plan Card Preview */}
-              <div className="p-4 bg-white border border-stone-200 rounded-[24px] text-left shadow-xs space-y-2">
+              <div className="p-4 bg-stone-50 border border-stone-200 rounded-[24px] text-left shadow-xs space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-extrabold text-[#382A21] flex items-center gap-1.5">
+                  <span className="text-xs font-extrabold text-stone-900 flex items-center gap-1.5">
                     {flagColor === 'pink' ? '💗 Pink Flag' : '🟢 Green Flag'} • {destination}
                   </span>
-                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-stone-900 text-white">
                     Live
                   </span>
                 </div>
@@ -692,14 +692,14 @@ export function CreateTripModal({
               </div>
 
               {/* Boost Upsell Box */}
-              <div className="p-4 bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-amber-500/5 border-2 border-amber-400/80 rounded-[24px] text-left space-y-3 shadow-sm">
+              <div className="p-4 bg-stone-50 border border-stone-200 rounded-[24px] text-left space-y-3 shadow-sm">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+                    <div className="w-8 h-8 rounded-xl bg-[#1C1C1E] text-white flex items-center justify-center font-bold text-sm shadow-xs">
                       🚀
                     </div>
                     <div>
-                      <h4 className="font-display font-extrabold text-sm text-[#382A21]">
+                      <h4 className="font-display font-extrabold text-sm text-stone-900">
                         Boost Your Plan
                       </h4>
                       <p className="text-[11px] font-medium text-stone-600">
@@ -707,7 +707,7 @@ export function CreateTripModal({
                       </p>
                     </div>
                   </div>
-                  <span className="font-extrabold text-xs text-amber-900 bg-amber-200/80 px-2.5 py-1 rounded-full">
+                  <span className="font-extrabold text-xs text-stone-900 bg-stone-200 px-2.5 py-1 rounded-full">
                     ₹49 only
                   </span>
                 </div>
@@ -716,10 +716,10 @@ export function CreateTripModal({
                   type="button"
                   onClick={handleBoost}
                   disabled={boosted}
-                  className={`w-full py-3 rounded-full font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md ${
+                  className={`w-full py-3 rounded-full font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                     boosted
                       ? 'bg-emerald-700 text-white'
-                      : 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white active:scale-95'
+                      : 'bg-[#1C1C1E] hover:bg-black text-white active:scale-95'
                   }`}
                 >
                   <Zap className="w-4 h-4" />
@@ -739,7 +739,7 @@ export function CreateTripModal({
               <button
                 type="button"
                 onClick={() => handleSelectLadder(1)}
-                className="w-full py-3.5 bg-[#1D3B2A] hover:bg-[#2D5A3F] text-white font-extrabold text-xs rounded-full shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3.5 bg-[#1C1C1E] hover:bg-black text-white font-extrabold text-xs rounded-full shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Continue to Plan Details</span>
                 <ArrowRight className="w-4 h-4" />
@@ -752,7 +752,7 @@ export function CreateTripModal({
               <button
                 type="button"
                 onClick={() => setCurrentScreen('type')}
-                className="px-5 py-3.5 bg-stone-100 hover:bg-stone-200 text-[#382A21] font-bold text-xs rounded-full transition-all"
+                className="px-5 py-3.5 bg-stone-100 hover:bg-stone-200 text-stone-900 font-bold text-xs rounded-full transition-all cursor-pointer"
               >
                 Back
               </button>
@@ -760,7 +760,7 @@ export function CreateTripModal({
                 type="button"
                 onClick={handlePublishTrip}
                 disabled={isSubmitting}
-                className="flex-1 py-3.5 bg-[#1D3B2A] hover:bg-[#2D5A3F] text-white font-extrabold text-xs rounded-full shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                className="flex-1 py-3.5 bg-[#1C1C1E] hover:bg-black text-white font-extrabold text-xs rounded-full shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -781,7 +781,7 @@ export function CreateTripModal({
                 hapticTap();
                 onClose();
               }}
-              className="w-full py-3.5 bg-[#1D3B2A] hover:bg-[#2D5A3F] text-white font-extrabold text-xs rounded-full shadow-md active:scale-95 transition-all"
+              className="w-full py-3.5 bg-[#1C1C1E] hover:bg-black text-white font-extrabold text-xs rounded-full shadow-md active:scale-95 transition-all cursor-pointer"
             >
               Done / View My Trips
             </button>

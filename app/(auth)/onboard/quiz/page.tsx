@@ -212,7 +212,7 @@ export default function QuizPage() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex items-center justify-center bg-[#FAF9F6]">
+      <div className="min-h-dvh flex items-center justify-center bg-white">
         <LoadingLogo />
       </div>
     );
@@ -220,21 +220,21 @@ export default function QuizPage() {
 
   if (reveal) {
     return (
-      <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center px-5 bg-[#FAF9F6] text-center">
+      <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center px-5 bg-white text-center">
         <OnboardingBackground image={reveal.image} />
-        <div className="max-w-sm mx-auto w-full bg-white/95 backdrop-blur-md border border-stone-200/90 rounded-[36px] p-8 shadow-md">
-          <div className="w-20 h-20 rounded-3xl bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto mb-5 shadow-sm">
-            <Sparkles className="w-10 h-10 text-emerald-700" />
+        <div className="max-w-sm mx-auto w-full bg-white border border-stone-200 rounded-[36px] p-8 shadow-md">
+          <div className="w-20 h-20 rounded-3xl bg-stone-100 text-stone-900 flex items-center justify-center mx-auto mb-5 shadow-xs">
+            <Sparkles className="w-10 h-10 text-stone-900" />
           </div>
-          <span className="text-emerald-800 font-bold text-xs uppercase tracking-widest bg-emerald-100/90 px-3.5 py-1 rounded-full inline-block mb-3">
+          <span className="text-stone-900 font-bold text-xs uppercase tracking-widest bg-stone-100 px-3.5 py-1 rounded-full inline-block mb-3 border border-stone-200">
             {name ? `${name}'s Travel Archetype` : 'Your Travel Archetype'}
           </span>
-          <h1 className="font-display text-3xl font-extrabold text-[#382A21] mb-3">{reveal.title}</h1>
-          <p className="text-stone-600 text-sm leading-relaxed mb-8 font-medium">{reveal.description}</p>
+          <h1 className="font-display text-3xl font-extrabold text-stone-900 mb-3">{reveal.title}</h1>
+          <p className="text-stone-600 text-sm leading-relaxed mb-8 font-normal">{reveal.description}</p>
           <button
             onClick={() => goTo('/onboard/interests', '/onboarding/interests.jpg')}
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'quiz-reveal-continue' : undefined}
-            className="btn-primary w-full py-4 font-bold text-sm active:scale-95 transition-transform shadow-lg"
+            className="w-full py-4 bg-[#1C1C1E] hover:bg-black text-white font-bold text-sm rounded-full active:scale-95 transition-transform shadow-lg cursor-pointer"
           >
             Continue to Interests
           </button>
@@ -258,85 +258,91 @@ export default function QuizPage() {
     : "There's no wrong answer — just pick what sounds fun.";
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-5 pt-safe-top pb-safe-bottom bg-[#FAF9F6]">
+    <div className="fixed inset-0 flex flex-col bg-white text-stone-900 overflow-hidden">
       <OnboardingBackground image={QUESTION_IMAGES[currentIdx] || '/onboarding/quiz.jpg'} />
       
-      <div className="max-w-md mx-auto w-full flex items-center justify-between mb-2">
-        <button
-          onClick={handleBack}
-          className="text-[#382A21] bg-white/80 hover:bg-white border border-stone-200/80 shadow-xs active:scale-90 transition-all p-2.5 rounded-full"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <span className="text-xs font-bold text-emerald-800 bg-emerald-100/90 px-3 py-1 rounded-full shadow-2xs">
-          Question {currentIdx + 1} of {QUIZ_QUESTIONS.length}
-        </span>
-      </div>
-
-      <div className="max-w-md mx-auto w-full mb-4">
-        {/* Progress Bar */}
-        <div className="w-full bg-stone-200/80 h-2 rounded-full overflow-hidden shadow-inner">
-          <div
-            className="bg-[#1D3B2A] h-full transition-all duration-300 ease-out rounded-full"
-            style={{ width: `${progressPercent}%` }}
-          />
+      {/* Frozen Top Header */}
+      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md pt-safe-top pb-3 px-5 border-b border-stone-100/80">
+        <div className="max-w-md mx-auto w-full flex items-center justify-between mb-2">
+          <button
+            onClick={handleBack}
+            className="text-stone-900 bg-stone-100 hover:bg-stone-200 border border-stone-200 shadow-xs active:scale-90 transition-all p-2.5 rounded-full cursor-pointer"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <span className="text-xs font-bold text-stone-900 bg-stone-100 px-3 py-1 rounded-full border border-stone-200">
+            Question {currentIdx + 1} of {QUIZ_QUESTIONS.length}
+          </span>
         </div>
-      </div>
 
-      <div className="max-w-md mx-auto w-full flex-1 flex flex-col justify-center pb-4">
-        <div className="bg-white/90 backdrop-blur-md border border-stone-200/90 rounded-[32px] p-6 shadow-sm mb-4">
-          <h2 className="text-2xl font-display font-extrabold text-[#382A21] mb-1.5 leading-snug">
-            {currentQuestion.question}
-          </h2>
-          <p className="text-stone-500 text-xs font-medium mb-5">Choose what matches your vibe</p>
-
-          {/* Options Grid */}
-          <div className="space-y-2.5">
-            {currentQuestion.options.map((option, optionIdx) => {
-              const isSelected = currentAnswer === option;
-              return (
-                <button
-                  key={option}
-                  onClick={() => { hapticTap(); handleOptionSelect(option); }}
-                  data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? `quiz-option-${optionIdx}` : undefined}
-                  className={`w-full py-4 px-4 rounded-2xl text-left text-sm transition-all duration-200 flex items-center justify-between border-2 ${
-                    isSelected
-                      ? 'bg-[#1D3B2A] border-[#1D3B2A] text-white font-bold shadow-md scale-[1.01]'
-                      : 'bg-stone-50/80 border-stone-200/90 text-[#382A21] font-semibold hover:border-emerald-400 active:scale-[0.98]'
-                  }`}
-                >
-                  <span className="pr-2">{option}</span>
-                  {isSelected && <CheckCircle2 className="w-5 h-5 text-white shrink-0" />}
-                </button>
-              );
-            })}
+        <div className="max-w-md mx-auto w-full">
+          {/* Progress Bar */}
+          <div className="w-full bg-stone-100 h-2 rounded-full overflow-hidden">
+            <div
+              className="bg-[#1C1C1E] h-full transition-all duration-300 ease-out rounded-full"
+              style={{ width: `${progressPercent}%` }}
+            />
           </div>
         </div>
+      </header>
 
-        {/* Action Button */}
-        <button
-          onClick={handleNext}
-          disabled={saving || !currentAnswer}
-          data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'quiz-next' : undefined}
-          className="btn-primary w-full py-4 font-bold text-sm active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-lg disabled:opacity-40"
-        >
-          {saving ? (
-            <Loader2 className="w-5 h-5 animate-spin text-white" />
-          ) : currentIdx === QUIZ_QUESTIONS.length - 1 ? (
-            <>
-              Complete Quiz <CheckCircle2 size={18} />
-            </>
-          ) : (
-            <>
-              Next Question <ArrowRight size={18} />
-            </>
-          )}
-        </button>
+      {/* Fluid Scrollable Body */}
+      <main className="flex-1 overflow-y-auto overscroll-contain px-5 py-4 pb-safe-bottom">
+        <div className="max-w-md mx-auto w-full py-2">
+          <div className="bg-white border border-stone-200 rounded-[32px] p-5 sm:p-6 shadow-xs mb-4">
+            <h2 className="text-2xl font-display font-extrabold text-stone-900 mb-1.5 leading-snug">
+              {currentQuestion.question}
+            </h2>
+            <p className="text-stone-500 text-xs font-medium mb-5">Choose what matches your vibe</p>
 
-        <p className="text-center text-xs text-stone-500 font-semibold mt-3 animate-fade-in" key={currentIdx}>
-          {encouragement}
-        </p>
-      </div>
+            {/* Options Grid */}
+            <div className="space-y-2.5">
+              {currentQuestion.options.map((option, optionIdx) => {
+                const isSelected = currentAnswer === option;
+                return (
+                  <button
+                    key={option}
+                    onClick={() => { hapticTap(); handleOptionSelect(option); }}
+                    data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? `quiz-option-${optionIdx}` : undefined}
+                    className={`w-full py-4 px-4 rounded-2xl text-left text-sm transition-all duration-200 flex items-center justify-between border cursor-pointer ${
+                      isSelected
+                        ? 'bg-[#1C1C1E] border-[#1C1C1E] text-white font-bold shadow-md scale-[1.01]'
+                        : 'bg-stone-50 border-stone-200 text-stone-900 font-semibold hover:border-stone-400 active:scale-[0.98]'
+                    }`}
+                  >
+                    <span className="pr-2">{option}</span>
+                    {isSelected && <CheckCircle2 className="w-5 h-5 text-white shrink-0" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Action Button */}
+          <button
+            onClick={handleNext}
+            disabled={saving || !currentAnswer}
+            data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'quiz-next' : undefined}
+            className="w-full py-4 bg-[#1C1C1E] hover:bg-black text-white font-bold text-sm rounded-full active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-lg disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+          >
+            {saving ? (
+              <Loader2 className="w-5 h-5 animate-spin text-white" />
+            ) : currentIdx === QUIZ_QUESTIONS.length - 1 ? (
+              <>
+                Complete Quiz <CheckCircle2 size={18} />
+              </>
+            ) : (
+              <>
+                Next Question <ArrowRight size={18} />
+              </>
+            )}
+          </button>
+
+          <p className="text-center text-xs text-stone-500 font-semibold mt-3 animate-fade-in" key={currentIdx}>
+            {encouragement}
+          </p>
+        </div>
+      </main>
     </div>
   );
 }

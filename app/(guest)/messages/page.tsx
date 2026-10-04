@@ -166,7 +166,7 @@ function ChatList({ userId, supabase }: ChatListPageProps) {
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
-      className="flex-1 overflow-y-auto overscroll-none scrollbar-hide pb-28"
+      className="flex-1 overflow-y-auto overscroll-contain pb-36"
     >
       <div
         className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
@@ -199,10 +199,10 @@ export default function MessagesListPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen w-full bg-white text-[#1C1C1E] font-sans max-w-md mx-auto relative overflow-hidden flex flex-col pb-safe-bottom">
+    <div className="w-full h-full flex flex-col bg-white overflow-hidden max-w-md mx-auto select-none antialiased">
       
-      {/* Header */}
-      <header className="relative z-10 px-6 pt-[max(20px,env(safe-area-inset-top,20px))] pb-3 flex items-center justify-between border-b border-stone-100">
+      {/* 100% Frozen Fixed Top Header */}
+      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md pt-safe-top pb-3 px-6 flex items-center justify-between border-b border-stone-100">
         <div>
           <h1 className="text-[22px] font-[800] text-[#1C1C1E] tracking-tight">Messages</h1>
           <p className="text-[12px] font-semibold text-stone-500">Trip buddies & conversations</p>
@@ -221,7 +221,10 @@ export default function MessagesListPage() {
         </button>
       </header>
 
-      <ChatList userId={user.id} supabase={supabase} persona={user.persona} />
+      {/* Main Scrollable Chat List */}
+      <main className="flex-1 overflow-hidden flex flex-col">
+        <ChatList userId={user.id} supabase={supabase} persona={user.persona} />
+      </main>
     </div>
   );
 }

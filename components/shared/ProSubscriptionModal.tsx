@@ -58,22 +58,22 @@ export function ProSubscriptionModal({ open, isOpen, onClose, defaultPlan = 'mon
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-[#FAF9F6] border-2 border-stone-200 rounded-[36px] p-6 shadow-2xl no-scrollbar">
+      <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-white border border-stone-200 rounded-[36px] p-6 shadow-2xl no-scrollbar">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 w-8 h-8 rounded-full bg-stone-200/80 hover:bg-stone-300 text-[#382A21] flex items-center justify-center active:scale-90"
+          className="absolute top-5 right-5 w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-900 flex items-center justify-center active:scale-90 cursor-pointer"
         >
           <X size={18} />
         </button>
 
         {/* Hero Header */}
         <div className="text-center mb-6 pt-2">
-          <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-amber-400 to-amber-500 text-stone-900 flex items-center justify-center mx-auto mb-3 shadow-md shadow-amber-500/20">
+          <div className="w-16 h-16 rounded-3xl bg-stone-900 text-white flex items-center justify-center mx-auto mb-3 shadow-md">
             <Crown className="w-8 h-8" />
           </div>
-          <h2 className="font-display text-3xl font-extrabold text-[#382A21]">GreenFlag PRO</h2>
-          <p className="text-xs font-semibold text-stone-600 mt-1 max-w-[280px] mx-auto">
+          <h2 className="font-display text-3xl font-extrabold text-stone-900">GreenFlag PRO</h2>
+          <p className="text-xs font-semibold text-stone-500 mt-1 max-w-[280px] mx-auto">
             Unlimited travel dates, see who sparked you, and map-top priority.
           </p>
         </div>
@@ -89,18 +89,18 @@ export function ProSubscriptionModal({ open, isOpen, onClose, defaultPlan = 'mon
                   hapticTap();
                   setSelectedPlan(tier.id as any);
                 }}
-                className={`relative rounded-2xl p-3 text-center border-2 transition-all active:scale-95 flex flex-col justify-between min-h-[110px] ${
+                className={`relative rounded-2xl p-3 text-center border-2 transition-all active:scale-95 flex flex-col justify-between min-h-[110px] cursor-pointer ${
                   isSelected
-                    ? 'bg-[#1D3B2A] text-white border-[#1D3B2A] shadow-md'
-                    : 'bg-white text-[#382A21] border-stone-200/90 hover:border-stone-400'
+                    ? 'bg-[#1C1C1E] text-white border-[#1C1C1E] shadow-md'
+                    : 'bg-stone-50 text-stone-900 border-stone-200 hover:border-stone-400'
                 }`}
               >
                 {tier.badge && (
                   <span
                     className={`absolute -top-2.5 left-1/2 -translate-x-1/2 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full whitespace-nowrap ${
                       isSelected
-                        ? 'bg-amber-400 text-stone-900'
-                        : 'bg-stone-100 text-stone-700 border border-stone-200'
+                        ? 'bg-white text-stone-900 shadow-xs'
+                        : 'bg-stone-200 text-stone-700 border border-stone-300'
                     }`}
                   >
                     {tier.badge}
@@ -111,7 +111,7 @@ export function ProSubscriptionModal({ open, isOpen, onClose, defaultPlan = 'mon
                   <span className="text-lg font-extrabold block leading-none">{tier.price}</span>
                   <span className="text-[10px] opacity-70">{tier.period}</span>
                 </div>
-                <div className={`w-4 h-4 rounded-full mx-auto flex items-center justify-center ${isSelected ? 'bg-white text-[#1D3B2A]' : 'border border-stone-300'}`}>
+                <div className={`w-4 h-4 rounded-full mx-auto flex items-center justify-center ${isSelected ? 'bg-white text-[#1C1C1E]' : 'border border-stone-300'}`}>
                   {isSelected && <Check size={10} strokeWidth={3} />}
                 </div>
               </button>
@@ -120,12 +120,12 @@ export function ProSubscriptionModal({ open, isOpen, onClose, defaultPlan = 'mon
         </div>
 
         {/* Pro Features List */}
-        <div className="bg-white rounded-2xl p-4 border border-stone-200 mb-5 space-y-3 shadow-xs">
+        <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200 mb-5 space-y-3 shadow-xs">
           {PRO_FEATURES.map((feat) => (
             <div key={feat.title} className="flex items-start gap-2.5">
               <span className="text-lg shrink-0 mt-0.5">{feat.icon}</span>
               <div>
-                <h4 className="text-xs font-bold text-[#382A21]">{feat.title}</h4>
+                <h4 className="text-xs font-bold text-stone-900">{feat.title}</h4>
                 <p className="text-[11px] font-medium text-stone-500 leading-tight">{feat.desc}</p>
               </div>
             </div>
@@ -136,27 +136,27 @@ export function ProSubscriptionModal({ open, isOpen, onClose, defaultPlan = 'mon
         <button
           onClick={handleSubscribe}
           disabled={purchasing}
-          className="btn-primary w-full py-4 text-sm font-bold active:scale-95 shadow-lg flex items-center justify-center gap-2 mb-4"
+          className="w-full py-4 bg-[#1C1C1E] hover:bg-black text-white rounded-full text-sm font-bold active:scale-95 shadow-lg flex items-center justify-center gap-2 mb-4 cursor-pointer"
         >
           {purchasing ? 'Activating via Apple IAP...' : `Get PRO (${selectedPlan === 'monthly' ? '₹249/mo' : selectedPlan === 'weekly' ? '₹99/wk' : '₹1,499/yr'})`}
           <ArrowRight size={16} />
         </button>
 
         {/* Standalone Boosts Section */}
-        <div className="border-t border-stone-200/80 pt-4">
-          <h4 className="text-xs font-bold text-[#382A21] uppercase tracking-wider mb-2.5">
-            Or Buy Individual Boosts (Micro-IAP)
+        <div className="border-t border-stone-200 pt-4">
+          <h4 className="text-xs font-bold text-stone-600 uppercase tracking-wider mb-2.5">
+            Or Buy Individual Boosts
           </h4>
           <div className="grid grid-cols-3 gap-2">
             {STANDALONE_BOOSTS.map((b) => (
               <button
                 key={b.id}
                 onClick={() => handleBuyBoost(b.name, b.price)}
-                className="bg-stone-50 hover:bg-emerald-50/70 border border-stone-200 rounded-xl p-2.5 text-center active:scale-95 transition-all shadow-2xs"
+                className="bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-xl p-2.5 text-center active:scale-95 transition-all cursor-pointer"
               >
                 <span className="text-lg block mb-0.5">{b.icon}</span>
-                <span className="text-[11px] font-bold text-[#382A21] block leading-tight truncate">{b.name}</span>
-                <span className="text-xs font-extrabold text-emerald-800">{b.price}</span>
+                <span className="text-[11px] font-bold text-stone-900 block leading-tight truncate">{b.name}</span>
+                <span className="text-xs font-extrabold text-stone-900">{b.price}</span>
               </button>
             ))}
           </div>

@@ -39,50 +39,56 @@ export function InterestsStepScreen({
   children,
 }: InterestsStepScreenProps) {
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-6 pt-safe-top bg-[#FAF9F6]">
+    <div className="fixed inset-0 flex flex-col bg-white overflow-hidden isolate">
       <OnboardingBackground image={image} />
       
-      <div className="flex items-center justify-between mt-2 mb-4 shrink-0 max-w-md mx-auto w-full">
-        <button
-          onClick={onBack}
-          className="text-[#382A21] bg-white/80 hover:bg-white border border-stone-200/80 shadow-xs active:scale-90 transition-all p-2 rounded-full"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <button
-          onClick={onSkip}
-          disabled={skipLoading}
-          className="px-3.5 py-1.5 rounded-full bg-white/80 border border-stone-200/80 shadow-xs text-xs font-bold tracking-wider uppercase text-stone-600 hover:text-[#382A21] active:scale-90 transition-all"
-        >
-          Skip
-        </button>
-      </div>
+      {/* 100% Frozen Fixed Top Header */}
+      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md pt-safe-top pb-3 px-6 border-b border-stone-100/80">
+        <div className="flex items-center justify-between mb-2 max-w-md mx-auto w-full">
+          <button
+            onClick={onBack}
+            className="text-stone-900 bg-stone-100 hover:bg-stone-200 border border-stone-200 shadow-xs active:scale-90 transition-all p-2 rounded-full cursor-pointer"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <button
+            onClick={onSkip}
+            disabled={skipLoading}
+            className="px-3.5 py-1.5 rounded-full bg-stone-100 border border-stone-200 shadow-xs text-xs font-bold tracking-wider uppercase text-stone-600 hover:text-stone-900 active:scale-90 transition-all cursor-pointer"
+          >
+            Skip
+          </button>
+        </div>
 
-      <div className="max-w-md mx-auto w-full shrink-0">
-        <StepDots current={step} total={total} />
-      </div>
+        <div className="max-w-md mx-auto w-full">
+          <StepDots current={step} total={total} />
+        </div>
+      </header>
 
-      <div className="flex-1 overflow-y-auto overscroll-none max-w-md mx-auto w-full pb-32">
+      {/* Smooth Scrollable Body */}
+      <main className="flex-1 overflow-y-auto overscroll-contain max-w-md mx-auto w-full px-6 py-4 pb-36">
         {children}
-      </div>
+      </main>
 
+      {/* Fixed Bottom Action Container */}
       <div
-        className="fixed inset-x-0 z-20 px-6 pt-4 pb-6 bg-gradient-to-t from-[#FAF9F6] via-[#FAF9F6]/95 to-transparent pointer-events-auto"
-        style={{ bottom: 'calc(max(0.5rem, env(safe-area-inset-bottom)) + var(--kb-inset, 0px))' }}
+        className="fixed inset-x-0 bottom-0 z-30 px-6 pt-3 pb-safe-bottom bg-gradient-to-t from-white via-white/95 to-transparent pointer-events-none"
       >
-        <button
-          onClick={onNext}
-          disabled={nextLoading}
-          data-testid={nextTestId}
-          className="btn-primary w-full max-w-md mx-auto active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg"
-        >
-          {nextLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
-            <>
-              {nextLabel}
-              <ArrowRight className="w-4 h-4" />
-            </>
-          )}
-        </button>
+        <div className="max-w-md mx-auto w-full pb-4 pointer-events-auto">
+          <button
+            onClick={onNext}
+            disabled={nextLoading}
+            data-testid={nextTestId}
+            className="w-full py-4 bg-[#1C1C1E] hover:bg-black text-white font-bold rounded-full active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+          >
+            {nextLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+              <>
+                {nextLabel}
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -109,10 +109,10 @@ export default function PassportPage() {
   const displayCity = user?.city || 'Bangalore, India';
 
   return (
-    <div className="min-h-screen w-full bg-white text-[#1C1C1E] font-sans max-w-md mx-auto relative overflow-hidden flex flex-col pb-36 select-none antialiased">
+    <div className="w-full h-full flex flex-col bg-white overflow-hidden max-w-md mx-auto select-none antialiased">
       
-      {/* ================= EDITORIAL TOP HEADER ================= */}
-      <header className="px-6 pt-[max(16px,env(safe-area-inset-top,16px))] pb-3 sticky top-0 z-30 flex items-center justify-between bg-white/95 backdrop-blur-md border-b border-stone-100">
+      {/* ================= 100% FROZEN EDITORIAL TOP HEADER ================= */}
+      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md pt-safe-top pb-3 px-6 flex items-center justify-between border-b border-stone-100">
         {/* User Avatar + Greeting */}
         <div className="flex items-center gap-3">
           <div className="relative">
@@ -149,8 +149,8 @@ export default function PassportPage() {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="px-6 space-y-5 pt-4 z-10">
+      {/* Main Scrollable Content */}
+      <main className="flex-1 overflow-y-auto overscroll-contain px-6 space-y-5 pt-4 pb-36 z-10">
         
         {/* Title + Pill Switcher */}
         <div className="space-y-3">

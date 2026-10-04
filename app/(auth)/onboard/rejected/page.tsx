@@ -58,19 +58,19 @@ export default function RejectedApplicationPage() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex items-center justify-center bg-[#FAF9F6]">
+      <div className="min-h-dvh flex items-center justify-center bg-white">
         <LoadingLogo />
       </div>
     );
   }
 
   return (
-    <div className="w-full animate-fade-in min-h-dvh flex flex-col justify-center items-center px-5 text-center bg-[#FAF9F6]">
+    <div className="w-full animate-fade-in min-h-dvh flex flex-col justify-center items-center px-5 text-center bg-white">
       <div className="absolute top-safe-top right-4">
         <button
           onClick={handleSignOut}
           disabled={signingOut}
-          className="text-xs font-bold text-stone-500 hover:text-red-600 flex items-center gap-1.5 transition-colors disabled:opacity-50 bg-white/80 border border-stone-200 px-3 py-1.5 rounded-full shadow-xs"
+          className="text-xs font-bold text-stone-500 hover:text-stone-900 flex items-center gap-1.5 transition-colors disabled:opacity-50 bg-white/80 border border-stone-200 px-3 py-1.5 rounded-full shadow-xs"
         >
           {signingOut ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <LogOut className="w-3.5 h-3.5" />}
           Sign Out
@@ -78,18 +78,18 @@ export default function RejectedApplicationPage() {
       </div>
 
       <div className="max-w-sm mx-auto w-full bg-white/95 backdrop-blur-md border border-stone-200/90 rounded-[36px] p-8 shadow-md">
-        <div className="w-16 h-16 rounded-3xl bg-rose-100 text-rose-600 flex items-center justify-center mb-5 mx-auto shadow-xs">
-          <XCircle className="w-8 h-8 text-rose-600" />
+        <div className="w-16 h-16 rounded-3xl bg-stone-100 text-stone-900 flex items-center justify-center mb-5 mx-auto shadow-xs border border-stone-200">
+          <XCircle className="w-8 h-8 text-stone-900" />
         </div>
 
-        <h1 className="font-display text-2xl font-extrabold text-[#382A21] mb-2">
+        <h1 className="font-display text-2xl font-extrabold text-stone-900 mb-2">
           Profile Needs Update
         </h1>
 
         {reason && (
-          <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-4 mb-5 text-left">
-            <p className="text-amber-800 text-[11px] font-bold uppercase tracking-wider mb-1">Host Feedback</p>
-            <p className="text-[#382A21] text-xs leading-relaxed font-medium">{reason}</p>
+          <div className="bg-stone-50 border border-stone-200 rounded-2xl p-4 mb-5 text-left">
+            <p className="text-stone-500 text-[11px] font-bold uppercase tracking-wider mb-1">Host Feedback</p>
+            <p className="text-stone-900 text-xs leading-relaxed font-medium">{reason}</p>
           </div>
         )}
 
@@ -100,7 +100,7 @@ export default function RejectedApplicationPage() {
         <button
           onClick={handleRestart}
           disabled={restarting}
-          className="btn-primary w-full flex items-center justify-center gap-2 py-3.5 shadow-lg"
+          className="w-full py-3.5 flex items-center justify-center gap-2 rounded-full bg-[#1C1C1E] text-white font-semibold hover:bg-black active:scale-[0.98] transition-transform shadow-lg disabled:opacity-50"
         >
           {restarting ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
           Update & Resubmit

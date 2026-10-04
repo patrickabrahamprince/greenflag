@@ -263,84 +263,90 @@ export default function ProfilePhotosPage() {
   };
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-5 pt-safe-top pb-safe-bottom bg-[#FAF9F6]">
+    <div className="fixed inset-0 flex flex-col bg-white text-stone-900 overflow-hidden">
       <OnboardingBackground image="/onboarding/hero.jpg" />
       
-      <div className="max-w-md mx-auto w-full flex items-center justify-between mb-2">
-        <button
-          onClick={() => router.push('/onboard/profile/teasers')}
-          className="text-[#382A21] bg-white/80 hover:bg-white border border-stone-200/80 shadow-xs active:scale-90 transition-all p-2.5 rounded-full"
-        >
-          <ArrowLeft size={20} />
-        </button>
-      </div>
-
-      <div className="max-w-md mx-auto w-full">
-        <StepDots current={6} total={6} />
-      </div>
-
-      <div className="max-w-md mx-auto w-full flex-1 flex flex-col pb-4 animate-fade-in">
-        <div className="bg-white/90 backdrop-blur-md border border-stone-200/90 rounded-[32px] p-7 shadow-sm">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center mb-4 font-bold text-xl">
-            ✨
-          </div>
-          <h1 className="font-display text-3xl font-extrabold text-[#382A21] mb-2">Show your best self</h1>
-          <p className="text-stone-600 text-sm leading-relaxed font-medium mb-6">
-            Real, recent photos — this is your first impression when joining or hosting adventures.
-          </p>
-
-          <PhotoUploadSlots
-            photos={photos}
-            maxPhotos={REQUIRED_PHOTOS}
-            onAdd={handlePhotoAdd}
-            onRemove={handlePhotoRemove}
-            onReorder={handlePhotoReorder}
-            error={error}
-          />
-          {compressing && (
-            <p className="text-xs text-emerald-800 font-semibold mt-2 flex items-center gap-1.5">
-              <Loader2 className="w-3.5 h-3.5 animate-spin" /> Optimizing photo...
-            </p>
-          )}
-
+      {/* Frozen Top Header */}
+      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md pt-safe-top pb-3 px-5 border-b border-stone-100/80">
+        <div className="max-w-md mx-auto w-full flex items-center justify-between mb-2">
           <button
-            onClick={handleContinue}
-            disabled={loading || compressing || checkingFace}
-            data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'submit-profile' : undefined}
-            className="btn-primary w-full mt-6 active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg"
+            onClick={() => router.push('/onboard/profile/teasers')}
+            className="text-stone-900 bg-stone-100 hover:bg-stone-200 border border-stone-200 shadow-xs active:scale-90 transition-all p-2.5 rounded-full cursor-pointer"
           >
-            {checkingFace ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Checking photos...
-              </>
-            ) : loading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                {uploadedCount < photoFiles.length
-                  ? `Uploading ${uploadedCount}/${photoFiles.length}...`
-                  : 'Finishing up...'}
-              </>
-            ) : (
-              <>
-                Save & Continue
-                <ArrowRight className="w-4 h-4" />
-              </>
-            )}
+            <ArrowLeft size={20} />
           </button>
         </div>
-      </div>
+
+        <div className="max-w-md mx-auto w-full">
+          <StepDots current={6} total={6} />
+        </div>
+      </header>
+
+      {/* Fluid Scrollable Body */}
+      <main className="flex-1 overflow-y-auto overscroll-contain px-5 py-4 pb-safe-bottom">
+        <div className="max-w-md mx-auto w-full py-2 pb-6 animate-fade-in">
+          <div className="bg-white border border-stone-200 rounded-[32px] p-6 sm:p-7 shadow-xs">
+            <div className="w-12 h-12 rounded-2xl bg-stone-100 text-stone-900 flex items-center justify-center mb-4 font-bold text-xl">
+              ✨
+            </div>
+            <h1 className="font-display text-3xl font-extrabold text-stone-900 mb-2">Show your best self</h1>
+            <p className="text-stone-500 text-sm leading-relaxed font-normal mb-6">
+              Real, recent photos — this is your first impression when joining or hosting adventures.
+            </p>
+
+            <PhotoUploadSlots
+              photos={photos}
+              maxPhotos={REQUIRED_PHOTOS}
+              onAdd={handlePhotoAdd}
+              onRemove={handlePhotoRemove}
+              onReorder={handlePhotoReorder}
+              error={error}
+            />
+            {compressing && (
+              <p className="text-xs text-stone-700 font-semibold mt-2 flex items-center gap-1.5">
+                <Loader2 className="w-3.5 h-3.5 animate-spin" /> Optimizing photo...
+              </p>
+            )}
+
+            <button
+              onClick={handleContinue}
+              disabled={loading || compressing || checkingFace}
+              data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'submit-profile' : undefined}
+              className="w-full py-4 mt-6 bg-[#1C1C1E] hover:bg-black text-white font-bold text-sm rounded-full active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+            >
+              {checkingFace ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Checking photos...
+                </>
+              ) : loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  {uploadedCount < photoFiles.length
+                    ? `Uploading ${uploadedCount}/${photoFiles.length}...`
+                    : 'Finishing up...'}
+                </>
+              ) : (
+                <>
+                  Save & Continue
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </main>
 
       <BottomSheet open={showFaceNudge} onClose={() => setShowFaceNudge(false)}>
         <div className="text-center pb-6">
-          <div className="w-16 h-16 rounded-3xl bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto mb-4 shadow-sm">
-            <Camera size={30} className="text-emerald-800" />
+          <div className="w-16 h-16 rounded-3xl bg-stone-100 text-stone-900 flex items-center justify-center mx-auto mb-4 shadow-sm">
+            <Camera size={30} className="text-stone-900" />
           </div>
-          <h2 className="font-display text-2xl font-bold text-[#382A21] mb-2">Clear Face Photo Required</h2>
-          <p className="text-stone-600 text-sm leading-relaxed mb-6 font-medium">
+          <h2 className="font-display text-2xl font-bold text-stone-900 mb-2">Clear Face Photo Required</h2>
+          <p className="text-stone-600 text-sm leading-relaxed mb-6 font-normal">
             To keep our travel community safe and verify all members, please make sure at least one photo shows your face clearly.
           </p>
-          <button onClick={() => setShowFaceNudge(false)} className="btn-primary w-full py-4 shadow-lg">
+          <button onClick={() => setShowFaceNudge(false)} className="w-full py-4 bg-[#1C1C1E] hover:bg-black text-white font-bold rounded-full shadow-lg cursor-pointer">
             Got it, let&apos;s upload
           </button>
         </div>

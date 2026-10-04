@@ -11,8 +11,8 @@ export function StepDots({ current, total }: StepDotsProps) {
           key={i}
           className={`h-1.5 rounded-full transition-all duration-300 ${
             i < current
-              ? 'w-7 bg-[#1D3B2A] shadow-xs'
-              : 'w-2 bg-stone-300/80'
+              ? 'w-7 bg-[#1C1C1E]'
+              : 'w-2 bg-stone-200'
           }`}
         />
       ))}

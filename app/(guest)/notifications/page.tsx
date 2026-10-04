@@ -292,13 +292,14 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="h-[calc(100dvh-5rem)] screen-gradient flex flex-col">
-      <div className="max-w-app mx-auto w-full px-6 pt-safe-top">
-        <div className="flex items-center justify-between mb-6 pt-4">
+    <div className="w-full h-full flex flex-col bg-white overflow-hidden max-w-md mx-auto select-none antialiased">
+      {/* 100% Frozen Top Header */}
+      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md px-6 pt-safe-top pb-3 border-b border-stone-100">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h1 className="font-display text-2xl text-ink">Alerts</h1>
+            <h1 className="font-display text-2xl font-extrabold text-stone-900 tracking-tight">Alerts</h1>
             {unreadCount > 0 && (
-              <span className="text-xs bg-gold/20 text-gold px-2 py-0.5 rounded-full">
+              <span className="text-xs bg-stone-100 text-stone-900 font-bold px-2.5 py-0.5 rounded-full border border-stone-200">
                 {unreadCount} new
               </span>
             )}
@@ -307,14 +308,14 @@ export default function NotificationsPage() {
             <button
               onClick={handleMarkAllRead}
               disabled={markingRead}
-              className="text-xs text-gold hover:text-gold-light active:scale-90 transition-all flex items-center gap-1.5 disabled:opacity-50"
+              className="text-xs text-stone-600 hover:text-stone-900 active:scale-90 font-bold transition-all flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
             >
               {markingRead && <Loader2 className="w-3 h-3 animate-spin" />}
               Mark all read
             </button>
           )}
         </div>
-      </div>
+      </header>
 
       <div
         ref={scrollRef}
@@ -323,7 +324,7 @@ export default function NotificationsPage() {
         onTouchEnd={onTouchEnd}
         onTouchStartCapture={dismissSwipeHint}
         onClick={() => setExpandedIds(new Set())}
-        className="flex-1 overflow-y-auto overscroll-none max-w-app mx-auto w-full px-6 pb-24"
+        className="flex-1 overflow-y-auto overscroll-contain max-w-md mx-auto w-full px-6 py-4 pb-36"
       >
         <div
           className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"

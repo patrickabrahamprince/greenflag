@@ -25,31 +25,31 @@ const slides = [
     id: 0,
     title: 'Respect & Inclusivity',
     desc: 'Every traveler is treated with dignity. Kind, welcoming, judgment-free journeys for everyone.',
-    icon: <ShieldCheck className="w-10 h-10 text-rose-600" />,
+    icon: <ShieldCheck className="w-10 h-10 text-stone-900" />,
     badge: 'Core Value',
-    badgeColor: 'bg-rose-100 text-rose-800 border-rose-200',
-    iconBg: 'bg-rose-500/15 border-rose-200',
-    cardBorder: 'border-rose-200/90 bg-gradient-to-br from-rose-50/95 via-white to-amber-50/70',
+    badgeColor: 'bg-stone-100 text-stone-900 border-stone-200',
+    iconBg: 'bg-stone-100 border-stone-200',
+    cardBorder: 'border-stone-200 bg-white',
   },
   {
     id: 1,
     title: 'Reliability & Trust',
     desc: 'Be dependable with trip commitments, meetup points, vehicle arrangements, and shared budgets.',
-    icon: <Flame className="w-10 h-10 text-emerald-700" />,
+    icon: <Flame className="w-10 h-10 text-stone-900" />,
     badge: 'Commitment',
-    badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-    iconBg: 'bg-emerald-500/15 border-emerald-200',
-    cardBorder: 'border-emerald-200/90 bg-gradient-to-br from-emerald-50/95 via-white to-teal-50/70',
+    badgeColor: 'bg-stone-100 text-stone-900 border-stone-200',
+    iconBg: 'bg-stone-100 border-stone-200',
+    cardBorder: 'border-stone-200 bg-white',
   },
   {
     id: 2,
     title: 'Safety First',
     desc: 'Honor personal boundaries, travel with verified members, and report any uncomfortable behavior instantly.',
-    icon: <MessageCircle className="w-10 h-10 text-cyan-700" />,
+    icon: <MessageCircle className="w-10 h-10 text-stone-900" />,
     badge: 'Zero Tolerance',
-    badgeColor: 'bg-cyan-100 text-cyan-800 border-cyan-200',
-    iconBg: 'bg-cyan-500/15 border-cyan-200',
-    cardBorder: 'border-cyan-200/90 bg-gradient-to-br from-cyan-50/95 via-white to-sky-50/70',
+    badgeColor: 'bg-stone-100 text-stone-900 border-stone-200',
+    iconBg: 'bg-stone-100 border-stone-200',
+    cardBorder: 'border-stone-200 bg-white',
   },
 ];
 
@@ -151,22 +151,25 @@ export default function RulesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex items-center justify-center bg-[#FAF9F6]">
+      <div className="min-h-dvh flex items-center justify-center bg-white">
         <LoadingLogo />
       </div>
     );
   }
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-5 pt-safe-top pb-safe-bottom bg-[#FAF9F6]">
+    <div className="fixed inset-0 flex flex-col bg-white text-stone-900 overflow-hidden">
       <OnboardingBackground image="/onboarding/rules.jpg" />
-      <div className="max-w-md mx-auto w-full flex flex-col flex-1 justify-center">
-        <div className="text-center mb-6">
-          <h1 className="font-display text-3xl font-extrabold text-[#382A21] mb-1.5">Community Code</h1>
-          <p className="text-stone-600 text-sm font-medium">How we keep adventures safe and fun for everyone</p>
-        </div>
+      
+      {/* Frozen Top Header */}
+      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md pt-safe-top pb-3 px-5 border-b border-stone-100/80 text-center">
+        <h1 className="font-display text-2xl font-extrabold text-stone-900 mb-0.5">Community Code</h1>
+        <p className="text-stone-500 text-xs font-medium">How we keep adventures safe and fun for everyone</p>
+      </header>
 
-        <div className="flex flex-col justify-center">
+      {/* Fluid Scrollable Body */}
+      <main className="flex-1 overflow-y-auto overscroll-contain px-5 py-4 flex flex-col justify-between pb-safe-bottom">
+        <div className="max-w-md mx-auto w-full flex-1 flex flex-col justify-center py-2">
           <div
             ref={trackRef}
             onScroll={handleScroll}
@@ -175,50 +178,52 @@ export default function RulesPage() {
           >
             {loopedSlides.map((slide) => (
               <div key={slide.loopKey} className="w-full shrink-0 snap-center px-1">
-                <div className={`flex flex-col items-center text-center px-7 py-9 rounded-[32px] min-h-[350px] justify-between border-2 shadow-sm ${slide.cardBorder}`}>
+                <div className={`flex flex-col items-center text-center px-6 py-6 rounded-[32px] min-h-[290px] justify-between border shadow-sm ${slide.cardBorder}`}>
                   <div className="w-full flex justify-end">
                     <span className={`text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border ${slide.badgeColor}`}>
                       {slide.badge}
                     </span>
                   </div>
-                  <div className={`w-20 h-20 rounded-3xl border flex items-center justify-center shadow-xs ${slide.iconBg}`}>
+                  <div className={`w-16 h-16 rounded-2xl border flex items-center justify-center shadow-xs my-2 ${slide.iconBg}`}>
                     {slide.icon}
                   </div>
                   <div>
-                    <h2 className="text-2xl font-display font-extrabold text-[#382A21] mb-2.5">
+                    <h2 className="text-xl sm:text-2xl font-display font-extrabold text-stone-900 mb-1.5">
                       {slide.title}
                     </h2>
-                    <p className="text-stone-700 text-sm leading-relaxed font-medium max-w-[280px]">
+                    <p className="text-stone-600 text-xs sm:text-sm leading-relaxed font-normal max-w-[280px]">
                       {slide.desc}
                     </p>
                   </div>
-                  <div className="w-6 h-1 rounded-full bg-stone-300/60" />
+                  <div className="w-6 h-1 rounded-full bg-stone-200 mt-2" />
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="flex items-center justify-center gap-2 mt-5 mb-6">
+          <div className="flex items-center justify-center gap-2 mt-4 mb-3">
             {slides.map((slide, i) => (
               <button
                 key={slide.id}
                 onClick={() => { hapticTap(); scrollToSlide(i); }}
                 aria-label={`Go to rule ${i + 1}`}
-                className={`rounded-full transition-all duration-300 ${
-                  i === activeSlide ? 'w-7 h-2 bg-[#1D3B2A] shadow-xs' : 'w-2 h-2 bg-stone-300'
+                className={`rounded-full transition-all duration-300 cursor-pointer ${
+                  i === activeSlide ? 'w-7 h-2 bg-[#1C1C1E]' : 'w-2 h-2 bg-stone-200'
                 }`}
               />
             ))}
           </div>
+        </div>
 
+        <div className="max-w-md mx-auto w-full pt-2">
           <button
             onClick={handleContinue}
-            className="btn-primary w-full py-4 font-bold text-sm active:scale-95 transition-transform shadow-lg"
+            className="w-full py-4 bg-[#1C1C1E] hover:bg-black text-white font-bold text-sm rounded-full active:scale-95 transition-transform shadow-lg cursor-pointer"
           >
             Agree & Enter GreenFlag
           </button>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

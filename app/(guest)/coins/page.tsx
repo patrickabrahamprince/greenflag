@@ -102,8 +102,9 @@ export default function CoinsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-[#1C1C1E] flex flex-col max-w-md mx-auto">
-      <div className="w-full px-6 pt-[max(16px,env(safe-area-inset-top,16px))] pb-2 shrink-0 border-b border-stone-100">
+    <div className="w-full h-full flex flex-col bg-white overflow-hidden max-w-md mx-auto select-none antialiased">
+      {/* 100% Frozen Top Header */}
+      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md px-6 pt-safe-top pb-3 border-b border-stone-100">
         <div className="flex items-center justify-between">
           <button
             onClick={() => {
@@ -129,14 +130,14 @@ export default function CoinsPage() {
             <div className="w-10" />
           )}
         </div>
-      </div>
+      </header>
 
       <div
         ref={scrollRef}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className="flex-1 overflow-y-auto overscroll-none w-full px-6 pt-4 pb-28 animate-fade-in"
+        className="flex-1 overflow-y-auto overscroll-contain w-full px-6 pt-4 pb-36 animate-fade-in"
       >
         <div
           className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"

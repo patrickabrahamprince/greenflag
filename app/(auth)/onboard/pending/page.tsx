@@ -67,7 +67,7 @@ export default function PendingApprovalPage() {
   }, [arrived]);
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center items-center px-5 pt-safe-top pb-safe-bottom text-center bg-[#FAF9F6]">
+    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col justify-center items-center px-5 pt-safe-top pb-safe-bottom text-center bg-white">
       <OnboardingBackground image="/onboarding/pending.jpg" />
 
       <div className="max-w-sm mx-auto w-full bg-white/95 backdrop-blur-md border border-stone-200/90 rounded-[36px] p-8 shadow-md">
@@ -75,7 +75,7 @@ export default function PendingApprovalPage() {
           <div className="flex flex-col items-center">
             <ReviewTimerRing secondsLeft={secondsLeft ?? totalSeconds} totalSeconds={totalSeconds} />
 
-            <h1 className="font-display text-3xl font-extrabold text-[#382A21] mb-2">
+            <h1 className="font-display text-3xl font-extrabold text-stone-900 mb-2">
               Verifying Your Profile
             </h1>
             <p className="text-stone-600 text-sm leading-relaxed font-medium">
@@ -84,11 +84,11 @@ export default function PendingApprovalPage() {
           </div>
         ) : (
           <div className="animate-fade-in flex flex-col items-center">
-            <div className="w-20 h-20 rounded-3xl bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto mb-5 shadow-sm">
-              <Sparkles className="w-10 h-10 text-emerald-700" />
+            <div className="w-20 h-20 rounded-3xl bg-stone-100 text-stone-900 flex items-center justify-center mx-auto mb-5 shadow-sm border border-stone-200">
+              <Sparkles className="w-10 h-10 text-stone-900" />
             </div>
 
-            <h1 className="font-display text-3xl font-extrabold text-[#382A21] mb-2">You&apos;re Verified!</h1>
+            <h1 className="font-display text-3xl font-extrabold text-stone-900 mb-2">You&apos;re Verified!</h1>
             <p className="text-stone-600 text-sm leading-relaxed font-medium">
               Welcome to the community. Taking you to explore upcoming trips and road trips...
             </p>

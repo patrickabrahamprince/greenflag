@@ -32,13 +32,13 @@ export function ReviewTimerRing({ secondsLeft, totalSeconds }: ReviewTimerRingPr
         />
         <defs>
           <linearGradient id="reviewRingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#1D3B2A" />
-            <stop offset="100%" stopColor="#10B981" />
+            <stop offset="0%" stopColor="#1C1C1E" />
+            <stop offset="100%" stopColor="#71717A" />
           </linearGradient>
         </defs>
       </svg>
-      <div className="w-20 h-20 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center shadow-xs">
-        <Loader2 className="w-8 h-8 text-emerald-800 animate-spin" />
+      <div className="w-20 h-20 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center shadow-xs">
+        <Loader2 className="w-8 h-8 text-[#1C1C1E] animate-spin" />
       </div>
     </div>
   );

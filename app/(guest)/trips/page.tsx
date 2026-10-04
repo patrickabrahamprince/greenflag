@@ -1085,10 +1085,10 @@ function TripsContent() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-white flex flex-col font-sans relative overflow-x-hidden text-[#1C1C1E] max-w-md mx-auto select-none antialiased">
+    <div className="w-full h-full flex flex-col bg-white overflow-hidden max-w-md mx-auto select-none antialiased">
       
-      {/* ================= MARRIOTT BONVOY STYLE EDITORIAL HEADER ================= */}
-      <header className="px-6 pt-[max(16px,env(safe-area-inset-top,16px))] pb-3 sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-stone-100">
+      {/* ================= MARRIOTT BONVOY STYLE FROZEN EDITORIAL HEADER ================= */}
+      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md pt-safe-top pb-3 px-6 border-b border-stone-100">
         <div className="flex items-center justify-between mb-3">
           {/* User Avatar + Greeting */}
           <div className="flex items-center gap-3">
@@ -1144,29 +1144,54 @@ function TripsContent() {
         </div>
 
         {/* Marriott Style "Where can we take you?" Search Bar */}
-        <div
-          onClick={() => {
-            hapticTap();
-            setShowLocationModal(true);
-          }}
-          className="w-full bg-[#F4F4F5] hover:bg-stone-100 active:scale-[0.99] border border-stone-200/80 rounded-full px-4 py-2.5 flex items-center justify-between cursor-pointer transition shadow-2xs"
-        >
-          <div className="flex items-center gap-2.5 text-stone-600">
-            <Search className="w-4 h-4 text-stone-500" />
-            <span className="text-xs font-medium text-stone-700">Where can we take you?</span>
+        <div className="space-y-2.5">
+          <div
+            onClick={() => {
+              hapticTap();
+              setShowLocationModal(true);
+            }}
+            className="w-full bg-[#F4F4F5] hover:bg-stone-100 active:scale-[0.99] border border-stone-200 rounded-full px-4 py-3 flex items-center justify-between cursor-pointer transition shadow-2xs"
+          >
+            <div className="flex items-center gap-2.5 text-stone-600">
+              <Search className="w-4 h-4 text-[#1C1C1E]" />
+              <span className="text-xs font-semibold text-[#1C1C1E]">Where can we take you?</span>
+            </div>
+            <span className="text-[11px] font-bold text-[#1C1C1E] bg-white px-3 py-1 rounded-full border border-stone-200 shadow-2xs truncate max-w-[140px]">
+              📍 {selectedLocation.name.split(',')[0]}
+            </span>
           </div>
-          <span className="text-[11px] font-semibold text-[#1C1C1E] bg-white px-2.5 py-0.5 rounded-full border border-stone-200 shadow-2xs truncate max-w-[130px]">
-            {selectedLocation.name.split(',')[0]}
-          </span>
+
+          {/* Quick Sub-Pills: Nearby, Explore, Road Trip */}
+          <div className="flex items-center gap-2">
+            {[
+              { id: 'nearby', label: '🧭 Nearby' },
+              { id: 'explore', label: '🗺️ Explore' },
+              { id: 'roadtrip', label: '🚗 Road Trip' },
+            ].map((chip) => (
+              <button
+                key={chip.id}
+                type="button"
+                onClick={() => {
+                  hapticTap();
+                  if (chip.id === 'nearby') setSelectedFilter('All');
+                  else if (chip.id === 'explore') setSelectedFilter('Dates');
+                  else setSelectedFilter('Buddies');
+                }}
+                className="flex-1 py-1.5 px-3 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-[11px] font-bold text-stone-700 active:scale-95 transition shadow-2xs flex items-center justify-center gap-1 cursor-pointer"
+              >
+                <span>{chip.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 relative flex flex-col pb-36 z-10 bg-white">
+      <main className="flex-1 overflow-y-auto overscroll-contain pb-36 z-10 bg-white">
         
         {/* ================= VIEW 1: DATING + TRAVEL ESCAPES HUB ================= */}
         {activeTab === 'explore' && (
-          <div className="h-full flex flex-col animate-fade-in space-y-4 pt-3">
+          <div className="h-full flex flex-col animate-fade-in space-y-4 pt-2">
             
             {/* 1. TRAVEL DATING FILTER PILLS (Clean Marriott Style) */}
             <div className="px-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
@@ -1200,10 +1225,10 @@ function TripsContent() {
                         pill.id === 'sunrise' ? 'Sunrise' : 'Coffee'
                       );
                     }}
-                    className={`px-4 py-1.5 rounded-full text-[12px] font-semibold transition-all cursor-pointer shrink-0 ${
+                    className={`px-4 py-1.5 rounded-full text-[11px] font-bold transition-all cursor-pointer shrink-0 ${
                       isSelected
-                        ? 'bg-[#1C1C1E] text-white shadow-xs'
-                        : 'bg-[#F4F4F5] text-[#1C1C1E] hover:bg-stone-200/80 border border-stone-200'
+                        ? 'bg-[#1C1C1E] text-white shadow-2xs'
+                        : 'bg-[#F4F4F5] text-stone-600 hover:text-[#1C1C1E] border border-stone-200'
                     }`}
                   >
                     {pill.label}

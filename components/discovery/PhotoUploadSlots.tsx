@@ -79,13 +79,13 @@ export function PhotoUploadSlots({
               className="w-full h-full object-cover"
             />
             {isPrimary && (
-              <div className="absolute top-3 left-3 px-3 py-1 bg-[#141414] text-[#CEFF00] rounded-full text-[11px] font-[900] shadow-lg tracking-wider uppercase border border-[#CEFF00]/30 flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-[#CEFF00]" />
+              <div className="absolute top-3 left-3 px-3 py-1 bg-[#1C1C1E] text-white rounded-full text-[11px] font-bold shadow-md tracking-wider uppercase border border-white/20 flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-white" />
                 <span>Primary Cover</span>
               </div>
             )}
             {photo && (
-              <div className="absolute bottom-3 left-3 p-1.5 bg-[#141414]/60 backdrop-blur-md rounded-xl opacity-80 hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing border border-white/20">
+              <div className="absolute bottom-3 left-3 p-1.5 bg-[#1C1C1E]/70 backdrop-blur-md rounded-xl opacity-80 hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing border border-white/20">
                 <GripVertical size={16} className="text-white" />
               </div>
             )}
@@ -95,24 +95,24 @@ export function PhotoUploadSlots({
                 e.stopPropagation();
                 onRemove(i);
               }}
-              className="absolute top-3 right-3 w-8 h-8 bg-[#141414]/75 hover:bg-[#141414] text-white rounded-full flex items-center justify-center active:scale-90 transition-all shadow-lg border border-white/20"
+              className="absolute top-3 right-3 w-8 h-8 bg-[#1C1C1E]/80 hover:bg-[#1C1C1E] text-white rounded-full flex items-center justify-center active:scale-90 transition-all shadow-md border border-white/20"
               aria-label="Remove photo"
             >
               <X size={15} className="text-white" />
             </button>
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center text-center p-4 gap-2 transition-transform">
-            <div className={`rounded-full bg-stone-100 flex items-center justify-center text-stone-700 border border-stone-200 shadow-xs ${i === 0 ? 'w-12 h-12' : 'w-10 h-10'}`}>
-              <Upload size={i === 0 ? 20 : 16} />
+          <div className="flex flex-col items-center justify-center text-center p-2 gap-1.5 transition-transform">
+            <div className="rounded-full bg-stone-100 flex items-center justify-center text-[#1C1C1E] border border-stone-200 shadow-xs w-9 h-9">
+              <Upload size={16} />
             </div>
             <div>
-              <span className="block text-[13px] font-[800] text-[#141414]">
-                {i === 0 ? 'Main Featured Photo' : `Trip Photo ${i + 1}`}
+              <span className="block text-[11px] font-bold text-[#1C1C1E] leading-tight">
+                {i === 0 ? 'Main Photo' : `Photo ${i + 1}`}
               </span>
               {i === 0 && (
-                <span className="block text-[11px] text-stone-500 font-medium mt-0.5">
-                  Shown on discovery cards & escapes
+                <span className="block text-[9px] text-stone-500 font-medium leading-tight mt-0.5">
+                  Cover
                 </span>
               )}
             </div>
@@ -125,37 +125,30 @@ export function PhotoUploadSlots({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-[800] text-[#141414]">
+        <label className="text-sm font-bold text-[#1C1C1E]">
           Photos <span className="text-stone-500 font-normal">({photos.length}/{maxPhotos})</span>
         </label>
-        <span className={`text-[11px] font-[800] px-3 py-1 rounded-full uppercase tracking-wider ${maxPhotos - photos.length > 0
-            ? 'bg-amber-100/80 text-amber-900 border border-amber-200'
-            : 'bg-[#CEFF00]/40 text-[#141414] border border-[#141414]/20'
+        <span className={`text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider ${maxPhotos - photos.length > 0
+            ? 'bg-stone-100 text-stone-700 border border-stone-200'
+            : 'bg-[#1C1C1E] text-white'
           }`}>
           {maxPhotos - photos.length > 0 ? `${maxPhotos - photos.length} Needed` : 'Complete'}
         </span>
       </div>
 
-      <div className="bg-stone-100/90 border border-stone-200/80 rounded-2xl px-3.5 py-2.5 flex items-center gap-2.5">
-        <Lightbulb className="w-4 h-4 text-[#141414] shrink-0" />
-        <p className="text-xs text-[#141414]/80 font-medium leading-tight">
+      <div className="bg-[#F9FAFB] border border-stone-200 rounded-2xl px-3.5 py-2.5 flex items-center gap-2.5">
+        <Lightbulb className="w-4 h-4 text-[#1C1C1E] shrink-0" />
+        <p className="text-xs text-stone-600 font-medium leading-tight">
           Your first photo is your travel card cover. Hold and drag to reorder.
         </p>
       </div>
 
       {maxPhotos === 3 ? (
-        <div className="space-y-3">
-          {/* Hero Cover Slot */}
-          {renderSlot(0, 'w-full aspect-[16/10] sm:aspect-[16/9]')}
-
-          {/* Secondary Slots */}
-          <div className="grid grid-cols-2 gap-3">
-            {renderSlot(1, 'aspect-square sm:aspect-[4/3]')}
-            {renderSlot(2, 'aspect-square sm:aspect-[4/3]')}
-          </div>
+        <div className="grid grid-cols-3 gap-2.5">
+          {Array.from({ length: 3 }).map((_, i) => renderSlot(i, 'aspect-[3/4]'))}
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-2.5">
           {Array.from({ length: maxPhotos }).map((_, i) => renderSlot(i, 'aspect-[3/4]'))}
         </div>
       )}

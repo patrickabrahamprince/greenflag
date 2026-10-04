@@ -115,8 +115,8 @@ export function AppleMapView({
               }}
               className={`shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold backdrop-blur-xl border transition-all duration-200 shadow-xs active:scale-95 cursor-pointer ${
                 isActive
-                  ? 'bg-[#1D3B2A] text-white border-[#1D3B2A] shadow-md'
-                  : 'bg-white/95 text-[#382A21] border-stone-200/80 hover:bg-white'
+                  ? 'bg-[#1C1C1E] text-white border-[#1C1C1E] shadow-md'
+                  : 'bg-white/95 text-stone-900 border-stone-200 hover:bg-white'
               }`}
             >
               <span>{f.icon}</span>
@@ -220,10 +220,10 @@ export function AppleMapView({
                 <div
                   className={`px-3 py-1 rounded-full text-[10px] font-extrabold shadow-md whitespace-nowrap mb-1 flex items-center gap-1.5 border transition-all ${
                     isSelected
-                      ? 'scale-110 ring-4 ring-emerald-400 bg-black text-white border-white'
+                      ? 'scale-110 ring-4 ring-stone-900 bg-black text-white border-white'
                       : isPink
                       ? 'bg-rose-600 text-white border-rose-400 group-hover:scale-105'
-                      : 'bg-[#1D3B2A] text-white border-emerald-400 group-hover:scale-105'
+                      : 'bg-[#1C1C1E] text-white border-stone-400 group-hover:scale-105'
                   }`}
                 >
                   <span>{isPink ? '💗 1-on-1 Date' : '🟢 Buddy Trip'}</span>
@@ -235,11 +235,11 @@ export function AppleMapView({
                 <div className="flex flex-col items-center">
                   <div
                     className={`w-11 h-11 rounded-2xl flex items-center justify-center text-white font-bold text-sm shadow-xl border-2 transition-all ${
-                      isSelected ? 'border-emerald-400 scale-110' : 'border-white'
+                      isSelected ? 'border-stone-900 scale-110' : 'border-white'
                     } ${
                       isPink 
                         ? 'bg-gradient-to-tr from-rose-500 to-pink-500' 
-                        : 'bg-gradient-to-tr from-[#1D3B2A] to-emerald-600'
+                        : 'bg-[#1C1C1E]'
                     }`}
                   >
                     {isPink ? '💗' : '🟢'}
@@ -258,7 +258,7 @@ export function AppleMapView({
           type="button"
           onClick={handleZoomIn}
           aria-label="Zoom in"
-          className="w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-md border border-stone-200 shadow-md flex items-center justify-center text-[#382A21] font-bold active:scale-90 transition cursor-pointer"
+          className="w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-md border border-stone-200 shadow-md flex items-center justify-center text-stone-900 font-bold active:scale-90 transition cursor-pointer"
         >
           <Plus size={18} />
         </button>
@@ -267,7 +267,7 @@ export function AppleMapView({
           type="button"
           onClick={handleZoomOut}
           aria-label="Zoom out"
-          className="w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-md border border-stone-200 shadow-md flex items-center justify-center text-[#382A21] font-bold active:scale-90 transition cursor-pointer"
+          className="w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-md border border-stone-200 shadow-md flex items-center justify-center text-stone-900 font-bold active:scale-90 transition cursor-pointer"
         >
           <Minus size={18} />
         </button>
@@ -276,7 +276,7 @@ export function AppleMapView({
           type="button"
           onClick={handleResetLocation}
           aria-label="Center on live location"
-          className="w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-md border border-stone-200 shadow-md flex items-center justify-center text-emerald-800 active:scale-90 transition cursor-pointer"
+          className="w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-md border border-stone-200 shadow-md flex items-center justify-center text-stone-900 active:scale-90 transition cursor-pointer"
         >
           <Navigation size={18} />
         </button>
@@ -285,7 +285,7 @@ export function AppleMapView({
       {/* Interactive Selected Event Overview Sheet */}
       {selectedPin && (
         <div className="absolute bottom-3 inset-x-3 z-30 animate-slide-up pointer-events-auto">
-          <div className="bg-white/95 backdrop-blur-xl border-2 border-stone-200/90 rounded-[28px] p-4 shadow-2xl">
+          <div className="bg-white/95 backdrop-blur-xl border border-stone-200 rounded-[28px] p-4 shadow-2xl">
             
             {/* Header / Host & Badge */}
             <div className="flex items-center justify-between mb-2.5 pb-2 border-b border-stone-100">
@@ -293,7 +293,7 @@ export function AppleMapView({
                 <span className={`text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full ${
                   selectedPin.flag_color === 'pink' 
                     ? 'bg-rose-100 text-rose-800 border border-rose-200' 
-                    : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                    : 'bg-stone-100 text-stone-900 border border-stone-200'
                 }`}>
                   {selectedPin.flag_color === 'pink' ? '💗 1-on-1 Travel Date' : '🟢 Group Road Trip'}
                 </span>
@@ -328,12 +328,12 @@ export function AppleMapView({
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-display font-extrabold text-[15px] text-[#382A21] truncate">
+                  <h4 className="font-display font-extrabold text-[15px] text-stone-900 truncate">
                     {selectedPin.destination}
                   </h4>
 
                   <div className="flex items-center gap-2 text-xs font-semibold text-stone-600 mt-0.5">
-                    <span className="text-emerald-900 font-bold text-sm">
+                    <span className="text-stone-900 font-bold text-sm">
                       ₹{selectedPin.budget_per_day || 950}
                     </span>
                     <span className="text-stone-400">•</span>
@@ -341,7 +341,7 @@ export function AppleMapView({
                   </div>
 
                   <div className="flex items-center gap-1 text-[11px] font-medium text-stone-500 mt-1 truncate">
-                    <Clock className="w-3 h-3 text-emerald-700 shrink-0" />
+                    <Clock className="w-3 h-3 text-stone-700 shrink-0" />
                     <span>Starts in 2h • Indiranagar Meet</span>
                   </div>
                 </div>
@@ -354,7 +354,7 @@ export function AppleMapView({
                   hapticTap();
                   onSelectTrip(selectedPin);
                 }}
-                className="px-4 py-3 bg-[#1D3B2A] hover:bg-[#14281c] text-white rounded-2xl font-bold text-xs shrink-0 active:scale-95 transition-all flex items-center gap-1.5 shadow-md cursor-pointer"
+                className="px-4 py-3 bg-[#1C1C1E] hover:bg-black text-white rounded-2xl font-bold text-xs shrink-0 active:scale-95 transition-all flex items-center gap-1.5 shadow-md cursor-pointer"
               >
                 <span>View Plan</span>
                 <ChevronRight size={14} />

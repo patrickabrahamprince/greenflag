@@ -14,40 +14,40 @@ import { useOnboardingNav } from '@/lib/onboarding/useOnboardingNav';
 
 const POINTS = [
   {
-    icon: <Plane className="w-8 h-8 text-orange-600" />,
-    badgeBg: 'bg-orange-100 text-orange-800 border-orange-200',
-    iconBg: 'bg-orange-500/15 border-orange-200/80',
-    cardBorder: 'border-orange-200/90 bg-gradient-to-br from-orange-50/95 via-white to-amber-50/70',
+    icon: <Plane className="w-8 h-8 text-stone-900" />,
+    badgeBg: 'bg-stone-100 text-stone-900 border-stone-200',
+    iconBg: 'bg-stone-100 border-stone-200',
+    cardBorder: 'border-stone-200 bg-white',
     step: 'Discover & Host',
     title: 'Weekend Getaways & Road Trips',
     desc: 'Road trips, mountain treks, beach getaways, coffee estate homestays, and sunrise drives — browse open getaways or post your own.',
     tip: 'Choose between co-ed getaways and verified female-only travel buddy circles.',
   },
   {
-    icon: <Users className="w-8 h-8 text-emerald-700" />,
-    badgeBg: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-    iconBg: 'bg-emerald-500/15 border-emerald-200/80',
-    cardBorder: 'border-emerald-200/90 bg-gradient-to-br from-emerald-50/95 via-white to-teal-50/70',
+    icon: <Users className="w-8 h-8 text-stone-900" />,
+    badgeBg: 'bg-stone-100 text-stone-900 border-stone-200',
+    iconBg: 'bg-stone-100 border-stone-200',
+    cardBorder: 'border-stone-200 bg-white',
     step: 'Natural Dating & Sparks',
     title: 'Date on the Way, Not Online',
     desc: 'Sparks happen organically over scenic highway drives, beach sunsets, and cozy cafe stops. No forced small talk.',
     tip: 'Connect directly with travelers who share your exact travel pace and dating vibe.',
   },
   {
-    icon: <MessageCircle className="w-8 h-8 text-cyan-700" />,
-    badgeBg: 'bg-cyan-100 text-cyan-800 border-cyan-200',
-    iconBg: 'bg-cyan-500/15 border-cyan-200/80',
-    cardBorder: 'border-cyan-200/90 bg-gradient-to-br from-cyan-50/95 via-white to-sky-50/70',
+    icon: <MessageCircle className="w-8 h-8 text-stone-900" />,
+    badgeBg: 'bg-stone-100 text-stone-900 border-stone-200',
+    iconBg: 'bg-stone-100 border-stone-200',
+    cardBorder: 'border-stone-200 bg-white',
     step: 'Double-Blind Sparks',
     title: 'Mutual Match & Instant Chat',
     desc: 'Send a travel spark or request to join a trip. When mutual interest matches, chat unlocks immediately to plan rides and stays.',
     tip: 'Zero swipe fatigue — real sparks built around exciting travel itineraries.',
   },
   {
-    icon: <ShieldCheck className="w-8 h-8 text-purple-700" />,
-    badgeBg: 'bg-purple-100 text-purple-800 border-purple-200',
-    iconBg: 'bg-purple-500/15 border-purple-200/80',
-    cardBorder: 'border-purple-200/90 bg-gradient-to-br from-purple-50/95 via-white to-rose-50/70',
+    icon: <ShieldCheck className="w-8 h-8 text-stone-900" />,
+    badgeBg: 'bg-stone-100 text-stone-900 border-stone-200',
+    iconBg: 'bg-stone-100 border-stone-200',
+    cardBorder: 'border-stone-200 bg-white',
     step: 'Safe Community',
     title: '100% Verified & Respectful',
     desc: 'Mandatory ID verification, public daytime coffee meetups, and community ratings ensure a safe, high-trust environment.',
@@ -114,74 +114,81 @@ export default function HowItWorksPage() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex items-center justify-center bg-[#FAF9F6]">
+      <div className="min-h-dvh flex items-center justify-center bg-white">
         <LoadingLogo />
       </div>
     );
   }
 
   return (
-    <div className="relative isolate w-full animate-fade-in min-h-dvh flex flex-col px-5 pt-safe-top pb-safe-bottom bg-[#FAF9F6]">
+    <div className="fixed inset-0 flex flex-col bg-white text-stone-900 overflow-hidden">
       <OnboardingBackground image="/onboarding/how-it-works.jpg" />
-      <div className="max-w-md mx-auto w-full flex-1 flex flex-col justify-center">
-        <div className="text-center mb-6">
-          <h1 className="font-display text-3xl font-extrabold text-[#382A21] mb-1.5">How GreenFlag Works</h1>
-          <p className="text-[#382A21]/70 text-sm font-medium">Meet new people. Explore the world together.</p>
-        </div>
+      
+      {/* Frozen Top Header */}
+      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md pt-safe-top pb-3 px-5 border-b border-stone-100/80 text-center">
+        <h1 className="font-display text-2xl font-extrabold text-stone-900 mb-0.5">How GreenFlag Works</h1>
+        <p className="text-stone-500 text-xs font-medium">Meet new people. Explore the world together.</p>
+      </header>
 
-        <div
-          ref={trackRef}
-          onScroll={handleScroll}
-          className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar -mx-2 px-2"
-          style={{ scrollbarWidth: 'none' }}
-        >
-          {loopedPoints.map((point) => (
-            <div key={point.loopKey} className="w-full shrink-0 snap-center px-1">
-              <div className={`text-left rounded-[32px] p-7 min-h-[350px] flex flex-col justify-between border-2 shadow-sm ${point.cardBorder}`}>
-                <div>
-                  <div className="flex items-center justify-between mb-5">
-                    <div className={`w-14 h-14 rounded-2xl border flex items-center justify-center shadow-2xs ${point.iconBg}`}>
-                      {point.icon}
+      {/* Fluid Scrollable Body */}
+      <main className="flex-1 overflow-y-auto overscroll-contain px-5 py-4 flex flex-col justify-between pb-safe-bottom">
+        <div className="max-w-md mx-auto w-full flex-1 flex flex-col justify-center py-2">
+          <div
+            ref={trackRef}
+            onScroll={handleScroll}
+            className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar -mx-2 px-2"
+            style={{ scrollbarWidth: 'none' }}
+          >
+            {loopedPoints.map((point) => (
+              <div key={point.loopKey} className="w-full shrink-0 snap-center px-1">
+                <div className={`text-left rounded-[32px] p-6 min-h-[290px] flex flex-col justify-between border shadow-sm ${point.cardBorder}`}>
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center shadow-xs ${point.iconBg}`}>
+                        {point.icon}
+                      </div>
+                      <span className={`text-[11px] font-bold tracking-wider uppercase border px-3 py-1 rounded-full ${point.badgeBg}`}>
+                        {point.step}
+                      </span>
                     </div>
-                    <span className={`text-[11px] font-bold tracking-wider uppercase border px-3 py-1 rounded-full ${point.badgeBg}`}>
-                      {point.step}
-                    </span>
+                    <h3 className="text-stone-900 font-display text-xl sm:text-2xl font-bold mb-1.5">{point.title}</h3>
+                    <p className="text-stone-600 text-xs sm:text-sm leading-relaxed font-normal">{point.desc}</p>
                   </div>
-                  <h3 className="text-[#382A21] font-display text-2xl font-bold mb-2.5">{point.title}</h3>
-                  <p className="text-[#382A21]/80 text-sm leading-relaxed font-normal">{point.desc}</p>
-                </div>
-                <div className="mt-5 pt-3.5 border-t border-stone-200/70 flex items-center gap-2 text-xs font-semibold text-[#382A21]/90">
-                  <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
-                  <span>{point.tip}</span>
+                  <div className="mt-4 pt-3 border-t border-stone-200 flex items-center gap-2 text-xs font-semibold text-stone-700">
+                    <Sparkles className="w-4 h-4 text-stone-900 shrink-0" />
+                    <span>{point.tip}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          <div className="flex items-center justify-center gap-2 mt-4">
+            {POINTS.map((point, i) => (
+              <button
+                key={point.title}
+                onClick={() => { hapticTap(); scrollToStep(i); }}
+                aria-label={`Go to point ${i + 1}`}
+                className={`rounded-full transition-all duration-300 cursor-pointer ${
+                  i === step ? 'w-7 h-2 bg-[#1C1C1E]' : 'w-2 h-2 bg-stone-200'
+                }`}
+              />
+            ))}
+          </div>
+
+          <SocialProofLine className="text-center text-xs text-stone-500 font-semibold mt-4 leading-relaxed max-w-[280px] mx-auto" />
         </div>
 
-        <div className="flex items-center justify-center gap-2 mt-5">
-          {POINTS.map((point, i) => (
-            <button
-              key={point.title}
-              onClick={() => { hapticTap(); scrollToStep(i); }}
-              aria-label={`Go to point ${i + 1}`}
-              className={`rounded-full transition-all duration-300 ${
-                i === step ? 'w-7 h-2 bg-[#1D3B2A] shadow-xs' : 'w-2 h-2 bg-stone-300'
-              }`}
-            />
-          ))}
+        <div className="max-w-md mx-auto w-full pt-2">
+          <button
+            onClick={handleContinue}
+            disabled={continuing}
+            className="w-full py-4 bg-[#1C1C1E] hover:bg-black text-white font-bold text-sm rounded-full active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+          >
+            {continuing ? <Loader2 className="w-4 h-4 animate-spin" /> : "Let's Begin"}
+          </button>
         </div>
-
-        <SocialProofLine className="text-center text-xs text-[#382A21]/70 font-semibold mt-5 leading-relaxed max-w-[280px] mx-auto" />
-
-        <button
-          onClick={handleContinue}
-          disabled={continuing}
-          className="btn-primary w-full py-4 mt-4 font-bold text-sm active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-lg"
-        >
-          {continuing ? <Loader2 className="w-4 h-4 animate-spin" /> : "Let's Begin"}
-        </button>
-      </div>
+      </main>
     </div>
   );
 }

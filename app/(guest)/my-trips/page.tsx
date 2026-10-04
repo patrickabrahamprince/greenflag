@@ -33,30 +33,30 @@ export default function MyTripsPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-white text-[#1C1C1E] font-sans max-w-md mx-auto relative overflow-hidden flex flex-col pb-28">
+    <div className="w-full h-full flex flex-col bg-white overflow-hidden max-w-md mx-auto select-none antialiased">
       
-      {/* Header */}
-      <header className="relative z-10 px-6 pt-[max(20px,env(safe-area-inset-top,20px))] pb-3 flex items-center justify-between border-b border-stone-100">
-        <div>
-          <h1 className="text-[22px] font-[800] text-[#1C1C1E] tracking-tight">My Plans</h1>
-          <p className="text-[12px] font-semibold text-stone-500">Scheduled escapes & trips</p>
+      {/* 100% Frozen Fixed Top Header with Tabs */}
+      <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md pt-safe-top pb-3 px-6 border-b border-stone-100 space-y-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-[22px] font-[800] text-[#1C1C1E] tracking-tight">My Plans</h1>
+            <p className="text-[12px] font-semibold text-stone-500">Scheduled escapes & trips</p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              hapticTap();
+              router.push('/trips');
+            }}
+            className="w-10 h-10 rounded-full bg-[#F4F4F5] border border-stone-200 shadow-2xs flex items-center justify-center text-[#1C1C1E] hover:bg-stone-200 transition cursor-pointer active:scale-95"
+            aria-label="Explore more"
+          >
+            <Compass className="w-5 h-5 text-[#1C1C1E]" />
+          </button>
         </div>
 
-        <button
-          type="button"
-          onClick={() => {
-            hapticTap();
-            router.push('/trips');
-          }}
-          className="w-10 h-10 rounded-full bg-[#F4F4F5] border border-stone-200 shadow-2xs flex items-center justify-center text-[#1C1C1E] hover:bg-stone-200 transition cursor-pointer active:scale-95"
-          aria-label="Explore more"
-        >
-          <Compass className="w-5 h-5 text-[#1C1C1E]" />
-        </button>
-      </header>
-
-      {/* Filter Tabs (Explore Style) */}
-      <div className="px-6 py-3">
+        {/* Filter Tabs (Explore Style) */}
         <div className="flex items-center gap-1.5 bg-[#F4F4F5] p-1 rounded-full border border-stone-200">
           {(['Upcoming', 'Hosting', 'Past'] as const).map((tab) => {
             const isActive = activeTab === tab;
@@ -79,10 +79,10 @@ export default function MyTripsPage() {
             );
           })}
         </div>
-      </div>
+      </header>
 
-      {/* Main Content List */}
-      <main className="px-6 space-y-4 pt-1 flex-1">
+      {/* Main Scrollable Content List */}
+      <main className="flex-1 overflow-y-auto overscroll-contain px-6 space-y-4 pt-3 pb-36">
         
         {/* Live Active Trip Card */}
         {activeTab === 'Upcoming' && (
