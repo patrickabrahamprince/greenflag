@@ -30,6 +30,8 @@ export function usePullToRefresh<T extends HTMLElement = HTMLDivElement>(
   const [pullDistance, setPullDistance] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 
+  const rafId = useRef<number | null>(null);
+
   function isAtArmedEdge(): boolean {
     const el = scrollRef.current;
     if (!el) return false;
@@ -49,7 +51,6 @@ export function usePullToRefresh<T extends HTMLElement = HTMLDivElement>(
     const deltaY = e.touches[0].clientY - touchStartY.current;
     const deltaX = Math.abs(e.touches[0].clientX - touchStartX.current);
 
-    // If horizontal movement is dominant, let horizontal gestures win
     if (deltaX > Math.abs(deltaY)) {
       touchStartY.current = null;
       touchStartX.current = null;
@@ -59,10 +60,16 @@ export function usePullToRefresh<T extends HTMLElement = HTMLDivElement>(
 
     if (deltaY > 15 && isAtArmedEdge()) {
       pulling.current = true;
-      setPullDistance(Math.min((deltaY - 15) * 0.45, 80));
-    } else if (deltaY <= 0) {
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+      rafId.current = requestAnimationFrame(() => {
+        setPullDistance(Math.min((deltaY - 15) * 0.45, 70));
+      });
+    } else if (deltaY <= 0 && pulling.current) {
       pulling.current = false;
-      if (pullDistance !== 0) setPullDistance(0);
+      if (pullDistance !== 0) {
+        if (rafId.current) cancelAnimationFrame(rafId.current);
+        rafId.current = requestAnimationFrame(() => setPullDistance(0));
+      }
     }
   }
 

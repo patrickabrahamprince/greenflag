@@ -385,7 +385,7 @@ export default function DiscoverPage() {
       <div
         ref={scrollRef}
         onTouchStart={onTouchStart}
-        className="snap-y snap-mandatory overflow-y-scroll scroll-smooth overscroll-y-contain momentum-scroll h-dvh scrollbar-hide"
+        className="snap-y snap-mandatory overflow-y-scroll overscroll-y-contain momentum-scroll h-dvh scrollbar-hide"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {profiles.map((p, i) => {
