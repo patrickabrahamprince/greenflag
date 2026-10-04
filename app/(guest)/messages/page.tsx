@@ -207,18 +207,6 @@ export default function MessagesListPage() {
           <h1 className="text-[22px] font-[800] text-[#1C1C1E] tracking-tight">Messages</h1>
           <p className="text-[12px] font-semibold text-stone-500">Trip buddies & conversations</p>
         </div>
-
-        <button
-          type="button"
-          onClick={() => {
-            hapticTap();
-            router.push('/trips');
-          }}
-          className="w-10 h-10 rounded-full bg-[#F4F4F5] border border-stone-200 shadow-2xs flex items-center justify-center text-[#1C1C1E] hover:bg-stone-200 transition cursor-pointer active:scale-95"
-          aria-label="Explore"
-        >
-          <Compass className="w-5 h-5 text-[#1C1C1E]" />
-        </button>
       </header>
 
       {/* Main Scrollable Chat List */}

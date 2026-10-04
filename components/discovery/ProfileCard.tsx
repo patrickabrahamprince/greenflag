@@ -277,18 +277,18 @@ export function ProfileCard({
           </div>
         )}
 
-        <div className="flex items-center gap-3 pt-2 shrink-0">
+        <div className="flex items-center gap-2.5 pt-2 shrink-0">
           <button
             type="button"
             onClick={() => {
               hapticTap();
               onBegin(p.id);
             }}
-            aria-label="Connect for Trips & Dating"
-            className="flex-1 h-14 rounded-full flex items-center justify-center gap-2 font-bold bg-white text-[#1C1C1E] hover:bg-stone-100 active:scale-[0.98] shadow-lg transition-all duration-150 border border-white"
+            aria-label="Connect"
+            className="flex-1 h-12 rounded-full flex items-center justify-center gap-2 font-bold bg-white text-[#1C1C1E] hover:bg-stone-100 active:scale-[0.98] shadow-md transition-all duration-150 border border-white cursor-pointer"
           >
-            <Compass className="w-5 h-5 text-[#1C1C1E]" />
-            <span className="text-sm tracking-tight font-extrabold">Connect for Trips & Dating</span>
+            <Compass className="w-4 h-4 text-[#1C1C1E]" />
+            <span className="text-[13px] tracking-tight font-extrabold">Connect</span>
           </button>
           <button
             type="button"
@@ -297,9 +297,9 @@ export function ProfileCard({
               onMoreOptions(p.id);
             }}
             aria-label="More options"
-            className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-xl border border-white/20 flex items-center justify-center flex-shrink-0 hover:bg-black/70 active:scale-95 transition-all duration-150 text-white shadow-md"
+            className="w-12 h-12 rounded-full bg-black/50 backdrop-blur-xl border border-white/20 flex items-center justify-center shrink-0 hover:bg-black/70 active:scale-95 transition-all duration-150 text-white shadow-md cursor-pointer"
           >
-            <MoreVertical className="w-5 h-5 text-white" />
+            <MoreVertical className="w-4 h-4 text-white" />
           </button>
         </div>
       </div>
