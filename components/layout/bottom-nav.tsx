@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Suspense, useState, useEffect } from 'react';
 import { Compass, Calendar, MessageCircle, User } from 'lucide-react';
 import { hapticTap } from '@/lib/haptics';
@@ -19,6 +20,14 @@ function BottomNavContent() {
     window.addEventListener('gf-wizard-active', handleWizard);
     return () => window.removeEventListener('gf-wizard-active', handleWizard);
   }, []);
+
+  // Aggressively prefetch all main tab routes on mount for 0ms instant transitions
+  useEffect(() => {
+    router.prefetch('/trips');
+    router.prefetch('/my-trips');
+    router.prefetch('/messages');
+    router.prefetch('/passport');
+  }, [router]);
 
   const tabs = [
     { id: 'explore', label: 'Explore', href: '/trips', icon: Compass },
@@ -45,12 +54,12 @@ function BottomNavContent() {
               : pathname.startsWith('/passport') || pathname.startsWith('/profile');
 
           return (
-            <button
+            <Link
               key={tab.id}
-              type="button"
+              href={tab.href}
+              prefetch={true}
               onClick={() => {
                 hapticTap();
-                router.push(tab.href);
               }}
               className={`flex-1 flex flex-col items-center justify-center py-1 px-1 transition-all duration-150 active:scale-90 cursor-pointer select-none ${
                 isActive
@@ -71,7 +80,7 @@ function BottomNavContent() {
               }`}>
                 {tab.label}
               </span>
-            </button>
+            </Link>
           );
         })}
       </div>

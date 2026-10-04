@@ -23,25 +23,33 @@ import {
 import { hapticTap, hapticSuccess } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { getCached, setCached } from '@/lib/pageCache';
 import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
 import { Trip, TripRequest } from '@/types';
+
+const HOSTED_CACHE_KEY = 'my-trips:hosted';
+const REQUESTS_CACHE_KEY = 'my-trips:requests';
 
 export default function MyTripsPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'Upcoming' | 'Hosting' | 'Past'>('Upcoming');
   const [rating, setRating] = useState<number>(5);
   const [sparked, setSparked] = useState<boolean>(false);
-  const [hostedTrips, setHostedTrips] = useState<Trip[]>([]);
-  const [joinedRequests, setJoinedRequests] = useState<TripRequest[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [hostedTrips, setHostedTrips] = useState<Trip[]>(() => getCached<Trip[]>(HOSTED_CACHE_KEY) ?? []);
+  const [joinedRequests, setJoinedRequests] = useState<TripRequest[]>(() => getCached<TripRequest[]>(REQUESTS_CACHE_KEY) ?? []);
+  const [loading, setLoading] = useState<boolean>(() => !getCached(HOSTED_CACHE_KEY));
 
   const loadData = useCallback(async () => {
     try {
       const res = await fetch('/api/trips/my').catch(() => null);
       if (res && res.ok) {
         const data = await res.json();
-        setHostedTrips(data.hosted || []);
-        setJoinedRequests(data.requests || []);
+        const hosted = data.hosted || [];
+        const requests = data.requests || [];
+        setHostedTrips(hosted);
+        setJoinedRequests(requests);
+        setCached(HOSTED_CACHE_KEY, hosted);
+        setCached(REQUESTS_CACHE_KEY, requests);
       }
     } catch {
       // safe fallback
