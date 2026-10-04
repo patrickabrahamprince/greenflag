@@ -47,7 +47,6 @@ export default function CoinsPage() {
   const { purchase: handleApplePurchase, purchasingProductId, restorePurchases } = useAppleIAP();
   const { purchase: handleRazorpayPurchase, purchasingCoins } = useRazorpayIAP();
 
-  // Real StoreKit pricing on native iOS
   useEffect(() => {
     if (!isIosNative) return;
     InAppPurchase.getProducts({ productIds: APPLE_COIN_PRODUCT_IDS })
@@ -96,36 +95,38 @@ export default function CoinsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh screen-gradient flex items-center justify-center">
-        <LoadingLogo />
+      <div className="min-h-dvh bg-white flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-[#1C1C1E] animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="h-[calc(100dvh-5rem)] screen-gradient flex flex-col">
-      <div className="max-w-app mx-auto w-full px-8 pt-safe-top shrink-0">
-        <div className="page-header">
+    <div className="min-h-screen bg-white text-[#1C1C1E] flex flex-col max-w-md mx-auto">
+      <div className="w-full px-6 pt-[max(16px,env(safe-area-inset-top,16px))] pb-2 shrink-0 border-b border-stone-100">
+        <div className="flex items-center justify-between">
           <button
             onClick={() => {
               hapticTap();
               router.back();
             }}
-            className="btn-ghost p-2"
+            className="w-10 h-10 rounded-full bg-[#F4F4F5] hover:bg-stone-200 border border-stone-200 flex items-center justify-center text-[#1C1C1E] transition active:scale-95 cursor-pointer"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4" />
           </button>
-          <h1 className="font-display text-xl text-ink flex-1">Coins & Store</h1>
-          {isIosNative && (
+          <h1 className="font-extrabold text-lg text-[#1C1C1E]">Coins & Store</h1>
+          {isIosNative ? (
             <button
               onClick={() => {
                 hapticTap();
                 restorePurchases();
               }}
-              className="text-xs text-emerald font-semibold hover:underline active:opacity-75"
+              className="text-xs text-[#1C1C1E] font-bold hover:underline active:opacity-75"
             >
               Restore
             </button>
+          ) : (
+            <div className="w-10" />
           )}
         </div>
       </div>
@@ -135,18 +136,18 @@ export default function CoinsPage() {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className="flex-1 overflow-y-auto overscroll-none max-w-app mx-auto w-full px-8 pb-28 animate-fade-in"
+        className="flex-1 overflow-y-auto overscroll-none w-full px-6 pt-4 pb-28 animate-fade-in"
       >
         <div
           className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out"
           style={{ height: pullDistance }}
         >
-          <Loader2 className={`w-5 h-5 text-emerald ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
+          <Loader2 className={`w-5 h-5 text-[#1C1C1E] ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
         </div>
 
         <CoinBalance balance={balance} />
 
-        <div className="space-y-3">
+        <div className="space-y-3 pt-4">
           {PACKAGES.map((pkg) => (
             <PackageCard
               key={pkg.appleProductId}
@@ -159,7 +160,7 @@ export default function CoinsPage() {
                   ? await handleApplePurchase(pkg.appleProductId)
                   : await handleRazorpayPurchase(pkg.coins);
                 if (newBalance !== undefined) {
-                  confetti({ particleCount: 120, spread: 75, origin: { y: 0.3 }, colors: ['#10b981', '#34d399', '#fff'] });
+                  confetti({ particleCount: 120, spread: 75, origin: { y: 0.3 }, colors: ['#1C1C1E', '#71717A', '#FFFFFF'] });
                 }
               }}
             />
@@ -167,25 +168,25 @@ export default function CoinsPage() {
         </div>
 
         {/* Security & Guarantees */}
-        <div className="mt-6 py-4 px-4 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-center gap-4 text-[11px] text-ink/50 text-center">
+        <div className="mt-6 py-3.5 px-4 rounded-2xl bg-[#F9FAFB] border border-stone-200 flex items-center justify-center gap-3 text-[11px] text-stone-500 text-center font-medium">
           <span className="flex items-center gap-1">🔒 256-Bit SSL Encrypted</span>
           <span>•</span>
-          <span className="flex items-center gap-1">⚡ Instant Coin Delivery</span>
+          <span className="flex items-center gap-1">⚡ Instant Delivery</span>
         </div>
 
         {/* Legal & Restore Footer */}
-        <div className="mt-4 pb-4 flex flex-col items-center justify-center gap-2 text-[11px] text-ink/40">
+        <div className="mt-4 pb-4 flex flex-col items-center justify-center gap-2 text-[11px] text-stone-400">
           <div className="flex items-center gap-4">
             <button
               onClick={() => router.push('/terms')}
-              className="hover:text-ink/80 transition-colors underline underline-offset-2"
+              className="hover:text-stone-700 transition-colors underline underline-offset-2"
             >
               Terms of Service
             </button>
             <span>•</span>
             <button
               onClick={() => router.push('/privacy')}
-              className="hover:text-ink/80 transition-colors underline underline-offset-2"
+              className="hover:text-stone-700 transition-colors underline underline-offset-2"
             >
               Privacy Policy
             </button>
@@ -197,14 +198,14 @@ export default function CoinsPage() {
                     hapticTap();
                     restorePurchases();
                   }}
-                  className="hover:text-ink/80 transition-colors underline underline-offset-2"
+                  className="hover:text-stone-700 transition-colors underline underline-offset-2"
                 >
                   Restore Purchases
                 </button>
               </>
             )}
           </div>
-          <p className="text-[10px] text-ink/30 mt-1">
+          <p className="text-[10px] text-stone-400 text-center mt-1">
             Coins are non-refundable consumable credits used for in-app features and unlocks.
           </p>
         </div>

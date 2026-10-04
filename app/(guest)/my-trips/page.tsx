@@ -7,12 +7,10 @@ import {
   Star, 
   Heart, 
   Check, 
-  Sparkles,
-  MapPin,
-  Clock,
-  ChevronRight,
-  ShieldCheck,
-  Compass
+  MapPin, 
+  Clock, 
+  ChevronRight, 
+  Compass 
 } from 'lucide-react';
 import { hapticTap, hapticSuccess } from '@/lib/haptics';
 import toast from 'react-hot-toast';
@@ -35,28 +33,13 @@ export default function MyTripsPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#E3F2FD] via-[#F0F7FF] to-[#F7F6EB] text-stone-900 font-sans max-w-md mx-auto relative overflow-hidden flex flex-col pb-28">
+    <div className="min-h-screen w-full bg-white text-[#1C1C1E] font-sans max-w-md mx-auto relative overflow-hidden flex flex-col pb-28">
       
-      {/* Top Ambient Glow Background */}
-      <div className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-sky-200/50 via-indigo-100/30 to-transparent pointer-events-none" />
-
       {/* Header */}
-      <header className="relative z-10 px-6 pt-[max(20px,env(safe-area-inset-top,20px))] pb-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <div className="w-12 h-12 rounded-full p-[2px] bg-gradient-to-tr from-amber-400 via-purple-500 to-sky-400">
-              <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
-                alt="Profile"
-                className="w-full h-full rounded-full object-cover border-2 border-white"
-              />
-            </div>
-            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#00E5A3] rounded-full border-2 border-white" />
-          </div>
-          <div>
-            <h1 className="text-[22px] font-[800] text-[#18181B] tracking-tight">My Plans</h1>
-            <p className="text-[12px] font-semibold text-stone-500">Scheduled escapes & trips</p>
-          </div>
+      <header className="relative z-10 px-6 pt-[max(20px,env(safe-area-inset-top,20px))] pb-3 flex items-center justify-between border-b border-stone-100">
+        <div>
+          <h1 className="text-[22px] font-[800] text-[#1C1C1E] tracking-tight">My Plans</h1>
+          <p className="text-[12px] font-semibold text-stone-500">Scheduled escapes & trips</p>
         </div>
 
         <button
@@ -65,16 +48,16 @@ export default function MyTripsPage() {
             hapticTap();
             router.push('/trips');
           }}
-          className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-md border border-white shadow-xs flex items-center justify-center text-stone-700 hover:bg-white transition cursor-pointer active:scale-95"
+          className="w-10 h-10 rounded-full bg-[#F4F4F5] border border-stone-200 shadow-2xs flex items-center justify-center text-[#1C1C1E] hover:bg-stone-200 transition cursor-pointer active:scale-95"
           aria-label="Explore more"
         >
-          <Compass className="w-5 h-5 text-stone-700" />
+          <Compass className="w-5 h-5 text-[#1C1C1E]" />
         </button>
       </header>
 
-      {/* Filter Tabs */}
-      <div className="px-6 py-2">
-        <div className="flex items-center gap-2 bg-white/60 backdrop-blur-md p-1.5 rounded-[22px] border border-white/80 shadow-xs">
+      {/* Filter Tabs (Explore Style) */}
+      <div className="px-6 py-3">
+        <div className="flex items-center gap-1.5 bg-[#F4F4F5] p-1 rounded-full border border-stone-200">
           {(['Upcoming', 'Hosting', 'Past'] as const).map((tab) => {
             const isActive = activeTab === tab;
             return (
@@ -85,10 +68,10 @@ export default function MyTripsPage() {
                   hapticTap();
                   setActiveTab(tab);
                 }}
-                className={`flex-1 py-2 rounded-[18px] text-[12px] font-bold transition-all cursor-pointer ${
+                className={`flex-1 py-2 rounded-full text-[12px] font-bold transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-[#9D54FF] text-white shadow-md shadow-[#9D54FF]/25'
-                    : 'text-stone-600 hover:text-stone-900'
+                    ? 'bg-[#1C1C1E] text-white shadow-2xs'
+                    : 'text-stone-600 hover:text-[#1C1C1E]'
                 }`}
               >
                 {tab}
@@ -99,38 +82,38 @@ export default function MyTripsPage() {
       </div>
 
       {/* Main Content List */}
-      <main className="px-6 space-y-4 pt-2">
+      <main className="px-6 space-y-4 pt-1 flex-1">
         
-        {/* Live Active Trip Card (Mint Green) */}
+        {/* Live Active Trip Card */}
         {activeTab === 'Upcoming' && (
           <>
-            <div className="rounded-[28px] bg-[#D7F5E8] border border-emerald-200/60 p-5 shadow-sm space-y-3.5">
+            <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200 p-5 shadow-2xs space-y-3.5">
               <div className="flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded-full bg-emerald-500 text-white font-[800] text-[10px] tracking-wide flex items-center gap-1.5">
+                <span className="px-3 py-1 rounded-full bg-[#1C1C1E] text-white font-extrabold text-[10px] tracking-wide flex items-center gap-1.5 shadow-2xs">
                   <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                   HAPPENING TODAY
                 </span>
-                <span className="text-[11px] font-bold text-emerald-950">9:45 AM</span>
+                <span className="text-[11px] font-bold text-stone-500">9:45 AM</span>
               </div>
 
               <div>
-                <h3 className="text-[18px] font-[800] text-emerald-950 leading-tight">
+                <h3 className="text-[17px] font-extrabold text-[#1C1C1E] leading-tight">
                   Nandi Sunrise Cloud Convoy
                 </h3>
-                <p className="text-[12px] text-emerald-900/70 font-medium mt-1 flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-emerald-800" />
+                <p className="text-[12px] text-stone-500 font-medium mt-1 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-[#1C1C1E]" />
                   Meeting at Indiranagar 100ft Rd
                 </p>
               </div>
 
               {/* Ride & Carpool Details */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-3.5 space-y-2 border border-white">
+              <div className="bg-white rounded-2xl p-3.5 space-y-2 border border-stone-200">
                 <div className="flex items-center justify-between text-[12px]">
                   <div className="flex items-center gap-2">
-                    <Car className="w-4 h-4 text-emerald-800" />
+                    <Car className="w-4 h-4 text-[#1C1C1E]" />
                     <span className="font-semibold text-stone-800">Car Lead</span>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-[11px] font-bold">
+                  <span className="px-2.5 py-0.5 rounded-full bg-stone-100 text-[#1C1C1E] text-[11px] font-bold border border-stone-200">
                     Aarav · Verified ✓
                   </span>
                 </div>
@@ -140,11 +123,11 @@ export default function MyTripsPage() {
                     <span>💳</span>
                     <span className="font-semibold text-stone-800">Fuel & Pass Split</span>
                   </div>
-                  <span className="font-bold text-emerald-950">₹350 / person</span>
+                  <span className="font-bold text-[#1C1C1E]">₹350 / person</span>
                 </div>
               </div>
 
-              {/* Travelers Stack */}
+              {/* Travelers Stack & Action */}
               <div className="flex items-center justify-between pt-1">
                 <div className="flex items-center -space-x-2">
                   <img
@@ -162,41 +145,41 @@ export default function MyTripsPage() {
                     alt="Traveler 3"
                     className="w-7 h-7 rounded-full border-2 border-white object-cover"
                   />
-                  <div className="w-7 h-7 rounded-full bg-emerald-800 text-white text-[10px] font-bold flex items-center justify-center border-2 border-white">
+                  <div className="w-7 h-7 rounded-full bg-[#1C1C1E] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white">
                     +2
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => router.push('/messages')}
-                  className="px-3.5 py-1.5 rounded-full bg-[#18181B] text-white text-[11px] font-bold active:scale-95 transition"
+                  className="px-4 py-2 rounded-full bg-[#1C1C1E] hover:bg-black text-white text-[11px] font-bold active:scale-95 transition shadow-2xs cursor-pointer"
                 >
                   Group Chat
                 </button>
               </div>
             </div>
 
-            {/* Next Scheduled Trip (Ice Blue) */}
-            <div className="rounded-[28px] bg-[#DDF0FE] border border-sky-200/60 p-5 shadow-sm space-y-3">
+            {/* Next Scheduled Trip */}
+            <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200 p-5 shadow-2xs space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-sky-900/70">Sat · Oct 4</span>
-                <span className="px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-900 font-bold text-[10px]">
+                <span className="text-[11px] font-bold text-stone-500">Sat · Oct 4</span>
+                <span className="px-2.5 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-[#1C1C1E] font-bold text-[10px]">
                   CONFIRMED
                 </span>
               </div>
 
               <div>
-                <h3 className="text-[17px] font-[800] text-sky-950">
+                <h3 className="text-[17px] font-extrabold text-[#1C1C1E]">
                   Coorg Coffee Estate & Waterfalls
                 </h3>
-                <p className="text-[12px] text-sky-900/70 font-medium mt-0.5">
+                <p className="text-[12px] text-stone-500 font-medium mt-0.5">
                   Weekend Getaway · 4 Buddies
                 </p>
               </div>
 
-              <div className="flex items-center justify-between pt-1">
-                <span className="text-[11px] font-bold text-sky-900">Host: Sneha R.</span>
-                <span className="text-[11px] font-bold text-sky-950">₹1,800 total</span>
+              <div className="flex items-center justify-between pt-1 border-t border-stone-200">
+                <span className="text-[11px] font-semibold text-stone-600">Host: Sneha R.</span>
+                <span className="text-[11px] font-bold text-[#1C1C1E]">₹1,800 total</span>
               </div>
             </div>
           </>
@@ -204,40 +187,40 @@ export default function MyTripsPage() {
 
         {/* Hosted Plans Tab */}
         {activeTab === 'Hosting' && (
-          <div className="rounded-[28px] bg-[#F2E8FD] border border-purple-200/60 p-5 shadow-sm space-y-3">
+          <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200 p-5 shadow-2xs space-y-3">
             <div className="flex items-center justify-between">
-              <span className="px-2.5 py-1 rounded-full bg-purple-600 text-white font-[800] text-[10px]">
+              <span className="px-3 py-1 rounded-full bg-[#1C1C1E] text-white font-extrabold text-[10px]">
                 YOU ARE HOSTING
               </span>
-              <span className="text-[11px] font-bold text-purple-950">3 Joined</span>
+              <span className="text-[11px] font-bold text-stone-500">3 Joined</span>
             </div>
 
             <div>
-              <h3 className="text-[17px] font-[800] text-purple-950">
+              <h3 className="text-[17px] font-extrabold text-[#1C1C1E]">
                 Skandagiri Sunrise Trek & Chai
               </h3>
-              <p className="text-[12px] text-purple-900/70 font-medium mt-0.5">
+              <p className="text-[12px] text-stone-500 font-medium mt-0.5">
                 Sunday 4:00 AM · Indiranagar Pickup
               </p>
             </div>
 
-            <div className="bg-white/80 rounded-2xl p-3 flex items-center justify-between text-[12px]">
+            <div className="bg-white rounded-2xl p-3 flex items-center justify-between text-[12px] border border-stone-200">
               <span className="font-semibold text-stone-800">Pending Requests</span>
-              <span className="font-bold text-purple-700">2 to review</span>
+              <span className="font-bold text-[#1C1C1E]">2 to review</span>
             </div>
           </div>
         )}
 
-        {/* Past Trips Tab & Rating Spark (Lavender & Peach) */}
+        {/* Past Trips Tab & Rating Spark */}
         {activeTab === 'Past' && (
           <div className="space-y-4">
-            <div className="rounded-[28px] bg-white border border-stone-200/70 p-5 shadow-sm space-y-4">
+            <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200 p-5 shadow-2xs space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-[16px] font-[800] text-[#18181B]">Cubbon Park Morning Walk</h3>
+                  <h3 className="text-[16px] font-extrabold text-[#1C1C1E]">Cubbon Park Morning Walk</h3>
                   <p className="text-[11px] text-stone-500">Completed Yesterday</p>
                 </div>
-                <span className="px-2 py-0.5 rounded-full bg-stone-100 text-stone-700 text-[10px] font-bold">
+                <span className="px-2.5 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-[#1C1C1E] text-[10px] font-bold">
                   Finished
                 </span>
               </div>
@@ -259,7 +242,7 @@ export default function MyTripsPage() {
                       <Star
                         className={`w-6 h-6 ${
                           star <= rating
-                            ? 'fill-amber-400 text-amber-400'
+                            ? 'fill-[#1C1C1E] text-[#1C1C1E]'
                             : 'text-stone-200'
                         }`}
                       />
@@ -269,24 +252,24 @@ export default function MyTripsPage() {
               </div>
 
               {/* Secret Spark Box */}
-              <div className="p-3.5 rounded-2xl bg-[#FFEBF2] border border-rose-200/60 flex items-center justify-between">
+              <div className="p-3.5 rounded-2xl bg-white border border-stone-200 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-xs">
-                    <Heart className="w-4 h-4 fill-white" />
+                  <div className="w-9 h-9 rounded-full bg-[#1C1C1E] text-white flex items-center justify-center shadow-2xs">
+                    <Heart className="w-4 h-4 fill-white text-white" />
                   </div>
                   <div>
-                    <div className="text-[12px] font-[800] text-rose-950">Secret Spark</div>
-                    <div className="text-[10px] text-rose-900/70">100% private unless mutual</div>
+                    <div className="text-[12px] font-extrabold text-[#1C1C1E]">Secret Spark</div>
+                    <div className="text-[10px] text-stone-500">100% private unless mutual</div>
                   </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={handleSpark}
-                  className={`px-3 py-1.5 rounded-full text-[11px] font-bold transition cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold transition cursor-pointer ${
                     sparked
-                      ? 'bg-rose-500 text-white shadow-xs'
-                      : 'bg-white text-stone-800 border border-stone-200 shadow-xs'
+                      ? 'bg-[#1C1C1E] text-white shadow-2xs'
+                      : 'bg-[#F4F4F5] hover:bg-stone-200 text-[#1C1C1E] border border-stone-200 shadow-2xs'
                   }`}
                 >
                   {sparked ? 'Sparked 💖' : 'Send Spark'}
