@@ -82,12 +82,12 @@ export default function MyTripsPage() {
       </header>
 
       {/* Main Scrollable Content List */}
-      <main className="flex-1 overflow-y-auto overscroll-contain px-6 space-y-4 pt-3 pb-36">
+      <main className="flex-1 overflow-y-auto overscroll-contain px-6 space-y-4.5 pt-3 pb-36">
         
         {/* Live Active Trip Card */}
         {activeTab === 'Upcoming' && (
           <>
-            <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200 p-5 shadow-2xs space-y-3.5 animate-card-enter hover:shadow-md transition-all duration-300">
+            <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-4 animate-card-enter hover:shadow-md transition-all duration-300">
               <div className="flex items-center justify-between">
                 <span className="px-3 py-1 rounded-full bg-[#1C1C1E] text-white font-extrabold text-[10px] tracking-wide flex items-center gap-1.5 shadow-2xs">
                   <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
@@ -97,7 +97,7 @@ export default function MyTripsPage() {
               </div>
 
               <div>
-                <h3 className="text-[17px] font-extrabold text-[#1C1C1E] leading-tight">
+                <h3 className="text-[18px] font-extrabold text-[#1C1C1E] leading-tight">
                   Nandi Sunrise Cloud Convoy
                 </h3>
                 <p className="text-[12px] text-stone-500 font-medium mt-1 flex items-center gap-1.5">
@@ -107,7 +107,7 @@ export default function MyTripsPage() {
               </div>
 
               {/* Ride & Carpool Details */}
-              <div className="bg-white rounded-2xl p-3.5 space-y-2 border border-stone-200">
+              <div className="bg-white rounded-2xl p-4 space-y-2.5 border border-stone-200/80 shadow-2xs">
                 <div className="flex items-center justify-between text-[12px]">
                   <div className="flex items-center gap-2">
                     <Car className="w-4 h-4 text-[#1C1C1E]" />
@@ -133,26 +133,26 @@ export default function MyTripsPage() {
                   <img
                     src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80"
                     alt="Traveler 1"
-                    className="w-7 h-7 rounded-full border-2 border-white object-cover"
+                    className="w-8 h-8 rounded-full border-2 border-white object-cover shadow-2xs"
                   />
                   <img
                     src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80"
                     alt="Traveler 2"
-                    className="w-7 h-7 rounded-full border-2 border-white object-cover"
+                    className="w-8 h-8 rounded-full border-2 border-white object-cover shadow-2xs"
                   />
                   <img
                     src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80"
                     alt="Traveler 3"
-                    className="w-7 h-7 rounded-full border-2 border-white object-cover"
+                    className="w-8 h-8 rounded-full border-2 border-white object-cover shadow-2xs"
                   />
-                  <div className="w-7 h-7 rounded-full bg-[#1C1C1E] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white">
+                  <div className="w-8 h-8 rounded-full bg-[#1C1C1E] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white">
                     +2
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => router.push('/messages')}
-                  className="px-4 py-2 rounded-full bg-[#1C1C1E] hover:bg-black text-white text-[11px] font-bold active:scale-95 transition shadow-2xs cursor-pointer"
+                  className="px-5 py-2.5 rounded-full bg-[#1C1C1E] hover:bg-black text-white text-[12px] font-bold active:scale-95 transition shadow-2xs cursor-pointer"
                 >
                   Group Chat
                 </button>
@@ -160,7 +160,7 @@ export default function MyTripsPage() {
             </div>
 
             {/* Next Scheduled Trip */}
-            <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200 p-5 shadow-2xs space-y-3">
+            <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-3.5">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-stone-500">Sat · Oct 4</span>
                 <span className="px-2.5 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-[#1C1C1E] font-bold text-[10px]">
@@ -169,7 +169,7 @@ export default function MyTripsPage() {
               </div>
 
               <div>
-                <h3 className="text-[17px] font-extrabold text-[#1C1C1E]">
+                <h3 className="text-[18px] font-extrabold text-[#1C1C1E]">
                   Coorg Coffee Estate & Waterfalls
                 </h3>
                 <p className="text-[12px] text-stone-500 font-medium mt-0.5">
@@ -177,7 +177,7 @@ export default function MyTripsPage() {
                 </p>
               </div>
 
-              <div className="flex items-center justify-between pt-1 border-t border-stone-200">
+              <div className="flex items-center justify-between pt-2 border-t border-stone-200/80">
                 <span className="text-[11px] font-semibold text-stone-600">Host: Sneha R.</span>
                 <span className="text-[11px] font-bold text-[#1C1C1E]">₹1,800 total</span>
               </div>
@@ -187,7 +187,7 @@ export default function MyTripsPage() {
 
         {/* Hosted Plans Tab */}
         {activeTab === 'Hosting' && (
-          <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200 p-5 shadow-2xs space-y-3">
+          <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-3.5">
             <div className="flex items-center justify-between">
               <span className="px-3 py-1 rounded-full bg-[#1C1C1E] text-white font-extrabold text-[10px]">
                 YOU ARE HOSTING
@@ -196,7 +196,7 @@ export default function MyTripsPage() {
             </div>
 
             <div>
-              <h3 className="text-[17px] font-extrabold text-[#1C1C1E]">
+              <h3 className="text-[18px] font-extrabold text-[#1C1C1E]">
                 Skandagiri Sunrise Trek & Chai
               </h3>
               <p className="text-[12px] text-stone-500 font-medium mt-0.5">
@@ -204,7 +204,7 @@ export default function MyTripsPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-3 flex items-center justify-between text-[12px] border border-stone-200">
+            <div className="bg-white rounded-2xl p-3.5 flex items-center justify-between text-[12px] border border-stone-200">
               <span className="font-semibold text-stone-800">Pending Requests</span>
               <span className="font-bold text-[#1C1C1E]">2 to review</span>
             </div>
@@ -213,11 +213,11 @@ export default function MyTripsPage() {
 
         {/* Past Trips Tab & Rating Spark */}
         {activeTab === 'Past' && (
-          <div className="space-y-4">
-            <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200 p-5 shadow-2xs space-y-4">
+          <div className="space-y-4.5">
+            <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-[16px] font-extrabold text-[#1C1C1E]">Cubbon Park Morning Walk</h3>
+                  <h3 className="text-[17px] font-extrabold text-[#1C1C1E]">Cubbon Park Morning Walk</h3>
                   <p className="text-[11px] text-stone-500">Completed Yesterday</p>
                 </div>
                 <span className="px-2.5 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-[#1C1C1E] text-[10px] font-bold">
