@@ -200,33 +200,34 @@ export default function MyTripsPage() {
                 if (!trip) return null;
                 const isAccepted = req.status === 'accepted';
                 return (
-                  <div key={req.id} className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-4 animate-card-enter hover:shadow-md transition-all duration-300">
+                  <div key={req.id} className="rounded-[26px] bg-white border border-black/[0.06] p-5.5 sm:p-6 shadow-[0_6px_20px_rgba(0,0,0,0.06),0_1px_4px_rgba(0,0,0,0.03)] space-y-4 animate-card-enter hover:shadow-[0_12px_28px_rgba(0,0,0,0.08)] transition-all duration-300">
                     <div className="flex items-center justify-between">
                       <span className={`px-3 py-1 rounded-full text-white font-extrabold text-[10px] tracking-wider uppercase flex items-center gap-1.5 shadow-2xs ${
-                        isAccepted ? 'bg-[#1C1C1E]' : 'bg-amber-600'
+                        isAccepted ? 'bg-[#000000]' : 'bg-amber-600'
                       }`}>
                         {isAccepted ? <CheckCircle2 className="w-3 h-3 text-emerald-400" /> : <AlertCircle className="w-3 h-3 text-white" />}
                         {isAccepted ? 'CONFIRMED' : 'APPLICATION UNDER REVIEW'}
                       </span>
-                      <span className="text-[11px] font-bold text-stone-500">{trip.start_date || 'Upcoming'}</span>
+                      <span className="text-[11px] font-semibold text-[#8E8E93]">{trip.start_date || 'Upcoming'}</span>
                     </div>
 
                     <div>
-                      <h3 className="text-[18px] font-extrabold text-[#1C1C1E] leading-tight">
+                      <h3 className="text-[18px] font-bold text-[#000000] leading-tight tracking-tight">
                         {trip.destination}
                       </h3>
-                      <p className="text-[12px] text-stone-500 font-medium mt-1 flex items-center gap-1.5">
-                        <MapPin className="w-3.5 h-3.5 text-[#1C1C1E]" />
+                      <p className="text-[12px] text-[#8E8E93] font-medium mt-1 flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-[#000000]" />
                         {trip.state || 'Bangalore'} · {trip.vibe || 'Road Trip'}
                       </p>
                     </div>
 
-                    <div className="bg-white rounded-2xl p-3.5 border border-stone-200 flex items-center justify-between text-[12px]">
+                    {/* Inset Well */}
+                    <div className="bg-[#F6F6F9] rounded-2xl p-3.5 border border-black/[0.04] flex items-center justify-between text-[12px]">
                       <div className="flex items-center gap-2">
                         <ShieldCheck className="w-4 h-4 text-emerald-600" />
                         <span className="font-semibold text-stone-800">Host: {trip.host?.name || 'Verified Explorer'}</span>
                       </div>
-                      <span className="font-bold text-[#1C1C1E]">
+                      <span className="font-bold text-[#000000]">
                         {trip.budget_per_day ? `₹${trip.budget_per_day}/day` : 'Shared Fuel'}
                       </span>
                     </div>
@@ -235,14 +236,14 @@ export default function MyTripsPage() {
                       <button
                         type="button"
                         onClick={() => router.push(`/trips/${trip.id}`)}
-                        className="text-[12px] font-bold text-stone-600 hover:text-stone-900 transition"
+                        className="text-[12px] font-semibold text-stone-600 hover:text-stone-900 transition cursor-pointer"
                       >
                         View Itinerary
                       </button>
                       <button
                         type="button"
                         onClick={() => router.push('/messages')}
-                        className="px-5 py-2 rounded-full bg-[#1C1C1E] hover:bg-black text-white text-[12px] font-bold active:scale-95 transition shadow-2xs cursor-pointer"
+                        className="px-5 py-2 rounded-full bg-[#000000] hover:opacity-90 text-white text-[12px] font-semibold active:scale-95 transition shadow-2xs cursor-pointer"
                       >
                         Trip Chat
                       </button>
@@ -259,13 +260,13 @@ export default function MyTripsPage() {
           <div className="space-y-4">
             {hostedTrips.length === 0 ? (
               /* Luxury Empty State */
-              <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-7 text-center space-y-4 animate-fade-in shadow-2xs">
-                <div className="w-14 h-14 rounded-full bg-white border border-stone-200 mx-auto flex items-center justify-center text-[#1C1C1E] shadow-2xs">
-                  <Car className="w-6 h-6 text-[#1C1C1E]" />
+              <div className="rounded-[26px] bg-white border border-black/[0.06] p-7 text-center space-y-4 animate-fade-in shadow-[0_6px_20px_rgba(0,0,0,0.06)]">
+                <div className="w-14 h-14 rounded-full bg-[#F6F6F9] border border-black/[0.04] mx-auto flex items-center justify-center text-[#000000] shadow-2xs">
+                  <Car className="w-6 h-6 text-[#000000]" />
                 </div>
                 <div className="space-y-1.5">
-                  <h3 className="text-[17px] font-[800] text-[#1C1C1E] tracking-tight">You Haven't Hosted Yet</h3>
-                  <p className="text-[13px] text-stone-500 font-medium leading-relaxed max-w-xs mx-auto">
+                  <h3 className="text-[17px] font-bold text-[#000000] tracking-tight">You Haven't Hosted Yet</h3>
+                  <p className="text-[13px] text-[#8E8E93] font-medium leading-relaxed max-w-xs mx-auto">
                     Take the lead on a weekend drive or trek. Verified members can apply to join your convoy.
                   </p>
                 </div>
@@ -276,7 +277,7 @@ export default function MyTripsPage() {
                       hapticTap();
                       router.push('/trips?tab=create');
                     }}
-                    className="w-full py-3 rounded-full bg-[#1C1C1E] hover:bg-black text-white text-[13px] font-bold active:scale-[0.98] transition shadow-2xs flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full py-3 rounded-full bg-[#000000] hover:opacity-90 text-white text-[13px] font-semibold active:scale-[0.98] transition shadow-2xs flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Create an Escape</span>
@@ -287,28 +288,29 @@ export default function MyTripsPage() {
               hostedTrips.map((trip) => {
                 const reqCount = (trip as any).requests?.length || 0;
                 return (
-                  <div key={trip.id} className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-4 animate-card-enter hover:shadow-md transition-all duration-300">
+                  <div key={trip.id} className="rounded-[26px] bg-white border border-black/[0.06] p-5.5 sm:p-6 shadow-[0_6px_20px_rgba(0,0,0,0.06),0_1px_4px_rgba(0,0,0,0.03)] space-y-4 animate-card-enter hover:shadow-[0_12px_28px_rgba(0,0,0,0.08)] transition-all duration-300">
                     <div className="flex items-center justify-between">
-                      <span className="px-3 py-1 rounded-full bg-[#1C1C1E] text-white font-extrabold text-[10px] tracking-wider uppercase flex items-center gap-1.5 shadow-2xs">
+                      <span className="px-3 py-1 rounded-full bg-[#000000] text-white font-extrabold text-[10px] tracking-wider uppercase flex items-center gap-1.5 shadow-2xs">
                         <Sparkles className="w-3 h-3 text-amber-300" />
                         YOU ARE HOSTING
                       </span>
-                      <span className="text-[11px] font-bold text-stone-500">{trip.start_date || 'Upcoming'}</span>
+                      <span className="text-[11px] font-semibold text-[#8E8E93]">{trip.start_date || 'Upcoming'}</span>
                     </div>
 
                     <div>
-                      <h3 className="text-[18px] font-extrabold text-[#1C1C1E] leading-tight">
+                      <h3 className="text-[18px] font-bold text-[#000000] leading-tight tracking-tight">
                         {trip.destination}
                       </h3>
-                      <p className="text-[12px] text-stone-500 font-medium mt-1 flex items-center gap-1.5">
-                        <MapPin className="w-3.5 h-3.5 text-[#1C1C1E]" />
+                      <p className="text-[12px] text-[#8E8E93] font-medium mt-1 flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-[#000000]" />
                         {trip.state || 'Bangalore'} · {trip.spots_available ?? 3} spots available
                       </p>
                     </div>
 
-                    <div className="bg-white rounded-2xl p-3.5 flex items-center justify-between text-[12px] border border-stone-200">
+                    {/* Inset Well */}
+                    <div className="bg-[#F6F6F9] rounded-2xl p-3.5 flex items-center justify-between text-[12px] border border-black/[0.04]">
                       <span className="font-semibold text-stone-800">Applicant Requests</span>
-                      <span className="font-bold text-[#1C1C1E] px-2.5 py-0.5 rounded-full bg-stone-100 border border-stone-200">
+                      <span className="font-bold text-[#000000] px-2.5 py-0.5 rounded-full bg-white border border-black/[0.06] shadow-2xs">
                         {reqCount} received
                       </span>
                     </div>
@@ -317,14 +319,14 @@ export default function MyTripsPage() {
                       <button
                         type="button"
                         onClick={() => router.push('/my-connections')}
-                        className="flex-1 py-2.5 rounded-full bg-[#1C1C1E] hover:bg-black text-white text-[12px] font-bold active:scale-95 transition shadow-2xs text-center cursor-pointer"
+                        className="flex-1 py-2.5 rounded-full bg-[#000000] hover:opacity-90 text-white text-[12px] font-semibold active:scale-95 transition shadow-2xs text-center cursor-pointer"
                       >
                         Review Applicants
                       </button>
                       <button
                         type="button"
                         onClick={() => router.push(`/trips/${trip.id}`)}
-                        className="px-4 py-2.5 rounded-full bg-white hover:bg-stone-50 text-[#1C1C1E] text-[12px] font-bold border border-stone-200 active:scale-95 transition shadow-2xs text-center cursor-pointer"
+                        className="px-4 py-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-[#000000] text-[12px] font-semibold border border-black/[0.04] active:scale-95 transition shadow-2xs text-center cursor-pointer"
                       >
                         Manage
                       </button>
@@ -338,7 +340,7 @@ export default function MyTripsPage() {
               <button
                 type="button"
                 onClick={() => router.push('/trips?tab=create')}
-                className="w-full py-3.5 rounded-full border-2 border-dashed border-stone-300 hover:border-[#1C1C1E] hover:bg-stone-50 text-[#1C1C1E] text-[13px] font-bold active:scale-[0.99] transition flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3.5 rounded-full border-2 border-dashed border-stone-300 hover:border-[#000000] hover:bg-white text-[#000000] text-[13px] font-bold active:scale-[0.99] transition flex items-center justify-center gap-2 cursor-pointer bg-white/50"
               >
                 <Plus className="w-4 h-4" />
                 <span>Create Another Escape</span>

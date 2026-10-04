@@ -1537,7 +1537,7 @@ function TripsContent() {
                 </button>
               </div>
 
-              {/* Clean Unified Escape Cards */}
+              {/* Multi-Layered Elevated Escape Cards */}
               <div className="space-y-4">
                 {filteredTrips.map((trip, idx) => {
                   return (
@@ -1548,59 +1548,73 @@ function TripsContent() {
                         setSelectedTrip(trip);
                       }}
                       style={{ animationDelay: `${Math.min(idx * 40, 300)}ms` }}
-                      className="bg-white rounded-3xl p-5 sm:p-6 border border-stone-200/90 shadow-2xs hover:border-stone-400 hover:shadow-md transition-all duration-300 cubic-bezier(0.16,1,0.3,1) active:scale-[0.98] cursor-pointer space-y-3.5 animate-card-enter"
+                      className="bg-white rounded-[26px] p-5 sm:p-6 border border-black/[0.06] shadow-[0_6px_20px_rgba(0,0,0,0.06),0_1px_4px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.09)] transition-all duration-300 active:scale-[0.99] cursor-pointer space-y-3.5 animate-card-enter"
                     >
-                      {/* Top Meta Bar */}
+                      {/* Top Meta Pill Bar */}
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-stone-100 text-[#1C1C1E] border border-stone-200">
+                          <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#767680]/10 text-[#000000] border border-black/[0.04]">
                             {trip.category === 'women' ? 'Women Safe' : trip.type === 'pink' ? '1-on-1 Date' : 'Road Trip'}
                           </span>
-                          <span className="text-[11px] font-medium text-stone-500 flex items-center gap-1">
-                            <Clock className="w-3.5 h-3.5 text-stone-400" />
+                          <span className="text-[11px] font-semibold text-[#8E8E93] flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5 text-[#8E8E93]" />
                             {trip.time}
                           </span>
                         </div>
 
-                        <div className="text-[16px] font-extrabold text-[#1C1C1E]">
+                        <div className="text-[16px] font-extrabold text-[#000000] tracking-tight">
                           {trip.cost === 0 ? 'FREE' : `₹${trip.cost}`}
                         </div>
                       </div>
 
-                      {/* Destination & Description */}
+                      {/* Destination & Title */}
                       <div className="space-y-1">
-                        <h3 className="text-[17px] font-bold text-[#1C1C1E] leading-snug tracking-tight">
+                        <h3 className="text-[18px] font-bold text-[#000000] leading-snug tracking-tight">
                           {trip.destination}
                         </h3>
-                        <p className="text-[13px] text-stone-500 font-normal line-clamp-1">
+                        <p className="text-[13px] text-[#8E8E93] font-medium line-clamp-1">
                           {trip.subtitle}
                         </p>
                       </div>
 
-                      {/* Pickup & Distance Pill */}
-                      <div className="flex items-center gap-2.5 text-[11px] text-stone-700 font-medium bg-[#F4F4F5] px-3.5 py-2 rounded-2xl border border-stone-200/80">
-                        <MapPin className="w-4 h-4 text-stone-600 shrink-0" />
-                        <span className="truncate">Pickup: <strong>{trip.pickupHub}</strong></span>
+                      {/* Layer 2: Inset Pickup & Route Well */}
+                      <div className="flex items-center gap-2.5 text-[11px] text-stone-800 font-medium bg-[#F6F6F9] px-3.5 py-2.5 rounded-2xl border border-black/[0.04]">
+                        <MapPin className="w-4 h-4 text-[#000000] shrink-0" />
+                        <span className="truncate">Pickup: <strong className="font-semibold text-[#000000]">{trip.pickupHub}</strong></span>
                         <span className="text-stone-300">•</span>
-                        <span className="shrink-0">{trip.distance} ({trip.routeTime})</span>
+                        <span className="shrink-0 text-[#8E8E93] font-medium">{trip.distance} ({trip.routeTime})</span>
                       </div>
 
-                      {/* Host & Spots Left Footer */}
-                      <div className="flex items-center justify-between pt-3 border-t border-stone-100">
+                      {/* Layer 3: Vibe Tags */}
+                      {trip.vibe && trip.vibe.length > 0 && (
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {trip.vibe.map((v) => (
+                            <span
+                              key={v}
+                              className="px-2.5 py-0.5 rounded-full bg-stone-100/90 text-stone-700 text-[10px] font-semibold border border-black/[0.03]"
+                            >
+                              {v}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Host & Action Footer */}
+                      <div className="flex items-center justify-between pt-3 border-t border-black/[0.06]">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-full bg-[#1C1C1E] text-white font-bold text-xs flex items-center justify-center shadow-xs">
+                          <div className="w-8 h-8 rounded-full bg-[#000000] text-white font-bold text-xs flex items-center justify-center shadow-2xs">
                             {trip.host.avatar}
                           </div>
                           <div>
-                            <span className="font-bold text-[13px] text-[#1C1C1E]">{trip.host.name}</span>
+                            <span className="font-bold text-[13px] text-[#000000]">{trip.host.name}</span>
                           </div>
                         </div>
 
                         <div className="flex items-center gap-2">
-                          <span className="text-[11px] font-semibold text-stone-600 bg-stone-100 px-3 py-1 rounded-full border border-stone-200">
+                          <span className="text-[11px] font-semibold text-stone-600 bg-stone-100 px-3 py-1 rounded-full border border-black/[0.04]">
                             {trip.totalSpots - trip.spots} spots left
                           </span>
-                          <div className="w-7 h-7 rounded-full bg-stone-100 text-[#1C1C1E] flex items-center justify-center">
+                          <div className="w-7 h-7 rounded-full bg-[#767680]/12 text-[#000000] flex items-center justify-center">
                             <ChevronRight className="w-4 h-4" />
                           </div>
                         </div>

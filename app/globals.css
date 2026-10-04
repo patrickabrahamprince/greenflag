@@ -12,7 +12,7 @@
    -- no radial glow, depth comes from the elevation ramp (well/base/
    raised/card/overlay) alone. */
 html, body {
-  background-color: #FFFFFF !important;
+  background-color: #F2F2F7 !important;
   color: #1C1C1E !important;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
