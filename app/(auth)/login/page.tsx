@@ -159,23 +159,6 @@ export default function LoginPage() {
     }
   }
 
-  const handleQuickDemoLogin = async (demoEmail = 'reviewer-woman@greenflag.app', demoPass = 'GreenFlag2026!') => {
-    setEmail(demoEmail)
-    setPassword(demoPass)
-    setShowEmailLogin(true)
-    setLoading(true)
-    setError('')
-    try {
-      const { error } = await supabase.auth.signInWithPassword({ email: demoEmail, password: demoPass })
-      if (error) throw error
-      await redirectAfterAuth()
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Authentication failed')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const handleGoogleLogin = () => withTermsGate(handleGoogleLoginInner)
 
   const handleGoogleLoginInner = async () => {
@@ -277,24 +260,14 @@ export default function LoginPage() {
           )}
 
           {!showEmailLogin ? (
-            <>
-              <button
-                type="button"
-                onClick={handleShowEmailToggle}
-                className="w-full flex items-center justify-center gap-2.5 bg-white hover:bg-stone-50 text-[#1C1C1E] font-bold text-xs py-3.5 px-4 rounded-full border border-stone-300 shadow-2xs transition-all active:scale-[0.98]"
-              >
-                <Mail className="w-4 h-4 text-stone-500" />
-                <span>Continue with Email</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickDemoLogin('reviewer-woman@greenflag.app', 'GreenFlag2026!')}
-                className="w-full flex items-center justify-center gap-2 bg-[#1C1C1E] hover:bg-black text-white font-bold text-xs py-3.5 px-4 rounded-full shadow-sm transition-all active:scale-[0.98]"
-              >
-                <span>Instant Reviewer Sign In (Sarah)</span>
-              </button>
-            </>
+            <button
+              type="button"
+              onClick={handleShowEmailToggle}
+              className="w-full flex items-center justify-center gap-2.5 bg-white hover:bg-stone-50 text-[#1C1C1E] font-bold text-xs py-3.5 px-4 rounded-full border border-stone-300 shadow-2xs transition-all active:scale-[0.98]"
+            >
+              <Mail className="w-4 h-4 text-stone-500" />
+              <span>Continue with Email</span>
+            </button>
           ) : (
             <form onSubmit={handleLogin} className="space-y-3 animate-fade-in pt-1">
               <div className="flex bg-[#F4F4F5] p-1 rounded-full border border-stone-200 mb-2">
