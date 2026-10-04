@@ -1579,7 +1579,7 @@ function TripsContent() {
 
               {/* Clean Unified Escape Cards */}
               <div className="space-y-3">
-                {filteredTrips.map((trip) => {
+                {filteredTrips.map((trip, idx) => {
                   return (
                     <div
                       key={trip.id}
@@ -1587,7 +1587,8 @@ function TripsContent() {
                         hapticTap();
                         setSelectedTrip(trip);
                       }}
-                      className="bg-white rounded-3xl p-4 border border-stone-200/90 shadow-xs hover:border-stone-400 hover:shadow-md transition-all active:scale-[0.99] cursor-pointer space-y-3"
+                      style={{ animationDelay: `${Math.min(idx * 40, 300)}ms` }}
+                      className="bg-white rounded-3xl p-4.5 border border-stone-200 shadow-2xs hover:border-stone-400 hover:shadow-md transition-all duration-300 cubic-bezier(0.16,1,0.3,1) active:scale-[0.98] cursor-pointer space-y-3 animate-card-enter"
                     >
                       {/* Top Meta Bar */}
                       <div className="flex items-center justify-between">

@@ -385,7 +385,7 @@ export default function DiscoverPage() {
       <div
         ref={scrollRef}
         onTouchStart={onTouchStart}
-        className="snap-y snap-mandatory overflow-y-scroll overscroll-none scroll-smooth h-dvh scrollbar-hide"
+        className="snap-y snap-mandatory overflow-y-scroll scroll-smooth overscroll-y-contain momentum-scroll h-dvh scrollbar-hide"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {profiles.map((p, i) => {
@@ -399,7 +399,7 @@ export default function DiscoverPage() {
             }}
             data-card-index={i}
             data-testid={process.env.NEXT_PUBLIC_E2E_TESTING === 'true' ? 'profile-card' : undefined}
-            className={`snap-start snap-always h-dvh w-full relative overflow-hidden ${prefersReducedMotion ? '' : 'animate-card-enter'}`}
+            className={`snap-start h-dvh w-full relative overflow-hidden transition-transform duration-300 ease-out ${prefersReducedMotion ? '' : 'animate-card-enter'}`}
           >
             {!isNear ? (
               <div className="absolute inset-0 bg-black" />

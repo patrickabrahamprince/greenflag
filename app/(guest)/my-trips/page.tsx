@@ -87,7 +87,7 @@ export default function MyTripsPage() {
         {/* Live Active Trip Card */}
         {activeTab === 'Upcoming' && (
           <>
-            <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200 p-5 shadow-2xs space-y-3.5">
+            <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200 p-5 shadow-2xs space-y-3.5 animate-card-enter hover:shadow-md transition-all duration-300">
               <div className="flex items-center justify-between">
                 <span className="px-3 py-1 rounded-full bg-[#1C1C1E] text-white font-extrabold text-[10px] tracking-wide flex items-center gap-1.5 shadow-2xs">
                   <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />

@@ -36,7 +36,7 @@ function ChatListItem({ conv }: { conv: ChatConversation }) {
   return (
     <button
       onClick={() => { hapticTap(); router.push(`/messages/${conv.id}`); }}
-      className="w-full flex items-center gap-3.5 p-4 text-left transition-all bg-[#F9FAFB] hover:bg-stone-100 border border-stone-200/80 rounded-3xl shadow-2xs active:scale-[0.98] cursor-pointer"
+      className="w-full flex items-center gap-3.5 p-4 text-left bg-[#F9FAFB] hover:bg-stone-100 border border-stone-200/80 rounded-3xl shadow-2xs hover:shadow-md transition-all duration-300 cubic-bezier(0.16,1,0.3,1) active:scale-[0.98] cursor-pointer animate-card-enter"
     >
       <div className="relative w-12 h-12 rounded-full shrink-0">
         <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-white border border-stone-200 shadow-2xs">
