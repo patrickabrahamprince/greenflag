@@ -87,6 +87,8 @@ module.exports = {
         'widest-xl': '0.25em',
       },
       boxShadow: {
+        '2xs': '0 1px 2px 0 rgba(0, 0, 0, 0.03)',
+        'xs': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
         'glow-crimson': '0 4px 20px -2px rgba(5,150,105,0.3)',
         'glow-crimson-sm': '0 2px 12px -2px rgba(5,150,105,0.2)',
         'glow-emerald': '0 4px 20px -2px rgba(5,150,105,0.3)',

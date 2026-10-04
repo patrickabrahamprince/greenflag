@@ -1,6 +1,6 @@
 'use client';
 
-import { GripVertical, Lightbulb, Upload, X, Sparkles } from 'lucide-react';
+import { GripVertical, Lightbulb, Sparkles, Upload, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 const PHOTO_TIPS = [
@@ -66,11 +66,10 @@ export function PhotoUploadSlots({
         onClick={() => {
           if (!photo && photos.length < maxPhotos) inputRef.current?.click();
         }}
-        className={`rounded-3xl border-2 flex items-center justify-center relative overflow-hidden transition-all duration-300 ${className} ${
-          photo
+        className={`rounded-3xl border-2 flex items-center justify-center relative overflow-hidden transition-all duration-300 ${className} ${photo
             ? 'border-transparent shadow-md'
             : 'border-dashed border-stone-300/90 bg-white hover:border-[#141414] hover:bg-stone-50/80 active:scale-[0.98] cursor-pointer shadow-xs'
-        } ${draggedIdx === i ? 'opacity-50 scale-95' : ''}`}
+          } ${draggedIdx === i ? 'opacity-50 scale-95' : ''}`}
       >
         {photo ? (
           <>
@@ -129,11 +128,10 @@ export function PhotoUploadSlots({
         <label className="text-sm font-[800] text-[#141414]">
           Photos <span className="text-stone-500 font-normal">({photos.length}/{maxPhotos})</span>
         </label>
-        <span className={`text-[11px] font-[800] px-3 py-1 rounded-full uppercase tracking-wider ${
-          maxPhotos - photos.length > 0 
-            ? 'bg-amber-100/80 text-amber-900 border border-amber-200' 
+        <span className={`text-[11px] font-[800] px-3 py-1 rounded-full uppercase tracking-wider ${maxPhotos - photos.length > 0
+            ? 'bg-amber-100/80 text-amber-900 border border-amber-200'
             : 'bg-[#CEFF00]/40 text-[#141414] border border-[#141414]/20'
-        }`}>
+          }`}>
           {maxPhotos - photos.length > 0 ? `${maxPhotos - photos.length} Needed` : 'Complete'}
         </span>
       </div>

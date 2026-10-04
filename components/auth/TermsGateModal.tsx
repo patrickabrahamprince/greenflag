@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { BottomSheet } from '@/components/shared/BottomSheet';
 import { hapticDecision } from '@/lib/haptics';
+import { ShieldCheck, UserCheck, Eye } from 'lucide-react';
 
 interface TermsGateModalProps {
   open: boolean;
@@ -16,25 +17,61 @@ interface TermsGateModalProps {
 // Google/Apple/email auth on terms acceptance).
 export function TermsGateModal({ open, onAccept, onClose }: TermsGateModalProps) {
   return (
-    <BottomSheet open={open} onClose={onClose}>
-      <h2 className="font-display text-2xl text-ink mb-3">Our Terms & Privacy</h2>
-      <p className="text-ink/60 text-sm leading-relaxed mb-4">
-        Before you continue, here&apos;s what matters most:
-      </p>
-      <ul className="space-y-2.5 text-ink/70 text-sm leading-relaxed mb-5 list-disc list-inside">
-        <li>You must be 18+ and every new profile is reviewed before approval.</li>
-        <li>You&apos;re responsible for what you post, and can report or block anyone directly in the app.</li>
-        <li>We only use your data to run GreenFlag&apos;s matching and safety features -- see our Privacy Policy for details.</li>
-      </ul>
-      <p className="text-ink/50 text-xs leading-relaxed mb-6">
-        Read the full{' '}
-        <Link href="/terms" className="text-gold underline underline-offset-2">Terms of Service</Link>
-        {' '}and{' '}
-        <Link href="/privacy" className="text-gold underline underline-offset-2">Privacy Policy</Link>.
-      </p>
-      <button onClick={() => { hapticDecision(); onAccept(); }} className="btn-primary w-full py-4 mb-4">
-        Accept Terms
-      </button>
+    <BottomSheet open={open} onClose={onClose} theme="light">
+      <div className="text-left space-y-4">
+        <div>
+          <h2 className="text-2xl font-extrabold text-[#1C1C1E] tracking-tight mb-1.5">
+            Our Terms &amp; Privacy
+          </h2>
+          <p className="text-stone-500 text-xs font-medium leading-relaxed">
+            Before you continue, here&apos;s what matters most:
+          </p>
+        </div>
+
+        <div className="space-y-3 bg-[#F8FAFC] border border-stone-200/90 rounded-2xl p-4 text-xs leading-relaxed text-[#1C1C1E]">
+          <div className="flex items-start gap-3">
+            <UserCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+            <p>
+              <span className="font-bold text-stone-900">18+ &amp; Verified:</span> You must be 18+ and every new profile is reviewed before approval.
+            </p>
+          </div>
+          <div className="flex items-start gap-3">
+            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+            <p>
+              <span className="font-bold text-stone-900">Safety &amp; Respect:</span> You&apos;re responsible for what you post, and can report or block anyone directly in the app.
+            </p>
+          </div>
+          <div className="flex items-start gap-3">
+            <Eye className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+            <p>
+              <span className="font-bold text-stone-900">Your Privacy:</span> We only use your data to run GreenFlag&apos;s matching and safety features — see our Privacy Policy for details.
+            </p>
+          </div>
+        </div>
+
+        <p className="text-stone-500 text-xs leading-relaxed text-center">
+          Read the full{' '}
+          <Link href="/terms" className="text-emerald-700 font-semibold underline underline-offset-2 hover:text-emerald-800">
+            Terms of Service
+          </Link>
+          {' '}and{' '}
+          <Link href="/privacy" className="text-emerald-700 font-semibold underline underline-offset-2 hover:text-emerald-800">
+            Privacy Policy
+          </Link>.
+        </p>
+
+        <button
+          type="button"
+          onClick={() => {
+            hapticDecision();
+            onAccept();
+          }}
+          className="w-full bg-[#1C1C1E] hover:bg-black text-white font-bold text-xs py-3.5 px-4 rounded-full shadow-sm transition-all active:scale-[0.98]"
+        >
+          Accept Terms
+        </button>
+      </div>
     </BottomSheet>
   );
 }
+
