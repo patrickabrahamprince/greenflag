@@ -15,7 +15,16 @@ html, body {
   background-color: #FFFFFF !important;
   color: #1C1C1E !important;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior-y: auto;
+  scroll-behavior: smooth;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+}
+
+/* Fluid Native Momentum Scrolling for all scrollable containers */
+.overflow-y-auto, [class*="overflow-y-auto"] {
+  -webkit-overflow-scrolling: touch !important;
+  scroll-behavior: smooth;
+  overscroll-behavior-y: contain;
   touch-action: pan-y;
 }
 

@@ -1144,7 +1144,7 @@ function TripsContent() {
         </div>
 
         {/* Marriott Style "Where can we take you?" Search Bar */}
-        <div className="space-y-2.5">
+        <div>
           <div
             onClick={() => {
               hapticTap();
@@ -1160,29 +1160,6 @@ function TripsContent() {
               📍 {selectedLocation.name.split(',')[0]}
             </span>
           </div>
-
-          {/* Quick Sub-Pills: Nearby, Explore, Road Trip */}
-          <div className="flex items-center gap-2">
-            {[
-              { id: 'nearby', label: '🧭 Nearby' },
-              { id: 'explore', label: '🗺️ Explore' },
-              { id: 'roadtrip', label: '🚗 Road Trip' },
-            ].map((chip) => (
-              <button
-                key={chip.id}
-                type="button"
-                onClick={() => {
-                  hapticTap();
-                  if (chip.id === 'nearby') setSelectedFilter('All');
-                  else if (chip.id === 'explore') setSelectedFilter('Dates');
-                  else setSelectedFilter('Buddies');
-                }}
-                className="flex-1 py-1.5 px-3 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-[11px] font-bold text-stone-700 active:scale-95 transition shadow-2xs flex items-center justify-center gap-1 cursor-pointer"
-              >
-                <span>{chip.label}</span>
-              </button>
-            ))}
-          </div>
         </div>
       </header>
 
@@ -1191,51 +1168,7 @@ function TripsContent() {
         
         {/* ================= VIEW 1: DATING + TRAVEL ESCAPES HUB ================= */}
         {activeTab === 'explore' && (
-          <div className="h-full flex flex-col animate-fade-in space-y-4 pt-2">
-            
-            {/* 1. TRAVEL DATING FILTER PILLS (Clean Marriott Style) */}
-            <div className="px-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-              {[
-                { id: 'all', label: 'All Escapes' },
-                { id: 'dates', label: 'Dating Pairs' },
-                { id: 'convoys', label: 'Road Trips' },
-                { id: 'women', label: 'Women Safe' },
-                { id: 'sunrise', label: 'Sunrise Drives' },
-                { id: 'coffee', label: 'Coffee Walks' },
-              ].map((pill) => {
-                const isSelected = 
-                  (pill.id === 'all' && selectedFilter === 'All') ||
-                  (pill.id === 'dates' && selectedFilter === 'Dates') ||
-                  (pill.id === 'convoys' && selectedFilter === 'Buddies') ||
-                  (pill.id === 'women' && selectedFilter === 'Women-Only') ||
-                  (pill.id === 'sunrise' && selectedFilter === 'Sunrise') ||
-                  (pill.id === 'coffee' && selectedFilter === 'Coffee');
-                
-                return (
-                  <button
-                    key={pill.id}
-                    type="button"
-                    onClick={() => {
-                      hapticTap();
-                      setSelectedFilter(
-                        pill.id === 'all' ? 'All' :
-                        pill.id === 'dates' ? 'Dates' :
-                        pill.id === 'convoys' ? 'Buddies' :
-                        pill.id === 'women' ? 'Women-Only' :
-                        pill.id === 'sunrise' ? 'Sunrise' : 'Coffee'
-                      );
-                    }}
-                    className={`px-4 py-1.5 rounded-full text-[11px] font-bold transition-all cursor-pointer shrink-0 ${
-                      isSelected
-                        ? 'bg-[#1C1C1E] text-white shadow-2xs'
-                        : 'bg-[#F4F4F5] text-stone-600 hover:text-[#1C1C1E] border border-stone-200'
-                    }`}
-                  >
-                    {pill.label}
-                  </button>
-                );
-              })}
-            </div>
+          <div className="h-full flex flex-col animate-fade-in space-y-4 pt-3">
 
             {/* 2. INTERACTIVE EDITORIAL MAP CANVAS */}
             <div className="px-6">
