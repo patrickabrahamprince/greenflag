@@ -246,8 +246,8 @@ module.exports = {
         // that same edge without clipping the background around them.
         // max() keeps a sane minimum gap on notch-less devices, where
         // env(safe-area-inset-*) resolves to 0.
-        'safe-top': 'max(1.5rem, env(safe-area-inset-top))',
-        'safe-bottom': 'max(1.5rem, env(safe-area-inset-bottom))',
+        'safe-top': 'max(2.5rem, env(safe-area-inset-top, 2.5rem))',
+        'safe-bottom': 'max(1.75rem, env(safe-area-inset-bottom, 1.75rem))',
       },
     },
   },

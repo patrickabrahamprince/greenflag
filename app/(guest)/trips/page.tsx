@@ -1172,24 +1172,11 @@ function TripsContent() {
 
             {/* 2. INTERACTIVE EDITORIAL MAP CANVAS */}
             <div className="px-6">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-1.5">
-                  <Compass className="w-4 h-4 text-[#1C1C1E]" />
-                  <span className="text-[13px] font-bold text-[#1C1C1E] tracking-tight">
-                    {is3DMapView ? '3D City Proximity Map' : 'Travel Dating Radar & Live Routes'}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    hapticTap();
-                    setIs3DMapView(!is3DMapView);
-                  }}
-                  className="flex items-center gap-1 text-[11px] font-semibold text-[#1C1C1E] bg-[#F4F4F5] px-3 py-1 rounded-full border border-stone-200 hover:bg-stone-100 transition cursor-pointer"
-                >
-                  <Layers className="w-3 h-3 text-[#1C1C1E]" />
-                  <span>{is3DMapView ? '2D Radar' : '3D Map'}</span>
-                </button>
+              <div className="flex items-center gap-1.5 mb-2">
+                <Compass className="w-4 h-4 text-[#1C1C1E]" />
+                <span className="text-[13px] font-bold text-[#1C1C1E] tracking-tight">
+                  {is3DMapView ? '3D City Proximity Map' : 'Travel Dating Radar & Live Routes'}
+                </span>
               </div>
             </div>
 
