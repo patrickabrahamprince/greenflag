@@ -1298,7 +1298,7 @@ function TripsContent() {
               </div>
             ) : (
             <div 
-              className="relative h-[340px] bg-[#F4F4F5] overflow-hidden mx-6 mb-2 rounded-3xl border border-stone-200/90 shadow-inner shrink-0 select-none cursor-grab active:cursor-grabbing touch-none"
+              className="relative h-[260px] bg-[#F4F4F5] overflow-hidden mx-6 mb-2 rounded-3xl border border-stone-200/90 shadow-inner shrink-0 select-none cursor-grab active:cursor-grabbing touch-none"
               onMouseDown={(e) => handleMapPointerDown(e.clientX, e.clientY)}
               onMouseMove={(e) => handleMapPointerMove(e.clientX, e.clientY)}
               onMouseUp={handleMapPointerUp}
@@ -1593,52 +1593,6 @@ function TripsContent() {
                     </div>
                   );
                 })}
-              </div>
-
-              {/* 4. DISCOVERY DUO (SECRET SPARK + TRAVEL SINGLES) */}
-              <div className="grid grid-cols-2 gap-3 pt-1">
-                <div className="bg-[#F9FAFB] rounded-3xl p-4 border border-stone-200 shadow-2xs flex flex-col justify-between min-h-[120px]">
-                  <div className="w-8 h-8 rounded-full bg-[#1C1C1E] text-white flex items-center justify-center">
-                    <Sparkles className="w-4 h-4" />
-                  </div>
-                  <div className="mt-2">
-                    <div className="text-[13px] font-bold text-[#1C1C1E]">Double-Blind Sparks</div>
-                    <p className="text-[10px] text-stone-500 font-medium mt-0.5">
-                      Private mutual trip sparks.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => router.push('/messages')}
-                      className="mt-2.5 w-full py-1.5 rounded-full bg-[#1C1C1E] text-white text-[11px] font-bold active:scale-95 transition"
-                    >
-                      View Sparks
-                    </button>
-                  </div>
-                </div>
-
-                <div className="bg-[#F9FAFB] rounded-3xl p-4 border border-stone-200 shadow-2xs flex flex-col justify-between min-h-[120px]">
-                  <div className="w-8 h-8 rounded-full bg-[#1C1C1E] text-white flex items-center justify-center">
-                    <Compass className="w-4 h-4" />
-                  </div>
-                  <div className="mt-2">
-                    <div className="text-[13px] font-bold text-[#1C1C1E]">Travel Singles</div>
-                    <p className="text-[10px] text-stone-500 font-medium mt-0.5">
-                      14 singles ready for getaways.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        hapticSuccess();
-                        if (filteredTrips.length > 0) {
-                          setSelectedTrip(filteredTrips[0]);
-                        }
-                      }}
-                      className="mt-2.5 w-full py-1.5 rounded-full bg-[#1C1C1E] text-white text-[11px] font-bold active:scale-95 transition"
-                    >
-                      Browse Profiles
-                    </button>
-                  </div>
-                </div>
               </div>
             </div>
 
