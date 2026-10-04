@@ -15,7 +15,10 @@ import {
   Plus,
   Loader2,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Sparkles,
+  ArrowRight,
+  ShieldCheck
 } from 'lucide-react';
 import { hapticTap, hapticSuccess } from '@/lib/haptics';
 import toast from 'react-hot-toast';
@@ -70,12 +73,12 @@ export default function MyTripsPage() {
   return (
     <div className="w-full h-full flex flex-col bg-white overflow-hidden max-w-md mx-auto select-none antialiased">
       
-      {/* 100% Frozen Fixed Top Header with Tabs */}
+      {/* ================= 100% FROZEN TOP HEADER ================= */}
       <header className="shrink-0 z-30 bg-white/95 backdrop-blur-md pt-safe-top pb-3 px-6 border-b border-stone-100 space-y-3">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-[22px] font-[800] text-[#1C1C1E] tracking-tight">My Plans</h1>
-            <p className="text-[12px] font-semibold text-stone-500">Scheduled escapes & trips</p>
+            <p className="text-[12px] font-semibold text-stone-500">Scheduled escapes & hosted trips</p>
           </div>
 
           <button
@@ -84,7 +87,7 @@ export default function MyTripsPage() {
               hapticTap();
               router.push('/trips?tab=create');
             }}
-            className="px-3.5 py-1.5 rounded-full bg-[#1C1C1E] text-white text-[11px] font-bold shadow-2xs hover:bg-black active:scale-95 transition flex items-center gap-1 cursor-pointer"
+            className="px-3.5 py-1.5 rounded-full bg-[#1C1C1E] hover:bg-black text-white text-[11px] font-bold shadow-2xs active:scale-95 transition flex items-center gap-1.5 cursor-pointer"
             aria-label="Host Escape"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -92,13 +95,13 @@ export default function MyTripsPage() {
           </button>
         </div>
 
-        {/* Filter Tabs (Explore Style) */}
-        <div className="flex items-center gap-1.5 bg-[#F4F4F5] p-1 rounded-full border border-stone-200">
+        {/* Filter Tabs */}
+        <div className="flex items-center gap-1.5 bg-[#F4F4F5] p-1 rounded-full border border-stone-200/90">
           {(['Upcoming', 'Hosting', 'Past'] as const).map((tab) => {
             const isActive = activeTab === tab;
             const count = 
               tab === 'Hosting' ? hostedTrips.length : 
-              tab === 'Upcoming' ? acceptedRequests.length : undefined;
+              tab === 'Upcoming' ? joinedRequests.length : undefined;
 
             return (
               <button
@@ -108,7 +111,7 @@ export default function MyTripsPage() {
                   hapticTap();
                   setActiveTab(tab);
                 }}
-                className={`flex-1 py-2 rounded-full text-[12px] font-bold transition-all cursor-pointer flex items-center justify-center gap-1 ${
+                className={`flex-1 py-2 rounded-full text-[12px] font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 ${
                   isActive
                     ? 'bg-[#1C1C1E] text-white shadow-2xs'
                     : 'text-stone-600 hover:text-[#1C1C1E]'
@@ -126,13 +129,13 @@ export default function MyTripsPage() {
         </div>
       </header>
 
-      {/* Main Scrollable Content List */}
+      {/* ================= MAIN SCROLLABLE CONTENT ================= */}
       <main 
         ref={scrollRef}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        className="flex-1 overflow-y-auto overscroll-contain px-6 space-y-4.5 pt-3 pb-36"
+        className="flex-1 overflow-y-auto overscroll-contain px-6 space-y-4 pt-4 pb-36"
       >
         {/* Pull To Refresh Spinner */}
         <div
@@ -142,240 +145,223 @@ export default function MyTripsPage() {
           <Loader2 className={`w-5 h-5 text-[#1C1C1E] ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="space-y-4 animate-pulse">
+            <div className="rounded-3xl bg-stone-100 h-44 border border-stone-200/60" />
+            <div className="rounded-3xl bg-stone-100 h-36 border border-stone-200/60" />
+          </div>
+        )}
+
         {/* ================= TAB 1: UPCOMING PLANS ================= */}
-        {activeTab === 'Upcoming' && (
-          <>
-            {/* Real Joined Trips if any */}
-            {joinedRequests.map((req) => {
-              const trip = (req as any).trip;
-              if (!trip) return null;
-              const isAccepted = req.status === 'accepted';
-              return (
-                <div key={req.id} className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-4 animate-card-enter">
-                  <div className="flex items-center justify-between">
-                    <span className={`px-3 py-1 rounded-full text-white font-extrabold text-[10px] tracking-wide flex items-center gap-1.5 shadow-2xs ${isAccepted ? 'bg-emerald-600' : 'bg-amber-600'}`}>
-                      {isAccepted ? <CheckCircle2 className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
-                      {isAccepted ? 'CONFIRMED' : 'APPLICATION PENDING'}
-                    </span>
-                    <span className="text-[11px] font-bold text-stone-500">{trip.start_date || 'Upcoming'}</span>
-                  </div>
-
-                  <div>
-                    <h3 className="text-[18px] font-extrabold text-[#1C1C1E] leading-tight">
-                      {trip.destination}
-                    </h3>
-                    <p className="text-[12px] text-stone-500 font-medium mt-1 flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-[#1C1C1E]" />
-                      {trip.state || 'Bangalore'} · {trip.vibe || 'Road Trip'}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-2 border-t border-stone-200/80">
-                    <span className="text-[12px] font-semibold text-stone-600">Host: {trip.host?.name || 'Verified Explorer'}</span>
-                    <button
-                      type="button"
-                      onClick={() => router.push('/messages')}
-                      className="px-4 py-2 rounded-full bg-[#1C1C1E] text-white text-[11px] font-bold active:scale-95 transition shadow-2xs"
-                    >
-                      Chat
-                    </button>
-                  </div>
+        {!loading && activeTab === 'Upcoming' && (
+          <div className="space-y-4">
+            {joinedRequests.length === 0 ? (
+              /* Luxury Empty State */
+              <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-7 text-center space-y-4 animate-fade-in shadow-2xs">
+                <div className="w-14 h-14 rounded-full bg-white border border-stone-200 mx-auto flex items-center justify-center text-[#1C1C1E] shadow-2xs">
+                  <Compass className="w-6 h-6 text-[#1C1C1E]" />
                 </div>
-              );
-            })}
-
-            {/* Live Active Trip Card (Bangalore Getaway) */}
-            <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-4 animate-card-enter hover:shadow-md transition-all duration-300">
-              <div className="flex items-center justify-between">
-                <span className="px-3 py-1 rounded-full bg-[#1C1C1E] text-white font-extrabold text-[10px] tracking-wide flex items-center gap-1.5 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                  HAPPENING TODAY
-                </span>
-                <span className="text-[11px] font-bold text-stone-500">9:45 AM</span>
-              </div>
-
-              <div>
-                <h3 className="text-[18px] font-extrabold text-[#1C1C1E] leading-tight">
-                  Nandi Sunrise Cloud Convoy
-                </h3>
-                <p className="text-[12px] text-stone-500 font-medium mt-1 flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-[#1C1C1E]" />
-                  Meeting at Indiranagar 100ft Rd
-                </p>
-              </div>
-
-              {/* Ride & Carpool Details */}
-              <div className="bg-white rounded-2xl p-4 space-y-2.5 border border-stone-200/80 shadow-2xs">
-                <div className="flex items-center justify-between text-[12px]">
-                  <div className="flex items-center gap-2">
-                    <Car className="w-4 h-4 text-[#1C1C1E]" />
-                    <span className="font-semibold text-stone-800">Car Lead</span>
-                  </div>
-                  <span className="px-2.5 py-0.5 rounded-full bg-stone-100 text-[#1C1C1E] text-[11px] font-bold border border-stone-200">
-                    Aarav · Verified ✓
-                  </span>
+                <div className="space-y-1.5">
+                  <h3 className="text-[17px] font-[800] text-[#1C1C1E] tracking-tight">No Escapes Scheduled Yet</h3>
+                  <p className="text-[13px] text-stone-500 font-medium leading-relaxed max-w-xs mx-auto">
+                    Join an upcoming sunrise drive, weekend coffee tour, or road trip with verified travel buddies.
+                  </p>
                 </div>
-
-                <div className="flex items-center justify-between text-[12px]">
-                  <div className="flex items-center gap-2">
-                    <span>💳</span>
-                    <span className="font-semibold text-stone-800">Fuel & Pass Split</span>
-                  </div>
-                  <span className="font-bold text-[#1C1C1E]">₹350 / person</span>
+                <div className="pt-2 flex flex-col gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      hapticTap();
+                      router.push('/trips');
+                    }}
+                    className="w-full py-3 rounded-full bg-[#1C1C1E] hover:bg-black text-white text-[13px] font-bold active:scale-[0.98] transition shadow-2xs flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <span>Explore Road Trips & Escapes</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      hapticTap();
+                      router.push('/trips?tab=create');
+                    }}
+                    className="w-full py-3 rounded-full bg-white hover:bg-stone-50 text-[#1C1C1E] text-[13px] font-bold border border-stone-200 active:scale-[0.98] transition shadow-2xs cursor-pointer"
+                  >
+                    Host Your Own Escape
+                  </button>
                 </div>
               </div>
+            ) : (
+              joinedRequests.map((req) => {
+                const trip = (req as any).trip;
+                if (!trip) return null;
+                const isAccepted = req.status === 'accepted';
+                return (
+                  <div key={req.id} className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-4 animate-card-enter hover:shadow-md transition-all duration-300">
+                    <div className="flex items-center justify-between">
+                      <span className={`px-3 py-1 rounded-full text-white font-extrabold text-[10px] tracking-wider uppercase flex items-center gap-1.5 shadow-2xs ${
+                        isAccepted ? 'bg-[#1C1C1E]' : 'bg-amber-600'
+                      }`}>
+                        {isAccepted ? <CheckCircle2 className="w-3 h-3 text-emerald-400" /> : <AlertCircle className="w-3 h-3 text-white" />}
+                        {isAccepted ? 'CONFIRMED' : 'APPLICATION UNDER REVIEW'}
+                      </span>
+                      <span className="text-[11px] font-bold text-stone-500">{trip.start_date || 'Upcoming'}</span>
+                    </div>
 
-              {/* Travelers Stack & Action */}
-              <div className="flex items-center justify-between pt-1">
-                <div className="flex items-center -space-x-2">
-                  <img
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80"
-                    alt="Traveler 1"
-                    className="w-8 h-8 rounded-full border-2 border-white object-cover shadow-2xs"
-                  />
-                  <img
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80"
-                    alt="Traveler 2"
-                    className="w-8 h-8 rounded-full border-2 border-white object-cover shadow-2xs"
-                  />
-                  <img
-                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80"
-                    alt="Traveler 3"
-                    className="w-8 h-8 rounded-full border-2 border-white object-cover shadow-2xs"
-                  />
-                  <div className="w-8 h-8 rounded-full bg-[#1C1C1E] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white">
-                    +2
+                    <div>
+                      <h3 className="text-[18px] font-extrabold text-[#1C1C1E] leading-tight">
+                        {trip.destination}
+                      </h3>
+                      <p className="text-[12px] text-stone-500 font-medium mt-1 flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-[#1C1C1E]" />
+                        {trip.state || 'Bangalore'} · {trip.vibe || 'Road Trip'}
+                      </p>
+                    </div>
+
+                    <div className="bg-white rounded-2xl p-3.5 border border-stone-200 flex items-center justify-between text-[12px]">
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                        <span className="font-semibold text-stone-800">Host: {trip.host?.name || 'Verified Explorer'}</span>
+                      </div>
+                      <span className="font-bold text-[#1C1C1E]">
+                        {trip.budget_per_day ? `₹${trip.budget_per_day}/day` : 'Shared Fuel'}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1">
+                      <button
+                        type="button"
+                        onClick={() => router.push(`/trips/${trip.id}`)}
+                        className="text-[12px] font-bold text-stone-600 hover:text-stone-900 transition"
+                      >
+                        View Itinerary
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => router.push('/messages')}
+                        className="px-5 py-2 rounded-full bg-[#1C1C1E] hover:bg-black text-white text-[12px] font-bold active:scale-95 transition shadow-2xs cursor-pointer"
+                      >
+                        Trip Chat
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => router.push('/messages')}
-                  className="px-5 py-2.5 rounded-full bg-[#1C1C1E] hover:bg-black text-white text-[12px] font-bold active:scale-95 transition shadow-2xs cursor-pointer"
-                >
-                  Group Chat
-                </button>
-              </div>
-            </div>
-
-            {/* Next Scheduled Trip */}
-            <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-3.5">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-stone-500">Sat · Oct 4</span>
-                <span className="px-2.5 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-[#1C1C1E] font-bold text-[10px]">
-                  CONFIRMED
-                </span>
-              </div>
-
-              <div>
-                <h3 className="text-[18px] font-extrabold text-[#1C1C1E]">
-                  Coorg Coffee Estate & Waterfalls
-                </h3>
-                <p className="text-[12px] text-stone-500 font-medium mt-0.5">
-                  Weekend Getaway · 4 Buddies
-                </p>
-              </div>
-
-              <div className="flex items-center justify-between pt-2 border-t border-stone-200/80">
-                <span className="text-[11px] font-semibold text-stone-600">Host: Sneha R.</span>
-                <span className="text-[11px] font-bold text-[#1C1C1E]">₹1,800 total</span>
-              </div>
-            </div>
-          </>
+                );
+              })
+            )}
+          </div>
         )}
 
         {/* ================= TAB 2: HOSTED PLANS ================= */}
-        {activeTab === 'Hosting' && (
-          <div className="space-y-4.5">
-            {/* Real Hosted Trips from Database */}
-            {hostedTrips.map((trip) => {
-              const reqCount = (trip as any).requests?.length || 0;
-              return (
-                <div key={trip.id} className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-3.5 animate-card-enter">
-                  <div className="flex items-center justify-between">
-                    <span className="px-3 py-1 rounded-full bg-[#1C1C1E] text-white font-extrabold text-[10px] tracking-wider uppercase">
-                      HOSTING
-                    </span>
-                    <span className="text-[11px] font-bold text-stone-500">{trip.start_date || 'Upcoming'}</span>
-                  </div>
-
-                  <div>
-                    <h3 className="text-[18px] font-extrabold text-[#1C1C1E]">
-                      {trip.destination}
-                    </h3>
-                    <p className="text-[12px] text-stone-500 font-medium mt-0.5">
-                      {trip.state || 'Bangalore'} · {trip.spots_available || trip.spots_total || 4} spots left
-                    </p>
-                  </div>
-
-                  <div className="bg-white rounded-2xl p-3.5 flex items-center justify-between text-[12px] border border-stone-200">
-                    <span className="font-semibold text-stone-800">Applicant Requests</span>
-                    <span className="font-bold text-[#1C1C1E]">{reqCount} received</span>
-                  </div>
-
+        {!loading && activeTab === 'Hosting' && (
+          <div className="space-y-4">
+            {hostedTrips.length === 0 ? (
+              /* Luxury Empty State */
+              <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-7 text-center space-y-4 animate-fade-in shadow-2xs">
+                <div className="w-14 h-14 rounded-full bg-white border border-stone-200 mx-auto flex items-center justify-center text-[#1C1C1E] shadow-2xs">
+                  <Car className="w-6 h-6 text-[#1C1C1E]" />
+                </div>
+                <div className="space-y-1.5">
+                  <h3 className="text-[17px] font-[800] text-[#1C1C1E] tracking-tight">You Haven't Hosted Yet</h3>
+                  <p className="text-[13px] text-stone-500 font-medium leading-relaxed max-w-xs mx-auto">
+                    Take the lead on a weekend drive or trek. Verified members can apply to join your convoy.
+                  </p>
+                </div>
+                <div className="pt-2">
                   <button
                     type="button"
-                    onClick={() => router.push('/my-connections')}
-                    className="w-full py-2.5 rounded-full bg-[#1C1C1E] hover:bg-black text-white text-[12px] font-bold active:scale-95 transition shadow-2xs text-center cursor-pointer"
+                    onClick={() => {
+                      hapticTap();
+                      router.push('/trips?tab=create');
+                    }}
+                    className="w-full py-3 rounded-full bg-[#1C1C1E] hover:bg-black text-white text-[13px] font-bold active:scale-[0.98] transition shadow-2xs flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    Manage Requests & Buddies
+                    <Plus className="w-4 h-4" />
+                    <span>Create an Escape</span>
                   </button>
                 </div>
-              );
-            })}
-
-            {/* Skandagiri Trek Host Plan */}
-            <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-3.5">
-              <div className="flex items-center justify-between">
-                <span className="px-3 py-1 rounded-full bg-[#1C1C1E] text-white font-extrabold text-[10px]">
-                  YOU ARE HOSTING
-                </span>
-                <span className="text-[11px] font-bold text-stone-500">3 Joined</span>
               </div>
+            ) : (
+              hostedTrips.map((trip) => {
+                const reqCount = (trip as any).requests?.length || 0;
+                return (
+                  <div key={trip.id} className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-4 animate-card-enter hover:shadow-md transition-all duration-300">
+                    <div className="flex items-center justify-between">
+                      <span className="px-3 py-1 rounded-full bg-[#1C1C1E] text-white font-extrabold text-[10px] tracking-wider uppercase flex items-center gap-1.5 shadow-2xs">
+                        <Sparkles className="w-3 h-3 text-amber-300" />
+                        YOU ARE HOSTING
+                      </span>
+                      <span className="text-[11px] font-bold text-stone-500">{trip.start_date || 'Upcoming'}</span>
+                    </div>
 
-              <div>
-                <h3 className="text-[18px] font-extrabold text-[#1C1C1E]">
-                  Skandagiri Sunrise Trek & Chai
-                </h3>
-                <p className="text-[12px] text-stone-500 font-medium mt-0.5">
-                  Sunday 4:00 AM · Indiranagar Pickup
-                </p>
-              </div>
+                    <div>
+                      <h3 className="text-[18px] font-extrabold text-[#1C1C1E] leading-tight">
+                        {trip.destination}
+                      </h3>
+                      <p className="text-[12px] text-stone-500 font-medium mt-1 flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-[#1C1C1E]" />
+                        {trip.state || 'Bangalore'} · {trip.spots_available ?? 3} spots available
+                      </p>
+                    </div>
 
-              <div className="bg-white rounded-2xl p-3.5 flex items-center justify-between text-[12px] border border-stone-200">
-                <span className="font-semibold text-stone-800">Pending Requests</span>
-                <span className="font-bold text-[#1C1C1E]">2 to review</span>
-              </div>
-            </div>
+                    <div className="bg-white rounded-2xl p-3.5 flex items-center justify-between text-[12px] border border-stone-200">
+                      <span className="font-semibold text-stone-800">Applicant Requests</span>
+                      <span className="font-bold text-[#1C1C1E] px-2.5 py-0.5 rounded-full bg-stone-100 border border-stone-200">
+                        {reqCount} received
+                      </span>
+                    </div>
 
-            {/* Host Another Plan Button */}
-            <button
-              type="button"
-              onClick={() => router.push('/trips?tab=create')}
-              className="w-full py-3.5 rounded-full border-2 border-dashed border-stone-300 hover:border-[#1C1C1E] hover:bg-stone-50 text-[#1C1C1E] text-[13px] font-bold active:scale-[0.99] transition flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Create Another Escape</span>
-            </button>
+                    <div className="flex items-center gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => router.push('/my-connections')}
+                        className="flex-1 py-2.5 rounded-full bg-[#1C1C1E] hover:bg-black text-white text-[12px] font-bold active:scale-95 transition shadow-2xs text-center cursor-pointer"
+                      >
+                        Review Applicants
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => router.push(`/trips/${trip.id}`)}
+                        className="px-4 py-2.5 rounded-full bg-white hover:bg-stone-50 text-[#1C1C1E] text-[12px] font-bold border border-stone-200 active:scale-95 transition shadow-2xs text-center cursor-pointer"
+                      >
+                        Manage
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+
+            {hostedTrips.length > 0 && (
+              <button
+                type="button"
+                onClick={() => router.push('/trips?tab=create')}
+                className="w-full py-3.5 rounded-full border-2 border-dashed border-stone-300 hover:border-[#1C1C1E] hover:bg-stone-50 text-[#1C1C1E] text-[13px] font-bold active:scale-[0.99] transition flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Create Another Escape</span>
+              </button>
+            )}
           </div>
         )}
 
         {/* ================= TAB 3: PAST TRIPS & REVIEWS ================= */}
-        {activeTab === 'Past' && (
-          <div className="space-y-4.5">
-            <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-4">
+        {!loading && activeTab === 'Past' && (
+          <div className="space-y-4">
+            <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-4 animate-fade-in">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-[17px] font-extrabold text-[#1C1C1E]">Cubbon Park Morning Walk</h3>
-                  <p className="text-[11px] text-stone-500">Completed Yesterday</p>
+                  <p className="text-[11px] text-stone-500 mt-0.5">Completed recently</p>
                 </div>
                 <span className="px-2.5 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-[#1C1C1E] text-[10px] font-bold">
-                  Finished
+                  Completed
                 </span>
               </div>
 
               {/* Star Rating */}
-              <div>
-                <div className="text-[12px] font-bold text-stone-700 mb-1.5">How was the vibe?</div>
+              <div className="bg-white rounded-2xl p-4 border border-stone-200 space-y-2">
+                <div className="text-[12px] font-bold text-stone-700">How was the vibe?</div>
                 <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
@@ -386,6 +372,7 @@ export default function MyTripsPage() {
                         setRating(star);
                       }}
                       className="cursor-pointer active:scale-90 transition"
+                      aria-label={`Rate ${star} stars`}
                     >
                       <Star
                         className={`w-6 h-6 ${
