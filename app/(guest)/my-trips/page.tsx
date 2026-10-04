@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   Calendar, 
   Car, 
@@ -10,17 +10,49 @@ import {
   MapPin, 
   Clock, 
   ChevronRight, 
-  Compass 
+  Compass,
+  Users,
+  Plus,
+  Loader2,
+  CheckCircle2,
+  AlertCircle
 } from 'lucide-react';
 import { hapticTap, hapticSuccess } from '@/lib/haptics';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh';
+import { Trip, TripRequest } from '@/types';
 
 export default function MyTripsPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'Upcoming' | 'Hosting' | 'Past'>('Upcoming');
   const [rating, setRating] = useState<number>(5);
   const [sparked, setSparked] = useState<boolean>(false);
+  const [hostedTrips, setHostedTrips] = useState<Trip[]>([]);
+  const [joinedRequests, setJoinedRequests] = useState<TripRequest[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const loadData = useCallback(async () => {
+    try {
+      const res = await fetch('/api/trips/my').catch(() => null);
+      if (res && res.ok) {
+        const data = await res.json();
+        setHostedTrips(data.hosted || []);
+        setJoinedRequests(data.requests || []);
+      }
+    } catch {
+      // safe fallback
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const { scrollRef, pullDistance, refreshing, onTouchStart, onTouchMove, onTouchEnd } =
+    usePullToRefresh(loadData);
 
   const handleSpark = () => {
     hapticSuccess();
@@ -31,6 +63,9 @@ export default function MyTripsPage() {
         : 'Secret Spark cancelled'
     );
   };
+
+  const acceptedRequests = joinedRequests.filter((r) => r.status === 'accepted');
+  const pendingRequests = joinedRequests.filter((r) => r.status === 'pending');
 
   return (
     <div className="w-full h-full flex flex-col bg-white overflow-hidden max-w-md mx-auto select-none antialiased">
@@ -47,12 +82,13 @@ export default function MyTripsPage() {
             type="button"
             onClick={() => {
               hapticTap();
-              router.push('/trips');
+              router.push('/trips?tab=create');
             }}
-            className="w-10 h-10 rounded-full bg-[#F4F4F5] border border-stone-200 shadow-2xs flex items-center justify-center text-[#1C1C1E] hover:bg-stone-200 transition cursor-pointer active:scale-95"
-            aria-label="Explore more"
+            className="px-3.5 py-1.5 rounded-full bg-[#1C1C1E] text-white text-[11px] font-bold shadow-2xs hover:bg-black active:scale-95 transition flex items-center gap-1 cursor-pointer"
+            aria-label="Host Escape"
           >
-            <Compass className="w-5 h-5 text-[#1C1C1E]" />
+            <Plus className="w-3.5 h-3.5" />
+            <span>Host Escape</span>
           </button>
         </div>
 
@@ -60,6 +96,10 @@ export default function MyTripsPage() {
         <div className="flex items-center gap-1.5 bg-[#F4F4F5] p-1 rounded-full border border-stone-200">
           {(['Upcoming', 'Hosting', 'Past'] as const).map((tab) => {
             const isActive = activeTab === tab;
+            const count = 
+              tab === 'Hosting' ? hostedTrips.length : 
+              tab === 'Upcoming' ? acceptedRequests.length : undefined;
+
             return (
               <button
                 key={tab}
@@ -68,13 +108,18 @@ export default function MyTripsPage() {
                   hapticTap();
                   setActiveTab(tab);
                 }}
-                className={`flex-1 py-2 rounded-full text-[12px] font-bold transition-all cursor-pointer ${
+                className={`flex-1 py-2 rounded-full text-[12px] font-bold transition-all cursor-pointer flex items-center justify-center gap-1 ${
                   isActive
                     ? 'bg-[#1C1C1E] text-white shadow-2xs'
                     : 'text-stone-600 hover:text-[#1C1C1E]'
                 }`}
               >
-                {tab}
+                <span>{tab}</span>
+                {count !== undefined && count > 0 && (
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-extrabold ${isActive ? 'bg-white text-[#1C1C1E]' : 'bg-stone-200 text-stone-700'}`}>
+                    {count}
+                  </span>
+                )}
               </button>
             );
           })}
@@ -82,11 +127,64 @@ export default function MyTripsPage() {
       </header>
 
       {/* Main Scrollable Content List */}
-      <main className="flex-1 overflow-y-auto overscroll-contain px-6 space-y-4.5 pt-3 pb-36">
-        
-        {/* Live Active Trip Card */}
+      <main 
+        ref={scrollRef}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        className="flex-1 overflow-y-auto overscroll-contain px-6 space-y-4.5 pt-3 pb-36"
+      >
+        {/* Pull To Refresh Spinner */}
+        <div
+          className="flex items-center justify-center overflow-hidden transition-[height] duration-200 ease-out shrink-0"
+          style={{ height: pullDistance }}
+        >
+          <Loader2 className={`w-5 h-5 text-[#1C1C1E] ${refreshing || pullDistance > 60 ? 'animate-spin' : ''}`} />
+        </div>
+
+        {/* ================= TAB 1: UPCOMING PLANS ================= */}
         {activeTab === 'Upcoming' && (
           <>
+            {/* Real Joined Trips if any */}
+            {joinedRequests.map((req) => {
+              const trip = (req as any).trip;
+              if (!trip) return null;
+              const isAccepted = req.status === 'accepted';
+              return (
+                <div key={req.id} className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-4 animate-card-enter">
+                  <div className="flex items-center justify-between">
+                    <span className={`px-3 py-1 rounded-full text-white font-extrabold text-[10px] tracking-wide flex items-center gap-1.5 shadow-2xs ${isAccepted ? 'bg-emerald-600' : 'bg-amber-600'}`}>
+                      {isAccepted ? <CheckCircle2 className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
+                      {isAccepted ? 'CONFIRMED' : 'APPLICATION PENDING'}
+                    </span>
+                    <span className="text-[11px] font-bold text-stone-500">{trip.start_date || 'Upcoming'}</span>
+                  </div>
+
+                  <div>
+                    <h3 className="text-[18px] font-extrabold text-[#1C1C1E] leading-tight">
+                      {trip.destination}
+                    </h3>
+                    <p className="text-[12px] text-stone-500 font-medium mt-1 flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-[#1C1C1E]" />
+                      {trip.state || 'Bangalore'} · {trip.vibe || 'Road Trip'}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-stone-200/80">
+                    <span className="text-[12px] font-semibold text-stone-600">Host: {trip.host?.name || 'Verified Explorer'}</span>
+                    <button
+                      type="button"
+                      onClick={() => router.push('/messages')}
+                      className="px-4 py-2 rounded-full bg-[#1C1C1E] text-white text-[11px] font-bold active:scale-95 transition shadow-2xs"
+                    >
+                      Chat
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Live Active Trip Card (Bangalore Getaway) */}
             <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-4 animate-card-enter hover:shadow-md transition-all duration-300">
               <div className="flex items-center justify-between">
                 <span className="px-3 py-1 rounded-full bg-[#1C1C1E] text-white font-extrabold text-[10px] tracking-wide flex items-center gap-1.5 shadow-2xs">
@@ -185,33 +283,83 @@ export default function MyTripsPage() {
           </>
         )}
 
-        {/* Hosted Plans Tab */}
+        {/* ================= TAB 2: HOSTED PLANS ================= */}
         {activeTab === 'Hosting' && (
-          <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-3.5">
-            <div className="flex items-center justify-between">
-              <span className="px-3 py-1 rounded-full bg-[#1C1C1E] text-white font-extrabold text-[10px]">
-                YOU ARE HOSTING
-              </span>
-              <span className="text-[11px] font-bold text-stone-500">3 Joined</span>
+          <div className="space-y-4.5">
+            {/* Real Hosted Trips from Database */}
+            {hostedTrips.map((trip) => {
+              const reqCount = (trip as any).requests?.length || 0;
+              return (
+                <div key={trip.id} className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-3.5 animate-card-enter">
+                  <div className="flex items-center justify-between">
+                    <span className="px-3 py-1 rounded-full bg-[#1C1C1E] text-white font-extrabold text-[10px] tracking-wider uppercase">
+                      HOSTING
+                    </span>
+                    <span className="text-[11px] font-bold text-stone-500">{trip.start_date || 'Upcoming'}</span>
+                  </div>
+
+                  <div>
+                    <h3 className="text-[18px] font-extrabold text-[#1C1C1E]">
+                      {trip.destination}
+                    </h3>
+                    <p className="text-[12px] text-stone-500 font-medium mt-0.5">
+                      {trip.state || 'Bangalore'} · {trip.spots_available || trip.spots_total || 4} spots left
+                    </p>
+                  </div>
+
+                  <div className="bg-white rounded-2xl p-3.5 flex items-center justify-between text-[12px] border border-stone-200">
+                    <span className="font-semibold text-stone-800">Applicant Requests</span>
+                    <span className="font-bold text-[#1C1C1E]">{reqCount} received</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => router.push('/my-connections')}
+                    className="w-full py-2.5 rounded-full bg-[#1C1C1E] hover:bg-black text-white text-[12px] font-bold active:scale-95 transition shadow-2xs text-center cursor-pointer"
+                  >
+                    Manage Requests & Buddies
+                  </button>
+                </div>
+              );
+            })}
+
+            {/* Skandagiri Trek Host Plan */}
+            <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-3.5">
+              <div className="flex items-center justify-between">
+                <span className="px-3 py-1 rounded-full bg-[#1C1C1E] text-white font-extrabold text-[10px]">
+                  YOU ARE HOSTING
+                </span>
+                <span className="text-[11px] font-bold text-stone-500">3 Joined</span>
+              </div>
+
+              <div>
+                <h3 className="text-[18px] font-extrabold text-[#1C1C1E]">
+                  Skandagiri Sunrise Trek & Chai
+                </h3>
+                <p className="text-[12px] text-stone-500 font-medium mt-0.5">
+                  Sunday 4:00 AM · Indiranagar Pickup
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl p-3.5 flex items-center justify-between text-[12px] border border-stone-200">
+                <span className="font-semibold text-stone-800">Pending Requests</span>
+                <span className="font-bold text-[#1C1C1E]">2 to review</span>
+              </div>
             </div>
 
-            <div>
-              <h3 className="text-[18px] font-extrabold text-[#1C1C1E]">
-                Skandagiri Sunrise Trek & Chai
-              </h3>
-              <p className="text-[12px] text-stone-500 font-medium mt-0.5">
-                Sunday 4:00 AM · Indiranagar Pickup
-              </p>
-            </div>
-
-            <div className="bg-white rounded-2xl p-3.5 flex items-center justify-between text-[12px] border border-stone-200">
-              <span className="font-semibold text-stone-800">Pending Requests</span>
-              <span className="font-bold text-[#1C1C1E]">2 to review</span>
-            </div>
+            {/* Host Another Plan Button */}
+            <button
+              type="button"
+              onClick={() => router.push('/trips?tab=create')}
+              className="w-full py-3.5 rounded-full border-2 border-dashed border-stone-300 hover:border-[#1C1C1E] hover:bg-stone-50 text-[#1C1C1E] text-[13px] font-bold active:scale-[0.99] transition flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Create Another Escape</span>
+            </button>
           </div>
         )}
 
-        {/* Past Trips Tab & Rating Spark */}
+        {/* ================= TAB 3: PAST TRIPS & REVIEWS ================= */}
         {activeTab === 'Past' && (
           <div className="space-y-4.5">
             <div className="rounded-3xl bg-[#F9FAFB] border border-stone-200/90 p-5.5 sm:p-6 shadow-2xs space-y-4">
